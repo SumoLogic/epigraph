@@ -3,6 +3,7 @@ namespace ws.epigraph.tests
 vartype User extends Person {
   override id: UserId
   override `record`: UserRecord
+  profile: Url
 }
 
 integer UserId extends PersonId

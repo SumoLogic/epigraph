@@ -133,7 +133,7 @@ public final class ReqOutputProjectionsPsiParser {
     }
 
     final List<ReqOutputVarProjection> tails =
-        parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
+        parseTails(dataType, op, required, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
 
     try {
       return new StepsAndProjection<>(
@@ -264,7 +264,7 @@ public final class ReqOutputProjectionsPsiParser {
     }
 
     final List<ReqOutputVarProjection> tails =
-        parseTails(dataType, op, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
+        parseTails(dataType, op, required, psi.getReqOutputVarPolymorphicTail(), subResolver, errors);
 
     try {
       return new StepsAndProjection<>(
@@ -337,6 +337,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static @Nullable List<ReqOutputVarProjection> parseTails(
       @NotNull DataTypeApi dataType,
       @NotNull OpOutputVarProjection op,
+      boolean required,
       @Nullable UrlReqOutputVarPolymorphicTail psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -363,7 +364,7 @@ public final class ReqOutputProjectionsPsiParser {
             @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
             @NotNull UrlReqOutputComaVarProjection psiTailProjection = tailItem.getReqOutputComaVarProjection();
             @NotNull ReqOutputVarProjection tailProjection =
-                buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, errors);
+                buildTailProjection(dataType, op, required, tailTypeRef, psiTailProjection, subResolver, errors);
             tails.add(tailProjection);
 
             prevTailType = tailProjection.type();
@@ -375,7 +376,7 @@ public final class ReqOutputProjectionsPsiParser {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
         @NotNull ReqOutputVarProjection tailProjection =
-            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, errors);
+            buildTailProjection(dataType, op, required, tailTypeRef, psiTailProjection, subResolver, errors);
         tails.add(tailProjection);
       }
 
@@ -423,6 +424,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static @NotNull ReqOutputVarProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpOutputVarProjection op,
+      boolean required,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqOutputComaVarProjection tailProjectionPsi,
       @NotNull TypesResolver typesResolver,
@@ -436,7 +438,7 @@ public final class ReqOutputProjectionsPsiParser {
     return parseComaVarProjection(
         tailType.dataType(dataType.defaultTag()),
         opTail,
-        false,
+        required,
         tailProjectionPsi,
         typesResolver,
         errors

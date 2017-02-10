@@ -69,7 +69,7 @@ public class ReqOutputProjectionsParserTest {
           "        id,",
           "        firstName",
           "      ),",
-          "    ) ),",
+          "    ) ) ~ws.epigraph.tests.User : profile ,",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -180,6 +180,14 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testRequiredField() {
     testParse(":record ( +id )", 1);
+  }
+
+  @Test
+  public void testRequiredFieldWithTails() {
+    testParse(
+        ":record ( +bestFriend :( id ) ~ws.epigraph.tests.User :( profile ) )",
+        ":record ( +bestFriend :( +id ) ~ws.epigraph.tests.User :( +profile ) )",
+        1);
   }
 
   @Test
