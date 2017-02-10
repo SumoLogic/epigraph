@@ -16,7 +16,7 @@ apply plugin: 'base'
 //version = lightPsiVersion
 
 // TODO single task for full rebuild:
-// gradle updateFileList2 packageLightPsi relocate copyPrebuilt && mvn clean install
+// gradle updateFileList packageLightPsi relocate copyPrebuilt && mvn clean install
 
 // `updateFileList` updates resources/light-psi-filelist.txt
 // `packageLightPsi` rebuilds jar in build/tmp/light-psi-tmp.jar using the file list
@@ -67,17 +67,28 @@ task locateIdeaHome {
 
 task locateGrammarKit {
   doLast {
-    def ideaVersion = '2016.3' // todo get from some global config
+    def ideaVersion = project.property('ideaVersion')
     def locations = [
         System.getenv('GKIT_JAR'),
         System.getProperty('GKIT_JAR'),
-        "${System.getProperty('user.home')}/Library/Application Support/IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit.jar",
-        "${System.getProperty('user.home')}/Library/Application Support/IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit.jar",
-        "${System.getProperty('user.home')}/.IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit.jar",
-        "${System.getProperty('user.home')}/.IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit.jar"
+        "${System.getProperty('user.home')}/Library/Application Support/IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit*.jar",
+        "${System.getProperty('user.home')}/Library/Application Support/IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit*.jar",
+        "${System.getProperty('user.home')}/.IdeaIC$ideaVersion/GrammarKit/lib/grammar-kit*.jar",
+        "${System.getProperty('user.home')}/.IntelliJIdea$ideaVersion/GrammarKit/lib/grammar-kit*.jar"
     ]
 
-    def grammarKit = locations.find { isFile(it) }
+    def finder = new FileNameFinder()
+    def grammarKit = locations.findResult {
+      if (it != null) {
+        def f = new File(it)
+        def parent = f.getParentFile()
+        if (parent.exists()) {
+          def fileNames = finder.getFileNames(parent.absolutePath, f.getName())
+          fileNames.size() == 1 ? fileNames.get(0) : null
+        } else null
+      } else null
+    }
+
     if (grammarKit == null) throw new GradleException('Can\'t detect grammar-kit.jar location, please set GKIT_JAR')
 
     logger.info("grammar kit found at $grammarKit")
@@ -85,10 +96,10 @@ task locateGrammarKit {
   }
 }
 
-task updateFileList2(dependsOn: [locateIdeaHome, locateGrammarKit]) {
+task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) {
   doLast {
-    def schemaParserJar = project.configurations.fileList.find { it.name.contains('schema-parser') }
-    if (schemaParserJar == null) throw new GradleException('Can\'t locate schema-parser jar, did you build it?')
+    def schemaParserJar = project.configurations.fileList.find { it.name.contains('epigraph-java-schema-parser') }
+    if (schemaParserJar == null) throw new GradleException('Can\'t locate epigraph-java-schema-parser jar, did you build it?')
 
     def producer = new FileListProducer(project.logger, project.ext.ideaHome, new File(project.ext.grammarKit), schemaParserJar)
 
@@ -102,38 +113,38 @@ task updateFileList2(dependsOn: [locateIdeaHome, locateGrammarKit]) {
   }
 }
 
-// deprecated: use updatedFileList2
-task updateFileList(dependsOn: [locateIdeaHome, locateGrammarKit]) {
-  doLast {
-    // steps:
-    // Assemble schema-parser standalone runnable
-    // Patch it's launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
-    // Run it capturing the list of loaded classes to resources/light-psi-filelist.txt
-
-    def fileList = "$projectDir/resources/light-psi-filelist.txt"
-    def fileListFile = new File(fileList)
-    fileListFile.parentFile.mkdirs()
-
-    // TODO patch template must be updated to remove our new light-psi jar from classpath
-    // prepare wrapper patch
-    def patch = new File('resources/schema-parser.patch.src').text
-    patch = patch.replaceAll('@IDEALIB', "$project.ext.ideaHome/lib")
-    patch = patch.replaceAll('@GKITJAR', project.ext.grammarKit)
-
-    def patchTarget = "$buildDir/schema-parser.patch"
-    def patchTargetFile = new File(patchTarget)
-    patchTargetFile.parentFile.mkdirs()
-    patchTargetFile.write(patch)
-
-    // TODO rewrite it in groovy? still has to invoke external JVM process
-    exec {
-      commandLine 'sh', 'resources/update-filelist.sh', fileListFile.canonicalPath
-    }
-
-    // add resource files
-    fileListFile.append('misc/registry.properties\n')
-  }
-}
+//// deprecated: use updatedFileList
+//task updateFileList_old(dependsOn: [locateIdeaHome, locateGrammarKit]) {
+//  doLast {
+//    // steps:
+//    // Assemble schema-parser standalone runnable
+//    // Patch it's launcher script to use real IDEA installation and Grammar-Kit instead of our light-psi jar
+//    // Run it capturing the list of loaded classes to resources/light-psi-filelist.txt
+//
+//    def fileList = "$projectDir/resources/light-psi-filelist.txt"
+//    def fileListFile = new File(fileList)
+//    fileListFile.parentFile.mkdirs()
+//
+//    // TODO patch template must be updated to remove our new light-psi jar from classpath
+//    // prepare wrapper patch
+//    def patch = new File('resources/schema-parser.patch.src').text
+//    patch = patch.replaceAll('@IDEALIB', "$project.ext.ideaHome/lib")
+//    patch = patch.replaceAll('@GKITJAR', project.ext.grammarKit)
+//
+//    def patchTarget = "$buildDir/schema-parser.patch"
+//    def patchTargetFile = new File(patchTarget)
+//    patchTargetFile.parentFile.mkdirs()
+//    patchTargetFile.write(patch)
+//
+//    // TODO rewrite it in groovy? still has to invoke external JVM process
+//    exec {
+//      commandLine 'sh', 'resources/update-filelist.sh', fileListFile.canonicalPath
+//    }
+//
+//    // add resource files
+//    fileListFile.append('misc/registry.properties\n')
+//  }
+//}
 
 import java.util.jar.*
 
@@ -241,7 +252,7 @@ import java.util.*
 import java.net.*
 import java.util.zip.*
 
-// switch to this instead of asm:
+// switch to this instead of asm? could break when class format changes:
 // http://stackoverflow.com/questions/1753337/determine-the-classes-referenced-in-a-class-file/1753747?noredirect=1#comment65681526_1753747
 class FileListProducer {
   private MyClassVisitor visitor
