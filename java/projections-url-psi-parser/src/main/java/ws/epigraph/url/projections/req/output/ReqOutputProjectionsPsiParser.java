@@ -87,7 +87,7 @@ public final class ReqOutputProjectionsPsiParser {
       final ReqOutputModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
-      final @NotNull TagApi tag = getTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
+      final @NotNull TagApi tag = getTagOrSelfTag(type, tagNamePsi, op, tagLocation, errors);
       @NotNull OpOutputTagProjectionEntry opTagProjection =
           getTagProjection(tag.name(), op, tagLocation, errors);
 
@@ -218,10 +218,10 @@ public final class ReqOutputProjectionsPsiParser {
     } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
-      TagApi tag = findTagOrDefaultTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi, errors);
+      TagApi tag = findTagOrSelfTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi, errors);
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
         if (tag == null) tag =
-            getTagOrDefaultTag(type, null, op, singleTagProjectionPsi, errors); // will throw proper error
+            getTagOrSelfTag(type, null, op, singleTagProjectionPsi, errors); // will throw proper error
         @NotNull OpOutputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, singleTagProjectionPsi, errors);
 
@@ -496,7 +496,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable TagApi defaultTag = findDefaultTag(type, op, locationPsi, errors);
+    @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, errors);
     Iterable<TagApi> tags = defaultTag == null ?
                             Collections.emptyList() :
                             Collections.singletonList(defaultTag);

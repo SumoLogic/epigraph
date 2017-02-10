@@ -1,9 +1,9 @@
 - [x] remove `requried` from req output field projections. Figure out how to add it to tag-less models
-  - [+] '+' on field must also mark all models in poly tails as required, recursively
+  - [x] '+' on field must also mark all models in poly tails as required, recursively
 - [x] remove field parameters/annotations
   - [x] req projections
   - [x] op projections
-- [ ] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
+- [x] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
 
 - Docs
   - Operations

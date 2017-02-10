@@ -17,6 +17,7 @@
 package ws.epigraph.url.projections;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
@@ -58,31 +59,25 @@ import static ws.epigraph.projections.ProjectionsParsingUtil.*;
  */
 public final class UrlProjectionsPsiParserUtil {
   private UrlProjectionsPsiParserUtil() {}
-//  @Contract("null -> null; !null -> !null")
-//  @Nullable
-//  public static String getTagName(@Nullable UrlTagName tagNamePsi) {
-//    if (tagNamePsi == null) return null;
-//    return tagNamePsi.getQid().getCanonicalName();
-//  }
 
   /**
-   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
+   * Finds supported tag with a given name in type {@code type} if {@code tagNamePsi} is not null.
    * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(TypeApi, GenVarProjection, PsiElement, List)}
-   * default tag} and, if not {@code null}, returns it; otherwise fails.
+   * Otherwise gets {@link ProjectionsParsingUtil#findSelfTag(TypeApi, GenVarProjection, PsiElement, List)}
+   * self tag} and, if not {@code null}, returns it; otherwise fails.
    */
   public static @NotNull <
       MP extends GenModelProjection<?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  TagApi getTagOrDefaultTag(
+  TagApi getTagOrSelfTag(
       @NotNull TypeApi type,
-      @Nullable UrlTagName idlTagName,
+      @Nullable UrlTagName tagNamePsi,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    TagApi tag = findTagOrDefaultTag(type, idlTagName, opOutputVarProjection, location, errors);
+    TagApi tag = findTagOrSelfTag(type, tagNamePsi, opOutputVarProjection, location, errors);
     if (tag == null)
       throw new PsiProcessingException(
           String.format(
@@ -98,28 +93,28 @@ public final class UrlProjectionsPsiParserUtil {
   }
 
   /**
-   * Finds supported tag with a given name in type {@code type} if {@code idlTagName} is not null.
+   * Finds supported tag with a given name in type {@code type} if {@code tagNamePsi} is not null.
    * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findDefaultTag(TypeApi, GenVarProjection, PsiElement, List)}
-   * default tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
+   * Otherwise gets {@link ProjectionsParsingUtil#findSelfTag(TypeApi, GenVarProjection, PsiElement, List)}
+   * self tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
    */
+  @Contract("_, !null, _, _, _ -> !null")
   public static @Nullable <
       MP extends GenModelProjection<?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
 
-  TagApi findTagOrDefaultTag(
+  TagApi findTagOrSelfTag(
       @NotNull TypeApi type,
-      @Nullable UrlTagName idlTagName,
+      @Nullable UrlTagName tagNamePsi,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    if (idlTagName == null) {
-      final @Nullable TagApi defaultTag = findDefaultTag(type, opOutputVarProjection, location, errors);
-
-      return defaultTag == null ? null : defaultTag;
-    } else return getTag(idlTagName, opOutputVarProjection, location, errors);
+    if (tagNamePsi == null)
+      return findSelfTag(type, opOutputVarProjection, location, errors);
+    else
+      return getTag(tagNamePsi, opOutputVarProjection, location, errors);
   }
 
 
@@ -149,16 +144,10 @@ public final class UrlProjectionsPsiParserUtil {
     return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, errors);
   }
 
+  @Contract("null -> null; !null -> !null")
   private static @Nullable String getTagNameString(final @Nullable UrlTagName tagName) {
-    String tagNameStr = null;
-
-    if (tagName != null) {
-      final @Nullable UrlQid qid = tagName.getQid();
-      tagNameStr = qid.getCanonicalName();
-    }
-    return tagNameStr;
+    return tagName == null ? null : tagName.getQid().getCanonicalName();
   }
-
 
   public static @Nullable Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,

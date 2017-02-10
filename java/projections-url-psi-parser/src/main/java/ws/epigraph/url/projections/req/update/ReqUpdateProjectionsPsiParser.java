@@ -72,9 +72,9 @@ public final class ReqUpdateProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
-      TagApi tag = findTagOrDefaultTag(type, tagNamePsi, op, tagLocation, errors);
+      TagApi tag = findTagOrSelfTag(type, tagNamePsi, op, tagLocation, errors);
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        if (tag == null) tag = getTagOrDefaultTag(type, null, op, tagLocation, errors); // will throw proper error
+        if (tag == null) tag = getTagOrSelfTag(type, null, op, tagLocation, errors); // will throw proper error
         @NotNull OpInputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, tagLocation, errors);
 
@@ -502,7 +502,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull PsiElement locationPsi,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
-    @Nullable TagApi defaultTag = findDefaultTag(type, op, locationPsi, errors);
+    @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, errors);
     List<TagApi> tags = defaultTag == null ?
                           Collections.emptyList() :
                           Collections.singletonList(defaultTag);

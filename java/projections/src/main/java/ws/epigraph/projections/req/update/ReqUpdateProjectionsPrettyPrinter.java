@@ -44,6 +44,17 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
+  protected void printVarOnly(final @NotNull ReqUpdateVarProjection p, final int pathSteps) throws E {
+    if (p.type().kind() != TypeKind.UNION) {
+      ReqUpdateTagProjectionEntry tp = p.tagProjections().values().iterator().next();
+      ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
+      if (isUpdateModelProjection(projection))
+        l.print(":"); // print ':' before '+' for tag-less sef var projections
+    }
+    super.printVarOnly(p, pathSteps);
+  }
+
+  @Override
   public void print(@Nullable String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
     ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
 
@@ -52,7 +63,8 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
     l.beginCInd();
     boolean needBrk = false;
-    if (projection.update() && projection.model().kind() != TypeKind.PRIMITIVE) l.print("+");
+    if (isUpdateModelProjection(projection))
+      l.print("+");
 
     if (tagName != null) {
       l.print(tagName);
@@ -75,6 +87,10 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     }
 
     l.end();
+  }
+
+  private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
+    return projection.update() && projection.model().kind() != TypeKind.PRIMITIVE;
   }
 
   @Override

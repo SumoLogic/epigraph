@@ -65,6 +65,7 @@ public class ReqUpdateProjectionsParserTest {
           "        firstName",
           "      ),",
           "    )),",
+          "    worstEnemy ( id ),",
           "    friends *( :id ),",
           "    friendsMap [ ;param: epigraph.String ]( :(id, `record` (id, firstName) ) )",
           "  )",
@@ -100,6 +101,21 @@ public class ReqUpdateProjectionsParserTest {
   @Test
   public void testParseList() {
     testParse(":record ( friends *( :id ) )");
+  }
+
+  @Test
+  public void testUpdateField() {
+    testParse(":record ( +bestFriend :id )");
+  }
+
+  @Test
+  public void testUpdateModel() {
+    testParse(":+record ( id )");
+  }
+
+  @Test
+  public void testUpdateDefaultModel() {
+    testParse(":record ( worstEnemy :+( id ) )");
   }
 
   @Test

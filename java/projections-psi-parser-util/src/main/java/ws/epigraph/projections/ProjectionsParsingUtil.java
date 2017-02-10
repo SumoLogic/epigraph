@@ -66,15 +66,17 @@ public final class ProjectionsParsingUtil {
     final TagApi tag;
 
     if (tagName == null) {
-      // get default tag
+      // get self tag
       if (defaultTag == null) {
-        defaultTag = findDefaultTag(type, null, location, errors);
+        TagApi selfTag = findSelfTag(type, null, location, errors);
 
-        if (defaultTag == null)
+        if (selfTag == null)
           return null;
-      }
 
-      tag = defaultTag;
+        tag = selfTag;
+      } else
+        tag = defaultTag;
+
       verifyTag(type, tag, location, errors);
     } else tag = getTag(type, tagName, location, errors);
     return tag;
@@ -179,7 +181,7 @@ public final class ProjectionsParsingUtil {
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       >
-  TagApi findDefaultTag(
+  TagApi findSelfTag(
       @NotNull TypeApi type,
       @Nullable VP op,
       @NotNull PsiElement locationPsi,

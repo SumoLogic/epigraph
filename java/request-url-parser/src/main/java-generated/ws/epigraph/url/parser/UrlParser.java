@@ -3078,7 +3078,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' '+'? tagName)? reqUpdateTagProjectionItem
+  // ( ':' '+'? tagName?)? reqUpdateTagProjectionItem
   public static boolean reqUpdateSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection")) return false;
     boolean r;
@@ -3089,21 +3089,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( ':' '+'? tagName)?
+  // ( ':' '+'? tagName?)?
   private static boolean reqUpdateSingleTagProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0")) return false;
     reqUpdateSingleTagProjection_0_0(b, l + 1);
     return true;
   }
 
-  // ':' '+'? tagName
+  // ':' '+'? tagName?
   private static boolean reqUpdateSingleTagProjection_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_COLON);
     r = r && reqUpdateSingleTagProjection_0_0_1(b, l + 1);
-    r = r && tagName(b, l + 1);
+    r = r && reqUpdateSingleTagProjection_0_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3112,6 +3112,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   private static boolean reqUpdateSingleTagProjection_0_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0_1")) return false;
     consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // tagName?
+  private static boolean reqUpdateSingleTagProjection_0_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0_2")) return false;
+    tagName(b, l + 1);
     return true;
   }
 

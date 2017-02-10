@@ -241,7 +241,7 @@ reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
 
 reqUpdateVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
 private reqUpdateBracedVarProjection ::= '(' reqUpdateVarProjection ')'
-reqUpdateSingleTagProjection ::= ( ':' '+'? tagName)? reqUpdateTagProjectionItem
+reqUpdateSingleTagProjection ::= ( ':' '+'? tagName?)? reqUpdateTagProjectionItem // optional tag name to allow updating self-vars
 reqUpdateMultiTagProjection ::= ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')' {pin=2}
 reqUpdateMultiTagProjectionItem ::= '+'? tagName reqUpdateTagProjectionItem
 private reqUpdateTagProjectionItem ::= reqParamsAndAnnotations reqUpdateModelProjection // reqUpdateModelMeta?
