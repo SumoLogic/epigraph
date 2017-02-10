@@ -63,13 +63,13 @@ public class ReqOutputProjectionsParserTest {
           "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
           "    },",
           "    firstName{;param:epigraph.String},",
-          "    bestFriend :`record` (",
+          "    bestFriend :( id, `record` (",
           "      id,",
           "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
-          "    ),",
+          "    ) ),",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -87,7 +87,7 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParsePath() {
-    testParse(":record / bestFriend :+record / bestFriend :record ( id, firstName )", 5);
+    testParse(":record / +bestFriend :+record / bestFriend :record ( id, firstName )", 5);
   }
 
   @Test
@@ -163,7 +163,7 @@ public class ReqOutputProjectionsParserTest {
   public void testStarTags2() {
     testParse(
         ":record(bestFriend:*)",
-        ":record ( bestFriend :( record ) )",
+        ":record ( bestFriend :( id, record ) )",
         1
     );
   }
@@ -175,6 +175,22 @@ public class ReqOutputProjectionsParserTest {
         ":record ( id, firstName, bestFriend :(), friends *( :() ), friendRecords, friendsMap [ * ]( :() ), friendRecordMap )",
         1
     );
+  }
+
+  @Test
+  public void testRequiredField() {
+    testParse(":record ( +id )", 1);
+  }
+
+  @Test
+  public void testRequiredFieldMultiModel() {
+    // + on field implies + on models
+    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
+  }
+
+  @Test
+  public void testModelRequired() {
+    testParse(":( +id, +record )", 0);
   }
 
   @Test

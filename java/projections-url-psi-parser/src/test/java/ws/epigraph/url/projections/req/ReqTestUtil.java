@@ -102,6 +102,7 @@ public final class ReqTestUtil {
     return runPsiParser(errors -> ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
         type,
         op,
+        false,
         psi,
         resolver,
         errors

@@ -23,6 +23,7 @@ import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DataTypeApi;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,19 +37,33 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
     ReqOutputFieldProjection
     > {
 
-  private final boolean required;
+//  private final boolean required;
 
   public ReqOutputFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
       @NotNull ReqOutputVarProjection projection,
-      boolean required,
+//      boolean required,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
-    this.required = required;
+//    this.required = required;
   }
 
-  public boolean required() { return required; }
+  /**
+   * @return {@code true} iff all models (including polymorphic tails) are required
+   */
+  public boolean required() {
+    return required(varProjection());
+  }
+
+  private static boolean required(@NotNull ReqOutputVarProjection vp) {
+    if (vp.tagProjections().isEmpty() && vp.polymorphicTails() == null) return false;
+
+    if (vp.tagProjections().values().stream().anyMatch(tpe -> !tpe.projection().required()))
+      return false;
+    final Collection<ReqOutputVarProjection> tails = vp.polymorphicTails();
+    return tails == null || tails.stream().allMatch(ReqOutputFieldProjection::required);
+  }
 
   @Override
   protected ReqOutputFieldProjection merge(
@@ -62,22 +77,22 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
 //        mergedParams,
 //        mergedAnnotations,
         mergedVarProjection,
-        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::required),
+//        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::required),
         TextLocation.UNKNOWN
     );
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
-    return required == that.required;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), required);
-  }
+//  @Override
+//  public boolean equals(final Object o) {
+//    if (this == o) return true;
+//    if (o == null || getClass() != o.getClass()) return false;
+//    if (!super.equals(o)) return false;
+//    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
+//    return required == that.required;
+//  }
+//
+//  @Override
+//  public int hashCode() {
+//    return Objects.hash(super.hashCode(), required);
+//  }
 }

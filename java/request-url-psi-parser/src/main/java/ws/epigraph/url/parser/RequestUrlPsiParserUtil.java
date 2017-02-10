@@ -63,14 +63,15 @@ public final class RequestUrlPsiParserUtil {
                   PsiUtil.NULL_PSI_ELEMENT,
                   errors
               ),
-              false,
+//              false,
               TextLocation.UNKNOWN
           )
       );
     } else {
       final StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
           ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-              true, dataType,
+              false, // ?
+              dataType,
               op,
               psi,
               resolver,

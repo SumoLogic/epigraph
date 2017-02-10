@@ -92,7 +92,7 @@ public class DeleteRequestUrlPsiParserTest {
         "users",
         3,
         "[ \"123\" ]( :record ( id ) )",
-        "+users / \"123\" :record ( id )",
+        "users / \"123\" :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }

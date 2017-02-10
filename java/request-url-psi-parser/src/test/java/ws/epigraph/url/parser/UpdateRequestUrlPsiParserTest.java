@@ -94,7 +94,7 @@ public class UpdateRequestUrlPsiParserTest {
         "users",
         3,
         "( +id )",
-        "+users / \"123\" :record ( id )",
+        "users / \"123\" :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }
