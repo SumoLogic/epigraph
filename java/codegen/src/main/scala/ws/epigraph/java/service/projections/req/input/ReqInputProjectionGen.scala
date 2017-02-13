@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req
+package ws.epigraph.java.service.projections.req.input
+
+import ws.epigraph.java.service.projections.req.ReqProjectionGen
+import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-sealed case class CodeChunk(code: String, imports: Set[String]) {
-  def +(other: CodeChunk): CodeChunk = CodeChunk(
-    if (code.isEmpty) other.code
-    else if (other.code.isEmpty) code
-    else {
-      if (code.endsWith("\n\n")) code + other.code
-      else if (code.endsWith("\n")) code + "\n" + other.code
-      else code + "\n\n" + other.code
-    },
-    imports ++ other.imports
-  )
+trait ReqInputProjectionGen extends ReqProjectionGen {
+  protected def namespaceSuffix: Qn
+
+  override lazy val namespace: Qn = super.namespace.append("input").append(namespaceSuffix)
 }
 
-object CodeChunk {
-  val empty = CodeChunk("", Set())
-
-  def apply(code: String): CodeChunk = CodeChunk(code, Set())
+object ReqInputProjectionGen {
+  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Input"
+  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
 }

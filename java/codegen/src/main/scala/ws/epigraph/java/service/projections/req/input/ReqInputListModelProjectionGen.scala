@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service.projections.req.input
 
-import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
+import ws.epigraph.projections.op.input.OpInputListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqOutputMapModelProjectionGen(
+class ReqInputListModelProjectionGen(
   operationInfo: OperationInfo,
-  override protected val op: OpOutputMapModelProjection,
+  val op: OpInputListModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
-  override type OpProjectionType = OpOutputMapModelProjection
+  override type OpProjectionType = OpInputListModelProjection
 
-  protected override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
-    operationInfo,
-    cType.asInstanceOf[CMapType],
-    op.keyProjection(),
-    namespaceSuffix,
-    ctx
-  )
-
-  protected override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  protected val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -50,7 +41,8 @@ class ReqOutputMapModelProjectionGen(
   )
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),
-    required
+    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputListModelProjection"),
+    CodeChunk.empty
   )
+
 }

@@ -172,8 +172,8 @@ public class $shortClassName {
   private final @NotNull ${reqVarProjectionFqn.last()} raw;
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }
-${tags.code}\
-${tails.code}\
+${tags.code}
+${tails.code}
 ${normalizedTails.code}\
 
   public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }

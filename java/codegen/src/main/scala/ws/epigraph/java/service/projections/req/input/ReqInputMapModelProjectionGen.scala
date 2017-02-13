@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
+import ws.epigraph.projections.op.input.OpInputMapModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqOutputMapModelProjectionGen(
+class ReqInputMapModelProjectionGen(
   operationInfo: OperationInfo,
-  override protected val op: OpOutputMapModelProjection,
+  override protected val op: OpInputMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpOutputMapModelProjection
+  override type OpProjectionType = OpInputMapModelProjection
 
-  protected override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
+  protected override val keyGen: ReqInputMapKeyProjectionGen = new ReqInputMapKeyProjectionGen(
     operationInfo,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
@@ -42,7 +42,7 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  protected override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  protected override val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -50,7 +50,7 @@ class ReqOutputMapModelProjectionGen(
   )
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),
-    required
+    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputMapModelProjection"),
+    CodeChunk.empty
   )
 }
