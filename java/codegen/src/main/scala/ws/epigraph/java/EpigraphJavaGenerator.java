@@ -27,6 +27,7 @@ import ws.epigraph.java.service.projections.req.OperationInfo;
 import ws.epigraph.java.service.projections.req.ReqProjectionGen;
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen;
+import ws.epigraph.java.service.projections.req.update.ReqUpdateFieldProjectionGen;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
@@ -188,32 +189,37 @@ public class EpigraphJavaGenerator {
               case READ:
                 break; // output projection already included
               case CREATE:
-                CreateOperationDeclaration cod = (CreateOperationDeclaration) operationDeclaration;
                 projectionGenerators.add(
                     new ReqInputFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
-                        cod.inputProjection(),
+                        operationDeclaration.inputProjection(),
                         Qn.EMPTY,
                         ctx
                     )
                 );
                 break;
               case UPDATE:
-                UpdateOperationDeclaration uod = (UpdateOperationDeclaration) operationDeclaration;
-                // todo
+                projectionGenerators.add(
+                    new ReqUpdateFieldProjectionGen(
+                        operationInfo,
+                        resourceDeclaration.fieldName(),
+                        operationDeclaration.inputProjection(),
+                        Qn.EMPTY,
+                        ctx
+                    )
+                );
                 break;
               case DELETE:
                 DeleteOperationDeclaration dod = (DeleteOperationDeclaration) operationDeclaration;
                 // todo
                 break;
               case CUSTOM:
-                CustomOperationDeclaration cuod = (CustomOperationDeclaration) operationDeclaration;
                 projectionGenerators.add(
                     new ReqInputFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
-                        cuod.inputProjection(),
+                        operationDeclaration.inputProjection(),
                         Qn.EMPTY,
                         ctx
                     )

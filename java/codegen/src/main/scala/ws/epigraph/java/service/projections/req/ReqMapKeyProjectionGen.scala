@@ -37,7 +37,7 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
 
   protected val mapTypeShortName: String = ln(cMapType)
 
-  protected def generate(reqKeyProjectionFqn: Qn): String = {
+  protected def generate(reqKeyProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val params = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
     val keyType: CDatumType = cMapType.keyTypeRef.resolved.asInstanceOf[CDatumType]
@@ -69,7 +69,7 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
       "org.jetbrains.annotations.NotNull",
       reqKeyProjectionFqn.toString,
       lqn2(keyType, namespace.toString)
-    ) ++ params.imports
+    ) ++ params.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -92,6 +92,7 @@ public class $shortClassName {
    */
 $keyCode\
 ${params.code}\
+${extra.code}\
 
   public @NotNull ${reqKeyProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

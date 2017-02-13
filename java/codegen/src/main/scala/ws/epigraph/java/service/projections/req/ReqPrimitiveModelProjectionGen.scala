@@ -56,7 +56,7 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${extra.code}
+${extra.code}\
 ${params.code}\
 ${meta.code}\
 

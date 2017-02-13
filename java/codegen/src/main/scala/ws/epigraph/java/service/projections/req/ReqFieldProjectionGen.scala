@@ -35,7 +35,7 @@ trait ReqFieldProjectionGen extends ReqProjectionGen {
 
   override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
 
-  protected def generate(fieldName: String, reqFieldProjectionFqn: Qn): String = {
+  protected def generate(fieldName: String, reqFieldProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
 //    val params =
 //      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
@@ -43,7 +43,7 @@ trait ReqFieldProjectionGen extends ReqProjectionGen {
       "org.jetbrains.annotations.NotNull",
       reqFieldProjectionFqn.toString,
       dataProjectionGen.fullClassName
-    )
+    ) ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -66,6 +66,7 @@ public class $shortClassName {
     return new ${dataProjectionGen.shortClassName}(raw.varProjection());
   }
 ${/*params.code*/""}\
+${extra.code}\
 
   public @NotNull ${reqFieldProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

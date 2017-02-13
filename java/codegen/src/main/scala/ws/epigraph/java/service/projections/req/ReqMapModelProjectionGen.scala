@@ -39,7 +39,7 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(keyGen, elementGen)
 
-  protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk): String = {
+  protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val keyProjectionClass = keyGen.shortClassName
     val elementProjectionClass = elementGen.shortClassName
 
@@ -73,7 +73,7 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${extra.code}
+${extra.code}\
   /**
    * @return key projections
    */
