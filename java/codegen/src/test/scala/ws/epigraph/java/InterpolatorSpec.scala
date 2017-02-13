@@ -46,4 +46,25 @@ foo
     w shouldEqual "  baz\n  foo\n    bar\n"
   }
 
+  it should "correctly support \\s" in {
+    val s1 = /*@formatter:off*/sn"""\
+foo\
+\sbar
+""" //@formatter:on
+    s1 shouldEqual "foo\n\nbar\n"
+
+    val s2 = /*@formatter:off*/sn"""\
+foo
+\sbar
+""" //@formatter:on
+    s2 shouldEqual "foo\n\nbar\n"
+
+    val s3 = /*@formatter:off*/sn"""\
+foo
+\s
+bar
+""" //@formatter:on
+    s3 shouldEqual "foo\n\nbar\n"
+  }
+
 }

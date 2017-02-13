@@ -77,6 +77,7 @@ object NewlineStringInterpolator {
             case 'n' => '\n'
             case 'f' => '\f'
             case 'r' => '\r'
+            case 's' => -2 //  \s = ensure preceding and following texts are separated by at least two newlines
             case '"' => '"'
             case '\'' => '\''
             case '\\' => '\\'
@@ -98,7 +99,19 @@ object NewlineStringInterpolator {
             case _ => throw new StringContext.InvalidEscapeException(str, next)
           }
           idx += 1       // advance
-          if (c != -1) sb append c
+          c match {
+            case -2 =>
+              val existingNewlines = List(
+                sb.length() > 0 && (sb.charAt(sb.length() - 1) == '\n'),
+                sb.length() > 1 && (sb.charAt(sb.length() - 2) == '\n'),
+                idx < str.length && (str.charAt(idx) == '\n'),
+                idx + 1 < str.length && (str.charAt(idx + 1) == '\n')
+              ).count(identity[Boolean])
+
+              sb append ("\n" * Math.max(0, 2 - existingNewlines))
+            case -1 =>
+            case _ => sb append c
+          }
           loop(idx, str.indexOf('\\', idx))
         } else {
           if (i < len) sb.append(str, i, len)
