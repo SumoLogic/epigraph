@@ -115,12 +115,8 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
-  }
-
-${extra.code}\
-${fields.code}\
-${params.code}\
-${meta.code}\
+  }\
+\s${(extra + fields + params + meta).code}\
 
   public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

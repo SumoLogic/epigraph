@@ -104,10 +104,10 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
   /**
    * @return {@code ${tag.name}} projection
    */
-   public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
-     ${reqTagProjectionEntryFqn.last()} tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
-     return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
-   }
+  public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
+    ${reqTagProjectionEntryFqn.last()} tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
+    return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
+  }
 """/*@formatter:on*/ ,
       Set(
         tagGenerator.fullClassName,
@@ -123,10 +123,10 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
   /**
    * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
    */
-   public @Nullable ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(false)}() {
-     ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
-     return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
-   }
+  public @Nullable ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(false)}() {
+    ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
+    return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
+  }
 """/*@formatter:on*/ ,
         Set(
           "org.jetbrains.annotations.Nullable"
@@ -142,9 +142,9 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
   /**
    * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} normalized tail projection
    */
-   public @NotNull ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(true)}() {
-     return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
-   }
+  public @NotNull ${tailGenerator.fullClassName} ${ReqVarProjectionGen.typeNameToPackageName(tailCtype, namespace.toString)}${ReqVarProjectionGen.tailMethodSuffix(true)}() {
+    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
+  }
 """/*@formatter:on*/ ,
         Set()
       )
@@ -171,10 +171,8 @@ ${ReqProjectionGen.generateImports(imports)}
 public class $shortClassName {
   private final @NotNull ${reqVarProjectionFqn.last()} raw;
 
-  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }
-${tags.code}
-${tails.code}
-${normalizedTails.code}\
+  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }\
+\s${(tags + tails + normalizedTails).code}\
 
   public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

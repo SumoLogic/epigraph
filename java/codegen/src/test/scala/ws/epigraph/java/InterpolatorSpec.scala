@@ -65,6 +65,16 @@ foo
 bar
 """ //@formatter:on
     s3 shouldEqual "foo\n\nbar\n"
+
+    // no easy way to fix this one
+//    val s4 = /*@formatter:off*/sn"""\
+//foo\
+//\s\
+//\s\
+//\s\
+//bar
+//""" //@formatter:on
+//    s4 shouldEqual "foo\n\nbar\n"
   }
 
 }

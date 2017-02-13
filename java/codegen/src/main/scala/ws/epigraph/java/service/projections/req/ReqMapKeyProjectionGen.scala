@@ -56,14 +56,14 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
   }
 """/*@formatter:on*/
 
-    val keyCode = keyType.kind match {
+    val keyCode = CodeChunk(keyType.kind match {
       case CTypeKind.STRING => genPrimitiveKey("String")
       case CTypeKind.INTEGER => genPrimitiveKey("Integer")
       case CTypeKind.LONG => genPrimitiveKey("Long")
       case CTypeKind.DOUBLE => genPrimitiveKey("Double")
       case CTypeKind.BOOLEAN => genPrimitiveKey("Boolean")
       case _ => genNonPrimitiveKey
-    }
+    })
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
@@ -90,9 +90,7 @@ public class $shortClassName {
   /**
    * @return key value
    */
-$keyCode\
-${params.code}\
-${extra.code}\
+${(keyCode + params + extra).code}\
 
   public @NotNull ${reqKeyProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

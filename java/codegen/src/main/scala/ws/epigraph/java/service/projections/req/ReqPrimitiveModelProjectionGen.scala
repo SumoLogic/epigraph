@@ -54,11 +54,8 @@ public class $shortClassName {
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
-  }
-
-${extra.code}\
-${params.code}\
-${meta.code}\
+  }\
+\s${(extra + params + meta).code}\
 
   public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

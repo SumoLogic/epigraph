@@ -64,15 +64,13 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${extra.code}\
   /**
    * @return items projection
    */
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
-  }
-${params.code}\
-${meta.code}\
+  }\
+\s${(extra + params + meta).code}\
 
   public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

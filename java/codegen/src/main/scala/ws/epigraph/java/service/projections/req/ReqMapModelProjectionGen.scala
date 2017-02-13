@@ -73,7 +73,6 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-${extra.code}\
   /**
    * @return key projections
    */
@@ -86,9 +85,8 @@ ${extra.code}\
    */
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
-  }
-${params.code}\
-${meta.code}\
+  }\
+\s${(extra + params + meta).code}\
 
   public @NotNull ${reqMapModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/
