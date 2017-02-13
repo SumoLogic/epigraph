@@ -47,7 +47,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
     throw new RuntimeException(s"Can't find field '$name' in type '${cType.name.toString}'")
   }
 
-  protected def generate(reqRecordModelProjectionFqn: Qn, reqFieldProjectionEntryFqn: Qn, extra: CodeChunk): String = {
+  protected def generate(reqRecordModelProjectionFqn: Qn, reqFieldProjectionEntryFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
 
     def genField(field: CField, fieldGenerator: ReqFieldProjectionGen): CodeChunk = {
 

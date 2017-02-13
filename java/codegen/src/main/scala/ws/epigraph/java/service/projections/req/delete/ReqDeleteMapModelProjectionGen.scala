@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.input
+package ws.epigraph.java.service.projections.req.delete
 
+import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqListModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputListModelProjection
+import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqInputListModelProjectionGen(
+class ReqDeleteMapModelProjectionGen(
   operationInfo: OperationInfo,
-  val op: OpInputListModelProjection,
+  override protected val op: OpDeleteMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpInputListModelProjection
+  override type OpProjectionType = OpDeleteMapModelProjection
 
-  protected val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
+  protected override val keyGen: ReqDeleteMapKeyProjectionGen = new ReqDeleteMapKeyProjectionGen(
+    operationInfo,
+    cType.asInstanceOf[CMapType],
+    op.keyProjection(),
+    namespaceSuffix,
+    ctx
+  )
+
+  protected override val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -41,7 +50,6 @@ class ReqInputListModelProjectionGen(
   )
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputListModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection")
   )
-
 }

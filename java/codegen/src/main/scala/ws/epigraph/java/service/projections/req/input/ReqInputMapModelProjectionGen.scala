@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
 
@@ -50,7 +50,6 @@ class ReqInputMapModelProjectionGen(
   )
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputMapModelProjection"),
-    CodeChunk.empty
+    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputMapModelProjection")
   )
 }

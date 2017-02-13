@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.input
+package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputRecordModelProjection
+import ws.epigraph.projections.op.delete.OpDeleteRecordModelProjection
 
 import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqInputRecordModelProjectionGen(
+class ReqDeleteRecordModelProjectionGen(
   operationInfo: OperationInfo,
-  protected val op: OpInputRecordModelProjection,
+  protected val op: OpDeleteRecordModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
-  override type OpProjectionType = OpInputRecordModelProjection
+  override type OpProjectionType = OpDeleteRecordModelProjection
 
-  override protected lazy val fieldGenerators: Map[CField, ReqInputFieldProjectionGen] =
+  override protected lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
     op.fieldProjections().values().map{ fpe =>
       (
         findField(fpe.field().name()),
-        new ReqInputFieldProjectionGen(
+        new ReqDeleteFieldProjectionGen(
           operationInfo,
           fpe.field().name(),
           fpe.fieldProjection(),
@@ -52,7 +52,7 @@ class ReqInputRecordModelProjectionGen(
     }.toMap
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputRecordModelProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputFieldProjectionEntry")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteRecordModelProjection"),
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjectionEntry")
   )
 }

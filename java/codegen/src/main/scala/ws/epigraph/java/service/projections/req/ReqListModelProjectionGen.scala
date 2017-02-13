@@ -35,7 +35,7 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
 
   override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(elementGen)
 
-  protected def generate(reqListModelProjectionFqn: Qn, extra: CodeChunk): String = {
+  protected def generate(reqListModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val elementProjectionClass = elementGen.shortClassName
 
     val imports: Set[String] = Set(

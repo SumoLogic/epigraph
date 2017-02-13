@@ -25,6 +25,7 @@ import ws.epigraph.java.service.AbstractResourceFactoryGen;
 import ws.epigraph.java.service.ResourceDeclarationGen;
 import ws.epigraph.java.service.projections.req.OperationInfo;
 import ws.epigraph.java.service.projections.req.ReqProjectionGen;
+import ws.epigraph.java.service.projections.req.delete.ReqDeleteFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.update.ReqUpdateFieldProjectionGen;
@@ -211,8 +212,15 @@ public class EpigraphJavaGenerator {
                 );
                 break;
               case DELETE:
-                DeleteOperationDeclaration dod = (DeleteOperationDeclaration) operationDeclaration;
-                // todo
+                projectionGenerators.add(
+                    new ReqDeleteFieldProjectionGen(
+                        operationInfo,
+                        resourceDeclaration.fieldName(),
+                        ((DeleteOperationDeclaration) operationDeclaration).deleteProjection(),
+                        Qn.EMPTY,
+                        ctx
+                    )
+                );
                 break;
               case CUSTOM:
                 projectionGenerators.add(
@@ -254,7 +262,7 @@ public class EpigraphJavaGenerator {
 
     final long endTime = System.currentTimeMillis();
 
-    System.out.println("Generation took " + (endTime - startTime) + "ms");
+    System.out.println("Epigraph Java code generation took " + (endTime - startTime) + "ms");
 
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent()); // move new root to final location
 

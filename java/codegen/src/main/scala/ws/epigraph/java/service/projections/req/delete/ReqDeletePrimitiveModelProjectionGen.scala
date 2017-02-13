@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.input
+package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
+import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqInputPrimitiveModelProjectionGen(
+class ReqDeletePrimitiveModelProjectionGen(
   operationInfo: OperationInfo,
-  val op: OpInputPrimitiveModelProjection,
+  val op: OpDeletePrimitiveModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
-  override type OpProjectionType = OpInputPrimitiveModelProjection
+  override type OpProjectionType = OpDeletePrimitiveModelProjection
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputPrimitiveModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeletePrimitiveModelProjection")
   )
 
 }
