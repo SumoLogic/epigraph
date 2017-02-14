@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.CDatumType
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.AbstractOpModelProjection
@@ -32,7 +32,7 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
 
   protected def op: OpProjectionType
 
-  protected val cType: CDatumType = ReqProjectionGen.toCType(op.model())
+  protected val cType: CDatumType = JavaGenUtils.toCType(op.model())
 
   protected def reqVarProjectionFqn: Qn
 
@@ -62,7 +62,7 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
     case None => CodeChunk.empty
   }
 
-  override def children: Iterable[ReqProjectionGen] = super.children ++ metaGeneratorOpt.iterator
+  override def children: Iterable[JavaGen] = super.children ++ metaGeneratorOpt.iterator
 
   protected def classJavadoc =/*@formatter:off*/sn"""\
 /**

@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenListModelProjection
@@ -33,7 +33,7 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
 
   protected def elementGen: ReqProjectionGen
 
-  override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(elementGen)
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(elementGen)
 
   protected def generate(reqListModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val elementProjectionClass = elementGen.shortClassName

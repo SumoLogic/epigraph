@@ -74,6 +74,27 @@ object JavaGenNames {
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
+  /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */
+  def lqdrn2(t: CType, namespace: String): String = t match {
+    case t: CVarTypeDef => lqn2(t, namespace)
+    case t: CDatumType => lqn2(t, namespace) + ".Data"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  /** locally qualified name for type's Data Builder type (e.g. `PersonRecord.Builder.Data` or `Person.Builder`) */
+  def lqbrn(t: CType, namespace: String): String = t match {
+    case t: CVarTypeDef => lqn2(t, namespace) + ".Builder"
+    case t: CDatumType => lqn2(t, namespace) + ".Builder.Data"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
+  /** locally qualified constructor call for type's Data Builder type (e.g. `PersonRecord.type.createDataBuilder()` or `Person.create()`) */
+  def lqbct(t: CType, namespace: String): String = t match {
+    case t: CVarTypeDef => lqn2(t, namespace) + ".create()"
+    case t: CDatumType => lqn2(t, namespace) + ".type.createDataBuilder()"
+    case unknown => throw new UnsupportedOperationException(unknown.toString)
+  }
+
   /** tag type for given typeref and tag name */
   def tt(tr: CTypeRef, tn: String): CType = tr.resolved match {
     case tt: CVarTypeDef => tt.effectiveTags.find(_.name == tn).get.typeRef.resolved

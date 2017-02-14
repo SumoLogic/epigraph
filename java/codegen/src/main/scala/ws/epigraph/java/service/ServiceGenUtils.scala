@@ -137,7 +137,7 @@ Util.create$mapClass(
     ctx.generatedTypes.get(w.cType.name).toString
   }
 
-  def genDataRef(t: TypeApi, ctx: GenContext): String = {
+  def genDataRef(t: TypeApi, ctx: GenContext): String = { // use lqdrn2?
     val typeClass = genTypeClassRef(t, ctx)
     if (t.isInstanceOf[DatumTypeApi]) typeClass + ".Data"
     else typeClass

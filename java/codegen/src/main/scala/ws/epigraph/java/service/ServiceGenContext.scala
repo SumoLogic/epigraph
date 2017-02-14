@@ -19,6 +19,7 @@ package ws.epigraph.java.service
 import java.util.concurrent.atomic.AtomicInteger
 
 import ws.epigraph.java.GenContext
+import ws.epigraph.lang.Qn
 
 import scala.collection.mutable
 
@@ -44,6 +45,27 @@ class ServiceGenContext(val gctx: GenContext) {
   //
 
   def addImport(i: String) {_imports.add(i)}
+
+  def addImport(qn: Qn) {addImport(qn.toString)}
+
+  /**
+   * Try to split `name` into namespace and class name by finding first segment starting with an upper case
+   * add namespace if it doesn't equal `currentNs`
+   *
+   * @return short class name or `null` if class name not found
+   */
+  def addImport(name: String, currentNs: Qn): String = {
+    val qn = Qn.fromDotSeparated(name)
+
+    val csi = qn.segments.indexWhere(_.charAt(0).isUpper)
+
+    val ns = if (csi < 0) qn else if (csi == qn.size() - 1) Qn.EMPTY else qn.takeHeadSegments(csi + 1)
+    val shortClassName = if (csi < 0) null else if (csi == 0) qn else qn.removeHeadSegments(csi)
+
+    if (ns != currentNs) addImport(ns)
+
+    if (shortClassName == null) null else shortClassName.toString
+  }
 
   def imports: List[String] = _imports.toList.sorted
 

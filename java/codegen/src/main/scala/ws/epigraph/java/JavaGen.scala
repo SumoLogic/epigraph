@@ -28,6 +28,8 @@ trait JavaGen {
 
   protected def generate: String
 
+  def children: Iterable[JavaGen] = Iterable()
+
   def writeUnder(sourcesRoot: Path): Unit = {
     //System.out.println("Writing to '" + relativeFilePath + "'")
     JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)

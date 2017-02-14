@@ -27,6 +27,7 @@ import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.*;
+import ws.epigraph.tests.resources.user.AbstractUserResourceFactory;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;

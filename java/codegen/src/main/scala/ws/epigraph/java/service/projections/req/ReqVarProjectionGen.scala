@@ -44,7 +44,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
   override lazy val children: Iterable[ReqProjectionGen] =
     tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
 
-  protected val cType: CVarTypeDef = ReqProjectionGen.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
+  protected val cType: CVarTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
 
   protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map{ tpe =>
@@ -71,7 +71,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
       visited: mutable.Set[CType],
       includeSelf: Boolean): Map[OpProjectionType, ReqProjectionGen] = {
 
-      val ct = ReqProjectionGen.toCType(op.`type`())
+      val ct = JavaGenUtils.toCType(op.`type`())
       if (visited.contains(ct)) Map()
       else {
         visited.add(ct)
@@ -117,7 +117,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
     )
 
     def genTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = ReqProjectionGen.toCType(tail.`type`())
+      val tailCtype = JavaGenUtils.toCType(tail.`type`())
       CodeChunk(
         /*@formatter:off*/sn"""\
   /**
@@ -135,7 +135,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
     }
 
     def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = ReqProjectionGen.toCType(tail.`type`())
+      val tailCtype = JavaGenUtils.toCType(tail.`type`())
       val tailTypeExpr = lqn2(tailCtype, namespace.toString)
       CodeChunk(
         /*@formatter:off*/sn"""\

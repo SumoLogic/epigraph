@@ -21,7 +21,7 @@ import java.nio.file.Path
 import ws.epigraph.compiler.CompilerException
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i, sp}
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
@@ -29,17 +29,14 @@ import ws.epigraph.schema.operations._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class AbstractResourceFactoryGen(rd: ResourceDeclaration) {
+class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: GenContext) extends JavaGen {
+  protected val namespace: Qn = AbstractResourceFactoryGen.abstractResourceFactoryNamespace(baseNamespace, rd)
 
-  def writeUnder(sourcesRoot: Path, namespace: Qn, gctx: GenContext): Unit = {
-    val relativePath = JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(
-      rd) + ".java")
-    val contents = generateFile(namespace.toString, gctx)
-    JavaGenUtils.writeFile(sourcesRoot, relativePath, contents)
-  }
+  override protected def relativeFilePath: Path =
+    JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd) + ".java")
 
-  private def generateFile(namespace: String, gctx: GenContext): String = {
-    val sgctx = new ServiceGenContext(gctx)
+  override def generate: String = {
+    val sgctx = new ServiceGenContext(ctx)
     val className = AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd)
 
     sgctx.addImport("org.jetbrains.annotations.NotNull")
@@ -72,6 +69,7 @@ public abstract class $className {
     import scala.collection.JavaConversions._
 
     val resourceDeclarationClassName = ResourceDeclarationGen.resourceDeclarationClassName(rd)
+//    ctx.addImport(ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd).append(resourceDeclarationClassName))
 
     var readOperationConstructorCalls: List[String] = List()
     var updateOperationConstructorCalls: List[String] = List()
@@ -219,6 +217,9 @@ protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull
 }
 
 object AbstractResourceFactoryGen {
+  def abstractResourceFactoryNamespace(baseNamespace: Qn, rd: ResourceDeclaration): Qn =
+    ServiceNames.resourceNamespace(baseNamespace, rd.fieldName())
+
   def abstractResourceFactoryClassName(rd: ResourceDeclaration): String =
     s"Abstract${up(rd.fieldName())}ResourceFactory"
 

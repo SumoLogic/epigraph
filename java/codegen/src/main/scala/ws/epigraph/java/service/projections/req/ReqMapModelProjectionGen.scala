@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenMapModelProjection
@@ -37,7 +37,7 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   // -------
 
-  override def children: Iterable[ReqProjectionGen] = super.children ++ Iterable(keyGen, elementGen)
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(keyGen, elementGen)
 
   protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val keyProjectionClass = keyGen.shortClassName

@@ -20,7 +20,7 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler.CompilerException
 import ws.epigraph.java.JavaGenUtils.up
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i, sp}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.lang.Qn
@@ -31,13 +31,15 @@ import ws.epigraph.types.DataTypeApi
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ResourceDeclarationGen(rd: ResourceDeclaration) extends ServiceObjectGen[ResourceDeclaration](rd) {
+class ResourceDeclarationGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: GenContext) extends ServiceObjectGen[ResourceDeclaration](rd) with JavaGen {
+  protected val namespace: Qn = ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd)
+  protected val resourceDeclarationClassName: String = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 
-  val resourceDeclarationClassName: String = ResourceDeclarationGen.resourceDeclarationClassName(rd)
+  override protected def relativeFilePath: Path =
+    JavaGenUtils.fqnToPath(namespace).resolve(ResourceDeclarationGen.resourceDeclarationClassName(rd) + ".java")
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     val fieldType: DataTypeApi = rd.fieldType()
-
 
     import scala.collection.JavaConversions._
     val operationFieldNames: List[String] = rd.operations().map{ od: OperationDeclaration =>
@@ -47,7 +49,6 @@ class ResourceDeclarationGen(rd: ResourceDeclaration) extends ServiceObjectGen[R
 
       ctx.addField(s"public static final ${od.getClass.getSimpleName} $operationFieldName = $operationConstructorName();")
       ctx.addMethod(
-
         /*@formatter:off*/sn"""\
 private static ${od.getClass.getSimpleName} $operationConstructorName() {
   return ${sp(2, gen(od, ctx))};
@@ -68,10 +69,9 @@ super(
 
   }
 
-  def generateFile(namespace: String, gctx: GenContext): String = {
-    val sgctx = new ServiceGenContext(gctx)
-    val superCall = generate(sgctx)
-
+  override def generate: String = {
+    val sgctx = new ServiceGenContext(ctx)
+    val superCall = generate(sgctx) // do not inline!
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package $namespace;
@@ -92,11 +92,6 @@ public final class $resourceDeclarationClassName extends ResourceDeclaration {
 
   }
 
-  def writeUnder(sourcesRoot: Path, namespace: Qn, gctx: GenContext): Unit = {
-    val relativePath = JavaGenUtils.fqnToPath(namespace).resolve(resourceDeclarationClassName + ".java")
-    val contents = generateFile(namespace.toString, gctx)
-    JavaGenUtils.writeFile(sourcesRoot, relativePath, contents)
-  }
 }
 
 object ResourceDeclarationGen {
@@ -107,6 +102,9 @@ object ResourceDeclarationGen {
     OperationKind.DELETE -> "delete",
     OperationKind.CUSTOM -> "custom"
   )
+
+  def resourceDeclarationNamespace(baseNamespace: Qn, rd: ResourceDeclaration): Qn =
+    ServiceNames.resourceNamespace(baseNamespace, rd.fieldName())
 
   def resourceDeclarationClassName(rd: ResourceDeclaration): String = up(rd.fieldName()) + "ResourceDeclaration"
 

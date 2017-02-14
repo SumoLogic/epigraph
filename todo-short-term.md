@@ -4,6 +4,7 @@
   - [x] req projections
   - [x] op projections
 - [x] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
+- [ ] generate req paths
 
 - Docs
   - Operations

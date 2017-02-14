@@ -35,6 +35,7 @@ import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
+import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
 import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapProjection;
 import ws.epigraph.tests.resources.users.operations.read.output.meta.ReqOutputPaginationInfoProjection;
@@ -131,6 +132,9 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
           paginationInfoBuilder.setCount(epigraph.Long.create(count));
         users.setMeta(paginationInfoBuilder);
       }
+
+      final PersonMap.Builder.Data builder = PersonMap.type.createDataBuilder();
+      final Person.Builder builder1 = Person.create();
 
       return CompletableFuture.completedFuture(new ReadOperationResponse<>(
           PersonMap.type.createDataBuilder().set(users)

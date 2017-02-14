@@ -22,8 +22,9 @@ import java.io.{BufferedWriter, OutputStream, OutputStreamWriter}
 import java.nio.charset.{CharsetEncoder, StandardCharsets}
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
-import ws.epigraph.compiler.CType
+import ws.epigraph.compiler.{CDatumType, CDatumTypeApiWrapper, CType, CTypeApiWrapper}
 import ws.epigraph.lang.Qn
+import ws.epigraph.types.{DatumTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -112,6 +113,10 @@ object JavaGenUtils {
   def withParents(t: CType, trans: (String) => String = identity): String = {
     t.getLinearizedParentsReversed.map(" " + JavaGenNames.lqn(_, t, trans) + ",").mkString
   }
+
+  def toCType(t: TypeApi): CType = t.asInstanceOf[CTypeApiWrapper].cType
+
+  def toCType(t: DatumTypeApi): CDatumType = t.asInstanceOf[CDatumTypeApiWrapper].cType
 
 //  def ?(arg: AnyRef, ifNotNull: => String, ifNull: => String): String = if (arg ne null) ifNotNull else ifNull
 

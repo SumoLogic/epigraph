@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req
+package ws.epigraph.java.service
 
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.operations.OperationDeclaration
@@ -22,8 +22,13 @@ import ws.epigraph.schema.operations.OperationDeclaration
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-sealed case class OperationInfo (
-  resourceNamespace: Qn,
-  resourceFieldName: String,
-  operation: OperationDeclaration
-)
+object ServiceNames {
+  def resourceNamespace(baseNamespace: Qn, resourceFieldName: String): Qn =
+    baseNamespace.append("resources").append(resourceFieldName.toLowerCase)
+
+  def operationNamespace(baseNamespace: Qn, resourceFieldName: String, op: OperationDeclaration): Qn =
+    resourceNamespace(baseNamespace, resourceFieldName)
+      .append("operations")
+      .append(s"${op.kind()}${Option(op.name()).getOrElse("")}".toLowerCase)
+
+}

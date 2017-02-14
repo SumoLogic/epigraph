@@ -20,10 +20,11 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.service.ServiceNames
 import ws.epigraph.java.{JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpParams
-import ws.epigraph.types.{DatumTypeApi, TypeApi}
+import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,19 +33,17 @@ trait ReqProjectionGen extends JavaGen {
   protected val operationInfo: OperationInfo
 
   def namespace: Qn =
-    operationInfo.resourceNamespace
-      .append("resources")
-      .append(operationInfo.resourceName.toLowerCase)
-      .append("operations")
-      .append(s"${operationInfo.operation.kind()}${Option(operationInfo.operation.name()).getOrElse("")}".toLowerCase)
+    ServiceNames.operationNamespace(
+      operationInfo.resourceNamespace,
+      operationInfo.resourceFieldName,
+      operationInfo.operation
+    )
 
   def shortClassName: String
 
   def fullClassName: String = namespace.append(shortClassName).toString
 
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
-
-  def children: Iterable[ReqProjectionGen] = Iterable()
 
   protected val packageStatement: String = s"package $namespace;"
 }
@@ -58,7 +57,7 @@ object ReqProjectionGen {
 
     op.asMap().values().map{ p =>
 
-      val datumType: CDatumType = toCType(p.projection().model().asInstanceOf[DatumTypeApi])
+      val datumType: CDatumType = JavaGenUtils.toCType(p.projection().model().asInstanceOf[DatumTypeApi])
       // Scala doesn't get it
       val valueType = JavaGenNames.lqn2(datumType, namespace)
 
@@ -103,7 +102,4 @@ object ReqProjectionGen {
 
   def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
 
-  def toCType(t: TypeApi): CType = t.asInstanceOf[CTypeApiWrapper].cType
-
-  def toCType(t: DatumTypeApi): CDatumType = t.asInstanceOf[CDatumTypeApiWrapper].cType
 }

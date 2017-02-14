@@ -21,10 +21,10 @@ package ws.epigraph.java;
 import scala.collection.Iterator;
 import scala.collection.JavaConversions;
 import ws.epigraph.compiler.*;
+import ws.epigraph.java.service.AbstractReadOperationGen;
 import ws.epigraph.java.service.AbstractResourceFactoryGen;
 import ws.epigraph.java.service.ResourceDeclarationGen;
 import ws.epigraph.java.service.projections.req.OperationInfo;
-import ws.epigraph.java.service.projections.req.ReqProjectionGen;
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen;
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen;
@@ -150,7 +150,7 @@ public class EpigraphJavaGenerator {
     new IndexGen(ctx).writeUnder(tmpRoot);
     final GenSettings settings = ctx.settings();
 
-    final ConcurrentLinkedQueue<ReqProjectionGen> projectionGenerators = new ConcurrentLinkedQueue<>();
+    final ConcurrentLinkedQueue<JavaGen> resourceGenerators = new ConcurrentLinkedQueue<>();
 
     for (final Map.Entry<CSchemaFile, ResourcesSchema> entry : cctx.resourcesSchemas().entrySet()) {
       ResourcesSchema rs = entry.getValue();
@@ -158,7 +158,7 @@ public class EpigraphJavaGenerator {
       Qn namespace = rs.namespace();
 
       for (final ResourceDeclaration resourceDeclaration : rs.resources().values()) {
-        new ResourceDeclarationGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
+        resourceGenerators.add(new ResourceDeclarationGen(resourceDeclaration, namespace, ctx));
 
         String resourceName = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName())).toString();
 
@@ -166,7 +166,7 @@ public class EpigraphJavaGenerator {
         if (settings.generateImplementationStubs() == null ||
             settings.generateImplementationStubs().contains(resourceName)) {
 
-          new AbstractResourceFactoryGen(resourceDeclaration).writeUnder(tmpRoot, namespace, ctx);
+          resourceGenerators.add(new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx));
 
           for (final OperationDeclaration operationDeclaration : resourceDeclaration.operations()) {
 
@@ -176,21 +176,30 @@ public class EpigraphJavaGenerator {
                 operationDeclaration
             );
 
-            projectionGenerators.add(
-                new ReqOutputFieldProjectionGen(
-                    operationInfo,
-                    resourceDeclaration.fieldName(),
-                    operationDeclaration.outputProjection(),
-                    Qn.EMPTY,
-                    ctx
-                )
+            final ReqOutputFieldProjectionGen outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
+                operationInfo,
+                resourceDeclaration.fieldName(),
+                operationDeclaration.outputProjection(),
+                Qn.EMPTY,
+                ctx
             );
+
+            resourceGenerators.add(outputFieldProjectionGen);
 
             switch (operationDeclaration.kind()) {
               case READ:
-                break; // output projection already included
+                resourceGenerators.add(
+                    new AbstractReadOperationGen(
+                        operationInfo.resourceNamespace(),
+                        resourceDeclaration,
+                        (ReadOperationDeclaration) operationDeclaration,
+                        outputFieldProjectionGen,
+                        ctx
+                    )
+                );
+                break;
               case CREATE:
-                projectionGenerators.add(
+                resourceGenerators.add(
                     new ReqInputFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
@@ -201,7 +210,7 @@ public class EpigraphJavaGenerator {
                 );
                 break;
               case UPDATE:
-                projectionGenerators.add(
+                resourceGenerators.add(
                     new ReqUpdateFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
@@ -212,7 +221,7 @@ public class EpigraphJavaGenerator {
                 );
                 break;
               case DELETE:
-                projectionGenerators.add(
+                resourceGenerators.add(
                     new ReqDeleteFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
@@ -223,7 +232,7 @@ public class EpigraphJavaGenerator {
                 );
                 break;
               case CUSTOM:
-                projectionGenerators.add(
+                resourceGenerators.add(
                     new ReqInputFieldProjectionGen(
                         operationInfo,
                         resourceDeclaration.fieldName(),
@@ -246,11 +255,11 @@ public class EpigraphJavaGenerator {
 
           // todo parallelize?
 
-          while (!projectionGenerators.isEmpty()) {
-            final ReqProjectionGen projectionGen = projectionGenerators.poll();
+          while (!resourceGenerators.isEmpty()) {
+            final JavaGen projectionGen = resourceGenerators.poll();
 
-            final Iterator<ReqProjectionGen> iterator = projectionGen.children().toIterator();
-            while (iterator.hasNext()) projectionGenerators.add(iterator.next());
+            final Iterator<JavaGen> iterator = projectionGen.children().toIterator();
+            while (iterator.hasNext()) resourceGenerators.add(iterator.next());
 
             projectionGen.writeUnder(tmpRoot);
           }

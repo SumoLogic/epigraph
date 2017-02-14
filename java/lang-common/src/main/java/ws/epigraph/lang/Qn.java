@@ -77,6 +77,11 @@ public class Qn implements Comparable<Qn> {
     return segments[size() - 1];
   }
 
+  public @NotNull Qn takeHeadSegments(int n) {
+    if (size() < n) throw new IllegalArgumentException("Can't take " + n + " segments from '" + toString() + "'");
+    return removeTailSegments(size() - n);
+  }
+
   public @NotNull Qn removeLastSegment() {
     return removeTailSegments(1);
   }
@@ -86,8 +91,9 @@ public class Qn implements Comparable<Qn> {
   }
 
   public @NotNull Qn removeHeadSegments(int n) {
-    if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (n < 0 || size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
+    if (n == 0) return this;
 
     String[] f = new String[size() - n];
     System.arraycopy(segments, n, f, 0, size() - n);
@@ -95,8 +101,9 @@ public class Qn implements Comparable<Qn> {
   }
 
   public @NotNull Qn removeTailSegments(int n) {
-    if (size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (n < 0 || size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
+    if (n == 0) return this;
 
     String[] f = new String[size() - n];
     System.arraycopy(segments, 0, f, 0, size() - n);
