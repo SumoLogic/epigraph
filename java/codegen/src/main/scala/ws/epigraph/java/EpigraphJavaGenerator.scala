@@ -34,7 +34,7 @@ import ws.epigraph.schema.ResourcesSchema
 import ws.epigraph.schema.operations.{DeleteOperationDeclaration, OperationKind, ReadOperationDeclaration}
 
 import scala.collection.JavaConversions._
-import scala.collection.{Iterator, JavaConversions, mutable}
+import scala.collection.{JavaConversions, mutable}
 
 class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: GenSettings) {
 
@@ -68,19 +68,19 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
             case CTypeKind.VARTYPE =>
               val varTypeDef: CVarTypeDef = typeDef.asInstanceOf[CVarTypeDef]
-              generators.add(new VarTypeGen(varTypeDef, ctx))
+              generators += new VarTypeGen(varTypeDef, ctx)
 
             case CTypeKind.RECORD =>
               val recordTypeDef: CRecordTypeDef = typeDef.asInstanceOf[CRecordTypeDef]
-              generators.add(new RecordGen(recordTypeDef, ctx))
+              generators += new RecordGen(recordTypeDef, ctx)
 
             case CTypeKind.MAP =>
               val mapTypeDef: CMapTypeDef = typeDef.asInstanceOf[CMapTypeDef]
-              generators.add(new NamedMapGen(mapTypeDef, ctx))
+              generators += new NamedMapGen(mapTypeDef, ctx)
 
             case CTypeKind.LIST =>
               val listTypeDef: CListTypeDef = typeDef.asInstanceOf[CListTypeDef]
-              generators.add(new NamedListGen(listTypeDef, ctx))
+              generators += new NamedListGen(listTypeDef, ctx)
 
             case CTypeKind.ENUM |
                  CTypeKind.STRING |
@@ -88,7 +88,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
                  CTypeKind.LONG |
                  CTypeKind.DOUBLE |
                  CTypeKind.BOOLEAN =>
-              generators.add(new PrimitiveGen(typeDef.asInstanceOf[CPrimitiveTypeDef], ctx))
+              generators += new PrimitiveGen(typeDef.asInstanceOf[CPrimitiveTypeDef], ctx)
 
             case _ =>
               throw new UnsupportedOperationException(typeDef.kind.toString)
@@ -104,7 +104,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     for (alt <- cctx.anonListTypes.values) {
       try {
         //System.out.println(alt.name().name());
-        generators.add(new AnonListGen(alt, ctx))
+        generators += new AnonListGen(alt, ctx)
       }
       catch {
         case _: CompilerException =>
@@ -114,7 +114,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     for (amt <- cctx.anonMapTypes.values) {
       try {
         //System.out.println(amt.name().name());
-        generators.add(new AnonMapGen(amt, ctx))
+        generators += new AnonMapGen(amt, ctx)
       }
       catch {
         case _: CompilerException =>
@@ -133,7 +133,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 //      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpRoot);
 //    }
 
-    generators.add(new IndexGen(ctx))
+    generators += new IndexGen(ctx)
 
     val settings: GenSettings = ctx.settings
 
@@ -142,7 +142,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       val namespace: Qn = rs.namespace
 
       for (resourceDeclaration <- rs.resources.values) {
-        generators.add(new ResourceDeclarationGen(resourceDeclaration, namespace, ctx))
+        generators += new ResourceDeclarationGen(resourceDeclaration, namespace, ctx)
 
         val resourceName: String = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName)).toString
 
@@ -150,7 +150,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         if (settings.generateImplementationStubs == null ||
             settings.generateImplementationStubs.contains(resourceName)) {
 
-          generators.add(new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx))
+          generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
+
 
           for (operationDeclaration <- resourceDeclaration.operations) {
 
@@ -171,9 +172,9 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
                 )
               }
 
-            for (pathProjectionGen <- pathProjectionGenOpt) generators.add(pathProjectionGen)
+            for (pathProjectionGen <- pathProjectionGenOpt) generators += pathProjectionGen
 
-            val outputFieldProjectionGen: ReqOutputFieldProjectionGen = new ReqOutputFieldProjectionGen(
+            val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
               operationInfo,
               resourceDeclaration.fieldName,
               operationDeclaration.outputProjection,
@@ -181,63 +182,53 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
               ctx
             )
 
-            generators.add(outputFieldProjectionGen)
+            generators += outputFieldProjectionGen
 
             operationDeclaration.kind match {
 
               case OperationKind.READ =>
-                generators.add(
-                  new AbstractReadOperationGen(
-                    operationInfo.resourceNamespace,
-                    resourceDeclaration,
-                    operationDeclaration.asInstanceOf[ReadOperationDeclaration],
-                    outputFieldProjectionGen,
-                    ctx
-                  )
+                generators += new AbstractReadOperationGen(
+                  operationInfo.resourceNamespace,
+                  resourceDeclaration,
+                  operationDeclaration.asInstanceOf[ReadOperationDeclaration],
+                  outputFieldProjectionGen,
+                  ctx
                 )
 
               case OperationKind.CREATE =>
-                generators.add(
-                  new ReqInputFieldProjectionGen(
-                    operationInfo,
-                    resourceDeclaration.fieldName,
-                    operationDeclaration.inputProjection,
-                    Qn.EMPTY,
-                    ctx
-                  )
+                generators += new ReqInputFieldProjectionGen(
+                  operationInfo,
+                  resourceDeclaration.fieldName,
+                  operationDeclaration.inputProjection,
+                  Qn.EMPTY,
+                  ctx
                 )
 
               case OperationKind.UPDATE =>
-                generators.add(
-                  new ReqUpdateFieldProjectionGen(
-                    operationInfo,
-                    resourceDeclaration.fieldName,
-                    operationDeclaration.inputProjection,
-                    Qn.EMPTY,
-                    ctx
-                  )
+                generators += new ReqUpdateFieldProjectionGen(
+                  operationInfo,
+                  resourceDeclaration.fieldName,
+                  operationDeclaration.inputProjection,
+                  Qn.EMPTY,
+                  ctx
                 )
 
               case OperationKind.DELETE =>
-                generators.add(
-                  new ReqDeleteFieldProjectionGen(
-                    operationInfo,
-                    resourceDeclaration.fieldName,
-                    operationDeclaration.asInstanceOf[DeleteOperationDeclaration].deleteProjection(),
-                    Qn.EMPTY,
-                    ctx
-                  )
+                generators += new ReqDeleteFieldProjectionGen(
+                  operationInfo,
+                  resourceDeclaration.fieldName,
+                  operationDeclaration.asInstanceOf[DeleteOperationDeclaration].deleteProjection(),
+                  Qn.EMPTY,
+                  ctx
                 )
 
               case OperationKind.CUSTOM =>
-                generators.add(
-                  new ReqInputFieldProjectionGen(
-                    operationInfo,
-                    resourceDeclaration.fieldName,
-                    operationDeclaration.inputProjection,
-                    Qn.EMPTY,
-                    ctx
-                  )
+                generators += new ReqInputFieldProjectionGen(
+                  operationInfo,
+                  resourceDeclaration.fieldName,
+                  operationDeclaration.inputProjection,
+                  Qn.EMPTY,
+                  ctx
                 )
 
               case _ =>
@@ -267,14 +258,13 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       // run sequentially
       while (generators.nonEmpty) {
         val generator: JavaGen = generators.dequeue()
-        val iterator: Iterator[JavaGen] = generator.children.toIterator
-        while (iterator.hasNext) {generators.add(iterator.next)}
+        generators ++= generator.children
         runner.apply(generator)
       }
     } else {
       // run asynchronously
       val executor = Executors.newWorkStealingPool()
-      val phaser = new Phaser()
+      val phaser = new Phaser(1)
 
       def submit(generator: JavaGen): Unit = {
         phaser.register()
@@ -285,8 +275,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
                 generator.children.foreach(submit)
                 runner.apply(generator)
               } catch {
-                case e: Exception =>
-                  cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
+                case e: Exception => cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
               } finally {
                 phaser.arriveAndDeregister()
               }
@@ -295,7 +284,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         )
       }
 
-      generators.foreach{submit}
+      generators.foreach{ submit }
       generators.clear()
 
       phaser.arriveAndAwaitAdvance()
