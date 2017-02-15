@@ -36,8 +36,9 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
   override protected def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd) + ".java")
 
+  // todo
   private val abstractOperationGens: Map[OperationDeclaration, AbstractOperationGen] =
-    rd.operations().map{
+    rd.operations().map {
       case o: ReadOperationDeclaration => (
         o,
         new AbstractReadOperationGen(
@@ -48,7 +49,16 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
         )
       )
 
-      case o: CreateOperationDeclaration => (o, null)
+      case o: CreateOperationDeclaration => (
+        o,
+        new AbstractCreateOperationGen(
+          baseNamespace,
+          rd,
+          o,
+          ctx
+        )
+      )
+
       case o: UpdateOperationDeclaration => (o, null)
       case o: DeleteOperationDeclaration => (o, null)
       case o: CustomOperationDeclaration => (o, null)
@@ -108,13 +118,12 @@ public abstract class $className {
           ctx.addImport("ws.epigraph.service.operations.ReadOperation")
 
           val operationConstructorMethodName =
-            if (o.name() != null) s"construct${up(od.name())}ReadOperation"
+            if (o.name() != null) s"construct${ up(od.name()) }ReadOperation"
             else s"constructReadOperation"
 
           ctx.addMethod(
             genOperationConstructorMethod(
               o,
-              "read",
               resourceDeclarationClassName,
               operationConstructorMethodName,
               ctx
@@ -127,13 +136,12 @@ public abstract class $className {
           ctx.addImport("ws.epigraph.service.operations.CreateOperation")
 
           val operationConstructorMethodName =
-            if (o.name() != null) s"construct${up(od.name())}CreateOperation"
+            if (o.name() != null) s"construct${ up(od.name()) }CreateOperation"
             else "constructCreateOperation"
 
           ctx.addMethod(
             genOperationConstructorMethod(
               o,
-              "create",
               resourceDeclarationClassName,
               operationConstructorMethodName,
               ctx
@@ -146,13 +154,12 @@ public abstract class $className {
           ctx.addImport("ws.epigraph.service.operations.UpdateOperation")
 
           val operationConstructorMethodName =
-            if (o.name() != null) s"construct${up(od.name())}UpdateOperation"
+            if (o.name() != null) s"construct${ up(od.name()) }UpdateOperation"
             else "constructUpdateOperation"
 
           ctx.addMethod(
             genOperationConstructorMethod(
               o,
-              "update",
               resourceDeclarationClassName,
               operationConstructorMethodName,
               ctx
@@ -165,13 +172,12 @@ public abstract class $className {
           ctx.addImport("ws.epigraph.service.operations.DeleteOperation")
 
           val operationConstructorMethodName =
-            if (o.name() != null) s"construct${up(od.name())}DeleteOperation"
+            if (o.name() != null) s"construct${ up(od.name()) }DeleteOperation"
             else "constructDeleteOperation"
 
           ctx.addMethod(
             genOperationConstructorMethod(
               o,
-              "delete",
               resourceDeclarationClassName,
               operationConstructorMethodName,
               ctx
@@ -183,12 +189,11 @@ public abstract class $className {
         case o: CustomOperationDeclaration =>
           ctx.addImport("ws.epigraph.service.operations.CustomOperation")
 
-          val operationConstructorMethodName = s"construct${up(od.name())}CustomOperation"
+          val operationConstructorMethodName = s"construct${ up(od.name()) }CustomOperation"
 
           ctx.addMethod(
             genOperationConstructorMethod(
               o,
-              "custom",
               resourceDeclarationClassName,
               operationConstructorMethodName,
               ctx
@@ -214,14 +219,14 @@ new Resource(
 
   private def genOperationConstructorMethod(
     o: OperationDeclaration,
-    kind: String,
     resourceDeclarationClassName: String,
     operationConstructorMethodName: String,
     ctx: ServiceGenContext): String = {
 
+    val kind = ServiceNames.operationKinds(o.kind())
     val ukind = up(kind)
     val declarationType = ukind + "OperationDeclaration"
-    val methodType: String = s"${ukind}Operation<${ServiceGenUtils.genDataRef(o.outputType(), ctx.gctx)}>"
+    val methodType: String = s"${ ukind }Operation<${ ServiceGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
 
     ctx.addImport("ws.epigraph.schema.operations." + declarationType)
 
@@ -257,7 +262,7 @@ protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull
       ctx.addImport(classOf[java.util.Arrays].getCanonicalName)
       calls
         .reverse
-        .map{ c => JavaGenUtils.indent(c, ServiceGenUtils.INDENT) }
+        .map { c => JavaGenUtils.indent(c, ServiceGenUtils.INDENT) }
         .mkString("Arrays.asList(\n", ",\n", "\n)")
   }
 
@@ -268,7 +273,7 @@ object AbstractResourceFactoryGen {
     ServiceNames.resourceNamespace(baseNamespace, rd.fieldName())
 
   def abstractResourceFactoryClassName(rd: ResourceDeclaration): String =
-    s"Abstract${up(rd.fieldName())}ResourceFactory"
+    s"Abstract${ up(rd.fieldName()) }ResourceFactory"
 
-  def factoryMethodName(rd: ResourceDeclaration): String = s"get${up(rd.fieldName())}Resource"
+  def factoryMethodName(rd: ResourceDeclaration): String = s"get${ up(rd.fieldName()) }Resource"
 }

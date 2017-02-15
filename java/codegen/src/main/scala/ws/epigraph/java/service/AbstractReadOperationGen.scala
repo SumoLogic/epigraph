@@ -46,51 +46,51 @@ class AbstractReadOperationGen(
 
       case Some(pathProjectionGen) =>
         sctx.addMethod(/*@formatter:off*/sn"""\
-  @Override
-  public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
-    $shortBuilderType builder = $resultBuilderCtor;
-    ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
-    ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-    return process(builder, path, projection).thenApply(ReadOperationResponse::new);
-  }
+@Override
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull ReadOperationRequest request) {
+  $shortBuilderType builder = $resultBuilderCtor;
+  ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
+  ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+  return process(builder, path, projection).thenApply(ReadOperationResponse::new);
+}
 """/*@formatter:off*/
         )
 
         sctx.addMethod(/*@formatter:off*/sn"""\
-  /**
-   * Process read request
-   *
-   * @param builder result builder, initially empty
-   * @param path request path
-   * @param projection request projection
-   *
-   * @return future of the result
-   */
-  protected abstract @NotNull CompletableFuture<$shortDataType> process($shortBuilderType builder, ${pathProjectionGen.shortClassName} path, ${outputFieldProjectionGen.shortClassName} projection);
+/**
+ * Process read request
+ *
+ * @param builder result builder, initially empty
+ * @param path request path
+ * @param projection request projection
+ *
+ * @return future of the result
+ */
+protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType builder, @NotNull ${pathProjectionGen.shortClassName} path, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
 """/*@formatter:off*/
         )
 
       case None =>
         sctx.addMethod(/*@formatter:off*/sn"""\
-  @Override
-  public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
-    $shortBuilderType builder = $resultBuilderCtor;
-    ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-    return process(builder, projection).thenApply(ReadOperationResponse::new);
-  }
+@Override
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
+  $shortBuilderType builder = $resultBuilderCtor;
+  ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+  return process(builder, projection).thenApply(ReadOperationResponse::new);
+}
 """/*@formatter:off*/
         )
 
         sctx.addMethod(/*@formatter:off*/sn"""\
-  /**
-   * Process read request
-   *
-   * @param builder result builder, initially empty
-   * @param projection request projection
-   *
-   * @return future of the result
-   */
-  protected abstract @NotNull CompletableFuture<$shortDataType> process($shortBuilderType builder, ${outputFieldProjectionGen.shortClassName} projection);
+/**
+ * Process read request
+ *
+ * @param builder result builder, initially empty
+ * @param projection request projection
+ *
+ * @return future of the result
+ */
+protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType builder, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
 """/*@formatter:off*/
         )
     }

@@ -18,13 +18,14 @@ package ws.epigraph.java.service
 
 import java.nio.file.Path
 
+import ws.epigraph.compiler.{CDatumType, CType, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.lqdrn2
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.OperationInfo
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
 import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations.OperationDeclaration
@@ -47,7 +48,7 @@ trait AbstractOperationGen extends JavaGen {
   protected val operationInfo = OperationInfo(baseNamespace, rd.fieldName(), op)
 
   protected val pathProjectionGenOpt: Option[ReqPathFieldProjectionGen] =
-    Option(op.path()).map{ opPath =>
+    Option(op.path()).map { opPath =>
       new ReqPathFieldProjectionGen(
         operationInfo,
         rd.fieldName,
@@ -77,10 +78,10 @@ trait AbstractOperationGen extends JavaGen {
     val nsString = namespace.toString
 
     sctx.addImport("org.jetbrains.annotations.NotNull")
-    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}Operation")
-    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}OperationRequest")
-    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}OperationResponse")
-    sctx.addImport(s"ws.epigraph.schema.operations.${operationKindUpper}OperationDeclaration")
+    sctx.addImport(s"ws.epigraph.service.operations.${ operationKindUpper }Operation")
+    sctx.addImport(s"ws.epigraph.service.operations.${ operationKindUpper }OperationRequest")
+    sctx.addImport(s"ws.epigraph.service.operations.ReadOperationResponse")  // response is always 'read'
+    sctx.addImport(s"ws.epigraph.schema.operations.${ operationKindUpper }OperationDeclaration")
     sctx.addImport("java.util.concurrent.CompletableFuture")
     sctx.addImport(outputFieldProjectionGen.fullClassName)
     val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
@@ -112,4 +113,13 @@ object AbstractOperationGen {
 
   def abstractOperationClassName(op: OperationDeclaration): String =
     s"Abstract${ up(op.kind().toString.toLowerCase) }${ Option(op.name()).map(up).getOrElse("") }Operation"
+
+  def dataExpr(dataType: CType, namespace: String, rawDataExpr: String): String = {
+    val typeExpr = JavaGenNames.lqn2(dataType, namespace)
+    dataType match {
+      case t: CVarTypeDef => s"($typeExpr) $rawDataExpr" // todo double check
+      case t: CDatumType => s"($typeExpr) $rawDataExpr._raw().getDatum($typeExpr.type.self)"
+      case other => throw new IllegalArgumentException("Unknown type kind: " + other.getClass.getName)
+    }
+  }
 }
