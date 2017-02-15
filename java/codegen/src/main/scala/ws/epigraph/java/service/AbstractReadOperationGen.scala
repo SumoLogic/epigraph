@@ -21,7 +21,9 @@ import java.nio.file.Path
 import ws.epigraph.java.JavaGenNames.{lqbct, lqbrn, lqdrn2}
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.OperationInfo
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
+import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
@@ -34,17 +36,43 @@ class AbstractReadOperationGen(
   val baseNamespace: Qn,
   rd: ResourceDeclaration,
   op: ReadOperationDeclaration,
-  outputFieldProjectionGen: ReqOutputFieldProjectionGen,
-  val ctx: GenContext) extends JavaGen {
+  val ctx: GenContext) extends AbstractOperationGen {
 
   protected val namespace: Qn = AbstractReadOperationGen.abstractReadOperationNamespace(baseNamespace, rd, op)
 
-  override protected def relativeFilePath: Path =
-    JavaGenUtils.fqnToPath(namespace).resolve(AbstractReadOperationGen.abstractReadOperationClassName(op) + ".java")
+  protected val shortClassName: String = AbstractReadOperationGen.abstractReadOperationClassName(op)
+
+  override val fqn: Qn = namespace.append(shortClassName)
+
+  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
+
+  protected val operationInfo = OperationInfo(baseNamespace, rd.fieldName(), op)
+
+  protected val pathProjectionGenOpt: Option[ReqPathFieldProjectionGen] =
+    Option(op.path()).map{ opPath =>
+      new ReqPathFieldProjectionGen(
+        operationInfo,
+        rd.fieldName,
+        opPath,
+        Qn.EMPTY,
+        ctx
+      )
+    }
+
+  protected val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
+    operationInfo,
+    rd.fieldName,
+    op.outputProjection,
+    Qn.EMPTY,
+    ctx
+  )
+
+  override def children: Iterable[JavaGen] = super.children ++
+                                             Iterable(outputFieldProjectionGen) ++
+                                             pathProjectionGenOpt.toIterable
 
   override protected def generate: String = {
     val sctx = new ServiceGenContext(ctx)
-    val className = AbstractReadOperationGen.abstractReadOperationClassName(op)
 
     val outputType = JavaGenUtils.toCType(op.outputType())
     val nsString = namespace.toString
@@ -60,7 +88,58 @@ class AbstractReadOperationGen(
     val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
     val shortBuilderType = sctx.addImport(lqbrn(outputType, nsString), namespace)
 
-    // todo take path into account
+    pathProjectionGenOpt match {
+
+      case Some(pathProjectionGen) =>
+        sctx.addMethod(/*@formatter:off*/sn"""\
+  @Override
+  public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
+    $shortBuilderType builder = $resultBuilderCtor;
+    ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
+    ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+    return process(builder, path, projection).thenApply(ReadOperationResponse::new);
+  }
+"""/*@formatter:off*/
+        )
+
+        sctx.addMethod(/*@formatter:off*/sn"""\
+  /**
+   * Process read request
+   *
+   * @param builder result builder, initially empty
+   * @param path request path
+   * @param projection request projection
+   *
+   * @return future of the result
+   */
+  protected abstract @NotNull CompletableFuture<$shortDataType> process($shortBuilderType builder, ${pathProjectionGen.shortClassName} path, ${outputFieldProjectionGen.shortClassName} projection);
+"""/*@formatter:off*/
+        )
+
+      case None =>
+        sctx.addMethod(/*@formatter:off*/sn"""\
+  @Override
+  public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
+    $shortBuilderType builder = $resultBuilderCtor;
+    ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+    return process(builder, projection).thenApply(ReadOperationResponse::new);
+  }
+"""/*@formatter:off*/
+        )
+
+        sctx.addMethod(/*@formatter:off*/sn"""\
+  /**
+   * Process read request
+   *
+   * @param builder result builder, initially empty
+   * @param projection request projection
+   *
+   * @return future of the result
+   */
+  protected abstract @NotNull CompletableFuture<$shortDataType> process($shortBuilderType builder, ${outputFieldProjectionGen.shortClassName} projection);
+"""/*@formatter:off*/
+        )
+    }
 
 
     /*@formatter:off*/sn"""\
@@ -71,21 +150,12 @@ ${ServiceGenUtils.genImports(sctx)}
 /**
  * Abstract base class for ${rd.fieldName()} ${Option(op.name()).map(_ + " ").getOrElse("")}read operation
  */
-public abstract class $className extends ReadOperation<$shortDataType> {
+public abstract class $shortClassName extends ReadOperation<$shortDataType> {
   ${i(ServiceGenUtils.genFields(sctx))}
 
-  protected $className(@NotNull ReadOperationDeclaration declaration) {
+  protected $shortClassName(@NotNull ReadOperationDeclaration declaration) {
     super(declaration);
   }
-
-  @Override
-  public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull final ReadOperationRequest request) {
-    $shortBuilderType builder = $resultBuilderCtor;
-    ${outputFieldProjectionGen.shortClassName} projection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-    return process(builder, projection).thenApply(ReadOperationResponse::new);
-  }
-
-  protected abstract @NotNull CompletableFuture<$shortDataType> process($shortBuilderType builder, ${outputFieldProjectionGen.shortClassName} projection);
 
   ${i(ServiceGenUtils.genMethods(sctx))}
 }

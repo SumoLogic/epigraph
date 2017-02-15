@@ -25,6 +25,7 @@ import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,6 +35,27 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
 
   override protected def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd) + ".java")
+
+  private val abstractOperationGens: Map[OperationDeclaration, AbstractOperationGen] =
+    rd.operations().map{
+      case o: ReadOperationDeclaration => (
+        o,
+        new AbstractReadOperationGen(
+          baseNamespace,
+          rd,
+          o,
+          ctx
+        )
+      )
+
+      case o: CreateOperationDeclaration => (o, null)
+      case o: UpdateOperationDeclaration => (o, null)
+      case o: DeleteOperationDeclaration => (o, null)
+      case o: CustomOperationDeclaration => (o, null)
+    }.toMap
+
+
+  override def children: Iterable[JavaGen] = super.children ++ abstractOperationGens.values.filter(g => g != null) // todo remove filter
 
   override def generate: String = {
     val sgctx = new ServiceGenContext(ctx)
@@ -66,7 +88,6 @@ public abstract class $className {
   }
 
   private def generateResourceConstructor(ctx: ServiceGenContext): String = {
-    import scala.collection.JavaConversions._
 
     val resourceDeclarationClassName = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 //    ctx.addImport(ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd).append(resourceDeclarationClassName))
@@ -90,11 +111,15 @@ public abstract class $className {
             if (o.name() != null) s"construct${up(od.name())}ReadOperation"
             else s"constructReadOperation"
 
-          ctx.addMethod(genOperationConstructorMethod(o,
-            "read",
-            resourceDeclarationClassName,
-            operationConstructorMethodName,
-            ctx))
+          ctx.addMethod(
+            genOperationConstructorMethod(
+              o,
+              "read",
+              resourceDeclarationClassName,
+              operationConstructorMethodName,
+              ctx
+            )
+          )
 
           readOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
@@ -105,11 +130,15 @@ public abstract class $className {
             if (o.name() != null) s"construct${up(od.name())}CreateOperation"
             else "constructCreateOperation"
 
-          ctx.addMethod(genOperationConstructorMethod(o,
-            "create",
-            resourceDeclarationClassName,
-            operationConstructorMethodName,
-            ctx))
+          ctx.addMethod(
+            genOperationConstructorMethod(
+              o,
+              "create",
+              resourceDeclarationClassName,
+              operationConstructorMethodName,
+              ctx
+            )
+          )
 
           createOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
@@ -120,11 +149,15 @@ public abstract class $className {
             if (o.name() != null) s"construct${up(od.name())}UpdateOperation"
             else "constructUpdateOperation"
 
-          ctx.addMethod(genOperationConstructorMethod(o,
-            "update",
-            resourceDeclarationClassName,
-            operationConstructorMethodName,
-            ctx))
+          ctx.addMethod(
+            genOperationConstructorMethod(
+              o,
+              "update",
+              resourceDeclarationClassName,
+              operationConstructorMethodName,
+              ctx
+            )
+          )
 
           updateOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
@@ -135,11 +168,15 @@ public abstract class $className {
             if (o.name() != null) s"construct${up(od.name())}DeleteOperation"
             else "constructDeleteOperation"
 
-          ctx.addMethod(genOperationConstructorMethod(o,
-            "delete",
-            resourceDeclarationClassName,
-            operationConstructorMethodName,
-            ctx))
+          ctx.addMethod(
+            genOperationConstructorMethod(
+              o,
+              "delete",
+              resourceDeclarationClassName,
+              operationConstructorMethodName,
+              ctx
+            )
+          )
 
           deleteOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
@@ -148,11 +185,15 @@ public abstract class $className {
 
           val operationConstructorMethodName = s"construct${up(od.name())}CustomOperation"
 
-          ctx.addMethod(genOperationConstructorMethod(o,
-            "custom",
-            resourceDeclarationClassName,
-            operationConstructorMethodName,
-            ctx))
+          ctx.addMethod(
+            genOperationConstructorMethod(
+              o,
+              "custom",
+              resourceDeclarationClassName,
+              operationConstructorMethodName,
+              ctx
+            )
+          )
 
           customOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
@@ -184,17 +225,23 @@ new Resource(
 
     ctx.addImport("ws.epigraph.schema.operations." + declarationType)
 
+    // todo abstract op references
     /*@formatter:off*/sn"""\
 /**
  * Constructs ${rd.fieldName()} ${if (o.name() !=null ) "'" + up(o.name()) + "' " else ""}$kind operation
+ * <p>
+ * {@code todo} is a suggested operation implementation base class
+ * </p>
  *
  * @param operationDeclaration operation {@link $resourceDeclarationClassName#${ResourceDeclarationGen.operationDeclarationFieldName(o)} declaration}
  *
  * @return operation implementation
  *
  * @throws ServiceInitializationException in case of operation initialization error
+ *
+ * @see todo todo
  */
-protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull $declarationType operationDeclaration) throws ServiceInitializationException;
+protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull $declarationType operationDeclaration) throws ServiceInitializationException;\
 """/*@formatter:on*/
 
   }

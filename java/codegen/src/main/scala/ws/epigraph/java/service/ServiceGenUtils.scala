@@ -18,6 +18,7 @@ package ws.epigraph.java.service
 
 import ws.epigraph.compiler.{CDatumType, CTypeApiWrapper}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.CodeChunk
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.types._
 import ws.epigraph.util.JavaNames
@@ -36,7 +37,7 @@ object ServiceGenUtils {
       "Collections.emptyList()"
     } else if (items.size == 1) {
       ctx.addImport("java.util.Collections")
-      s"Collections.singletonList(${items.head})"
+      s"Collections.singletonList(${ items.head })"
     } else {
       ctx.addImport("java.util.Arrays")
       val indentedItems = items.map(JavaGenUtils.indent(_, INDENT))
@@ -130,12 +131,12 @@ Util.create$mapClass(
 
   def genFields(ctx: ServiceGenContext): String = ctx.fields.sorted.mkString("", "\n", "\n")
 
-  def genMethods(ctx: ServiceGenContext): String = ctx.methods.mkString("", "\n\n", "\n") // sorted?
+  def genMethods(ctx: ServiceGenContext): String = ctx.methods.foldLeft(CodeChunk.empty)(_ + _).code
 
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
     val qn = ctx.generatedTypes.get(w.cType.name)
-    if (qn == null) throw new NullPointerException(s"No type generated for '${w.cType.name.name}'")
+    if (qn == null) throw new NullPointerException(s"No type generated for '${ w.cType.name.name }'")
     qn.toString
   }
 

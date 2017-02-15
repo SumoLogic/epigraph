@@ -19,6 +19,7 @@ package ws.epigraph.java.service
 import java.util.concurrent.atomic.AtomicInteger
 
 import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.projections.req.CodeChunk
 import ws.epigraph.lang.Qn
 
 import scala.collection.mutable
@@ -32,7 +33,7 @@ import scala.collection.mutable
 class ServiceGenContext(val gctx: GenContext) {
   private val _imports = new mutable.HashSet[String]()
   private val _fields = new mutable.MutableList[String]()
-  private val _methods = new mutable.MutableList[String]()
+  private val _methods = new mutable.MutableList[CodeChunk]()
 
   private val methodUID: AtomicInteger = new AtomicInteger(0)
 
@@ -49,7 +50,7 @@ class ServiceGenContext(val gctx: GenContext) {
     _imports.add(i)
   }
 
-  def addImport(qn: Qn) {addImport(qn.toString)}
+  def addImport(qn: Qn) { addImport(qn.toString) }
 
   /**
    * Try to split `name` into namespace and class name by finding first segment starting with an upper case
@@ -70,15 +71,17 @@ class ServiceGenContext(val gctx: GenContext) {
     if (shortClassName == null) null else shortClassName.toString
   }
 
-  def imports: List[String] = _imports.toList.sorted
+  def imports: List[String] = (_imports ++ _methods.flatMap(_.imports)).toList.sorted
 
-  def addField(f: String) {_fields += f}
+  def addField(f: String) { _fields += f }
 
   def fields: mutable.MutableList[String] = _fields
 
-  def addMethod(m: String) {_methods += m}
+  def addMethod(m: String) { _methods += CodeChunk(m) }
 
-  def methods: mutable.MutableList[String] = _methods
+  def addMethod(m: CodeChunk) { _methods += m }
+
+  def methods: mutable.MutableList[CodeChunk] = _methods
 
   def nextMethodUID: Int = methodUID.getAndIncrement()
 }

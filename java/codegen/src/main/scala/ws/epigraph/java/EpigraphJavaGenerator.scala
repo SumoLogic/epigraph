@@ -152,91 +152,77 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
           generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
 
-
-          for (operationDeclaration <- resourceDeclaration.operations) {
-
-            val operationInfo: OperationInfo = OperationInfo(
-              namespace,
-              resourceDeclaration.fieldName,
-              operationDeclaration
-            )
-
-            val pathProjectionGenOpt: Option[ReqPathFieldProjectionGen] =
-              Option(operationDeclaration.path()).map{ opPath =>
-                new ReqPathFieldProjectionGen(
-                  operationInfo,
-                  resourceDeclaration.fieldName,
-                  opPath,
-                  Qn.EMPTY,
-                  ctx
-                )
-              }
-
-            for (pathProjectionGen <- pathProjectionGenOpt) generators += pathProjectionGen
-
-            val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
-              operationInfo,
-              resourceDeclaration.fieldName,
-              operationDeclaration.outputProjection,
-              Qn.EMPTY,
-              ctx
-            )
-
-            generators += outputFieldProjectionGen
-
-            operationDeclaration.kind match {
-
-              case OperationKind.READ =>
-                generators += new AbstractReadOperationGen(
-                  operationInfo.resourceNamespace,
-                  resourceDeclaration,
-                  operationDeclaration.asInstanceOf[ReadOperationDeclaration],
-                  outputFieldProjectionGen,
-                  ctx
-                )
-
-              case OperationKind.CREATE =>
-                generators += new ReqInputFieldProjectionGen(
-                  operationInfo,
-                  resourceDeclaration.fieldName,
-                  operationDeclaration.inputProjection,
-                  Qn.EMPTY,
-                  ctx
-                )
-
-              case OperationKind.UPDATE =>
-                generators += new ReqUpdateFieldProjectionGen(
-                  operationInfo,
-                  resourceDeclaration.fieldName,
-                  operationDeclaration.inputProjection,
-                  Qn.EMPTY,
-                  ctx
-                )
-
-              case OperationKind.DELETE =>
-                generators += new ReqDeleteFieldProjectionGen(
-                  operationInfo,
-                  resourceDeclaration.fieldName,
-                  operationDeclaration.asInstanceOf[DeleteOperationDeclaration].deleteProjection(),
-                  Qn.EMPTY,
-                  ctx
-                )
-
-              case OperationKind.CUSTOM =>
-                generators += new ReqInputFieldProjectionGen(
-                  operationInfo,
-                  resourceDeclaration.fieldName,
-                  operationDeclaration.inputProjection,
-                  Qn.EMPTY,
-                  ctx
-                )
-
-              case _ =>
-                throw new RuntimeException(
-                  s"Unknown operation '${operationDeclaration.name}' kind '${operationDeclaration.kind}'"
-                )
-            }
-          }
+//          for (operationDeclaration <- resourceDeclaration.operations) {
+//
+//            val operationInfo: OperationInfo = OperationInfo(
+//              namespace,
+//              resourceDeclaration.fieldName,
+//              operationDeclaration
+//            )
+//
+////            val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
+////              operationInfo,
+////              resourceDeclaration.fieldName,
+////              operationDeclaration.outputProjection,
+////              Qn.EMPTY,
+////              ctx
+////            )
+////
+////            generators += outputFieldProjectionGen
+//
+//
+//            operationDeclaration.kind match {
+//
+//              case OperationKind.READ =>
+//                generators += new AbstractReadOperationGen(
+//                  operationInfo.resourceNamespace,
+//                  resourceDeclaration,
+//                  operationDeclaration.asInstanceOf[ReadOperationDeclaration],
+//                  ctx
+//                )
+//
+//              case OperationKind.CREATE =>
+//                generators += new ReqInputFieldProjectionGen(
+//                  operationInfo,
+//                  resourceDeclaration.fieldName,
+//                  operationDeclaration.inputProjection,
+//                  Qn.EMPTY,
+//                  ctx
+//                )
+//
+//              case OperationKind.UPDATE =>
+//                generators += new ReqUpdateFieldProjectionGen(
+//                  operationInfo,
+//                  resourceDeclaration.fieldName,
+//                  operationDeclaration.inputProjection,
+//                  Qn.EMPTY,
+//                  ctx
+//                )
+//
+//              case OperationKind.DELETE =>
+//                generators += new ReqDeleteFieldProjectionGen(
+//                  operationInfo,
+//                  resourceDeclaration.fieldName,
+//                  operationDeclaration.asInstanceOf[DeleteOperationDeclaration].deleteProjection(),
+//                  Qn.EMPTY,
+//                  ctx
+//                )
+//
+//              case OperationKind.CUSTOM =>
+//                generators += new ReqInputFieldProjectionGen(
+//                  operationInfo,
+//                  resourceDeclaration.fieldName,
+//                  operationDeclaration.inputProjection,
+//                  Qn.EMPTY,
+//                  ctx
+//                )
+//
+//              case _ =>
+//                throw new RuntimeException(
+//                  s"Unknown operation '${operationDeclaration.name}' kind '${operationDeclaration.kind}'"
+//                )
+//            }
+//          }
 
         }
       }
