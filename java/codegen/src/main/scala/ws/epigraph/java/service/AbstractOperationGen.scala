@@ -16,12 +16,100 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.JavaGen
+import java.nio.file.Path
+
+import ws.epigraph.java.JavaGenNames.lqdrn2
+import ws.epigraph.java.JavaGenUtils.up
+import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.OperationInfo
+import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
+import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
+import ws.epigraph.schema.ResourceDeclaration
+import ws.epigraph.schema.operations.OperationDeclaration
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait AbstractOperationGen extends JavaGen {
-  def fqn: Qn
+  protected def baseNamespace: Qn
+  protected def rd: ResourceDeclaration
+  protected def op: OperationDeclaration
+  protected def ctx: GenContext
+
+  val namespace: Qn = AbstractOperationGen.abstractOperationNamespace(baseNamespace, rd, op)
+
+  val shortClassName: String = AbstractOperationGen.abstractOperationClassName(op)
+
+  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
+
+  protected val operationInfo = OperationInfo(baseNamespace, rd.fieldName(), op)
+
+  protected val pathProjectionGenOpt: Option[ReqPathFieldProjectionGen] =
+    Option(op.path()).map{ opPath =>
+      new ReqPathFieldProjectionGen(
+        operationInfo,
+        rd.fieldName,
+        opPath,
+        Qn.EMPTY,
+        ctx
+      )
+    }
+
+  protected val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
+    operationInfo,
+    rd.fieldName,
+    op.outputProjection,
+    Qn.EMPTY,
+    ctx
+  )
+
+  override def children: Iterable[JavaGen] = super.children ++
+                                             Iterable(outputFieldProjectionGen) ++
+                                             pathProjectionGenOpt.toIterable
+
+  protected def generate(sctx: ServiceGenContext): String = {
+    val operationKindLower = ServiceNames.operationKinds(op.kind())
+    val operationKindUpper = up(operationKindLower)
+
+    val outputType = JavaGenUtils.toCType(op.outputType())
+    val nsString = namespace.toString
+
+    sctx.addImport("org.jetbrains.annotations.NotNull")
+    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}Operation")
+    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}OperationRequest")
+    sctx.addImport(s"ws.epigraph.service.operations.${operationKindUpper}OperationResponse")
+    sctx.addImport(s"ws.epigraph.schema.operations.${operationKindUpper}OperationDeclaration")
+    sctx.addImport("java.util.concurrent.CompletableFuture")
+    sctx.addImport(outputFieldProjectionGen.fullClassName)
+    val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
+
+    /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
+package $namespace;
+
+${ServiceGenUtils.genImports(sctx)}
+/**
+ * Abstract base class for ${rd.fieldName()} ${Option(op.name()).map(_ + " ").getOrElse("")}$operationKindLower operation
+ */
+public abstract class $shortClassName extends ${operationKindUpper}Operation<$shortDataType> {
+  ${i(ServiceGenUtils.genFields(sctx))}
+
+  protected $shortClassName(@NotNull ${operationKindUpper}OperationDeclaration declaration) {
+    super(declaration);
+  }
+
+  ${i(ServiceGenUtils.genMethods(sctx))}
+}
+"""/*@formatter:on*/
+  }
+}
+
+object AbstractOperationGen {
+  def abstractOperationNamespace(baseNamespace: Qn, rd: ResourceDeclaration, op: OperationDeclaration): Qn =
+    ServiceNames.operationNamespace(baseNamespace, rd.fieldName(), op)
+
+  def abstractOperationClassName(op: OperationDeclaration): String =
+    s"Abstract${ up(op.kind().toString.toLowerCase) }${ Option(op.name()).map(up).getOrElse("") }Operation"
 }

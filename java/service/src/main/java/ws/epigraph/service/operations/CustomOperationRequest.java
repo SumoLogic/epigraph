@@ -27,10 +27,8 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CustomOperationRequest extends OperationRequest {
-  @Nullable
-  private final Data data;
-  @Nullable
-  private final ReqInputFieldProjection inputProjection;
+  private final @Nullable Data data;
+  private final @Nullable ReqInputFieldProjection inputProjection;
 
   public CustomOperationRequest(
       final @Nullable ReqFieldPath path,
@@ -42,9 +40,7 @@ public class CustomOperationRequest extends OperationRequest {
     this.inputProjection = inputProjection;
   }
 
-  @Nullable
-  public Data data() { return data; }
+  public @Nullable Data data() { return data; }
 
-  @Nullable
-  public ReqInputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable ReqInputFieldProjection inputProjection() { return inputProjection; }
 }

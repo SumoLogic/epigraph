@@ -17,12 +17,20 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.lang.Qn
-import ws.epigraph.schema.operations.OperationDeclaration
+import ws.epigraph.schema.operations.{OperationDeclaration, OperationKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 object ServiceNames {
+  val operationKinds: Map[OperationKind, String] = Map(
+    OperationKind.CREATE -> "create",
+    OperationKind.READ -> "read",
+    OperationKind.UPDATE -> "update",
+    OperationKind.DELETE -> "delete",
+    OperationKind.CUSTOM -> "custom"
+  )
+
   def resourceNamespace(baseNamespace: Qn, resourceFieldName: String): Qn =
     baseNamespace.append("resources").append(resourceFieldName.toLowerCase)
 

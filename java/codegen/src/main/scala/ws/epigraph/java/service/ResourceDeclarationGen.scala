@@ -95,13 +95,6 @@ public final class $resourceDeclarationClassName extends ResourceDeclaration {
 }
 
 object ResourceDeclarationGen {
-  private val operationKinds: Map[OperationKind, String] = Map(
-    OperationKind.CREATE -> "create",
-    OperationKind.READ -> "read",
-    OperationKind.UPDATE -> "update",
-    OperationKind.DELETE -> "delete",
-    OperationKind.CUSTOM -> "custom"
-  )
 
   def resourceDeclarationNamespace(baseNamespace: Qn, rd: ResourceDeclaration): Qn =
     ServiceNames.resourceNamespace(baseNamespace, rd.fieldName())
@@ -109,7 +102,7 @@ object ResourceDeclarationGen {
   def resourceDeclarationClassName(rd: ResourceDeclaration): String = up(rd.fieldName()) + "ResourceDeclaration"
 
   def operationDeclarationFieldName(od: OperationDeclaration): String = {
-    val kind = operationKinds.getOrElse(od.kind(), {throw new CompilerException})
+    val kind = ServiceNames.operationKinds.getOrElse(od.kind(), {throw new CompilerException})
 
     if (od.name() != null)
       s"${od.name()}${up(kind)}OperationDeclaration"
@@ -118,7 +111,7 @@ object ResourceDeclarationGen {
   }
 
   def operationConstructorName(od: OperationDeclaration): String = {
-    val kind = up(operationKinds.getOrElse(od.kind(), {throw new CompilerException}))
+    val kind = up(ServiceNames.operationKinds.getOrElse(od.kind(), {throw new CompilerException}))
 
     if (od.name() != null)
       s"construct${up(od.name())}${kind}OperationDeclaration"
