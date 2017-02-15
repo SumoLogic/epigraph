@@ -134,7 +134,9 @@ Util.create$mapClass(
 
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
-    ctx.generatedTypes.get(w.cType.name).toString
+    val qn = ctx.generatedTypes.get(w.cType.name)
+    if (qn == null) throw new NullPointerException(s"No type generated for '${w.cType.name.name}'")
+    qn.toString
   }
 
   def genDataRef(t: TypeApi, ctx: GenContext): String = { // use lqdrn2?

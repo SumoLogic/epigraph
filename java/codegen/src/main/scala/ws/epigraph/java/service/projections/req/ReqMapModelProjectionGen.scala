@@ -39,9 +39,24 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(keyGen, elementGen)
 
-  protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+  protected def keys: CodeChunk = {
     val keyProjectionClass = keyGen.shortClassName
+
+    CodeChunk(
+      /*@formatter:off*/sn"""\
+  /**
+   * @return key projections
+   */
+  public @Nullable List<$keyProjectionClass> keys() {
+    return raw.keys() == null ? null : raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
+  }
+"""/*@formatter:on*/
+    )
+  }
+
+  protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val elementProjectionClass = elementGen.shortClassName
+    val _keys = keys
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
@@ -53,7 +68,7 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
       reqMapModelProjectionFqn.toString,
       elementGen.fullClassName,
       keyGen.fullClassName
-    ) ++ params.imports ++ meta.imports ++ extra.imports
+    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -73,12 +88,7 @@ public class $shortClassName {
     this(selfVar.singleTagProjection().projection());
   }
 
-  /**
-   * @return key projections
-   */
-  public @Nullable List<$keyProjectionClass> keys() {
-    return raw.keys() == null ? null : raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
-  }
+${keys.code}\
 
   /**
    * @return items projection

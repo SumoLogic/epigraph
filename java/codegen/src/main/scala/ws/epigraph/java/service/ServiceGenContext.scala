@@ -44,7 +44,10 @@ class ServiceGenContext(val gctx: GenContext) {
 
   //
 
-  def addImport(i: String) {_imports.add(i)}
+  def addImport(i: String) {
+    if (i == null || i.isEmpty) throw new IllegalArgumentException
+    _imports.add(i)
+  }
 
   def addImport(qn: Qn) {addImport(qn.toString)}
 
@@ -62,7 +65,7 @@ class ServiceGenContext(val gctx: GenContext) {
     val ns = if (csi < 0) qn else if (csi == qn.size() - 1) Qn.EMPTY else qn.takeHeadSegments(csi + 1)
     val shortClassName = if (csi < 0) null else if (csi == 0) qn else qn.removeHeadSegments(csi)
 
-    if (ns != currentNs) addImport(ns)
+    if (!ns.isEmpty && ns != currentNs) addImport(ns)
 
     if (shortClassName == null) null else shortClassName.toString
   }
