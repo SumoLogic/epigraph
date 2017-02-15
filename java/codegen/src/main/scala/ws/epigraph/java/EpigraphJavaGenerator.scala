@@ -19,22 +19,22 @@ package ws.epigraph.java
 
 import java.io.{File, IOException}
 import java.nio.file.Path
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent._
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.service.{AbstractReadOperationGen, AbstractResourceFactoryGen, ResourceDeclarationGen}
 import ws.epigraph.java.service.projections.req.OperationInfo
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteFieldProjectionGen
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
 import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
 import ws.epigraph.java.service.projections.req.update.ReqUpdateFieldProjectionGen
+import ws.epigraph.java.service.{AbstractReadOperationGen, AbstractResourceFactoryGen, ResourceDeclarationGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 import ws.epigraph.schema.operations.{DeleteOperationDeclaration, OperationKind, ReadOperationDeclaration}
 
 import scala.collection.JavaConversions._
-import scala.collection.{Iterator, JavaConversions}
+import scala.collection.{Iterator, JavaConversions, mutable}
 
 class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: GenSettings) {
 
@@ -55,11 +55,10 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 //    }
 
     // TODO only generate request projection classes if there are any resources defined ?
-    // TODO parallelize all these?
 
     val startTime: Long = System.currentTimeMillis
 
-    val generators: ConcurrentLinkedQueue[JavaGen] = new ConcurrentLinkedQueue[JavaGen]
+    val generators: mutable.Queue[JavaGen] = mutable.Queue()
 
     for (schemaFile <- cctx.schemaFiles.values) {
       for (typeDef <- JavaConversions.asJavaIterable(schemaFile.typeDefs)) {
@@ -248,27 +247,60 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
             }
           }
 
-          runGenerators(generators, _.writeUnder(tmpRoot))
         }
       }
     }
+
+    runGenerators(generators, _.writeUnder(tmpRoot))
+    handleErrors()
 
     val endTime: Long = System.currentTimeMillis
 
     System.out.println(s"Epigraph Java code generation took ${endTime - startTime}ms")
 
+
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
   }
 
-  private def runGenerators(generators: ConcurrentLinkedQueue[JavaGen], runner: JavaGen => Unit): Unit = {
-    // todo parallelize?
-    while (!generators.isEmpty) {
-      {
-        val generator: JavaGen = generators.poll
+  private def runGenerators(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
+    if (generators.size() < 5) { // todo find correct break-even point
+      // run sequentially
+      while (generators.nonEmpty) {
+        val generator: JavaGen = generators.dequeue()
         val iterator: Iterator[JavaGen] = generator.children.toIterator
         while (iterator.hasNext) {generators.add(iterator.next)}
         runner.apply(generator)
       }
+    } else {
+      // run asynchronously
+      val executor = Executors.newWorkStealingPool()
+      val phaser = new Phaser()
+
+      def submit(generator: JavaGen): Unit = {
+        phaser.register()
+        executor.submit(
+          new Runnable {
+            override def run(): Unit = {
+              try {
+                generator.children.foreach(submit)
+                runner.apply(generator)
+              } catch {
+                case e: Exception =>
+                  cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
+              } finally {
+                phaser.arriveAndDeregister()
+              }
+            }
+          }
+        )
+      }
+
+      generators.foreach{submit}
+      generators.clear()
+
+      phaser.arriveAndAwaitAdvance()
+      executor.shutdown()
+      if (!executor.awaitTermination(10, TimeUnit.MINUTES)) throw new RuntimeException("Code generation timeout")
     }
   }
 
