@@ -59,7 +59,16 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
         )
       )
 
-      case o: UpdateOperationDeclaration => (o, null)
+      case o: UpdateOperationDeclaration => (
+        o,
+        new AbstractUpdateOperationGen(
+          baseNamespace,
+          rd,
+          o,
+          ctx
+        )
+      )
+
       case o: DeleteOperationDeclaration => (o, null)
       case o: CustomOperationDeclaration => (o, null)
     }.toMap
