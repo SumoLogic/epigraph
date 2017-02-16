@@ -32,8 +32,8 @@ object CPrettyPrinters {
   implicit object CErrorPrinter extends PPrinter[CError] {
 
     override def render0(t: CError, c: Config): Iterator[String] = Iterator(
-      t.filename, ":", t.position.line.toString, ":", t.position.column.toString, " ", intellijLink(t),
-      "\nError: ", t.message, "\n" // TODO skip :line:colon, line text, and ^ if NA
+      fansi.Color.Blue(t.filename + ":" + t.position.line.toString + ":" + t.position.column.toString + " " + intellijLink(t)).render,
+      fansi.Color.Red("\nError").render, ": ", t.message, "\n" // TODO skip :line:colon, line text, and ^ if NA
     ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
 
     private def intellijLink(t: CError): String = { // relies on '.' already rendered (as part of canonical path

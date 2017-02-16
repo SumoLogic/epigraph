@@ -24,7 +24,7 @@ resource users: PersonMap {
               profile
             )
           )
-          worstEnemy( id, firstName, lastName )
+          worstEnemy( id, firstName, lastName ) // ~UserRecord( profile )
           friends *(
             :(
               id,

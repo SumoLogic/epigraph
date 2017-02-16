@@ -274,7 +274,11 @@ object EpigraphCompiler {
     width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
   )
 
-  def renderErrors(ctx: CContext): Unit = ctx.errors foreach pprint.pprintln
+  def renderErrors(ctx: CContext): Unit = {
+    // bring pretty printers into scope
+    import CPrettyPrinters._
+    ctx.errors foreach pprint.pprintln
+  }
 }
 
 
