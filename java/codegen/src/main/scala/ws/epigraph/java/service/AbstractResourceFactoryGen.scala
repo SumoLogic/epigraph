@@ -69,7 +69,16 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
         )
       )
 
-      case o: DeleteOperationDeclaration => (o, null)
+      case o: DeleteOperationDeclaration => (
+        o,
+        new AbstractDeleteOperationGen(
+          baseNamespace,
+          rd,
+          o,
+          ctx
+        )
+      )
+
       case o: CustomOperationDeclaration => (o, null)
     }.toMap
 

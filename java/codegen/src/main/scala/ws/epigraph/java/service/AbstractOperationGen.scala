@@ -95,13 +95,13 @@ ${ServiceGenUtils.genImports(sctx)}
  * Abstract base class for ${rd.fieldName()} ${Option(op.name()).map(_ + " ").getOrElse("")}$operationKindLower operation
  */
 public abstract class $shortClassName extends ${operationKindUpper}Operation<$shortDataType> {
-  ${i(ServiceGenUtils.genFields(sctx))}
 
   protected $shortClassName(@NotNull ${operationKindUpper}OperationDeclaration declaration) {
     super(declaration);
   }
 
   ${i(ServiceGenUtils.genMethods(sctx))}
+
 }
 """/*@formatter:on*/
   }
