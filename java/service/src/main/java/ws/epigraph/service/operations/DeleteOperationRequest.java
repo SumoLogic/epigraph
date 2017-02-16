@@ -30,11 +30,11 @@ public class DeleteOperationRequest extends OperationRequest {
 
   public DeleteOperationRequest(
       final @Nullable ReqFieldPath path,
-      final @NotNull ReqDeleteFieldProjection DeleteProjection,
+      final @NotNull ReqDeleteFieldProjection deleteProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {
 
     super(path, outputProjection);
-    this.DeleteProjection = DeleteProjection;
+    this.DeleteProjection = deleteProjection;
   }
 
   public @NotNull ReqDeleteFieldProjection deleteProjection() { return DeleteProjection; }

@@ -51,19 +51,30 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
 """/*@formatter:on*/
 
     def genNonPrimitiveKey: String = /*@formatter:off*/sn"""\
-  public @NotNull $keyTypeShortName value() {
-    return ($keyTypeShortName) raw.value();
+  public @NotNull $keyTypeShortName.Imm value() {
+    return (($keyTypeShortName) raw.value()).toImmutable();
   }
 """/*@formatter:on*/
 
-    val keyCode = CodeChunk(keyType.kind match {
-      case CTypeKind.STRING => genPrimitiveKey("String")
-      case CTypeKind.INTEGER => genPrimitiveKey("Integer")
-      case CTypeKind.LONG => genPrimitiveKey("Long")
-      case CTypeKind.DOUBLE => genPrimitiveKey("Double")
-      case CTypeKind.BOOLEAN => genPrimitiveKey("Boolean")
-      case _ => genNonPrimitiveKey
-    })
+    val builtInPrimitives = Set(
+      "epigraph.Integer",
+      "epigraph.Long",
+      "epigraph.Double",
+      "epigraph.Boolean",
+      "epigraph.String"
+    )
+
+    val keyCode = CodeChunk(
+      if (!builtInPrimitives.contains(keyType.name.name)) genNonPrimitiveKey
+      else keyType.kind match {
+        case CTypeKind.STRING => genPrimitiveKey("String")
+        case CTypeKind.INTEGER => genPrimitiveKey("Integer")
+        case CTypeKind.LONG => genPrimitiveKey("Long")
+        case CTypeKind.DOUBLE => genPrimitiveKey("Double")
+        case CTypeKind.BOOLEAN => genPrimitiveKey("Boolean")
+        case _ => genNonPrimitiveKey
+      }
+    )
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",

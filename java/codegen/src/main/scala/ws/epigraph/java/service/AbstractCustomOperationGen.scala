@@ -74,7 +74,7 @@ class AbstractCustomOperationGen(
 public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
   $shortBuilderType builder = $resultBuilderCtor;
   ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
-  $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
+  $inputTypeClass data = request.data() == null ? null : ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
   ${inputFieldProjectionGen.shortClassName} inputProjection = request.inputProjection() == null ? null : new ${inputFieldProjectionGen.shortClassName}(request.inputProjection());
   ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
   return process(builder, data, path, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
@@ -87,7 +87,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  * Process custom request
  *
  * @param builder result builder, initially empty
- * @param inputData input data
+ * @param inputData input data, may be {@code null} if not specified
  * @param path request path
  * @param inputProjection request input projection, may be {@code null} if not specified
  * @param outputProjection request output projection
@@ -96,7 +96,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
   @NotNull $shortBuilderType builder,
-  @NotNull $inputTypeClass inputData,
+  @Nullable $inputTypeClass inputData,
   @NotNull ${pathProjectionGen.shortClassName} path,
   @Nullable ${inputFieldProjectionGen.shortClassName} inputProjection,
   @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
@@ -109,7 +109,7 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
 @Override
 public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
   $shortBuilderType builder = $resultBuilderCtor;
-  $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
+  $inputTypeClass data = request.data() == null ? null : ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
   ${inputFieldProjectionGen.shortClassName} inputProjection = request.inputProjection() == null ? null : new ${inputFieldProjectionGen.shortClassName}(request.inputProjection());
   ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
   return process(builder, data, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
@@ -122,7 +122,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  * Process custom request
  *
  * @param builder result builder, initially empty
- * @param inputData input data
+ * @param inputData input data, may be {@code null} if not specified
  * @param inputProjection request input projection, may be {@code null} if not specified
  * @param outputProjection request output projection
  *
@@ -130,7 +130,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
   @NotNull $shortBuilderType builder,
-  @NotNull $inputTypeClass inputData,
+  @Nullable $inputTypeClass inputData,
   @Nullable ${inputFieldProjectionGen.shortClassName} inputProjection,
   @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
 );
@@ -151,7 +151,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
   $shortBuilderType builder = $resultBuilderCtor;
   ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
   ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, data, path, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  return process(builder, path, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
 }
 """/*@formatter:off*/
         )
@@ -180,7 +180,7 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
 public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
   $shortBuilderType builder = $resultBuilderCtor;
   ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, data, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  return process(builder, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
 }
 """/*@formatter:off*/
         )
