@@ -36,54 +36,18 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
   override protected def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd) + ".java")
 
-  // todo
   private val abstractOperationGens: Map[OperationDeclaration, AbstractOperationGen] =
     rd.operations().map {
-      case o: ReadOperationDeclaration => (
-        o,
-        new AbstractReadOperationGen(
-          baseNamespace,
-          rd,
-          o,
-          ctx
-        )
-      )
-
-      case o: CreateOperationDeclaration => (
-        o,
-        new AbstractCreateOperationGen(
-          baseNamespace,
-          rd,
-          o,
-          ctx
-        )
-      )
-
-      case o: UpdateOperationDeclaration => (
-        o,
-        new AbstractUpdateOperationGen(
-          baseNamespace,
-          rd,
-          o,
-          ctx
-        )
-      )
-
-      case o: DeleteOperationDeclaration => (
-        o,
-        new AbstractDeleteOperationGen(
-          baseNamespace,
-          rd,
-          o,
-          ctx
-        )
-      )
-
-      case o: CustomOperationDeclaration => (o, null)
+      case o: ReadOperationDeclaration => o -> new AbstractReadOperationGen(baseNamespace, rd, o, ctx)
+      case o: CreateOperationDeclaration => o -> new AbstractCreateOperationGen(baseNamespace, rd, o, ctx)
+      case o: UpdateOperationDeclaration => o -> new AbstractUpdateOperationGen(baseNamespace, rd, o, ctx)
+      case o: DeleteOperationDeclaration => o -> new AbstractDeleteOperationGen(baseNamespace, rd, o, ctx)
+      case o: CustomOperationDeclaration => o -> new AbstractCustomOperationGen(baseNamespace, rd, o, ctx)
+      case other => throw new IllegalArgumentException(s"Unknown operation declaration class: ${ other.getClass.getName }")
     }.toMap
 
 
-  override def children: Iterable[JavaGen] = super.children ++ abstractOperationGens.values.filter(g => g != null) // todo remove filter
+  override def children: Iterable[JavaGen] = super.children ++ abstractOperationGens.values
 
   override def generate: String = {
     val sgctx = new ServiceGenContext(ctx)
@@ -101,7 +65,7 @@ package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}
 /**
- * Abstract factory for constructing `${rd.fieldName()}` resource implementation
+ * Abstract factory for constructing {@${rd.fieldName()}`} resource implementation
  */
 public abstract class $className {
   ${i(ServiceGenUtils.genFields(sgctx))}
@@ -118,7 +82,6 @@ public abstract class $className {
   private def generateResourceConstructor(ctx: ServiceGenContext): String = {
 
     val resourceDeclarationClassName = ResourceDeclarationGen.resourceDeclarationClassName(rd)
-//    ctx.addImport(ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd).append(resourceDeclarationClassName))
 
     var readOperationConstructorCalls: List[String] = List()
     var updateOperationConstructorCalls: List[String] = List()
@@ -248,13 +211,13 @@ new Resource(
 
     ctx.addImport("ws.epigraph.schema.operations." + declarationType)
 
-    // todo abstract op references
+    val abstractOpGen: AbstractOperationGen = abstractOperationGens(o)
+
     /*@formatter:off*/sn"""\
 /**
  * Constructs ${rd.fieldName()} ${if (o.name() !=null ) "'" + up(o.name()) + "' " else ""}$kind operation
  * <p>
- * {@code todo} is a suggested operation implementation base class
- * </p>
+ * {@code ${abstractOpGen.shortClassName}} is a suggested operation implementation base class
  *
  * @param operationDeclaration operation {@link $resourceDeclarationClassName#${ResourceDeclarationGen.operationDeclarationFieldName(o)} declaration}
  *
@@ -262,7 +225,7 @@ new Resource(
  *
  * @throws ServiceInitializationException in case of operation initialization error
  *
- * @see todo todo
+ * @see ${abstractOpGen.namespace}.${abstractOpGen.shortClassName} ${abstractOpGen.shortClassName}
  */
 protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull $declarationType operationDeclaration) throws ServiceInitializationException;\
 """/*@formatter:on*/

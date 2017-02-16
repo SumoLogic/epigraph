@@ -22,27 +22,29 @@ import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
-import ws.epigraph.schema.operations.CreateOperationDeclaration
+import ws.epigraph.schema.operations.CustomOperationDeclaration
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class AbstractCreateOperationGen(
+class AbstractCustomOperationGen(
   val baseNamespace: Qn,
   val rd: ResourceDeclaration,
-  val op: CreateOperationDeclaration,
+  val op: CustomOperationDeclaration,
   val ctx: GenContext) extends AbstractOperationGen {
 
-  protected val inputFieldProjectionGen: ReqInputFieldProjectionGen =
-    new ReqInputFieldProjectionGen(
-      operationInfo,
-      rd.fieldName(),
-      op.inputProjection(),
-      Qn.EMPTY,
-      ctx
-    )
+  protected val inputFieldProjectionGenOpt: Option[ReqInputFieldProjectionGen] =
+    Option(op.inputProjection()).map { inputProjection =>
+      new ReqInputFieldProjectionGen(
+        operationInfo,
+        rd.fieldName(),
+        inputProjection,
+        Qn.EMPTY,
+        ctx
+      )
+    }
 
-  override def children: Iterable[JavaGen] = super.children ++ Iterable(inputFieldProjectionGen)
+  override def children: Iterable[JavaGen] = super.children ++ inputFieldProjectionGenOpt.toIterable
 
   override protected def generate: String = {
     val sctx = new ServiceGenContext(ctx)
@@ -52,20 +54,24 @@ class AbstractCreateOperationGen(
     val resultBuilderCtor = lqbct(outputType, nsString)
 
     sctx.addImport("org.jetbrains.annotations.Nullable")
-    sctx.addImport(inputFieldProjectionGen.fullClassName)
     val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
     val shortBuilderType = sctx.addImport(lqbrn(outputType, nsString), namespace)
 
-    val inputType = JavaGenUtils.toCType(op.inputType())
-    val inputTypeClass = lqn2(inputType, nsString)
+    inputFieldProjectionGenOpt match {
+      case Some(inputFieldProjectionGen) =>
 
-    pathProjectionGenOpt match {
+        sctx.addImport(inputFieldProjectionGen.fullClassName)
 
-      case Some(pathProjectionGen) =>
-        sctx.addImport(pathProjectionGen.fullClassName)
-        sctx.addMethod(/*@formatter:off*/sn"""\
+        val inputType = JavaGenUtils.toCType(op.inputType())
+        val inputTypeClass = lqn2(inputType, nsString)
+
+        pathProjectionGenOpt match {
+
+          case Some(pathProjectionGen) =>
+            sctx.addImport(pathProjectionGen.fullClassName)
+            sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CreateOperationRequest request) {
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
   $shortBuilderType builder = $resultBuilderCtor;
   ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
   $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
@@ -78,7 +84,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 
         sctx.addMethod(/*@formatter:off*/sn"""\
 /**
- * Process create request
+ * Process custom request
  *
  * @param builder result builder, initially empty
  * @param inputData input data
@@ -101,7 +107,7 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
       case None =>
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CreateOperationRequest request) {
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
   $shortBuilderType builder = $resultBuilderCtor;
   $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
   ${inputFieldProjectionGen.shortClassName} inputProjection = request.inputProjection() == null ? null : new ${inputFieldProjectionGen.shortClassName}(request.inputProjection());
@@ -113,7 +119,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 
         sctx.addMethod(/*@formatter:off*/sn"""\
 /**
- * Process create request
+ * Process custom request
  *
  * @param builder result builder, initially empty
  * @param inputData input data
@@ -131,6 +137,70 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
 """/*@formatter:off*/
         )
     }
+
+        // case when input projection and data are not supported =================================================
+
+      case None =>
+        pathProjectionGenOpt match {
+
+          case Some(pathProjectionGen) =>
+            sctx.addImport(pathProjectionGen.fullClassName)
+            sctx.addMethod(/*@formatter:off*/sn"""\
+@Override
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
+  $shortBuilderType builder = $resultBuilderCtor;
+  ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
+  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+  return process(builder, data, path, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
+}
+"""/*@formatter:off*/
+        )
+
+        sctx.addMethod(/*@formatter:off*/sn"""\
+/**
+ * Process custom request
+ *
+ * @param builder result builder, initially empty
+ * @param path request path
+ * @param outputProjection request output projection
+ *
+ * @return future of the result
+ */
+protected abstract @NotNull CompletableFuture<$shortDataType> process(
+  @NotNull $shortBuilderType builder,
+  @NotNull ${pathProjectionGen.shortClassName} path,
+  @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
+);
+"""/*@formatter:off*/
+        )
+
+      case None =>
+        sctx.addMethod(/*@formatter:off*/sn"""\
+@Override
+public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull CustomOperationRequest request) {
+  $shortBuilderType builder = $resultBuilderCtor;
+  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
+  return process(builder, data, inputProjection, outputProjection).thenApply(ReadOperationResponse::new);
+}
+"""/*@formatter:off*/
+        )
+
+        sctx.addMethod(/*@formatter:off*/sn"""\
+/**
+ * Process custom request
+ *
+ * @param builder result builder, initially empty
+ * @param outputProjection request output projection
+ *
+ * @return future of the result
+ */
+protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType builder, @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection);
+"""/*@formatter:off*/
+        )
+    }
+
+    }
+
 
     generate(sctx)
   }

@@ -22,16 +22,9 @@ import java.nio.file.Path
 import java.util.concurrent._
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.service.projections.req.OperationInfo
-import ws.epigraph.java.service.projections.req.delete.ReqDeleteFieldProjectionGen
-import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen
-import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
-import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
-import ws.epigraph.java.service.projections.req.update.ReqUpdateFieldProjectionGen
-import ws.epigraph.java.service.{AbstractReadOperationGen, AbstractResourceFactoryGen, ResourceDeclarationGen}
+import ws.epigraph.java.service.{AbstractResourceFactoryGen, ResourceDeclarationGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
-import ws.epigraph.schema.operations.{DeleteOperationDeclaration, OperationKind, ReadOperationDeclaration}
 
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
@@ -121,8 +114,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       }
     }
 
-    runGenerators(generators, _.writeUnder(tmpRoot))
-    handleErrors()
+    runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
 
 
 //    final Set<CDataType> anonMapValueTypes = new HashSet<>();
@@ -135,7 +127,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     generators += new IndexGen(ctx)
 
-    val settings: GenSettings = ctx.settings
+    val generateImplementationStubs = ctx.settings.generateImplementationStubs
 
     for (entry <- cctx.resourcesSchemas.entrySet) {
       val rs: ResourcesSchema = entry.getValue
@@ -147,99 +139,21 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         val resourceName: String = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName)).toString
 
         // change them to be patters/regex?
-        if (settings.generateImplementationStubs == null ||
-            settings.generateImplementationStubs.contains(resourceName)) {
-
+        if (generateImplementationStubs == null || generateImplementationStubs.contains(resourceName)) {
           generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
-
-//          for (operationDeclaration <- resourceDeclaration.operations) {
-//
-//            val operationInfo: OperationInfo = OperationInfo(
-//              namespace,
-//              resourceDeclaration.fieldName,
-//              operationDeclaration
-//            )
-//
-////            val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
-////              operationInfo,
-////              resourceDeclaration.fieldName,
-////              operationDeclaration.outputProjection,
-////              Qn.EMPTY,
-////              ctx
-////            )
-////
-////            generators += outputFieldProjectionGen
-//
-//
-//            operationDeclaration.kind match {
-//
-//              case OperationKind.READ =>
-//                generators += new AbstractReadOperationGen(
-//                  operationInfo.resourceNamespace,
-//                  resourceDeclaration,
-//                  operationDeclaration.asInstanceOf[ReadOperationDeclaration],
-//                  ctx
-//                )
-//
-//              case OperationKind.CREATE =>
-//                generators += new ReqInputFieldProjectionGen(
-//                  operationInfo,
-//                  resourceDeclaration.fieldName,
-//                  operationDeclaration.inputProjection,
-//                  Qn.EMPTY,
-//                  ctx
-//                )
-//
-//              case OperationKind.UPDATE =>
-//                generators += new ReqUpdateFieldProjectionGen(
-//                  operationInfo,
-//                  resourceDeclaration.fieldName,
-//                  operationDeclaration.inputProjection,
-//                  Qn.EMPTY,
-//                  ctx
-//                )
-//
-//              case OperationKind.DELETE =>
-//                generators += new ReqDeleteFieldProjectionGen(
-//                  operationInfo,
-//                  resourceDeclaration.fieldName,
-//                  operationDeclaration.asInstanceOf[DeleteOperationDeclaration].deleteProjection(),
-//                  Qn.EMPTY,
-//                  ctx
-//                )
-//
-//              case OperationKind.CUSTOM =>
-//                generators += new ReqInputFieldProjectionGen(
-//                  operationInfo,
-//                  resourceDeclaration.fieldName,
-//                  operationDeclaration.inputProjection,
-//                  Qn.EMPTY,
-//                  ctx
-//                )
-//
-//              case _ =>
-//                throw new RuntimeException(
-//                  s"Unknown operation '${operationDeclaration.name}' kind '${operationDeclaration.kind}'"
-//                )
-//            }
-//          }
-
         }
       }
     }
 
-    runGenerators(generators, _.writeUnder(tmpRoot))
-    handleErrors()
+    runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
 
     val endTime: Long = System.currentTimeMillis
-
     System.out.println(s"Epigraph Java code generation took ${endTime - startTime}ms")
-
 
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
   }
 
-  private def runGenerators(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
+  private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
     if (generators.size() < 5) { // todo find correct break-even point
       // run sequentially
       while (generators.nonEmpty) {
@@ -250,7 +164,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     } else {
       // run asynchronously
       val executor = Executors.newWorkStealingPool()
-      val phaser = new Phaser(1)
+      val phaser = new Phaser(1) // active jobs counter + 1
 
       def submit(generator: JavaGen): Unit = {
         phaser.register()
@@ -277,6 +191,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       executor.shutdown()
       if (!executor.awaitTermination(10, TimeUnit.MINUTES)) throw new RuntimeException("Code generation timeout")
     }
+
+    handleErrors()
   }
 
 //  public static void main(String... args) throws IOException {

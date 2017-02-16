@@ -62,6 +62,7 @@ class AbstractUpdateOperationGen(
     pathProjectionGenOpt match {
 
       case Some(pathProjectionGen) =>
+        sctx.addImport(pathProjectionGen.fullClassName)
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
 public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull UpdateOperationRequest request) {
