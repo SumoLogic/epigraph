@@ -16,12 +16,12 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CDatumType, CMapType, CTypeKind}
-import ws.epigraph.projections.op.OpKeyProjection
+import ws.epigraph.compiler.{CDatumType, CMapType}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.op.OpKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -56,25 +56,17 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
   }
 """/*@formatter:on*/
 
-    val builtInPrimitives = Set(
-      "epigraph.Integer",
-      "epigraph.Long",
-      "epigraph.Double",
-      "epigraph.Boolean",
-      "epigraph.String"
+    // unwrap built-in primitives
+
+    val builtInPrimitives = Map(
+      "epigraph.Integer" -> "Integer",
+      "epigraph.Long" -> "Long",
+      "epigraph.Double" -> "Double",
+      "epigraph.Boolean" -> "Boolean",
+      "epigraph.String" -> "String"
     )
 
-    val keyCode = CodeChunk(
-      if (!builtInPrimitives.contains(keyType.name.name)) genNonPrimitiveKey
-      else keyType.kind match {
-        case CTypeKind.STRING => genPrimitiveKey("String")
-        case CTypeKind.INTEGER => genPrimitiveKey("Integer")
-        case CTypeKind.LONG => genPrimitiveKey("Long")
-        case CTypeKind.DOUBLE => genPrimitiveKey("Double")
-        case CTypeKind.BOOLEAN => genPrimitiveKey("Boolean")
-        case _ => genNonPrimitiveKey
-      }
-    )
+    val keyCode = CodeChunk(builtInPrimitives.get(keyType.name.name).map(genPrimitiveKey).getOrElse(genNonPrimitiveKey))
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
