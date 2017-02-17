@@ -40,7 +40,11 @@ public interface UrlElementTypes {
   IElementType U_REQ_DELETE_KEY_PROJECTION = new UrlElementType("U_REQ_DELETE_KEY_PROJECTION");
   IElementType U_REQ_DELETE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_DELETE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_DELETE_MODEL_MULTI_TAIL");
+  IElementType U_REQ_DELETE_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_DELETE_MODEL_MULTI_TAIL_ITEM");
+  IElementType U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL");
   IElementType U_REQ_DELETE_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_MODEL_PROJECTION");
+  IElementType U_REQ_DELETE_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_DELETE_MODEL_SINGLE_TAIL");
   IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION");
   IElementType U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM");
   IElementType U_REQ_DELETE_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_DELETE_RECORD_MODEL_PROJECTION");
@@ -58,7 +62,11 @@ public interface UrlElementTypes {
   IElementType U_REQ_INPUT_KEY_PROJECTION = new UrlElementType("U_REQ_INPUT_KEY_PROJECTION");
   IElementType U_REQ_INPUT_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_LIST_MODEL_PROJECTION");
   IElementType U_REQ_INPUT_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_INPUT_MODEL_MULTI_TAIL");
+  IElementType U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM");
+  IElementType U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL");
   IElementType U_REQ_INPUT_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_MODEL_PROJECTION");
+  IElementType U_REQ_INPUT_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_INPUT_MODEL_SINGLE_TAIL");
   IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION");
   IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM");
   IElementType U_REQ_INPUT_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_RECORD_MODEL_PROJECTION");
@@ -82,6 +90,10 @@ public interface UrlElementTypes {
   IElementType U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION");
   IElementType U_REQ_OUTPUT_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_VAR_PROJECTION");
   IElementType U_REQ_OUTPUT_MODEL_META = new UrlElementType("U_REQ_OUTPUT_MODEL_META");
+  IElementType U_REQ_OUTPUT_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_MULTI_TAIL");
+  IElementType U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM");
+  IElementType U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL");
+  IElementType U_REQ_OUTPUT_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_SINGLE_TAIL");
   IElementType U_REQ_OUTPUT_STAR_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_STAR_TAG_PROJECTION");
   IElementType U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION");
   IElementType U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION");
@@ -101,7 +113,11 @@ public interface UrlElementTypes {
   IElementType U_REQ_UPDATE_KEY_PROJECTION = new UrlElementType("U_REQ_UPDATE_KEY_PROJECTION");
   IElementType U_REQ_UPDATE_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_LIST_MODEL_PROJECTION");
   IElementType U_REQ_UPDATE_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_UPDATE_MODEL_MULTI_TAIL");
+  IElementType U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM");
+  IElementType U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL");
   IElementType U_REQ_UPDATE_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_MODEL_PROJECTION");
+  IElementType U_REQ_UPDATE_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_UPDATE_MODEL_SINGLE_TAIL");
   IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION");
   IElementType U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM");
   IElementType U_REQ_UPDATE_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_UPDATE_RECORD_MODEL_PROJECTION");
@@ -249,8 +265,20 @@ public interface UrlElementTypes {
       else if (type == U_REQ_DELETE_MAP_MODEL_PROJECTION) {
         return new UrlReqDeleteMapModelProjectionImpl(node);
       }
+      else if (type == U_REQ_DELETE_MODEL_MULTI_TAIL) {
+        return new UrlReqDeleteModelMultiTailImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MODEL_MULTI_TAIL_ITEM) {
+        return new UrlReqDeleteModelMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL) {
+        return new UrlReqDeleteModelPolymorphicTailImpl(node);
+      }
       else if (type == U_REQ_DELETE_MODEL_PROJECTION) {
         return new UrlReqDeleteModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_DELETE_MODEL_SINGLE_TAIL) {
+        return new UrlReqDeleteModelSingleTailImpl(node);
       }
       else if (type == U_REQ_DELETE_MULTI_TAG_PROJECTION) {
         return new UrlReqDeleteMultiTagProjectionImpl(node);
@@ -303,8 +331,20 @@ public interface UrlElementTypes {
       else if (type == U_REQ_INPUT_MAP_MODEL_PROJECTION) {
         return new UrlReqInputMapModelProjectionImpl(node);
       }
+      else if (type == U_REQ_INPUT_MODEL_MULTI_TAIL) {
+        return new UrlReqInputModelMultiTailImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM) {
+        return new UrlReqInputModelMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL) {
+        return new UrlReqInputModelPolymorphicTailImpl(node);
+      }
       else if (type == U_REQ_INPUT_MODEL_PROJECTION) {
         return new UrlReqInputModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_MODEL_SINGLE_TAIL) {
+        return new UrlReqInputModelSingleTailImpl(node);
       }
       else if (type == U_REQ_INPUT_MULTI_TAG_PROJECTION) {
         return new UrlReqInputMultiTagProjectionImpl(node);
@@ -375,6 +415,18 @@ public interface UrlElementTypes {
       else if (type == U_REQ_OUTPUT_MODEL_META) {
         return new UrlReqOutputModelMetaImpl(node);
       }
+      else if (type == U_REQ_OUTPUT_MODEL_MULTI_TAIL) {
+        return new UrlReqOutputModelMultiTailImpl(node);
+      }
+      else if (type == U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM) {
+        return new UrlReqOutputModelMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL) {
+        return new UrlReqOutputModelPolymorphicTailImpl(node);
+      }
+      else if (type == U_REQ_OUTPUT_MODEL_SINGLE_TAIL) {
+        return new UrlReqOutputModelSingleTailImpl(node);
+      }
       else if (type == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
         return new UrlReqOutputStarTagProjectionImpl(node);
       }
@@ -432,8 +484,20 @@ public interface UrlElementTypes {
       else if (type == U_REQ_UPDATE_MAP_MODEL_PROJECTION) {
         return new UrlReqUpdateMapModelProjectionImpl(node);
       }
+      else if (type == U_REQ_UPDATE_MODEL_MULTI_TAIL) {
+        return new UrlReqUpdateModelMultiTailImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM) {
+        return new UrlReqUpdateModelMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL) {
+        return new UrlReqUpdateModelPolymorphicTailImpl(node);
+      }
       else if (type == U_REQ_UPDATE_MODEL_PROJECTION) {
         return new UrlReqUpdateModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_UPDATE_MODEL_SINGLE_TAIL) {
+        return new UrlReqUpdateModelSingleTailImpl(node);
       }
       else if (type == U_REQ_UPDATE_MULTI_TAG_PROJECTION) {
         return new UrlReqUpdateMultiTagProjectionImpl(node);

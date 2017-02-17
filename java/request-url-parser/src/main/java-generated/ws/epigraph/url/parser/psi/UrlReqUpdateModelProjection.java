@@ -14,6 +14,9 @@ public interface UrlReqUpdateModelProjection extends PsiElement {
   UrlReqUpdateMapModelProjection getReqUpdateMapModelProjection();
 
   @Nullable
+  UrlReqUpdateModelPolymorphicTail getReqUpdateModelPolymorphicTail();
+
+  @Nullable
   UrlReqUpdateRecordModelProjection getReqUpdateRecordModelProjection();
 
 }

@@ -13,7 +13,4 @@ public interface UrlReqInputVarSingleTail extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

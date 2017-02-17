@@ -16,4 +16,7 @@ public interface UrlReqOutputComaModelProjection extends PsiElement {
   @Nullable
   UrlReqOutputComaRecordModelProjection getReqOutputComaRecordModelProjection();
 
+  @Nullable
+  UrlReqOutputModelPolymorphicTail getReqOutputModelPolymorphicTail();
+
 }

@@ -40,6 +40,12 @@ public class SchemaOpDeleteModelProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
+  public SchemaOpDeleteModelPolymorphicTail getOpDeleteModelPolymorphicTail() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelPolymorphicTail.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaOpDeleteRecordModelProjection getOpDeleteRecordModelProjection() {
     return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteRecordModelProjection.class);
   }

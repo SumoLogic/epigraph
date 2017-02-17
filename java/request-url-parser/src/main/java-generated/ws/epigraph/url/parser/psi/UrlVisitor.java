@@ -131,7 +131,23 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqDeleteModelMultiTail(@NotNull UrlReqDeleteModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteModelMultiTailItem(@NotNull UrlReqDeleteModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteModelPolymorphicTail(@NotNull UrlReqDeleteModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqDeleteModelProjection(@NotNull UrlReqDeleteModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteModelSingleTail(@NotNull UrlReqDeleteModelSingleTail o) {
     visitPsiElement(o);
   }
 
@@ -203,7 +219,23 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqInputModelMultiTail(@NotNull UrlReqInputModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputModelMultiTailItem(@NotNull UrlReqInputModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputModelPolymorphicTail(@NotNull UrlReqInputModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqInputModelProjection(@NotNull UrlReqInputModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqInputModelSingleTail(@NotNull UrlReqInputModelSingleTail o) {
     visitPsiElement(o);
   }
 
@@ -299,6 +331,22 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqOutputModelMultiTail(@NotNull UrlReqOutputModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputModelMultiTailItem(@NotNull UrlReqOutputModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputModelPolymorphicTail(@NotNull UrlReqOutputModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputModelSingleTail(@NotNull UrlReqOutputModelSingleTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqOutputStarTagProjection(@NotNull UrlReqOutputStarTagProjection o) {
     visitPsiElement(o);
   }
@@ -375,7 +423,23 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqUpdateModelMultiTail(@NotNull UrlReqUpdateModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateModelMultiTailItem(@NotNull UrlReqUpdateModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateModelPolymorphicTail(@NotNull UrlReqUpdateModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqUpdateModelProjection(@NotNull UrlReqUpdateModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateModelSingleTail(@NotNull UrlReqUpdateModelSingleTail o) {
     visitPsiElement(o);
   }
 

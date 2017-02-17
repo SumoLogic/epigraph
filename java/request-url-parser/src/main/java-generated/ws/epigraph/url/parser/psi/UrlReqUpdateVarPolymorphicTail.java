@@ -13,4 +13,7 @@ public interface UrlReqUpdateVarPolymorphicTail extends PsiElement {
   @Nullable
   UrlReqUpdateVarSingleTail getReqUpdateVarSingleTail();
 
+  @NotNull
+  PsiElement getTilda();
+
 }

@@ -14,6 +14,9 @@ public interface SchemaOpOutputModelProjection extends PsiElement {
   SchemaOpOutputMapModelProjection getOpOutputMapModelProjection();
 
   @Nullable
+  SchemaOpOutputModelPolymorphicTail getOpOutputModelPolymorphicTail();
+
+  @Nullable
   SchemaOpOutputRecordModelProjection getOpOutputRecordModelProjection();
 
 }

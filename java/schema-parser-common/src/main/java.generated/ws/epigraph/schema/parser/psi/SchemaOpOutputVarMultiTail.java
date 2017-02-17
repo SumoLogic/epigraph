@@ -16,7 +16,4 @@ public interface SchemaOpOutputVarMultiTail extends PsiElement {
   @Nullable
   PsiElement getParenRight();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

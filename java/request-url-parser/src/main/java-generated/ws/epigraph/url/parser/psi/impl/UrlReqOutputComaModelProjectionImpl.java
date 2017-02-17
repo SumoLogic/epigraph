@@ -44,4 +44,10 @@ public class UrlReqOutputComaModelProjectionImpl extends ASTWrapperPsiElement im
     return findChildByClass(UrlReqOutputComaRecordModelProjection.class);
   }
 
+  @Override
+  @Nullable
+  public UrlReqOutputModelPolymorphicTail getReqOutputModelPolymorphicTail() {
+    return findChildByClass(UrlReqOutputModelPolymorphicTail.class);
+  }
+
 }

@@ -16,7 +16,4 @@ public interface SchemaOpDeleteVarMultiTail extends PsiElement {
   @Nullable
   PsiElement getParenRight();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

@@ -40,6 +40,12 @@ public class UrlReqInputModelProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
+  public UrlReqInputModelPolymorphicTail getReqInputModelPolymorphicTail() {
+    return findChildByClass(UrlReqInputModelPolymorphicTail.class);
+  }
+
+  @Override
+  @Nullable
   public UrlReqInputRecordModelProjection getReqInputRecordModelProjection() {
     return findChildByClass(UrlReqInputRecordModelProjection.class);
   }

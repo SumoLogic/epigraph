@@ -14,6 +14,9 @@ public interface SchemaOpDeleteModelProjection extends PsiElement {
   SchemaOpDeleteMapModelProjection getOpDeleteMapModelProjection();
 
   @Nullable
+  SchemaOpDeleteModelPolymorphicTail getOpDeleteModelPolymorphicTail();
+
+  @Nullable
   SchemaOpDeleteRecordModelProjection getOpDeleteRecordModelProjection();
 
 }

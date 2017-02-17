@@ -38,4 +38,10 @@ public class UrlReqUpdateVarPolymorphicTailImpl extends ASTWrapperPsiElement imp
     return findChildByClass(UrlReqUpdateVarSingleTail.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTilda() {
+    return findNotNullChildByType(U_TILDA);
+  }
+
 }

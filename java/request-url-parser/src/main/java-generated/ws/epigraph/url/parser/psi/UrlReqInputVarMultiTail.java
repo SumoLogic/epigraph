@@ -16,7 +16,4 @@ public interface UrlReqInputVarMultiTail extends PsiElement {
   @Nullable
   PsiElement getParenRight();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

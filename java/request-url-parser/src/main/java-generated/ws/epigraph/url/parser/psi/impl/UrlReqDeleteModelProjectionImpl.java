@@ -40,6 +40,12 @@ public class UrlReqDeleteModelProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
+  public UrlReqDeleteModelPolymorphicTail getReqDeleteModelPolymorphicTail() {
+    return findChildByClass(UrlReqDeleteModelPolymorphicTail.class);
+  }
+
+  @Override
+  @Nullable
   public UrlReqDeleteRecordModelProjection getReqDeleteRecordModelProjection() {
     return findChildByClass(UrlReqDeleteRecordModelProjection.class);
   }

@@ -16,7 +16,4 @@ public interface UrlReqDeleteVarMultiTail extends PsiElement {
   @Nullable
   PsiElement getParenRight();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

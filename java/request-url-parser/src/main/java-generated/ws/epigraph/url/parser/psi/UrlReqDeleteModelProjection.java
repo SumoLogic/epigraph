@@ -14,6 +14,9 @@ public interface UrlReqDeleteModelProjection extends PsiElement {
   UrlReqDeleteMapModelProjection getReqDeleteMapModelProjection();
 
   @Nullable
+  UrlReqDeleteModelPolymorphicTail getReqDeleteModelPolymorphicTail();
+
+  @Nullable
   UrlReqDeleteRecordModelProjection getReqDeleteRecordModelProjection();
 
 }

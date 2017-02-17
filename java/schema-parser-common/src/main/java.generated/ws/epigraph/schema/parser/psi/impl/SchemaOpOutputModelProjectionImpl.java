@@ -40,6 +40,12 @@ public class SchemaOpOutputModelProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
+  public SchemaOpOutputModelPolymorphicTail getOpOutputModelPolymorphicTail() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelPolymorphicTail.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
     return PsiTreeUtil.getChildOfType(this, SchemaOpOutputRecordModelProjection.class);
   }

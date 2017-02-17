@@ -44,10 +44,4 @@ public class UrlReqUpdateVarMultiTailImpl extends ASTWrapperPsiElement implement
     return findChildByType(U_PAREN_RIGHT);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return findNotNullChildByType(U_TILDA);
-  }
-
 }

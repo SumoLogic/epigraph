@@ -38,10 +38,4 @@ public class SchemaOpInputVarSingleTailImpl extends ASTWrapperPsiElement impleme
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return notNullChild(findChildByType(S_TILDA));
-  }
-
 }

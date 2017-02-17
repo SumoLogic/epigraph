@@ -44,10 +44,4 @@ public class SchemaOpOutputVarMultiTailImpl extends ASTWrapperPsiElement impleme
     return findChildByType(S_PAREN_RIGHT);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return notNullChild(findChildByType(S_TILDA));
-  }
-
 }

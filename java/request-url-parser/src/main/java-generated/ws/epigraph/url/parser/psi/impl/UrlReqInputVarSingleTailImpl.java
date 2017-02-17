@@ -38,10 +38,4 @@ public class UrlReqInputVarSingleTailImpl extends ASTWrapperPsiElement implement
     return findNotNullChildByClass(UrlTypeRef.class);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return findNotNullChildByType(U_TILDA);
-  }
-
 }

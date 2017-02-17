@@ -13,7 +13,4 @@ public interface SchemaOpDeleteVarSingleTail extends PsiElement {
   @NotNull
   SchemaTypeRef getTypeRef();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

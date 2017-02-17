@@ -13,7 +13,4 @@ public interface SchemaOpInputVarSingleTail extends PsiElement {
   @NotNull
   SchemaTypeRef getTypeRef();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

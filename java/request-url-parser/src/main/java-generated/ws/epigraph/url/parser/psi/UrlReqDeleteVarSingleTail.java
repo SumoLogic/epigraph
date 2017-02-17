@@ -13,7 +13,4 @@ public interface UrlReqDeleteVarSingleTail extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

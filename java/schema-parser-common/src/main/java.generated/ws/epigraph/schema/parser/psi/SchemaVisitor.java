@@ -163,11 +163,27 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteModelMultiTail(@NotNull SchemaOpDeleteModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteModelMultiTailItem(@NotNull SchemaOpDeleteModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteModelPolymorphicTail(@NotNull SchemaOpDeleteModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteModelProjection(@NotNull SchemaOpDeleteModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpDeleteModelProperty(@NotNull SchemaOpDeleteModelProperty o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteModelSingleTail(@NotNull SchemaOpDeleteModelSingleTail o) {
     visitPsiElement(o);
   }
 
@@ -247,11 +263,27 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputModelMultiTail(@NotNull SchemaOpInputModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputModelMultiTailItem(@NotNull SchemaOpInputModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputModelPolymorphicTail(@NotNull SchemaOpInputModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputModelProjection(@NotNull SchemaOpInputModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpInputModelProperty(@NotNull SchemaOpInputModelProperty o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputModelSingleTail(@NotNull SchemaOpInputModelSingleTail o) {
     visitPsiElement(o);
   }
 
@@ -331,11 +363,27 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputModelMultiTail(@NotNull SchemaOpOutputModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelMultiTailItem(@NotNull SchemaOpOutputModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelPolymorphicTail(@NotNull SchemaOpOutputModelPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputModelProjection(@NotNull SchemaOpOutputModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpOutputModelProperty(@NotNull SchemaOpOutputModelProperty o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputModelSingleTail(@NotNull SchemaOpOutputModelSingleTail o) {
     visitPsiElement(o);
   }
 
