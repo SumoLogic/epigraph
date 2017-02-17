@@ -283,7 +283,7 @@ reqDeleteVarSingleTail ::= typeRef reqDeleteVarProjection
 reqDeleteVarMultiTail ::= '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=1}
 reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
 //
-reqDeleteModelPolymorphicTail ::= '~' '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) {pin=1}
+reqDeleteModelPolymorphicTail ::= '~' '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) {pin=2}
 reqDeleteModelSingleTail ::= typeRef reqDeleteModelProjection
 reqDeleteModelMultiTail ::= '(' (reqDeleteModelMultiTailItem ','?)* ')' {pin=1}
 reqDeleteModelMultiTailItem ::= typeRef reqDeleteModelProjection
@@ -321,7 +321,7 @@ reqInputVarSingleTail ::= typeRef reqInputVarProjection
 reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
 reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
 //
-reqInputModelPolymorphicTail ::= '~' '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) {pin=1}
+reqInputModelPolymorphicTail ::= '~' '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) {pin=2}
 reqInputModelSingleTail ::= typeRef reqInputModelProjection
 reqInputModelMultiTail ::= '(' (reqInputModelMultiTailItem ','?)* ')' {pin=1}
 reqInputModelMultiTailItem ::= typeRef reqInputModelProjection

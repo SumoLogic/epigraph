@@ -1322,8 +1322,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 1, U_TILDA, U_TILDA);
-    p = r; // pin = 1
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
     r = r && reqDeleteModelPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
@@ -1926,8 +1926,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 1, U_TILDA, U_TILDA);
-    p = r; // pin = 1
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
     r = r && reqInputModelPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;

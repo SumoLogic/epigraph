@@ -59,7 +59,7 @@ public interface GenModelProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull SMP normalizedForType(@NotNull DatumTypeApi type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
+  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
 
   /**
    * Merges a list of models together
