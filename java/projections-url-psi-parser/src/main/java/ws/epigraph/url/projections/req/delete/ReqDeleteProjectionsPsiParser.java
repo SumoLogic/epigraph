@@ -403,6 +403,7 @@ public final class ReqDeleteProjectionsPsiParser {
             params,
             annotations,
             fields,
+            null,
             location
         );
       case MAP:
@@ -422,6 +423,7 @@ public final class ReqDeleteProjectionsPsiParser {
             annotations,
             null,
             valueVarProjection,
+            null,
             location
         );
       case LIST:
@@ -440,6 +442,7 @@ public final class ReqDeleteProjectionsPsiParser {
             params,
             annotations,
             itemVarProjection,
+            null,
             location
         );
       case UNION:
@@ -456,6 +459,7 @@ public final class ReqDeleteProjectionsPsiParser {
             (PrimitiveTypeApi) type,
             params,
             annotations,
+            null,
             location
         );
       default:
@@ -593,6 +597,7 @@ public final class ReqDeleteProjectionsPsiParser {
         params,
         annotations,
         fieldProjections,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -686,6 +691,7 @@ public final class ReqDeleteProjectionsPsiParser {
         annotations,
         keyProjections,
         elementsVarProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -719,6 +725,7 @@ public final class ReqDeleteProjectionsPsiParser {
         params,
         annotations,
         elementsVarProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -733,6 +740,7 @@ public final class ReqDeleteProjectionsPsiParser {
         op.model(),
         params,
         annotations,
+        null, // todo
         EpigraphPsiUtil.getLocation(locationPsi)
     );
 

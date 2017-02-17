@@ -154,7 +154,7 @@ public final class ProjectionsParsingUtil {
    * Finds tag projection by tag name
    */
   public static @NotNull <
-      MP extends GenModelProjection<?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       >
@@ -177,7 +177,7 @@ public final class ProjectionsParsingUtil {
    * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
    */
   public static @Nullable <
-      MP extends GenModelProjection<?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       >

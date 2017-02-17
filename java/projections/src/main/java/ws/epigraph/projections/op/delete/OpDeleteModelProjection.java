@@ -17,18 +17,21 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpDeleteModelProjection<
     MP extends OpDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends OpDeleteModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends OpDeleteModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi
     > extends AbstractOpModelProjection<MP, SMP, M> {
 
@@ -36,9 +39,10 @@ public abstract class OpDeleteModelProjection<
       @NotNull M model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
+      @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, null, params, annotations, location);
+    super(model, null, params, annotations, tails, location);
   }
 
 }

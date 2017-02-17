@@ -41,6 +41,7 @@ new OpDeleteRecordModelProjection(
   ${i(gen(p.annotations(), ctx))},
   ${i(genLinkedMap("String", "OpDeleteFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

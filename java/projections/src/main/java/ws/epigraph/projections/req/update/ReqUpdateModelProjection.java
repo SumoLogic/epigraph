@@ -17,12 +17,14 @@
 package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,7 +32,7 @@ import java.util.Objects;
  */
 public abstract class ReqUpdateModelProjection<
     MP extends ReqUpdateModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends ReqUpdateModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqUpdateModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
@@ -41,9 +43,10 @@ public abstract class ReqUpdateModelProjection<
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, params, null, annotations, location);
+    super(model, params, null, annotations, tails, location);
     this.update = update;
   }
 

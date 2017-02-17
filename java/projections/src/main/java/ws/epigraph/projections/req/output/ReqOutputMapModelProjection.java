@@ -53,8 +53,9 @@ public class ReqOutputMapModelProjection
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
       @NotNull ReqOutputVarProjection valuesProjection,
+      @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, tails, location);
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }
@@ -71,7 +72,8 @@ public class ReqOutputMapModelProjection
       final @NotNull List<ReqOutputMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqOutputMapModelProjection> mergedTails) {
 
 
     final List<ReqOutputKeyProjection> mergedKeys;
@@ -102,6 +104,7 @@ public class ReqOutputMapModelProjection
         mergedMetaProjection,
         mergedKeys,
         mergedItemsVarType,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

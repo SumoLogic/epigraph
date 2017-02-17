@@ -36,7 +36,7 @@ import java.util.*;
 public abstract class AbstractProjectionsPrettyPrinter<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;

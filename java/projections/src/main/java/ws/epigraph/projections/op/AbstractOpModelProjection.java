@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 public abstract class AbstractOpModelProjection<
     MP extends AbstractOpModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends AbstractOpModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends AbstractOpModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
     extends AbstractModelProjection<MP, SMP, M> {
   protected final @NotNull OpParams params;
@@ -44,8 +44,9 @@ public abstract class AbstractOpModelProjection<
       final @Nullable MP metaProjection,
       final @NotNull OpParams params,
       final @NotNull Annotations annotations,
+      final @Nullable List<SMP> tails,
       final @NotNull TextLocation location) {
-    super(model, metaProjection, annotations, location);
+    super(model, metaProjection, annotations, tails, location);
     this.params = params;
   }
 
@@ -56,20 +57,21 @@ public abstract class AbstractOpModelProjection<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull Annotations mergedAnnotations,
-      final MP mergedMetaProjection) {
+      final MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails) {
 
     if (modelProjections.isEmpty()) return null;
 
     Collection<OpParams> paramsList = new ArrayList<>();
 
-    for (final GenModelProjection<?, ?, ?> projection : modelProjections) {
+    for (final GenModelProjection<?, ?, ?, ?> projection : modelProjections) {
       AbstractOpModelProjection<?, ?, ?> mp = (AbstractOpModelProjection<?, ?, ?>) projection;
       paramsList.add(mp.params());
     }
 
     return merge(
         model,
-        modelProjections, OpParams.merge(paramsList), mergedAnnotations, mergedMetaProjection
+        modelProjections, OpParams.merge(paramsList), mergedAnnotations, mergedMetaProjection, mergedTails
     );
   }
 
@@ -79,7 +81,8 @@ public abstract class AbstractOpModelProjection<
       @NotNull List<SMP> modelProjections,
       @NotNull OpParams mergedParams,
       @NotNull Annotations mergedAnnotations,
-      @Nullable MP mergedMetaProjection) {
+      @Nullable MP mergedMetaProjection,
+      @Nullable List<SMP> mergedTails) {
 
     throw new RuntimeException("not implemented"); // todo
   }

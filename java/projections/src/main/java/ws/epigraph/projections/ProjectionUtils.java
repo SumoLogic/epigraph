@@ -25,6 +25,7 @@ import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.UnionTypeApi;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -64,7 +65,7 @@ public final class ProjectionUtils {
 
       lastDataType = tagProjection.tag().type().dataType();
 
-      final GenModelProjection<?, ?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
@@ -100,7 +101,7 @@ public final class ProjectionUtils {
 
       len++;
 
-      final GenModelProjection<?, ?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.model();
       switch (model.kind()) {
         case RECORD:
@@ -125,23 +126,92 @@ public final class ProjectionUtils {
     return len;
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+  // var tails linearization
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeVarTails(
       @NotNull TypeApi t,
       @NotNull Stream<VP> tails) {
 
-    return linearizeTails(t, tails, new LinkedList<>());
+    return linearizeVarTails(t, tails, new LinkedList<>());
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeVarTails(
       @NotNull TypeApi t,
       @NotNull List<VP> tails) {
 
+    return linearizeTails(
+        VP::type,
+        VP::polymorphicTails,
+        t,
+        tails
+    );
+
+  }
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeVarTails(
+      @NotNull TypeApi type,
+      @NotNull Stream<VP> tails,
+      @NotNull LinkedList<VP> linearizedTails) {
+
+    return linearizeTails(
+        VP::type,
+        VP::polymorphicTails,
+        type,
+        tails,
+        linearizedTails
+    );
+  }
+
+  // model tails linearization
+
+  public static <MP extends GenModelProjection<?, ?, MP, ?>> List<MP> linearizeModelTails(
+      @NotNull TypeApi t,
+      @NotNull Stream<MP> tails) {
+
+    return linearizeModelTails(t, tails, new LinkedList<>());
+  }
+
+  public static <MP extends GenModelProjection<?, ?, MP, ?>> List<MP> linearizeModelTails(
+      @NotNull TypeApi t,
+      @NotNull List<MP> tails) {
+
+    return linearizeTails(
+        m -> m.model(),
+        MP::polymorphicTails,
+        t,
+        tails
+    );
+
+  }
+
+  public static <MP extends GenModelProjection<?, ?, MP, ?>> List<MP> linearizeModelTails(
+      @NotNull TypeApi type,
+      @NotNull Stream<MP> tails,
+      @NotNull LinkedList<MP> linearizedTails) {
+
+    return linearizeTails(
+        m -> m.model(),
+        MP::polymorphicTails,
+        type,
+        tails,
+        linearizedTails
+    );
+  }
+
+  // generic tails linearization
+
+  private static <P> List<P> linearizeTails(
+      @NotNull Function<P, TypeApi> typeAccessor,
+      @NotNull Function<P, List<P>> tailsAccessor,
+      @NotNull TypeApi t,
+      @NotNull List<P> tails) {
+
     if (tails.isEmpty()) return Collections.emptyList();
     if (tails.size() == 1) {
-      final VP tail = tails.get(0);
-      final Collection<VP> tailTails = tail.polymorphicTails();
+      final P tail = tails.get(0);
+      final Collection<P> tailTails = tailsAccessor.apply(tail);
 
-      if (tail.type().isAssignableFrom(t)) {
+      if (typeAccessor.apply(tail).isAssignableFrom(t)) {
         if (tailTails == null || tailTails.isEmpty())
           return tails;
         // else run full linearizeTails below
@@ -149,24 +219,27 @@ public final class ProjectionUtils {
         return Collections.emptyList();
     }
 
-    return linearizeTails(t, tails.stream(), new LinkedList<>());
+    return linearizeTails(typeAccessor, tailsAccessor, t, tails.stream(), new LinkedList<>());
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeTails(
+  private static <P> List<P> linearizeTails(
+      @NotNull Function<P, TypeApi> typeAccessor,
+      @NotNull Function<P, List<P>> tailsAccessor,
       @NotNull TypeApi type,
-      @NotNull Stream<VP> tails,
-      @NotNull LinkedList<VP> linearizedTails) {
+      @NotNull Stream<P> tails,
+      @NotNull LinkedList<P> linearizedTails) {
 
-    final Optional<VP> matchingTailOpt = tails.filter(tail -> tail.type().isAssignableFrom(type)).findFirst();
+    final Optional<P> matchingTailOpt =
+        tails.filter(tail -> typeAccessor.apply(tail).isAssignableFrom(type)).findFirst();
 
     if (matchingTailOpt.isPresent()) {
-      final VP matchingTail = matchingTailOpt.get();
+      final P matchingTail = matchingTailOpt.get();
       linearizedTails.addFirst(matchingTail);
 //      linearizedTails.addFirst(stripTails(matchingTail));
 
-      final List<VP> tails2 = matchingTail.polymorphicTails();
+      final List<P> tails2 = tailsAccessor.apply(matchingTail);
       if (tails2 != null)
-        linearizeTails(type, tails2.stream(), linearizedTails);
+        linearizeTails(typeAccessor, tailsAccessor, type, tails2.stream(), linearizedTails);
 
     }
 

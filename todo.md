@@ -2,7 +2,6 @@
 - [ ] Schema/IDL: enforce folders structure based on namespace?
 - [ ] gradle/maven build: add verification that all files have apache license headers
 
-
 # Framework
 - [x] Fix tails support in JSON output. Data trimmer must be fixed?
 - JSON marshaller
@@ -24,6 +23,7 @@
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 - [ ] Add `type.createBuilder(data)` similar to `toImmutable`
 - [ ] Introduce real epigraph (record?) type for holding error values
+- [ ] Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/merged
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
@@ -50,10 +50,10 @@
 - [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
-- [ ] **HIGH** resolve field vs model params/annotations syntax problem
+- [x] **HIGH** resolve field vs model params/annotations syntax problem
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] support for recursive projections
-- [ ] Generate projection classes for specific types. For both req and op! So it's possibly to easly access things like permissions attached to op
+- [x] Generate projection classes for specific types. For both req and op! So it's possibly to easly access things like permissions attached to op
 - [ ] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
   - [ ] update parser
   - [ ] input parser
@@ -68,11 +68,6 @@
 - [x] rename `pathTagProjection` to `singleTagProjection` (mind codegen)
 
 # Operations
--[x] Operations code gen
-  -[x] Op input projections code gen
-    -[x] Add support for defaults
-  -[x] Op output projections code gen
-  -[x] Op delete projections code gen
 
 # Service
 
@@ -80,8 +75,8 @@
   - [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)
   - [x] Try to remove sources copying from `java/schema-parser`, include generated sources directly. See if IDEA will get confused about them. If all is fine: get rid of `maven-resources-plugin`
   - Gradle
-    -[ ] light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM
-    -[ ] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
+    -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
+    -[x] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
   - Maven
 
 # Other

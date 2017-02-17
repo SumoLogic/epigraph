@@ -103,7 +103,7 @@ public final class JsonFormatCommon {
   public static <
       VP extends GenVarProjection<VP, TP, MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      MP extends GenModelProjection</*MP*/?, ?, ?>,
+      MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
       Coll extends Collection<MP>>
 
   @Nullable Coll tagModelProjections(

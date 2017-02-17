@@ -25,6 +25,8 @@ import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -39,7 +41,8 @@ public class OpInputPrimitiveModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
+      @Nullable List<OpInputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, defaultValue, params, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
   }
 }

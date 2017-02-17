@@ -67,7 +67,7 @@ public final class UrlProjectionsPsiParserUtil {
    * self tag} and, if not {@code null}, returns it; otherwise fails.
    */
   public static @NotNull <
-      MP extends GenModelProjection<?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
   TagApi getTagOrSelfTag(
@@ -100,7 +100,7 @@ public final class UrlProjectionsPsiParserUtil {
    */
   @Contract("_, !null, _, _, _ -> !null")
   public static @Nullable <
-      MP extends GenModelProjection<?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
 
@@ -122,7 +122,7 @@ public final class UrlProjectionsPsiParserUtil {
    * Finds supported tag with a given name in type {@code type}
    */
   public static @NotNull <
-      MP extends GenModelProjection<?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
   TagApi getTag(

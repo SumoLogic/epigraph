@@ -38,8 +38,9 @@ public class OpOutputPrimitiveModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<OpOutputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, tails, location);
   }
 
   @Override
@@ -48,13 +49,15 @@ public class OpOutputPrimitiveModelProjection
       final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpOutputPrimitiveModelProjection> mergedTails) {
 
     return new OpOutputPrimitiveModelProjection(
         model,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

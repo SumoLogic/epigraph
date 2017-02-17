@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractTagProjectionEntry<
     TP extends AbstractTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
     > implements GenTagProjectionEntry<TP, MP> {
 
   private final @NotNull TagApi tag;
@@ -71,7 +71,7 @@ public abstract class AbstractTagProjectionEntry<
 
     final @NotNull MP mp = models.get(0);
     final @NotNull DatumTypeApi type = tag.type();
-    MP mergedModel = ((GenModelProjection<MP, MP, DatumTypeApi>) mp).merge(type, models);
+    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(type, models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }

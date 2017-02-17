@@ -28,7 +28,7 @@ import ws.epigraph.types.DatumTypeApi;
  */
 public abstract class ReqModelPath<
     MP extends ReqModelPath</*MP*/?, /*SMP*/?, ?>,
-    SMP extends ReqModelPath</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqModelPath</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
@@ -37,6 +37,6 @@ public abstract class ReqModelPath<
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull TextLocation location) {
-    super(model, params, null, annotations, location);
+    super(model, params, null, annotations, null, location);
   }
 }

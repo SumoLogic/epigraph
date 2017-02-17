@@ -742,6 +742,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             null,
             fields,
+            null,
             location
         );
       case MAP:
@@ -771,6 +772,7 @@ public final class ReqOutputProjectionsPsiParser {
             null,
             null,
             valueVarProjection,
+            null,
             location
         );
       case LIST:
@@ -792,6 +794,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             null,
             itemVarProjection,
+            null,
             location
         );
       case UNION:
@@ -809,6 +812,7 @@ public final class ReqOutputProjectionsPsiParser {
             required,
             params,
             annotations,
+            null,
             null,
             location
         );
@@ -926,6 +930,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             metaProjection,
             fieldProjections,
+            null, // todo
             fieldLocation
         )
     );
@@ -1087,6 +1092,7 @@ public final class ReqOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         fieldProjections,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1135,6 +1141,7 @@ public final class ReqOutputProjectionsPsiParser {
             metaProjection,
             Collections.singletonList(keyProjection),
             valueProjection,
+            null, // todo
             EpigraphPsiUtil.getLocation(psi)
         )
     );
@@ -1220,6 +1227,7 @@ public final class ReqOutputProjectionsPsiParser {
         metaProjection,
         keyProjections,
         valueProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1257,6 +1265,7 @@ public final class ReqOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         itemsProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1275,6 +1284,7 @@ public final class ReqOutputProjectionsPsiParser {
         params,
         annotations,
         metaProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

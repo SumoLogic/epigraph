@@ -49,8 +49,9 @@ public class ReqInputMapModelProjection
       @NotNull Annotations annotations,
       @Nullable List<ReqInputKeyProjection> keys,
       @NotNull ReqInputVarProjection valuesProjection,
+      @Nullable List<ReqInputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }

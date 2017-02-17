@@ -321,7 +321,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   private static @NotNull Deque<ReqOutputVarProjection> varProjections(
       @NotNull ReqOutputVarProjection projection,
       @NotNull TypeApi varType
-  ) { return append(new ArrayDeque<>(projection.polymorphicDepth() + 1), projection, varType); }
+  ) { return append(new ArrayDeque<>(5), projection, varType); }
 
   // FIXME take explicit type for all projectionless writes below
 

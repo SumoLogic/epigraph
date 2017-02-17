@@ -38,6 +38,7 @@ new OpDeleteListModelProjection(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.itemsProjection(), ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

@@ -49,8 +49,9 @@ public class OpOutputListModelProjection
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull OpOutputVarProjection itemsProjection,
+      @Nullable List<OpOutputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -64,7 +65,8 @@ public class OpOutputListModelProjection
       final @NotNull List<OpOutputListModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpOutputListModelProjection> mergedTails) {
 
     List<OpOutputVarProjection> itemProjections =
         modelProjections.stream()
@@ -79,6 +81,7 @@ public class OpOutputListModelProjection
         mergedAnnotations,
         mergedMetaProjection,
         mergedItemsVarType,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

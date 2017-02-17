@@ -25,6 +25,7 @@ import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.MapTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,8 +53,9 @@ public class OpInputMapModelProjection
       @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpInputKeyProjection keyProjection,
       @NotNull OpInputVarProjection itemsProjection,
+      @Nullable List<OpInputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, defaultValue, params, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
     this.keyProjection = keyProjection;
     this.itemsProjection = itemsProjection;
   }

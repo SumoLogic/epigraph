@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -24,6 +25,7 @@ import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.RecordTypeApi;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,8 +50,9 @@ public class OpDeleteRecordModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections,
+      @Nullable List<OpDeleteRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

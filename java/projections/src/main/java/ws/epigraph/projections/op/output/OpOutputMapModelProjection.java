@@ -52,8 +52,9 @@ public class OpOutputMapModelProjection
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull OpOutputKeyProjection keyProjection,
       @NotNull OpOutputVarProjection itemsProjection,
+      @Nullable List<OpOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
     this.keyProjection = keyProjection;
   }
@@ -70,7 +71,8 @@ public class OpOutputMapModelProjection
       final @NotNull List<OpOutputMapModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpOutputMapModelProjection> mergedTails) {
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
@@ -119,6 +121,7 @@ public class OpOutputMapModelProjection
             TextLocation.UNKNOWN
         ),
         itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

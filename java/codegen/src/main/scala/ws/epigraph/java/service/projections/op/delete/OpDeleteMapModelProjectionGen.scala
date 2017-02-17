@@ -39,6 +39,7 @@ new OpDeleteMapModelProjection(
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.keyProjection(), ctx))},
   ${i(gen(p.itemsProjection(), ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

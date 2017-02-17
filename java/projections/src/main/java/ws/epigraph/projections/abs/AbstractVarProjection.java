@@ -28,7 +28,7 @@ import ws.epigraph.types.TypeApi;
 
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionUtils.linearizeTails;
+import static ws.epigraph.projections.ProjectionUtils.linearizeVarTails;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,7 +36,7 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeTails;
 public abstract class AbstractVarProjection<
     VP extends AbstractVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
@@ -44,7 +44,6 @@ public abstract class AbstractVarProjection<
   private final boolean parenthesized; // todo merge
   private final @Nullable List<VP> polymorphicTails;
 
-  private int polymorphicDepth = -1;
   private final @NotNull TextLocation location;
 
   protected AbstractVarProjection(
@@ -127,27 +126,13 @@ public abstract class AbstractVarProjection<
   @Override
   public @Nullable List<VP> polymorphicTails() { return polymorphicTails; }
 
-  /**
-   * Max polymorphic tail depth.
-   */
-  public int polymorphicDepth() {
-    if (polymorphicDepth == -1)
-      polymorphicDepth = polymorphicTails == null
-                         ? 0
-                         : polymorphicTails.stream()
-                             .mapToInt(AbstractVarProjection::polymorphicDepth)
-                             .max()
-                             .orElse(0);
-    return polymorphicDepth;
-  }
-
   @Override
   public @NotNull VP normalizedForType(final @NotNull TypeApi targetType) {
 
     final @Nullable List<VP> polymorphicTails = polymorphicTails();
     if (polymorphicTails == null || polymorphicTails.isEmpty()) return self();
 
-    final List<VP> linearizedTails = linearizeTails(targetType, polymorphicTails);
+    final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails);
 
     if (linearizedTails.isEmpty())
       return self();
@@ -155,16 +140,10 @@ public abstract class AbstractVarProjection<
     final TypeApi effectiveType = linearizedTails.get(0).type();
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
-    final @Nullable List<VP> mergedTails = mergeTails(effectiveProjections);
-
+    final List<VP> mergedTails = mergeTails(effectiveProjections); // before adding self!
     effectiveProjections.add(self()); //we're the least specific projection
 
-    final Map<String, TagApi> tags = collectTags(effectiveProjections);
-    final LinkedHashMap<String, TP> mergedTags = mergeTags(tags, effectiveProjections);
-
-    final boolean mergedParenthesized = mergeParenthesized(effectiveProjections, mergedTags);
-
-    return merge(effectiveType, effectiveProjections, mergedTags, mergedParenthesized, mergedTails);
+    return merge(effectiveType, mergedTails, effectiveProjections);
   }
 
   private @NotNull Map<String, TagApi>
@@ -209,6 +188,26 @@ public abstract class AbstractVarProjection<
     return mergedTags.size() != 1 || varProjections.stream().anyMatch(GenVarProjection::parenthesized);
   }
 
+  @Override
+  public @NotNull VP merge(final @NotNull List<VP> varProjections) {
+    return merge(type(), mergeTails(varProjections), varProjections);
+  }
+
+  protected @NotNull VP merge(
+      final @NotNull TypeApi type,
+      final @Nullable List<VP> mergedTails,
+      final @NotNull List<VP> varProjections) {
+    if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
+    if (varProjections.size() == 1) return varProjections.get(0);
+
+    final @NotNull Map<String, TagApi> tags = collectTags(varProjections);
+
+    final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
+    boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
+
+    return merge(type, varProjections, mergedTags, mergedParenthesized, mergedTails);
+  }
+
   private @Nullable List<VP> mergeTails(
       final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
@@ -225,19 +224,6 @@ public abstract class AbstractVarProjection<
     return mergedTails;
   }
 
-  @Override
-  public @NotNull VP merge(final @NotNull List<VP> varProjections) {
-    if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
-    if (varProjections.size() == 1) return varProjections.get(0);
-
-    final @NotNull Map<String, TagApi> tags = collectTags(varProjections);
-
-    final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
-    boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
-    final @Nullable List<VP> mergedTails = mergeTails(varProjections);
-
-    return merge(type(), varProjections, mergedTags, mergedParenthesized, mergedTails);
-  }
 
   /* static */
   protected VP merge(

@@ -25,6 +25,7 @@ import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -50,8 +51,9 @@ public class OpInputListModelProjection
       @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpInputVarProjection itemsProjection,
+      @Nullable List<OpInputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, defaultValue, params, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 

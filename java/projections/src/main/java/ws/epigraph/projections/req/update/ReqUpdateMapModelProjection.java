@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.update;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -51,8 +52,9 @@ public class ReqUpdateMapModelProjection
       boolean updateKeys,
       @NotNull List<ReqUpdateKeyProjection> keys,
       @NotNull ReqUpdateVarProjection valuesProjection,
+      @Nullable List<ReqUpdateMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, location);
+    super(model, update, params, annotations, tails, location);
     this.updateKeys = updateKeys;
     this.keys = keys;
     this.valuesProjection = valuesProjection;

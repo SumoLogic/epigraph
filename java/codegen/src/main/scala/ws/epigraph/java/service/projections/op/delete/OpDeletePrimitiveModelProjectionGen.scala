@@ -37,6 +37,7 @@ new OpDeletePrimitiveModelProjection(
   ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

@@ -53,8 +53,9 @@ public class OpOutputRecordModelProjection
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
+      @Nullable List<OpOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, location);
+    super(model, params, annotations, metaProjection, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
@@ -69,7 +70,8 @@ public class OpOutputRecordModelProjection
       final @NotNull List<OpOutputRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpOutputRecordModelProjection> mergedTails) {
 
     Map<FieldApi, OpOutputFieldProjection> mergedFieldProjections =
         RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
@@ -92,6 +94,7 @@ public class OpOutputRecordModelProjection
         mergedAnnotations,
         mergedMetaProjection,
         mergedFieldEntries,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

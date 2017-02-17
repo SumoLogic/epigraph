@@ -378,6 +378,7 @@ public final class OpDeleteProjectionsPsiParser {
             params,
             annotations,
             Collections.emptyMap(),
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
@@ -415,6 +416,7 @@ public final class OpDeleteProjectionsPsiParser {
             annotations,
             keyProjection,
             valueVarProjection,
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
@@ -442,6 +444,7 @@ public final class OpDeleteProjectionsPsiParser {
             params,
             annotations,
             itemVarProjection,
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case UNION:
@@ -457,6 +460,7 @@ public final class OpDeleteProjectionsPsiParser {
             (PrimitiveTypeApi) type,
             params,
             annotations,
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
@@ -507,6 +511,7 @@ public final class OpDeleteProjectionsPsiParser {
         params,
         annotations,
         fieldProjections,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -564,6 +569,7 @@ public final class OpDeleteProjectionsPsiParser {
         annotations,
         keyProjection,
         valueProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -624,6 +630,7 @@ public final class OpDeleteProjectionsPsiParser {
         params,
         annotations,
         itemsProjection,
+        null, // todo
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -638,6 +645,7 @@ public final class OpDeleteProjectionsPsiParser {
         type,
         params,
         annotations,
+        null, // todo
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

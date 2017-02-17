@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.op.delete;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -23,6 +24,7 @@ import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -45,8 +47,9 @@ public class OpDeleteListModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull OpDeleteVarProjection itemsProjection,
+      @Nullable List<OpDeleteListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
     this.itemsProjection = itemsProjection;
   }
 

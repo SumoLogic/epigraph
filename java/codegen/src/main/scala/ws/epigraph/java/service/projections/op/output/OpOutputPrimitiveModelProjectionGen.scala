@@ -38,6 +38,7 @@ new OpOutputPrimitiveModelProjection(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

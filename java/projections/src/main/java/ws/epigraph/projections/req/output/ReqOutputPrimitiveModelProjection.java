@@ -39,8 +39,9 @@ public class ReqOutputPrimitiveModelProjection
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, tails, location);
   }
 
   /* static */
@@ -51,7 +52,8 @@ public class ReqOutputPrimitiveModelProjection
       final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqOutputPrimitiveModelProjection> mergedTails) {
 
     return new ReqOutputPrimitiveModelProjection(
         model,
@@ -59,6 +61,7 @@ public class ReqOutputPrimitiveModelProjection
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

@@ -24,12 +24,14 @@ import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpOutputModelProjection<
     MP extends OpOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends OpOutputModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends OpOutputModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi
     > extends AbstractOpModelProjection<MP, SMP, M> {
 
@@ -38,8 +40,9 @@ public abstract class OpOutputModelProjection<
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable MP metaProjection,
+      @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, metaProjection, params, annotations, location);
+    super(model, metaProjection, params, annotations, tails, location);
   }
 }

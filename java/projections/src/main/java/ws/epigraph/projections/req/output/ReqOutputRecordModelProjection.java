@@ -52,8 +52,9 @@ public class ReqOutputRecordModelProjection
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
+      @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
@@ -74,7 +75,8 @@ public class ReqOutputRecordModelProjection
       final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqOutputRecordModelProjection> mergedTails) {
 
 
     Map<FieldApi, ReqOutputFieldProjection> mergedFieldProjections =
@@ -99,6 +101,7 @@ public class ReqOutputRecordModelProjection
         mergedAnnotations,
         mergedMetaProjection,
         mergedFieldEntries,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

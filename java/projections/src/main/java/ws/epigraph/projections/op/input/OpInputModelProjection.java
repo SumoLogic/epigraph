@@ -25,6 +25,7 @@ import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,7 +33,7 @@ import java.util.Objects;
  */
 public abstract class OpInputModelProjection<
     MP extends OpInputModelProjection</*MP*/?, /*SMP*/?, /*M*/?, /*D*/?>,
-    SMP extends OpInputModelProjection</*MP*/?, ?, ?, ?>,
+    SMP extends OpInputModelProjection</*MP*/?, SMP, ?, ?>,
     M extends DatumTypeApi,
     D extends GDatum>
     extends AbstractOpModelProjection<MP, SMP, M> {
@@ -47,9 +48,10 @@ public abstract class OpInputModelProjection<
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable MP metaProjection,
+      @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, metaProjection, params, annotations, location);
+    super(model, metaProjection, params, annotations, tails, location);
     this.required = required;
     this.defaultValue = defaultValue;
   }

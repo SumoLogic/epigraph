@@ -49,8 +49,9 @@ public class ReqDeleteMapModelProjection
       @NotNull Annotations annotations,
       @Nullable List<ReqDeleteKeyProjection> keys,
       @NotNull ReqDeleteVarProjection valuesProjection,
+      @Nullable List<ReqDeleteMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }

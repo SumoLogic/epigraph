@@ -50,8 +50,9 @@ public class ReqOutputListModelProjection
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull ReqOutputVarProjection itemsProjection,
+      @Nullable List<ReqOutputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, location);
+    super(model, required, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -66,7 +67,8 @@ public class ReqOutputListModelProjection
       final @NotNull List<ReqOutputListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection) {
+      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqOutputListModelProjection> mergedTails) {
 
     List<ReqOutputVarProjection> itemProjections =
         modelProjections.stream()
@@ -82,6 +84,7 @@ public class ReqOutputListModelProjection
         mergedAnnotations,
         mergedMetaProjection,
         mergedItemsVarType,
+        mergedTails,
         TextLocation.UNKNOWN
     );
   }

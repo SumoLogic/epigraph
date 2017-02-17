@@ -28,6 +28,7 @@ import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,9 +56,10 @@ public class OpInputRecordModelProjection
       @NotNull Annotations annotations,
       @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections,
+      @Nullable List<OpInputRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, required, defaultValue, params, annotations, metaProjection, location);
+    super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface GenTagProjectionEntry<
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
     > {
 
   @NotNull TagApi tag();

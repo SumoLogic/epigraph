@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.update;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -23,6 +24,7 @@ import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,8 +48,9 @@ public class ReqUpdateListModelProjection
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqUpdateVarProjection itemsProjection,
+      @Nullable List<ReqUpdateListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, location);
+    super(model, update, params, annotations, tails, location);
     this.itemsProjection = itemsProjection;
   }
 

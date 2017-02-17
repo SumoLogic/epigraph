@@ -40,6 +40,7 @@ new OpOutputMapModelProjection(
   ${i(gen(p.metaProjection(), ctx))},
   ${i(gen(p.keyProjection(), ctx))},
   ${i(gen(p.itemsProjection(), ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

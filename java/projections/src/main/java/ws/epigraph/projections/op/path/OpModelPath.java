@@ -28,7 +28,7 @@ import ws.epigraph.types.DatumTypeApi;
  */
 public abstract class OpModelPath<
     MP extends OpModelPath</*MP*/?, /*SMP*/?, ?>,
-    SMP extends OpModelPath</*MP*/?, /*SMP*/?, ?>,
+    SMP extends OpModelPath</*MP*/?, SMP, ?>,
     M extends DatumTypeApi
     > extends AbstractOpModelProjection<MP, SMP, M> {
 
@@ -38,7 +38,7 @@ public abstract class OpModelPath<
       @NotNull Annotations annotations,
       @NotNull TextLocation location
   ) {
-    super(model, null, params, annotations, location);
+    super(model, null, params, annotations, null, location);
   }
 
 }

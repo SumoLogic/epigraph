@@ -49,8 +49,9 @@ public class ReqDeleteRecordModelProjection
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull Map<String, ReqDeleteFieldProjectionEntry> fieldProjections,
+      @Nullable List<ReqDeleteRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);

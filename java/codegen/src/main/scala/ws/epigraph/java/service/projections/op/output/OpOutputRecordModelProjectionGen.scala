@@ -42,6 +42,7 @@ new OpOutputRecordModelProjection(
   ${i(gen(p.metaProjection(), ctx))},
   ${i(genLinkedMap("String", "OpOutputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
+  null,
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

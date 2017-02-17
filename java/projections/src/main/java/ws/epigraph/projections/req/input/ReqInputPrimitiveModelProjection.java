@@ -16,12 +16,15 @@
 
 package ws.epigraph.projections.req.input;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +37,8 @@ public class ReqInputPrimitiveModelProjection
       @NotNull PrimitiveTypeApi model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqInputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
   }
 }

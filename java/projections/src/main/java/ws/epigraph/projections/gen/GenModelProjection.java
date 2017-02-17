@@ -22,19 +22,44 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
+ * Generic model projection
+ *
+ * @param <MP>  model projection type, e.g. {@code OpOutputModelProjection}
+ * @param <SMP> specific projection type, e.g. {@code OpOutputRecordModelProjection}
+ * @param <TMP> tail model projection type, almost always same as {@code SMP}. Possible exception in the future: any/abstract type
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenModelProjection<
-    MP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, ?>,
+    MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    TMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     M extends DatumTypeApi> {
 
   @NotNull M model();
 
   @Nullable MP metaProjection();
+
+  @Nullable List<TMP> polymorphicTails();
+
+  default @Nullable TMP tailByType(@NotNull DatumTypeApi type) {
+    Collection<TMP> tails = polymorphicTails();
+    return tails == null
+           ? null
+           : tails.stream().filter(t -> t.model().name().equals(type.name())).findFirst().orElse(null);
+  }
+
+  /**
+   * Builds normalized view of this model projection for a given type
+   *
+   * @param type target type
+   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
+   */
+  @NotNull SMP normalizedForType(@NotNull DatumTypeApi type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
 
   /**
    * Merges a list of models together
@@ -45,7 +70,6 @@ public interface GenModelProjection<
    *
    * @param model            resulting model's type
    * @param modelProjections models to merge
-   *
    * @return merged models or {@code null} if {@code modelProjections} is empty
    */
   /* static */

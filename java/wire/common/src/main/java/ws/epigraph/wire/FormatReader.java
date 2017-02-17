@@ -31,7 +31,7 @@ import ws.epigraph.types.DatumType;
 
 public interface FormatReader<
     VP extends GenVarProjection<VP, ?, ?>,
-    MP extends GenModelProjection</*MP*/?, ?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     Exc extends Exception> {
 
   @Nullable Data readData(@NotNull VP projection) throws Exc;

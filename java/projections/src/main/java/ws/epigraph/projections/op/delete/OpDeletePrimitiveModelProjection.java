@@ -17,11 +17,14 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +37,8 @@ public class OpDeletePrimitiveModelProjection
       @NotNull PrimitiveTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
+      @Nullable List<OpDeletePrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, annotations, tails, location);
   }
 }

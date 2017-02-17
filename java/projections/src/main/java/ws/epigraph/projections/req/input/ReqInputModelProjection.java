@@ -17,18 +17,21 @@
 package ws.epigraph.projections.req.input;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqInputModelProjection<
     MP extends ReqInputModelProjection</*MP*/?, /*SMP*/?, ?>,
-    SMP extends ReqInputModelProjection</*MP*/?, /*SMP*/?, ?>,
+    SMP extends ReqInputModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
@@ -36,8 +39,9 @@ public abstract class ReqInputModelProjection<
       @NotNull M model,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, params, null, annotations, location);
+    super(model, params, null, annotations, tails, location);
   }
 }
