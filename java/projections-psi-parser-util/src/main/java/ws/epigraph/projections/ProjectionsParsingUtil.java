@@ -150,6 +150,22 @@ public final class ProjectionsParsingUtil {
         ), location, errors);
   }
 
+  public static @NotNull DatumTypeApi getDatumType(
+      @NotNull TypeRef typeRef,
+      @NotNull TypesResolver resolver,
+      @NotNull PsiElement location,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    TypeApi type = getType(typeRef, resolver, location, errors);
+    if (type instanceof DatumTypeApi)
+      return (DatumTypeApi) type;
+
+    throw new PsiProcessingException(
+        String.format("Expected '%s' to be a non-var type, but actual kind is '%s'",
+            type.name().toString(), type.kind().toString()
+        ), location, errors);
+  }
+
   /**
    * Finds tag projection by tag name
    */

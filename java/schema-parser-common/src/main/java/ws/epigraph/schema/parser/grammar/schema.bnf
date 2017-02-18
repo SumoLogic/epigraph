@@ -533,9 +533,9 @@ opInputVarMultiTailItem ::= typeRef opInputVarProjection // {recoverWhile = opIn
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 //
 opInputModelPolymorphicTail ::= '~' '~' ( opInputModelSingleTail | opInputModelMultiTail ) {pin=2}
-opInputModelSingleTail ::= typeRef opInputModelProjection
+opInputModelSingleTail ::= typeRef opInputModelProjectionWithProperties
 opInputModelMultiTail ::= '(' (opInputModelMultiTailItem ','?)* ')' {pin=1}
-opInputModelMultiTailItem ::= typeRef opInputModelProjection
+opInputModelMultiTailItem ::= typeRef opInputModelProjectionWithProperties
 
 // todo: recovery. Commented out one breaks parsing tests
 //opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
@@ -546,11 +546,11 @@ opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjectio
 private opInputBracedVarProjection ::= '(' opInputVarProjection ')'
 
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputSingleTagProjection ::= ( ':' '+'? tagName)? (opInputComplexTagProjection | opInputSimpleTagProjection )
-opInputMultiTagProjectionItem ::= '+'? tagName ( opInputComplexTagProjection | opInputSimpleTagProjection )
+opInputSingleTagProjection ::= ( ':' '+'? tagName)? opInputModelProjectionWithProperties
+opInputMultiTagProjectionItem ::= '+'? tagName opInputModelProjectionWithProperties
 
-private opInputSimpleTagProjection ::= opInputModelProjection
-private opInputComplexTagProjection ::= '{' (opInputModelProperty ','?)* '}' opInputModelProjection {pin=1}
+private opInputModelProjectionWithProperties ::= opInputModelProjectionWithProperties_ | opInputModelProjection
+private opInputModelProjectionWithProperties_ ::= '{' (opInputModelProperty ','?)* '}' opInputModelProjection {pin=1}
 //
 
 opInputModelProjection ::= ( ( opInputRecordModelProjection

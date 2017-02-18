@@ -7,10 +7,19 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaOpInputModelSingleTail extends PsiElement {
 
-  @NotNull
+  @Nullable
   SchemaOpInputModelProjection getOpInputModelProjection();
 
   @NotNull
+  List<SchemaOpInputModelProperty> getOpInputModelPropertyList();
+
+  @NotNull
   SchemaTypeRef getTypeRef();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

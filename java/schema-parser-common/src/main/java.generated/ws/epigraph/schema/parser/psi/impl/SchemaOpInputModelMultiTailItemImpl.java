@@ -27,15 +27,33 @@ public class SchemaOpInputModelMultiTailItemImpl extends ASTWrapperPsiElement im
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaOpInputModelProjection getOpInputModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class));
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaOpInputModelProperty> getOpInputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpInputModelProperty.class);
   }
 
   @Override
   @NotNull
   public SchemaTypeRef getTypeRef() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }
