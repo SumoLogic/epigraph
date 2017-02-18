@@ -47,12 +47,12 @@ public class OpInputProjectionsTest {
         "    ),",
         "    friends :_ {} *( :+id {} )",
         "  )",
-        ") ~ws.epigraph.tests.User :`record` (profile)"
+        ") ~~ws.epigraph.tests.User :`record` (profile)"
     );
 
     String expected = lines(
         ":( +id, `record` ( +id, +bestFriend :`record` ( +id, bestFriend :id { default: 123 } ), friends *( :+id ) ) )",
-        "  ~ws.epigraph.tests.User :`record` ( profile )"
+        "  ~~ws.epigraph.tests.User :`record` ( profile )"
     );
 
     testParsingVarProjection(
@@ -83,8 +83,8 @@ public class OpInputProjectionsTest {
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
-        "~ws.epigraph.tests.User :id",
-        ":id ~ws.epigraph.tests.User :id"
+        "~~ws.epigraph.tests.User :id",
+        ":id ~~ws.epigraph.tests.User :id"
     );
   }
 
@@ -92,8 +92,8 @@ public class OpInputProjectionsTest {
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
-        "~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )",
-        ":id ~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )",
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
     );
   }
 

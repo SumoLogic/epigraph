@@ -38,10 +38,4 @@ public class SchemaOpDeleteVarPolymorphicTailImpl extends ASTWrapperPsiElement i
     return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteVarSingleTail.class);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return notNullChild(findChildByType(S_TILDA));
-  }
-
 }

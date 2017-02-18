@@ -38,10 +38,4 @@ public class UrlReqDeleteVarPolymorphicTailImpl extends ASTWrapperPsiElement imp
     return findChildByClass(UrlReqDeleteVarSingleTail.class);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return findNotNullChildByType(U_TILDA);
-  }
-
 }

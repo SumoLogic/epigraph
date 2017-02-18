@@ -2137,22 +2137,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opDeleteModelSingleTail | opDeleteModelMultiTail )
+  // '~' ( opDeleteModelSingleTail | opDeleteModelMultiTail )
   public static boolean opDeleteModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
-    p = r; // pin = 2
-    r = r && opDeleteModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_TILDA);
+    r = r && opDeleteModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, S_OP_DELETE_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // opDeleteModelSingleTail | opDeleteModelMultiTail
-  private static boolean opDeleteModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteModelPolymorphicTail_2")) return false;
+  private static boolean opDeleteModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opDeleteModelSingleTail(b, l + 1);
@@ -2460,22 +2459,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( opDeleteVarSingleTail | opDeleteVarMultiTail )
+  // '~' '~' ( opDeleteVarSingleTail | opDeleteVarMultiTail )
   public static boolean opDeleteVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, S_TILDA);
-    p = r; // pin = 1
-    r = r && opDeleteVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    p = r; // pin = 2
+    r = r && opDeleteVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // opDeleteVarSingleTail | opDeleteVarMultiTail
-  private static boolean opDeleteVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteVarPolymorphicTail_1")) return false;
+  private static boolean opDeleteVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opDeleteVarSingleTail(b, l + 1);
@@ -2892,22 +2891,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opInputModelSingleTail | opInputModelMultiTail )
+  // '~' ( opInputModelSingleTail | opInputModelMultiTail )
   public static boolean opInputModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
-    p = r; // pin = 2
-    r = r && opInputModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_TILDA);
+    r = r && opInputModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, S_OP_INPUT_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // opInputModelSingleTail | opInputModelMultiTail
-  private static boolean opInputModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputModelPolymorphicTail_2")) return false;
+  private static boolean opInputModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opInputModelSingleTail(b, l + 1);
@@ -3272,22 +3270,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( opInputVarSingleTail | opInputVarMultiTail )
+  // '~' '~' ( opInputVarSingleTail | opInputVarMultiTail )
   public static boolean opInputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, S_TILDA);
-    p = r; // pin = 1
-    r = r && opInputVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    p = r; // pin = 2
+    r = r && opInputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // opInputVarSingleTail | opInputVarMultiTail
-  private static boolean opInputVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputVarPolymorphicTail_1")) return false;
+  private static boolean opInputVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opInputVarSingleTail(b, l + 1);
@@ -3740,22 +3738,21 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opOutputModelSingleTail | opOutputModelMultiTail )
+  // '~' ( opOutputModelSingleTail | opOutputModelMultiTail )
   public static boolean opOutputModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
-    p = r; // pin = 2
-    r = r && opOutputModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_TILDA);
+    r = r && opOutputModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, S_OP_OUTPUT_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // opOutputModelSingleTail | opOutputModelMultiTail
-  private static boolean opOutputModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputModelPolymorphicTail_2")) return false;
+  private static boolean opOutputModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opOutputModelSingleTail(b, l + 1);
@@ -4063,22 +4060,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( opOutputVarSingleTail | opOutputVarMultiTail )
+  // '~' '~' ( opOutputVarSingleTail | opOutputVarMultiTail )
   public static boolean opOutputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, S_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, S_TILDA);
-    p = r; // pin = 1
-    r = r && opOutputVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    p = r; // pin = 2
+    r = r && opOutputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // opOutputVarSingleTail | opOutputVarMultiTail
-  private static boolean opOutputVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputVarPolymorphicTail_1")) return false;
+  private static boolean opOutputVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opOutputVarSingleTail(b, l + 1);

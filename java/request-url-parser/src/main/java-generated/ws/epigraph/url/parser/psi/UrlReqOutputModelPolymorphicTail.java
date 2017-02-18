@@ -13,4 +13,7 @@ public interface UrlReqOutputModelPolymorphicTail extends PsiElement {
   @Nullable
   UrlReqOutputModelSingleTail getReqOutputModelSingleTail();
 
+  @NotNull
+  PsiElement getTilda();
+
 }

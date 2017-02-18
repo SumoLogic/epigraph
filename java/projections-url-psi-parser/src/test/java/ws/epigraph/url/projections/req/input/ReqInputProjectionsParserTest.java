@@ -68,7 +68,7 @@ public class ReqInputProjectionsParserTest {
           "    friends *( :id ),",
           "    friendsMap []( :(id, `record` (id, firstName) ) )",
           "  )",
-          ") ~ws.epigraph.tests.User :`record` (profile)"
+          ") ~~ws.epigraph.tests.User :`record` (profile)"
       )
   );
 
@@ -110,8 +110,8 @@ public class ReqInputProjectionsParserTest {
   @Test
   public void testParseTail() {
     testParse(
-        ":id ~User :record ( profile )",
-        ":id ~ws.epigraph.tests.User :record ( profile )"
+        ":id ~~User :record ( profile )",
+        ":id ~~ws.epigraph.tests.User :record ( profile )"
     );
   }
 

@@ -38,4 +38,10 @@ public class UrlReqDeleteModelPolymorphicTailImpl extends ASTWrapperPsiElement i
     return findChildByClass(UrlReqDeleteModelSingleTail.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTilda() {
+    return findNotNullChildByType(U_TILDA);
+  }
+
 }

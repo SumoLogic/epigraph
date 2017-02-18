@@ -75,9 +75,9 @@ public class JsonFormatWriterTest {
       "    friends *( :id ),",
       "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
       "  )",
-      ") ~(",
+      ") ~~(",
       "      ws.epigraph.tests.User :`record` (profile)",
-      "        ~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+      "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
       "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
       ")"
   ), resolver);
@@ -214,7 +214,7 @@ public class JsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":record(id)~ws.epigraph.tests.User :record(profile)",
+        ":record(id)~~ws.epigraph.tests.User :record(profile)",
         person,
         "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1}}"
     );
@@ -233,7 +233,7 @@ public class JsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":id~ws.epigraph.tests.User :record(profile)",
+        ":id~~ws.epigraph.tests.User :record(profile)",
         person,
         "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
     );
@@ -251,7 +251,7 @@ public class JsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":record(id)~ws.epigraph.tests.User :record(profile) ~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
+        ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         person,
         "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
     );

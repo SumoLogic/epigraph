@@ -38,4 +38,10 @@ public class SchemaOpDeleteModelPolymorphicTailImpl extends ASTWrapperPsiElement
     return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelSingleTail.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTilda() {
+    return notNullChild(findChildByType(S_TILDA));
+  }
+
 }

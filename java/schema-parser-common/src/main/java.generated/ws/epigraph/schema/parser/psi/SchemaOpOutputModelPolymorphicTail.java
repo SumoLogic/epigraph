@@ -13,4 +13,7 @@ public interface SchemaOpOutputModelPolymorphicTail extends PsiElement {
   @Nullable
   SchemaOpOutputModelSingleTail getOpOutputModelSingleTail();
 
+  @NotNull
+  PsiElement getTilda();
+
 }

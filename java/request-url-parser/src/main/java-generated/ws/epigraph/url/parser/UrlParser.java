@@ -1316,22 +1316,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail )
+  // '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail )
   public static boolean reqDeleteModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqDeleteModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_TILDA);
+    r = r && reqDeleteModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, U_REQ_DELETE_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // reqDeleteModelSingleTail | reqDeleteModelMultiTail
-  private static boolean reqDeleteModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqDeleteModelPolymorphicTail_2")) return false;
+  private static boolean reqDeleteModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqDeleteModelSingleTail(b, l + 1);
@@ -1604,22 +1603,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail )
+  // '~' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail )
   public static boolean reqDeleteVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    p = r; // pin = 1
-    r = r && reqDeleteVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
+    r = r && reqDeleteVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // reqDeleteVarSingleTail | reqDeleteVarMultiTail
-  private static boolean reqDeleteVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqDeleteVarPolymorphicTail_1")) return false;
+  private static boolean reqDeleteVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqDeleteVarSingleTail(b, l + 1);
@@ -1920,22 +1919,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( reqInputModelSingleTail | reqInputModelMultiTail )
+  // '~' ( reqInputModelSingleTail | reqInputModelMultiTail )
   public static boolean reqInputModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqInputModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_TILDA);
+    r = r && reqInputModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // reqInputModelSingleTail | reqInputModelMultiTail
-  private static boolean reqInputModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelPolymorphicTail_2")) return false;
+  private static boolean reqInputModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqInputModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqInputModelSingleTail(b, l + 1);
@@ -2208,22 +2206,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( reqInputVarSingleTail | reqInputVarMultiTail )
+  // '~' '~' ( reqInputVarSingleTail | reqInputVarMultiTail )
   public static boolean reqInputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    p = r; // pin = 1
-    r = r && reqInputVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
+    r = r && reqInputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // reqInputVarSingleTail | reqInputVarMultiTail
-  private static boolean reqInputVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarPolymorphicTail_1")) return false;
+  private static boolean reqInputVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqInputVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqInputVarSingleTail(b, l + 1);
@@ -2822,22 +2820,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail )
+  // '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail )
   public static boolean reqOutputModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqOutputModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_TILDA);
+    r = r && reqOutputModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // reqOutputModelSingleTail | reqOutputModelMultiTail
-  private static boolean reqOutputModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelPolymorphicTail_2")) return false;
+  private static boolean reqOutputModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputModelSingleTail(b, l + 1);
@@ -3155,22 +3152,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail )
+  // '~' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail )
   public static boolean reqOutputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    p = r; // pin = 1
-    r = r && reqOutputVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
+    r = r && reqOutputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // reqOutputVarSingleTail | reqOutputVarMultiTail
-  private static boolean reqOutputVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarPolymorphicTail_1")) return false;
+  private static boolean reqOutputVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputVarSingleTail(b, l + 1);
@@ -3474,22 +3471,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail )
+  // '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail )
   public static boolean reqUpdateModelPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqUpdateModelPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_TILDA);
+    r = r && reqUpdateModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL, r);
+    return r;
   }
 
   // reqUpdateModelSingleTail | reqUpdateModelMultiTail
-  private static boolean reqUpdateModelPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelPolymorphicTail_2")) return false;
+  private static boolean reqUpdateModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqUpdateModelSingleTail(b, l + 1);
@@ -3785,22 +3781,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail )
+  // '~' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail )
   public static boolean reqUpdateVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateVarPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeToken(b, U_TILDA);
-    p = r; // pin = 1
-    r = r && reqUpdateVarPolymorphicTail_1(b, l + 1);
+    r = consumeTokens(b, 2, U_TILDA, U_TILDA);
+    p = r; // pin = 2
+    r = r && reqUpdateVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // reqUpdateVarSingleTail | reqUpdateVarMultiTail
-  private static boolean reqUpdateVarPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarPolymorphicTail_1")) return false;
+  private static boolean reqUpdateVarPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateVarPolymorphicTail_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqUpdateVarSingleTail(b, l + 1);

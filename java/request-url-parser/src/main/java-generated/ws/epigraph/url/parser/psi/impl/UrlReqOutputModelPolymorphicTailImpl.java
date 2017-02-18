@@ -38,4 +38,10 @@ public class UrlReqOutputModelPolymorphicTailImpl extends ASTWrapperPsiElement i
     return findChildByClass(UrlReqOutputModelSingleTail.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTilda() {
+    return findNotNullChildByType(U_TILDA);
+  }
+
 }

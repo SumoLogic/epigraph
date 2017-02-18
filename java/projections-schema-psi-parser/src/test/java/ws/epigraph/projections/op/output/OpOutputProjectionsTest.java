@@ -64,7 +64,7 @@ public class OpOutputProjectionsTest {
 //        "    friends { :_ { *( :+id {} ) } }", // same as above
         // :`record` (....) {params}
         "  )",
-        ") ~ws.epigraph.tests.User :`record` (profile)"
+        ") ~~ws.epigraph.tests.User :`record` (profile)"
     );
 
 
@@ -77,7 +77,7 @@ public class OpOutputProjectionsTest {
         "      bestFriend :`record` ( id, bestFriend :id ),",
         "      friends *( :id )",
         "    )",
-        ") ~ws.epigraph.tests.User :`record` ( profile )"
+        ") ~~ws.epigraph.tests.User :`record` ( profile )"
     );
 
     testParsingVarProjection(
@@ -114,9 +114,9 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        "~ws.epigraph.tests.User :id"
+        "~~ws.epigraph.tests.User :id"
         ,
-        ":id ~ws.epigraph.tests.User :id"
+        ":id ~~ws.epigraph.tests.User :id"
     );
   }
 
@@ -124,9 +124,9 @@ public class OpOutputProjectionsTest {
   public void testParseDoubleTail() throws PsiProcessingException {
     final OpOutputVarProjection projection = testParsingVarProjection(
         dataType,
-        "~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
+        "~~ws.epigraph.tests.User :id ~~ws.epigraph.tests.SubUser :id"
         ,
-        ":id ~ws.epigraph.tests.User :id ~ws.epigraph.tests.SubUser :id"
+        ":id ~~ws.epigraph.tests.User :id ~~ws.epigraph.tests.SubUser :id"
     );
 
     List<OpOutputVarProjection> tails = projection.polymorphicTails();
@@ -146,9 +146,9 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        "~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
         ,
-        ":id ~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
     );
   }
 
@@ -196,57 +196,57 @@ public class OpOutputProjectionsTest {
   @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":`record`(id)~ws.epigraph.tests.User :`record`(profile)",
+        ":`record`(id)~~ws.epigraph.tests.User :`record`(profile)",
         User.type,
         ":`record` ( profile, id )"
     );
 
     // parameters merging
     testTailsNormalization(
-        ":`record`(id,firstName{;param:epigraph.String})~ws.epigraph.tests.User :`record`(firstName{;param:epigraph.Integer})",
+        ":`record`(id,firstName{;param:epigraph.String})~~ws.epigraph.tests.User :`record`(firstName{;param:epigraph.Integer})",
         User.type,
         ":`record` ( firstName { ;param: epigraph.Integer }, id )"
     );
 
     // annotations merging
     testTailsNormalization(
-        ":`record`(id,firstName{doc=\"doc1\"})~ws.epigraph.tests.User :`record`(firstName{doc=\"doc2\"})",
+        ":`record`(id,firstName{doc=\"doc1\"})~~ws.epigraph.tests.User :`record`(firstName{doc=\"doc2\"})",
         User.type,
         ":`record` ( firstName { doc = \"doc2\" }, id )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName)",
+        ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         User.type,
-        ":`record` ( firstName, id ) ~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName)",
+        ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         SubUser.type,
-        ":`record` ( lastName, firstName, id ) ~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName)",
+        ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         User2.type,
-        ":`record` ( id ) ~ws.epigraph.tests.User :`record` ( firstName ) ~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( id ) ~~ws.epigraph.tests.User :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~(ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
+        ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User.type,
-        ":`record` ( firstName, id ) ~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~(ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
+        ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         SubUser.type,
-        ":`record` ( lastName, firstName, id ) ~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
-        ":`record`(id)~(ws.epigraph.tests.User :`record`(firstName) ~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
+        ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User2.type,
         ":`record` ( bestFriend :id, id )"
     );
@@ -255,7 +255,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testListTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":`record`(friends*(:id))~ws.epigraph.tests.User :`record`(friends*(:`record`(id)))",
+        ":`record`(friends*(:id))~~ws.epigraph.tests.User :`record`(friends*(:`record`(id)))",
         User.type,
         ":`record` ( friends *( :( `record` ( id ), id ) ) )"
     );
@@ -264,7 +264,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testMapTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":`record`(friendsMap[](:id))~ws.epigraph.tests.User :`record`(friendsMap[required, ;param:epigraph.String](:`record`(id)))",
+        ":`record`(friendsMap[](:id))~~ws.epigraph.tests.User :`record`(friendsMap[required, ;param:epigraph.String](:`record`(id)))",
         User.type,
         ":`record` ( friendsMap [ required, ;param: epigraph.String ]( :( `record` ( id ), id ) ) )"
     );

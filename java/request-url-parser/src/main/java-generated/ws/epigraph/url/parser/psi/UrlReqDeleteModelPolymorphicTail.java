@@ -13,4 +13,7 @@ public interface UrlReqDeleteModelPolymorphicTail extends PsiElement {
   @Nullable
   UrlReqDeleteModelSingleTail getReqDeleteModelSingleTail();
 
+  @NotNull
+  PsiElement getTilda();
+
 }

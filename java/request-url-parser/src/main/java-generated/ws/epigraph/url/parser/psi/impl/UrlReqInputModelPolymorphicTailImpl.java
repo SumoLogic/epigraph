@@ -38,4 +38,10 @@ public class UrlReqInputModelPolymorphicTailImpl extends ASTWrapperPsiElement im
     return findChildByClass(UrlReqInputModelSingleTail.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getTilda() {
+    return findNotNullChildByType(U_TILDA);
+  }
+
 }

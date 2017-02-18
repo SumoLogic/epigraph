@@ -409,6 +409,7 @@ public final class OpInputProjectionsPsiParser {
     );
   }
 
+  @SuppressWarnings("unchecked")
   private static <MP extends OpInputModelProjection<?, ?, ?, ?>>
   @NotNull MP parseModelProjection(
       @NotNull Class<MP> modelClass,

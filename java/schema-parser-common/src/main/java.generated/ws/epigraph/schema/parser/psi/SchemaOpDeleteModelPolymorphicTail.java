@@ -13,4 +13,7 @@ public interface SchemaOpDeleteModelPolymorphicTail extends PsiElement {
   @Nullable
   SchemaOpDeleteModelSingleTail getOpDeleteModelSingleTail();
 
+  @NotNull
+  PsiElement getTilda();
+
 }

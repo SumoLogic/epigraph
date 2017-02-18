@@ -165,12 +165,12 @@ reqOutputStarTagProjection ::= ':' '*' // all tags with empty contents
 
 reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
 
-reqOutputVarPolymorphicTail ::= '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail ) {pin=1}
+reqOutputVarPolymorphicTail ::= '~' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail ) {pin=2}
 reqOutputVarSingleTail ::= typeRef reqOutputComaVarProjection
 reqOutputVarMultiTail ::= '(' (reqOutputVarMultiTailItem ','?)* ')' {pin=1}
 reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
 //
-reqOutputModelPolymorphicTail ::= '~' '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail ) {pin=2}
+reqOutputModelPolymorphicTail ::= '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail ) // {pin=1}
 reqOutputModelSingleTail ::= typeRef reqOutputComaModelProjection
 reqOutputModelMultiTail ::= '(' (reqOutputModelMultiTailItem ','?)* ')' {pin=1}
 reqOutputModelMultiTailItem ::= typeRef reqOutputComaModelProjection
@@ -240,12 +240,12 @@ reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 //reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
 
-reqUpdateVarPolymorphicTail ::= '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail ) {pin=1}
+reqUpdateVarPolymorphicTail ::= '~' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail ) {pin=2}
 reqUpdateVarSingleTail ::= typeRef reqUpdateVarProjection
 reqUpdateVarMultiTail ::= '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=1}
 reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
 //
-reqUpdateModelPolymorphicTail ::= '~' '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail ) {pin=2}
+reqUpdateModelPolymorphicTail ::= '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail ) // {pin=1}
 reqUpdateModelSingleTail ::= typeRef reqUpdateModelProjection
 reqUpdateModelMultiTail ::= '(' (reqUpdateModelMultiTailItem ','?)* ')' {pin=1}
 reqUpdateModelMultiTailItem ::= typeRef reqUpdateModelProjection
@@ -278,12 +278,12 @@ reqUpdateKeyProjection ::= datum reqParamsAndAnnotations
 
 // reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
 
-reqDeleteVarPolymorphicTail ::= '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=1}
+reqDeleteVarPolymorphicTail ::= '~' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=2}
 reqDeleteVarSingleTail ::= typeRef reqDeleteVarProjection
 reqDeleteVarMultiTail ::= '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=1}
 reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
 //
-reqDeleteModelPolymorphicTail ::= '~' '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) {pin=2}
+reqDeleteModelPolymorphicTail ::= '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) // {pin=1}
 reqDeleteModelSingleTail ::= typeRef reqDeleteModelProjection
 reqDeleteModelMultiTail ::= '(' (reqDeleteModelMultiTailItem ','?)* ')' {pin=1}
 reqDeleteModelMultiTailItem ::= typeRef reqDeleteModelProjection
@@ -316,12 +316,12 @@ reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
 // reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
 
-reqInputVarPolymorphicTail ::= '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=1}
+reqInputVarPolymorphicTail ::= '~' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
 reqInputVarSingleTail ::= typeRef reqInputVarProjection
 reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
 reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
 //
-reqInputModelPolymorphicTail ::= '~' '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) {pin=2}
+reqInputModelPolymorphicTail ::= '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) // {pin=1}
 reqInputModelSingleTail ::= typeRef reqInputModelProjection
 reqInputModelMultiTail ::= '(' (reqInputModelMultiTailItem ','?)* ')' {pin=1}
 reqInputModelMultiTailItem ::= typeRef reqInputModelProjection

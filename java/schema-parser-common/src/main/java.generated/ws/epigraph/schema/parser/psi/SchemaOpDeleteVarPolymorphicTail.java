@@ -13,7 +13,4 @@ public interface SchemaOpDeleteVarPolymorphicTail extends PsiElement {
   @Nullable
   SchemaOpDeleteVarSingleTail getOpDeleteVarSingleTail();
 
-  @NotNull
-  PsiElement getTilda();
-
 }

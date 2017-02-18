@@ -38,10 +38,4 @@ public class SchemaOpInputVarPolymorphicTailImpl extends ASTWrapperPsiElement im
     return PsiTreeUtil.getChildOfType(this, SchemaOpInputVarSingleTail.class);
   }
 
-  @Override
-  @NotNull
-  public PsiElement getTilda() {
-    return notNullChild(findChildByType(S_TILDA));
-  }
-
 }
