@@ -83,14 +83,14 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqModelPath<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull ReqModelPath<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqRecordModelPath)
-      print((ReqRecordModelPath) mp);
+      printModelOnly((ReqRecordModelPath) mp);
     else if (mp instanceof ReqMapModelPath)
-      print((ReqMapModelPath) mp);
+      printModelOnly((ReqMapModelPath) mp);
   }
 
-  private void print(@NotNull ReqRecordModelPath mp) throws E {
+  private void printModelOnly(@NotNull ReqRecordModelPath mp) throws E {
     final @Nullable ReqFieldPathEntry fieldProjectionEntry = mp.pathFieldProjection();
 
     if (fieldProjectionEntry != null) {
@@ -119,7 +119,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
     l.end();
   }
 
-  private void print(ReqMapModelPath mp) throws E {
+  private void printModelOnly(ReqMapModelPath mp) throws E {
     final @NotNull ReqPathKeyProjection key = mp.key();
 
     l.beginIInd();

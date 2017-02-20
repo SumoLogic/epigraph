@@ -102,13 +102,13 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void print(@NotNull OpInputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull OpInputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
       print((OpInputRecordModelProjection) mp);
     else if (mp instanceof OpInputMapModelProjection)
-      print((OpInputMapModelProjection) mp);
+      printModelOnly((OpInputMapModelProjection) mp);
     else if (mp instanceof OpInputListModelProjection)
-      print((OpInputListModelProjection) mp);
+      printModelOnly((OpInputListModelProjection) mp);
   }
 
   @Override
@@ -116,7 +116,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     return fieldEntry.fieldProjection().required() ? "+" : "";
   }
 
-  private void print(OpInputMapModelProjection mp) throws E {
+  private void printModelOnly(OpInputMapModelProjection mp) throws E {
     @NotNull OpInputKeyProjection keyProjection = mp.keyProjection();
     printMapModelProjection(
         keyProjection.presence().getPrettyPrinterString(),
@@ -125,7 +125,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     );
   }
 
-  private void print(OpInputListModelProjection mp) throws E {
+  private void printModelOnly(OpInputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
     print(mp.itemsProjection(), 0);

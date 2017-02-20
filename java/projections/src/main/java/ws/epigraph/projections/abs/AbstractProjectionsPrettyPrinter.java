@@ -141,7 +141,42 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   public abstract void print(@Nullable String tagName, @NotNull TP tp, int pathSteps) throws E;
 
-  public abstract void print(@NotNull MP mp, int pathSteps) throws E;
+  public void print(@NotNull MP mp, int pathSteps) throws E {
+    // check recursion?
+    printModelOnly(mp, pathSteps);
+    printModelTailsOnly(mp);
+  }
+
+  public abstract void printModelOnly(@NotNull MP mp, int pathSteps) throws E;
+
+  @SuppressWarnings("unchecked") // todo introduce TMP extends MP
+  private void printModelTailsOnly(@NotNull MP p) throws E {
+    List<MP> polymorphicTails = (List<MP>) p.polymorphicTails();
+
+    if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
+      l.beginIInd();
+      l.brk();
+      if (polymorphicTails.size() == 1) {
+        l.print("~");
+        MP tail = polymorphicTails.iterator().next();
+        l.print(tail.model().name().toString());
+        l.brk();
+        print(tail, 0);
+      } else {
+        l.beginCInd();
+        l.print("~(");
+        boolean first = true;
+        for (MP tail : polymorphicTails) {
+          if (first) first = false;
+          else l.print(",");
+          l.brk().print(tail.model().name().toString()).brk();
+          print(tail, 0);
+        }
+        l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      }
+      l.end();
+    }
+  }
 
   public void print(@NotNull Annotations cp) throws E {
     print(cp, false, true);

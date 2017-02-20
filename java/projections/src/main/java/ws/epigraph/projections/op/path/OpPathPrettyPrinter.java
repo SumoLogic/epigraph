@@ -85,11 +85,11 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpModelPath<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull OpModelPath<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpRecordModelPath)
       print((OpRecordModelPath) mp);
     else if (mp instanceof OpMapModelPath)
-      print((OpMapModelPath) mp);
+      printModelOnly((OpMapModelPath) mp);
   }
 
   @Override
@@ -105,7 +105,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     }
   }
 
-  private void print(OpMapModelPath mp) throws E {
+  private void printModelOnly(OpMapModelPath mp) throws E {
     l.beginIInd(0);
 
     @NotNull OpPathKeyProjection keyProjection = mp.keyProjection();

@@ -76,20 +76,20 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull ReqInputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqInputRecordModelProjection)
       print((ReqInputRecordModelProjection) mp, 0);
     else if (mp instanceof ReqInputMapModelProjection)
-      print((ReqInputMapModelProjection) mp);
+      printModelOnly((ReqInputMapModelProjection) mp);
     else if (mp instanceof ReqInputListModelProjection)
-      print((ReqInputListModelProjection) mp, pathSteps);
+      printModelOnly((ReqInputListModelProjection) mp, pathSteps);
   }
 
-  private void print(ReqInputMapModelProjection mp) throws E {
+  private void printModelOnly(ReqInputMapModelProjection mp) throws E {
     printMapModelProjection(mp.keys(), mp.itemsProjection());
   }
 
-  private void print(ReqInputListModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqInputListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );

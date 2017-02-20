@@ -94,16 +94,16 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqUpdateModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull ReqUpdateModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqUpdateRecordModelProjection)
-      print((ReqUpdateRecordModelProjection) mp);
+      printModelOnly((ReqUpdateRecordModelProjection) mp);
     else if (mp instanceof ReqUpdateMapModelProjection)
-      print((ReqUpdateMapModelProjection) mp);
+      printModelOnly((ReqUpdateMapModelProjection) mp);
     else if (mp instanceof ReqUpdateListModelProjection)
-      print((ReqUpdateListModelProjection) mp, pathSteps);
+      printModelOnly((ReqUpdateListModelProjection) mp, pathSteps);
   }
 
-  private void print(@NotNull ReqUpdateRecordModelProjection mp) throws E {
+  private void printModelOnly(@NotNull ReqUpdateRecordModelProjection mp) throws E {
     Map<String, ReqUpdateFieldProjectionEntry> fieldProjections = mp.fieldProjections();
 
     l.print("(").beginCInd();
@@ -124,12 +124,12 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     return fieldProjection.update() ? "+" : "";
   }
 
-  private void print(ReqUpdateMapModelProjection mp) throws E {
+  private void printModelOnly(ReqUpdateMapModelProjection mp) throws E {
     if (mp.updateKeys()) l.print("+");
     printMapModelProjection(mp.keys(), mp.itemsProjection());
   }
 
-  private void print(ReqUpdateListModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqUpdateListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );

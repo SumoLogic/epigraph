@@ -88,13 +88,13 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull ReqOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqOutputRecordModelProjection)
       print((ReqOutputRecordModelProjection) mp, pathSteps);
     else if (mp instanceof ReqOutputMapModelProjection)
-      print((ReqOutputMapModelProjection) mp, pathSteps);
+      printModelOnly((ReqOutputMapModelProjection) mp, pathSteps);
     else if (mp instanceof ReqOutputListModelProjection)
-      print((ReqOutputListModelProjection) mp, pathSteps);
+      printModelOnly((ReqOutputListModelProjection) mp, pathSteps);
   }
 
   @Override
@@ -102,7 +102,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     return fieldProjection.required() ? "+" : "";
   }
 
-  private void print(ReqOutputMapModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqOutputMapModelProjection mp, int pathSteps) throws E {
     @Nullable List<ReqOutputKeyProjection> keys = mp.keys();
 
     if (pathSteps > 0) {
@@ -154,7 +154,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  private void print(ReqOutputListModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqOutputListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );

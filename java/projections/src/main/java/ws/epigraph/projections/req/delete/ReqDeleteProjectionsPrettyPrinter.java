@@ -77,20 +77,20 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull ReqDeleteModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull ReqDeleteModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqDeleteRecordModelProjection)
       print((ReqDeleteRecordModelProjection) mp, 0);
     else if (mp instanceof ReqDeleteMapModelProjection)
-      print((ReqDeleteMapModelProjection) mp);
+      printModelOnly((ReqDeleteMapModelProjection) mp);
     else if (mp instanceof ReqDeleteListModelProjection)
-      print((ReqDeleteListModelProjection) mp, pathSteps);
+      printModelOnly((ReqDeleteListModelProjection) mp, pathSteps);
   }
 
-  private void print(ReqDeleteMapModelProjection mp) throws E {
+  private void printModelOnly(ReqDeleteMapModelProjection mp) throws E {
     printMapModelProjection(mp.keys(), mp.itemsProjection());
   }
 
-  private void print(ReqDeleteListModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqDeleteListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );

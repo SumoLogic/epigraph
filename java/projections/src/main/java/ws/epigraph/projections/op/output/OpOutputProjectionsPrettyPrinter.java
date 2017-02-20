@@ -92,21 +92,21 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
       print((OpOutputRecordModelProjection) mp);
     else if (mp instanceof OpOutputMapModelProjection)
-      print((OpOutputMapModelProjection) mp);
+      printModelOnly((OpOutputMapModelProjection) mp);
     else if (mp instanceof OpOutputListModelProjection)
-      print((OpOutputListModelProjection) mp);
+      printModelOnly((OpOutputListModelProjection) mp);
   }
 
-  private void print(OpOutputMapModelProjection mp) throws E {
+  private void printModelOnly(OpOutputMapModelProjection mp) throws E {
     @NotNull OpOutputKeyProjection keyProjection = mp.keyProjection();
     printMapModelProjection(keyProjection.presence().getPrettyPrinterString(), keyProjection, mp.itemsProjection());
   }
 
-  private void print(OpOutputListModelProjection mp) throws E {
+  private void printModelOnly(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
     print(mp.itemsProjection(), 0);
