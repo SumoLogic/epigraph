@@ -153,6 +153,13 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseModelTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
+    );
+  }
+
+  @Test
   public void testParseCustomParams() throws PsiProcessingException {
     testParsingVarProjection(":id { deprecated = true }");
   }

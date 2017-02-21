@@ -5,6 +5,7 @@
   - [x] op projections
 - [x] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
 - [ ] generate req paths
+- [ ] undertow handler: remove trimmer, should be handled by marshaller
 
 - Docs
   - Operations

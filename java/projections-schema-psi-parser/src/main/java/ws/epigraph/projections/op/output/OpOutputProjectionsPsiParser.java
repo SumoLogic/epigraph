@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.projections.Annotation;
@@ -38,6 +39,7 @@ import ws.epigraph.types.TypeKind;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static ws.epigraph.projections.ProjectionsParsingUtil.getDatumType;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
 
@@ -336,66 +338,192 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull List<PsiProcessingError> errors)
       throws PsiProcessingException {
 
+    return parseModelProjection(
+        OpOutputModelProjection.class,
+        type,
+        params,
+        annotations,
+        metaProjection,
+        psi,
+        typesResolver,
+        errors
+    );
+
+  }
+
+  private static <MP extends OpOutputModelProjection<?, ?, ?>>
+  @NotNull MP parseModelProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull DatumTypeApi type,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
+      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @NotNull SchemaOpOutputModelProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors)
+      throws PsiProcessingException {
+
     switch (type.kind()) {
       case RECORD:
         @Nullable SchemaOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+
         ensureModelKind(psi, TypeKind.RECORD, errors);
-        return parseRecordModelProjection(
+        return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                OpOutputRecordModelProjection.class,
+                psi.getOpOutputModelPolymorphicTail(),
+                typesResolver,
+                errors
+            ),
             recordModelProjectionPsi,
             typesResolver,
             errors
         );
+
       case MAP:
         @Nullable SchemaOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+
         ensureModelKind(psi, TypeKind.MAP, errors);
 
-        return parseMapModelProjection(
+        return (MP) parseMapModelProjection(
             (MapTypeApi) type,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                OpOutputMapModelProjection.class,
+                psi.getOpOutputModelPolymorphicTail(),
+                typesResolver,
+                errors
+            ),
             mapModelProjectionPsi,
             typesResolver,
             errors
         );
+
       case LIST:
         @Nullable SchemaOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+
         ensureModelKind(psi, TypeKind.LIST, errors);
 
-        return parseListModelProjection(
+        return (MP) parseListModelProjection(
             (ListTypeApi) type,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                OpOutputListModelProjection.class,
+                psi.getOpOutputModelPolymorphicTail(),
+                typesResolver,
+                errors
+            ),
             listModelProjectionPsi,
             typesResolver,
             errors
         );
+
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+
       case PRIMITIVE:
-        return parsePrimitiveModelProjection(
+        return (MP) parsePrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                OpOutputPrimitiveModelProjection.class,
+                psi.getOpOutputModelPolymorphicTail(),
+                typesResolver,
+                errors
+            ),
             psi
         );
+
       case UNION:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, errors);
     }
+  }
+  
+  @Contract("_, null, _, _ -> null")
+  private static <MP extends OpOutputModelProjection<?, ?, ?>>
+  @Nullable List<MP> parseModelTails(
+      @NotNull Class<MP> modelClass,
+      @Nullable SchemaOpOutputModelPolymorphicTail tailPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (tailPsi == null) return null;
+    else {
+      List<MP> tails = new ArrayList<MP>();
+
+      final SchemaOpOutputModelSingleTail singleTailPsi = tailPsi.getOpOutputModelSingleTail();
+      if (singleTailPsi == null) {
+        final SchemaOpOutputModelMultiTail multiTailPsi = tailPsi.getOpOutputModelMultiTail();
+        assert multiTailPsi != null;
+        for (SchemaOpOutputModelMultiTailItem tailItemPsi : multiTailPsi.getOpOutputModelMultiTailItemList()) {
+          tails.add(
+              buildModelTailProjection(
+                  modelClass,
+                  tailItemPsi.getTypeRef(),
+                  tailItemPsi.getOpOutputModelProjection(),
+                  tailItemPsi.getOpOutputModelPropertyList(),
+                  typesResolver,
+                  errors
+              )
+          );
+        }
+      } else {
+        tails.add(
+            buildModelTailProjection(
+                modelClass,
+                singleTailPsi.getTypeRef(),
+                singleTailPsi.getOpOutputModelProjection(),
+                singleTailPsi.getOpOutputModelPropertyList(),
+                typesResolver,
+                errors
+            )
+        );
+      }
+      return tails;
+    }
+  }
+
+  private static <MP extends OpOutputModelProjection<?, ?, ?>>
+  @NotNull MP buildModelTailProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull SchemaTypeRef tailTypeRefPsi,
+      @NotNull SchemaOpOutputModelProjection modelProjectionPsi,
+      @NotNull List<SchemaOpOutputModelProperty> modelPropertiesPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
+    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+
+    return parseModelProjection(
+        modelClass,
+        tailType,
+        parseModelParams(modelPropertiesPsi, typesResolver, errors),
+        parseModelAnnotations(modelPropertiesPsi, errors),
+        parseModelMetaProjection(tailType, modelPropertiesPsi, typesResolver, errors),
+        modelProjectionPsi,
+        typesResolver,
+        errors
+    );
   }
 
   private static void ensureModelKind(
@@ -531,6 +659,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<OpOutputRecordModelProjection> tails,
       @NotNull SchemaOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -582,7 +711,7 @@ public final class OpOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         fieldProjections,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -618,6 +747,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<OpOutputMapModelProjection> tails,
       @NotNull SchemaOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
@@ -642,7 +772,7 @@ public final class OpOutputProjectionsPsiParser {
         metaProjection,
         keyProjection,
         valueProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -682,6 +812,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<OpOutputListModelProjection> tails,
       @NotNull SchemaOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors)
@@ -701,7 +832,7 @@ public final class OpOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         itemsProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -711,6 +842,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<OpOutputPrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new OpOutputPrimitiveModelProjection(
@@ -718,7 +850,7 @@ public final class OpOutputProjectionsPsiParser {
         params,
         annotations,
         metaProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }
