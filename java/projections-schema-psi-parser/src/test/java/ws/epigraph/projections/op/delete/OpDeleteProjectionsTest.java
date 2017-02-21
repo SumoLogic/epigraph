@@ -116,6 +116,29 @@ public class OpDeleteProjectionsTest {
   }
 
   @Test
+  public void testParseTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        "~~ws.epigraph.tests.User :id",
+        ":id ~~ws.epigraph.tests.User :id"
+    );
+  }
+
+  @Test
+  public void testParseTails() throws PsiProcessingException {
+    testParsingVarProjection(
+        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )",
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+    );
+  }
+
+  @Test
+  public void testParseModelTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
+    );
+  }
+
+  @Test
   public void testParseCustomParams() throws PsiProcessingException {
     testParsingVarProjection(":id { deprecated = true }");
   }
@@ -142,15 +165,20 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
+    testParsingVarProjection(
+        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
   }
 
   private void testParsingVarProjection(String str) {
+    testParsingVarProjection(str, str);
+  }
+
+  private void testParsingVarProjection(String str, String exp) {
     testParsingVarProjection(
         new DataType(Person.type, Person.id),
         str
         ,
-        str
+        exp
     );
   }
 

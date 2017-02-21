@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.input;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.*;
@@ -571,6 +572,7 @@ public final class OpInputProjectionsPsiParser {
     }
   }
 
+  @Contract("_, null, _, _ -> null")
   private static <MP extends OpInputModelProjection<?, ?, ?, ?>>
   @Nullable List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
