@@ -28,8 +28,26 @@ public class UrlReqOutputModelSingleTailImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
+  }
+
+  @Override
+  @NotNull
   public UrlReqOutputComaModelProjection getReqOutputComaModelProjection() {
     return findNotNullChildByClass(UrlReqOutputComaModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public UrlReqOutputModelMeta getReqOutputModelMeta() {
+    return findChildByClass(UrlReqOutputModelMeta.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
   @Override

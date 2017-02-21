@@ -26,9 +26,9 @@ public class UrlEnumDatumImpl extends UrlDatumImpl implements UrlEnumDatum {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public UrlQid getQid() {
-    return findNotNullChildByClass(UrlQid.class);
+    return findChildByClass(UrlQid.class);
   }
 
   @Override

@@ -8,7 +8,16 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqOutputModelMultiTailItem extends PsiElement {
 
   @NotNull
+  List<UrlReqAnnotation> getReqAnnotationList();
+
+  @NotNull
   UrlReqOutputComaModelProjection getReqOutputComaModelProjection();
+
+  @Nullable
+  UrlReqOutputModelMeta getReqOutputModelMeta();
+
+  @NotNull
+  List<UrlReqParam> getReqParamList();
 
   @NotNull
   UrlTypeRef getTypeRef();

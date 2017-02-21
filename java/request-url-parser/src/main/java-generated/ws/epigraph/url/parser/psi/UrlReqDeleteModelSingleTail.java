@@ -8,7 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqDeleteModelSingleTail extends PsiElement {
 
   @NotNull
+  List<UrlReqAnnotation> getReqAnnotationList();
+
+  @NotNull
   UrlReqDeleteModelProjection getReqDeleteModelProjection();
+
+  @NotNull
+  List<UrlReqParam> getReqParamList();
 
   @NotNull
   UrlTypeRef getTypeRef();

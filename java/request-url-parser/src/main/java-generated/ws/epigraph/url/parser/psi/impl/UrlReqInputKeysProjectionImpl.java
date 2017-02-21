@@ -39,9 +39,9 @@ public class UrlReqInputKeysProjectionImpl extends ASTWrapperPsiElement implemen
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getBracketRight() {
-    return findNotNullChildByType(U_BRACKET_RIGHT);
+    return findChildByType(U_BRACKET_RIGHT);
   }
 
   @Override

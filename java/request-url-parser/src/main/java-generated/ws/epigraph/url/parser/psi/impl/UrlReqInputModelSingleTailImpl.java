@@ -28,8 +28,20 @@ public class UrlReqInputModelSingleTailImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @NotNull
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
+  }
+
+  @Override
+  @NotNull
   public UrlReqInputModelProjection getReqInputModelProjection() {
     return findNotNullChildByClass(UrlReqInputModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
   @Override

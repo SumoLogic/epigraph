@@ -28,8 +28,20 @@ public class UrlReqDeleteModelSingleTailImpl extends ASTWrapperPsiElement implem
 
   @Override
   @NotNull
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
+  }
+
+  @Override
+  @NotNull
   public UrlReqDeleteModelProjection getReqDeleteModelProjection() {
     return findNotNullChildByClass(UrlReqDeleteModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
   @Override

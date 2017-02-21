@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface UrlEnumDatum extends UrlDatum {
 
-  @NotNull
+  @Nullable
   UrlQid getQid();
 
   @NotNull

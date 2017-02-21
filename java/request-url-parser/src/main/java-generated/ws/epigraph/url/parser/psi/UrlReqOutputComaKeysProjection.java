@@ -13,7 +13,7 @@ public interface UrlReqOutputComaKeysProjection extends PsiElement {
   @NotNull
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
   @Nullable

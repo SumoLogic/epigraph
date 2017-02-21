@@ -13,7 +13,7 @@ public interface UrlReqUpdateKeysProjection extends PsiElement {
   @NotNull
   PsiElement getBracketLeft();
 
-  @NotNull
+  @Nullable
   PsiElement getBracketRight();
 
   @Nullable

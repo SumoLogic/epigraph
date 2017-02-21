@@ -28,6 +28,18 @@ public class UrlReqUpdateModelMultiTailItemImpl extends ASTWrapperPsiElement imp
 
   @Override
   @NotNull
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
+  }
+
+  @Override
+  @NotNull
   public UrlReqUpdateModelProjection getReqUpdateModelProjection() {
     return findNotNullChildByClass(UrlReqUpdateModelProjection.class);
   }

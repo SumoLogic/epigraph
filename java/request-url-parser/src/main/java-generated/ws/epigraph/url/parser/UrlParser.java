@@ -746,12 +746,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean enumDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDatum")) return false;
     if (!nextTokenIs(b, U_HASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_ENUM_DATUM, null);
     r = consumeToken(b, U_HASH);
+    p = r; // pin = 1
     r = r && qid(b, l + 1);
-    exit_section_(b, m, U_ENUM_DATUM, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1145,13 +1146,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean reqDeleteKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteKeysProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_KEYS_PROJECTION, null);
     r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqDeleteKeysProjection_1(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, m, U_REQ_DELETE_KEYS_PROJECTION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, reqDeleteKeysProjection_1(b, l + 1));
+    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '*' | ( ( reqDeleteKeyProjection ','? )* )
@@ -1304,13 +1306,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqDeleteModelProjection
+  // typeRef reqDeleteModelProjectionWithProperties
   public static boolean reqDeleteModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_MODEL_MULTI_TAIL_ITEM, "<req delete model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && reqDeleteModelProjection(b, l + 1);
+    r = r && reqDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1389,13 +1391,25 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqDeleteModelProjection
+  // reqParamsAndAnnotations reqDeleteModelProjection
+  static boolean reqDeleteModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqDeleteModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeRef reqDeleteModelProjectionWithProperties
   public static boolean reqDeleteModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_MODEL_SINGLE_TAIL, "<req delete model single tail>");
     r = typeRef(b, l + 1);
-    r = r && reqDeleteModelProjection(b, l + 1);
+    r = r && reqDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1446,14 +1460,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // tagName reqDeleteTagProjectionItem
+  // tagName reqDeleteModelProjectionWithProperties
   public static boolean reqDeleteMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, U_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = tagName(b, l + 1);
-    r = r && reqDeleteTagProjectionItem(b, l + 1);
+    r = r && reqDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, m, U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM, r);
     return r;
   }
@@ -1504,13 +1518,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' tagName)? reqDeleteTagProjectionItem
+  // ( ':' tagName)? reqDeleteModelProjectionWithProperties
   public static boolean reqDeleteSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_SINGLE_TAG_PROJECTION, "<req delete single tag projection>");
     r = reqDeleteSingleTagProjection_0(b, l + 1);
-    r = r && reqDeleteTagProjectionItem(b, l + 1);
+    r = r && reqDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1529,18 +1543,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, U_COLON);
     r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqDeleteModelProjection
-  static boolean reqDeleteTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqDeleteTagProjectionItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqDeleteModelProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1748,13 +1750,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean reqInputKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputKeysProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_KEYS_PROJECTION, null);
     r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqInputKeysProjection_1(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, m, U_REQ_INPUT_KEYS_PROJECTION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, reqInputKeysProjection_1(b, l + 1));
+    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '*' | ( ( reqInputKeyProjection ','? )* )
@@ -1907,13 +1910,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqInputModelProjection
+  // typeRef reqInputModelProjectionWithProperties
   public static boolean reqInputModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM, "<req input model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && reqInputModelProjection(b, l + 1);
+    r = r && reqInputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1992,13 +1995,25 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqInputModelProjection
+  // reqParamsAndAnnotations reqInputModelProjection
+  static boolean reqInputModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqInputModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqInputModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeRef reqInputModelProjectionWithProperties
   public static boolean reqInputModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_SINGLE_TAIL, "<req input model single tail>");
     r = typeRef(b, l + 1);
-    r = r && reqInputModelProjection(b, l + 1);
+    r = r && reqInputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2049,14 +2064,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // tagName reqInputTagProjectionItem
+  // tagName reqInputModelProjectionWithProperties
   public static boolean reqInputMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, U_ID)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = tagName(b, l + 1);
-    r = r && reqInputTagProjectionItem(b, l + 1);
+    r = r && reqInputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, m, U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM, r);
     return r;
   }
@@ -2107,13 +2122,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' tagName)? reqInputTagProjectionItem
+  // ( ':' tagName)? reqInputModelProjectionWithProperties
   public static boolean reqInputSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqInputSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_SINGLE_TAG_PROJECTION, "<req input single tag projection>");
     r = reqInputSingleTagProjection_0(b, l + 1);
-    r = r && reqInputTagProjectionItem(b, l + 1);
+    r = r && reqInputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2132,18 +2147,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, U_COLON);
     r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqInputModelProjection
-  static boolean reqInputTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputTagProjectionItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqInputModelProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -2363,13 +2366,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean reqOutputComaKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaKeysProjection")) return false;
     if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, null);
     r = consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqOutputComaKeysProjection_1(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, m, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, reqOutputComaKeysProjection_1(b, l + 1));
+    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '*' | ( ( reqOutputComaKeyProjection ','? )* )
@@ -2526,6 +2530,26 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
+  static boolean reqOutputComaModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqOutputComaModelProjection(b, l + 1);
+    r = r && reqOutputComaModelProjectionWithProperties_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqOutputModelMeta?
+  private static boolean reqOutputComaModelProjectionWithProperties_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaModelProjectionWithProperties_2")) return false;
+    reqOutputModelMeta(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')'
   public static boolean reqOutputComaMultiTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjection")) return false;
@@ -2571,7 +2595,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? tagName reqOutputComaTagProjectionItem
+  // '+'? tagName reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputComaMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, "<req output coma multi tag projection item>", U_PLUS, U_ID)) return false;
@@ -2579,7 +2603,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM, "<req output coma multi tag projection item>");
     r = reqOutputComaMultiTagProjectionItem_0(b, l + 1);
     r = r && tagName(b, l + 1);
-    r = r && reqOutputComaTagProjectionItem(b, l + 1);
+    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2648,13 +2672,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' '+'? tagName)? reqOutputComaTagProjectionItem
+  // ( ':' '+'? tagName)? reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputComaSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION, "<req output coma single tag projection>");
     r = reqOutputComaSingleTagProjection_0(b, l + 1);
-    r = r && reqOutputComaTagProjectionItem(b, l + 1);
+    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2682,26 +2706,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
   private static boolean reqOutputComaSingleTagProjection_0_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection_0_0_1")) return false;
     consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
-  static boolean reqOutputComaTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaTagProjectionItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqOutputComaModelProjection(b, l + 1);
-    r = r && reqOutputComaTagProjectionItem_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelMeta?
-  private static boolean reqOutputComaTagProjectionItem_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaTagProjectionItem_2")) return false;
-    reqOutputModelMeta(b, l + 1);
     return true;
   }
 
@@ -2808,13 +2812,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqOutputComaModelProjection
+  // typeRef reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM, "<req output model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && reqOutputComaModelProjection(b, l + 1);
+    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2844,13 +2848,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqOutputComaModelProjection
+  // typeRef reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_SINGLE_TAIL, "<req output model single tail>");
     r = typeRef(b, l + 1);
-    r = r && reqOutputComaModelProjection(b, l + 1);
+    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2905,7 +2909,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqOutputTrunkRecordModelProjection
+  // ( reqOutputTrunkRecordModelProjection // no tails on paths
   //                                   | reqOutputTrunkMapModelProjection
   //                                   | ( reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail? )
   //                                   | ( reqOutputComaMapModelProjection reqOutputModelPolymorphicTail? )
@@ -2919,7 +2923,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // reqOutputTrunkRecordModelProjection
+  // reqOutputTrunkRecordModelProjection // no tails on paths
   //                                   | reqOutputTrunkMapModelProjection
   //                                   | ( reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail? )
   //                                   | ( reqOutputComaMapModelProjection reqOutputModelPolymorphicTail? )
@@ -2992,6 +2996,18 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // reqParamsAndAnnotations reqOutputTrunkModelProjection
+  static boolean reqOutputTrunkModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqOutputTrunkModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // '/' '+'? qid reqOutputTrunkFieldProjection
   public static boolean reqOutputTrunkRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkRecordModelProjection")) return false;
@@ -3015,15 +3031,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' '+'? tagName )? reqParamsAndAnnotations reqOutputTrunkModelProjection reqOutputModelMeta?
+  // ( ':' '+'? tagName )? reqOutputTrunkModelProjectionWithProperties reqOutputModelMeta?
   public static boolean reqOutputTrunkSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION, "<req output trunk single tag projection>");
     r = reqOutputTrunkSingleTagProjection_0(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    r = r && reqOutputTrunkModelProjection(b, l + 1);
-    r = r && reqOutputTrunkSingleTagProjection_3(b, l + 1);
+    r = r && reqOutputTrunkModelProjectionWithProperties(b, l + 1);
+    r = r && reqOutputTrunkSingleTagProjection_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3055,41 +3070,44 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   // reqOutputModelMeta?
-  private static boolean reqOutputTrunkSingleTagProjection_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_3")) return false;
+  private static boolean reqOutputTrunkSingleTagProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_2")) return false;
     reqOutputModelMeta(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // reqOutputStarTagProjection
+  // ( reqOutputStarTagProjection
   //                                 | reqOutputComaMultiTagProjection
-  //                                 | ( reqOutputTrunkSingleTagProjection reqOutputVarPolymorphicTail? )
+  //                                 | reqOutputTrunkSingleTagProjection
+  //                                 ) reqOutputVarPolymorphicTail?
   public static boolean reqOutputTrunkVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, "<req output trunk var projection>");
-    r = reqOutputStarTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
-    if (!r) r = reqOutputTrunkVarProjection_2(b, l + 1);
+    r = reqOutputTrunkVarProjection_0(b, l + 1);
+    r = r && reqOutputTrunkVarProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // reqOutputTrunkSingleTagProjection reqOutputVarPolymorphicTail?
-  private static boolean reqOutputTrunkVarProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_2")) return false;
+  // reqOutputStarTagProjection
+  //                                 | reqOutputComaMultiTagProjection
+  //                                 | reqOutputTrunkSingleTagProjection
+  private static boolean reqOutputTrunkVarProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputTrunkSingleTagProjection(b, l + 1);
-    r = r && reqOutputTrunkVarProjection_2_1(b, l + 1);
+    r = reqOutputStarTagProjection(b, l + 1);
+    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
+    if (!r) r = reqOutputTrunkSingleTagProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // reqOutputVarPolymorphicTail?
-  private static boolean reqOutputTrunkVarProjection_2_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_2_1")) return false;
+  private static boolean reqOutputTrunkVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_1")) return false;
     reqOutputVarPolymorphicTail(b, l + 1);
     return true;
   }
@@ -3303,14 +3321,15 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean reqUpdateKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateKeysProjection")) return false;
     if (!nextTokenIs(b, "<req update keys projection>", U_PLUS, U_BRACKET_LEFT)) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEYS_PROJECTION, "<req update keys projection>");
     r = reqUpdateKeysProjection_0(b, l + 1);
     r = r && consumeToken(b, U_BRACKET_LEFT);
-    r = r && reqUpdateKeysProjection_2(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_RIGHT);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    p = r; // pin = 2
+    r = r && report_error_(b, reqUpdateKeysProjection_2(b, l + 1));
+    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '+'?
@@ -3459,13 +3478,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqUpdateModelProjection
+  // typeRef reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM, "<req update model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && reqUpdateModelProjection(b, l + 1);
+    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3544,13 +3563,25 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqUpdateModelProjection
+  // reqParamsAndAnnotations reqUpdateModelProjection
+  static boolean reqUpdateModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqUpdateModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeRef reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_SINGLE_TAIL, "<req update model single tail>");
     r = typeRef(b, l + 1);
-    r = r && reqUpdateModelProjection(b, l + 1);
+    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3601,7 +3632,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? tagName reqUpdateTagProjectionItem
+  // '+'? tagName reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, "<req update multi tag projection item>", U_PLUS, U_ID)) return false;
@@ -3609,7 +3640,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM, "<req update multi tag projection item>");
     r = reqUpdateMultiTagProjectionItem_0(b, l + 1);
     r = r && tagName(b, l + 1);
-    r = r && reqUpdateTagProjectionItem(b, l + 1);
+    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3667,13 +3698,13 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' '+'? tagName?)? reqUpdateTagProjectionItem
+  // ( ':' '+'? tagName?)? reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_SINGLE_TAG_PROJECTION, "<req update single tag projection>");
     r = reqUpdateSingleTagProjection_0(b, l + 1);
-    r = r && reqUpdateTagProjectionItem(b, l + 1);
+    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3709,18 +3740,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0_2")) return false;
     tagName(b, l + 1);
     return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqUpdateModelProjection
-  static boolean reqUpdateTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateTagProjectionItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqUpdateModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */

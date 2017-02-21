@@ -8,6 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqUpdateModelSingleTail extends PsiElement {
 
   @NotNull
+  List<UrlReqAnnotation> getReqAnnotationList();
+
+  @NotNull
+  List<UrlReqParam> getReqParamList();
+
+  @NotNull
   UrlReqUpdateModelProjection getReqUpdateModelProjection();
 
   @NotNull
