@@ -10,3 +10,9 @@ integer UserId2 extends PersonId
 record UserRecord2 extends PersonRecord {
   override worstEnemy: UserRecord2
 }
+
+// to test the diamond
+record UserRecord3 extends UserRecord, UserRecord2 {
+  override worstEnemy: UserRecord3
+  diamond: String
+}

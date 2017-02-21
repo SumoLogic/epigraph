@@ -18,6 +18,8 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -26,6 +28,7 @@ import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import java.util.List;
@@ -278,6 +281,24 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testModelTailsNormalization() throws PsiProcessingException {
+    testModelTailsNormalization(
+        ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
+        UserRecord.type,
+        ":`record` ( firstName, id )"
+    );
+  }
+
+  @Test
+  public void testDiamond() throws PsiProcessingException {
+    testModelTailsNormalization(
+        ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
+        UserRecord3.type,
+        ":`record` ( firstName, id )"
+    );
+  }
+
+  @Test
   public void testParseMeta() throws PsiProcessingException {
     String projection = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
 
@@ -292,6 +313,32 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
     final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
     String actual = printOpOutputVarProjection(normalized);
+    assertEquals(expected, actual);
+  }
+
+  private void testModelTailsNormalization(String str, DatumType type, String expected) {
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
+    final OpOutputTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
+    assertNotNull(tagProjectionEntry);
+    final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+    assertNotNull(modelProjection);
+
+    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    final OpOutputVarProjection normalizedVar = new OpOutputVarProjection(
+        varProjection.type(),
+        ProjectionUtils.singletonLinkedHashMap(
+            tagProjectionEntry.tag().name(),
+            new OpOutputTagProjectionEntry(
+                tagProjectionEntry.tag(),
+                normalized,
+                TextLocation.UNKNOWN
+            )
+        ),
+        varProjection.parenthesized(),
+        null,
+        TextLocation.UNKNOWN
+    );
+    String actual = printOpOutputVarProjection(normalizedVar);
     assertEquals(expected, actual);
   }
 
@@ -329,6 +376,7 @@ public class OpOutputProjectionsTest {
         User2.type,
         UserId2.type,
         UserRecord2.type,
+        UserRecord3.type,
         SubUser.type,
         SubUserId.type,
         SubUserRecord.type,
