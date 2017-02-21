@@ -7,10 +7,19 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaOpDeleteModelMultiTailItem extends PsiElement {
 
-  @NotNull
+  @Nullable
   SchemaOpDeleteModelProjection getOpDeleteModelProjection();
 
   @NotNull
+  List<SchemaOpDeleteModelProperty> getOpDeleteModelPropertyList();
+
+  @NotNull
   SchemaTypeRef getTypeRef();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

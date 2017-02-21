@@ -27,15 +27,33 @@ public class SchemaOpOutputModelSingleTailImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaOpOutputModelProjection getOpOutputModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelProjection.class));
+    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaOpOutputModelProperty> getOpOutputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpOutputModelProperty.class);
   }
 
   @Override
   @NotNull
   public SchemaTypeRef getTypeRef() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }

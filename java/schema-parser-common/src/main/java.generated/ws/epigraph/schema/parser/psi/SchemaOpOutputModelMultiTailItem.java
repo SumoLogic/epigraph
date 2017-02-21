@@ -7,10 +7,19 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaOpOutputModelMultiTailItem extends PsiElement {
 
-  @NotNull
+  @Nullable
   SchemaOpOutputModelProjection getOpOutputModelProjection();
 
   @NotNull
+  List<SchemaOpOutputModelProperty> getOpOutputModelPropertyList();
+
+  @NotNull
   SchemaTypeRef getTypeRef();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

@@ -1815,52 +1815,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opDeleteModelProperty ','?)* '}' opDeleteModelProjection
-  static boolean opDeleteComplexTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexTagProjection")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, opDeleteComplexTagProjection_1(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, S_CURLY_RIGHT)) && r;
-    r = p && opDeleteModelProjection(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (opDeleteModelProperty ','?)*
-  private static boolean opDeleteComplexTagProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexTagProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opDeleteComplexTagProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opDeleteComplexTagProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opDeleteModelProperty ','?
-  private static boolean opDeleteComplexTagProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexTagProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opDeleteModelProperty(b, l + 1);
-    r = r && opDeleteComplexTagProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opDeleteComplexTagProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteComplexTagProjection_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
   // opDeleteSimpleFieldProjection
   public static boolean opDeleteFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteFieldProjection")) return false;
@@ -2125,13 +2079,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opDeleteModelProjection
+  // typeRef opDeleteModelProjectionWithProperties
   public static boolean opDeleteModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_MULTI_TAIL_ITEM, "<op delete model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && opDeleteModelProjection(b, l + 1);
+    r = r && opDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2210,6 +2164,64 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // opDeleteModelProjectionWithProperties_ | opDeleteModelProjection
+  static boolean opDeleteModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opDeleteModelProjectionWithProperties_(b, l + 1);
+    if (!r) r = opDeleteModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (opDeleteModelProperty ','?)* '}' opDeleteModelProjection
+  static boolean opDeleteModelProjectionWithProperties_(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionWithProperties_")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opDeleteModelProjectionWithProperties__1(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, S_CURLY_RIGHT)) && r;
+    r = p && opDeleteModelProjection(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opDeleteModelProperty ','?)*
+  private static boolean opDeleteModelProjectionWithProperties__1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionWithProperties__1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!opDeleteModelProjectionWithProperties__1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opDeleteModelProjectionWithProperties__1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // opDeleteModelProperty ','?
+  private static boolean opDeleteModelProjectionWithProperties__1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionWithProperties__1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opDeleteModelProperty(b, l + 1);
+    r = r && opDeleteModelProjectionWithProperties__1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opDeleteModelProjectionWithProperties__1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionWithProperties__1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // opParam | annotation
   public static boolean opDeleteModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelProperty")) return false;
@@ -2223,13 +2235,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opDeleteModelProjection
+  // typeRef opDeleteModelProjectionWithProperties
   public static boolean opDeleteModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_SINGLE_TAIL, "<op delete model single tail>");
     r = typeRef(b, l + 1);
-    r = r && opDeleteModelProjection(b, l + 1);
+    r = r && opDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2280,26 +2292,15 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // tagName ( opDeleteComplexTagProjection | opDeleteSimpleTagProjection )
+  // tagName opDeleteModelProjectionWithProperties
   public static boolean opDeleteMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, "<op delete multi tag projection item>", S_UNDERSCORE, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MULTI_TAG_PROJECTION_ITEM, "<op delete multi tag projection item>");
     r = tagName(b, l + 1);
-    r = r && opDeleteMultiTagProjectionItem_1(b, l + 1);
+    r = r && opDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // opDeleteComplexTagProjection | opDeleteSimpleTagProjection
-  private static boolean opDeleteMultiTagProjectionItem_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteMultiTagProjectionItem_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opDeleteComplexTagProjection(b, l + 1);
-    if (!r) r = opDeleteSimpleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -2355,19 +2356,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opDeleteModelProjection
-  static boolean opDeleteSimpleTagProjection(PsiBuilder b, int l) {
-    return opDeleteModelProjection(b, l + 1);
-  }
-
-  /* ********************************************************** */
-  // ( ':' tagName)? (opDeleteComplexTagProjection | opDeleteSimpleTagProjection )
+  // ( ':' tagName)? opDeleteModelProjectionWithProperties
   public static boolean opDeleteSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_SINGLE_TAG_PROJECTION, "<op delete single tag projection>");
     r = opDeleteSingleTagProjection_0(b, l + 1);
-    r = r && opDeleteSingleTagProjection_1(b, l + 1);
+    r = r && opDeleteModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2386,17 +2381,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, S_COLON);
     r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // opDeleteComplexTagProjection | opDeleteSimpleTagProjection
-  private static boolean opDeleteSingleTagProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteSingleTagProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opDeleteComplexTagProjection(b, l + 1);
-    if (!r) r = opDeleteSimpleTagProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3403,52 +3387,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection
-  static boolean opOutputComplexTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexTagProjection")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, opOutputComplexTagProjection_1(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, S_CURLY_RIGHT)) && r;
-    r = p && opOutputModelProjection(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (opOutputModelProperty ','?)*
-  private static boolean opOutputComplexTagProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexTagProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opOutputComplexTagProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opOutputComplexTagProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opOutputModelProperty ','?
-  private static boolean opOutputComplexTagProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexTagProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opOutputModelProperty(b, l + 1);
-    r = r && opOutputComplexTagProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opOutputComplexTagProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputComplexTagProjection_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
   // opOutputSimpleFieldProjection
   public static boolean opOutputFieldProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjection")) return false;
@@ -3726,13 +3664,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opOutputModelProjection
+  // typeRef opOutputModelProjectionWithProperties
   public static boolean opOutputModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MODEL_MULTI_TAIL_ITEM, "<op output model multi tail item>");
     r = typeRef(b, l + 1);
-    r = r && opOutputModelProjection(b, l + 1);
+    r = r && opOutputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3811,6 +3749,64 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // opOutputModelProjectionWithProperties_ | opOutputModelProjection
+  static boolean opOutputModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputModelProjectionWithProperties_(b, l + 1);
+    if (!r) r = opOutputModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection
+  static boolean opOutputModelProjectionWithProperties_(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionWithProperties_")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opOutputModelProjectionWithProperties__1(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, S_CURLY_RIGHT)) && r;
+    r = p && opOutputModelProjection(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opOutputModelProperty ','?)*
+  private static boolean opOutputModelProjectionWithProperties__1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionWithProperties__1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!opOutputModelProjectionWithProperties__1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opOutputModelProjectionWithProperties__1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // opOutputModelProperty ','?
+  private static boolean opOutputModelProjectionWithProperties__1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionWithProperties__1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opOutputModelProperty(b, l + 1);
+    r = r && opOutputModelProjectionWithProperties__1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opOutputModelProjectionWithProperties__1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionWithProperties__1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // opParam | annotation | opOutputModelMeta
   public static boolean opOutputModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProperty")) return false;
@@ -3824,13 +3820,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opOutputModelProjection
+  // typeRef opOutputModelProjectionWithProperties
   public static boolean opOutputModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MODEL_SINGLE_TAIL, "<op output model single tail>");
     r = typeRef(b, l + 1);
-    r = r && opOutputModelProjection(b, l + 1);
+    r = r && opOutputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3881,26 +3877,15 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // tagName ( opOutputComplexTagProjection | opOutputSimpleTagProjection )
+  // tagName opOutputModelProjectionWithProperties
   public static boolean opOutputMultiTagProjectionItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem")) return false;
     if (!nextTokenIs(b, "<op output multi tag projection item>", S_UNDERSCORE, S_ID)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM, "<op output multi tag projection item>");
     r = tagName(b, l + 1);
-    r = r && opOutputMultiTagProjectionItem_1(b, l + 1);
+    r = r && opOutputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // opOutputComplexTagProjection | opOutputSimpleTagProjection
-  private static boolean opOutputMultiTagProjectionItem_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputMultiTagProjectionItem_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opOutputComplexTagProjection(b, l + 1);
-    if (!r) r = opOutputSimpleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -3956,19 +3941,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opOutputModelProjection
-  static boolean opOutputSimpleTagProjection(PsiBuilder b, int l) {
-    return opOutputModelProjection(b, l + 1);
-  }
-
-  /* ********************************************************** */
-  // ( ':' tagName)? (opOutputComplexTagProjection | opOutputSimpleTagProjection )
+  // ( ':' tagName)? opOutputModelProjectionWithProperties
   public static boolean opOutputSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_SINGLE_TAG_PROJECTION, "<op output single tag projection>");
     r = opOutputSingleTagProjection_0(b, l + 1);
-    r = r && opOutputSingleTagProjection_1(b, l + 1);
+    r = r && opOutputModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3987,17 +3966,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, S_COLON);
     r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // opOutputComplexTagProjection | opOutputSimpleTagProjection
-  private static boolean opOutputSingleTagProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opOutputSingleTagProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opOutputComplexTagProjection(b, l + 1);
-    if (!r) r = opOutputSimpleTagProjection(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

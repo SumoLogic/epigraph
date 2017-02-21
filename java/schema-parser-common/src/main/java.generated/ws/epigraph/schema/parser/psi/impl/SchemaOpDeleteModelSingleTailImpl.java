@@ -27,15 +27,33 @@ public class SchemaOpDeleteModelSingleTailImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @NotNull
+  @Nullable
   public SchemaOpDeleteModelProjection getOpDeleteModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelProjection.class));
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaOpDeleteModelProperty> getOpDeleteModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpDeleteModelProperty.class);
   }
 
   @Override
   @NotNull
   public SchemaTypeRef getTypeRef() {
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }
