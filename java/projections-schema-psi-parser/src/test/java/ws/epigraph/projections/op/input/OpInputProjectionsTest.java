@@ -56,7 +56,6 @@ public class OpInputProjectionsTest {
     );
 
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         projectionStr, expected
     );
   }
@@ -64,7 +63,6 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseEmpty() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         "", ":id"
     );
   }
@@ -82,7 +80,6 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         "~~ws.epigraph.tests.User :id",
         ":id ~~ws.epigraph.tests.User :id"
     );
@@ -91,9 +88,15 @@ public class OpInputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )",
         ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+    );
+  }
+
+  @Test
+  public void testParseModelTail() throws PsiProcessingException {
+    testParsingVarProjection(
+        ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
     );
   }
 
@@ -141,9 +144,16 @@ public class OpInputProjectionsTest {
 
   private void testParsingVarProjection(String str) {
     testParsingVarProjection(
-        new DataType(Person.type, Person.id),
         str,
         str
+    );
+  }
+
+  private void testParsingVarProjection(String str, String expected) {
+    testParsingVarProjection(
+        new DataType(Person.type, Person.id),
+        str,
+        expected
     );
   }
 
