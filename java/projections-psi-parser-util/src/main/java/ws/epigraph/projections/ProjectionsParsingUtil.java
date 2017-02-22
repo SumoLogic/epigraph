@@ -28,7 +28,7 @@ import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -211,5 +211,37 @@ public final class ProjectionsParsingUtil {
     }
 
     return null;
+  }
+
+  public static @NotNull List<String> supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
+    if (vp.polymorphicTails() == null) return Collections.emptyList();
+    Set<String> acc = new HashSet<>();
+    supportedVarTailTypes(vp, acc);
+    List<String> res = new ArrayList<>(acc);
+    Collections.sort(res);
+    return res;
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp, Set<String> acc) {
+    final List<GenVarProjection<?, ?, ?>> tails = (List<GenVarProjection<?, ?, ?>>) vp.polymorphicTails();
+    if (tails != null)
+      tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
+  }
+
+  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp) {
+    if (vp.polymorphicTails() == null) return Collections.emptyList();
+    Set<String> acc = new HashSet<>();
+    supportedModelTailTypes(vp, acc);
+    List<String> res = new ArrayList<>(acc);
+    Collections.sort(res);
+    return res;
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp, Set<String> acc) {
+    final List<GenModelProjection<?, ?, ?, ?>> tails = (List<GenModelProjection<?, ?, ?, ?>>) vp.polymorphicTails();
+    if (tails != null)
+      tails.stream().map(t -> t.model().name().toString()).forEach(acc::add);
   }
 }

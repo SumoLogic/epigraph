@@ -351,6 +351,7 @@ public final class OpOutputProjectionsPsiParser {
 
   }
 
+  @SuppressWarnings("unchecked")
   private static <MP extends OpOutputModelProjection<?, ?, ?>>
   @NotNull MP parseModelProjection(
       @NotNull Class<MP> modelClass,
@@ -365,6 +366,8 @@ public final class OpOutputProjectionsPsiParser {
 
     switch (type.kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(OpOutputRecordModelProjection.class);
+
         @Nullable SchemaOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -387,6 +390,8 @@ public final class OpOutputProjectionsPsiParser {
         );
 
       case MAP:
+        assert modelClass.isAssignableFrom(OpOutputMapModelProjection.class);
+
         @Nullable SchemaOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -410,6 +415,8 @@ public final class OpOutputProjectionsPsiParser {
         );
 
       case LIST:
+        assert modelClass.isAssignableFrom(OpOutputListModelProjection.class);
+
         @Nullable SchemaOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -436,6 +443,8 @@ public final class OpOutputProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
 
       case PRIMITIVE:
+        assert modelClass.isAssignableFrom(OpOutputPrimitiveModelProjection.class);
+
         return (MP) parsePrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,

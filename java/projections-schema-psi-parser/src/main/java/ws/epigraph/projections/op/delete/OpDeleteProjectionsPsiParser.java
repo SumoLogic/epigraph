@@ -310,6 +310,8 @@ public final class OpDeleteProjectionsPsiParser {
 
     switch (type.kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(OpDeleteRecordModelProjection.class);
+
         @Nullable SchemaOpDeleteRecordModelProjection recordModelProjectionPsi = psi.getOpDeleteRecordModelProjection();
         if (recordModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -331,6 +333,8 @@ public final class OpDeleteProjectionsPsiParser {
         );
 
       case MAP:
+        assert modelClass.isAssignableFrom(OpDeleteMapModelProjection.class);
+
         @Nullable SchemaOpDeleteMapModelProjection mapModelProjectionPsi = psi.getOpDeleteMapModelProjection();
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -353,6 +357,8 @@ public final class OpDeleteProjectionsPsiParser {
         );
 
       case LIST:
+        assert modelClass.isAssignableFrom(OpDeleteListModelProjection.class);
+
         @Nullable SchemaOpDeleteListModelProjection listModelProjectionPsi = psi.getOpDeleteListModelProjection();
         if (listModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
@@ -377,6 +383,8 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
 
       case PRIMITIVE:
+        assert modelClass.isAssignableFrom(OpDeletePrimitiveModelProjection.class);
+
         return (MP) parsePrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,
