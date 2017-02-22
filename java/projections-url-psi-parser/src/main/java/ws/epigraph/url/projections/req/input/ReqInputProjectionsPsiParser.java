@@ -18,6 +18,7 @@ package ws.epigraph.url.projections.req.input;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
@@ -456,6 +457,7 @@ public final class ReqInputProjectionsPsiParser {
 
   }
 
+  @Contract("_, _, null, _, _ -> null")
   private static <MP extends ReqInputModelProjection<?, ?, ?>>
   @Nullable List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,

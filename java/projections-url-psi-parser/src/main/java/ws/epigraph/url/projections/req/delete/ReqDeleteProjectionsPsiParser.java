@@ -18,11 +18,13 @@ package ws.epigraph.url.projections.req.delete;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.delete.*;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.delete.*;
@@ -154,7 +156,8 @@ public final class ReqDeleteProjectionsPsiParser {
 
     for (UrlReqDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
-        @NotNull TagApi tag = UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
+        @NotNull TagApi tag =
+            UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, errors);
         @NotNull OpDeleteTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, errors);
 
         OpDeleteModelProjection<?, ?, ?> opTagProjection = opTag.projection();
@@ -260,7 +263,11 @@ public final class ReqDeleteProjectionsPsiParser {
     @Nullable OpDeleteVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)
       throw new PsiProcessingException(
-          String.format("Polymorphic tail for type '%s' is not supported", tailType.name()),
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              String.join(", ", ProjectionsParsingUtil.supportedVarTailTypes(op)),
+              tailType.name()
+          ),
           tailProjectionPsi,
           errors
       );
@@ -274,7 +281,9 @@ public final class ReqDeleteProjectionsPsiParser {
     );
   }
 
-  private static @Nullable OpDeleteVarProjection mergeOpTails(@NotNull OpDeleteVarProjection op, @NotNull TypeApi tailType) {
+  private static @Nullable OpDeleteVarProjection mergeOpTails(
+      @NotNull OpDeleteVarProjection op,
+      @NotNull TypeApi tailType) {
     Iterable<OpDeleteVarProjection> opTails = op.polymorphicTails();
     if (opTails == null) return null;
     // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
@@ -298,62 +307,108 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
+    return parseModelProjection(
+        ReqDeleteModelProjection.class,
+        op,
+        params,
+        annotations,
+        psi,
+        resolver,
+        errors
+    );
+
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <MP extends ReqDeleteModelProjection<?, ?, ?>> @NotNull MP parseModelProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpDeleteModelProjection<?, ?, ?> op,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
+      @NotNull UrlReqDeleteModelProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     DatumTypeApi model = op.model();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(ReqDeleteRecordModelProjection.class);
         final OpDeleteRecordModelProjection opRecord = (OpDeleteRecordModelProjection) op;
 
         @Nullable UrlReqDeleteRecordModelProjection recordModelProjectionPsi =
             psi.getReqDeleteRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(model, opRecord, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, errors);
 
-        return parseRecordModelProjection(
+        return (MP) parseRecordModelProjection(
             opRecord,
             params,
             annotations,
+            parseModelTails(
+                ReqDeleteRecordModelProjection.class,
+                op,
+                psi.getReqDeleteModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             recordModelProjectionPsi,
             subResolver,
             errors
         );
 
       case MAP:
+        assert modelClass.isAssignableFrom(ReqDeleteMapModelProjection.class);
         final OpDeleteMapModelProjection opMap = (OpDeleteMapModelProjection) op;
         @Nullable UrlReqDeleteMapModelProjection mapModelProjectionPsi = psi.getReqDeleteMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(model, opMap, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, errors);
 
-        return parseMapModelProjection(
+        return (MP) parseMapModelProjection(
             opMap,
             params,
             annotations,
+            parseModelTails(
+                ReqDeleteMapModelProjection.class,
+                op,
+                psi.getReqDeleteModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             mapModelProjectionPsi,
             subResolver,
             errors
         );
 
       case LIST:
+        assert modelClass.isAssignableFrom(ReqDeleteListModelProjection.class);
         final OpDeleteListModelProjection opList = (OpDeleteListModelProjection) op;
         @Nullable UrlReqDeleteListModelProjection listModelProjectionPsi =
             psi.getReqDeleteListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(model, opList, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, errors);
 
-        return parseListModelProjection(
+        return (MP) parseListModelProjection(
             opList,
             params,
             annotations,
+            parseModelTails(
+                ReqDeleteListModelProjection.class,
+                op,
+                psi.getReqDeleteModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             listModelProjectionPsi,
             subResolver,
             errors
@@ -363,10 +418,18 @@ public final class ReqDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, errors);
 
       case PRIMITIVE:
-        return parsePrimitiveModelProjection(
+        assert modelClass.isAssignableFrom(ReqDeletePrimitiveModelProjection.class);
+        return (MP) parsePrimitiveModelProjection(
             (OpDeletePrimitiveModelProjection) op,
             params,
             annotations,
+            parseModelTails(
+                ReqDeletePrimitiveModelProjection.class,
+                op,
+                psi.getReqDeleteModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             psi
         );
 
@@ -377,6 +440,96 @@ public final class ReqDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + model.kind(), psi, errors);
     }
 
+  }
+
+  @Contract("_, _, null, _, _ -> null")
+  private static <MP extends ReqDeleteModelProjection<?, ?, ?>>
+  @Nullable List<MP> parseModelTails(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpDeleteModelProjection<?, ?, ?> op,
+      @Nullable UrlReqDeleteModelPolymorphicTail tailPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (tailPsi == null) return null;
+    else {
+      List<MP> tails = new ArrayList<>();
+
+      final UrlReqDeleteModelSingleTail singleTailPsi = tailPsi.getReqDeleteModelSingleTail();
+      if (singleTailPsi == null) {
+        final UrlReqDeleteModelMultiTail multiTailPsi = tailPsi.getReqDeleteModelMultiTail();
+        assert multiTailPsi != null;
+        for (UrlReqDeleteModelMultiTailItem tailItemPsi : multiTailPsi.getReqDeleteModelMultiTailItemList()) {
+          try {
+            tails.add(
+                buildModelTailProjection(
+                    modelClass,
+                    op,
+                    tailItemPsi.getTypeRef(),
+                    tailItemPsi.getReqDeleteModelProjection(),
+                    tailItemPsi.getReqParamList(),
+                    tailItemPsi.getReqAnnotationList(),
+                    typesResolver,
+                    errors
+                )
+            );
+          } catch (PsiProcessingException e) {
+            errors.add(e.toError());
+          }
+        }
+      } else {
+        tails.add(
+            buildModelTailProjection(
+                modelClass,
+                op,
+                singleTailPsi.getTypeRef(),
+                singleTailPsi.getReqDeleteModelProjection(),
+                singleTailPsi.getReqParamList(),
+                singleTailPsi.getReqAnnotationList(),
+                typesResolver,
+                errors
+            )
+        );
+      }
+      return tails;
+    }
+  }
+
+  private static <MP extends ReqDeleteModelProjection<?, ?, ?>>
+  @NotNull MP buildModelTailProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpDeleteModelProjection<?, ?, ?> op,
+      @NotNull UrlTypeRef tailTypeRefPsi,
+      @NotNull UrlReqDeleteModelProjection modelProjectionPsi,
+      @NotNull List<UrlReqParam> modelParamsList,
+      @NotNull List<UrlReqAnnotation> modelAnnotationsList,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
+    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+
+    final OpDeleteModelProjection<?, ?, ?> opTail = op.tailByType(tailType);
+    if (opTail == null)
+      throw new PsiProcessingException(
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op)),
+              tailType.name()
+          ),
+          modelProjectionPsi,
+          errors
+      );
+
+    return parseModelProjection(
+        modelClass,
+        opTail,
+        parseReqParams(modelParamsList, op.params(), typesResolver, errors),
+        parseAnnotations(modelAnnotationsList, errors),
+        modelProjectionPsi,
+        typesResolver,
+        errors
+    );
   }
 
   private static @NotNull ReqDeleteModelProjection<?, ?, ?> createDefaultModelProjection(
@@ -484,8 +637,8 @@ public final class ReqDeleteProjectionsPsiParser {
 
     @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, errors);
     List<TagApi> tags = defaultTag == null ?
-                          Collections.emptyList() :
-                          Collections.singletonList(defaultTag);
+                        Collections.emptyList() :
+                        Collections.singletonList(defaultTag);
     return createDefaultVarProjection(type, tags, op, locationPsi, errors);
   }
 
@@ -542,6 +695,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull OpDeleteRecordModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqDeleteRecordModelProjection> tails,
       @NotNull UrlReqDeleteRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) {
@@ -597,7 +751,7 @@ public final class ReqDeleteProjectionsPsiParser {
         params,
         annotations,
         fieldProjections,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -635,6 +789,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull OpDeleteMapModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqDeleteMapModelProjection> tails,
       @NotNull UrlReqDeleteMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -691,7 +846,7 @@ public final class ReqDeleteProjectionsPsiParser {
         annotations,
         keyProjections,
         elementsVarProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -700,6 +855,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull OpDeleteListModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqDeleteListModelProjection> tails,
       @NotNull UrlReqDeleteListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -725,7 +881,7 @@ public final class ReqDeleteProjectionsPsiParser {
         params,
         annotations,
         elementsVarProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -734,13 +890,14 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull OpDeletePrimitiveModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqDeletePrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new ReqDeletePrimitiveModelProjection(
         op.model(),
         params,
         annotations,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
 

@@ -61,7 +61,7 @@ public class ReqDeleteProjectionsParserTest {
           "    ),",
           "    friends *( :id ),",
           "    friendsMap []( :(id, `record` (id, firstName) ) )",
-          "  )",
+          "  ) ~ws.epigraph.tests.UserRecord (profile)",
           ") ~~ws.epigraph.tests.User :`record` (profile)"
       )
   );
@@ -104,6 +104,13 @@ public class ReqDeleteProjectionsParserTest {
     );
   }
 
+  @Test
+  public void testParseModelTail() {
+    testParse(
+        ":record (id) ~UserRecord (profile)",
+        ":record ( id ) ~ws.epigraph.tests.UserRecord ( profile )"
+    );
+  }
 
   private void testParse(String expr) {
     testParse(expr, expr);
