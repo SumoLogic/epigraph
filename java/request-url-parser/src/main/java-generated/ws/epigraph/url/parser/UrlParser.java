@@ -2812,15 +2812,23 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqOutputComaModelProjectionWithProperties
+  // '+'? typeRef reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM, "<req output model multi tail item>");
-    r = typeRef(b, l + 1);
+    r = reqOutputModelMultiTailItem_0(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean reqOutputModelMultiTailItem_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputModelMultiTailItem_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2848,15 +2856,23 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqOutputComaModelProjectionWithProperties
+  // '+'? typeRef reqOutputComaModelProjectionWithProperties
   public static boolean reqOutputModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_SINGLE_TAIL, "<req output model single tail>");
-    r = typeRef(b, l + 1);
+    r = reqOutputModelSingleTail_0(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean reqOutputModelSingleTail_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputModelSingleTail_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */

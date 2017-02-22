@@ -74,7 +74,7 @@ public class ReqOutputProjectionsParserTest {
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "    friendRecordMap [] (id, firstName)",
-          "  )",
+          "  ) ~ws.epigraph.tests.UserRecord (profile)",
           ") ~~(",
           "      ws.epigraph.tests.User :`record` (profile)",
           "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
@@ -146,6 +146,15 @@ public class ReqOutputProjectionsParserTest {
     testParse(
         ":id ~~User :record ( profile ) ~~SubUser :record (worstEnemy(id))",
         ":id ~~ws.epigraph.tests.User :record ( profile ) ~~ws.epigraph.tests.SubUser :record ( worstEnemy ( id ) )",
+        1
+    );
+  }
+
+  @Test
+  public void testParseModelTail() {
+    testParse(
+        ":record (id) ~+UserRecord (profile)",
+        ":record ( id ) ~+ws.epigraph.tests.UserRecord ( profile )",
         1
     );
   }
@@ -247,6 +256,9 @@ public class ReqOutputProjectionsParserTest {
         ":record ( friendsMap [ \"2\";keyParam = \"foo\" ]( :( record ( id ), id ) ) )"
     );
   }
+
+  // todo model tails normalization
+  // todo diamond
 
   @Test
   public void testParseMeta() throws PsiProcessingException {

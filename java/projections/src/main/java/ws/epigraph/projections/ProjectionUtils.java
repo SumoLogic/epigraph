@@ -126,6 +126,22 @@ public final class ProjectionUtils {
     return len;
   }
 
+  public static @NotNull TypeApi mostSpecific(@NotNull TypeApi t1, @NotNull TypeApi t2) {
+    if (t1.isAssignableFrom(t2)) return t1;
+    if (t2.isAssignableFrom(t1)) return t2;
+    throw new IllegalArgumentException(
+        String.format("Types '%s' and '%s' are not related", t1.name().toString(), t2.name())
+    );
+  }
+
+  public static @NotNull DatumTypeApi mostSpecific(@NotNull DatumTypeApi t1, @NotNull DatumTypeApi t2) {
+    if (t1.isAssignableFrom(t2)) return t1;
+    if (t2.isAssignableFrom(t1)) return t2;
+    throw new IllegalArgumentException(
+        String.format("Types '%s' and '%s' are not related", t1.name().toString(), t2.name())
+    );
+  }
+
   // var tails linearization
 
   public static <VP extends GenVarProjection<VP, ?, ?>> List<VP> linearizeVarTails(

@@ -66,8 +66,12 @@ public class OpOutputProjectionsTest {
 //        "    friends { { *( :+id {} ) } }",
 //        "    friends { :_ { *( :+id {} ) } }", // same as above
         // :`record` (....) {params}
-        "  )",
-        ") ~~ws.epigraph.tests.User :`record` (profile)"
+        "  ) ~ws.epigraph.tests.UserRecord (profile)",
+        ") ~~(",
+        "      ws.epigraph.tests.User :`record` (profile)",
+        "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+        "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
+        ")"
     );
 
 
@@ -79,14 +83,37 @@ public class OpOutputProjectionsTest {
         "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
         "      bestFriend :`record` ( id, bestFriend :id ),",
         "      friends *( :id )",
-        "    )",
-        ") ~~ws.epigraph.tests.User :`record` ( profile )"
+        "    ) ~ws.epigraph.tests.UserRecord ( profile )",
+        ")",
+        "  ~~(",
+        "    ws.epigraph.tests.User :`record` ( profile ) ~~ws.epigraph.tests.SubUser :`record` ( worstEnemy ( id ) ),",
+        "    ws.epigraph.tests.User2 :`record` ( worstEnemy ( id ) )",
+        "  )"
     );
 
     testParsingVarProjection(
         dataType,
         projectionStr,
         expected
+    );
+
+    // todo fix record formatting
+    testTailsNormalization(
+        projectionStr,
+        SubUser.type,
+        lines(
+            ":(",
+            "  `record`",
+            "    (",
+            "      worstEnemy ( id ),",
+            "      profile,",
+            "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+            "      bestFriend :`record` ( id, bestFriend :id ),",
+            "      friends *( :id )",
+            "    ),",
+            "  id",
+            ") ~~ws.epigraph.tests.SubUser :`record` ( worstEnemy ( id ) )" // todo this tail here is harmless but it must be removed
+        )
     );
   }
 

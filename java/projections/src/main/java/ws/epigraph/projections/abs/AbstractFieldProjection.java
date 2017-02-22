@@ -65,8 +65,13 @@ public abstract class AbstractFieldProjection<
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
+//    final List<@NotNull VP> varProjections =
+//        fieldProjections.stream().map(GenFieldProjection::varProjection).collect(Collectors.toList());
     final List<@NotNull VP> varProjections =
-        fieldProjections.stream().map(GenFieldProjection::varProjection).collect(Collectors.toList());
+        fieldProjections
+            .stream()
+            .map(fp -> fp.varProjection().normalizedForType(type.type()))
+            .collect(Collectors.toList());
 
     assert varProjections.size() >= 1;
 

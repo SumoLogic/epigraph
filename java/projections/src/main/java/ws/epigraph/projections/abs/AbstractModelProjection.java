@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumTypeApi;
 
@@ -83,7 +84,7 @@ public abstract class AbstractModelProjection<
     if (linearizedTails.isEmpty())
       return self();
 
-    final DatumTypeApi effectiveType = linearizedTails.get(0).model();
+    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(targetType, linearizedTails.get(0).model());
 
     final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
     final List<SMP> mergedTails = mergeTails(effectiveProjections); // before adding self!

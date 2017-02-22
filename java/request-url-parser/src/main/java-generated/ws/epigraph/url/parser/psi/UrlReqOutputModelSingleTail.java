@@ -22,4 +22,7 @@ public interface UrlReqOutputModelSingleTail extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

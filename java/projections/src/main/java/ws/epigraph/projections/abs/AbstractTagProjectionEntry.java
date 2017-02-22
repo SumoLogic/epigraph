@@ -23,6 +23,7 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public abstract class AbstractTagProjectionEntry<
       throw new IllegalArgumentException(
           String.format(
               "Tag '%s' type '%s' is not compatible with '%s' projection",
-              tag.name(), tag.type(), projection().model().name()
+              tag.name(), tag.type().name(), projection().model().name()
           )
       );
 
@@ -66,8 +67,13 @@ public abstract class AbstractTagProjectionEntry<
   public @Nullable TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
+//    final List<@NotNull MP> models =
+//        tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
     final List<@NotNull MP> models =
-        tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
+        tagEntries
+            .stream()
+            .map(te -> (MP) te.projection().normalizedForType(tag.type()))
+            .collect(Collectors.toList());
 
     final @NotNull MP mp = models.get(0);
     final @NotNull DatumTypeApi type = tag.type();

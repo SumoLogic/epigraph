@@ -25,6 +25,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 //import ws.epigraph.projections.op.OpParams;
@@ -51,10 +52,6 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
  */
 public final class ReqOutputProjectionsPsiParser {
   private ReqOutputProjectionsPsiParser() {}
-  // todo error messages listing supported fields/tags should take parents into account:
-  // op : ..bestFriend(id,firstName)~User(profileUrl)
-  // req: ..bestFriend(id,firstName)~User(x) -- supported fields are (id, firstName, profileUrl)
-
 
   public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseTrunkVarProjection(
       @NotNull DataTypeApi dataType,
@@ -231,6 +228,7 @@ public final class ReqOutputProjectionsPsiParser {
             singleTagProjectionPsi.getReqOutputComaModelProjection();
 
         final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
+            ReqOutputModelProjection.class,
             opModelProjection,
             required || singleTagProjectionPsi.getPlus() != null,
             parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, errors),
@@ -310,6 +308,7 @@ public final class ReqOutputProjectionsPsiParser {
         @NotNull UrlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
         final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
+            ReqOutputModelProjection.class,
             opTagProjection,
             required || tagProjectionPsi.getPlus() != null,
             parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, errors),
@@ -410,6 +409,7 @@ public final class ReqOutputProjectionsPsiParser {
     // no params/annotations/meta on meta for now
 
     return parseComaModelProjection(
+        ReqOutputModelProjection.class,
         metaOp,
         modelMetaPsi.getPlus() != null,
         ReqParams.EMPTY,
@@ -514,7 +514,34 @@ public final class ReqOutputProjectionsPsiParser {
     return createDefaultVarProjection(type.type(), op, required, locationPsi, errors);
   }
 
+  @SuppressWarnings("unchecked")
   private static @NotNull StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> parseTrunkModelProjection(
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      boolean required,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
+      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @NotNull UrlReqOutputTrunkModelProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    return (StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>>) parseTrunkModelProjection(
+        ReqOutputModelProjection.class,
+        op,
+        required,
+        params,
+        annotations,
+        metaProjection,
+        psi,
+        typesResolver,
+        errors
+    );
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  @NotNull StepsAndProjection<? extends MP> parseTrunkModelProjection(
+      @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
@@ -529,17 +556,25 @@ public final class ReqOutputProjectionsPsiParser {
     //noinspection SwitchStatementWithoutDefaultBranch,EnumSwitchStatementWhichMissesCases
     switch (op.model().kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
         @Nullable
         UrlReqOutputTrunkRecordModelProjection trunkRecordProjectionPsi = psi.getReqOutputTrunkRecordModelProjection();
 
         if (trunkRecordProjectionPsi == null) break;
         else {
-          return parseTrunkRecordModelProjection(
+          return (StepsAndProjection<? extends MP>) parseTrunkRecordModelProjection(
               (OpOutputRecordModelProjection) op,
               required,
               params,
               annotations,
               metaProjection,
+              parseModelTails(
+                  ReqOutputRecordModelProjection.class,
+                  op,
+                  psi.getReqOutputModelPolymorphicTail(),
+                  subResolver,
+                  errors
+              ),
               trunkRecordProjectionPsi,
               subResolver,
               errors
@@ -547,17 +582,25 @@ public final class ReqOutputProjectionsPsiParser {
         }
 
       case MAP:
+        assert modelClass.isAssignableFrom(ReqOutputMapModelProjection.class);
         @Nullable
         UrlReqOutputTrunkMapModelProjection trunkMapProjectionPsi = psi.getReqOutputTrunkMapModelProjection();
 
         if (trunkMapProjectionPsi == null) break;
         else {
-          return parseTrunkMapModelProjection(
+          return (StepsAndProjection<? extends MP>) parseTrunkMapModelProjection(
               (OpOutputMapModelProjection) op,
               required,
               params,
               annotations,
               metaProjection,
+              parseModelTails(
+                  ReqOutputMapModelProjection.class,
+                  op,
+                  psi.getReqOutputModelPolymorphicTail(),
+                  subResolver,
+                  errors
+              ),
               trunkMapProjectionPsi,
               subResolver,
               errors
@@ -569,12 +612,24 @@ public final class ReqOutputProjectionsPsiParser {
     return
         new StepsAndProjection<>(
             0,
-            parseComaModelProjection(op, required, params, annotations, metaProjection, psi, subResolver, errors)
+            parseComaModelProjection(
+                modelClass,
+                op,
+                required,
+                params,
+                annotations,
+                metaProjection,
+                psi,
+                subResolver,
+                errors
+            )
         );
 
   }
 
-  private static @NotNull ReqOutputModelProjection<?, ?, ?> parseComaModelProjection(
+  @SuppressWarnings("unchecked")
+  private static <MP extends ReqOutputModelProjection<?, ?, ?>> @NotNull MP parseComaModelProjection(
+      @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
@@ -589,63 +644,87 @@ public final class ReqOutputProjectionsPsiParser {
 
     switch (model.kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
         final OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
 
         @Nullable UrlReqOutputComaRecordModelProjection recordModelProjectionPsi =
             psi.getReqOutputComaRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(model, required, opRecord, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, required, opRecord, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, errors);
 
-        return parseComaRecordModelProjection(
+        return (MP) parseComaRecordModelProjection(
             opRecord,
             required,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                ReqOutputRecordModelProjection.class,
+                op,
+                psi.getReqOutputModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             recordModelProjectionPsi,
             subResolver,
             errors
         );
 
       case MAP:
+        assert modelClass.isAssignableFrom(ReqOutputMapModelProjection.class);
         final OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
         @Nullable UrlReqOutputComaMapModelProjection mapModelProjectionPsi = psi.getReqOutputComaMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(model, required, opMap, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, required, opMap, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, errors);
 
-        return parseComaMapModelProjection(
+        return (MP) parseComaMapModelProjection(
             opMap,
             required,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                ReqOutputMapModelProjection.class,
+                op,
+                psi.getReqOutputModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             mapModelProjectionPsi,
             subResolver,
             errors
         );
 
       case LIST:
+        assert modelClass.isAssignableFrom(ReqOutputListModelProjection.class);
         final OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         @Nullable UrlReqOutputComaListModelProjection listModelProjectionPsi =
             psi.getReqOutputComaListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(model, required, opList, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, required, opList, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, errors);
 
-        return parseListModelProjection(
+        return (MP) parseListModelProjection(
             opList,
             required,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                ReqOutputListModelProjection.class,
+                op,
+                psi.getReqOutputModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             listModelProjectionPsi,
             subResolver,
             errors
@@ -655,12 +734,20 @@ public final class ReqOutputProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, errors);
 
       case PRIMITIVE:
-        return parsePrimitiveModelProjection(
+        assert modelClass.isAssignableFrom(ReqOutputPrimitiveModelProjection.class);
+        return (MP) parsePrimitiveModelProjection(
             (PrimitiveTypeApi) model,
             required,
             params,
             annotations,
             metaProjection,
+            parseModelTails(
+                ReqOutputPrimitiveModelProjection.class,
+                op,
+                psi.getReqOutputModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             psi
         );
 
@@ -672,6 +759,108 @@ public final class ReqOutputProjectionsPsiParser {
     }
   }
 
+  @Contract("_, _, null, _, _ -> null")
+  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  @Nullable List<MP> parseModelTails(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @Nullable UrlReqOutputModelPolymorphicTail tailPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (tailPsi == null) return null;
+    else {
+      List<MP> tails = new ArrayList<>();
+
+      final UrlReqOutputModelSingleTail singleTailPsi = tailPsi.getReqOutputModelSingleTail();
+      if (singleTailPsi == null) {
+        final UrlReqOutputModelMultiTail multiTailPsi = tailPsi.getReqOutputModelMultiTail();
+        assert multiTailPsi != null;
+        for (UrlReqOutputModelMultiTailItem tailItemPsi : multiTailPsi.getReqOutputModelMultiTailItemList()) {
+          try {
+            tails.add(
+                buildModelTailProjection(
+                    modelClass,
+                    op,
+                    tailItemPsi.getPlus() != null,
+                    tailItemPsi.getTypeRef(),
+                    tailItemPsi.getReqOutputComaModelProjection(),
+                    tailItemPsi.getReqParamList(),
+                    tailItemPsi.getReqAnnotationList(),
+                    tailItemPsi.getReqOutputModelMeta(),
+                    typesResolver,
+                    errors
+                )
+            );
+          } catch (PsiProcessingException e) {
+            errors.add(e.toError());
+          }
+        }
+      } else {
+        tails.add(
+            buildModelTailProjection(
+                modelClass,
+                op,
+                singleTailPsi.getPlus() != null,
+                singleTailPsi.getTypeRef(),
+                singleTailPsi.getReqOutputComaModelProjection(),
+                singleTailPsi.getReqParamList(),
+                singleTailPsi.getReqAnnotationList(),
+                singleTailPsi.getReqOutputModelMeta(),
+                typesResolver,
+                errors
+            )
+        );
+      }
+      return tails;
+    }
+  }
+
+  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  @NotNull MP buildModelTailProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      boolean required,
+      @NotNull UrlTypeRef tailTypeRefPsi,
+      @NotNull UrlReqOutputComaModelProjection modelProjectionPsi,
+      @NotNull List<UrlReqParam> modelParamsList,
+      @NotNull List<UrlReqAnnotation> modelAnnotationsList,
+      @Nullable UrlReqOutputModelMeta modelMetaPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
+    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+
+    final OpOutputModelProjection<?, ?, ?> opTail = op.tailByType(tailType);
+    if (opTail == null)
+      throw new PsiProcessingException(
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op)),
+              tailType.name()
+          ),
+          modelProjectionPsi,
+          errors
+      );
+
+    return parseComaModelProjection(
+        modelClass,
+        opTail,
+        required,
+        parseReqParams(modelParamsList, op.params(), typesResolver, errors),
+        parseAnnotations(modelAnnotationsList, errors),
+        parseModelMetaProjection(
+            op,
+            modelMetaPsi,
+            typesResolver,
+            errors
+        ),
+        modelProjectionPsi,
+        typesResolver,
+        errors
+    );
+  }
 
   private static @Nullable TypeKind findProjectionKind(@NotNull UrlReqOutputComaModelProjection psi) {
     if (psi.getReqOutputComaRecordModelProjection() != null) return TypeKind.RECORD;
@@ -827,6 +1016,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -930,7 +1120,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             metaProjection,
             fieldProjections,
-            null, // todo
+            tails,
             fieldLocation
         )
     );
@@ -986,6 +1176,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1092,7 +1283,7 @@ public final class ReqOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         fieldProjections,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1103,6 +1294,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1126,7 +1318,14 @@ public final class ReqOutputProjectionsPsiParser {
 
     @Nullable UrlReqOutputTrunkVarProjection valueProjectionPsi = psi.getReqOutputTrunkVarProjection();
     StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
-        parseTrunkVarProjection(op.model().valueType(), op.itemsProjection(), false, valueProjectionPsi, resolver, errors);
+        parseTrunkVarProjection(
+            op.model().valueType(),
+            op.itemsProjection(),
+            false,
+            valueProjectionPsi,
+            resolver,
+            errors
+        );
 
     valueProjection = stepsAndProjection.projection();
     steps = stepsAndProjection.pathSteps() + 1;
@@ -1141,7 +1340,7 @@ public final class ReqOutputProjectionsPsiParser {
             metaProjection,
             Collections.singletonList(keyProjection),
             valueProjection,
-            null, // todo
+            tails,
             EpigraphPsiUtil.getLocation(psi)
         )
     );
@@ -1153,6 +1352,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull UrlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1227,7 +1427,7 @@ public final class ReqOutputProjectionsPsiParser {
         metaProjection,
         keyProjections,
         valueProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1238,6 +1438,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputListModelProjection> tails,
       @NotNull UrlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -1265,7 +1466,7 @@ public final class ReqOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         itemsProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1276,6 +1477,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqOutputPrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new ReqOutputPrimitiveModelProjection(
@@ -1284,7 +1486,7 @@ public final class ReqOutputProjectionsPsiParser {
         params,
         annotations,
         metaProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

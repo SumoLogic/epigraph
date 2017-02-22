@@ -22,4 +22,7 @@ public interface UrlReqOutputModelMultiTailItem extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

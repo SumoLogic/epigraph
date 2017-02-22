@@ -164,6 +164,10 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
+  @Override
+  protected String modelTailTypeNamePrefix(final @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+    return projection.required() ? "+" : super.modelTailTypeNamePrefix(projection);
+  }
 
   @Override
   public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {

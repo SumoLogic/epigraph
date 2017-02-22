@@ -19,6 +19,7 @@ package ws.epigraph.projections.abs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -137,7 +138,7 @@ public abstract class AbstractVarProjection<
     if (linearizedTails.isEmpty())
       return self();
 
-    final TypeApi effectiveType = linearizedTails.get(0).type();
+    final TypeApi effectiveType = ProjectionUtils.mostSpecific(targetType, linearizedTails.get(0).type());
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
     final List<VP> mergedTails = mergeTails(effectiveProjections); // before adding self!
@@ -159,6 +160,7 @@ public abstract class AbstractVarProjection<
   }
 
   private @NotNull LinkedHashMap<String, TP> mergeTags(
+      TypeApi type,
       final @NotNull Map<String, TagApi> tags,
       final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
@@ -174,6 +176,7 @@ public abstract class AbstractVarProjection<
 
       if (!tagProjections.isEmpty()) {
         final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections);
+//        final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(type.tagsMap().get(tag.name()), tagProjections);
         if (mergedTag != null)
           mergedTags.put(tag.name(), mergedTag);
       }
@@ -202,7 +205,7 @@ public abstract class AbstractVarProjection<
 
     final @NotNull Map<String, TagApi> tags = collectTags(varProjections);
 
-    final @NotNull Map<String, TP> mergedTags = mergeTags(tags, varProjections);
+    final @NotNull Map<String, TP> mergedTags = mergeTags(type, tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
 
     return merge(type, varProjections, mergedTags, mergedParenthesized, mergedTails);
