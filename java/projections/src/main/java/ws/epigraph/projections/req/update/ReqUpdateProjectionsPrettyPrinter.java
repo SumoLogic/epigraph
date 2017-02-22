@@ -94,6 +94,11 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
+  protected String modelTailTypeNamePrefix(final @NotNull ReqUpdateModelProjection<?, ?, ?> projection) {
+    return projection.update() ? "+" : super.modelTailTypeNamePrefix(projection);
+  }
+
+  @Override
   public void printModelOnly(@NotNull ReqUpdateModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof ReqUpdateRecordModelProjection)
       printModelOnly((ReqUpdateRecordModelProjection) mp);

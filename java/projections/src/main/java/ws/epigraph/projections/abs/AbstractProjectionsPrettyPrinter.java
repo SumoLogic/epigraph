@@ -159,6 +159,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
       if (polymorphicTails.size() == 1) {
         l.print("~");
         MP tail = polymorphicTails.iterator().next();
+        l.print(modelTailTypeNamePrefix(tail));
         l.print(tail.model().name().toString());
         l.brk();
         print(tail, 0);
@@ -169,13 +170,19 @@ public abstract class AbstractProjectionsPrettyPrinter<
         for (MP tail : polymorphicTails) {
           if (first) first = false;
           else l.print(",");
-          l.brk().print(tail.model().name().toString()).brk();
+          l.brk();
+          l.print(modelTailTypeNamePrefix(tail));
+          l.print(tail.model().name().toString()).brk();
           print(tail, 0);
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
       }
       l.end();
     }
+  }
+
+  protected String modelTailTypeNamePrefix(@NotNull MP mp) {
+    return "";
   }
 
   public void print(@NotNull Annotations cp) throws E {

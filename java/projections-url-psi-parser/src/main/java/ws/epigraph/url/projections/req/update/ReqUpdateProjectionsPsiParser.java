@@ -18,11 +18,13 @@ package ws.epigraph.url.projections.req.update;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.input.*;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.update.*;
@@ -271,7 +273,11 @@ public final class ReqUpdateProjectionsPsiParser {
     @Nullable OpInputVarProjection opTail = mergeOpTails(op, tailType);
     if (opTail == null)
       throw new PsiProcessingException(
-          String.format("Polymorphic tail for type '%s' is not supported", tailType.name()),
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              String.join(", ", ProjectionsParsingUtil.supportedVarTailTypes(op)),
+              tailType.name()
+          ),
           tailProjectionPsi,
           errors
       );
@@ -285,7 +291,9 @@ public final class ReqUpdateProjectionsPsiParser {
     );
   }
 
-  private static @Nullable OpInputVarProjection mergeOpTails(@NotNull OpInputVarProjection op, @NotNull TypeApi tailType) {
+  private static @Nullable OpInputVarProjection mergeOpTails(
+      @NotNull OpInputVarProjection op,
+      @NotNull TypeApi tailType) {
     Iterable<OpInputVarProjection> opTails = op.polymorphicTails();
     if (opTails == null) return null;
     // TODO a deep merge of op projections wrt to tailTypeApi is needed here, probably moved into a separate class
@@ -310,65 +318,113 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 
+    return parseModelProjection(
+        ReqUpdateModelProjection.class,
+        op,
+        update,
+        params,
+        annotations,
+        psi,
+        resolver,
+        errors
+    );
+
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <MP extends ReqUpdateModelProjection<?, ?, ?>> @NotNull MP parseModelProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      boolean update,
+      @NotNull ReqParams params,
+      @NotNull Annotations annotations,
+      @NotNull UrlReqUpdateModelProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
     DatumTypeApi model = op.model();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
       case RECORD:
+        assert modelClass.isAssignableFrom(ReqUpdateRecordModelProjection.class);
         final OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
 
         @Nullable UrlReqUpdateRecordModelProjection recordModelProjectionPsi =
             psi.getReqUpdateRecordModelProjection();
 
         if (recordModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opRecord, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, update, opRecord, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, errors);
 
-        return parseRecordModelProjection(
+        return (MP) parseRecordModelProjection(
             opRecord,
             update,
             params,
             annotations,
+            parseModelTails(
+                ReqUpdateRecordModelProjection.class,
+                op,
+                psi.getReqUpdateModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             recordModelProjectionPsi,
             subResolver,
             errors
         );
 
       case MAP:
+        assert modelClass.isAssignableFrom(ReqUpdateMapModelProjection.class);
         final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
         @Nullable UrlReqUpdateMapModelProjection mapModelProjectionPsi = psi.getReqUpdateMapModelProjection();
 
         if (mapModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opMap, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, update, opMap, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, errors);
 
-        return parseMapModelProjection(
+        return (MP) parseMapModelProjection(
             opMap,
             update,
             params,
             annotations,
+            parseModelTails(
+                ReqUpdateMapModelProjection.class,
+                op,
+                psi.getReqUpdateModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             mapModelProjectionPsi,
             subResolver,
             errors
         );
 
       case LIST:
+        assert modelClass.isAssignableFrom(ReqUpdateListModelProjection.class);
         final OpInputListModelProjection opList = (OpInputListModelProjection) op;
         @Nullable UrlReqUpdateListModelProjection listModelProjectionPsi =
             psi.getReqUpdateListModelProjection();
 
         if (listModelProjectionPsi == null)
-          return createDefaultModelProjection(model, update, opList, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(model, update, opList, params, annotations, psi, errors);
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, errors);
 
-        return parseListModelProjection(
+        return (MP) parseListModelProjection(
             opList,
             update,
             params,
             annotations,
+            parseModelTails(
+                ReqUpdateListModelProjection.class,
+                op,
+                psi.getReqUpdateModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             listModelProjectionPsi,
             subResolver,
             errors
@@ -378,10 +434,18 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, errors);
 
       case PRIMITIVE:
-        return parsePrimitiveModelProjection(
+        assert modelClass.isAssignableFrom(ReqUpdatePrimitiveModelProjection.class);
+        return (MP) parsePrimitiveModelProjection(
             (OpInputPrimitiveModelProjection) op,
             params,
             annotations,
+            parseModelTails(
+                ReqUpdatePrimitiveModelProjection.class,
+                op,
+                psi.getReqUpdateModelPolymorphicTail(),
+                subResolver,
+                errors
+            ),
             psi
         );
 
@@ -392,6 +456,100 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + model.kind(), psi, errors);
     }
 
+  }
+
+  @Contract("_, _, null, _, _ -> null")
+  private static <MP extends ReqUpdateModelProjection<?, ?, ?>>
+  @Nullable List<MP> parseModelTails(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @Nullable UrlReqUpdateModelPolymorphicTail tailPsi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    if (tailPsi == null) return null;
+    else {
+      List<MP> tails = new ArrayList<>();
+
+      final UrlReqUpdateModelSingleTail singleTailPsi = tailPsi.getReqUpdateModelSingleTail();
+      if (singleTailPsi == null) {
+        final UrlReqUpdateModelMultiTail multiTailPsi = tailPsi.getReqUpdateModelMultiTail();
+        assert multiTailPsi != null;
+        for (UrlReqUpdateModelMultiTailItem tailItemPsi : multiTailPsi.getReqUpdateModelMultiTailItemList()) {
+          try {
+            tails.add(
+                buildModelTailProjection(
+                    modelClass,
+                    op,
+                    tailItemPsi.getPlus() != null,
+                    tailItemPsi.getTypeRef(),
+                    tailItemPsi.getReqUpdateModelProjection(),
+                    tailItemPsi.getReqParamList(),
+                    tailItemPsi.getReqAnnotationList(),
+                    typesResolver,
+                    errors
+                )
+            );
+          } catch (PsiProcessingException e) {
+            errors.add(e.toError());
+          }
+        }
+      } else {
+        tails.add(
+            buildModelTailProjection(
+                modelClass,
+                op,
+                singleTailPsi.getPlus() != null,
+                singleTailPsi.getTypeRef(),
+                singleTailPsi.getReqUpdateModelProjection(),
+                singleTailPsi.getReqParamList(),
+                singleTailPsi.getReqAnnotationList(),
+                typesResolver,
+                errors
+            )
+        );
+      }
+      return tails;
+    }
+  }
+
+  private static <MP extends ReqUpdateModelProjection<?, ?, ?>>
+  @NotNull MP buildModelTailProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      boolean update,
+      @NotNull UrlTypeRef tailTypeRefPsi,
+      @NotNull UrlReqUpdateModelProjection modelProjectionPsi,
+      @NotNull List<UrlReqParam> modelParamsList,
+      @NotNull List<UrlReqAnnotation> modelAnnotationsList,
+      @NotNull TypesResolver typesResolver,
+      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
+    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+
+    final OpInputModelProjection<?, ?, ?, ?> opTail = op.tailByType(tailType);
+    if (opTail == null)
+      throw new PsiProcessingException(
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op)),
+              tailType.name()
+          ),
+          modelProjectionPsi,
+          errors
+      );
+
+    return parseModelProjection(
+        modelClass,
+        opTail,
+        update,
+        parseReqParams(modelParamsList, op.params(), typesResolver, errors),
+        parseAnnotations(modelAnnotationsList, errors),
+        modelProjectionPsi,
+        typesResolver,
+        errors
+    );
   }
 
   private static @NotNull ReqUpdateModelProjection<?, ?, ?> createDefaultModelProjection(
@@ -508,8 +666,8 @@ public final class ReqUpdateProjectionsPsiParser {
 
     @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, errors);
     List<TagApi> tags = defaultTag == null ?
-                          Collections.emptyList() :
-                          Collections.singletonList(defaultTag);
+                        Collections.emptyList() :
+                        Collections.singletonList(defaultTag);
     return createDefaultVarProjection(type, tags, op, required, locationPsi, errors);
   }
 
@@ -569,6 +727,7 @@ public final class ReqUpdateProjectionsPsiParser {
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqUpdateRecordModelProjection> tails,
       @NotNull UrlReqUpdateRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) {
@@ -635,7 +794,7 @@ public final class ReqUpdateProjectionsPsiParser {
         params,
         annotations,
         fieldProjections,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -676,6 +835,7 @@ public final class ReqUpdateProjectionsPsiParser {
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqUpdateMapModelProjection> tails,
       @NotNull UrlReqUpdateMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -733,7 +893,7 @@ public final class ReqUpdateProjectionsPsiParser {
         psi.getReqUpdateKeysProjection().getPlus() != null,
         keys,
         elementsVarProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -743,6 +903,7 @@ public final class ReqUpdateProjectionsPsiParser {
       boolean update,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqUpdateListModelProjection> tails,
       @NotNull UrlReqUpdateListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
@@ -769,7 +930,7 @@ public final class ReqUpdateProjectionsPsiParser {
         params,
         annotations,
         elementsVarProjection,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -778,13 +939,14 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull OpInputPrimitiveModelProjection op,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
+      @Nullable List<ReqUpdatePrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new ReqUpdatePrimitiveModelProjection(
         op.model(),
         params,
         annotations,
-        null, // todo
+        tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
 

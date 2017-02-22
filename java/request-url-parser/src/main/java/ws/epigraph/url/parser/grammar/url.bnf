@@ -256,9 +256,9 @@ reqUpdateVarMultiTail ::= '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=1}
 reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
 //
 reqUpdateModelPolymorphicTail ::= '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail ) // {pin=1}
-reqUpdateModelSingleTail ::= typeRef reqUpdateModelProjectionWithProperties
+reqUpdateModelSingleTail ::= '+'? typeRef reqUpdateModelProjectionWithProperties
 reqUpdateModelMultiTail ::= '(' (reqUpdateModelMultiTailItem ','?)* ')' {pin=1}
-reqUpdateModelMultiTailItem ::= typeRef reqUpdateModelProjectionWithProperties
+reqUpdateModelMultiTailItem ::= '+'? typeRef reqUpdateModelProjectionWithProperties
 
 private reqUpdateModelProjectionWithProperties ::= reqParamsAndAnnotations reqUpdateModelProjection // reqUpdateModelMeta?
 //

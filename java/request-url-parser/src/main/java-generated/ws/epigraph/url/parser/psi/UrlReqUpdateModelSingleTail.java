@@ -19,4 +19,7 @@ public interface UrlReqUpdateModelSingleTail extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

@@ -19,4 +19,7 @@ public interface UrlReqUpdateModelMultiTailItem extends PsiElement {
   @NotNull
   UrlTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

@@ -3478,15 +3478,23 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqUpdateModelProjectionWithProperties
+  // '+'? typeRef reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM, "<req update model multi tail item>");
-    r = typeRef(b, l + 1);
+    r = reqUpdateModelMultiTailItem_0(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean reqUpdateModelMultiTailItem_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateModelMultiTailItem_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3575,15 +3583,23 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef reqUpdateModelProjectionWithProperties
+  // '+'? typeRef reqUpdateModelProjectionWithProperties
   public static boolean reqUpdateModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_SINGLE_TAIL, "<req update model single tail>");
-    r = typeRef(b, l + 1);
+    r = reqUpdateModelSingleTail_0(b, l + 1);
+    r = r && typeRef(b, l + 1);
     r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean reqUpdateModelSingleTail_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateModelSingleTail_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */

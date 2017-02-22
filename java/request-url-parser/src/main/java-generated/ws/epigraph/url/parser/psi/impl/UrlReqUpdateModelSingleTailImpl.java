@@ -50,4 +50,10 @@ public class UrlReqUpdateModelSingleTailImpl extends ASTWrapperPsiElement implem
     return findNotNullChildByClass(UrlTypeRef.class);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
+  }
+
 }
