@@ -176,9 +176,9 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
         ,
-        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
 
@@ -239,8 +239,8 @@ public class OpOutputProjectionsTest {
     );
 
     testTailsNormalization(
-        ":id ~~ws.epigraph.tests.Person:`record`(id)",
-        User.type,
+        ":id ~~ws.epigraph.tests.User:`record`(id)",
+        SubUser.type,
         ":( `record` ( id ), id )"
     );
 

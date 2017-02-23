@@ -61,8 +61,7 @@ public abstract class AbstractVarProjection<
     this.location = location;
 
     validateTags();
-    // we're allowed to have unrelated tails now
-//    validateTails();
+    validateTails();
   }
 
   private void validateTags() {
@@ -101,10 +100,10 @@ public abstract class AbstractVarProjection<
     final @Nullable List<VP> tails = polymorphicTails();
     if (tails != null) {
       for (final VP tail : tails) {
-        if (!type().isAssignableFrom(tail.type())) { // warn about useless cases when tail.type == type?
+        if (tail.type().isAssignableFrom(type)){
           throw new IllegalArgumentException(
               String.format(
-                  "Tail type '%s' is not a sub-type of var type '%s'. Tail defined at %s",
+                  "Tail type '%s' is assignable from var type '%s'. Tail defined at %s",
                   tail.type().name(),
                   type().name(),
                   tail.location()
@@ -232,7 +231,7 @@ public abstract class AbstractVarProjection<
     for (final AbstractVarProjection<VP, TP, MP> projection : sources) {
       final List<VP> tails = projection.polymorphicTails();
       if (tails != null) {
-        if (tailsByType == null) tailsByType = new HashMap<>();
+        if (tailsByType == null) tailsByType = new LinkedHashMap<>();
         for (VP tail : tails) {
           List<VP> collectedTails = tailsByType.computeIfAbsent(tail.type(), k -> new ArrayList<>());
           collectedTails.add(tail);

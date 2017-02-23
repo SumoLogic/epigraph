@@ -57,8 +57,7 @@ public abstract class AbstractModelProjection<
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
-    // we're allowed to have unrelated tails now
-//    validateTails();
+    validateTails();
   }
 
   @Override
@@ -158,7 +157,7 @@ public abstract class AbstractModelProjection<
     for (final SMP projection : sources) {
       final List<SMP> tails = projection.polymorphicTails();
       if (tails != null) {
-        if (tailsByType == null) tailsByType = new HashMap<>();
+        if (tailsByType == null) tailsByType = new LinkedHashMap<>();
         for (SMP tail : tails) {
           List<SMP> collectedTails = tailsByType.computeIfAbsent(tail.model(), k -> new ArrayList<>());
           collectedTails.add(tail);
@@ -197,10 +196,10 @@ public abstract class AbstractModelProjection<
     final @Nullable List<SMP> tails = polymorphicTails();
     if (tails != null) {
       for (final SMP tail : tails) {
-        if (!model().isAssignableFrom(tail.model())) { // warn about useless cases when tail.type == type?
+        if (tail.model().isAssignableFrom(model())) {
           throw new IllegalArgumentException(
               String.format(
-                  "Tail type '%s' is not a sub-type of var type '%s'. Tail defined at %s",
+                  "Tail type '%s' is assignable from model type '%s'. Tail defined at %s",
                   tail.model().name(),
                   model().name(),
                   tail.location()

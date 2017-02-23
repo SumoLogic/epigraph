@@ -126,8 +126,8 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )",
-        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.Person :id )"
+        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
 
@@ -198,6 +198,7 @@ public class OpDeleteProjectionsTest {
         PersonId.type,
         Person.type,
         User.type,
+        User2.type,
         UserId.type,
         UserRecord.type,
         String_Person_Map.type,
