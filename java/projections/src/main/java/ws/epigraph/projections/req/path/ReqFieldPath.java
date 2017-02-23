@@ -40,4 +40,8 @@ public class ReqFieldPath extends AbstractReqFieldProjection<
     super(/*reqParams, annotations, */projection, location);
   }
 
+  @Override
+  public @NotNull ReqFieldPath setVarProjection(final @NotNull ReqVarPath varProjection) {
+    return new ReqFieldPath(varProjection, TextLocation.UNKNOWN);
+  }
 }

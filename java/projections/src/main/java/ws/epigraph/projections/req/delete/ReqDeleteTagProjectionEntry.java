@@ -33,4 +33,9 @@ public class ReqDeleteTagProjectionEntry
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
+
+  @Override
+  public @NotNull ReqDeleteTagProjectionEntry setModelProjection(final @NotNull ReqDeleteModelProjection<?, ?, ?> modelProjection) {
+    return new ReqDeleteTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

@@ -24,9 +24,8 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumTypeApi;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
 
@@ -71,26 +70,33 @@ public abstract class AbstractModelProjection<
 
   @Override
   public @Nullable List<SMP> polymorphicTails() { return polymorphicTails; }
-  
+
   @SuppressWarnings("unchecked")
   @Override
   public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType) {
 
-    final @Nullable List<SMP> polymorphicTails = polymorphicTails();
-    if (polymorphicTails == null || polymorphicTails.isEmpty()) return self();
+    final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
 
-    final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails);
-
-    if (linearizedTails.isEmpty())
-      return self();
-
-    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(targetType, linearizedTails.get(0).model());
+    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(targetType,
+        linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model()
+    );
+//    final DatumTypeApi effectiveType = linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model();
 
     final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
-    final List<SMP> mergedTails = mergeTails(effectiveProjections); // before adding self!
+//    final List<SMP> effectiveProjections = linearizedTails.stream()
+//        .map(t -> t.normalizedForType(effectiveType)).collect(Collectors.toList());
+
+    // before adding self to effectiveProjections!
+    final List<SMP> mergedTails = mergeTails(effectiveProjections);
+    final List<SMP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
+        .stream()
+        .filter(t -> !t.model().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
+        .map(t -> t.normalizedForType(targetType))
+        .collect(Collectors.toList());
+
     effectiveProjections.add(self()); //we're the least specific projection
 
-    final SMP mergeResult = merge((M) effectiveType, mergedTails, effectiveProjections);
+    final SMP mergeResult = merge((M) effectiveType, mergedNormalizedTails, effectiveProjections);
     assert mergeResult != null; // since effectiveProjections is non-empty, at least self is there
     return mergeResult;
   }
@@ -109,12 +115,11 @@ public abstract class AbstractModelProjection<
   @SuppressWarnings("unchecked")
   /* static */
   private @Nullable SMP merge(
-      final @NotNull M model,
+      final @NotNull M effectiveType,
       final @Nullable List<SMP> mergedTails,
       final @NotNull List<SMP> modelProjections) {
-    
+
     if (modelProjections.isEmpty()) return null;
-    if (modelProjections.size() == 1) return modelProjections.get(0);
 
     List<Annotations> annotationsList = new ArrayList<>();
     List<MP> metaProjectionsList = new ArrayList<>();
@@ -130,29 +135,43 @@ public abstract class AbstractModelProjection<
     if (metaProjectionsList.isEmpty()) mergedMetaProjection = null;
     else {
       final MP metaProjection = metaProjectionsList.get(0);
-      DatumTypeApi metaModel = model.metaType();
+      DatumTypeApi metaModel = effectiveType.metaType();
       assert metaModel != null; // since we have a projection for it
-      mergedMetaProjection = ((GenModelProjection<MP, MP, MP, M>) metaProjection).merge((M) metaModel, metaProjectionsList);
+      mergedMetaProjection = (MP) ((GenModelProjection<MP, MP, MP, M>) metaProjection)
+          .merge((M) metaModel, metaProjectionsList)
+          .normalizedForType(metaModel);
     }
 
     return merge(
-        model,
+        effectiveType,
         modelProjections,
         Annotations.merge(annotationsList),
         mergedMetaProjection,
         mergedTails
     );
   }
-  
+
+  @SuppressWarnings("unchecked")
   private @Nullable List<SMP> mergeTails(final @NotNull List<SMP> sources) {
-    List<SMP> mergedTails = null;
+    Map<DatumTypeApi, List<SMP>> tailsByType = null;
 
     for (final SMP projection : sources) {
       final List<SMP> tails = projection.polymorphicTails();
       if (tails != null) {
-        if (mergedTails == null) mergedTails = new ArrayList<>();
-        mergedTails.addAll(tails);
+        if (tailsByType == null) tailsByType = new HashMap<>();
+        for (SMP tail : tails) {
+          List<SMP> collectedTails = tailsByType.computeIfAbsent(tail.model(), k -> new ArrayList<>());
+          collectedTails.add(tail);
+        }
       }
+    }
+
+    if (tailsByType == null) return null;
+
+    List<SMP> mergedTails = new ArrayList<>(tailsByType.size());
+
+    for (final Map.Entry<DatumTypeApi, List<SMP>> entry : tailsByType.entrySet()) {
+      mergedTails.add(merge((M) entry.getKey(), mergeTails(entry.getValue()), entry.getValue()));
     }
 
     return mergedTails;
@@ -162,12 +181,12 @@ public abstract class AbstractModelProjection<
       @NotNull M model,
       @NotNull List<SMP> modelProjections,
       @NotNull Annotations mergedAnnotations,
-      @Nullable MP mergedMetaProjection, 
+      @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails) {
 
     throw new RuntimeException("unimplemented"); // todo
   }
-  
+
   @SuppressWarnings("unchecked")
   private @NotNull SMP self() { return (SMP) this; }
 

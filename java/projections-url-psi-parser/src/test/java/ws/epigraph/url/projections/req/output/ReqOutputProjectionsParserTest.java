@@ -18,17 +18,23 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static ws.epigraph.test.TestUtil.lines;
 import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
@@ -48,6 +54,7 @@ public class ReqOutputProjectionsParserTest {
       User2.type,
       UserId2.type,
       UserRecord2.type,
+      UserRecord3.type,
       SubUser.type,
       SubUserId.type,
       SubUserRecord.type,
@@ -196,7 +203,8 @@ public class ReqOutputProjectionsParserTest {
     testParse(
         ":record ( +bestFriend :( id ) ~~ws.epigraph.tests.User :( profile ) )",
         ":record ( +bestFriend :( +id ) ~~ws.epigraph.tests.User :( +profile ) )",
-        1);
+        1
+    );
   }
 
   @Test
@@ -257,8 +265,48 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
-  // todo model tails normalization
-  // todo diamond
+  @Test
+  public void testModelTailsNormalization() throws PsiProcessingException {
+
+    testModelTailsNormalization(
+        parseOpOutputVarProjection(
+            new DataType(Person.type, null),
+            ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
+            resolver
+        ),
+        ":record(id)~ws.epigraph.tests.UserRecord(firstName)",
+        UserRecord.type,
+        ":record ( firstName, id )"
+    );
+
+    testModelTailsNormalization(
+        parseOpOutputVarProjection(
+            new DataType(Person.type, null),
+            ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
+            resolver
+        ),
+        ":record( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
+        UserRecord.type,
+        ":record ( worstEnemy ( firstName, id ) )"
+    );
+
+  }
+
+  @Test
+  public void testDiamond() throws PsiProcessingException {
+
+    testModelTailsNormalization(
+        parseOpOutputVarProjection(
+            new DataType(Person.type, null),
+            ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
+            resolver
+        ),
+        ":record(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
+        UserRecord3.type,
+        ":record ( firstName, id )"
+    );
+
+  }
 
   @Test
   public void testParseMeta() throws PsiProcessingException {
@@ -287,6 +335,32 @@ public class ReqOutputProjectionsParserTest {
     final @NotNull ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
 
     String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
+    assertEquals(expected, actual);
+  }
+
+  private void testModelTailsNormalization(OpOutputVarProjection op, String str, DatumType type, String expected) {
+    ReqOutputVarProjection varProjection = parseReqOutputVarProjection(dataType, op, str, resolver).projection();
+    final ReqOutputTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
+    assertNotNull(tagProjectionEntry);
+    final ReqOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+    assertNotNull(modelProjection);
+
+    final ReqOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    final ReqOutputVarProjection normalizedVar = new ReqOutputVarProjection(
+        varProjection.type(),
+        ProjectionUtils.singletonLinkedHashMap(
+            tagProjectionEntry.tag().name(),
+            new ReqOutputTagProjectionEntry(
+                tagProjectionEntry.tag(),
+                normalized,
+                TextLocation.UNKNOWN
+            )
+        ),
+        null,
+        varProjection.parenthesized(),
+        TextLocation.UNKNOWN
+    );
+    String actual = printReqOutputVarProjection(normalizedVar, 0);
     assertEquals(expected, actual);
   }
 

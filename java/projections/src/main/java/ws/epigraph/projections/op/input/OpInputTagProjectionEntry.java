@@ -34,4 +34,9 @@ public class OpInputTagProjectionEntry
 
     super(tag, projection, location);
   }
+
+  @Override
+  public @NotNull OpInputTagProjectionEntry setModelProjection(final @NotNull OpInputModelProjection<?, ?, ?, ?> modelProjection) {
+    return new OpInputTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

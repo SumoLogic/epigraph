@@ -33,4 +33,9 @@ public class ReqInputTagProjectionEntry
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
+
+  @Override
+  public @NotNull ReqInputTagProjectionEntry setModelProjection(final @NotNull ReqInputModelProjection<?, ?, ?> modelProjection) {
+    return new ReqInputTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

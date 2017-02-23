@@ -48,6 +48,11 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
   public boolean update() { return update; }
 
   @Override
+  public @NotNull ReqUpdateFieldProjection setVarProjection(final @NotNull ReqUpdateVarProjection varProjection) {
+    return new ReqUpdateFieldProjection(varProjection, update, TextLocation.UNKNOWN);
+  }
+
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

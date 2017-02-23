@@ -36,6 +36,8 @@ public interface GenFieldProjection<
 
   @NotNull VP varProjection();
 
+  @NotNull FP setVarProjection(@NotNull VP varProjection);
+
   /**
    * Merges a list of field projections together
    * <p/>

@@ -23,6 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
 import java.util.List;
@@ -105,6 +106,23 @@ public class ReqOutputMapModelProjection
         mergedKeys,
         mergedItemsVarType,
         mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+  
+  @Override
+  public @NotNull ReqOutputMapModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    @NotNull ReqOutputMapModelProjection n =  super.normalizedForType(targetType);
+    return new ReqOutputMapModelProjection(
+        n.model(),
+        n.required(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        n.keys(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
+        n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
   }

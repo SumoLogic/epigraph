@@ -49,4 +49,9 @@ public class ReqOutputTagProjectionEntry
         TextLocation.UNKNOWN
     );
   }
+
+  @Override
+  public @NotNull ReqOutputTagProjectionEntry setModelProjection(final @NotNull ReqOutputModelProjection<?, ?, ?> modelProjection) {
+    return new ReqOutputTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

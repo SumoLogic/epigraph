@@ -20,6 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +86,22 @@ public class ReqOutputListModelProjection
         mergedMetaProjection,
         mergedItemsVarType,
         mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public @NotNull ReqOutputListModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    ReqOutputListModelProjection n = super.normalizedForType(targetType);
+    return new ReqOutputListModelProjection(
+        n.model(),
+        n.required(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
   }

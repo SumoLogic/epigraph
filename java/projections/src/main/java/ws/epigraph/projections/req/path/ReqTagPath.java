@@ -31,4 +31,9 @@ public class ReqTagPath extends AbstractTagProjectionEntry<ReqTagPath, ReqModelP
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
+
+  @Override
+  public @NotNull ReqTagPath setModelProjection(final @NotNull ReqModelPath<?, ?, ?> modelProjection) {
+    return new ReqTagPath(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

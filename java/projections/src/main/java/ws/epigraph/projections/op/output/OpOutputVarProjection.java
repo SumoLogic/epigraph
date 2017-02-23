@@ -45,12 +45,12 @@ public class OpOutputVarProjection extends AbstractVarProjection<
 
   @Override
   protected OpOutputVarProjection merge(
-      final @NotNull TypeApi type,
+      final @NotNull TypeApi effectiveType,
       final @NotNull List<OpOutputVarProjection> varProjections,
       final @NotNull Map<String, OpOutputTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
       final List<OpOutputVarProjection> mergedTails) {
 
-    return new OpOutputVarProjection(type, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
+    return new OpOutputVarProjection(effectiveType, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
   }
 }

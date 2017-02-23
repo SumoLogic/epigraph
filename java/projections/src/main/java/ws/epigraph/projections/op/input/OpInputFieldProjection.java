@@ -49,6 +49,11 @@ public class OpInputFieldProjection extends AbstractOpFieldProjection<
   public boolean required() { return required; }
 
   @Override
+  public @NotNull OpInputFieldProjection setVarProjection(final @NotNull OpInputVarProjection varProjection) {
+    return new OpInputFieldProjection(varProjection, required, TextLocation.UNKNOWN);
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

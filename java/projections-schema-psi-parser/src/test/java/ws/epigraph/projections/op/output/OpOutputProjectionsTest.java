@@ -107,12 +107,12 @@ public class OpOutputProjectionsTest {
             "    (",
             "      worstEnemy ( id ),",
             "      profile,",
+            "      bestFriend :`record` ( bestFriend :id, id ),",
             "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
-            "      bestFriend :`record` ( id, bestFriend :id ),",
             "      friends *( :id )",
             "    ),",
             "  id",
-            ") ~~ws.epigraph.tests.SubUser :`record` ( worstEnemy ( id ) )" // todo this tail here is harmless but it must be removed
+            ")"
         )
     );
   }
@@ -261,13 +261,13 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         SubUser.type,
-        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( lastName, firstName, id )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         User2.type,
-        ":`record` ( id ) ~~ws.epigraph.tests.User :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( id )"
     );
 
     testTailsNormalization(
@@ -279,13 +279,19 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         SubUser.type,
-        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( lastName, firstName, id )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User2.type,
         ":`record` ( bestFriend :id, id )"
+    );
+
+    testTailsNormalization(
+        ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
+        User.type,
+        ":`record` ( worstEnemy ( firstName, id ) )"
     );
   }
 
@@ -313,6 +319,12 @@ public class OpOutputProjectionsTest {
         ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
         UserRecord.type,
         ":`record` ( firstName, id )"
+    );
+
+    testModelTailsNormalization(
+        ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
+        UserRecord.type,
+        ":`record` ( worstEnemy ( firstName, id ) )"
     );
   }
 

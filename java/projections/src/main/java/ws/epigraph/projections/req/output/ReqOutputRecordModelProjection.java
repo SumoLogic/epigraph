@@ -21,12 +21,14 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -102,6 +104,44 @@ public class ReqOutputRecordModelProjection
         mergedMetaProjection,
         mergedFieldEntries,
         mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public @NotNull ReqOutputRecordModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+    ReqOutputRecordModelProjection n = super.normalizedForType(targetType);
+    final Map<String, ReqOutputFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
+
+    final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries =
+        normalizedFields
+            .entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> new ReqOutputFieldProjectionEntry(
+                        targetRecordType.fieldsMap().get(entry.getKey()),
+                        entry.getValue(),
+                        TextLocation.UNKNOWN
+                    ),
+                    (u, v) -> {
+                      throw new IllegalStateException(String.format("Duplicate key %s", u));
+                    },
+                    LinkedHashMap::new
+                )
+            );
+
+    return new ReqOutputRecordModelProjection(
+        n.model(),
+        n.required(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
   }

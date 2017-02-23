@@ -31,4 +31,9 @@ public class OpTagPath extends AbstractTagProjectionEntry<OpTagPath, OpModelPath
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
+
+  @Override
+  public @NotNull OpTagPath setModelProjection(final @NotNull OpModelPath<?, ?, ?> modelProjection) {
+    return new OpTagPath(tag(), modelProjection, TextLocation.UNKNOWN);
+  }
 }

@@ -44,6 +44,11 @@ public class OpOutputFieldProjection extends AbstractOpFieldProjection<
   }
 
   @Override
+  public @NotNull OpOutputFieldProjection setVarProjection(final @NotNull OpOutputVarProjection varProjection) {
+    return new OpOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
+  }
+
+  @Override
   protected @NotNull OpOutputFieldProjection merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<OpOutputFieldProjection> fieldProjections,

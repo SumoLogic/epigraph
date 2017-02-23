@@ -4,8 +4,14 @@
   - [x] req projections
   - [x] op projections
 - [x] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
-- [ ] generate req paths
+- [x] generate req paths
 - [ ] undertow handler: remove trimmer, should be handled by marshaller
+
+- [ ] remove type information from projections?
+  - [ ] record projections should contain a String->FP, not String->FPE map
+
+- [ ] fix projections pretty printer for records, see OpOutputProjectionsTest.tetParsing
+- [ ] generated req projections: cache normalized projections
 
 - Docs
   - Operations

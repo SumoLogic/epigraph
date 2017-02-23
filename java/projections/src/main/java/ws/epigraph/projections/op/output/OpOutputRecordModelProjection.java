@@ -23,12 +23,14 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -95,6 +97,42 @@ public class OpOutputRecordModelProjection
         mergedMetaProjection,
         mergedFieldEntries,
         mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public @NotNull OpOutputRecordModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+    OpOutputRecordModelProjection n = super.normalizedForType(targetType);
+    final Map<String, OpOutputFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
+
+    final Map<String, OpOutputFieldProjectionEntry> normalizedFieldEntries =
+        normalizedFields.entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> new OpOutputFieldProjectionEntry(
+                        targetRecordType.fieldsMap().get(entry.getKey()),
+                        entry.getValue(),
+                        TextLocation.UNKNOWN
+                    ),
+                    (u, v) -> {
+                      throw new IllegalStateException(String.format("Duplicate key %s", u));
+                    },
+                    LinkedHashMap::new
+                )
+            );
+
+    return new OpOutputRecordModelProjection(
+        n.model(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
   }

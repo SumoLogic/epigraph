@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
@@ -91,11 +92,13 @@ public final class RecordModelProjectionHelper {
   }
 
   @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
-  public static <RMP extends GenRecordModelProjection<?, ?, ?, RMP, FPE, FP, ?>,
-      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
-      FP extends GenFieldProjection<?, ?, ?, FP>>
+  public static <
+      VP extends GenVarProjection<VP, ?, ?>,
+      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
+      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
+      FP extends GenFieldProjection<VP, ?, ?, FP>>
 
-  Map<FieldApi, FP> mergeFieldProjections(List<RMP> recordProjections) {
+  Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections) {
 
     Set<FieldApi> collectedFields = new LinkedHashSet<>();
     for (final RMP projection : recordProjections)
@@ -112,7 +115,8 @@ public final class RecordModelProjectionHelper {
 
       for (RMP projection : recordProjections) {
         final @Nullable FPE fieldProjectionEntry = projection.fieldProjection(fieldName);
-        if (fieldProjectionEntry != null) fieldProjectionsToMerge.add(fieldProjectionEntry.fieldProjection());
+        if (fieldProjectionEntry != null)
+          fieldProjectionsToMerge.add(fieldProjectionEntry.fieldProjection());
       }
 
       assert !fieldProjectionsToMerge.isEmpty();
@@ -126,5 +130,24 @@ public final class RecordModelProjectionHelper {
     }
 
     return mergedFields;
+  }
+
+  @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
+  public static <
+      VP extends GenVarProjection<VP, ?, ?>,
+      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
+      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
+      FP extends GenFieldProjection<VP, ?, ?, FP>>
+  Map<String, FP> normalizeFields(@NotNull RecordTypeApi effectiveType, @NotNull RMP projection) {
+    Map<String, FP> result = new HashMap<>(projection.fieldProjections().size());
+
+    for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
+      final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
+      FP fp = entry.getValue().fieldProjection();
+      final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type());
+      result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
+    }
+
+    return result;
   }
 }

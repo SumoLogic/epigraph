@@ -22,6 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
@@ -82,6 +83,21 @@ public class OpOutputListModelProjection
         mergedMetaProjection,
         mergedItemsVarType,
         mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public @NotNull OpOutputListModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    OpOutputListModelProjection n = super.normalizedForType(targetType);
+    return new OpOutputListModelProjection(
+        n.model(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
   }

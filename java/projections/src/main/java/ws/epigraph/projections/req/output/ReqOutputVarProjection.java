@@ -48,14 +48,14 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
 
   @Override
   protected ReqOutputVarProjection merge(
-      final @NotNull TypeApi type,
+      final @NotNull TypeApi effectiveType,
       final @NotNull List<ReqOutputVarProjection> varProjections,
       final @NotNull Map<String, ReqOutputTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
       final List<ReqOutputVarProjection> mergedTails) {
 
     return new ReqOutputVarProjection(
-        type,
+        effectiveType,
         mergedTags,
         mergedTails,
         mergedParenthesized,

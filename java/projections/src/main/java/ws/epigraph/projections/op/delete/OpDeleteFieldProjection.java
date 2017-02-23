@@ -39,4 +39,9 @@ public class OpDeleteFieldProjection extends AbstractOpFieldProjection<
       @NotNull TextLocation location) {
     super(/*params, annotations, */projection, location);
   }
+
+  @Override
+  public @NotNull OpDeleteFieldProjection setVarProjection(final @NotNull OpDeleteVarProjection varProjection) {
+    return new OpDeleteFieldProjection(varProjection, TextLocation.UNKNOWN);
+  }
 }

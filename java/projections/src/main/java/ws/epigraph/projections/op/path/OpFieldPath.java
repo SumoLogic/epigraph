@@ -39,4 +39,9 @@ public class OpFieldPath extends AbstractOpFieldProjection<
       @NotNull TextLocation location) {
     super(/*params, annotations, */projection, location);
   }
+
+  @Override
+  public @NotNull OpFieldPath setVarProjection(final @NotNull OpVarPath varProjection) {
+    return new OpFieldPath(varProjection, TextLocation.UNKNOWN);
+  }
 }

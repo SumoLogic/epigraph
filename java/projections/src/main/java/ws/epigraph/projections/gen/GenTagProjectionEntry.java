@@ -38,5 +38,7 @@ public interface GenTagProjectionEntry<
   @Nullable
   /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 
+  @NotNull TP setModelProjection(@NotNull MP modelProjection);
+
   @NotNull TextLocation location();
 }

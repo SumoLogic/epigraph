@@ -66,6 +66,11 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
   }
 
   @Override
+  public @NotNull ReqOutputFieldProjection setVarProjection(final @NotNull ReqOutputVarProjection varProjection) {
+    return new ReqOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
+  }
+
+  @Override
   protected ReqOutputFieldProjection merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<ReqOutputFieldProjection> fieldProjections,

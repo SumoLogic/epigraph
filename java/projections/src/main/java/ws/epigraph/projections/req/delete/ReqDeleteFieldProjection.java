@@ -39,4 +39,9 @@ public class ReqDeleteFieldProjection extends AbstractReqFieldProjection<
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
   }
+
+  @Override
+  public @NotNull ReqDeleteFieldProjection setVarProjection(final @NotNull ReqDeleteVarProjection varProjection) {
+    return new ReqDeleteFieldProjection(varProjection, TextLocation.UNKNOWN);
+  }
 }
