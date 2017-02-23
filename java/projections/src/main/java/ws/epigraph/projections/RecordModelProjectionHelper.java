@@ -85,7 +85,7 @@ public final class RecordModelProjectionHelper {
       if (!modelFieldNames.contains(fieldName))
         throw new IllegalArgumentException(
             String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
-                          fieldName, model.name(), ProjectionUtils.listFields(modelFieldNames)
+                fieldName, model.name(), ProjectionUtils.listFields(modelFieldNames)
             )
         );
     }
@@ -139,7 +139,8 @@ public final class RecordModelProjectionHelper {
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
   Map<String, FP> normalizeFields(@NotNull RecordTypeApi effectiveType, @NotNull RMP projection) {
-    Map<String, FP> result = new HashMap<>(projection.fieldProjections().size());
+
+    Map<String, FP> result = new LinkedHashMap<>(projection.fieldProjections().size());
 
     for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
       final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());

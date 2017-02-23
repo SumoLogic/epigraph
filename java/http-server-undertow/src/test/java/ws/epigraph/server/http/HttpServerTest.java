@@ -75,7 +75,7 @@ public class HttpServerTest {
     get("/users/1:record(id,firstName)", 200, "{'id':1,'firstName':'First1'}");
   }
 
-//  @Test
+  @Test
   public void testPolymorphicGet() throws UnirestException {
     get(
         "users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~~User:record(profile)))",

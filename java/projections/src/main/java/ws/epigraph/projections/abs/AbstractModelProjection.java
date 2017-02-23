@@ -56,7 +56,9 @@ public abstract class AbstractModelProjection<
     this.annotations = annotations;
     this.polymorphicTails = polymorphicTails;
     this.location = location;
-    validateTails();
+
+    // we're allowed to have unrelated tails now
+//    validateTails();
   }
 
   @Override
@@ -77,16 +79,15 @@ public abstract class AbstractModelProjection<
 
     final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
 
-    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(targetType,
-        linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model()
+    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(
+        targetType,
+        linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model(),
+        this.model()
     );
-//    final DatumTypeApi effectiveType = linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model();
 
     final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
-//    final List<SMP> effectiveProjections = linearizedTails.stream()
-//        .map(t -> t.normalizedForType(effectiveType)).collect(Collectors.toList());
+    effectiveProjections.add(self()); //we're the least specific projection
 
-    // before adding self to effectiveProjections!
     final List<SMP> mergedTails = mergeTails(effectiveProjections);
     final List<SMP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
         .stream()
@@ -94,7 +95,6 @@ public abstract class AbstractModelProjection<
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
-    effectiveProjections.add(self()); //we're the least specific projection
 
     final SMP mergeResult = merge((M) effectiveType, mergedNormalizedTails, effectiveProjections);
     assert mergeResult != null; // since effectiveProjections is non-empty, at least self is there

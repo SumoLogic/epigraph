@@ -127,20 +127,20 @@ public final class ProjectionUtils {
     return len;
   }
 
-  public static @NotNull TypeApi mostSpecific(@NotNull TypeApi t1, @NotNull TypeApi t2) {
+  public static @NotNull TypeApi mostSpecific(@NotNull TypeApi t1, @NotNull TypeApi t2, @NotNull TypeApi ifUnrelated) {
     if (t1.isAssignableFrom(t2)) return t2;
     if (t2.isAssignableFrom(t1)) return t1;
-    throw new IllegalArgumentException(
-        String.format("Types '%s' and '%s' are not related", t1.name().toString(), t2.name())
-    );
+    return ifUnrelated;
   }
 
-  public static @NotNull DatumTypeApi mostSpecific(@NotNull DatumTypeApi t1, @NotNull DatumTypeApi t2) {
+  public static @NotNull DatumTypeApi mostSpecific(
+      @NotNull DatumTypeApi t1,
+      @NotNull DatumTypeApi t2,
+      @NotNull DatumTypeApi ifUnrelated) {
+
     if (t1.isAssignableFrom(t2)) return t2;
     if (t2.isAssignableFrom(t1)) return t1;
-    throw new IllegalArgumentException(
-        String.format("Types '%s' and '%s' are not related", t1.name().toString(), t2.name())
-    );
+    return ifUnrelated;
   }
 
   // var tails linearization

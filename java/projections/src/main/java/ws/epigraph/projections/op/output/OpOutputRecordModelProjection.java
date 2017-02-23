@@ -105,6 +105,7 @@ public class OpOutputRecordModelProjection
   public @NotNull OpOutputRecordModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
     OpOutputRecordModelProjection n = super.normalizedForType(targetType);
+
     final Map<String, OpOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 

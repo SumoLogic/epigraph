@@ -97,7 +97,7 @@ public class OpOutputProjectionsTest {
         expected
     );
 
-    // todo fix record formatting
+    // todo fix record formatting, map braces alignment too
     testTailsNormalization(
         projectionStr,
         SubUser.type,
@@ -107,12 +107,12 @@ public class OpOutputProjectionsTest {
             "    (",
             "      worstEnemy ( id ),",
             "      profile,",
-            "      bestFriend :`record` ( bestFriend :id, id ),",
             "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+            "      bestFriend :`record` ( id, bestFriend :id ),",
             "      friends *( :id )",
             "    ),",
             "  id",
-            ")"
+            ") ~~ws.epigraph.tests.User2 :`record` ( worstEnemy ( id ) )"
         )
     );
   }
@@ -233,6 +233,24 @@ public class OpOutputProjectionsTest {
   @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
+        ":id ~~ws.epigraph.tests.User:`record`(id)",
+        Person.type,
+        ":id ~~ws.epigraph.tests.User :`record` ( id )"
+    );
+
+    testTailsNormalization(
+        ":id ~~ws.epigraph.tests.Person:`record`(id)",
+        User.type,
+        ":( `record` ( id ), id )"
+    );
+
+    testTailsNormalization(
+        ":`record`(id, bestFriend:id~~ws.epigraph.tests.User:`record`(id))",
+        Person.type,
+        ":`record` ( id, bestFriend :id ~~ws.epigraph.tests.User :`record` ( id ) )" // bestFriend field can still contain a User
+    );
+
+    testTailsNormalization(
         ":`record`(id)~~ws.epigraph.tests.User :`record`(profile)",
         User.type,
         ":`record` ( profile, id )"
@@ -267,25 +285,25 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         User2.type,
-        ":`record` ( id )"
+        ":`record` ( id ) ~~ws.epigraph.tests.User :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User.type,
-        ":`record` ( firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( firstName, id )\n  ~~( ws.epigraph.tests.SubUser :`record` ( lastName ), ws.epigraph.tests.User2 :`record` ( bestFriend :id ) )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         SubUser.type,
-        ":`record` ( lastName, firstName, id )"
+        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.User2 :`record` ( bestFriend :id )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User2.type,
-        ":`record` ( bestFriend :id, id )"
+        ":`record` ( bestFriend :id, id ) ~~ws.epigraph.tests.User\n  :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(

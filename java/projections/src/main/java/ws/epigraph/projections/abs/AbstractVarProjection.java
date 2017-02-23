@@ -61,7 +61,8 @@ public abstract class AbstractVarProjection<
     this.location = location;
 
     validateTags();
-    validateTails();
+    // we're allowed to have unrelated tails now
+//    validateTails();
   }
 
   private void validateTags() {
@@ -135,24 +136,19 @@ public abstract class AbstractVarProjection<
 
     final TypeApi effectiveType = ProjectionUtils.mostSpecific(
         targetType,
-        linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type()
+        linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
+        this.type()
     );
-//    final TypeApi effectiveType = linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type();
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
-//    final List<VP> effectiveProjections = linearizedTails.stream()
-//        .map(t -> t.normalizedForType(effectiveType)).collect(Collectors.toList());
+    effectiveProjections.add(self()); //we're the least specific projection
 
-    // before adding self to effectiveProjections!
     final List<VP> mergedTails = mergeTails(effectiveProjections);
     final List<VP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
         .stream()
-        .filter(t -> !t.type()
-            .isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
+        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
-
-    effectiveProjections.add(self()); //we're the least specific projection
 
     return merge(effectiveType, true, mergedNormalizedTails, effectiveProjections);
   }
@@ -184,7 +180,7 @@ public abstract class AbstractVarProjection<
         if (tagProjection != null) {
           if (normalizeTags) {
             final DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
-            final DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type());
+            final DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type(), tag.type());
             final MP normalizedModel = (MP) tagProjection.projection().normalizedForType(minModelType);
             tagProjections.add(tagProjection.setModelProjection(normalizedModel));
           } else {
