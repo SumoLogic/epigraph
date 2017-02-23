@@ -75,6 +75,7 @@ public class TextLocation {
 
   @Override
   public String toString() {
+    if (this == UNKNOWN) return "<unknown>";
     String file = fileName() == null ? "<unknown>" : "file '" + fileName() + "'";
     String lines = startLine() == endLine() ?
                    "line " + startLine() :
