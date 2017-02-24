@@ -21,12 +21,9 @@ package ws.epigraph.wire.json;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.*;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
-import ws.epigraph.types.RecordType.Field;
 import ws.epigraph.types.TagApi;
-import ws.epigraph.types.Type;
-import ws.epigraph.types.Type.Tag;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Collection;
@@ -43,10 +40,24 @@ public final class JsonFormatCommon {
   public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> @NotNull Acc flatten(
       @NotNull Acc acc,
       @NotNull Collection<? extends VP> projections,
-      @NotNull Type type
+      @NotNull TypeApi type
   ) {
     // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
     for (VP projection : projections) append(acc, projection, type);
+    return acc;
+  }
+
+  /**
+   * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
+   * with most specific one being last
+   */
+  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> @NotNull Acc flatten(
+      @NotNull Acc acc,
+      @NotNull Collection<? extends MP> projections,
+      @NotNull DatumTypeApi type
+  ) {
+    // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
+    for (MP projection : projections) append(acc, projection, type);
     return acc;
   }
 
@@ -62,6 +73,23 @@ public final class JsonFormatCommon {
     Iterable<VP> tails = varProjection.polymorphicTails();
     if (tails != null) for (VP tail : tails) {
       if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
+    }
+    return acc;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> Acc append(
+      @NotNull Acc acc,
+      @NotNull MP modelProjection,
+      @NotNull DatumTypeApi type
+  ) {
+    // effectively this is
+    // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(modelProjection).stream()));
+
+    if (modelProjection.model().isAssignableFrom(type)) acc.add(modelProjection);
+    Iterable<MP> tails = (Iterable<MP>) modelProjection.polymorphicTails();
+    if (tails != null) for (MP tail : tails) {
+      if (tail.model().isAssignableFrom(type)) return append(acc, tail, type); // dfs
     }
     return acc;
   }

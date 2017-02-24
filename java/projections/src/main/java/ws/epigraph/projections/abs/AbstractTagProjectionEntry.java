@@ -70,8 +70,7 @@ public abstract class AbstractTagProjectionEntry<
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
     final @NotNull MP mp = models.get(0);
-    final @NotNull DatumTypeApi type = tag.type();
-    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(type, models);
+    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.model(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }

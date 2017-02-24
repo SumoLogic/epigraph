@@ -80,7 +80,12 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
           out.write(tag.name());
           out.write("\":");
         }
-        writeValue(tagModelProjections, data._raw().getValue((Tag) tag));
+        final @Nullable Val value = data._raw().getValue((Tag) tag);
+        writeValue(
+            value == null || value.getDatum() == null ? tagModelProjections :
+            flatten(new ArrayDeque<>(), tagModelProjections, value.getDatum().type()),
+            value
+        );
       }
     } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
     if (renderMulti) out.write('}');
@@ -99,10 +104,18 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   @Override
-  public void writeDatum(@Nullable ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum)
+  public void writeDatum(
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
+      @Nullable Datum datum)
       throws IOException {
-    ArrayDeque<ReqOutputModelProjection<?, ?, ?>> projections = new ArrayDeque<>(1);
-    projections.add(projection);
+
+    final Deque<ReqOutputModelProjection<?, ?, ?>> projections;
+    if (datum == null) {
+      projections = new ArrayDeque<>(1);
+      projections.add(projection);
+    } else
+     projections = modelProjections(projection, datum.type());
+
     writeDatum(projections, datum);
   }
 
@@ -112,11 +125,19 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @Nullable Datum datum)
       throws IOException {
 
+    DatumTypeApi model = projections.peekLast().model();
+    boolean renderPoly = projections.stream().anyMatch(p -> p.polymorphicTails() != null);
+
     Deque<? extends ReqOutputModelProjection<?, ?, ?>> metaProjections = projections.stream()
         .map(ReqOutputModelProjection::metaProjection)
         .filter(Objects::nonNull)
         .collect(Collectors.toCollection(ArrayDeque::new));
 
+    if (renderPoly) {
+      out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
+      out.write(model.name().toString()); // TODO use (potentially short) type name used in request projection?
+      out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
+    }
     if (!metaProjections.isEmpty()) {
       out.write("{\"");
       out.write(JsonFormat.DATUM_META_FIELD);
@@ -130,7 +151,6 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (datum == null) {
       out.write("null");
     } else {
-      DatumTypeApi model = projections.peekLast().model(); // todo pass explicitly
       switch (model.kind()) {
         case RECORD:
           writeRecord((Deque<ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
@@ -156,6 +176,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (!metaProjections.isEmpty()) {
       out.write('}');
     }
+    if (renderPoly) out.write('}');
   }
 
   @Override
@@ -322,6 +343,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull ReqOutputVarProjection projection,
       @NotNull TypeApi varType
   ) { return append(new ArrayDeque<>(5), projection, varType); }
+
+  private static @NotNull Deque<ReqOutputModelProjection<?, ?, ?>> modelProjections(
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
+      @NotNull DatumTypeApi modelType
+  ) { return append(new ArrayDeque<>(5), projection, modelType); }
 
   // FIXME take explicit type for all projectionless writes below
 

@@ -72,6 +72,7 @@ public class JsonFormatWriterTest {
       "        firstName",
       "      ),",
       "    ),",
+      "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
       "    friends *( :id ),",
       "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
       "  )",
@@ -254,6 +255,29 @@ public class JsonFormatWriterTest {
         ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         person,
         "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
+    );
+  }
+
+  @Test
+  public void testRenderModelTail() throws IOException {
+    final Person.@NotNull Imm person =
+        Person.create()
+            .setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+                    .setWorstEnemy(
+                        SubUserRecord.create()
+                            .setId(PersonId.create(1))
+                            .setProfile(Url.create("foo"))
+                    )
+
+            )
+            .toImmutable();
+
+    testRender(
+        ":record(id,worstEnemy(id)~ws.epigraph.tests.UserRecord(profile))",
+        person,
+        "{\"id\":1,\"worstEnemy\":{\"type\":\"ws.epigraph.tests.UserRecord\",\"data\":{\"id\":1,\"profile\":\"foo\"}}}"
     );
   }
 
