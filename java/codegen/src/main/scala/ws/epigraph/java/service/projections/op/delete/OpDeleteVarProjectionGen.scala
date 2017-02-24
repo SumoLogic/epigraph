@@ -45,7 +45,7 @@ private static OpDeleteVarProjection $methodName() {
     ${i(genLinkedMap("String", "OpDeleteTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
       (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
     ${p.parenthesized().toString},
-    ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
+    ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
     ${gen(p.location(), ctx)}
   );
 }"""/*@formatter:on*/
@@ -62,7 +62,7 @@ new OpDeleteVarProjection(
   ${i(genLinkedMap("String", "OpDeleteTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
     (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
-  ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
+  ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 

@@ -17,11 +17,13 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.genTypeExpr
+import ws.epigraph.java.service.ServiceGenUtils.{genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.input.OpInputListModelProjection
 import ws.epigraph.types.{ListType, TypeApi}
+
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -41,7 +43,7 @@ new OpInputListModelProjection(
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
   ${i(gen(p.itemsProjection(), ctx))},
-  null,
+  ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }

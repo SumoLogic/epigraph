@@ -44,7 +44,7 @@ private static OpOutputVarProjection $methodName() {
     ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
       (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
     ${p.parenthesized().toString},
-    ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
+    ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
     ${gen(p.location(), ctx)}
   );
 }"""/*@formatter:on*/
@@ -60,7 +60,7 @@ new OpOutputVarProjection(
   ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
     (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
-  ${if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx)},
+  ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 

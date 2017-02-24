@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.op.delete
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genTypeExpr}
+import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
 import ws.epigraph.projections.op.delete.{OpDeleteFieldProjectionEntry, OpDeleteRecordModelProjection}
@@ -41,7 +41,7 @@ new OpDeleteRecordModelProjection(
   ${i(gen(p.annotations(), ctx))},
   ${i(genLinkedMap("String", "OpDeleteFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
-  null,
+  ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
   }
