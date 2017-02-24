@@ -40,7 +40,7 @@ abstract class ReqInputModelProjectionGen(
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection")
 
-  override protected def reqModelProjectionQn: Qn =
+  override protected def reqModelProjectionFqn: Qn =
   Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"

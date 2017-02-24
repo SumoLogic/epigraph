@@ -18,9 +18,8 @@ package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -41,7 +40,7 @@ abstract class ReqDeleteModelProjectionGen(
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection")
 
-  override protected def reqModelProjectionQn: Qn =
+  override protected def reqModelProjectionFqn: Qn =
   Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"

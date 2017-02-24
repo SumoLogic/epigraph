@@ -115,7 +115,7 @@
       <dependency>
         <groupId>com.lihaoyi</groupId>
         <artifactId>pprint_${scala.version.major.minor}</artifactId>
-        <version>0.4.1</version>
+        <version>0.4.4</version>
       </dependency>
 
       <dependency>
@@ -233,7 +233,7 @@
       <dependency>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest_${scala.version.major.minor}</artifactId>
-        <version>3.0.0-RC3</version>
+        <version>3.0.1</version>
         <scope>test</scope>
       </dependency>
 

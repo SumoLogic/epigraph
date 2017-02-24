@@ -41,7 +41,7 @@ abstract class ReqPathModelProjectionGen(
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath")
 
-  override protected def reqModelProjectionQn: Qn =
+  override protected def reqModelProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqModelPath")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"

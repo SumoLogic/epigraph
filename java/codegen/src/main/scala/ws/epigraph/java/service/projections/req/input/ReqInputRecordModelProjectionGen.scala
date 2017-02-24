@@ -38,7 +38,7 @@ class ReqInputRecordModelProjectionGen(
   override type OpProjectionType = OpInputRecordModelProjection
 
   override protected lazy val fieldGenerators: Map[CField, ReqInputFieldProjectionGen] =
-    op.fieldProjections().values().map{ fpe =>
+    op.fieldProjections().values().map { fpe =>
       (
         findField(fpe.field().name()),
         new ReqInputFieldProjectionGen(
@@ -50,6 +50,21 @@ class ReqInputRecordModelProjectionGen(
         )
       )
     }.toMap
+
+  override protected def tailGenerator(
+    op: OpInputRecordModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqInputRecordModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpInputRecordModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputRecordModelProjection"),

@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
 
@@ -48,6 +48,21 @@ class ReqDeleteMapModelProjectionGen(
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
+
+  override protected def tailGenerator(
+    op: OpDeleteMapModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqDeleteMapModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpDeleteMapModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteMapModelProjection")

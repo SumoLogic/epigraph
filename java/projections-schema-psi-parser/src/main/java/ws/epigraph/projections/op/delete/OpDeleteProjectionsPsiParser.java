@@ -298,8 +298,8 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   @SuppressWarnings("unchecked")
-  private static <MP extends OpDeleteModelProjection<?, ?, ?>>
-  @NotNull MP parseModelProjection(
+  private static @NotNull <MP extends OpDeleteModelProjection<?, ?, ?>>
+  /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
@@ -407,8 +407,8 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   @Contract("_, null, _, _ -> null")
-  private static <MP extends OpDeleteModelProjection<?, ?, ?>>
-  @Nullable List<MP> parseModelTails(
+  private static @Nullable <MP extends OpDeleteModelProjection<?, ?, ?>>
+  /*@Nullable*/ List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
       @Nullable SchemaOpDeleteModelPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver,
@@ -450,8 +450,8 @@ public final class OpDeleteProjectionsPsiParser {
     }
   }
 
-  private static <MP extends OpDeleteModelProjection<?, ?, ?>>
-  @NotNull MP buildModelTailProjection(
+  private static @NotNull <MP extends OpDeleteModelProjection<?, ?, ?>>
+  /*@NotNull*/ MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteModelProjection modelProjectionPsi,

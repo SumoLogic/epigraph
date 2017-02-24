@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputMapModelProjection
 
@@ -48,6 +48,22 @@ class ReqOutputMapModelProjectionGen(
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
+
+
+  override protected def tailGenerator(
+    op: OpOutputMapModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqOutputMapModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpOutputMapModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),

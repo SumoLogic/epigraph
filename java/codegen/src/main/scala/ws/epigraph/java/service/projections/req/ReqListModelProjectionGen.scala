@@ -41,10 +41,10 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString,
-      reqModelProjectionQn.toString,
+      reqModelProjectionFqn.toString,
       reqListModelProjectionFqn.toString,
       elementGen.fullClassName
-    ) ++ params.imports ++ meta.imports ++ extra.imports
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -56,7 +56,7 @@ $classJavadoc\
 public class $shortClassName {
   private final @NotNull ${reqListModelProjectionFqn.last()} raw;
 
-  public $shortClassName(@NotNull ${reqModelProjectionQn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
     this.raw = (${reqListModelProjectionFqn.last()}) raw;
   }
 
@@ -70,7 +70,7 @@ public class $shortClassName {
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }\
-\s${(extra + params + meta).code}\
+\s${(extra + params + meta + tails + normalizedTails).code}\
 
   public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

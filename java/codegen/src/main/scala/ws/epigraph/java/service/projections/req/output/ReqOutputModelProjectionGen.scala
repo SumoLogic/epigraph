@@ -42,7 +42,7 @@ abstract class ReqOutputModelProjectionGen(
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection")
 
-  override protected def reqModelProjectionQn: Qn =
+  override protected def reqModelProjectionFqn: Qn =
   Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"

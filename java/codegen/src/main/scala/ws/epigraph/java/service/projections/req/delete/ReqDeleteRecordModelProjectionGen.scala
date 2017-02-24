@@ -38,7 +38,7 @@ class ReqDeleteRecordModelProjectionGen(
   override type OpProjectionType = OpDeleteRecordModelProjection
 
   override protected lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
-    op.fieldProjections().values().map{ fpe =>
+    op.fieldProjections().values().map { fpe =>
       (
         findField(fpe.field().name()),
         new ReqDeleteFieldProjectionGen(
@@ -50,6 +50,21 @@ class ReqDeleteRecordModelProjectionGen(
         )
       )
     }.toMap
+
+  override protected def tailGenerator(
+    op: OpDeleteRecordModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqDeleteRecordModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpDeleteRecordModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteRecordModelProjection"),

@@ -41,7 +41,7 @@ abstract class ReqUpdateModelProjectionGen(
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateVarProjection")
 
-  override protected def reqModelProjectionQn: Qn =
+  override protected def reqModelProjectionFqn: Qn =
   Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"

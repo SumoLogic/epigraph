@@ -34,9 +34,9 @@ trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString,
-      reqModelProjectionQn.toString,
+      reqModelProjectionFqn.toString,
       reqPrimitiveModelProjectionFqn.toString
-    ) ++ params.imports ++ meta.imports ++ extra.imports
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -48,14 +48,14 @@ $classJavadoc\
 public class $shortClassName {
   private final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;
 
-  public $shortClassName(@NotNull ${reqModelProjectionQn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
     this.raw = (${reqPrimitiveModelProjectionFqn.last()}) raw;
   }
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
-\s${(extra + params + meta).code}\
+\s${(extra + params + meta + tails + normalizedTails).code}\
 
   public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

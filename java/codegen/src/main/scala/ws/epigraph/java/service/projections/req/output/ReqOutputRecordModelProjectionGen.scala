@@ -38,7 +38,7 @@ class ReqOutputRecordModelProjectionGen(
   override type OpProjectionType = OpOutputRecordModelProjection
 
   override protected lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
-    op.fieldProjections().values().map{ fpe =>
+    op.fieldProjections().values().map { fpe =>
       (
         findField(fpe.field().name()),
         new ReqOutputFieldProjectionGen(
@@ -50,6 +50,21 @@ class ReqOutputRecordModelProjectionGen(
         )
       )
     }.toMap
+
+  override protected def tailGenerator(
+    op: OpOutputRecordModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqOutputRecordModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpOutputRecordModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"),

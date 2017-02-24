@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
 
@@ -49,6 +49,21 @@ class ReqUpdateMapModelProjectionGen(
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
+
+  override protected def tailGenerator(
+    op: OpInputMapModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqUpdateMapModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpInputMapModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateMapModelProjection"),

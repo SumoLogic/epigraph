@@ -121,8 +121,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       }
 
       // poly tails check
-      final ws.epigraph.tests.resources.users.operations.read.output.elements.ws_epigraph_tests_person_ntail.record.ReqOutputUserRecordProjection
-          userRecordProjection = mapProjection.itemsProjection().ws_epigraph_tests_userNormalizedTail().record();
+      final @Nullable ws.epigraph.tests.resources.users.operations.read.output.elements.ws_epigraph_tests_person_normalized.record.ReqOutputUserRecordProjection
+          userRecordProjection = mapProjection.itemsProjection().normalizedFor_ws_epigraph_tests_User().record();
       if (userRecordProjection != null) userRecordProjection.worstEnemy();
 
       final PersonMap.Builder users = storage.users();

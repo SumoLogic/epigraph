@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CField, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenRecordModelProjection
@@ -37,11 +37,12 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
 
   protected val cRecordType: CRecordTypeDef = cType.asInstanceOf[CRecordTypeDef]
 
-  override lazy val children: Iterable[ReqProjectionGen] =
+  override lazy val children: Iterable[JavaGen] = super.children ++ (
     if (ReqFieldProjectionGen.generateFieldProjections)
       fieldGenerators.values
     else
       fieldGenerators.values.flatMap(_.children)
+    )
 
   protected def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse{
     throw new RuntimeException(s"Can't find field '$name' in type '${cType.name.toString}'")
@@ -95,9 +96,9 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString,
-      reqModelProjectionQn.toString,
+      reqModelProjectionFqn.toString,
       reqRecordModelProjectionFqn.toString
-    ) ++ fields.imports ++ params.imports ++ meta.imports ++ extra.imports
+    ) ++ fields.imports ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -109,14 +110,14 @@ $classJavadoc\
 public class $shortClassName {
   private final @NotNull ${reqRecordModelProjectionFqn.last()} raw;
 
-  public $shortClassName(@NotNull ${reqModelProjectionQn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
     this.raw = (${reqRecordModelProjectionFqn.last()} ) raw;
   }
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
-\s${(extra + fields + params + meta).code}\
+\s${(extra + fields + params + meta + tails + normalizedTails).code}\
 
   public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

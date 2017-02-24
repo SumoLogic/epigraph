@@ -352,8 +352,8 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   @SuppressWarnings("unchecked")
-  private static <MP extends OpOutputModelProjection<?, ?, ?>>
-  @NotNull MP parseModelProjection(
+  private static @NotNull <MP extends OpOutputModelProjection<?, ?, ?>>
+  /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
@@ -468,8 +468,8 @@ public final class OpOutputProjectionsPsiParser {
   }
   
   @Contract("_, null, _, _ -> null")
-  private static <MP extends OpOutputModelProjection<?, ?, ?>>
-  @Nullable List<MP> parseModelTails(
+  private static @Nullable <MP extends OpOutputModelProjection<?, ?, ?>>
+  /*@Nullable*/ List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
       @Nullable SchemaOpOutputModelPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver,
@@ -511,8 +511,8 @@ public final class OpOutputProjectionsPsiParser {
     }
   }
 
-  private static <MP extends OpOutputModelProjection<?, ?, ?>>
-  @NotNull MP buildModelTailProjection(
+  private static @NotNull <MP extends OpOutputModelProjection<?, ?, ?>>
+  /*@NotNull*/ MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpOutputModelProjection modelProjectionPsi,

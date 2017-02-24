@@ -64,11 +64,11 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
       "java.util.List",
       "java.util.stream.Collectors",
       reqVarProjectionFqn.toString,
-      reqModelProjectionQn.toString,
+      reqModelProjectionFqn.toString,
       reqMapModelProjectionFqn.toString,
       elementGen.fullClassName,
       keyGen.fullClassName
-    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports
+    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports ++ tails.imports ++ normalizedTails.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -80,7 +80,7 @@ $classJavadoc\
 public class $shortClassName {
   private final @NotNull ${reqMapModelProjectionFqn.last()} raw;
 
-  public $shortClassName(@NotNull ${reqModelProjectionQn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
     this.raw = (${reqMapModelProjectionFqn.last()}) raw;
   }
 
@@ -96,7 +96,7 @@ ${keys.code}\
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }\
-\s${(extra + params + meta).code}\
+\s${(extra + params + meta + tails + normalizedTails).code}\
 
   public @NotNull ${reqMapModelProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

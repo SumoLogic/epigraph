@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqPrimitiveModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
 
@@ -32,6 +32,21 @@ class ReqInputPrimitiveModelProjectionGen(
   extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpInputPrimitiveModelProjection
+
+  override protected def tailGenerator(
+    op: OpInputPrimitiveModelProjection,
+    normalized: Boolean): ReqModelProjectionGen =
+    new ReqInputPrimitiveModelProjectionGen(
+      operationInfo,
+      op,
+      namespaceSuffix.append(
+        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
+        + ReqModelProjectionGen.tailPackageSuffix(normalized)
+      ),
+      ctx
+    ) {
+      override protected lazy val normalizedTailGenerators: Map[OpInputPrimitiveModelProjection, ReqModelProjectionGen] = Map()
+    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputPrimitiveModelProjection")
