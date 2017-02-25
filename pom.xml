@@ -222,12 +222,12 @@
       <dependency>
         <groupId>org.scalameta</groupId>
         <artifactId>scalameta_${scala.version.major.minor}</artifactId>
-        <version>1.0.0</version>
+        <version>1.6.0</version>
       </dependency>
       <dependency>
         <groupId>org.scalameta</groupId>
         <artifactId>trees_${scala.version.major.minor}</artifactId>
-        <version>1.0.0</version>
+        <version>1.6.0</version>
       </dependency>
 
       <dependency>
