@@ -78,6 +78,7 @@ public class ReqOutputJsonFormatReaderTest {
           "        firstName",
           "      ),",
           "    ),",
+          "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
           "    friends *( :id ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "  )",
@@ -243,6 +244,29 @@ public class ReqOutputJsonFormatReaderTest {
     testRead(
         ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}", person
+    );
+  }
+
+  @Test
+  public void testReadModelTail() throws IOException {
+    final Person.@NotNull Imm person =
+        Person.create()
+            .setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+                    .setWorstEnemy(
+                        UserRecord.create()
+                            .setId(PersonId.create(1))
+                            .setProfile(Url.create("foo"))
+                    )
+
+            )
+            .toImmutable();
+
+    testRead(
+        ":record(id,worstEnemy(id)~ws.epigraph.tests.UserRecord(profile))",
+        "{\"id\":1,\"worstEnemy\":{\"type\":\"ws.epigraph.tests.UserRecord\",\"data\":{\"id\":1,\"profile\":\"foo\"}}}",
+        person
     );
   }
 
