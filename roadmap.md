@@ -16,12 +16,15 @@
     * [x] Doubles
     * [x] Booleans
     * [ ] Bytes / binary?
+  * [ ] abstract/any type with heterogeneous poly tails
+  * [ ] use real type for errors. See also "try/catch in projections"
+
 
 #### 1.2. Var types
   * [x] Explicitly defined var types
   * [x] Implicit default var types (for declared or inferred data types)
   * [x] Default ~~var~~ data type members
-    * [ ] Rename `default` keyword to `retro` (to highlight the backwards-compatibility purpose of these)?
+    * [x] Rename `default` keyword to `retro` (to highlight the backwards-compatibility purpose of these)?
 
 #### 1.3. ~~Polymorphic types~~ [replaced with polymorphic projections]
   ~~Normally data contract is defined by declared data type of the type member of the var holding
@@ -45,6 +48,7 @@
   * [x] Parameters
     * [x] On fields / tags
     * [x] On data types
+  * [ ] try/catch in projections (see todo/projections)
 
 #### 1.8. Metadata
 
@@ -93,7 +97,7 @@
 ### 5. Schema-driven code generation
   * [x] Maven plugin
     * [x] Java
-      * [ ] Staticly-typed projections 
+      * [ ] Staticly-typed projections
     * [ ] JavaScript
     * [ ] Scala?
   * [ ] Gradle plugin
@@ -114,7 +118,7 @@
 ### 8.
 
 ### 9. IDL (Merged with Schema)
-  * [ ] ~~File extension (.sdl - Service Description Language? .scl - Service Contract Language?)~~
+  * [x] ~~File extension (.sdl - Service Description Language? .scl - Service Contract Language?)~~
   * [x] Resources
   * [x] Operations
     * [x] Read
@@ -124,9 +128,9 @@
     * [x] Custom actions
 
 ### 10. Schema-driven code generation
-  * [ ] Serivice stubs
-  * [ ] Resource stubs
-  * [ ] Operation interfaces
+  * [x] Service stubs
+  * [x] Resource stubs
+  * [x] Operation interfaces
 
 ### 11. HTTP Service
   * [x] Undertow

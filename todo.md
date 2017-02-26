@@ -3,7 +3,6 @@
 - [ ] gradle/maven build: add verification that all files have apache license headers
 
 # Framework
-- [x] Fix tails support in JSON output. Data trimmer must be fixed?
 - JSON marshaller
   -[x] metadata support
   -[ ] recursive data support
@@ -13,7 +12,6 @@
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
 - [ ] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
-- [x] Add top-level comment to generated files: // This is a generated file. Not intended for manual editing.
 
 # Type system
 - [ ] Enums
@@ -21,15 +19,13 @@
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
-- [ ] Add `type.createBuilder(data)` similar to `toImmutable`
+- [ ] **Add `type.createBuilder(data)` similar to `toImmutable`**
 - [ ] Introduce real epigraph (record?) type for holding error values
 - [ ] Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/merged
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
-- [x] (anonymous) types should be collected from `*.eidl` files too
-- [x] Build an index of types in `META-INF`. Type name to schema file?
 - [ ] Proper resources compilation (port op projections/resource decls to scala/ctypes)
   - [x] Port generic projections to scala
   - [x] Port `GData` to scala/ctypes
@@ -44,16 +40,12 @@
   - [ ] Revert gradle/maven build changes added to avoid circular dependencies
 
 # Maven plugin
-- [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Gradle plugin
-- [x] Produce a list of `EpigraphType`->`JavaClass` mappings artifact (Duplicates task from `Schema compiler` list above)
 
 # Projections
-- [x] **HIGH** resolve field vs model params/annotations syntax problem
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
 - [ ] support for recursive projections
-- [x] Generate projection classes for specific types. For both req and op! So it's possibly to easly access things like permissions attached to op
 - [ ] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
   - [ ] update parser
   - [ ] input parser
@@ -63,9 +55,11 @@
 - [ ] Unify op projections pretty printers, there's lots of code duplication
 - [ ] Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
-- [x] Bug: meta-projection type should be `ModelProjection` (currently it's map for maps, list for lists etc)
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
-- [x] rename `pathTagProjection` to `singleTagProjection` (mind codegen)
+- [ ] generated req projections: cache normalized projections
+- [ ] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing
+- [ ] remove type information from projections?
+  - [ ] record projections should contain a String->FP, not String->FPE map
 
 # Operations
 

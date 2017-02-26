@@ -1,17 +1,12 @@
-- [x] remove `requried` from req output field projections. Figure out how to add it to tag-less models
-  - [x] '+' on field must also mark all models in poly tails as required, recursively
-- [x] remove field parameters/annotations
-  - [x] req projections
-  - [x] op projections
-- [x] check if `update` on `ReqUpdateFieldProjection` is OK (syntax, semantics)
-- [x] generate req paths
+- [ ] simple service quick-start guide
+
 - [ ] undertow handler: remove trimmer, should be handled by marshaller
 
-- [ ] remove type information from projections?
-  - [ ] record projections should contain a String->FP, not String->FPE map
-
-- [ ] fix projections pretty printer for records, see OpOutputProjectionsTest.tetParsing
-- [ ] generated req projections: cache normalized projections
+- Federator prerequisites
+  - [ ] `toBuilder` on data
+  - [ ] recursive op projections: syntax(?), pretty printers
+  - [ ] remote service invocation layer
+  - [ ] introduce transformers +codegen?
 
 - Docs
   - Operations
