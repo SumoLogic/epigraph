@@ -58,15 +58,7 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
 
     // unwrap built-in primitives
 
-    val builtInPrimitives = Map(
-      "epigraph.Integer" -> "Integer",
-      "epigraph.Long" -> "Long",
-      "epigraph.Double" -> "Double",
-      "epigraph.Boolean" -> "Boolean",
-      "epigraph.String" -> "String"
-    )
-
-    val keyCode = CodeChunk(builtInPrimitives.get(keyType.name.name).map(genPrimitiveKey).getOrElse(genNonPrimitiveKey))
+    val keyCode = CodeChunk(JavaGenUtils.builtInPrimitives.get(keyType.name.name).map(genPrimitiveKey).getOrElse(genNonPrimitiveKey))
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",

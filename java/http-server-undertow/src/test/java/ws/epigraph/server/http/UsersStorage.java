@@ -16,7 +16,6 @@
 
 package ws.epigraph.server.http;
 
-import epigraph.String;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.tests.*;
@@ -61,8 +60,8 @@ public class UsersStorage {
     final Person bestFriend;
     final UserRecord bestFriendRecord = UserRecord.create()
         .setId(PersonId.create(id + 1))
-        .setFirstName(String.create("First" + (id + 1)))
-        .setLastName(String.create("Last" + (id + 1)))
+        .setFirstName("First" + (id + 1))
+        .setLastName("Last" + (id + 1))
         .setProfile(Url.create("http://google.com/" + (id + 1)));
 
     if (id % 5 == 0)
@@ -76,14 +75,14 @@ public class UsersStorage {
         .setRecord(UserRecord
             .create()
             .setId(pid)
-            .setFirstName(epigraph.String.create("First" + id))
-            .setLastName(epigraph.String.create("Last" + id))
+            .setFirstName("First" + id)
+            .setLastName("Last" + id)
             .setProfile_Error(new ErrorValue(404, "Not Found", null))
             .setBestFriend$(bestFriend)
             .setWorstEnemy(UserRecord.create()
                 .setId(PersonId.create(id + 2))
-                .setFirstName(epigraph.String.create("First" + (id + 2)))
-                .setLastName(epigraph.String.create("Last" + (id + 2)))
+                .setFirstName("First" + (id + 2))
+                .setLastName("Last" + (id + 2))
                 .setProfile(Url.create("http://bing.com/" + (id + 2)))
             )
             .setFriends(Person_List.create()
@@ -91,8 +90,8 @@ public class UsersStorage {
                     .setId(UserId.create(id + 1))
                     .setRecord(UserRecord.create()
                         .setId(PersonId.create(id + 1))
-                        .setFirstName(epigraph.String.create("First" + (id + 1)))
-                        .setLastName(epigraph.String.create("Last" + (id + 1)))
+                        .setFirstName("First" + (id + 1))
+                        .setLastName("Last" + (id + 1))
                         .setProfile(Url.create("http://google.com/" + (id + 1)))
                     )
                 )
@@ -100,8 +99,8 @@ public class UsersStorage {
                     .setId(PersonId.create(id + 3))
                     .setRecord(PersonRecord.create()
                         .setId(PersonId.create(id + 3))
-                        .setFirstName(epigraph.String.create("First" + (id + 3)))
-                        .setLastName(epigraph.String.create("Last" + (id + 3)))
+                        .setFirstName("First" + (id + 3))
+                        .setLastName("Last" + (id + 3))
                     )
                 )
             )

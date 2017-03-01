@@ -129,9 +129,9 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       if (metaProjection != null) {
         final PaginationInfo.Builder paginationInfoBuilder = PaginationInfo.type.createBuilder();
         if (start != null && metaProjection.start() != null)
-          paginationInfoBuilder.setStart(epigraph.Long.create(start));
+          paginationInfoBuilder.setStart(start);
         if (count != null && metaProjection.count() != null)
-          paginationInfoBuilder.setCount(epigraph.Long.create(count));
+          paginationInfoBuilder.setCount(count);
         users.setMeta(paginationInfoBuilder);
       }
 
@@ -258,24 +258,20 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
       final List<ReqDeletePersonMapKeyProjection> keys = deleteProjection.dataProjection().keys();
 
-      if (keys == null) {
-        builder.set_Error(new ErrorValue(400, "keys not specified")); // can never happen?
-      } else {
-        final PersonId_Error_Map.Builder resultMapBuilder = PersonId_Error_Map.create();
-        builder.set(resultMapBuilder);
+      final PersonId_Error_Map.Builder resultMapBuilder = PersonId_Error_Map.create();
+      builder.set(resultMapBuilder);
 
-        for (final ReqDeletePersonMapKeyProjection key : keys) {
-          final @Nullable Person removedPerson = storage.users().datas().remove(key.value());
-          //noinspection ConstantConditions why?
-          if (removedPerson == null)
-            resultMapBuilder.put(
-                key.value(),
-                Error.create()
-                    .setCode(epigraph.Integer.create(404))
-                    .setMessage(epigraph.String.create("Item with id " + key.value().getVal() + " doesn't exist"))
-            );
+      for (final ReqDeletePersonMapKeyProjection key : keys) {
+        final @Nullable Person removedPerson = storage.users().datas().remove(key.value());
+        //noinspection ConstantConditions why?
+        if (removedPerson == null)
+          resultMapBuilder.put(
+              key.value(),
+              Error.create()
+                  .setCode(404)
+                  .setMessage("Item with id " + key.value().getVal() + " doesn't exist")
+          );
 
-        }
       }
 
       return CompletableFuture.completedFuture(builder);
@@ -311,16 +307,16 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
             @NotNull ReqInputPersonRecordProjection inputProjection = inputFieldProjection.dataProjection();
 
             if (inputProjection.firstName() != null) {
-              final epigraph.String firstName = personRecord.getFirstName();
+              final String firstName = personRecord.getFirstName();
               if (firstName != null) {
-                personRecord.setFirstName(epigraph.String.create(firstName.getVal().toUpperCase()));
+                personRecord.setFirstName(firstName.toUpperCase());
               }
             }
 
             if (inputProjection.lastName() != null) {
-              final epigraph.String lastName = personRecord.getFirstName();
+              final String lastName = personRecord.getFirstName();
               if (lastName != null) {
-                personRecord.setFirstName(epigraph.String.create(lastName.getVal().toUpperCase()));
+                personRecord.setFirstName(lastName.toUpperCase());
               }
             }
 

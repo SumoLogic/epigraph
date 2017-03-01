@@ -296,11 +296,11 @@ public class JsonFormatWriterTest {
     personMap.put$(
         PersonId.create(2),
         Person.create().setRecord(
-            PersonRecord.create().setId(PersonId.create(2)).setFirstName(epigraph.String.create("Alfred"))
+            PersonRecord.create().setId(PersonId.create(2)).setFirstName("Alfred")
         )
     );
     personMap.setMeta(PaginationInfo.create()
-        .setStart(epigraph.Long.create(10L)).setCount(epigraph.Long.create(20L)));
+        .setStart(10L).setCount(20L));
 
     String expectedJson =
         "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";

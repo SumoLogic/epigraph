@@ -29,6 +29,14 @@ import ws.epigraph.types.{DatumTypeApi, TypeApi}
 import scala.collection.JavaConversions._
 
 object JavaGenUtils {
+  val builtInPrimitives = Map(
+    "epigraph.Integer" -> "java.lang.Integer",
+    "epigraph.Long" -> "java.lang.Long",
+    "epigraph.Double" -> "java.lang.Double",
+    "epigraph.Boolean" -> "java.lang.Boolean",
+    "epigraph.String" -> "java.lang.String"
+  )
+
   private val spacesCache = new scala.collection.mutable.HashMap[Int, String]
 
   val EmptyPath: Path = Paths.get("")

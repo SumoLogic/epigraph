@@ -63,11 +63,28 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 }\
 ${  f.effectiveDefaultTagName match { // default tag accessors (implied or explicit, if any)
       case None => ""
-      case Some(dtn) => sn"""\
-
+      case Some(dtn) => 
+        
+        def genPrimitiveGetter(nativeType: String): String =
+        sn"""\
+  /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
+  //@Override TODO where applicable
+  @Nullable $nativeType get${up(f.name)}();
+"""
+        def genNonPrimitiveGetter: String =
+        sn"""\
   /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
   //@Override TODO where applicable
   @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}();
+"""
+        val getter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveGetter)
+          .getOrElse(genNonPrimitiveGetter)
+        
+        sn"""\
+
+$getter\
 
   /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
   //@Override TODO where applicable
@@ -174,11 +191,27 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 }\
 ${  f.effectiveDefaultTagName match { // default tag accessors (implied or explicit, if any)
       case None => ""
-      case Some(dtn) => sn"""\
-
+      case Some(dtn) =>
+        def genPrimitiveGetter(nativeType: String): String =
+        sn"""\
+    /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
+    @Override
+    @Nullable $nativeType get${up(f.name)}();
+"""
+        def genNonPrimitiveGetter: String =
+        sn"""\
     /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}();
+"""
+        val getter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveGetter)
+          .getOrElse(genNonPrimitiveGetter)
+
+        sn"""\
+
+$getter\
 
     /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
@@ -222,13 +255,32 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 }\
 ${  f.effectiveDefaultTagName match { // default tag accessors (implied or explicit, if any)
       case None => ""
-      case Some(dtn) => sn"""\
+      case Some(dtn) =>
 
+        def genPrimitiveGetter(nativeType: String): String =
+        sn"""\
+        /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
+        @Override
+        public @Nullable $nativeType get${up(f.name)}() {
+          return get${up(f.name)}_().getDatum().getVal();
+        }
+"""
+        def genNonPrimitiveGetter: String =
+        sn"""\
         /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm get${up(f.name)}() {
           return ws.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value::getDatum);
         }
+"""
+        val getter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveGetter)
+          .getOrElse(genNonPrimitiveGetter)
+
+        sn"""\
+
+$getter\
 
         /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
@@ -336,19 +388,59 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 }\
 ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if any)
       case None => ""
-      case Some(dtn) => sn"""\
-
+      case Some(dtn) =>
+        
+        def genPrimitiveGetter(nativeType: String): String =
+        sn"""\
+    /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
+    @Override
+    public @Nullable $nativeType get${up(f.name)}() {
+      return get${up(f.name)}_().getDatum().getVal();
+    }
+"""
+        def genNonPrimitiveGetter: String =
+        sn"""\
     /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}() {
       return ws.epigraph.util.Util.apply(get${up(f.name)}_(), ${lqn(tt(f.typeRef, dtn), t)}.Value::getDatum);
     }
+"""
 
+        def genPrimitiveSetter(nativeType: String): String =
+        sn"""\
+    /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
+    public @NotNull $ln.Builder set${up(f.name)}(@Nullable $nativeType ${jn(f.name)}) {
+      if (${jn(f.name)} == null)
+        _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_(${lqn(tt(f.typeRef, dtn), t)}.type.createValue(null)));
+      else
+        _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${lqn(tt(f.typeRef, dtn), t)}.create(${jn(f.name)})));
+      return this;
+    }
+"""
+        def genNonPrimitiveSetter: String =
+        sn"""\
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
     public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${jn(f.name)}) {
       _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${jn(f.name)}));
       return this;
     }
+"""
+        val getter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveGetter)
+          .getOrElse(genNonPrimitiveGetter)
+        
+        val setter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveSetter)
+          .getOrElse(genNonPrimitiveSetter)
+
+        sn"""\
+
+$getter\
+
+$setter\
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
     public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {

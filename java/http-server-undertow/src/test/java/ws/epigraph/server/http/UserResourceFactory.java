@@ -21,7 +21,6 @@ package ws.epigraph.server.http;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
@@ -29,7 +28,6 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.user.AbstractUserResourceFactory;
 
-import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class UserResourceFactory extends AbstractUserResourceFactory {
@@ -51,22 +49,22 @@ public class UserResourceFactory extends AbstractUserResourceFactory {
           .setId(UserId.create(1))
           .setRecord(UserRecord.create()
               .setId(PersonId.create(1))
-              .setFirstName(epigraph.String.create("Alfred"))
-              .setLastName(epigraph.String.create("Hitchcock"))
+              .setFirstName("Alfred")
+              .setLastName("Hitchcock")
               .setProfile_Error(new ErrorValue(404, "Not Found", null))
               .setBestFriend$(User.create()
                   .setId(UserId.create(2))
                   .setRecord(UserRecord.create()
                       .setId(PersonId.create(2))
-                      .setFirstName(epigraph.String.create("Bruce"))
-                      .setLastName(epigraph.String.create("Willis"))
+                      .setFirstName("Bruce")
+                      .setLastName("Willis")
                       .setProfile(Url.create("http://google.com/"))
                   )
               )
               .setWorstEnemy(UserRecord.create()
                   .setId(PersonId.create(3))
-                  .setFirstName(epigraph.String.create("Chuck"))
-                  .setLastName(epigraph.String.create("Norris"))
+                  .setFirstName("Chuck")
+                  .setLastName("Norris")
                   .setProfile(Url.create("http://bing.com/"))
               )
               .setFriends(Person_List.create()
@@ -74,8 +72,8 @@ public class UserResourceFactory extends AbstractUserResourceFactory {
                       .setId(UserId.create(2))
                       .setRecord(UserRecord.create()
                           .setId(PersonId.create(2))
-                          .setFirstName(epigraph.String.create("Bruce"))
-                          .setLastName(epigraph.String.create("Willis"))
+                          .setFirstName("Bruce")
+                          .setLastName("Willis")
                           .setProfile(Url.create("http://google.com/"))
                       )
                   )
@@ -83,8 +81,8 @@ public class UserResourceFactory extends AbstractUserResourceFactory {
                       .setId(PersonId.create(4))
                       .setRecord(PersonRecord.create()
                           .setId(PersonId.create(4))
-                          .setFirstName(epigraph.String.create("Douglas"))
-                          .setLastName(epigraph.String.create("Adams"))
+                          .setFirstName("Douglas")
+                          .setLastName("Adams")
                       )
                   )
               )
