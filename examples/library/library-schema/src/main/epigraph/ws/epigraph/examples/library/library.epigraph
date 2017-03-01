@@ -1,0 +1,63 @@
+namespace ws.epigraph.examples.library
+
+// book types
+
+vartype Book {
+  id: BookId
+  `record`: BookRecord
+}
+
+long BookId
+
+record BookRecord {
+  title: String
+  author: Author
+  text: Text
+}
+
+// author types
+
+vartype Author {
+  id: AuthorId
+  `record`: AuthorRecord
+}
+
+long AuthorId
+
+record AuthorRecord {
+  firstName: String
+  middleName: String
+  lastName: String
+}
+
+// book content types
+
+vartype Text {
+  plain: PlainText
+}
+
+string PlainText meta PlainTextRange   // meta-data attached
+
+record PlainTextRange {
+  offset: Long,
+  count: Long
+}
+
+// service
+
+resource books: map[BookId, BookRecord] {
+  read {                               // default read operation
+    outputProjection [ required ] (    // map keys are required
+      title,
+      author :(
+        id,
+        `record` (firstName, middleName, lastName)
+      ),
+      text :plain {
+        ;offset: Long,                 // input parameter
+        ;count: Long,                  // input parameter
+        meta: (offset, count)          // supported meta-data projection
+      }
+    )
+  }
+}
