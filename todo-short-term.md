@@ -1,8 +1,8 @@
 - [ ] simple service quick-start guide
 
 - [ ] undertow handler: remove trimmer, should be handled by marshaller
-- [ ] generated maps/lists: add `putError`
-- [ ] generated data classes: auto box/unboxing for built-in primitives
+- [x] generated maps/lists: add `putError`
+- [x] generated data classes: auto box/unboxing for built-in primitives
 
 - Federator prerequisites
   - [ ] `toBuilder` on data

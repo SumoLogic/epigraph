@@ -65,7 +65,7 @@ public abstract class AbstractVarProjection<
   }
 
   private void validateTags() {
-    if (!parenthesized && tagProjections().size() != 1)
+    if (!parenthesized && tagProjections().size() > 1)
       throw new IllegalArgumentException(
           String.format(
               "Non-parenthesized var projection can only contain one tag; was passed %d tags",
