@@ -47,6 +47,7 @@ package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.errors.ErrorValue;
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -305,10 +306,10 @@ ${
 """
     case _ => sn"""\
 
-      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-      private @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm.Data> datas() {
-        return ws.epigraph.util.Util.castEx(_raw().elements());
-      }
+    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+    private @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm.Data> datas() {
+      return ws.epigraph.util.Util.castEx(_raw().elements());
+    }
 """
   }
 }\
@@ -415,6 +416,12 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} datum with specified key in this map. */
     public @NotNull $ln.Builder put(@NotNull ${lqn(kt, t)} key, @Nullable ${lqn(tt(vtr, dtn), t)} datum) {
       datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}(datum));
+      return this;
+    }
+
+    ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} error with specified key in this map. */
+    public @NotNull $ln.Builder putError(@NotNull ${lqn(kt, t)} key, @NotNull ErrorValue error) {
+      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_Error(error));
       return this;
     }
 

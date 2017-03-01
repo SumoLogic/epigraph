@@ -40,6 +40,7 @@ package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.errors.ErrorValue;
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -296,10 +297,10 @@ ${
 """
     case _ => sn"""\
 
-      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-      private @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm.Data> datas() {
-        return ws.epigraph.util.Util.castEx(_raw().elements());
-      }
+    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+    private @NotNull java.util.List<@NotNull ? extends ${lqn(et, t)}.Imm.Data> datas() {
+      return ws.epigraph.util.Util.castEx(_raw().elements());
+    }
 """
   }
 }\
@@ -406,6 +407,12 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
     ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum element to the list. */
     public @NotNull $ln.Builder add(@Nullable ${lqn(tt(etr, dtn), t)} datum) {
       datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(datum));
+      return this;
+    }
+
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} error element to the list. */
+    public @NotNull $ln.Builder addError(@NotNull ErrorValue error) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}_Error(error));
       return this;
     }
 
