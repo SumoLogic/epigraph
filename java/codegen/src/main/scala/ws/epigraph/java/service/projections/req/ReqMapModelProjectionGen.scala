@@ -35,6 +35,8 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   protected def elementGen: ReqProjectionGen
 
+  protected def keysNullable: Boolean = true
+
   // -------
 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(keyGen, elementGen)
@@ -42,8 +44,9 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
   protected def keys: CodeChunk = {
     val keyProjectionClass = keyGen.shortClassName
 
-    CodeChunk(
-      /*@formatter:off*/sn"""\
+    if (keysNullable) {
+      CodeChunk(
+        /*@formatter:off*/sn"""\
   /**
    * @return key projections
    */
@@ -51,7 +54,20 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
     return raw.keys() == null ? null : raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
   }
 """/*@formatter:on*/
-    )
+      )
+    } else {
+      CodeChunk(
+        /*@formatter:off*/sn"""\
+  /**
+   * @return key projections
+   */
+  public @NotNull List<$keyProjectionClass> keys() {
+    assert raw.keys() != null;
+    return raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
+  }
+"""/*@formatter:on*/
+      )
+    }
   }
 
   protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {

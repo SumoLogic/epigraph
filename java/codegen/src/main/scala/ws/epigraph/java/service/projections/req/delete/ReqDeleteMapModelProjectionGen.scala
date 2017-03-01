@@ -20,6 +20,7 @@ import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
 
 /**
@@ -33,6 +34,8 @@ class ReqDeleteMapModelProjectionGen(
   extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpDeleteMapModelProjection
+
+  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
   protected override val keyGen: ReqDeleteMapKeyProjectionGen = new ReqDeleteMapKeyProjectionGen(
     operationInfo,
