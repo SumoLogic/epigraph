@@ -40,7 +40,6 @@ package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.errors.ErrorValue;
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -411,7 +410,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
     }
 
     ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} error element to the list. */
-    public @NotNull $ln.Builder addError(@NotNull ErrorValue error) {
+    public @NotNull $ln.Builder addError(@NotNull ws.epigraph.errors.ErrorValue error) {
       datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}_Error(error));
       return this;
     }

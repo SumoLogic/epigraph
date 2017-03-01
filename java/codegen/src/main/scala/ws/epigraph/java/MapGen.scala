@@ -47,7 +47,6 @@ package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.errors.ErrorValue;
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -420,7 +419,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} error with specified key in this map. */
-    public @NotNull $ln.Builder putError(@NotNull ${lqn(kt, t)} key, @NotNull ErrorValue error) {
+    public @NotNull $ln.Builder putError(@NotNull ${lqn(kt, t)} key, @NotNull ws.epigraph.errors.ErrorValue error) {
       datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_Error(error));
       return this;
     }
