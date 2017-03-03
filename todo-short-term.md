@@ -1,5 +1,6 @@
 - [ ] simple service quick-start guide
 
+- [ ] support projection snippets in schema. Lots of code duplication otherwise!
 - [ ] undertow handler: remove trimmer, should be handled by marshaller
 - [x] generated maps/lists: add `putError`
 - [x] generated data classes: auto box/unboxing for built-in primitives

@@ -39,7 +39,7 @@ public class BooksReadOperation extends AbstractReadOperation{
 
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      final @NotNull BookId_BookRecord_Map.Builder.Data booksDataBuilder,
+      @NotNull final BookId_BookRecord_Map.Builder.Data booksDataBuilder,
       @NotNull final ReqOutputBooksFieldProjection booksFieldProjection) {
 
     final BookId_BookRecord_Map.Builder booksMap = BookId_BookRecord_Map.create();
@@ -79,6 +79,7 @@ public class BooksReadOperation extends AbstractReadOperation{
       return book.asValue();
     }
   }
+
   private Author getAuthor(long authorId, ReqOutputAuthorProjection authorProjection) {
     Author.Builder author = Author.create();
     author.setId(AuthorId.create(authorId));
