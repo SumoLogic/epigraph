@@ -17,8 +17,8 @@
 package ws.epigraph.psi;
 
 import com.intellij.psi.PsiElement;
-import ws.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.TextLocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +50,14 @@ public class PsiProcessingException extends Exception {
   }
 
   public PsiProcessingException(
+      @NotNull String message,
+      @NotNull PsiElement psi,
+      @NotNull PsiProcessingContext context) {
+
+    this(message, psi, context.errors());
+  }
+
+  public PsiProcessingException(
       @NotNull Exception cause,
       @NotNull PsiElement psi,
       @NotNull List<PsiProcessingError> precedingErrors) {
@@ -64,6 +72,14 @@ public class PsiProcessingException extends Exception {
       this.errors = new ArrayList<>(precedingErrors);
       errors.add(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
     }
+  }
+
+  public PsiProcessingException(
+      @NotNull Exception cause,
+      @NotNull PsiElement psi,
+      @NotNull PsiProcessingContext context) {
+
+    this(cause, psi, context.errors());
   }
 
   public @NotNull PsiElement psi() { return psi; }

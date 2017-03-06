@@ -54,7 +54,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpOutputVarProjection psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
@@ -70,7 +70,7 @@ public final class OpOutputProjectionsPsiParser {
           multiTagProjection.getOpOutputMultiTagProjectionItemList();
 
       for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, errors);
+        final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
 
         final OpOutputModelProjection<?, ?, ?> parsedModelProjection;
 
@@ -82,12 +82,12 @@ public final class OpOutputProjectionsPsiParser {
 
         parsedModelProjection = parseModelProjection(
             tagType,
-            parseModelParams(modelPropertiesPsi, typesResolver, errors),
-            parseModelAnnotations(modelPropertiesPsi, errors),
-            parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver, errors),
+            parseModelParams(modelPropertiesPsi, typesResolver, context),
+            parseModelAnnotations(modelPropertiesPsi, context),
+            parseModelMetaProjection(tagType, modelPropertiesPsi, typesResolver, context),
             modelProjection,
             typesResolver,
-            errors
+            context
         );
 
         tagProjections.put(
@@ -105,7 +105,7 @@ public final class OpOutputProjectionsPsiParser {
           singleTagProjectionPsi.getTagName(),
           dataType.defaultTag(),
           singleTagProjectionPsi,
-          errors
+          context
       );
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
         final OpOutputModelProjection<?, ?, ?> parsedModelProjection;
@@ -115,7 +115,7 @@ public final class OpOutputProjectionsPsiParser {
               singleTagProjectionPsi.getTagName(),
               dataType.defaultTag(),
               singleTagProjectionPsi,
-              errors
+              context
           );
 
         @Nullable SchemaOpOutputModelProjection modelProjection = singleTagProjectionPsi.getOpOutputModelProjection();
@@ -126,12 +126,12 @@ public final class OpOutputProjectionsPsiParser {
 
         parsedModelProjection = parseModelProjection(
             tag.type(),
-            parseModelParams(modelPropertiesPsi, typesResolver, errors),
-            parseModelAnnotations(modelPropertiesPsi, errors),
-            parseModelMetaProjection(tag.type(), modelPropertiesPsi, typesResolver, errors),
+            parseModelParams(modelPropertiesPsi, typesResolver, context),
+            parseModelAnnotations(modelPropertiesPsi, context),
+            parseModelMetaProjection(tag.type(), modelPropertiesPsi, typesResolver, context),
             modelProjection,
             typesResolver,
-            errors
+            context
         );
 
         tagProjections.put(
@@ -160,14 +160,14 @@ public final class OpOutputProjectionsPsiParser {
           @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull SchemaOpOutputVarProjection psiTailProjection = tailItem.getOpOutputVarProjection();
           @NotNull OpOutputVarProjection tailProjection =
-              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
+              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, context);
           tails.add(tailProjection);
         }
       } else {
         @NotNull SchemaTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull SchemaOpOutputVarProjection psiTailProjection = singleTail.getOpOutputVarProjection();
         @NotNull OpOutputVarProjection tailProjection =
-            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, errors);
+            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, context);
         tails.add(tailProjection);
       }
 
@@ -182,7 +182,7 @@ public final class OpOutputProjectionsPsiParser {
           EpigraphPsiUtil.getLocation(psi)
       );
     } catch (Exception e) {
-      throw new PsiProcessingException(e, psi, errors);
+      throw new PsiProcessingException(e, psi, context);
     }
   }
 
@@ -190,23 +190,23 @@ public final class OpOutputProjectionsPsiParser {
   private static @NotNull OpParams parseModelParams(
       @NotNull List<SchemaOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
 
     return parseParams(
         modelProperties.stream().map(SchemaOpOutputModelProperty::getOpParam),
         resolver,
-        errors
+        context.inputPsiProcessingContext()
     );
   }
 
   private static @NotNull Annotations parseModelAnnotations(
       @NotNull List<SchemaOpOutputModelProperty> modelProperties,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     return parseAnnotations(
         modelProperties.stream().map(SchemaOpOutputModelProperty::getAnnotation),
-        errors
+        context
     );
   }
 
@@ -214,14 +214,14 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull DatumTypeApi type,
       @NotNull List<SchemaOpOutputModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors
+      @NotNull OpOutputPsiProcessingContext context
   ) throws PsiProcessingException {
 
     @Nullable SchemaOpOutputModelMeta modelMetaPsi = null;
 
     for (SchemaOpOutputModelProperty modelProperty : modelProperties) {
       if (modelMetaPsi != null)
-        errors.add(new PsiProcessingError("Metadata projection should be specified only once", modelProperty));
+        context.addError("Metadata projection should be specified only once", modelProperty);
 
       modelMetaPsi = modelProperty.getOpOutputModelMeta();
     }
@@ -230,10 +230,10 @@ public final class OpOutputProjectionsPsiParser {
     else {
       @Nullable DatumTypeApi metaType = type.metaType();
       if (metaType == null) {
-        errors.add(new PsiProcessingError(
+        context.addError(
             String.format("Type '%s' doesn't have a metadata, metadata projection can't be specified", type.name()),
             modelMetaPsi
-        ));
+        );
         return null;
       } else {
 
@@ -245,7 +245,7 @@ public final class OpOutputProjectionsPsiParser {
             null, // TODO what if meta-type has it's own meta-type? meta-meta-type projection should go here
             metaProjectionPsi,
             resolver,
-            errors
+            context
         );
       }
     }
@@ -256,15 +256,15 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpOutputVarProjection psiTailProjection,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
-    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
+    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
         psiTailProjection,
         typesResolver,
-        errors
+        context
     );
   }
 
@@ -273,7 +273,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull TypeApi type,
       @NotNull TagApi tag,
       @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
     return new OpOutputVarProjection(
         type,
         ProjectionUtils.singletonLinkedHashMap(
@@ -285,7 +285,7 @@ public final class OpOutputProjectionsPsiParser {
                     OpParams.EMPTY,
                     Annotations.EMPTY,
                     locationPsi,
-                    errors
+                    context
                 ),
                 EpigraphPsiUtil.getLocation(locationPsi)
             )
@@ -299,14 +299,14 @@ public final class OpOutputProjectionsPsiParser {
   private static @NotNull OpOutputVarProjection createDefaultVarProjection(
       @NotNull DatumTypeApi type,
       @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
-    return createDefaultVarProjection(type, type.self(), locationPsi, errors);
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+    return createDefaultVarProjection(type, type.self(), locationPsi, context);
   }
 
   public static @NotNull OpOutputVarProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
       @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     @Nullable TagApi defaultTag = type.defaultTag();
@@ -319,13 +319,13 @@ public final class OpOutputProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Can't build default projection for '%s', default tag not specified", type.name()),
             locationPsi,
-            errors
+            context
         );
       }
 
     }
 
-    return createDefaultVarProjection(type.type(), defaultTag, locationPsi, errors);
+    return createDefaultVarProjection(type.type(), defaultTag, locationPsi, context);
   }
 
   public static @NotNull OpOutputModelProjection<?, ?, ?> parseModelProjection(
@@ -335,7 +335,7 @@ public final class OpOutputProjectionsPsiParser {
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     return parseModelProjection(
@@ -346,7 +346,7 @@ public final class OpOutputProjectionsPsiParser {
         metaProjection,
         psi,
         typesResolver,
-        errors
+        context
     );
 
   }
@@ -361,7 +361,7 @@ public final class OpOutputProjectionsPsiParser {
       @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull SchemaOpOutputModelProjection psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     switch (type.kind()) {
@@ -370,9 +370,9 @@ public final class OpOutputProjectionsPsiParser {
 
         @Nullable SchemaOpOutputRecordModelProjection recordModelProjectionPsi = psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        ensureModelKind(psi, TypeKind.RECORD, errors);
+        ensureModelKind(psi, TypeKind.RECORD, context);
         return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
@@ -382,11 +382,11 @@ public final class OpOutputProjectionsPsiParser {
                 OpOutputRecordModelProjection.class,
                 psi.getOpOutputModelPolymorphicTail(),
                 typesResolver,
-                errors
+                context
             ),
             recordModelProjectionPsi,
             typesResolver,
-            errors
+            context
         );
 
       case MAP:
@@ -394,9 +394,9 @@ public final class OpOutputProjectionsPsiParser {
 
         @Nullable SchemaOpOutputMapModelProjection mapModelProjectionPsi = psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        ensureModelKind(psi, TypeKind.MAP, errors);
+        ensureModelKind(psi, TypeKind.MAP, context);
 
         return (MP) parseMapModelProjection(
             (MapTypeApi) type,
@@ -407,11 +407,11 @@ public final class OpOutputProjectionsPsiParser {
                 OpOutputMapModelProjection.class,
                 psi.getOpOutputModelPolymorphicTail(),
                 typesResolver,
-                errors
+                context
             ),
             mapModelProjectionPsi,
             typesResolver,
-            errors
+            context
         );
 
       case LIST:
@@ -419,9 +419,9 @@ public final class OpOutputProjectionsPsiParser {
 
         @Nullable SchemaOpOutputListModelProjection listModelProjectionPsi = psi.getOpOutputListModelProjection();
         if (listModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, errors);
+          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        ensureModelKind(psi, TypeKind.LIST, errors);
+        ensureModelKind(psi, TypeKind.LIST, context);
 
         return (MP) parseListModelProjection(
             (ListTypeApi) type,
@@ -432,15 +432,15 @@ public final class OpOutputProjectionsPsiParser {
                 OpOutputListModelProjection.class,
                 psi.getOpOutputModelPolymorphicTail(),
                 typesResolver,
-                errors
+                context
             ),
             listModelProjectionPsi,
             typesResolver,
-            errors
+            context
         );
 
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
 
       case PRIMITIVE:
         assert modelClass.isAssignableFrom(OpOutputPrimitiveModelProjection.class);
@@ -454,16 +454,16 @@ public final class OpOutputProjectionsPsiParser {
                 OpOutputPrimitiveModelProjection.class,
                 psi.getOpOutputModelPolymorphicTail(),
                 typesResolver,
-                errors
+                context
             ),
             psi
         );
 
       case UNION:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
 
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
     }
   }
   
@@ -473,7 +473,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull Class<MP> modelClass,
       @Nullable SchemaOpOutputModelPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     if (tailPsi == null) return null;
     else {
@@ -491,7 +491,7 @@ public final class OpOutputProjectionsPsiParser {
                   tailItemPsi.getOpOutputModelProjection(),
                   tailItemPsi.getOpOutputModelPropertyList(),
                   typesResolver,
-                  errors
+                  context
               )
           );
         }
@@ -503,7 +503,7 @@ public final class OpOutputProjectionsPsiParser {
                 singleTailPsi.getOpOutputModelProjection(),
                 singleTailPsi.getOpOutputModelPropertyList(),
                 typesResolver,
-                errors
+                context
             )
         );
       }
@@ -518,27 +518,27 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull SchemaOpOutputModelProjection modelProjectionPsi,
       @NotNull List<SchemaOpOutputModelProperty> modelPropertiesPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, errors);
-    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, errors);
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
+    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
     return parseModelProjection(
         modelClass,
         tailType,
-        parseModelParams(modelPropertiesPsi, typesResolver, errors),
-        parseModelAnnotations(modelPropertiesPsi, errors),
-        parseModelMetaProjection(tailType, modelPropertiesPsi, typesResolver, errors),
+        parseModelParams(modelPropertiesPsi, typesResolver, context),
+        parseModelAnnotations(modelPropertiesPsi, context),
+        parseModelMetaProjection(tailType, modelPropertiesPsi, typesResolver, context),
         modelProjectionPsi,
         typesResolver,
-        errors
+        context
     );
   }
 
   private static void ensureModelKind(
       @NotNull SchemaOpOutputModelProjection psi,
       @NotNull TypeKind expectedKind,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
     if (expectedKind != actualKind)
@@ -546,7 +546,7 @@ public final class OpOutputProjectionsPsiParser {
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,
           expectedKind
-      ), psi, errors);
+      ), psi, context);
   }
 
   private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpOutputModelProjection psi) {
@@ -561,7 +561,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     switch (type.kind()) {
@@ -594,13 +594,13 @@ public final class OpOutputProjectionsPsiParser {
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
               valueType.name()
-          ), locationPsi, errors);
+          ), locationPsi, context);
 
         final OpOutputVarProjection valueVarProjection = createDefaultVarProjection(
             valueType.type(),
             defaultValuesTag,
             locationPsi,
-            errors
+            context
         );
 
         return new OpOutputMapModelProjection(
@@ -623,13 +623,13 @@ public final class OpOutputProjectionsPsiParser {
               "Can't create default projection for list type '%s, as it's element type '%s' doesn't have a default tag",
               type.name(),
               elementType.name()
-          ), locationPsi, errors);
+          ), locationPsi, context);
 
         final OpOutputVarProjection itemVarProjection = createDefaultVarProjection(
             elementType.type(),
             defaultElementsTag,
             locationPsi,
-            errors
+            context
         );
 
         return new OpOutputListModelProjection(
@@ -645,10 +645,10 @@ public final class OpOutputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,
-            errors
+            context
         );
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
       case PRIMITIVE:
         return new OpOutputPrimitiveModelProjection(
             (PrimitiveTypeApi) type,
@@ -659,7 +659,7 @@ public final class OpOutputProjectionsPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, errors);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, context);
     }
   }
 
@@ -671,7 +671,7 @@ public final class OpOutputProjectionsPsiParser {
       @Nullable List<OpOutputRecordModelProjection> tails,
       @NotNull SchemaOpOutputRecordModelProjection psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     LinkedHashMap<String, OpOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull List<SchemaOpOutputFieldProjectionEntry> fieldProjectionEntriesPsi =
@@ -682,7 +682,7 @@ public final class OpOutputProjectionsPsiParser {
       FieldApi field = type.fieldsMap().get(fieldName);
 
       if (field == null) {
-        errors.add(new PsiProcessingError(
+        context.addError(
             String.format(
                 "Unknown field '%s' in type '%s'; known fields: {%s}",
                 fieldName,
@@ -690,7 +690,7 @@ public final class OpOutputProjectionsPsiParser {
                 String.join(", ", type.fieldsMap().keySet())
             ),
             fieldProjectionEntryPsi
-        ));
+        );
         continue;
       }
 
@@ -701,7 +701,7 @@ public final class OpOutputProjectionsPsiParser {
           field.dataType(),
           fieldProjectionPsi,
           typesResolver,
-          errors
+          context
       );
 
       fieldProjections.put(
@@ -729,7 +729,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull DataTypeApi fieldType,
       @NotNull SchemaOpOutputFieldProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
 //    List<OpParam> fieldParamsList = null;
 //    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
@@ -737,16 +737,16 @@ public final class OpOutputProjectionsPsiParser {
 //      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
 //      if (fieldParamPsi != null) {
 //        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
+//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, context));
 //      }
 //
-//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
+//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), context);
 //    }
 
     return new OpOutputFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),
 //        Annotations.fromMap(fieldAnnotationsMap),
-        parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, errors),
+        parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, context),
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -759,10 +759,10 @@ public final class OpOutputProjectionsPsiParser {
       @Nullable List<OpOutputMapModelProjection> tails,
       @NotNull SchemaOpOutputMapModelProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
-    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, errors);
+    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, context);
 
     @Nullable SchemaOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
     @NotNull OpOutputVarProjection valueProjection =
@@ -770,9 +770,9 @@ public final class OpOutputProjectionsPsiParser {
         ? createDefaultVarProjection(
             type.valueType(),
             psi,
-            errors
+            context
         )
-        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver, errors);
+        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver, context);
 
     return new OpOutputMapModelProjection(
         type,
@@ -789,7 +789,7 @@ public final class OpOutputProjectionsPsiParser {
   private static @NotNull OpOutputKeyProjection parseKeyProjection(
       @NotNull SchemaOpOutputKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     final OpKeyPresence presence;
 
@@ -804,9 +804,9 @@ public final class OpOutputProjectionsPsiParser {
         keyProjectionPsi.getOpOutputKeyProjectionPartList();
 
     final @NotNull OpParams keyParams =
-        parseParams(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getOpParam), resolver, errors);
+        parseParams(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getOpParam), resolver, context.inputPsiProcessingContext());
     final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), errors);
+        parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), context);
 
     return new OpOutputKeyProjection(
         presence,
@@ -824,15 +824,15 @@ public final class OpOutputProjectionsPsiParser {
       @Nullable List<OpOutputListModelProjection> tails,
       @NotNull SchemaOpOutputListModelProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
     OpOutputVarProjection itemsProjection;
     @Nullable SchemaOpOutputVarProjection opOutputVarProjectionPsi = psi.getOpOutputVarProjection();
     if (opOutputVarProjectionPsi == null)
-      itemsProjection = createDefaultVarProjection(type, psi, errors);
+      itemsProjection = createDefaultVarProjection(type, psi, context);
     else
-      itemsProjection = parseVarProjection(type.elementType(), opOutputVarProjectionPsi, resolver, errors);
+      itemsProjection = parseVarProjection(type.elementType(), opOutputVarProjectionPsi, resolver, context);
 
 
     return new OpOutputListModelProjection(

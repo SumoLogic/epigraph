@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -200,12 +201,20 @@ public class OpInputProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpInputProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpInputVarReferenceContext varReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+      OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(context, varReferenceContext);
+
+      OpInputVarProjection vp =  OpInputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          inputPsiProcessingContext
+      );
+
+      varReferenceContext.ensureAllReferencesResolved(context);
+      return vp;
+    });
 
   }
 }

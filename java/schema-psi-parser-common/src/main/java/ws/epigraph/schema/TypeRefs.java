@@ -16,14 +16,12 @@
 
 package ws.epigraph.schema;
 
-import ws.epigraph.schema.parser.psi.*;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.refs.*;
+import ws.epigraph.schema.parser.psi.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,7 +29,7 @@ import java.util.List;
 public final class TypeRefs {
   private TypeRefs() {}
 
-  public static @NotNull TypeRef fromPsi(@NotNull SchemaTypeRef psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull TypeRef fromPsi(@NotNull SchemaTypeRef psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
     if (psi instanceof SchemaQnTypeRef) {
@@ -42,32 +40,32 @@ public final class TypeRefs {
     if (psi instanceof SchemaAnonList) {
       SchemaAnonList anonListPsi = (SchemaAnonList) psi;
       @Nullable SchemaValueTypeRef valueTypeRefPsi = anonListPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, errors);
-      return new AnonListRef(fromPsi(valueTypeRefPsi, errors));
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, context.errors());
+      return new AnonListRef(fromPsi(valueTypeRefPsi, context));
     }
 
     if (psi instanceof SchemaAnonMap) {
       SchemaAnonMap anonMapPsi = (SchemaAnonMap) psi;
 
       @Nullable SchemaTypeRef keyTypeRefPsi = anonMapPsi.getTypeRef();
-      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, errors);
-      TypeRef keyTypeRef = fromPsi(keyTypeRefPsi, errors);
+      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, context.errors());
+      TypeRef keyTypeRef = fromPsi(keyTypeRefPsi, context);
 
       @Nullable SchemaValueTypeRef valueTypeRefPsi = anonMapPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, errors);
-      ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi, errors);
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, context.errors());
+      ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi, context);
 
       return new AnonMapRef(keyTypeRef, valueTypeRef);
     }
 
-    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, errors);
+    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, context.errors());
   }
 
-  public static @NotNull ValueTypeRef fromPsi(@NotNull SchemaValueTypeRef psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull ValueTypeRef fromPsi(@NotNull SchemaValueTypeRef psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
     @Nullable SchemaRetroDecl retroDeclPsi = psi.getRetroDecl();
     return new ValueTypeRef(
-        fromPsi(psi.getTypeRef(), errors),
+        fromPsi(psi.getTypeRef(), context),
         retroDeclPsi == null ? null : retroDeclPsi.getVarTagRef().getQid().getCanonicalName()
     );
   }

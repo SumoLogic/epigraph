@@ -14,37 +14,27 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
-
-  protected OpDeleteVarReferenceContext(
-      final Qn referencesNamespace,
-      final VarReferenceContext<OpDeleteVarProjection> parent) {
-    super(referencesNamespace, parent);
-  }
-
+public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext {
   @NotNull
-  @Override
-  protected OpDeleteVarProjection newReference(
-      @NotNull final TypeApi type,
-      @NotNull final Qn name,
-      @NotNull final TextLocation location) {
+  private final OpInputVarReferenceContext varReferenceContext;
 
-    return new OpDeleteVarProjection(type, name, location);
+  public OpInputPsiProcessingContext(
+      final @NotNull PsiProcessingContext psiProcessingContext,
+      final @NotNull OpInputVarReferenceContext varReferenceContext) {
+    super(psiProcessingContext);
+    this.varReferenceContext = varReferenceContext;
   }
-
 }

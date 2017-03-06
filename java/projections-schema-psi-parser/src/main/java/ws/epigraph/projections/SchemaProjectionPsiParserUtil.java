@@ -21,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
+import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
 import ws.epigraph.schema.parser.psi.*;
@@ -29,7 +32,6 @@ import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
@@ -50,9 +52,9 @@ public final class SchemaProjectionPsiParserUtil {
       @Nullable SchemaTagName tagName,
       @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, errors);
+    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, context);
   }
 
   public static @Nullable TagApi findTag(
@@ -60,9 +62,9 @@ public final class SchemaProjectionPsiParserUtil {
       @Nullable SchemaTagName tagName,
       @Nullable TagApi defaultTag,
       @NotNull PsiElement location,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, errors);
+    return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, context);
   }
 
   private static @Nullable String getTagNameString(final @Nullable SchemaTagName tagName) {
@@ -79,14 +81,14 @@ public final class SchemaProjectionPsiParserUtil {
   public static @Nullable Map<String, Annotation> parseAnnotation(
       @Nullable Map<String, Annotation> annotationsMap,
       @Nullable SchemaAnnotation annotationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (annotationPsi != null) {
       if (annotationsMap == null) annotationsMap = new HashMap<>();
       @Nullable SchemaDataValue annotationValuePsi = annotationPsi.getDataValue();
       if (annotationValuePsi != null) {
         @NotNull String annotationName = annotationPsi.getQid().getCanonicalName();
-        @NotNull GDataValue annotationValue = SchemaGDataPsiParser.parseValue(annotationValuePsi, errors);
+        @NotNull GDataValue annotationValue = SchemaGDataPsiParser.parseValue(annotationValuePsi, context);
         annotationsMap.put(
             annotationName,
             new Annotation(
@@ -103,15 +105,15 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParams parseParams(
       @NotNull Stream<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
-    return parseParams(paramsPsi.collect(Collectors.toList()), resolver, errors);
+    return parseParams(paramsPsi.collect(Collectors.toList()), resolver, context);
   }
 
   public static @NotNull OpParams parseParams(
       @NotNull Iterable<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
 
@@ -119,7 +121,7 @@ public final class SchemaProjectionPsiParserUtil {
       if (param != null) {
         if (params == null) params = new ArrayList<>();
 
-        params.add(parseParameter(param, resolver, errors));
+        params.add(parseParameter(param, resolver, context));
       }
     }
 
@@ -129,32 +131,32 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParam parseParameter(
       @NotNull SchemaOpParam paramPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaQid qid = paramPsi.getQid();
-    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, errors);
+    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, context.errors());
     @NotNull String paramName = qid.getCanonicalName();
 
     @Nullable SchemaTypeRef typeRef = paramPsi.getTypeRef();
     if (typeRef == null)
-      throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, errors);
-    @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, errors);
+      throw new PsiProcessingException(String.format("Parameter '%s' type not specified", paramName), paramPsi, context.errors());
+    @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, context);
     @Nullable DatumTypeApi paramType = paramTypeRef.resolveDatumType(resolver);
 
     if (paramType == null)
       throw new PsiProcessingException(
-          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi, errors
+          String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef), paramPsi, context.errors()
       );
 
     @Nullable SchemaOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
-    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, errors);
-    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), errors);
+    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, context);
+    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), context);
 
     @Nullable SchemaDatum defaultValuePsi = paramPsi.getDatum();
     @Nullable GDatum defaultValue = defaultValuePsi == null
                                     ? null
-                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, errors);
+                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, context);
 
     final OpInputModelProjection<?, ?, ?, ?> paramModelProjection;
 
@@ -167,7 +169,7 @@ public final class SchemaProjectionPsiParserUtil {
           annotations,
           paramPsi,
           resolver,
-          errors
+          context
       );
     else paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
         paramType,
@@ -178,7 +180,7 @@ public final class SchemaProjectionPsiParserUtil {
         null, // TODO do we want to support metadata on parameters?
         paramModelProjectionPsi,
         resolver,
-        errors
+        context
     );
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
@@ -186,18 +188,18 @@ public final class SchemaProjectionPsiParserUtil {
 
   public static @NotNull Annotations parseAnnotations(
       @NotNull Stream<SchemaAnnotation> annotationsPsi,
-      @NotNull List<PsiProcessingError> errors
+      @NotNull PsiProcessingContext context
   ) throws PsiProcessingException {
-    return parseAnnotations(annotationsPsi.collect(Collectors.toList()), errors);
+    return parseAnnotations(annotationsPsi.collect(Collectors.toList()), context);
   }
 
   public static @NotNull Annotations parseAnnotations(
       @NotNull Iterable<SchemaAnnotation> annotationsPsi,
-      @NotNull List<PsiProcessingError> errors
+      @NotNull PsiProcessingContext context
   ) throws PsiProcessingException {
     @Nullable Map<String, Annotation> annotationMap = null;
     for (final SchemaAnnotation annotationPsi : annotationsPsi) {
-      annotationMap = parseAnnotation(annotationMap, annotationPsi, errors);
+      annotationMap = parseAnnotation(annotationMap, annotationPsi, context);
     }
 
     return Annotations.fromMap(annotationMap);

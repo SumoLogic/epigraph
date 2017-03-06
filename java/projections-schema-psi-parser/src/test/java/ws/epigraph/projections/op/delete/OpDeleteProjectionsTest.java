@@ -18,6 +18,9 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -223,12 +226,27 @@ public class OpDeleteProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpDeleteProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpInputVarReferenceContext inputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+      OpDeleteVarReferenceContext deleteVarReferenceContext = new OpDeleteVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext inputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, inputVarReferenceContext);
+      OpDeletePsiProcessingContext deletePsiProcessingContext =
+          new OpDeletePsiProcessingContext(context, inputPsiProcessingContext, deleteVarReferenceContext);
+
+      OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          deletePsiProcessingContext
+      );
+
+      deleteVarReferenceContext.ensureAllReferencesResolved(context);
+      inputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
 
   }
 

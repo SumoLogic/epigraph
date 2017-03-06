@@ -18,10 +18,10 @@ package ws.epigraph.schema.gdata;
 
 import org.jetbrains.annotations.Contract;
 import ws.epigraph.gdata.*;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
@@ -37,14 +37,14 @@ import java.util.List;
 public final class SchemaGDataPsiParser {
   private SchemaGDataPsiParser() {}
 
-  public static @NotNull GDataValue parseValue(@NotNull SchemaDataValue psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GDataValue parseValue(@NotNull SchemaDataValue psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
-    if (psi.getData() != null) return parseData(psi.getData(), errors);
-    else if (psi.getDatum() != null) return parseDatum(psi.getDatum(), errors);
-    else throw new PsiProcessingException("Neither data nor datum is set", psi, errors);
+    if (psi.getData() != null) return parseData(psi.getData(), context);
+    else if (psi.getDatum() != null) return parseDatum(psi.getDatum(), context);
+    else throw new PsiProcessingException("Neither data nor datum is set", psi, context.errors());
   }
 
-  public static @NotNull GData parseData(@NotNull SchemaData psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GData parseData(@NotNull SchemaData psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
 
@@ -52,33 +52,33 @@ public final class SchemaGDataPsiParser {
     for (SchemaDataEntry entry : psi.getDataEntryList()) {
       @Nullable SchemaDatum value = entry.getDatum();
       if (value == null) throw new PsiProcessingException(
-          String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, errors
+          String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, context.errors()
       );
-      else tags.put(entry.getQid().getCanonicalName(), parseDatum(value, errors));
+      else tags.put(entry.getQid().getCanonicalName(), parseDatum(value, context));
     }
 
-    return new GData(getTypeRef(typeRef, errors), tags, EpigraphPsiUtil.getLocation(psi));
+    return new GData(getTypeRef(typeRef, context), tags, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GDatum parseDatum(@NotNull SchemaDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GDatum parseDatum(@NotNull SchemaDatum psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
     if (psi instanceof SchemaRecordDatum)
-      return parseRecord((SchemaRecordDatum) psi, errors);
+      return parseRecord((SchemaRecordDatum) psi, context);
     else if (psi instanceof SchemaMapDatum)
-      return parseMap((SchemaMapDatum) psi, errors);
+      return parseMap((SchemaMapDatum) psi, context);
     else if (psi instanceof SchemaListDatum)
-      return parseList((SchemaListDatum) psi, errors);
+      return parseList((SchemaListDatum) psi, context);
     else if (psi instanceof SchemaEnumDatum)
       return parseEnum((SchemaEnumDatum) psi);
     else if (psi instanceof SchemaPrimitiveDatum)
-      return parsePrimitive((SchemaPrimitiveDatum) psi, errors);
+      return parsePrimitive((SchemaPrimitiveDatum) psi, context);
     else if (psi instanceof SchemaNullDatum)
-      return parseNull((SchemaNullDatum) psi, errors);
-    else throw new PsiProcessingException("Unknown value element", psi, errors);
+      return parseNull((SchemaNullDatum) psi, context);
+    else throw new PsiProcessingException("Unknown value element", psi, context.errors());
   }
 
-  public static @NotNull GRecordDatum parseRecord(@NotNull SchemaRecordDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GRecordDatum parseRecord(@NotNull SchemaRecordDatum psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
 
@@ -86,19 +86,19 @@ public final class SchemaGDataPsiParser {
     for (SchemaRecordDatumEntry entry : psi.getRecordDatumEntryList()) {
       try {
         @Nullable SchemaDataValue value = entry.getDataValue();
-        if (value == null) errors.add(new PsiProcessingError(
+        if (value == null) context.addError(
             String.format("Got 'null' value for field '%s'", entry.getQid().getCanonicalName()), psi
-        ));
-        else fields.put(entry.getQid().getCanonicalName(), parseValue(value, errors));
+        );
+        else fields.put(entry.getQid().getCanonicalName(), parseValue(value, context));
       } catch (PsiProcessingException e) {
-        errors = e.errors();
+        context.setErrors(e.errors());
       }
     }
 
-    return new GRecordDatum(getTypeRef(typeRef, errors), fields, EpigraphPsiUtil.getLocation(psi));
+    return new GRecordDatum(getTypeRef(typeRef, context), fields, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GMapDatum parseMap(@NotNull SchemaMapDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GMapDatum parseMap(@NotNull SchemaMapDatum psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
 
@@ -106,19 +106,19 @@ public final class SchemaGDataPsiParser {
     for (SchemaMapDatumEntry entry : psi.getMapDatumEntryList()) {
       try {
         @Nullable SchemaDataValue dataValue = entry.getDataValue();
-        if (dataValue == null) errors.add(new PsiProcessingError(
+        if (dataValue == null) context.addError(
             String.format("Got 'null' value for key '%s'", entry.getDataValue().getText()), psi
-        ));
-        else map.put(parseDatum(entry.getDatum(), errors), parseValue(dataValue, errors));
+        );
+        else map.put(parseDatum(entry.getDatum(), context), parseValue(dataValue, context));
       } catch (PsiProcessingException e) {
-        errors = e.errors();
+        context.setErrors(e.errors());
       }
     }
 
-    return new GMapDatum(getTypeRef(typeRef, errors), map, EpigraphPsiUtil.getLocation(psi));
+    return new GMapDatum(getTypeRef(typeRef, context), map, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GListDatum parseList(@NotNull SchemaListDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GListDatum parseList(@NotNull SchemaListDatum psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
@@ -127,19 +127,21 @@ public final class SchemaGDataPsiParser {
 
     for (SchemaDataValue value : psi.getDataValueList())
       try {
-        items.add(parseValue(value, errors));
+        items.add(parseValue(value, context));
       } catch (PsiProcessingException e) {
-        errors = e.errors();
+        context.setErrors(e.errors());
       }
 
-    return new GListDatum(getTypeRef(typeRef, errors), items, EpigraphPsiUtil.getLocation(psi));
+    return new GListDatum(getTypeRef(typeRef, context), items, EpigraphPsiUtil.getLocation(psi));
   }
 
   public static @NotNull GEnumDatum parseEnum(@NotNull SchemaEnumDatum psi) {
     return new GEnumDatum(psi.getQid().getCanonicalName(), EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GPrimitiveDatum parsePrimitive(@NotNull SchemaPrimitiveDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GPrimitiveDatum parsePrimitive(
+      @NotNull SchemaPrimitiveDatum psi,
+      @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
@@ -159,21 +161,21 @@ public final class SchemaGDataPsiParser {
       throw new PsiProcessingException(
           String.format("Don't know how to handle primitive '%s'", psi.getText()),
           psi,
-          errors
+          context.errors()
       );
 
-    return new GPrimitiveDatum(getTypeRef(typeRef, errors), value, EpigraphPsiUtil.getLocation(psi));
+    return new GPrimitiveDatum(getTypeRef(typeRef, context), value, EpigraphPsiUtil.getLocation(psi));
   }
 
-  public static @NotNull GNullDatum parseNull(@NotNull SchemaNullDatum psi, @NotNull List<PsiProcessingError> errors)
+  public static @NotNull GNullDatum parseNull(@NotNull SchemaNullDatum psi, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
     @Nullable SchemaTypeRef typeRef = psi.getTypeRef();
-    return new GNullDatum(getTypeRef(typeRef, errors), EpigraphPsiUtil.getLocation(psi));
+    return new GNullDatum(getTypeRef(typeRef, context), EpigraphPsiUtil.getLocation(psi));
   }
 
   @Contract("null, _ -> null; !null, _ -> !null")
-  private static @Nullable TypeRef getTypeRef(SchemaTypeRef typeRef, @NotNull List<PsiProcessingError> errors)
+  private static @Nullable TypeRef getTypeRef(SchemaTypeRef typeRef, @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
-    return typeRef == null ? null : TypeRefs.fromPsi(typeRef, errors);
+    return typeRef == null ? null : TypeRefs.fromPsi(typeRef, context);
   }
 }

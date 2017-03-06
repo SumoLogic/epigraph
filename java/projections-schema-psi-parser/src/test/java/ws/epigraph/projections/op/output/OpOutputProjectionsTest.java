@@ -18,8 +18,11 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -247,7 +250,8 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`(id, bestFriend:id~~ws.epigraph.tests.User:`record`(id))",
         Person.type,
-        ":`record` ( id, bestFriend :id ~~ws.epigraph.tests.User :`record` ( id ) )" // bestFriend field can still contain a User
+        ":`record` ( id, bestFriend :id ~~ws.epigraph.tests.User :`record` ( id ) )"
+        // bestFriend field can still contain a User
     );
 
     testTailsNormalization(
@@ -462,12 +466,28 @@ public class OpOutputProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpOutputProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpInputVarReferenceContext inputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+      OpOutputVarReferenceContext outputVarReferenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext inputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, inputVarReferenceContext);
+
+      OpOutputPsiProcessingContext outputPsiProcessingContext =
+          new OpOutputPsiProcessingContext(context, inputPsiProcessingContext, outputVarReferenceContext);
+
+      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          outputPsiProcessingContext
+      );
+
+      outputVarReferenceContext.ensureAllReferencesResolved(context);
+      inputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
   }
 
 }

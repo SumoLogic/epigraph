@@ -21,20 +21,17 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.TypeApi;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
-public abstract class VarReferenceContext<
-    VP extends GenVarProjection<VP, ?, ?>
-    > {
+public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>> {
 
   @NotNull
   private final Qn referencesNamespace;
@@ -42,20 +39,14 @@ public abstract class VarReferenceContext<
   private final VarReferenceContext<VP> parent;
   private final Map<Qn, VP> references = new HashMap<>();
   private final Map<Qn, TextLocation> resolvedAt = new HashMap<>();
-  private final List<PsiProcessingError> errors;
 
   protected VarReferenceContext(
       @NotNull final Qn referencesNamespace,
-      final VarReferenceContext<VP> parent,
-      final List<PsiProcessingError> errors) {
+      final VarReferenceContext<VP> parent) {
 
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;
-    this.errors = errors;
   }
-
-  @NotNull
-  public List<PsiProcessingError> errors() { return errors; }
 
   @NotNull
   public VP reference(@NotNull TypeApi type, @NotNull String name, @NotNull TextLocation location) {
@@ -84,15 +75,17 @@ public abstract class VarReferenceContext<
   @NotNull
   protected abstract VP newReference(@NotNull TypeApi type, @NotNull Qn name, @NotNull TextLocation location);
 
-  public void resolve(@NotNull String name, @NotNull VP value, @NotNull TextLocation location) {
+  public void resolve(
+      @NotNull String name, @NotNull VP value, @NotNull TextLocation location,
+      @NotNull PsiProcessingContext context) {
     Qn qnName = referencesNamespace.append(name);
     VP ref = references.get(qnName);
 
     if (ref == null)
-      errors.add(new PsiProcessingError(String.format("Projection '%s' reference not found", name), location));
+      context.addError(String.format("Projection '%s' reference not found", name), location);
     else if (ref.isResolved()) {
-      errors.add(new PsiProcessingError(
-          String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(qnName)), location)
+      context.addError(
+          String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(qnName)), location
       );
     } else {
       resolvedAt.put(qnName, location);
@@ -100,7 +93,7 @@ public abstract class VarReferenceContext<
     }
   }
 
-  public void ensureAllReferencesResolved() {
+  public void ensureAllReferencesResolved(@NotNull PsiProcessingContext context) {
     for (final Map.Entry<Qn, VP> entry : references.entrySet()) {
       Qn qnName = entry.getKey();
       String name = qnName.last();
@@ -108,11 +101,10 @@ public abstract class VarReferenceContext<
       final VP vp = entry.getValue();
 
       if (!vp.isResolved())
-        errors.add(
-            new PsiProcessingError(
-                String.format("Projection '%s' is not defined", name),
-                vp.location()
-            )
+        context.addError(
+            String.format("Projection '%s' is not defined", name),
+            vp.location()
+
         );
     }
   }

@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.op.input;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -41,5 +42,9 @@ public class OpInputVarProjection extends AbstractVarProjection<
       @Nullable List<OpInputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
+  }
+
+  protected OpInputVarProjection(final TypeApi type, final Qn name, final TextLocation location) {
+    super(type, name, location);
   }
 }

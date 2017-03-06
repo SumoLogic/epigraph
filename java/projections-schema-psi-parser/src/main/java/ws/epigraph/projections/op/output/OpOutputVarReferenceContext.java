@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.types.TypeApi;
 
@@ -29,22 +28,18 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
+public class OpOutputVarReferenceContext extends VarReferenceContext<OpOutputVarProjection> {
 
-  protected OpDeleteVarReferenceContext(
+  protected OpOutputVarReferenceContext(
       final Qn referencesNamespace,
-      final VarReferenceContext<OpDeleteVarProjection> parent) {
+      final VarReferenceContext<OpOutputVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 
   @NotNull
   @Override
-  protected OpDeleteVarProjection newReference(
-      @NotNull final TypeApi type,
-      @NotNull final Qn name,
-      @NotNull final TextLocation location) {
-
-    return new OpDeleteVarProjection(type, name, location);
+  protected OpOutputVarProjection newReference(
+      @NotNull final TypeApi type, @NotNull final Qn name, @NotNull final TextLocation location) {
+    return new OpOutputVarProjection(type, name, location);
   }
-
 }

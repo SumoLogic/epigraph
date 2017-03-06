@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -41,6 +42,10 @@ public class OpOutputVarProjection extends AbstractVarProjection<
       @Nullable List<OpOutputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
+  }
+
+  protected OpOutputVarProjection(final TypeApi type, final Qn name, final TextLocation location) {
+    super(type, name, location);
   }
 
   @Override

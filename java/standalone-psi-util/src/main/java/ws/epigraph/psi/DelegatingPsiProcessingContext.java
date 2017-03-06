@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.psi;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
+public class DelegatingPsiProcessingContext implements PsiProcessingContext {
+  final @NotNull PsiProcessingContext delegate;
 
-  protected OpDeleteVarReferenceContext(
-      final Qn referencesNamespace,
-      final VarReferenceContext<OpDeleteVarProjection> parent) {
-    super(referencesNamespace, parent);
-  }
+  public DelegatingPsiProcessingContext(final @NotNull PsiProcessingContext delegate) {this.delegate = delegate;}
 
-  @NotNull
   @Override
-  protected OpDeleteVarProjection newReference(
-      @NotNull final TypeApi type,
-      @NotNull final Qn name,
-      @NotNull final TextLocation location) {
+  public @NotNull List<PsiProcessingError> errors() { return delegate.errors(); }
 
-    return new OpDeleteVarProjection(type, name, location);
+  @Override
+  public void setErrors(final @NotNull List<PsiProcessingError> errors) {
+    delegate.setErrors(errors);
   }
 
+  @Override
+  public void addError(final @NotNull String message, final @NotNull TextLocation location) {
+    delegate.addError(message, location);
+  }
+
+  @Override
+  public void addError(final @NotNull String message, final @NotNull PsiElement psi) {
+    delegate.addError(message, psi);
+  }
 }

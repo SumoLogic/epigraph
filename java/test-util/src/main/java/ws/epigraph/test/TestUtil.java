@@ -26,8 +26,6 @@ import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.SchemaPrettyPrinter;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -49,11 +47,10 @@ import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.projections.req.update.ReqUpdateProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
-import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.psi.*;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.SchemaPrettyPrinter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -427,16 +424,16 @@ public final class TestUtil {
   }
 
   public static @NotNull <R> R runPsiParser(@NotNull TestUtil.PsiParserClosure<R> closure) {
-    List<PsiProcessingError> errors = new ArrayList<>();
+    PsiProcessingContext context = new DefaultPsiProcessingContext();
     R r = null;
 
     try {
-      r = closure.runParser(errors);
+      r = closure.runParser(context);
     } catch (PsiProcessingException e) {
-      errors = e.errors();
+      context.setErrors(e.errors());
     }
 
-    failIfHasErrors(errors);
+    failIfHasErrors(context.errors());
 
     assert r != null;
     return r;
@@ -444,10 +441,11 @@ public final class TestUtil {
 
   public static @NotNull <R> R runPsiParserNotCatchingErrors(@NotNull TestUtil.PsiParserClosure<R> closure)
       throws PsiProcessingException {
-    List<PsiProcessingError> errors = new ArrayList<>();
+    PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    R r = closure.runParser(errors);
+    R r = closure.runParser(context);
 
+    final List<PsiProcessingError> errors = context.errors();
     if (!errors.isEmpty()) throw new PsiProcessingException("got parsing errors", PsiUtil.NULL_PSI_ELEMENT, errors);
 
     assert r != null;
@@ -455,6 +453,6 @@ public final class TestUtil {
   }
 
   public interface PsiParserClosure<R> {
-    R runParser(List<PsiProcessingError> errors) throws PsiProcessingException;
+    R runParser(PsiProcessingContext context) throws PsiProcessingException;
   }
 }

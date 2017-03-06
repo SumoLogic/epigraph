@@ -52,7 +52,7 @@ public final class OpPathPsiParser {
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpVarPath psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors)
+      @NotNull OpPathPsiProcessingContext context)
       throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
@@ -60,12 +60,12 @@ public final class OpPathPsiParser {
     @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
 
     @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
-    final OpParams modelParams = parseModelParams(modelPropertiesPsi, typesResolver, errors);
-    final Annotations modelAnnotations = parseModelAnnotations(modelPropertiesPsi, errors);
+    final OpParams modelParams = parseModelParams(modelPropertiesPsi, typesResolver, context);
+    final Annotations modelAnnotations = parseModelAnnotations(modelPropertiesPsi, context);
 
     if (isModelPathEmpty(modelProjection) && modelParams.isEmpty() && modelAnnotations.isEmpty()) {
       if (psi.getTagName() != null)
-        throw new PsiProcessingException("Path can't end with a tag", psi.getTagName(), errors);
+        throw new PsiProcessingException("Path can't end with a tag", psi.getTagName(), context);
 
       return new OpVarPath(
           type,
@@ -79,7 +79,7 @@ public final class OpPathPsiParser {
         psi.getTagName(),
         dataType.defaultTag(),
         psi,
-        errors
+        context
     );
 
 
@@ -89,7 +89,7 @@ public final class OpPathPsiParser {
         modelAnnotations,
         modelProjection,
         typesResolver,
-        errors
+        context
     );
 
     try {
@@ -101,7 +101,7 @@ public final class OpPathPsiParser {
           EpigraphPsiUtil.getLocation(psi)
       );
     } catch (RuntimeException e) {
-      throw new PsiProcessingException(e, psi, errors);
+      throw new PsiProcessingException(e, psi, context);
     }
   }
 
@@ -109,23 +109,23 @@ public final class OpPathPsiParser {
   private static @NotNull OpParams parseModelParams(
       @NotNull Collection<SchemaOpModelPathProperty> modelProperties,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
 
     return parseParams(
         modelProperties.stream().map(SchemaOpModelPathProperty::getOpParam),
         resolver,
-        errors
+        context.inputPsiProcessingContext()
     );
   }
 
   private static @NotNull Annotations parseModelAnnotations(
       @NotNull Collection<SchemaOpModelPathProperty> modelProperties,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     return parseAnnotations(
         modelProperties.stream().map(SchemaOpModelPathProperty::getAnnotation),
-        errors
+        context
     );
   }
 
@@ -133,7 +133,7 @@ public final class OpPathPsiParser {
       @NotNull TypeApi type,
       @NotNull TagApi tag,
       @NotNull PsiElement locationPsi,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     return new OpVarPath(
         type,
@@ -144,7 +144,7 @@ public final class OpPathPsiParser {
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 locationPsi,
-                errors
+                context
             ),
             EpigraphPsiUtil.getLocation(locationPsi)
         ),
@@ -166,27 +166,27 @@ public final class OpPathPsiParser {
       @NotNull Annotations annotations,
       @NotNull SchemaOpModelPath psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
         @Nullable SchemaOpRecordModelPath recordModelProjectionPsi = psi.getOpRecordModelPath();
         if (recordModelProjectionPsi == null)
-          return createDefaultModelPath(type, params, annotations, psi, errors);
-        ensureModelKind(psi, TypeKind.RECORD, errors);
+          return createDefaultModelPath(type, params, annotations, psi, context);
+        ensureModelKind(psi, TypeKind.RECORD, context);
         return parseRecordModelPath(
             (RecordTypeApi) type,
             params,
             annotations,
             recordModelProjectionPsi,
             typesResolver,
-            errors
+            context
         );
       case MAP:
         @Nullable SchemaOpMapModelPath mapModelProjectionPsi = psi.getOpMapModelPath();
         if (mapModelProjectionPsi == null)
-          return createDefaultModelPath(type, params, annotations, psi, errors);
-        ensureModelKind(psi, TypeKind.MAP, errors);
+          return createDefaultModelPath(type, params, annotations, psi, context);
+        ensureModelKind(psi, TypeKind.MAP, context);
 
         return parseMapModelPath(
             (MapTypeApi) type,
@@ -194,12 +194,12 @@ public final class OpPathPsiParser {
             annotations,
             mapModelProjectionPsi,
             typesResolver,
-            errors
+            context
         );
       case LIST:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       case PRIMITIVE:
         return parsePrimitiveModelPath(
             (PrimitiveTypeApi) type,
@@ -208,16 +208,16 @@ public final class OpPathPsiParser {
             psi
         );
       case UNION:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, errors);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
     }
   }
 
   private static void ensureModelKind(
       @NotNull SchemaOpModelPath psi,
       @NotNull TypeKind expectedKind,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
     if (expectedKind != actualKind)
@@ -225,7 +225,7 @@ public final class OpPathPsiParser {
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,
           expectedKind
-      ), psi, errors);
+      ), psi, context);
   }
 
   private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpModelPath psi) {
@@ -238,7 +238,7 @@ public final class OpPathPsiParser {
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @NotNull PsiElement locationPsi, @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiElement locationPsi, @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     switch (type.kind()) {
       case RECORD:
@@ -267,13 +267,13 @@ public final class OpPathPsiParser {
               "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
               type.name(),
               valueType.name()
-          ), locationPsi, errors);
+          ), locationPsi, context);
 
         final OpVarPath valueVarProjection = createDefaultVarPath(
             valueType.type(),
             defaultValuesTag,
             locationPsi,
-            errors
+            context
         );
 
         return new OpMapModelPath(
@@ -285,15 +285,15 @@ public final class OpPathPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
       case UNION:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,
-            errors
+            context
         );
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, errors);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
       case PRIMITIVE:
         return new OpPrimitiveModelPath(
             (PrimitiveTypeApi) type,
@@ -302,7 +302,7 @@ public final class OpPathPsiParser {
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, errors);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, context);
     }
   }
 
@@ -312,7 +312,7 @@ public final class OpPathPsiParser {
       @NotNull Annotations annotations,
       @NotNull SchemaOpRecordModelPath psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     final @NotNull SchemaOpFieldPathEntry fieldPathEntryPsi = psi.getOpFieldPathEntry();
 
@@ -322,7 +322,7 @@ public final class OpPathPsiParser {
       throw new PsiProcessingException(
           String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
           fieldPathEntryPsi,
-          errors
+          context
       );
 
     final @NotNull SchemaOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
@@ -335,7 +335,7 @@ public final class OpPathPsiParser {
             field.dataType(),
             fieldPathPsi,
             typesResolver,
-            errors
+            context
         ),
         fieldLocation
     );
@@ -353,7 +353,7 @@ public final class OpPathPsiParser {
       @NotNull DataTypeApi fieldType,
       @NotNull SchemaOpFieldPath psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
 //    Collection<OpParam> fieldParamsList = null;
 //    @Nullable Map<String, Annotation> fieldAnnotationsMap = null;
@@ -362,10 +362,10 @@ public final class OpPathPsiParser {
 //      @Nullable SchemaOpParam fieldParamPsi = fieldBodyPart.getOpParam();
 //      if (fieldParamPsi != null) {
 //        if (fieldParamsList == null) fieldParamsList = new ArrayList<>(3);
-//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, errors));
+//        fieldParamsList.add(parseParameter(fieldParamPsi, resolver, context));
 //      }
 //
-//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), errors);
+//      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), context);
 //    }
 
     final OpVarPath varProjection;
@@ -378,11 +378,11 @@ public final class OpPathPsiParser {
         throw new PsiProcessingException(String.format(
             "Can't construct default projection for type '%s' because it has no default tag",
             fieldType.name()
-        ), psi, errors);
+        ), psi, context);
 
-      varProjection = createDefaultVarPath(fieldType.type(), defaultFieldTag, psi, errors);
+      varProjection = createDefaultVarPath(fieldType.type(), defaultFieldTag, psi, context);
     } else {
-      varProjection = parseVarPath(fieldType, varPathPsi, resolver, errors);
+      varProjection = parseVarPath(fieldType, varPathPsi, resolver, context);
     }
 
     return new OpFieldPath(
@@ -399,16 +399,16 @@ public final class OpPathPsiParser {
       @NotNull Annotations annotations,
       @NotNull SchemaOpMapModelPath psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull OpPathKeyProjection keyProjection = parseKeyProjection(psi.getOpPathKeyProjection(), resolver, errors);
+    @NotNull OpPathKeyProjection keyProjection = parseKeyProjection(psi.getOpPathKeyProjection(), resolver, context);
 
     @Nullable SchemaOpVarPath valueProjectionPsi = psi.getOpVarPath();
 
     if (valueProjectionPsi == null)
-      throw new PsiProcessingException("Map value projection not specified", psi, errors);
+      throw new PsiProcessingException("Map value projection not specified", psi, context);
 
-    @NotNull OpVarPath valueProjection = parseVarPath(type.valueType(), valueProjectionPsi, resolver, errors);
+    @NotNull OpVarPath valueProjection = parseVarPath(type.valueType(), valueProjectionPsi, resolver, context);
 
     return new OpMapModelPath(
         type,
@@ -423,7 +423,7 @@ public final class OpPathPsiParser {
   private static @NotNull OpPathKeyProjection parseKeyProjection(
       @NotNull SchemaOpPathKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
     @Nullable Map<String, Annotation> annotationsMap = null;
@@ -434,10 +434,10 @@ public final class OpPathPsiParser {
         @Nullable SchemaOpParam paramPsi = keyPart.getOpParam();
         if (paramPsi != null) {
           if (params == null) params = new ArrayList<>(3);
-          params.add(parseParameter(paramPsi, resolver, errors));
+          params.add(parseParameter(paramPsi, resolver, context.inputPsiProcessingContext()));
         }
 
-        annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), errors);
+        annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context);
       }
     }
 

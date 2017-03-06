@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.psi;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
-
-  protected OpDeleteVarReferenceContext(
-      final Qn referencesNamespace,
-      final VarReferenceContext<OpDeleteVarProjection> parent) {
-    super(referencesNamespace, parent);
-  }
-
+public interface PsiProcessingContext {
   @NotNull
-  @Override
-  protected OpDeleteVarProjection newReference(
-      @NotNull final TypeApi type,
-      @NotNull final Qn name,
-      @NotNull final TextLocation location) {
+  List<PsiProcessingError> errors();
 
-    return new OpDeleteVarProjection(type, name, location);
+  default void setErrors(@NotNull List<PsiProcessingError> errors) {
+    if (errors() != errors) {
+      errors().clear();
+      errors().addAll(errors);
+    }
   }
 
+  // todo track and provide more information about current location in the errors like resource/operation/field/model/key
+
+  default void addError(@NotNull String message, @NotNull TextLocation location) {
+    errors().add(new PsiProcessingError(message, location));
+  }
+
+  default void addError(@NotNull String message, @NotNull PsiElement psi) {
+    errors().add(new PsiProcessingError(message, psi));
+  }
 }
