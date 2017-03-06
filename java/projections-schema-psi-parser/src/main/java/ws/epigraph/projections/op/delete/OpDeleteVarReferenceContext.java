@@ -1,0 +1,50 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ws.epigraph.projections.op.delete;
+
+import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.VarReferenceContext;
+import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.types.TypeApi;
+
+import java.util.List;
+
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
+
+  protected OpDeleteVarReferenceContext(
+      final Qn referencesNamespace,
+      final VarReferenceContext<OpDeleteVarProjection> parent,
+      final List<PsiProcessingError> errors) {
+    super(referencesNamespace, parent, errors);
+  }
+
+  @NotNull
+  @Override
+  protected OpDeleteVarProjection newReference(
+      @NotNull final TypeApi type,
+      @NotNull final Qn name,
+      @NotNull final TextLocation location) {
+
+    return new OpDeleteVarProjection(type, name, location);
+  }
+
+}
