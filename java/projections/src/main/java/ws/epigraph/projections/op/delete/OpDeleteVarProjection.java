@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.op.delete;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -35,7 +36,7 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
     OpDeleteModelProjection<?, ?, ?>
     > {
 
-  private final boolean canDelete;
+  private /*final*/ boolean canDelete;
 
   public OpDeleteVarProjection(
       @NotNull TypeApi type,
@@ -48,7 +49,17 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
     this.canDelete = canDelete;
   }
 
-  public boolean canDelete() { return canDelete; }
+  protected OpDeleteVarProjection(final TypeApi type, final Qn name, final TextLocation location) {
+    super(type, name, location);
+  }
+
+  public boolean canDelete() { assertResolved(); return canDelete; }
+
+  @Override
+  public void resolve(final @NotNull OpDeleteVarProjection value) {
+    super.resolve(value);
+    this.canDelete = value.canDelete();
+  }
 
   @Override
   public boolean equals(Object o) {

@@ -18,6 +18,7 @@ package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TypeApi;
 
@@ -34,6 +35,13 @@ public interface GenVarProjection<
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>
     > {
 
+  /**
+   * Type this projection applies to.
+   * <p/>
+   * Projection should be applicable to this type or any of it's subtypes.
+   *
+   * @return type this projection was constructed for
+   */
   @NotNull TypeApi type();
 
   @NotNull Map<String, TP> tagProjections();
@@ -61,6 +69,12 @@ public interface GenVarProjection<
    */
   boolean parenthesized();
 
+  /**
+   * Polymorphic tails for this projection.
+   *
+   * @return polymorphic tails list.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails">polymorphic tails</a>
+   */
   @Nullable List<VP> polymorphicTails();
 
   default @Nullable VP tailByType(@NotNull TypeApi type) {
@@ -99,6 +113,54 @@ public interface GenVarProjection<
 //    if (tails == null) return null;
 //    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
 //  }
+
+  // references
+
+  /**
+   * Gets projection qualified name, if there exists one.
+   * <p/>
+   * Named projections are used to extract common parts and enable code reuse. For example:
+   * <pre><code>
+   * namespace com.mycompany
+   *
+   * outputProjection userProjection: UserRecord (id, firstName, lastName, company $companyProjection)
+   * outputProjection companyProjection: CompanyRecord (id, name, logo)
+   * </code></pre>
+   * {@code userProjection} will get a name of {@code com.mycompany.userProjection} and
+   * {@code companyProjection} will get a name of {@code com.mycompany.companyProjection}
+   * <p/>
+   * Instances will be constructed as follows:
+   * <ul>
+   * <li>{@code userProjection} reference (empty instance) is created and put in then context</li>
+   * <li>projection definition is parsed</li>
+   * <li>when {@code companyProjection} name is found: reference is created and put in the context</li>
+   * <li>{@code userProjection} construction is complete and reference is {@link #resolve(GenVarProjection) resolved}</li>
+   * <li>{@code companyProjection} is already in the context, so another reference is not created</li>
+   * <li>after {@code companyProjection} construction is complete, this reference is also resolved</li>
+   * <li>as the last step it is checked that all projections are {@link #isResolved() resolved}</li>
+   * </ul>
+   *
+   * @return qualified projection name or {@code null} if there is no name.
+   */
+  @Nullable Qn name();
+
+  /**
+   * Resolves this projection reference from another instance. Acts as a copy constructor for all
+   * parts except for {@link #type()}, {@link #name()} and {@link #location()}.
+   * Is only applicable to reference instances.
+   *
+   * @param value projection instance to copy state from
+   * @see #name()
+   */
+  void resolve(@NotNull VP value);
+
+  /**
+   * Checks if this projection is resolved, i.e. it's not an empty placeholder instance.
+   *
+   * @return {@code false} iff this is a reference and is not resolved
+   * @see #name()
+   */
+  boolean isResolved();
 
   @NotNull TextLocation location();
 }

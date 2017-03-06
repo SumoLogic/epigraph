@@ -18,6 +18,7 @@ package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
@@ -42,9 +43,10 @@ public abstract class AbstractVarProjection<
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
-  private final @NotNull Map<String, TP> tagProjections;
-  private final boolean parenthesized; // todo merge
-  private final @Nullable List<VP> polymorphicTails;
+  private final @Nullable Qn name;
+  private /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
+  private /*final*/ boolean parenthesized;
+  private /*final*/ @Nullable List<VP> polymorphicTails;
 
   private final @NotNull TextLocation location;
 
@@ -55,6 +57,7 @@ public abstract class AbstractVarProjection<
       @Nullable List<VP> polymorphicTails,
       @NotNull TextLocation location) {
     this.type = type;
+    this.name = null;
     this.tagProjections = tagProjections;
     this.parenthesized = parenthesized;
     this.polymorphicTails = polymorphicTails;
@@ -64,7 +67,19 @@ public abstract class AbstractVarProjection<
     validateTails();
   }
 
+  /**
+   * Creates an empty reference instance
+   */
+  protected AbstractVarProjection(@NotNull TypeApi type, @NotNull Qn name, @NotNull TextLocation location) {
+    this.type = type;
+    this.name = name;
+    this.location = location;
+  }
+
   private void validateTags() {
+    assertResolved();
+    assert tagProjections != null;
+
     if (!parenthesized && tagProjections().size() > 1)
       throw new IllegalArgumentException(
           String.format(
@@ -100,7 +115,7 @@ public abstract class AbstractVarProjection<
     final @Nullable List<VP> tails = polymorphicTails();
     if (tails != null) {
       for (final VP tail : tails) {
-        if (tail.type().isAssignableFrom(type)){
+        if (tail.type().isAssignableFrom(type)) {
           throw new IllegalArgumentException(
               String.format(
                   "Tail type '%s' is assignable from var type '%s'. Tail defined at %s",
@@ -118,18 +133,25 @@ public abstract class AbstractVarProjection<
   public @NotNull TypeApi type() { return type; }
 
   @Override
-  public @NotNull Map<String, TP> tagProjections() { return tagProjections; }
+  public @NotNull Map<String, TP> tagProjections() {
+    assertResolved();
+    assert tagProjections != null;
 
-  public @Nullable TP tagProjection(@NotNull String tagName) { return tagProjections.get(tagName); }
+    return tagProjections;
+  }
+
+  public @Nullable TP tagProjection(@NotNull String tagName) { return tagProjections().get(tagName); }
 
   @Override
-  public boolean parenthesized() { return parenthesized; }
+  public boolean parenthesized() { assertResolved(); return parenthesized; }
 
   @Override
-  public @Nullable List<VP> polymorphicTails() { return polymorphicTails; }
+  public @Nullable List<VP> polymorphicTails() { assertResolved(); return polymorphicTails; }
 
   @Override
   public @NotNull VP normalizedForType(final @NotNull TypeApi targetType) {
+    assertResolved();
+    assert tagProjections != null;
 
     final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
 
@@ -191,7 +213,7 @@ public abstract class AbstractVarProjection<
       if (!tagProjections.isEmpty()) {
         final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections);
         if (mergedTag != null)
-            mergedTags.put(tag.name(), mergedTag);
+          mergedTags.put(tag.name(), mergedTag);
       }
     }
     return mergedTags;
@@ -250,7 +272,6 @@ public abstract class AbstractVarProjection<
     return mergedTails;
   }
 
-
   /* static */
   protected VP merge(
       final @NotNull TypeApi effectiveType,
@@ -263,6 +284,31 @@ public abstract class AbstractVarProjection<
 
   @SuppressWarnings("unchecked")
   private @NotNull VP self() { return (VP) this; }
+
+  @Override
+  public @Nullable Qn name() { return name; }
+
+  @Override
+  public void resolve(final @NotNull VP value) {
+    if (name == null)
+      throw new IllegalStateException("Non-reference projection can't be resolved");
+    if (isResolved())
+      throw new IllegalStateException("Attempt to resolve already resolved reference: " + name);
+
+    this.tagProjections = value.tagProjections();
+    this.parenthesized = value.parenthesized();
+    this.polymorphicTails = value.polymorphicTails();
+  }
+
+  @Override
+  public boolean isResolved() { return name == null || tagProjections != null; }
+
+  protected void assertResolved() {
+    if (!isResolved())
+      throw new IllegalStateException("Projection is not resolved: " + name);
+
+    assert tagProjections != null;
+  }
 
   @Override
   public @NotNull TextLocation location() {
