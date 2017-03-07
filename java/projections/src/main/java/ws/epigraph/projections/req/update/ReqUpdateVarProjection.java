@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.update;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -41,5 +42,13 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
       @Nullable List<ReqUpdateVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
+  }
+
+  public ReqUpdateVarProjection(
+      final @NotNull TypeApi type,
+      final @NotNull Qn name,
+      final @NotNull TextLocation location) {
+
+    super(type, name, location);
   }
 }

@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarReferenceContext;
@@ -30,9 +31,9 @@ import java.util.List;
  */
 public class OpOutputVarReferenceContext extends VarReferenceContext<OpOutputVarProjection> {
 
-  protected OpOutputVarReferenceContext(
-      final Qn referencesNamespace,
-      final VarReferenceContext<OpOutputVarProjection> parent) {
+  public OpOutputVarReferenceContext(
+      final @NotNull Qn referencesNamespace,
+      final @Nullable VarReferenceContext<OpOutputVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 

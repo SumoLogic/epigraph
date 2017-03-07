@@ -37,4 +37,9 @@ public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext 
     super(psiProcessingContext);
     this.varReferenceContext = varReferenceContext;
   }
+
+  @NotNull
+  public OpInputVarReferenceContext varReferenceContext() {
+    return varReferenceContext;
+  }
 }

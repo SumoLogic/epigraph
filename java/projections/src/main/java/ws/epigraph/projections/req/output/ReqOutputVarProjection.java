@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -44,6 +45,14 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
 
     if (tagProjections.size() > 1 && !parenthesized)
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
+  }
+
+  public ReqOutputVarProjection(
+      final @NotNull TypeApi type,
+      final @NotNull Qn name,
+      final @NotNull TextLocation location) {
+
+    super(type, name, location);
   }
 
   @Override

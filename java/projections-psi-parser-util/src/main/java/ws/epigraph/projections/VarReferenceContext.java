@@ -36,13 +36,14 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
   @NotNull
   private final Qn referencesNamespace;
 
+  @Nullable
   private final VarReferenceContext<VP> parent;
   private final Map<Qn, VP> references = new HashMap<>();
   private final Map<Qn, TextLocation> resolvedAt = new HashMap<>();
 
   protected VarReferenceContext(
       @NotNull final Qn referencesNamespace,
-      final VarReferenceContext<VP> parent) {
+      @Nullable final VarReferenceContext<VP> parent) {
 
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;

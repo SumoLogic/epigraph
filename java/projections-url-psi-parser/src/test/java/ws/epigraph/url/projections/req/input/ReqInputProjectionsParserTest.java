@@ -18,6 +18,7 @@ package ws.epigraph.url.projections.req.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -156,13 +157,24 @@ public class ReqInputProjectionsParserTest {
     failIfHasErrors(psi, errorsAccumulator);
 
     try {
-      TestUtil.runPsiParserNotCatchingErrors(errors -> ReqInputProjectionsPsiParser.parseVarProjection(
-          dataType,
-          personOpProjection,
-          psi,
-          resolver,
-          errors
-      ));
+      TestUtil.runPsiParserNotCatchingErrors(context -> {
+        ReqInputVarReferenceContext reqInputVarReferenceContext = new ReqInputVarReferenceContext(Qn.EMPTY, null);
+
+        ReqInputPsiProcessingContext reqInputPsiProcessingContext =
+            new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);
+
+        ReqInputVarProjection vp = ReqInputProjectionsPsiParser.parseVarProjection(
+            dataType,
+            personOpProjection,
+            psi,
+            resolver,
+            reqInputPsiProcessingContext
+        );
+
+        reqInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+        return vp;
+      });
       fail();
     } catch (PsiProcessingException ignored) {
     }

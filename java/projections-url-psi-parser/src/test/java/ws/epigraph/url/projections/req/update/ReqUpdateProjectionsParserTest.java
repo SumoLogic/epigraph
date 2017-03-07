@@ -18,6 +18,7 @@ package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -154,7 +155,7 @@ public class ReqUpdateProjectionsParserTest {
   private void testParse(String expr) {
     testParse(expr, expr);
   }
-  
+
   private void testParseFail(String expr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
@@ -167,13 +168,25 @@ public class ReqUpdateProjectionsParserTest {
     failIfHasErrors(psi, errorsAccumulator);
 
     try {
-      TestUtil.runPsiParserNotCatchingErrors(errors -> ReqUpdateProjectionsPsiParser.parseVarProjection(
-          dataType,
-          personOpProjection,
-          psi,
-          resolver,
-          errors
-      ));
+      TestUtil.runPsiParserNotCatchingErrors(context -> {
+        ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+
+        ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
+            new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
+
+        ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
+            dataType,
+            personOpProjection,
+            psi,
+            resolver,
+            reqUpdatePsiProcessingContext
+        );
+
+        reqUpdateVarReferenceContext.ensureAllReferencesResolved(context);
+
+        return vp;
+      });
+
       fail();
     } catch (PsiProcessingException ignored) {
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.path;
+package ws.epigraph.url.projections.req.update;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
-import ws.epigraph.psi.PsiProcessingException;
-
-import java.util.List;
+import ws.epigraph.url.projections.req.update.ReqUpdateVarReferenceContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class PathNotMatchedException extends PsiProcessingException {
-  public PathNotMatchedException(
-      final @NotNull String message,
-      final @NotNull PsiElement psi,
-      final @NotNull List<PsiProcessingError> precedingErrors) {
-    super(message, psi, precedingErrors);
+public class ReqUpdatePsiProcessingContext extends DelegatingPsiProcessingContext {
+  private final @NotNull ReqUpdateVarReferenceContext varReferenceContext;
+
+  public ReqUpdatePsiProcessingContext(
+      final @NotNull PsiProcessingContext psiProcessingContext,
+      final @NotNull ReqUpdateVarReferenceContext context) {
+    super(psiProcessingContext);
+    varReferenceContext = context;
   }
 
-  public PathNotMatchedException(
-      final @NotNull String message,
-      final @NotNull PsiElement psi,
-      final @NotNull PsiProcessingContext context) {
-    super(message, psi, context);
-  }
+  public @NotNull ReqUpdateVarReferenceContext varReferenceContext() { return varReferenceContext; }
 }

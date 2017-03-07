@@ -21,7 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.path.ReqVarPath;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -31,8 +33,6 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
@@ -127,7 +127,9 @@ public class ReadReqPathParserTest {
   private void testPathNotMatched(OpVarPath opPath, String expr) {
     try {
       UrlReqOutputTrunkVarProjection psi = getPsi(expr);
-      ReadReqPathPsiParser.parseVarPath(opPath, Person.type.dataType(null), psi, resolver, new ArrayList<>());
+      PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
+      ReqPathPsiProcessingContext pathPsiProcessingContext = new ReqPathPsiProcessingContext(psiProcessingContext);
+      ReadReqPathPsiParser.parseVarPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
 
       fail("Expected to get 'path not matched' error");
     } catch (PathNotMatchedException ignored) {
@@ -141,15 +143,13 @@ public class ReadReqPathParserTest {
 
     UrlReqOutputTrunkVarProjection psi = getPsi(expr);
     final ReadReqPathParsingResult<ReqVarPath> result =
-        TestUtil.runPsiParser(
-            errors ->
-                ReadReqPathPsiParser.parseVarPath(
-                    opPath,
-                    Person.type.dataType(null),
-                    psi,
-                    resolver,
-                    errors
-                ));
+        TestUtil.runPsiParser(context -> ReadReqPathPsiParser.parseVarPath(
+            opPath,
+            Person.type.dataType(null),
+            psi,
+            resolver,
+            new ReqPathPsiProcessingContext(context)
+        ));
 
     String s = TestUtil.printReqVarPath(result.path());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,33 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.delete;
+package ws.epigraph.url.projections.req.delete;
 
-import ws.epigraph.lang.Qn;
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Map;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.VarReferenceContext;
+import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeleteVarProjection extends AbstractVarProjection<
-    ReqDeleteVarProjection,
-    ReqDeleteTagProjectionEntry,
-    ReqDeleteModelProjection<?, ?, ?>
-    > {
+public class ReqDeleteVarReferenceContext extends VarReferenceContext<ReqDeleteVarProjection> {
 
-  public ReqDeleteVarProjection(
-      @NotNull TypeApi type,
-      @NotNull Map<String, ReqDeleteTagProjectionEntry> tagProjections,
-      boolean parenthesized,
-      @Nullable List<ReqDeleteVarProjection> polymorphicTails,
-      @NotNull TextLocation location) {
-    super(type, tagProjections, parenthesized, polymorphicTails, location);
+  public ReqDeleteVarReferenceContext(
+      final @NotNull Qn referencesNamespace,
+      final @Nullable VarReferenceContext<ReqDeleteVarProjection> parent) {
+    super(referencesNamespace, parent);
   }
 
-  public ReqDeleteVarProjection(
+  @Override
+  protected @NotNull ReqDeleteVarProjection newReference(
       final @NotNull TypeApi type,
       final @NotNull Qn name,
       final @NotNull TextLocation location) {
-    
-    super(type, name, location);
+
+    return new ReqDeleteVarProjection(type, name, location);
   }
 }

@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarReferenceContext;
@@ -31,9 +32,9 @@ import java.util.List;
  */
 public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVarProjection> {
 
-  protected OpDeleteVarReferenceContext(
-      final Qn referencesNamespace,
-      final VarReferenceContext<OpDeleteVarProjection> parent) {
+  public OpDeleteVarReferenceContext(
+      final @NotNull Qn referencesNamespace,
+      final @Nullable VarReferenceContext<OpDeleteVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 

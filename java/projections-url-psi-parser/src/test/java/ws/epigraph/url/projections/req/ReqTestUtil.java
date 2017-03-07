@@ -17,14 +17,22 @@
 package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
+import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
+import ws.epigraph.projections.op.delete.OpDeleteVarReferenceContext;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
+import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarReferenceContext;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
+import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
@@ -46,9 +54,17 @@ import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
+import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
+import ws.epigraph.url.projections.req.delete.ReqDeleteVarReferenceContext;
 import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.input.ReqInputPsiProcessingContext;
+import ws.epigraph.url.projections.req.input.ReqInputVarReferenceContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqOutputVarReferenceContext;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
+import ws.epigraph.url.projections.req.update.ReqUpdatePsiProcessingContext;
+import ws.epigraph.url.projections.req.update.ReqUpdateVarReferenceContext;
 
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.*;
@@ -75,12 +91,31 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpOutputProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpInputVarReferenceContext opInputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+      OpOutputVarReferenceContext opOutputVarReferenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext opInputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, opInputVarReferenceContext);
+
+      OpOutputPsiProcessingContext opOutputPsiProcessingContext = new OpOutputPsiProcessingContext(
+          context,
+          opInputPsiProcessingContext,
+          opOutputVarReferenceContext
+      );
+      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          opOutputPsiProcessingContext
+      );
+
+      opOutputVarReferenceContext.ensureAllReferencesResolved(context);
+      opInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
+
   }
 
   public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
@@ -99,14 +134,25 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(errors -> ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
-        type,
-        op,
-        false,
-        psi,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      ReqOutputVarReferenceContext reqOutputVarReferenceContext = new ReqOutputVarReferenceContext(Qn.EMPTY, null);
+
+      ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
+          new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
+
+      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+          type,
+          op,
+          false,
+          psi,
+          resolver,
+          reqOutputPsiProcessingContext
+      );
+
+      reqOutputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return res;
+    });
   }
 
   public static @NotNull OpVarPath parseOpVarPath(
@@ -140,8 +186,20 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpVarPath> closure =
-        errors -> OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, errors);
+    final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
+      OpInputVarReferenceContext opInputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext opInputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, opInputVarReferenceContext);
+      OpPathPsiProcessingContext opPathPsiProcessingContext =
+          new OpPathPsiProcessingContext(context, opInputPsiProcessingContext);
+
+      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, opPathPsiProcessingContext);
+
+      opInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    };
 
     return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
   }
@@ -162,13 +220,23 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(errors -> ReqUpdateProjectionsPsiParser.parseVarProjection(
-        type,
-        op,
-        psi,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+      ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
+          new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
+
+      ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
+          type,
+          op,
+          psi,
+          resolver,
+          reqUpdatePsiProcessingContext
+      );
+
+      reqUpdateVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
   }
 
   public static @NotNull ReqInputVarProjection parseReqInputVarProjection(
@@ -187,13 +255,24 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(errors -> ReqInputProjectionsPsiParser.parseVarProjection(
-        type,
-        op,
-        psi,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      ReqInputVarReferenceContext reqInputVarReferenceContext = new ReqInputVarReferenceContext(Qn.EMPTY, null);
+
+      ReqInputPsiProcessingContext reqInputPsiProcessingContext =
+          new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);
+
+      ReqInputVarProjection vp = ReqInputProjectionsPsiParser.parseVarProjection(
+          type,
+          op,
+          psi,
+          resolver,
+          reqInputPsiProcessingContext
+      );
+
+      reqInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
   }
 
   public static ReqDeleteVarProjection parseReqDeleteVarProjection(
@@ -212,13 +291,22 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(errors -> ReqDeleteProjectionsPsiParser.parseVarProjection(
-        type,
-        op,
-        psi,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      ReqDeleteVarReferenceContext reqDeleteVarReferenceContext = new ReqDeleteVarReferenceContext(Qn.EMPTY, null);
+
+      ReqDeletePsiProcessingContext reqDeletePsiProcessingContext = new ReqDeletePsiProcessingContext(context, reqDeleteVarReferenceContext);
+      ReqDeleteVarProjection vp = ReqDeleteProjectionsPsiParser.parseVarProjection(
+          type,
+          op,
+          psi,
+          resolver,
+          reqDeletePsiProcessingContext
+      );
+
+      reqDeleteVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
   }
 
   public static OpInputVarProjection parseOpInputVarProjection(
@@ -236,12 +324,23 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpInputProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpInputVarReferenceContext opInputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext opInputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, opInputVarReferenceContext);
+
+      OpInputVarProjection vp = OpInputProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          opInputPsiProcessingContext
+      );
+
+      opInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
 
   }
 
@@ -260,12 +359,27 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(errors -> OpDeleteProjectionsPsiParser.parseVarProjection(
-        varDataType,
-        psiVarProjection,
-        resolver,
-        errors
-    ));
+    return runPsiParser(context -> {
+      OpDeleteVarReferenceContext opDeleteVarReferenceContext = new OpDeleteVarReferenceContext(Qn.EMPTY, null);
+      OpInputVarReferenceContext opInputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
+
+      OpInputPsiProcessingContext opInputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, opInputVarReferenceContext);
+      OpDeletePsiProcessingContext opDeletePsiProcessingContext =
+          new OpDeletePsiProcessingContext(context, opInputPsiProcessingContext, opDeleteVarReferenceContext);
+
+      OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
+          varDataType,
+          psiVarProjection,
+          resolver,
+          opDeletePsiProcessingContext
+      );
+
+      opDeleteVarReferenceContext.ensureAllReferencesResolved(context);
+      opInputVarReferenceContext.ensureAllReferencesResolved(context);
+
+      return vp;
+    });
 
   }
 }

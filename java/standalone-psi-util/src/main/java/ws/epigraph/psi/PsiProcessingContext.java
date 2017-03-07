@@ -37,6 +37,8 @@ public interface PsiProcessingContext {
   }
 
   // todo track and provide more information about current location in the errors like resource/operation/field/model/key
+  // todo PsiProcessingException ctor should only be called from this class
+  // todo PsiProcessingException should also hold additional context information (see first todo)
 
   default void addError(@NotNull String message, @NotNull TextLocation location) {
     errors().add(new PsiProcessingError(message, location));
@@ -44,5 +46,11 @@ public interface PsiProcessingContext {
 
   default void addError(@NotNull String message, @NotNull PsiElement psi) {
     errors().add(new PsiProcessingError(message, psi));
+  }
+
+  default void addException(@NotNull PsiProcessingException ex) {
+//    final PsiProcessingError error = ex.toError();
+//    addError(error.message(), error.location());
+    errors().add(ex.toError());
   }
 }

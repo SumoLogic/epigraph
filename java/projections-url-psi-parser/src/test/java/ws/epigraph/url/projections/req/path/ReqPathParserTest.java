@@ -75,15 +75,14 @@ public class ReqPathParserTest {
     UrlReqVarPath psi = getPsi(expr);
 
     try {
-      TestUtil.runPsiParserNotCatchingErrors(
-          errors ->
-              ReqPathPsiParser.parseVarPath(
-                  personOpPath,
-                  Person.type.dataType(null),
-                  psi,
-                  resolver,
-                  errors
-              ));
+      TestUtil.runPsiParserNotCatchingErrors(context ->
+          ReqPathPsiParser.parseVarPath(
+              personOpPath,
+              Person.type.dataType(null),
+              psi,
+              resolver,
+              new ReqPathPsiProcessingContext(context)
+          ));
       fail();
     } catch (PsiProcessingException ignored) {
     }
@@ -96,15 +95,14 @@ public class ReqPathParserTest {
   private void testParse(String expr, String expectedProjection) {
     UrlReqVarPath psi = getPsi(expr);
 
-    final @NotNull ReqVarPath path = TestUtil.runPsiParser(
-        errors ->
-            ReqPathPsiParser.parseVarPath(
-                personOpPath,
-                Person.type.dataType(null),
-                psi,
-                resolver,
-                errors
-            ));
+    final @NotNull ReqVarPath path = TestUtil.runPsiParser(context ->
+        ReqPathPsiParser.parseVarPath(
+            personOpPath,
+            Person.type.dataType(null),
+            psi,
+            resolver,
+            new ReqPathPsiProcessingContext(context)
+        ));
 
     String s = TestUtil.printReqVarPath(path);
     final String actual =
