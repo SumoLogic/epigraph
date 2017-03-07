@@ -32,14 +32,13 @@ import java.util.Map;
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>> {
-
   @NotNull
   private final Qn referencesNamespace;
 
   @Nullable
   private final VarReferenceContext<VP> parent;
-  private final Map<Qn, VP> references = new HashMap<>();
-  private final Map<Qn, TextLocation> resolvedAt = new HashMap<>();
+  private final Map<String, VP> references = new HashMap<>();
+  private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
   protected VarReferenceContext(
       @NotNull final Qn referencesNamespace,
@@ -50,23 +49,21 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
   }
 
   @NotNull
-  public VP reference(@NotNull TypeApi type, @NotNull String name, @NotNull TextLocation location) {
-    Qn qnName = referencesNamespace.append(name);
-
-    VP ref = lookupReference(name);
+  public VP reference(@NotNull TypeApi type, @NotNull String name, boolean useParent, @NotNull TextLocation location) {
+    VP ref = useParent ? lookupReference(name) : references.get(name);
 
     if (ref == null) {
-      ref = newReference(type, qnName, location);
-      references.put(qnName, ref);
+      ref = newReference(type, location);
+      references.put(name, ref);
       return ref;
     } else return ref;
-
   }
+
+  public boolean exists(@NotNull String name) { return references.containsKey(name); }
 
   @Nullable
   protected VP lookupReference(@NotNull String name) {
-    Qn qnName = referencesNamespace.append(name);
-    VP ref = references.get(qnName);
+    VP ref = references.get(name);
 
     if (ref != null) return ref;
     if (parent == null) return null;
@@ -74,39 +71,69 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
   }
 
   @NotNull
-  protected abstract VP newReference(@NotNull TypeApi type, @NotNull Qn name, @NotNull TextLocation location);
+  protected abstract VP newReference(@NotNull TypeApi type, @NotNull TextLocation location);
 
   public void resolve(
       @NotNull String name, @NotNull VP value, @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) {
-    Qn qnName = referencesNamespace.append(name);
-    VP ref = references.get(qnName);
 
-    if (ref == null)
-      context.addError(String.format("Projection '%s' reference not found", name), location);
-    else if (ref.isResolved()) {
+    VP ref = references.get(name);
+
+    if (ref == null) {
+
+      if (parent != null && parent.lookupReference(name) != null) {
+
+        // a = c
+        //    b = a
+        //    a = 2         <-- prohibited
+        // c = 1
+
+        context.addError(String.format("Can't override projection '%s' from parent context", name), location);
+
+      } else
+        context.addError(String.format("Projection '%s' reference not found", name), location);
+
+    } else if (ref.isResolved()) {
       context.addError(
-          String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(qnName)), location
+          String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
       );
     } else {
-      resolvedAt.put(qnName, location);
-      ref.resolve(value);
+      resolvedAt.put(name, location);
+      ref.resolve(referencesNamespace.append(name), value);
     }
+
   }
 
   public void ensureAllReferencesResolved(@NotNull PsiProcessingContext context) {
-    for (final Map.Entry<Qn, VP> entry : references.entrySet()) {
-      Qn qnName = entry.getKey();
-      String name = qnName.last();
+    for (final Map.Entry<String, VP> entry : references.entrySet()) {
+      String name = entry.getKey();
       assert name != null;
       final VP vp = entry.getValue();
 
-      if (!vp.isResolved())
-        context.addError(
-            String.format("Projection '%s' is not defined", name),
-            vp.location()
+      if (!vp.isResolved()) {
+        // delegate it to parent if possible:
+        //
+        //    b = a
+        // a = 1
 
-        );
+        if (parent == null) {
+          context.addError(String.format("Projection '%s' is not defined", name), vp.location());
+        } else {
+          final VP parentRef = parent.references.get(name);
+          if (parentRef == null) {
+            parent.references.put(name, vp);
+          } else if (parentRef != vp) {
+            //?? can't happen
+            context.addError(
+                String.format(
+                    "Internal error: different references to projection '%s' in this and parent context",
+                    name
+                ),
+                vp.location()
+            );
+          }
+        }
+      }
     }
   }
 

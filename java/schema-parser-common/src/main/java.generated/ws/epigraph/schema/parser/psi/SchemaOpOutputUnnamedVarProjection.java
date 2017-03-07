@@ -21,15 +21,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputVarProjection extends PsiElement {
+public interface SchemaOpOutputUnnamedVarProjection extends PsiElement {
 
   @Nullable
-  SchemaOpOutputNamedVarProjection getOpOutputNamedVarProjection();
+  SchemaOpOutputMultiTagProjection getOpOutputMultiTagProjection();
 
   @Nullable
-  SchemaOpOutputUnnamedVarProjection getOpOutputUnnamedVarProjection();
+  SchemaOpOutputSingleTagProjection getOpOutputSingleTagProjection();
 
   @Nullable
-  SchemaOpOutputVarProjectionRef getOpOutputVarProjectionRef();
+  SchemaOpOutputVarPolymorphicTail getOpOutputVarPolymorphicTail();
 
 }

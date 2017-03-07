@@ -38,9 +38,8 @@ public class ReqOutputVarReferenceContext extends VarReferenceContext<ReqOutputV
   @Override
   protected @NotNull ReqOutputVarProjection newReference(
       final @NotNull TypeApi type,
-      final @NotNull Qn name,
       final @NotNull TextLocation location) {
 
-    return new ReqOutputVarProjection(type, name, location);
+    return new ReqOutputVarProjection(type, location);
   }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.lexer;
 
@@ -122,12 +138,15 @@ public interface SchemaElementTypes {
   IElementType S_OP_OUTPUT_MODEL_SINGLE_TAIL = new SchemaElementType("S_OP_OUTPUT_MODEL_SINGLE_TAIL");
   IElementType S_OP_OUTPUT_MULTI_TAG_PROJECTION = new SchemaElementType("S_OP_OUTPUT_MULTI_TAG_PROJECTION");
   IElementType S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM = new SchemaElementType("S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM");
+  IElementType S_OP_OUTPUT_NAMED_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_NAMED_VAR_PROJECTION");
   IElementType S_OP_OUTPUT_RECORD_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_RECORD_MODEL_PROJECTION");
   IElementType S_OP_OUTPUT_SINGLE_TAG_PROJECTION = new SchemaElementType("S_OP_OUTPUT_SINGLE_TAG_PROJECTION");
+  IElementType S_OP_OUTPUT_UNNAMED_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_UNNAMED_VAR_PROJECTION");
   IElementType S_OP_OUTPUT_VAR_MULTI_TAIL = new SchemaElementType("S_OP_OUTPUT_VAR_MULTI_TAIL");
   IElementType S_OP_OUTPUT_VAR_MULTI_TAIL_ITEM = new SchemaElementType("S_OP_OUTPUT_VAR_MULTI_TAIL_ITEM");
   IElementType S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL");
   IElementType S_OP_OUTPUT_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_VAR_PROJECTION");
+  IElementType S_OP_OUTPUT_VAR_PROJECTION_REF = new SchemaElementType("S_OP_OUTPUT_VAR_PROJECTION_REF");
   IElementType S_OP_OUTPUT_VAR_SINGLE_TAIL = new SchemaElementType("S_OP_OUTPUT_VAR_SINGLE_TAIL");
   IElementType S_OP_PARAM = new SchemaElementType("S_OP_PARAM");
   IElementType S_OP_PATH_KEY_PROJECTION = new SchemaElementType("S_OP_PATH_KEY_PROJECTION");
@@ -135,9 +154,11 @@ public interface SchemaElementTypes {
   IElementType S_OP_PATH_KEY_PROJECTION_PART = new SchemaElementType("S_OP_PATH_KEY_PROJECTION_PART");
   IElementType S_OP_RECORD_MODEL_PATH = new SchemaElementType("S_OP_RECORD_MODEL_PATH");
   IElementType S_OP_VAR_PATH = new SchemaElementType("S_OP_VAR_PATH");
+  IElementType S_OUTPUT_PROJECTION_DEF = new SchemaElementType("S_OUTPUT_PROJECTION_DEF");
   IElementType S_PRIMITIVE_DATUM = new SchemaElementType("S_PRIMITIVE_DATUM");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
   IElementType S_PRIMITIVE_TYPE_DEF = new SchemaPrimitiveTypeDefStubElementType("S_PRIMITIVE_TYPE_DEF");
+  IElementType S_PROJECTION_DEF = new SchemaElementType("S_PROJECTION_DEF");
   IElementType S_QID = new SchemaElementType("S_QID");
   IElementType S_QN = new SchemaElementType("S_QN");
   IElementType S_QN_SEGMENT = new SchemaElementType("S_QN_SEGMENT");
@@ -183,6 +204,7 @@ public interface SchemaElementTypes {
   IElementType S_DEFAULT = new SchemaElementType("default");
   IElementType S_DELETE = new SchemaElementType("DELETE");
   IElementType S_DELETE_PROJECTION = new SchemaElementType("deleteProjection");
+  IElementType S_DOLLAR = new SchemaElementType("$");
   IElementType S_DOT = new SchemaElementType(".");
   IElementType S_DOUBLE_T = new SchemaElementType("double");
   IElementType S_ENUM = new SchemaElementType("enum");
@@ -550,11 +572,17 @@ public interface SchemaElementTypes {
       else if (type == S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM) {
         return new SchemaOpOutputMultiTagProjectionItemImpl(node);
       }
+      else if (type == S_OP_OUTPUT_NAMED_VAR_PROJECTION) {
+        return new SchemaOpOutputNamedVarProjectionImpl(node);
+      }
       else if (type == S_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
         return new SchemaOpOutputRecordModelProjectionImpl(node);
       }
       else if (type == S_OP_OUTPUT_SINGLE_TAG_PROJECTION) {
         return new SchemaOpOutputSingleTagProjectionImpl(node);
+      }
+      else if (type == S_OP_OUTPUT_UNNAMED_VAR_PROJECTION) {
+        return new SchemaOpOutputUnnamedVarProjectionImpl(node);
       }
       else if (type == S_OP_OUTPUT_VAR_MULTI_TAIL) {
         return new SchemaOpOutputVarMultiTailImpl(node);
@@ -567,6 +595,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_OUTPUT_VAR_PROJECTION) {
         return new SchemaOpOutputVarProjectionImpl(node);
+      }
+      else if (type == S_OP_OUTPUT_VAR_PROJECTION_REF) {
+        return new SchemaOpOutputVarProjectionRefImpl(node);
       }
       else if (type == S_OP_OUTPUT_VAR_SINGLE_TAIL) {
         return new SchemaOpOutputVarSingleTailImpl(node);
@@ -589,6 +620,9 @@ public interface SchemaElementTypes {
       else if (type == S_OP_VAR_PATH) {
         return new SchemaOpVarPathImpl(node);
       }
+      else if (type == S_OUTPUT_PROJECTION_DEF) {
+        return new SchemaOutputProjectionDefImpl(node);
+      }
       else if (type == S_PRIMITIVE_DATUM) {
         return new SchemaPrimitiveDatumImpl(node);
       }
@@ -597,6 +631,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_PRIMITIVE_TYPE_DEF) {
         return new SchemaPrimitiveTypeDefImpl(node);
+      }
+      else if (type == S_PROJECTION_DEF) {
+        return new SchemaProjectionDefImpl(node);
       }
       else if (type == S_QID) {
         return new SchemaQidImpl(node);

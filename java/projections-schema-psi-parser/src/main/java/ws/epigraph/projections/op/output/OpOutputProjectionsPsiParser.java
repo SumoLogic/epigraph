@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,66 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
+    final SchemaOpOutputNamedVarProjection namedVarProjection = psi.getOpOutputNamedVarProjection();
+    if (namedVarProjection != null) { // named var projection init
+
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final SchemaOpOutputUnnamedVarProjection unnamedVarProjection =
+          namedVarProjection.getOpOutputUnnamedVarProjection();
+
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context.errors()
+        );
+
+      final OpOutputVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final OpOutputVarProjection value = parseUnnamedVarProjection(
+          dataType,
+          unnamedVarProjection,
+          typesResolver,
+          context
+      );
+
+      context.varReferenceContext()
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedVarProjection), context);
+
+      assert reference.name() != null;
+      return reference;
+
+    } else {
+      final SchemaOpOutputVarProjectionRef varProjectionRef = psi.getOpOutputVarProjectionRef();
+      if (varProjectionRef != null) { // var projection reference
+
+        final String projectionName = varProjectionRef.getQid().getCanonicalName();
+        return context.varReferenceContext()
+            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+
+      } else { // usual var projection
+        final SchemaOpOutputUnnamedVarProjection unnamedVarProjection = psi.getOpOutputUnnamedVarProjection();
+        if (unnamedVarProjection == null)
+          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        else return parseUnnamedVarProjection(
+            dataType,
+            unnamedVarProjection,
+            typesResolver,
+            context
+        );
+      }
+    }
+  }
+
+  public static OpOutputVarProjection parseUnnamedVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull SchemaOpOutputUnnamedVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpOutputPsiProcessingContext context)
+      throws PsiProcessingException {
+
     final TypeApi type = dataType.type();
     final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
@@ -70,7 +130,8 @@ public final class OpOutputProjectionsPsiParser {
           multiTagProjection.getOpOutputMultiTagProjectionItemList();
 
       for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+        final TagApi tag =
+            getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
 
         final OpOutputModelProjection<?, ?, ?> parsedModelProjection;
 
@@ -466,7 +527,7 @@ public final class OpOutputProjectionsPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
     }
   }
-  
+
   @Contract("_, null, _, _ -> null")
   private static @Nullable <MP extends OpOutputModelProjection<?, ?, ?>>
   /*@Nullable*/ List<MP> parseModelTails(
@@ -762,7 +823,8 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpOutputPsiProcessingContext context)
       throws PsiProcessingException {
 
-    @NotNull OpOutputKeyProjection keyProjection = parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, context);
+    @NotNull OpOutputKeyProjection keyProjection =
+        parseKeyProjection(psi.getOpOutputKeyProjection(), resolver, context);
 
     @Nullable SchemaOpOutputVarProjection valueProjectionPsi = psi.getOpOutputVarProjection();
     @NotNull OpOutputVarProjection valueProjection =
@@ -804,7 +866,11 @@ public final class OpOutputProjectionsPsiParser {
         keyProjectionPsi.getOpOutputKeyProjectionPartList();
 
     final @NotNull OpParams keyParams =
-        parseParams(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getOpParam), resolver, context.inputPsiProcessingContext());
+        parseParams(
+            keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getOpParam),
+            resolver,
+            context.inputPsiProcessingContext()
+        );
     final @NotNull Annotations keyAnnotations =
         parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), context);
 

@@ -42,10 +42,9 @@ public class OpDeleteVarReferenceContext extends VarReferenceContext<OpDeleteVar
   @Override
   protected OpDeleteVarProjection newReference(
       @NotNull final TypeApi type,
-      @NotNull final Qn name,
       @NotNull final TextLocation location) {
 
-    return new OpDeleteVarProjection(type, name, location);
+    return new OpDeleteVarProjection(type, location);
   }
 
 }

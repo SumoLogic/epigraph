@@ -40,7 +40,7 @@ public class OpInputVarReferenceContext extends VarReferenceContext<OpInputVarPr
   @NotNull
   @Override
   protected OpInputVarProjection newReference(
-      @NotNull final TypeApi type, @NotNull final Qn name, @NotNull final TextLocation location) {
-    return new OpInputVarProjection(type, name, location);
+      @NotNull final TypeApi type, @NotNull final TextLocation location) {
+    return new OpInputVarProjection(type, location);
   }
 }

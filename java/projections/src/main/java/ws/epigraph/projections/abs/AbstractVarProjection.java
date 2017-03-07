@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public abstract class AbstractVarProjection<
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
-  private final @Nullable Qn name;
+  private /*final*/ @Nullable Qn name;
   private /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
@@ -70,9 +70,8 @@ public abstract class AbstractVarProjection<
   /**
    * Creates an empty reference instance
    */
-  protected AbstractVarProjection(@NotNull TypeApi type, @NotNull Qn name, @NotNull TextLocation location) {
+  protected AbstractVarProjection(@NotNull TypeApi type, @NotNull TextLocation location) {
     this.type = type;
-    this.name = name;
     this.location = location;
   }
 
@@ -289,12 +288,13 @@ public abstract class AbstractVarProjection<
   public @Nullable Qn name() { return name; }
 
   @Override
-  public void resolve(final @NotNull VP value) {
-    if (name == null)
+  public void resolve(@NotNull Qn name, @NotNull VP value) {
+    if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())
       throw new IllegalStateException("Attempt to resolve already resolved reference: " + name);
 
+    this.name = name;
     this.tagProjections = value.tagProjections();
     this.parenthesized = value.parenthesized();
     this.polymorphicTails = value.polymorphicTails();

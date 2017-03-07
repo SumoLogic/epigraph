@@ -38,9 +38,8 @@ public class ReqInputVarReferenceContext extends VarReferenceContext<ReqInputVar
   @Override
   protected @NotNull ReqInputVarProjection newReference(
       final @NotNull TypeApi type,
-      final @NotNull Qn name,
       final @NotNull TextLocation location) {
 
-    return new ReqInputVarProjection(type, name, location);
+    return new ReqInputVarProjection(type, location);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@
     HASH = '#'
     UNDERSCORE = '_'
     BANG = '!'
+    DOLLAR = '$'
 
     space='regexp:\s+'
     comment='regexp://.*'
@@ -348,9 +349,13 @@ resourceDef ::= 'resource' resourceName resourceType resourceDefBody {
 resourceName ::= qid
 resourceType ::= ':' valueTypeRef
 
-private resourceDefBody ::= '{' (operationDef ','?)* '}' {
+private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
   recoverWhile = defRecover
 }
+
+// projection def
+projectionDef ::= outputProjectionDef // | inputProjectionDef | deleteProjectionDef
+outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opOutputUnnamedVarProjection {pin=1}
 
 // operation def parts
 operationName ::= 'default' | qid
@@ -364,10 +369,11 @@ operationDeleteProjection ::= 'deleteProjection' opDeleteFieldProjection {pin=1}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef {
   name = "Operation declaration"
-  recoverWhile = operationDefRecover
+  recoverWhile = resourceDefBodyRecover
 }
 
-private operationDefRecover ::= ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
+private resourceDefBodyRecover ::= ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
+  ( ('inputProjection' | 'outputProjection' | 'deleteProjection') qid ) )
 
 private operationBodyRecover ::= ! ( '}' | ',' |
   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
@@ -466,7 +472,10 @@ opPathKeyProjectionPart ::= opParam | annotation
 
 opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
 
-opOutputVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
+opOutputVarProjection ::= opOutputNamedVarProjection | opOutputVarProjectionRef | opOutputUnnamedVarProjection
+opOutputNamedVarProjection ::= '$' qid '=' opOutputUnnamedVarProjection {pin = 3}
+opOutputVarProjectionRef ::= '$' qid {pin = 1}
+opOutputUnnamedVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
 private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}

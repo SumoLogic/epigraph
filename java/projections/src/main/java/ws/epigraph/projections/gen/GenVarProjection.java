@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public interface GenVarProjection<
    * <li>{@code userProjection} reference (empty instance) is created and put in then context</li>
    * <li>projection definition is parsed</li>
    * <li>when {@code companyProjection} name is found: reference is created and put in the context</li>
-   * <li>{@code userProjection} construction is complete and reference is {@link #resolve(GenVarProjection) resolved}</li>
+   * <li>{@code userProjection} construction is complete and reference is {@link #resolve(Qn, GenVarProjection)} resolved}</li>
    * <li>{@code companyProjection} is already in the context, so another reference is not created</li>
    * <li>after {@code companyProjection} construction is complete, this reference is also resolved</li>
    * <li>as the last step it is checked that all projections are {@link #isResolved() resolved}</li>
@@ -149,10 +149,11 @@ public interface GenVarProjection<
    * parts except for {@link #type()}, {@link #name()} and {@link #location()}.
    * Is only applicable to reference instances.
    *
+   * @param name qualified projection name
    * @param value projection instance to copy state from
    * @see #name()
    */
-  void resolve(@NotNull VP value);
+  void resolve(@NotNull Qn name, @NotNull VP value);
 
   /**
    * Checks if this projection is resolved, i.e. it's not an empty placeholder instance.

@@ -38,9 +38,8 @@ public class ReqDeleteVarReferenceContext extends VarReferenceContext<ReqDeleteV
   @Override
   protected @NotNull ReqDeleteVarProjection newReference(
       final @NotNull TypeApi type,
-      final @NotNull Qn name,
       final @NotNull TextLocation location) {
 
-    return new ReqDeleteVarProjection(type, name, location);
+    return new ReqDeleteVarProjection(type, location);
   }
 }

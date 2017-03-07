@@ -38,9 +38,8 @@ public class ReqUpdateVarReferenceContext extends VarReferenceContext<ReqUpdateV
   @Override
   protected @NotNull ReqUpdateVarProjection newReference(
       final @NotNull TypeApi type,
-      final @NotNull Qn name,
       final @NotNull TextLocation location) {
 
-    return new ReqUpdateVarProjection(type, name, location);
+    return new ReqUpdateVarProjection(type, location);
   }
 }

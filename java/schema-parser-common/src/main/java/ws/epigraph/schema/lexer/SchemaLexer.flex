@@ -85,6 +85,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "#"                  { return S_HASH; }
   "_"                  { return S_UNDERSCORE; }
   "!"                  { return S_BANG; }
+  "$"                  { return S_DOLLAR; }
 
   // idl - specific
   "forbidden"          { return S_FORBIDDEN; }

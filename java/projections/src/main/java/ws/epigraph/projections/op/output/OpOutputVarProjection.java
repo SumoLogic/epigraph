@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -44,8 +43,8 @@ public class OpOutputVarProjection extends AbstractVarProjection<
     super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
-  protected OpOutputVarProjection(final TypeApi type, final Qn name, final TextLocation location) {
-    super(type, name, location);
+  protected OpOutputVarProjection(final TypeApi type, final TextLocation location) {
+    super(type, location);
   }
 
   @Override

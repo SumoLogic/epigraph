@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi;
 
@@ -395,11 +411,19 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputNamedVarProjection(@NotNull SchemaOpOutputNamedVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputRecordModelProjection(@NotNull SchemaOpOutputRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpOutputSingleTagProjection(@NotNull SchemaOpOutputSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputUnnamedVarProjection(@NotNull SchemaOpOutputUnnamedVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -416,6 +440,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputVarProjection(@NotNull SchemaOpOutputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputVarProjectionRef(@NotNull SchemaOpOutputVarProjectionRef o) {
     visitPsiElement(o);
   }
 
@@ -483,6 +511,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOutputProjectionDef(@NotNull SchemaOutputProjectionDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitPrimitiveDatum(@NotNull SchemaPrimitiveDatum o) {
     visitDatum(o);
   }
@@ -493,6 +525,10 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitPrimitiveTypeDef(@NotNull SchemaPrimitiveTypeDef o) {
     visitTypeDef(o);
+  }
+
+  public void visitProjectionDef(@NotNull SchemaProjectionDef o) {
+    visitPsiElement(o);
   }
 
   public void visitQid(@NotNull SchemaQid o) {

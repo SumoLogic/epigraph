@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package ws.epigraph.projections.req.input;
 
-import ws.epigraph.lang.Qn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -44,11 +43,8 @@ public class ReqInputVarProjection extends AbstractVarProjection<
     super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
-  public ReqInputVarProjection(
-      final @NotNull TypeApi type,
-      final @NotNull Qn name,
-      final @NotNull TextLocation location) {
-
-    super(type, name, location);
+  public ReqInputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
+    super(type, location);
   }
+
 }

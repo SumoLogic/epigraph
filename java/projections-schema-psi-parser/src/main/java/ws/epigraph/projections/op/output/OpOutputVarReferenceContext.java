@@ -40,7 +40,7 @@ public class OpOutputVarReferenceContext extends VarReferenceContext<OpOutputVar
   @NotNull
   @Override
   protected OpOutputVarProjection newReference(
-      @NotNull final TypeApi type, @NotNull final Qn name, @NotNull final TextLocation location) {
-    return new OpOutputVarProjection(type, name, location);
+      @NotNull final TypeApi type, @NotNull final TextLocation location) {
+    return new OpOutputVarProjection(type, location);
   }
 }

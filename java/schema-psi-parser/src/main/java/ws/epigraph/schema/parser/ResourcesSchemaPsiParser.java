@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,14 @@
 package ws.epigraph.schema.parser;
 
 import com.intellij.psi.util.PsiTreeUtil;
+import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarReferenceContext;
 import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.refs.TypeRef;
 import ws.epigraph.schema.ResourcePsiProcessingContext;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -27,7 +34,6 @@ import ws.epigraph.schema.operations.OperationsPsiParser;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -142,23 +148,105 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context, namespace, fieldName
     );
 
-    @NotNull List<SchemaOperationDef> defsPsi = psi.getOperationDefList();
-
-    final List<OperationDeclaration> operations = new ArrayList<>(defsPsi.size());
-    for (SchemaOperationDef defPsi : defsPsi)
+    final List<SchemaProjectionDef> projectionDefsPsi = psi.getProjectionDefList();
+    for (final SchemaProjectionDef projectionDef : projectionDefsPsi) {
       try {
-        operations.add(OperationsPsiParser.parseOperation(
-            resourceType,
-            defPsi,
-            resolver,
-            resourcePsiProcessingContext
-        ));
+        parseProjectionDef(projectionDef, resolver, resourcePsiProcessingContext);
+      } catch (PsiProcessingException e) {
+        context.addException(e);
+      }
+    }
+
+    @NotNull List<SchemaOperationDef> operationDefsPsi = psi.getOperationDefList();
+
+    final List<OperationDeclaration> operations = new ArrayList<>(operationDefsPsi.size());
+    for (SchemaOperationDef defPsi : operationDefsPsi)
+      try {
+        operations.add(
+            OperationsPsiParser.parseOperation(
+                resourceType,
+                defPsi,
+                resolver,
+                resourcePsiProcessingContext
+            )
+        );
       } catch (PsiProcessingException e) {
         context.addException(e);
       }
 
+    resourcePsiProcessingContext.inputVarReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.outputVarReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.deleteVarReferenceContext().ensureAllReferencesResolved(context);
+
     return new ResourceDeclaration(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
     );
+  }
+
+  private static void parseProjectionDef(
+      @NotNull SchemaProjectionDef projectionDefPsi,
+      @NotNull TypesResolver resolver,
+      @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
+
+    final SchemaOutputProjectionDef outputProjectionDef = projectionDefPsi.getOutputProjectionDef();
+    if (outputProjectionDef != null) {
+      parseOutputProjectionDef(outputProjectionDef, resolver, context);
+    } else { // todo rest
+      context.addError("Incomplete projection definition", projectionDefPsi);
+    }
+  }
+
+  private static void parseOutputProjectionDef(
+      @NotNull SchemaOutputProjectionDef projectionDefPsi,
+      @NotNull TypesResolver resolver,
+      @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
+
+    final OpOutputVarReferenceContext referenceContext = context.outputVarReferenceContext();
+
+    final String projectionName = projectionDefPsi.getQid().getCanonicalName();
+    if (referenceContext.exists(projectionName))
+      context.addError(String.format("Output projection '%s' is already defined", projectionName), projectionDefPsi);
+    else {
+      final SchemaTypeRef typeRefPsi = projectionDefPsi.getTypeRef();
+      final SchemaOpOutputUnnamedVarProjection unnamedPsi = projectionDefPsi.getOpOutputUnnamedVarProjection();
+
+      if (typeRefPsi == null || unnamedPsi == null)
+        context.addError(
+            String.format("Incomplete output projection '%s' definition", projectionName),
+            projectionDefPsi
+        );
+      else {
+        final TypeRef typeRef = TypeRefs.fromPsi(typeRefPsi, context);
+        final TypeApi type = typeRef.resolve(resolver);
+        if (type == null)
+          context.addError(
+              String.format("Output projection '%s' type '%s' not defined", projectionName, typeRef.toString()),
+              projectionDefPsi
+          );
+        else {
+          final OpOutputVarProjection reference =
+              referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
+
+          OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
+              context,
+              context.inputVarReferenceContext()
+          );
+          OpOutputPsiProcessingContext outputPsiProcessingContext = new OpOutputPsiProcessingContext(
+              context,
+              inputPsiProcessingContext,
+              referenceContext
+          );
+
+          final OpOutputVarProjection value = OpOutputProjectionsPsiParser.parseUnnamedVarProjection(
+              type.dataType(),
+              unnamedPsi,
+              resolver,
+              outputPsiProcessingContext
+          );
+
+          referenceContext.resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
+        }
+      }
+    }
   }
 }
