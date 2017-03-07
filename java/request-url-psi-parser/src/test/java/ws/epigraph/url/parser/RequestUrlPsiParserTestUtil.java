@@ -57,6 +57,6 @@ public final class RequestUrlPsiParserTestUtil {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors));
+    return runPsiParser(context -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, context));
   }
 }

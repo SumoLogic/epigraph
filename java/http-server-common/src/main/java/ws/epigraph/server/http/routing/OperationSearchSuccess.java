@@ -26,23 +26,19 @@ import ws.epigraph.url.RequestUrl;
  */
 public final class OperationSearchSuccess<O extends Operation<?, ?, ?>, R extends RequestUrl>
     implements OperationSearchResult<O> {
-  @NotNull
-  private final O operation;
-  @NotNull
-  private final R requestUrl;
+  private final @NotNull O operation;
+  private final @NotNull R requestUrl;
 
   public OperationSearchSuccess(
-      @NotNull final O operation,
-      @NotNull final R url) {
+      final @NotNull O operation,
+      final @NotNull R url) {
 
     this.operation = operation;
     requestUrl = url;
   }
 
   @Contract(pure = true)
-  @NotNull
-  public O operation() { return operation; }
+  public @NotNull O operation() { return operation; }
 
-  @NotNull
-  public R requestUrl() { return requestUrl; }
+  public @NotNull R requestUrl() { return requestUrl; }
 }

@@ -19,17 +19,16 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
@@ -40,11 +39,13 @@ import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqOutputVarReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
+import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.addTypeNamespace;
@@ -63,16 +64,16 @@ public final class ReadRequestUrlPsiParser {
       @NotNull ReadOperationDeclaration op,
       @NotNull UrlReadUrl psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     final @Nullable OpFieldPath opPath = op.path();
 
-    final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), errors);
+    final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), context);
 
     if (opPath == null)
-      return parseReadRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, errors);
+      return parseReadRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, context);
     else
-      return parseReadRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, errors);
+      return parseReadRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, context);
   }
 
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithPath(
@@ -82,14 +83,14 @@ public final class ReadRequestUrlPsiParser {
       final @NotNull OpFieldPath opPath,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
-      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
         resourceType,
         opPath,
         psi.getReqOutputTrunkFieldProjection(),
         typesResolver,
-        errors
+        new ReqPathPsiProcessingContext(context)
     );
 
     @NotNull ReqFieldPath reqPath = pathParsingResult.path();
@@ -103,6 +104,10 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull ReqOutputVarProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
+    ReqOutputVarReferenceContext reqOutputVarReferenceContext = new ReqOutputVarReferenceContext(Qn.EMPTY, null);
+    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
+
     if (trunkVarProjection != null) {
       @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           pathTipType,
@@ -110,8 +115,9 @@ public final class ReadRequestUrlPsiParser {
           false,
           trunkVarProjection,
           newResolver,
-          errors
+          reqOutputPsiProcessingContext
       );
+
       steps = r.pathSteps();
       varProjection = r.projection();
       fieldLocation = EpigraphPsiUtil.getLocation(trunkVarProjection);
@@ -122,7 +128,7 @@ public final class ReadRequestUrlPsiParser {
           false,
           comaVarProjection,
           newResolver,
-          errors
+          reqOutputPsiProcessingContext
       );
       steps = r.pathSteps();
       varProjection = r.projection();
@@ -138,6 +144,7 @@ public final class ReadRequestUrlPsiParser {
       );
       fieldLocation = TextLocation.UNKNOWN;
     }
+    reqOutputVarReferenceContext.ensureAllReferencesResolved(context);
 
     return new ReadRequestUrl(
         psi.getQid().getCanonicalName(),
@@ -162,11 +169,15 @@ public final class ReadRequestUrlPsiParser {
       final @NotNull ReadOperationDeclaration op,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
-      final @NotNull List<PsiProcessingError> errors)
+      final @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
+
+    ReqOutputVarReferenceContext reqOutputVarReferenceContext = new ReqOutputVarReferenceContext(Qn.EMPTY, null);
+    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
@@ -174,8 +185,10 @@ public final class ReadRequestUrlPsiParser {
             resourceType,
             op.outputProjection(),
             fieldProjectionPsi, newResolver,
-            errors
+            reqOutputPsiProcessingContext
         );
+
+    reqOutputVarReferenceContext.ensureAllReferencesResolved(context);
 
     int pathSteps = stepsAndProjection.pathSteps();
 

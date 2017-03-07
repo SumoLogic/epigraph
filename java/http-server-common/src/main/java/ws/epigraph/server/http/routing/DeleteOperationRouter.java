@@ -18,10 +18,10 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.schema.operations.DeleteOperationDeclaration;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.DeleteOperation;
 import ws.epigraph.types.DataTypeApi;
@@ -30,7 +30,6 @@ import ws.epigraph.url.parser.DeleteRequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlDeleteUrl;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -58,13 +57,13 @@ public final class DeleteOperationRouter
       final @NotNull DeleteOperationDeclaration opDecl,
       final @NotNull UrlDeleteUrl urlPsi,
       final @NotNull TypesResolver resolver,
-      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
     return DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
         resourceType,
         opDecl,
         urlPsi,
         resolver,
-        errors
+        context
     );
   }
 

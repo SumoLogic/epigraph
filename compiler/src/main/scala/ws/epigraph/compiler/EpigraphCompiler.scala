@@ -26,7 +26,7 @@ import com.intellij.lang.ParserDefinition
 import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
-import ws.epigraph.psi.{PsiProcessingError, PsiProcessingException}
+import ws.epigraph.psi.{DefaultPsiProcessingContext, PsiProcessingContext, PsiProcessingError, PsiProcessingException}
 import ws.epigraph.schema.parser.psi._
 import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
 
@@ -240,11 +240,11 @@ class EpigraphCompiler(
   private def parseResources(): Unit = {
     ctx.schemaFiles.values().par.foreach{ csf =>
       val typesResolver = new CTypesResolver(csf)
-      val errors = new java.util.ArrayList[PsiProcessingError]
+      val context: PsiProcessingContext = new DefaultPsiProcessingContext
 
       try {
-        val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, errors)
-        handlePsiErrors(csf, errors)
+        val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, context)
+        handlePsiErrors(csf, context.errors())
         ctx.resourcesSchemas.put(csf, resourcesSchema)
       } catch {
         case e: PsiProcessingException => handlePsiErrors(csf, e.errors())
@@ -262,7 +262,6 @@ class EpigraphCompiler(
     EpigraphCompiler.renderErrors(ctx)
     throw new EpigraphCompilerException(exitCode.toString, ctx.errors, null)
   }
-
 
   private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach pprint.pprintln
 

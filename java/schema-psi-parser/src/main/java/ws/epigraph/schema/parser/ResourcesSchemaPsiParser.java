@@ -17,6 +17,8 @@
 package ws.epigraph.schema.parser;
 
 import com.intellij.psi.util.PsiTreeUtil;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.schema.ResourcePsiProcessingContext;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.TypeRefs;
@@ -46,14 +48,14 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   public static @NotNull ResourcesSchema parseResourcesSchema(
       @NotNull SchemaFile psi,
       @NotNull TypesResolver basicResolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(psi, SchemaNamespaceDecl.class);
     if (namespaceDeclPsi == null)
-      throw new PsiProcessingException("namespace not specified", psi, errors);
+      throw new PsiProcessingException("namespace not specified", psi, context);
     @Nullable SchemaQn namespaceFqnPsi = namespaceDeclPsi.getQn();
     if (namespaceFqnPsi == null)
-      throw new PsiProcessingException("namespace not specified", psi, errors);
+      throw new PsiProcessingException("namespace not specified", psi, context);
 
     Qn namespace = namespaceFqnPsi.getQn();
 
@@ -68,14 +70,14 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       for (SchemaResourceDef resourceDefPsi : defs.getResourceDefList()) {
         if (resourceDefPsi != null) {
           try {
-            ResourceDeclaration resource = parseResource(resourceDefPsi, resolver, errors);
+            ResourceDeclaration resource = parseResource(namespace, resourceDefPsi, resolver, context);
             String fieldName = resource.fieldName();
             if (resources.containsKey(fieldName))
-              errors.add(new PsiProcessingError("Resource '" + fieldName + "' is already defined", resourceDefPsi));
+              context.addError("Resource '" + fieldName + "' is already defined", resourceDefPsi);
             else
               resources.put(fieldName, resource);
           } catch (PsiProcessingException e) {
-            errors.add(e.toError());
+            context.addException(e);
           }
         }
       }
@@ -102,13 +104,14 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   public static ResourceDeclaration parseResource(
+      @NotNull Qn namespace,
       @NotNull SchemaResourceDef psi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     final SchemaResourceName resourceName = psi.getResourceName();
     if (resourceName == null) throw new PsiProcessingException(
-        "Resource name not specified", psi, errors
+        "Resource name not specified", psi, context
     );
 
     final String fieldName = resourceName.getQid().getCanonicalName();
@@ -116,17 +119,17 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     SchemaResourceType resourceTypePsi = psi.getResourceType();
     if (resourceTypePsi == null) throw new PsiProcessingException(
         String.format("Resource '%s' type not specified", fieldName),
-        psi, errors
+        psi, context
     );
 
     @NotNull SchemaValueTypeRef valueTypeRefPsi = resourceTypePsi.getValueTypeRef();
-    @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi, errors);
+    @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(valueTypeRefPsi, context);
     @Nullable DataTypeApi resourceType = resolver.resolve(valueTypeRef);
 
     if (resourceType == null) throw new PsiProcessingException(
         String.format("Can't resolve resource '%s' type '%s'", fieldName, valueTypeRef),
         resourceTypePsi,
-        errors
+        context
     );
 
     // convert datum kind to samovar
@@ -135,14 +138,23 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       resourceType = type.dataType();
     }
 
+    ResourcePsiProcessingContext resourcePsiProcessingContext = new ResourcePsiProcessingContext(
+        context, namespace, fieldName
+    );
+
     @NotNull List<SchemaOperationDef> defsPsi = psi.getOperationDefList();
 
     final List<OperationDeclaration> operations = new ArrayList<>(defsPsi.size());
     for (SchemaOperationDef defPsi : defsPsi)
       try {
-        operations.add(OperationsPsiParser.parseOperation(resourceType, defPsi, resolver, errors));
+        operations.add(OperationsPsiParser.parseOperation(
+            resourceType,
+            defPsi,
+            resolver,
+            resourcePsiProcessingContext
+        ));
       } catch (PsiProcessingException e) {
-        errors.add(e.toError());
+        context.addException(e);
       }
 
     return new ResourceDeclaration(

@@ -18,24 +18,24 @@ package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.operations.OperationDeclaration;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -113,16 +113,17 @@ public class ReadRequestUrlPsiParserTest {
       String expectedParams)
       throws PsiProcessingException {
 
-    List<PsiProcessingError> errors = new ArrayList<>();
+    PsiProcessingContext context = new DefaultPsiProcessingContext();
+
     final @NotNull ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
         resolver,
-        errors
+        context
     );
 
-    failIfHasErrors(errors);
+    failIfHasErrors(context.errors());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 

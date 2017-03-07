@@ -11,7 +11,7 @@
   -[ ] recursive data support
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
-- [ ] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
+- [x] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
 
 # Type system
 - [ ] Enums

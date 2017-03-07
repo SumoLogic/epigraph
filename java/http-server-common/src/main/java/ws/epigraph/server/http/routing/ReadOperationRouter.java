@@ -16,6 +16,7 @@
 
 package ws.epigraph.server.http.routing;
 
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
@@ -58,13 +59,13 @@ public final class ReadOperationRouter
       final @NotNull ReadOperationDeclaration opDecl,
       final @NotNull UrlReadUrl urlPsi,
       final @NotNull TypesResolver resolver,
-      final @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
+      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
     return ReadRequestUrlPsiParser.parseReadRequestUrl(
         resourceType,
         opDecl,
         urlPsi,
         resolver,
-        errors
+        context
     );
   }
 

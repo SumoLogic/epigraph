@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
-import ws.epigraph.schema.operations.HttpMethod;
-import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
@@ -42,10 +40,13 @@ import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.HttpMethod;
+import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.server.http.routing.*;
 import ws.epigraph.service.*;
@@ -62,8 +63,6 @@ import ws.epigraph.wire.json.writer.JsonFormatWriter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
@@ -711,21 +710,21 @@ public class UndertowHandler implements HttpHandler {
       @NotNull HttpServerExchange exchange) throws RequestFailedException, IOException {
 
     CustomRequestUrl customRequestUrl = null;
-    List<PsiProcessingError> urlParsingErrors = new ArrayList<>();
+    PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
     try {
       customRequestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
           resource.declaration().fieldType(),
           operation.declaration(),
           urlPsi,
           typesResolver,
-          urlParsingErrors
+          psiProcessingContext
       );
     } catch (PsiProcessingException e) {
-      urlParsingErrors = e.errors();
+      psiProcessingContext.setErrors(e.errors());
     }
 
-    if (!urlParsingErrors.isEmpty()) {
-      reportPsiProcessingErrorsAndFail(urlPsi.getText(), urlParsingErrors, exchange);
+    if (!psiProcessingContext.errors().isEmpty()) {
+      reportPsiProcessingErrorsAndFail(urlPsi.getText(), psiProcessingContext.errors(), exchange);
     }
 
     assert customRequestUrl != null;

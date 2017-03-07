@@ -18,6 +18,8 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
@@ -102,7 +104,7 @@ public abstract class AbstractOperationRouter<
     if (operation == null)
       return OperationNotFound.instance();
     else {
-      List<PsiProcessingError> operationErrors = new ArrayList<>();
+      PsiProcessingContext context = new DefaultPsiProcessingContext();
 
       R request = null;
 
@@ -112,13 +114,13 @@ public abstract class AbstractOperationRouter<
             operation.declaration(),
             urlPsi,
             resolver,
-            operationErrors
+            context
         );
       } catch (PsiProcessingException e) {
-        operationErrors = e.errors();
+        context.setErrors(e.errors());
       }
 
-      if (operationErrors.isEmpty()) {
+      if (context.errors().isEmpty()) {
         assert request != null;
         return new OperationSearchSuccess<>(
             operation,
@@ -126,7 +128,7 @@ public abstract class AbstractOperationRouter<
         );
       } else
         return new OperationSearchFailure<>(
-            Collections.singletonMap(operation, operationErrors)
+            Collections.singletonMap(operation, context.errors())
         );
     }
   }
@@ -136,6 +138,6 @@ public abstract class AbstractOperationRouter<
       @NotNull D opDecl,
       @NotNull U urlPsi,
       @NotNull TypesResolver resolver,
-      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException;
+      @NotNull PsiProcessingContext context) throws PsiProcessingException;
 
 }

@@ -28,8 +28,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OperationSearchFailure<O extends Operation<?, ?, ?>> implements OperationSearchResult<O> {
-  @NotNull
-  private final Map<O, List<PsiProcessingError>> errors;
+  private final @NotNull Map<O, List<PsiProcessingError>> errors;
 
   public OperationSearchFailure(final @NotNull Map<O, List<PsiProcessingError>> errors) { this.errors = errors; }
 
