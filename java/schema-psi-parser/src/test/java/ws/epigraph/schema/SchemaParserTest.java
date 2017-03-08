@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public class SchemaParserTest {
             "import ws.epigraph.tests.Person",
             "import ws.epigraph.tests.UserRecord",
             "resource users : map[String,Person] {",
+            "  outputProjection defaultOutput : map[String,Person] = [forbidden](:id)",
             "  read {",
             "    doc = \"dome doc string\"",
             "    outputProjection {",
@@ -99,12 +100,12 @@ public class SchemaParserTest {
             "  update {",
             "    doc = \"dome doc string\"",
             "    inputProjection []( :`record` ( firstName, lastName) )",
-            "    outputProjection [forbidden]( :id )",
+            "    outputProjection $defaultOutput",
             "  }",
             "  update customUpdate {",
             "    doc = \"dome doc string\"",
             "    inputProjection []( :`record` ( firstName, lastName) )",
-            "    outputProjection [forbidden]( :id )",
+            "    outputProjection $defaultOutput",
             "  }",
             "  delete {",
             "    deleteProjection [forbidden]( +:`record` ( firstName ) )",
@@ -117,14 +118,13 @@ public class SchemaParserTest {
             "    inputType map[String,Person]",
             "    inputProjection []( :`record` ( firstName, lastName) )",
             "    outputType map[String,Person]",
-            "    outputProjection [forbidden]( :id )",
+            "    outputProjection $defaultOutput",
             "  }",
             "}"
         ),
         lines(
             "namespace test",
-            "resource users: map[epigraph.String,ws.epigraph.tests.Person]",
-            "{",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
             "  read",
             "  {",
             "    doc = \"dome doc string\",",
@@ -152,7 +152,7 @@ public class SchemaParserTest {
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
-            "    outputProjection [ forbidden ]( :id )",
+            "    outputProjection $defaultOutput",
             "  }",
             "  update customUpdate",
             "  {",
@@ -160,7 +160,7 @@ public class SchemaParserTest {
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
-            "    outputProjection [ forbidden ]( :id )",
+            "    outputProjection $defaultOutput",
             "  }",
             "  delete",
             "  {",
@@ -175,8 +175,11 @@ public class SchemaParserTest {
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
-            "    outputProjection [ forbidden ]( :id )",
-            "  } }"
+            "    outputProjection $defaultOutput",
+            "  }",
+            "  outputProjection defaultOutput: map[epigraph.String,ws.epigraph.tests.Person]",
+            "    = [ forbidden ]( :id )",
+            "}"
         )
     );
   }

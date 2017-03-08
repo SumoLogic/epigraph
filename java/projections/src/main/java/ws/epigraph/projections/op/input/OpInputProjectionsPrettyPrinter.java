@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
 
@@ -38,8 +40,14 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     OpInputFieldProjection,
     E> {
 
-  public OpInputProjectionsPrettyPrinter(Layouter<E> layouter) {
-    super(layouter);
+  public OpInputProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection> context) {
+    super(layouter, context);
+  }
+
+  public OpInputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
+    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
   }
 
   @Override

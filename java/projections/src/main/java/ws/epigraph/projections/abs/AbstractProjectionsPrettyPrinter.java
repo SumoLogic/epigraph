@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.lang.Keywords;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -40,38 +42,51 @@ public abstract class AbstractProjectionsPrettyPrinter<
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;
-  protected @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
+  protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
+  protected final @NotNull ProjectionsPrettyPrinterContext<VP> context;
 
-  private int nextRefNumber = 1;
-  private final Map<VP, Integer> varRefs = new HashMap<>();
-  private final Stack<VP> varsStack = new Stack<>();
+  private final Collection<String> visitedRefs = new HashSet<>();
 
-  protected AbstractProjectionsPrettyPrinter(@NotNull Layouter<E> layouter) {
+  protected AbstractProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
     l = layouter;
+    this.context = context;
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  // todo figure out recursive projections syntax
+  public void addVisitedRefs(@NotNull Collection<String> names) {
+    visitedRefs.addAll(names);
+  }
+
   public final void print(@NotNull VP p, int pathSteps) throws E {
-    if (varsStack.contains(p)) {
-      // handle recursive projections
-      int ref = nextRefNumber++;
-      varRefs.put(p, ref);
-      l.print("... = @").print(Integer.toString(ref));
-      return;
+    final Qn name = p.name();
+
+    boolean shouldPrint = true;
+
+    if (name != null) {
+      String shortName = name.last();
+
+      if (!context.inNamespace(name)) {
+        context.addOtherNamespaceProjection(p);
+        l.print("$").print(shortName);
+        shouldPrint = false;
+      } else if (visitedRefs.contains(shortName)) {
+        l.print("$").print(shortName);
+        shouldPrint = false;
+      } else {
+        visitedRefs.add(shortName);
+        l.print("$").print(shortName).print(" = ");
+      }
     }
 
-    try {
-      varsStack.push(p);
+    if (shouldPrint)
+      printVarNoRefCheck(p, pathSteps);
+  }
 
-      printVarOnly(p, pathSteps);
-      printTailsOnly(p);
-    } finally {
-      varsStack.pop();
-      Integer ref = varRefs.remove(p);
-      if (ref != null) l.print("@").print(Integer.toString(ref));
-    }
-
+  public final void printVarNoRefCheck(@NotNull VP p, int pathSteps) throws E {
+    printVarOnly(p, pathSteps);
+    printTailsOnly(p);
   }
 
   protected void printVarOnly(@NotNull VP p, int pathSteps) throws E {

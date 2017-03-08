@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,11 @@ package ws.epigraph.projections.req.path;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
@@ -37,7 +39,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   protected @NotNull DataPrinter<E> dataPrinter;
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter);
+    super(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
     dataPrinter = new DataPrinter<>(layouter);
   }
 

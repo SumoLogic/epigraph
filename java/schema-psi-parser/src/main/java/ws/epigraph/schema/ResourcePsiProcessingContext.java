@@ -28,7 +28,8 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final @NotNull Qn resourceNamespace;
+  private final @NotNull Qn namespace;
+  private final @NotNull String resourceName;
   private final @NotNull OpInputVarReferenceContext inputVarReferenceContext;
   private final @NotNull OpOutputVarReferenceContext outputVarReferenceContext;
   private final @NotNull OpDeleteVarReferenceContext deleteVarReferenceContext;
@@ -40,30 +41,34 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
     super(psiProcessingContext);
 
-    resourceNamespace = namespace.append("resources").append(resourceName);
-    Qn projectionsNamespace = resourceNamespace.append("projections");
+    this.namespace = namespace;
+    this.resourceName = resourceName;
+
+    final Namespaces namespaces = new Namespaces(namespace);
 
     inputVarReferenceContext = new OpInputVarReferenceContext(
-        projectionsNamespace.append("input"),
+        namespaces.inputProjectionsNamespace(resourceName),
         null
     );
 
     outputVarReferenceContext = new OpOutputVarReferenceContext(
-        projectionsNamespace.append("ouput"),
+        namespaces.outputProjectionsNamespace(resourceName),
         null
     );
 
     deleteVarReferenceContext = new OpDeleteVarReferenceContext(
-        projectionsNamespace.append("delete"),
+        namespaces.deleteProjectionsNamespace(resourceName),
         null
     );
   }
+
+  public @NotNull  Qn namespace() { return namespace; }
+
+  public @NotNull String resourceName() { return resourceName; }
 
   public @NotNull OpInputVarReferenceContext inputVarReferenceContext() { return inputVarReferenceContext; }
 
   public @NotNull OpOutputVarReferenceContext outputVarReferenceContext() { return outputVarReferenceContext; }
 
   public @NotNull OpDeleteVarReferenceContext deleteVarReferenceContext() { return deleteVarReferenceContext; }
-
-  public @NotNull Qn resourceNamespace() { return resourceNamespace; }
 }

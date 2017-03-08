@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.*;
 
@@ -42,8 +43,10 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   protected @NotNull DataPrinter<E> dataPrinter;
 
-  protected AbstractReqProjectionsPrettyPrinter(final Layouter<E> layouter) {
-    super(layouter);
+  protected AbstractReqProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
+    super(layouter, context);
     dataPrinter = new DataPrinter<>(layouter);
   }
 

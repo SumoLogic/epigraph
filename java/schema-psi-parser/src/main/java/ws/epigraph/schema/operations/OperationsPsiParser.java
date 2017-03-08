@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
 import ws.epigraph.projections.op.delete.OpDeleteVarReferenceContext;
@@ -30,6 +29,7 @@ import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.schema.Namespaces;
 import ws.epigraph.schema.ResourcePsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
@@ -328,7 +328,12 @@ public final class OperationsPsiParser {
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
     OpDeleteVarReferenceContext deleteReferenceContext = new OpDeleteVarReferenceContext(
-        projectionsNamespace(context, OperationKind.DELETE, operationName).append("delete"),
+        new Namespaces(context.namespace())
+            .operationDeleteProjectionsNamespace(
+                context.resourceName(),
+                OperationKind.DELETE,
+                operationName
+            ),
         context.deleteVarReferenceContext()
     );
 
@@ -477,7 +482,12 @@ public final class OperationsPsiParser {
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
     OpOutputVarReferenceContext outputVarReferenceContext = new OpOutputVarReferenceContext(
-        projectionsNamespace(context, operationKind, operationName).append("output"),
+        new Namespaces(context.namespace())
+            .operationOutputProjectionsNamespace(
+                context.resourceName(),
+                operationKind,
+                operationName
+            ),
         context.outputVarReferenceContext()
     );
     OpInputVarReferenceContext inputVarReferenceContext =
@@ -519,7 +529,6 @@ public final class OperationsPsiParser {
 
     return fieldProjection;
   }
-
 
   @Contract("null, !null, _, _ -> !null")
   private static @Nullable <T extends PsiElement> T getPsiPart(
@@ -643,29 +652,18 @@ public final class OperationsPsiParser {
     return qid.getCanonicalName();
   }
 
-  private static @NotNull Qn projectionsNamespace(
-      @NotNull ResourcePsiProcessingContext context,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
-
-    // keep logic in sync with ServiceNames.scala
-    Qn qn = context.resourceNamespace()
-        .append("operations")
-        .append(operationKind.toString().toLowerCase());
-
-    if (operationName != null)
-      qn = qn.append(operationName.toLowerCase());
-
-    return qn.append("projections");
-  }
-
   private static @NotNull OpInputVarReferenceContext createInputVarReferenceContext(
       final @NotNull OperationKind operationKind,
       final @Nullable String operationName,
       final @NotNull ResourcePsiProcessingContext context) {
 
     return new OpInputVarReferenceContext(
-        projectionsNamespace(context, operationKind, operationName).append("input"), context.inputVarReferenceContext()
+        new Namespaces(context.namespace())
+            .operationInputProjectionsNamespace(
+                context.resourceName(),
+                operationKind,
+                operationName
+            ), context.inputVarReferenceContext()
     );
 
   }

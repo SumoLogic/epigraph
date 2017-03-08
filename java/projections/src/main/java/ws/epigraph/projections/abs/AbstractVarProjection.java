@@ -301,7 +301,7 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public boolean isResolved() { return name == null || tagProjections != null; }
+  public boolean isResolved() { return tagProjections != null; }
 
   protected void assertResolved() {
     if (!isResolved())

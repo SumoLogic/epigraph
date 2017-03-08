@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
@@ -43,8 +44,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
-  protected AbstractOpProjectionsPrettyPrinter(final Layouter<E> layouter) {
-    super(layouter);
+  protected AbstractOpProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
+    super(layouter, context);
   }
 
   public void print(@NotNull OpParams p) throws E {
@@ -100,6 +103,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public void print(@NotNull RP recordProjection) throws E {
+    @SuppressWarnings("unchecked")
     Map<String, FPE> fieldProjections = recordProjection.fieldProjections();
 
     l.print("(").beginCInd();

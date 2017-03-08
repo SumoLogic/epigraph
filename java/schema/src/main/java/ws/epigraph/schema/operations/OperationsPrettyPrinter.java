@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,14 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.types.TypeApi;
@@ -35,19 +39,25 @@ import ws.epigraph.types.TypeApi;
 public class OperationsPrettyPrinter<E extends Exception> {
   private final @NotNull Layouter<E> l;
   private final OpPathPrettyPrinter<E> opPathPrinter;
-  private final OpOutputProjectionsPrettyPrinter<E> opOutputPrinter;
-  private final OpInputProjectionsPrettyPrinter<E> opInputPrinter;
-  private final OpDeleteProjectionsPrettyPrinter<E> opDeletePrinter;
+  private OpOutputProjectionsPrettyPrinter<E> opOutputPrinter;
+  private OpInputProjectionsPrettyPrinter<E> opInputPrinter;
+  private OpDeleteProjectionsPrettyPrinter<E> opDeletePrinter;
 
   public OperationsPrettyPrinter(@NotNull Layouter<E> l) {
     this.l = l;
     opPathPrinter = new OpPathPrettyPrinter<>(l);
-    opOutputPrinter = new OpOutputProjectionsPrettyPrinter<>(l);
-    opInputPrinter = new OpInputProjectionsPrettyPrinter<>(l);
-    opDeletePrinter = new OpDeleteProjectionsPrettyPrinter<>(l);
   }
 
-  public void printOperation(@NotNull OperationDeclaration operation) throws E {
+  public void printOperation(
+      @NotNull OperationDeclaration operation,
+      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection> outputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection> inputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection> deleteProjectionsPrinterContext
+  ) throws E {
+    opOutputPrinter = new OpOutputProjectionsPrettyPrinter<>(l, outputProjectionsPrinterContext);
+    opInputPrinter = new OpInputProjectionsPrettyPrinter<>(l, inputProjectionsPrinterContext);
+    opDeletePrinter = new OpDeleteProjectionsPrettyPrinter<>(l, deleteProjectionsPrinterContext);
+
     l.beginIInd(0);
 
     l.print(operation.kind().toString().toLowerCase()).brk();

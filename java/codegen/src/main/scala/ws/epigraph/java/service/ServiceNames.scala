@@ -17,6 +17,7 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.lang.Qn
+import ws.epigraph.schema.Namespaces
 import ws.epigraph.schema.operations.{OperationDeclaration, OperationKind}
 
 /**
@@ -32,11 +33,9 @@ object ServiceNames {
   )
 
   def resourceNamespace(baseNamespace: Qn, resourceFieldName: String): Qn =
-    baseNamespace.append("resources").append(resourceFieldName.toLowerCase)
+    new Namespaces(baseNamespace).resourceNamespace(resourceFieldName)
 
   def operationNamespace(baseNamespace: Qn, resourceFieldName: String, op: OperationDeclaration): Qn =
-    resourceNamespace(baseNamespace, resourceFieldName)
-      .append("operations")
-      .append(s"${op.kind()}${Option(op.name()).getOrElse("")}".toLowerCase)
+    new Namespaces(baseNamespace).operationNamespace(resourceFieldName, op.kind(), op.name())
 
 }

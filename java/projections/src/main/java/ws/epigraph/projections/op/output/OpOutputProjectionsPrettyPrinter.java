@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package ws.epigraph.projections.op.output;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
@@ -39,8 +41,14 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     OpOutputFieldProjection,
     E> {
 
-  public OpOutputProjectionsPrettyPrinter(Layouter<E> layouter) {
-    super(layouter);
+  public OpOutputProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection> context) {
+    super(layouter, context);
+  }
+
+  public OpOutputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
+    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
   }
 
   @Override
@@ -59,7 +67,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
           l.brk();
         }
         print(projection, 0);
-      } else if (tagName!=null) l.print(escape(tagName));
+      } else if (tagName != null) l.print(escape(tagName));
 
       l.end();
     } else {

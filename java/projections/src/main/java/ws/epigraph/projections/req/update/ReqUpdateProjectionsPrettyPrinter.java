@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package ws.epigraph.projections.req.update;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.TypeKind;
@@ -39,8 +41,14 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     ReqUpdateFieldProjection,
     E> {
 
-  public ReqUpdateProjectionsPrettyPrinter(Layouter<E> layouter) {
-    super(layouter);
+  public ReqUpdateProjectionsPrettyPrinter(
+      final @NotNull Layouter<E> layouter,
+      final @NotNull ProjectionsPrettyPrinterContext<ReqUpdateVarProjection> context) {
+    super(layouter, context);
+  }
+
+  public ReqUpdateProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
+    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
   }
 
   @Override

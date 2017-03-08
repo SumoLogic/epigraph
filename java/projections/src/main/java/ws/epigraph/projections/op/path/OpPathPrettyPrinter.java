@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package ws.epigraph.projections.op.path;
 
 import de.uka.ilkd.pp.Layouter;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter);
+    super(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
   }
 
   @Override
