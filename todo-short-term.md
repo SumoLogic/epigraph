@@ -1,13 +1,14 @@
 - [ ] simple service quick-start guide
 
 - [ ] support projection snippets in schema. Lots of code duplication otherwise!
-  - [ ] change schema grammar
-  - [ ] attach names (FQNs?) to (op?) var projections
-  - [ ] make var projections half-mutable? find a way to have var projection references/resolve them
-  - [ ] introduce context to op psi parsers, use it to store (potentially unfinished) named var projections
-  - [ ] update psi parsers
+  - [x] change schema grammar
+  - [x] attach names (FQNs?) to (op?) var projections
+  - [x] make var projections half-mutable? find a way to have var projection references/resolve them
+  - [x] introduce context to op psi parsers, use it to store (potentially unfinished) named var projections
+  - [x] update psi parsers
   - [ ] update op codegen
   - [ ] update req codegen: req projections must be reusable too
+  - [ ] allow recursive data: update marshaller/unmarshaller
 
 
 - [ ] undertow handler: remove trimmer, should be handled by marshaller
