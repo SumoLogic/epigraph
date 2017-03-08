@@ -59,7 +59,10 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
     } else return ref;
   }
 
-  public boolean exists(@NotNull String name) { return references.containsKey(name); }
+  public boolean isResolved(@NotNull String name) {
+    final VP reference = lookupReference(name);
+    return reference != null && reference.isResolved();
+  }
 
   @Nullable
   protected VP lookupReference(@NotNull String name) {
@@ -74,33 +77,43 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
   protected abstract VP newReference(@NotNull TypeApi type, @NotNull TextLocation location);
 
   public void resolve(
-      @NotNull String name, @NotNull VP value, @NotNull TextLocation location,
-      @NotNull PsiProcessingContext context) {
+      @NotNull final String name,
+      @NotNull final VP value,
+      @NotNull final TextLocation location,
+      @NotNull final PsiProcessingContext context) {
 
-    VP ref = references.get(name);
+    value.runOnResolved(() -> {
+      VP ref = references.get(name);
 
-    if (ref == null) {
+      if (ref == null) {
 
-      if (parent != null && parent.lookupReference(name) != null) {
+        if (parent != null && parent.lookupReference(name) != null) {
 
-        // a = c
-        //    b = a
-        //    a = 2         <-- prohibited
-        // c = 1
+          // a = c
+          //    b = a
+          //    a = 2         <-- prohibited
+          // c = 1
 
-        context.addError(String.format("Can't override projection '%s' from parent context", name), location);
+          context.addError(String.format("Can't override projection '%s' from parent context", name), location);
 
-      } else
-        context.addError(String.format("Projection '%s' reference not found", name), location);
+        } else
+          context.addError(String.format("Projection '%s' reference not found", name), location);
 
-    } else if (ref.isResolved()) {
-      context.addError(
-          String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-      );
-    } else {
-      resolvedAt.put(name, location);
-      ref.resolve(referencesNamespace.append(name), value);
-    }
+      } else if (ref.isResolved()) {
+        context.addError(
+            String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
+        );
+      } else if (!ref.type().isAssignableFrom(value.type())) {
+        context.addError(
+            String.format("Projection type '%s' is not compatible with reference type '%s'", value.type(), ref.type()),
+            location
+        );
+      } else {
+        resolvedAt.put(name, location);
+        ref.resolve(referencesNamespace.append(name), value);
+      }
+
+    });
 
   }
 

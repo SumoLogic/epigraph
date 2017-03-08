@@ -42,10 +42,7 @@ import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.refs.ValueTypeRef;
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.ResourcePsiProcessingContext;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.*;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationsPsiParser;
 import ws.epigraph.schema.parser.psi.*;
@@ -54,6 +51,7 @@ import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -162,7 +160,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     final List<SchemaProjectionDef> projectionDefsPsi = psi.getProjectionDefList();
     for (final SchemaProjectionDef projectionDef : projectionDefsPsi) {
       try {
-        parseProjectionDef(projectionDef, resolver, resourcePsiProcessingContext);
+        parseProjectionDef(namespace, fieldName, projectionDef, resolver, resourcePsiProcessingContext);
       } catch (PsiProcessingException e) {
         context.addException(e);
       }
@@ -195,6 +193,8 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private static void parseProjectionDef(
+      @NotNull Qn namespace,
+      @NotNull String resourceName,
       @NotNull SchemaProjectionDef projectionDefPsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -204,64 +204,85 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     final SchemaDeleteProjectionDef deleteProjectionDef = projectionDefPsi.getDeleteProjectionDef();
 
     if (outputProjectionDef != null) {
-      parseOutputProjectionDef(outputProjectionDef, resolver, context);
+      parseOutputProjectionDef(namespace, resourceName, outputProjectionDef, resolver, context);
     } else if (inputProjectionDef != null) {
-      parseInputProjectionDef(inputProjectionDef, resolver, context);
+      parseInputProjectionDef(namespace, resourceName, inputProjectionDef, resolver, context);
     } else if (deleteProjectionDef != null) {
-      parseDeleteProjectionDef(deleteProjectionDef, resolver, context);
+      parseDeleteProjectionDef(namespace, resourceName, deleteProjectionDef, resolver, context);
     } else {
       context.addError("Incomplete projection definition", projectionDefPsi);
     }
   }
 
   private static void parseOutputProjectionDef(
+      @NotNull Qn namespace,
+      @NotNull String resourceName,
       @NotNull SchemaOutputProjectionDef projectionDefPsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
-    
+
     parseGenProjectionDef(
-        projectionDefPsi, 
+        "output",
+        projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpOutputUnnamedVarProjection(),
-        resolver, 
+        projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
+        resolver,
         context.outputVarReferenceContext(),
-        context, 
+        projectionName -> new OpOutputVarReferenceContext(
+            new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName),
+            context.outputVarReferenceContext()
+        ),
+        context,
         OutputUnnamedVarReferenceParser.INSTANCE
     );
 
   }
-  
+
   private static void parseInputProjectionDef(
+      @NotNull Qn namespace,
+      @NotNull String resourceName,
       @NotNull SchemaInputProjectionDef projectionDefPsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
     parseGenProjectionDef(
+        "input",
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpInputUnnamedVarProjection(),
+        projectionDefPsi.getOpInputUnnamedOrRefVarProjection(),
         resolver,
         context.inputVarReferenceContext(),
+        projectionName -> new OpInputVarReferenceContext(
+            new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName),
+            context.inputVarReferenceContext()
+        ),
         context,
         InputUnnamedVarReferenceParser.INSTANCE
     );
 
   }
-  
+
   private static void parseDeleteProjectionDef(
+      @NotNull Qn namespace,
+      @NotNull String resourceName,
       @NotNull SchemaDeleteProjectionDef projectionDefPsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
     parseGenProjectionDef(
+        "delete",
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpDeleteUnnamedVarProjection(),
+        projectionDefPsi.getOpDeleteUnnamedOrRefVarProjection(),
         resolver,
         context.deleteVarReferenceContext(),
+        projectionName -> new OpDeleteVarReferenceContext(
+            new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName),
+            context.deleteVarReferenceContext()
+        ),
         context,
         DeleteUnnamedVarReferenceParser.INSTANCE
     );
@@ -273,25 +294,33 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       RC extends VarReferenceContext<VP>,
       UP extends PsiElement>
   void parseGenProjectionDef(
+      @NotNull String projectionKind,
       @NotNull PsiElement projectionDefPsi,
       @Nullable SchemaQid projectionNamePsi,
       @Nullable SchemaTypeRef typeRefPsi,
       @Nullable UP unnamedPsi,
       @NotNull TypesResolver resolver,
       @NotNull RC referenceContext,
+      @NotNull Function<String, RC> innerReferenceContextFactory,
       @NotNull ResourcePsiProcessingContext context,
       @NotNull UnnamedVarParser<VP, RC, UP> psiParser) throws PsiProcessingException {
 
+    String projectionKindUp = projectionKind.substring(0, 1).toUpperCase() + projectionKind.substring(1);
+
     if (projectionNamePsi == null)
-      context.addError("Incomplete output projection definition: name not specified", projectionDefPsi);
+      context.addError("Incomplete " + projectionKind + " projection definition: name not specified", projectionDefPsi);
     else {
       final String projectionName = projectionNamePsi.getCanonicalName();
-      if (referenceContext.exists(projectionName))
-        context.addError(String.format("Output projection '%s' is already defined", projectionName), projectionDefPsi);
+
+      if (referenceContext.isResolved(projectionName))
+        context.addError(
+            String.format(projectionKindUp + " projection '%s' is already defined", projectionName),
+            projectionDefPsi
+        );
       else {
         if (typeRefPsi == null || unnamedPsi == null)
           context.addError(
-              String.format("Incomplete output projection '%s' definition", projectionName),
+              String.format("Incomplete " + projectionKind + " projection '%s' definition", projectionName),
               projectionDefPsi
           );
         else {
@@ -299,24 +328,28 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
           final TypeApi type = typeRef.resolve(resolver);
           if (type == null)
             context.addError(
-                String.format("Output projection '%s' type '%s' not defined", projectionName, typeRef.toString()),
+                String.format(
+                    projectionKindUp + " projection '%s' type '%s' not defined",
+                    projectionName,
+                    typeRef.toString()
+                ),
                 projectionDefPsi
             );
           else {
-            final VP reference =
-                referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
-            
+            //final VP reference =
+            referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
+
+            final RC innerReferenceContext = innerReferenceContextFactory.apply(projectionName);
             final VP value = psiParser.parse(
                 type.dataType(),
                 unnamedPsi,
                 resolver,
-                referenceContext, 
+                innerReferenceContext,
                 context
             );
+            innerReferenceContext.ensureAllReferencesResolved(context);
 
             referenceContext.resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
-            //noinspection unchecked
-            assert reference.name() != null;
           }
         }
       }
@@ -337,15 +370,15 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     ) throws PsiProcessingException;
   }
 
-  private static class OutputUnnamedVarReferenceParser 
-      implements UnnamedVarParser<OpOutputVarProjection, OpOutputVarReferenceContext, SchemaOpOutputUnnamedVarProjection> {
-    
+  private static class OutputUnnamedVarReferenceParser
+      implements UnnamedVarParser<OpOutputVarProjection, OpOutputVarReferenceContext, SchemaOpOutputUnnamedOrRefVarProjection> {
+
     static final OutputUnnamedVarReferenceParser INSTANCE = new OutputUnnamedVarReferenceParser();
 
     @Override
     public OpOutputVarProjection parse(
         final @NotNull DataTypeApi type,
-        final @NotNull SchemaOpOutputUnnamedVarProjection psi,
+        final @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
         final @NotNull OpOutputVarReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -360,7 +393,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
           referenceContext
       );
 
-      return OpOutputProjectionsPsiParser.parseUnnamedVarProjection(
+      return OpOutputProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
           psi,
           resolver,
@@ -368,16 +401,16 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       );
     }
   }
-  
+
   private static class InputUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpInputVarProjection, OpInputVarReferenceContext, SchemaOpInputUnnamedVarProjection> {
+      implements UnnamedVarParser<OpInputVarProjection, OpInputVarReferenceContext, SchemaOpInputUnnamedOrRefVarProjection> {
 
     static final InputUnnamedVarReferenceParser INSTANCE = new InputUnnamedVarReferenceParser();
 
     @Override
     public OpInputVarProjection parse(
         final @NotNull DataTypeApi type,
-        final @NotNull SchemaOpInputUnnamedVarProjection psi,
+        final @NotNull SchemaOpInputUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
         final @NotNull OpInputVarReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -387,7 +420,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
           referenceContext
       );
 
-      return OpInputProjectionsPsiParser.parseUnnamedVarProjection(
+      return OpInputProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
           psi,
           resolver,
@@ -395,16 +428,16 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       );
     }
   }
-  
+
   private static class DeleteUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpDeleteVarProjection, OpDeleteVarReferenceContext, SchemaOpDeleteUnnamedVarProjection> {
+      implements UnnamedVarParser<OpDeleteVarProjection, OpDeleteVarReferenceContext, SchemaOpDeleteUnnamedOrRefVarProjection> {
 
     static final DeleteUnnamedVarReferenceParser INSTANCE = new DeleteUnnamedVarReferenceParser();
 
     @Override
     public OpDeleteVarProjection parse(
         final @NotNull DataTypeApi type,
-        final @NotNull SchemaOpDeleteUnnamedVarProjection psi,
+        final @NotNull SchemaOpDeleteUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
         final @NotNull OpDeleteVarReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -419,7 +452,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
           referenceContext
       );
 
-      return OpDeleteProjectionsPsiParser.parseUnnamedVarProjection(
+      return OpDeleteProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
           psi,
           resolver,

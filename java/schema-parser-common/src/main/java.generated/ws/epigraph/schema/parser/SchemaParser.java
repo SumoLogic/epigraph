@@ -192,6 +192,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_DELETE_SINGLE_TAG_PROJECTION) {
       r = opDeleteSingleTagProjection(b, 0);
     }
+    else if (t == S_OP_DELETE_UNNAMED_OR_REF_VAR_PROJECTION) {
+      r = opDeleteUnnamedOrRefVarProjection(b, 0);
+    }
     else if (t == S_OP_DELETE_UNNAMED_VAR_PROJECTION) {
       r = opDeleteUnnamedVarProjection(b, 0);
     }
@@ -276,6 +279,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_INPUT_SINGLE_TAG_PROJECTION) {
       r = opInputSingleTagProjection(b, 0);
     }
+    else if (t == S_OP_INPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
+      r = opInputUnnamedOrRefVarProjection(b, 0);
+    }
     else if (t == S_OP_INPUT_UNNAMED_VAR_PROJECTION) {
       r = opInputUnnamedVarProjection(b, 0);
     }
@@ -359,6 +365,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_OUTPUT_SINGLE_TAG_PROJECTION) {
       r = opOutputSingleTagProjection(b, 0);
+    }
+    else if (t == S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
+      r = opOutputUnnamedOrRefVarProjection(b, 0);
     }
     else if (t == S_OP_OUTPUT_UNNAMED_VAR_PROJECTION) {
       r = opOutputUnnamedVarProjection(b, 0);
@@ -1029,7 +1038,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'deleteProjection' qid ':' typeRef '=' opDeleteUnnamedVarProjection
+  // 'deleteProjection' qid ':' typeRef '=' opDeleteUnnamedOrRefVarProjection
   public static boolean deleteProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteProjectionDef")) return false;
     if (!nextTokenIs(b, S_DELETE_PROJECTION)) return false;
@@ -1041,7 +1050,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
-    r = p && opDeleteUnnamedVarProjection(b, l + 1) && r;
+    r = p && opDeleteUnnamedOrRefVarProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1397,7 +1406,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' qid ':' typeRef '=' opInputUnnamedVarProjection
+  // 'inputProjection' qid ':' typeRef '=' opInputUnnamedOrRefVarProjection
   public static boolean inputProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjectionDef")) return false;
     if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
@@ -1409,7 +1418,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
-    r = p && opInputUnnamedVarProjection(b, l + 1) && r;
+    r = p && opInputUnnamedOrRefVarProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1920,13 +1929,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid opDeleteFieldProjection
   public static boolean opDeleteFieldProjectionEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteFieldProjectionEntry")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_FIELD_PROJECTION_ENTRY, "<op delete field projection entry>");
     r = qid(b, l + 1);
+    p = r; // pin = 1
     r = r && opDeleteFieldProjection(b, l + 1);
-    exit_section_(b, m, S_OP_DELETE_FIELD_PROJECTION_ENTRY, r);
-    return r;
+    exit_section_(b, l, m, r, p, recordModelProjectionRecover_parser_);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2396,7 +2405,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '$' qid '=' opDeleteUnnamedVarProjection
+  // '$' qid '=' opDeleteUnnamedOrRefVarProjection
   public static boolean opDeleteNamedVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteNamedVarProjection")) return false;
     if (!nextTokenIs(b, S_DOLLAR)) return false;
@@ -2406,7 +2415,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 3
-    r = r && opDeleteUnnamedVarProjection(b, l + 1);
+    r = r && opDeleteUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2489,6 +2498,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_COLON);
     r = r && tagName(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // opDeleteVarProjectionRef | opDeleteUnnamedVarProjection
+  public static boolean opDeleteUnnamedOrRefVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteUnnamedOrRefVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_UNNAMED_OR_REF_VAR_PROJECTION, "<op delete unnamed or ref var projection>");
+    r = opDeleteVarProjectionRef(b, l + 1);
+    if (!r) r = opDeleteUnnamedVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -2613,14 +2634,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opDeleteNamedVarProjection | opDeleteVarProjectionRef | opDeleteUnnamedVarProjection
+  // opDeleteNamedVarProjection | opDeleteUnnamedOrRefVarProjection
   public static boolean opDeleteVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_VAR_PROJECTION, "<op delete var projection>");
     r = opDeleteNamedVarProjection(b, l + 1);
-    if (!r) r = opDeleteVarProjectionRef(b, l + 1);
-    if (!r) r = opDeleteUnnamedVarProjection(b, l + 1);
+    if (!r) r = opDeleteUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2718,14 +2738,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '+'? qid opInputFieldProjection
   public static boolean opInputFieldProjectionEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputFieldProjectionEntry")) return false;
-    if (!nextTokenIs(b, "<op input field projection entry>", S_PLUS, S_ID)) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_FIELD_PROJECTION_ENTRY, "<op input field projection entry>");
     r = opInputFieldProjectionEntry_0(b, l + 1);
     r = r && qid(b, l + 1);
+    p = r; // pin = 2
     r = r && opInputFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
+    exit_section_(b, l, m, r, p, recordModelProjectionRecover_parser_);
+    return r || p;
   }
 
   // '+'?
@@ -3242,7 +3262,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '$' qid '=' opInputUnnamedVarProjection
+  // '$' qid '=' opInputUnnamedOrRefVarProjection
   public static boolean opInputNamedVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputNamedVarProjection")) return false;
     if (!nextTokenIs(b, S_DOLLAR)) return false;
@@ -3252,7 +3272,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 3
-    r = r && opInputUnnamedVarProjection(b, l + 1);
+    r = r && opInputUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -3344,6 +3364,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opInputSingleTagProjection_0_0_1")) return false;
     consumeToken(b, S_PLUS);
     return true;
+  }
+
+  /* ********************************************************** */
+  // opInputVarProjectionRef | opInputUnnamedVarProjection
+  public static boolean opInputUnnamedOrRefVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputUnnamedOrRefVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_UNNAMED_OR_REF_VAR_PROJECTION, "<op input unnamed or ref var projection>");
+    r = opInputVarProjectionRef(b, l + 1);
+    if (!r) r = opInputUnnamedVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -3459,14 +3491,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opInputNamedVarProjection | opInputVarProjectionRef | opInputUnnamedVarProjection
+  // opInputNamedVarProjection | opInputUnnamedOrRefVarProjection
   public static boolean opInputVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_VAR_PROJECTION, "<op input var projection>");
     r = opInputNamedVarProjection(b, l + 1);
-    if (!r) r = opInputVarProjectionRef(b, l + 1);
-    if (!r) r = opInputUnnamedVarProjection(b, l + 1);
+    if (!r) r = opInputUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3578,13 +3609,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // qid opOutputFieldProjection
   public static boolean opOutputFieldProjectionEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputFieldProjectionEntry")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_FIELD_PROJECTION_ENTRY, "<op output field projection entry>");
     r = qid(b, l + 1);
+    p = r; // pin = 1
     r = r && opOutputFieldProjection(b, l + 1);
-    exit_section_(b, m, S_OP_OUTPUT_FIELD_PROJECTION_ENTRY, r);
-    return r;
+    exit_section_(b, l, m, r, p, recordModelProjectionRecover_parser_);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4067,7 +4098,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '$' qid '=' opOutputUnnamedVarProjection
+  // '$' qid '=' opOutputUnnamedOrRefVarProjection
   public static boolean opOutputNamedVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputNamedVarProjection")) return false;
     if (!nextTokenIs(b, S_DOLLAR)) return false;
@@ -4077,7 +4108,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, S_EQ);
     p = r; // pin = 3
-    r = r && opOutputUnnamedVarProjection(b, l + 1);
+    r = r && opOutputUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -4160,6 +4191,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_COLON);
     r = r && tagName(b, l + 1);
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // opOutputVarProjectionRef | opOutputUnnamedVarProjection
+  public static boolean opOutputUnnamedOrRefVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputUnnamedOrRefVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION, "<op output unnamed or ref var projection>");
+    r = opOutputVarProjectionRef(b, l + 1);
+    if (!r) r = opOutputUnnamedVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -4276,14 +4319,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opOutputNamedVarProjection | opOutputVarProjectionRef | opOutputUnnamedVarProjection
+  // opOutputNamedVarProjection | opOutputUnnamedOrRefVarProjection
   public static boolean opOutputVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_VAR_PROJECTION, "<op output var projection>");
     r = opOutputNamedVarProjection(b, l + 1);
-    if (!r) r = opOutputVarProjectionRef(b, l + 1);
-    if (!r) r = opOutputUnnamedVarProjection(b, l + 1);
+    if (!r) r = opOutputUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -4790,7 +4832,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'outputProjection' qid ':' typeRef '=' opOutputUnnamedVarProjection
+  // 'outputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection
   public static boolean outputProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "outputProjectionDef")) return false;
     if (!nextTokenIs(b, S_OUTPUT_PROJECTION)) return false;
@@ -4802,7 +4844,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
-    r = p && opOutputUnnamedVarProjection(b, l + 1) && r;
+    r = p && opOutputUnnamedOrRefVarProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5257,6 +5299,29 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "recordDatumEntry_3")) return false;
     consumeToken(b, S_COMMA);
     return true;
+  }
+
+  /* ********************************************************** */
+  // ! ( ',' | ')' | qid )
+  static boolean recordModelProjectionRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordModelProjectionRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !recordModelProjectionRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ',' | ')' | qid
+  private static boolean recordModelProjectionRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recordModelProjectionRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COMMA);
+    if (!r) r = consumeToken(b, S_PAREN_RIGHT);
+    if (!r) r = qid(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -6066,6 +6131,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   final static Parser partRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return partRecover(b, l + 1);
+    }
+  };
+  final static Parser recordModelProjectionRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return recordModelProjectionRecover(b, l + 1);
     }
   };
   final static Parser resourceDefBodyRecover_parser_ = new Parser() {

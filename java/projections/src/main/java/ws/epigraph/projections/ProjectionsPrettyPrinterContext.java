@@ -48,7 +48,11 @@ public class ProjectionsPrettyPrinterContext<VP extends GenVarProjection<VP, ?, 
     otherNamespaceProjections.put(projectionName, projection);
   }
 
+  public boolean isEmpty() { return otherNamespaceProjections.isEmpty(); }
+
   public Collection<VP> otherNamespaceProjections() {
     return otherNamespaceProjections.values();
   }
+
+  public void reset() { otherNamespaceProjections.clear(); }
 }

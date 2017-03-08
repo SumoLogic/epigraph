@@ -231,6 +231,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteUnnamedOrRefVarProjection(@NotNull SchemaOpDeleteUnnamedOrRefVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteUnnamedVarProjection(@NotNull SchemaOpDeleteUnnamedVarProjection o) {
     visitPsiElement(o);
   }
@@ -343,6 +347,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputUnnamedOrRefVarProjection(@NotNull SchemaOpInputUnnamedOrRefVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputUnnamedVarProjection(@NotNull SchemaOpInputUnnamedVarProjection o) {
     visitPsiElement(o);
   }
@@ -452,6 +460,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpOutputSingleTagProjection(@NotNull SchemaOpOutputSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpOutputUnnamedOrRefVarProjection(@NotNull SchemaOpOutputUnnamedOrRefVarProjection o) {
     visitPsiElement(o);
   }
 

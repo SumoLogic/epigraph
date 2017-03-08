@@ -21,12 +21,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputFieldProjectionEntry extends PsiElement {
+public interface SchemaOpDeleteUnnamedOrRefVarProjection extends PsiElement {
 
   @Nullable
-  SchemaOpOutputFieldProjection getOpOutputFieldProjection();
+  SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection();
 
-  @NotNull
-  SchemaQid getQid();
+  @Nullable
+  SchemaOpDeleteVarProjectionRef getOpDeleteVarProjectionRef();
 
 }

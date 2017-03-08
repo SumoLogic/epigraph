@@ -36,9 +36,8 @@ import ws.epigraph.types.Type;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.*;
 
 /**
@@ -62,7 +61,7 @@ public class OpOutputProjectionsTest {
         "      id,",
         "      bestFriend: id",
         // todo get default tag from Person.type, once available
-        "    ),",
+        "    )",
         "    friends *( :id )",
 //        "    friends *( :+id )",
 //        "    friends { *( :+id ) }",
@@ -145,6 +144,16 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseRecursive() throws PsiProcessingException {
     testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+  }
+
+  @Test
+  public void testParseStupidRecursive() throws PsiProcessingException {
+    try {
+      testParsingVarProjection("$self = $self");
+      fail("Expected to get an error");
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("is not defined"));
+    }
   }
 
   @Test

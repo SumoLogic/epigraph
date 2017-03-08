@@ -65,6 +65,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     if (!operation.isDefault())
       l.print(operation.name()).brk();
 
+    l.end();
     l.print("{");
     l.beginCInd();
 
@@ -86,7 +87,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     printOutputProjection(operation, first);
 
     l.brk(1, -l.getDefaultIndentation()).end().print("}");
-    l.end();
+    //l.end();
   }
 
   private boolean printMethod(@NotNull OperationDeclaration operation, boolean first) throws E {

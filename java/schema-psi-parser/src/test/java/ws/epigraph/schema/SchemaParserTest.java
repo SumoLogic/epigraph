@@ -18,17 +18,19 @@ package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.tests.*;
 
 import java.io.IOException;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static ws.epigraph.test.TestUtil.*;
 
 /**
@@ -125,8 +127,7 @@ public class SchemaParserTest {
         lines(
             "namespace test",
             "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
-            "  read",
-            "  {",
+            "  read {",
             "    doc = \"dome doc string\",",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    outputProjection {",
@@ -134,41 +135,35 @@ public class SchemaParserTest {
             "        { id: 1337 } { doc = \"super user account\" }",
             "    } [ required ]( :`record` ( id, firstName ) )",
             "  }",
-            "  read readWithPath",
-            "  {",
+            "  read readWithPath {",
             "    path / .,",
             "    outputType ws.epigraph.tests.Person,",
             "    outputProjection :`record` ( id, firstName )",
             "  }",
-            "  create",
-            "  {",
+            "  create {",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType epigraph.Boolean",
             "  }",
-            "  update",
-            "  {",
+            "  update {",
             "    doc = \"dome doc string\",",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    outputProjection $defaultOutput",
             "  }",
-            "  update customUpdate",
-            "  {",
+            "  update customUpdate {",
             "    doc = \"dome doc string\",",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection []( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    outputProjection $defaultOutput",
             "  }",
-            "  delete",
-            "  {",
+            "  delete {",
             "    deleteProjection [ forbidden ]( +:`record` ( firstName ) ),",
             "    outputType epigraph.Boolean",
             "  }",
-            "  custom customOp",
-            "  {",
+            "  custom customOp {",
             "    method POST,",
             "    doc = \"dome doc string\",",
             "    path / . :`record` / bestFriend,",
@@ -184,6 +179,127 @@ public class SchemaParserTest {
     );
   }
 
+  @Test
+  public void testParseSimpleReference() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[String,Person] {",
+            "  outputProjection out: map[String,Person] = [] (:id)",
+            "  read {",
+            "    outputProjection $out",
+            "  }",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection $out",
+            "  }",
+            "  outputProjection out: map[epigraph.String,ws.epigraph.tests.Person] =",
+            "    []( :id )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseStupidReference() throws IOException {
+    try {
+      testParse(
+          lines(
+              "namespace ws.epigraph.tests",
+              "resource users: map[String,Person] {",
+              "  outputProjection out: map[String,Person] = $out",
+              "  read {",
+              "    outputProjection $out",
+              "  }",
+              "}"
+          ),
+          lines(
+              "namespace ws.epigraph.tests",
+              "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+              "  read {",
+              "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+              "    outputProjection $out",
+              "  }",
+              "  outputProjection out: map[epigraph.String,ws.epigraph.tests.Person] =",
+              "    []( :id )",
+              "}"
+          )
+      );
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Projection 'out' is not defined"));
+    }
+  }
+
+  @Test
+  public void testParseCrossReference() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[String,Person] {",
+            "  outputProjection person1: Person = :`record` (id, firstName, bestFriend $person2)",
+            "  outputProjection person2: Person = :`record` (id, lastName, bestFriend $person1)",
+            "  read {",
+            "    outputProjection [] ( $person1 )",
+            "  }",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection []( $person1 )",
+            "  }",
+            "  outputProjection person1: ws.epigraph.tests.Person =",
+            "    :`record` ( id, firstName, bestFriend $person2 )",
+            "  outputProjection person2: ws.epigraph.tests.Person =",
+            "    :`record` ( id, lastName, bestFriend $person1 )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseStupidCrossReference() throws IOException {
+    try {
+      testParse(
+          lines(
+              "namespace ws.epigraph.tests",
+              "resource users: map[String,Person] {",
+              "  outputProjection person1: Person = $person2",
+              "  outputProjection person2: Person = $person1",
+              "  read {",
+              "    outputProjection [] ( $person1 )",
+              "  }",
+              "}"
+          ),
+          lines(
+              "namespace ws.epigraph.tests",
+              "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+              "  read {",
+              "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+              "    outputProjection []( $person1 )",
+              "  }",
+              "  outputProjection person1: ws.epigraph.tests.Person =",
+              "    :`record` ( id, firstName, bestFriend $person2 )",
+              "  outputProjection person2: ws.epigraph.tests.Person =",
+              "    :`record` ( id, lastName, bestFriend $person1 )",
+              "}"
+          )
+      );
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Projection 'person1' is not defined"));
+      assertTrue(e.getMessage().contains("Projection 'person2' is not defined"));
+    }
+  }
+
   private void testParse(String idlStr, String expected) {
     ResourcesSchema schema = parseSchema(idlStr, resolver);
     assertEquals(expected, printSchema(schema));
@@ -197,7 +313,10 @@ public class SchemaParserTest {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(errors -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, errors));
+//    String psiDump = DebugUtil.psiToString(psiFile, true, false).trim();
+//    System.out.println(psiDump);
+
+    return runPsiParser(context -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, context));
   }
 
 }

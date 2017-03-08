@@ -27,9 +27,6 @@ public interface SchemaOpInputVarProjection extends PsiElement {
   SchemaOpInputNamedVarProjection getOpInputNamedVarProjection();
 
   @Nullable
-  SchemaOpInputUnnamedVarProjection getOpInputUnnamedVarProjection();
-
-  @Nullable
-  SchemaOpInputVarProjectionRef getOpInputVarProjectionRef();
+  SchemaOpInputUnnamedOrRefVarProjection getOpInputUnnamedOrRefVarProjection();
 
 }

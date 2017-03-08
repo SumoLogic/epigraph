@@ -44,8 +44,8 @@ public class SchemaOpDeleteNamedVarProjectionImpl extends ASTWrapperPsiElement i
 
   @Override
   @Nullable
-  public SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedVarProjection.class);
+  public SchemaOpDeleteUnnamedOrRefVarProjection getOpDeleteUnnamedOrRefVarProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedOrRefVarProjection.class);
   }
 
   @Override

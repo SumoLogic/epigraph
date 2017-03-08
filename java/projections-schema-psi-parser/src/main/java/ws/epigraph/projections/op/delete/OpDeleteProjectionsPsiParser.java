@@ -57,41 +57,30 @@ public final class OpDeleteProjectionsPsiParser {
 
     final SchemaOpDeleteNamedVarProjection namedVarProjection = psi.getOpDeleteNamedVarProjection();
     if (namedVarProjection == null) {
-      final SchemaOpDeleteVarProjectionRef varProjectionRef = psi.getOpDeleteVarProjectionRef();
-      if (varProjectionRef == null) {
-        // usual var projection
-        final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection = psi.getOpDeleteUnnamedVarProjection();
-        if (unnamedVarProjection == null)
-          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
-        else return parseUnnamedVarProjection(
-            dataType,
-            unnamedVarProjection,
-            typesResolver,
-            context
+      final SchemaOpDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
+          psi.getOpDeleteUnnamedOrRefVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition",
+            psi,
+            context.errors()
         );
-      } else {
-        // var projection reference
-        final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
-        if (varProjectionRefPsi == null)
-          throw new PsiProcessingException(
-              "Incomplete var projection definition: name not specified",
-              psi,
-              context.errors()
-          );
 
-        final String projectionName = varProjectionRefPsi.getCanonicalName();
-        return context.varReferenceContext()
-            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
-
-      }
+      return parseUnnamedOrRefVarProjection(
+          dataType,
+          unnamedOrRefVarProjection,
+          typesResolver,
+          context
+      );
     } else {
       // named var projection
       final String projectionName = namedVarProjection.getQid().getCanonicalName();
 
-      final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection =
-          namedVarProjection.getOpDeleteUnnamedVarProjection();
+      final @Nullable SchemaOpDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
+          namedVarProjection.getOpDeleteUnnamedOrRefVarProjection();
 
-      if (unnamedVarProjection == null)
+      if (unnamedOrRefVarProjection == null)
         throw new PsiProcessingException(
             String.format("Incomplete var projection '%s' definition", projectionName),
             psi,
@@ -101,18 +90,53 @@ public final class OpDeleteProjectionsPsiParser {
       final OpDeleteVarProjection reference = context.varReferenceContext()
           .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
-      final OpDeleteVarProjection value = parseUnnamedVarProjection(
+      final OpDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
-          unnamedVarProjection,
+          unnamedOrRefVarProjection,
           typesResolver,
           context
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedVarProjection), context);
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
-      assert reference.name() != null;
       return reference;
+    }
+  }
+
+  public static OpDeleteVarProjection parseUnnamedOrRefVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull SchemaOpDeleteUnnamedOrRefVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpDeletePsiProcessingContext context)
+      throws PsiProcessingException {
+
+    final SchemaOpDeleteVarProjectionRef varProjectionRef = psi.getOpDeleteVarProjectionRef();
+    if (varProjectionRef == null) {
+      // usual var projection
+      final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection = psi.getOpDeleteUnnamedVarProjection();
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+      else return parseUnnamedVarProjection(
+          dataType,
+          unnamedVarProjection,
+          typesResolver,
+          context
+      );
+    } else {
+      // var projection reference
+      final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
+      if (varProjectionRefPsi == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition: name not specified",
+            psi,
+            context.errors()
+        );
+
+      final String projectionName = varProjectionRefPsi.getCanonicalName();
+      return context.varReferenceContext()
+          .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+
     }
   }
 

@@ -43,12 +43,24 @@ public class Namespaces {
     return projectionsNamespace(resourceName).append("input");
   }
 
+  public @NotNull Qn inputProjectionNamespace(@NotNull String resourceName, @NotNull String projectionName) {
+    return inputProjectionsNamespace(resourceName).append(projectionName.toLowerCase());
+  }
+
   public @NotNull Qn outputProjectionsNamespace(@NotNull String resourceName) {
     return projectionsNamespace(resourceName).append("output");
   }
 
+  public @NotNull Qn outputProjectionNamespace(@NotNull String resourceName, @NotNull String projectionName) {
+    return outputProjectionsNamespace(resourceName).append(projectionName.toLowerCase());
+  }
+
   public @NotNull Qn deleteProjectionsNamespace(@NotNull String resourceName) {
     return projectionsNamespace(resourceName).append("delete");
+  }
+
+  public @NotNull Qn deleteProjectionNamespace(@NotNull String resourceName, @NotNull String projectionName) {
+    return deleteProjectionsNamespace(resourceName).append(projectionName.toLowerCase());
   }
 
   public @NotNull Qn operationsNamespace(@NotNull String resourceName) {

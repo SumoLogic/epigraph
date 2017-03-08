@@ -27,9 +27,6 @@ public interface SchemaOpDeleteVarProjection extends PsiElement {
   SchemaOpDeleteNamedVarProjection getOpDeleteNamedVarProjection();
 
   @Nullable
-  SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection();
-
-  @Nullable
-  SchemaOpDeleteVarProjectionRef getOpDeleteVarProjectionRef();
+  SchemaOpDeleteUnnamedOrRefVarProjection getOpDeleteUnnamedOrRefVarProjection();
 
 }

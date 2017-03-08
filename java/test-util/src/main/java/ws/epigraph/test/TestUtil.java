@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -328,7 +328,9 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqInputFieldProjection(String fieldName, @NotNull ReqInputFieldProjection projection) {
+  public static @NotNull String printReqInputFieldProjection(
+      String fieldName,
+      @NotNull ReqInputFieldProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
@@ -403,9 +405,11 @@ public final class TestUtil {
 
   public static void failIfHasErrors(final List<PsiProcessingError> errors) {
     if (!errors.isEmpty()) {
-      for (final PsiProcessingError error : errors) System.err.println(error.message() + " at " + error.location());
+      StringBuilder sb = new StringBuilder("\n");
+      for (final PsiProcessingError error : errors)
+        sb.append(error.location()).append(": ").append(error.message()).append("\n");
 
-      fail();
+      fail(sb.toString());
     }
   }
 

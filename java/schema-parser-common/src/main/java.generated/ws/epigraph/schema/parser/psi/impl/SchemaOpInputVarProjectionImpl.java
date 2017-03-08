@@ -50,14 +50,8 @@ public class SchemaOpInputVarProjectionImpl extends ASTWrapperPsiElement impleme
 
   @Override
   @Nullable
-  public SchemaOpInputUnnamedVarProjection getOpInputUnnamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedVarProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpInputVarProjectionRef getOpInputVarProjectionRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputVarProjectionRef.class);
+  public SchemaOpInputUnnamedOrRefVarProjection getOpInputUnnamedOrRefVarProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedOrRefVarProjection.class);
   }
 
 }

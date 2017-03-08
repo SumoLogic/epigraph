@@ -163,5 +163,12 @@ public interface GenVarProjection<
    */
   boolean isResolved();
 
+  /**
+   * Registers a callback to be called after this reference is resolved. Multiple callbacks may be registered.
+   *
+   * @param callback callback to call when this reference is resolved
+   */
+  void runOnResolved(@NotNull Runnable callback);
+
   @NotNull TextLocation location();
 }

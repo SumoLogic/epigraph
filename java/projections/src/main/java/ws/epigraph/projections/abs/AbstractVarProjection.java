@@ -48,6 +48,8 @@ public abstract class AbstractVarProjection<
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
 
+  private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
+
   private final @NotNull TextLocation location;
 
   protected AbstractVarProjection(
@@ -142,10 +144,16 @@ public abstract class AbstractVarProjection<
   public @Nullable TP tagProjection(@NotNull String tagName) { return tagProjections().get(tagName); }
 
   @Override
-  public boolean parenthesized() { assertResolved(); return parenthesized; }
+  public boolean parenthesized() {
+    assertResolved();
+    return parenthesized;
+  }
 
   @Override
-  public @Nullable List<VP> polymorphicTails() { assertResolved(); return polymorphicTails; }
+  public @Nullable List<VP> polymorphicTails() {
+    assertResolved();
+    return polymorphicTails;
+  }
 
   @Override
   public @NotNull VP normalizedForType(final @NotNull TypeApi targetType) {
@@ -166,7 +174,8 @@ public abstract class AbstractVarProjection<
     final List<VP> mergedTails = mergeTails(effectiveProjections);
     final List<VP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
         .stream()
-        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
+        .filter(t -> !t.type()
+            .isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
@@ -291,17 +300,35 @@ public abstract class AbstractVarProjection<
   public void resolve(@NotNull Qn name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
-    if (isResolved())
-      throw new IllegalStateException("Attempt to resolve already resolved reference: " + name);
+    if (this.name != null)
+      throw new IllegalStateException("Attempt to resolve already resolved reference: " + this.name);
+    if (!type().isAssignableFrom(value.type()))
+      throw new IllegalStateException(String.format(
+          "Value type '%s' is incompatible with reference type '%s'",
+          value.type(),
+          this.type()
+      ));
 
     this.name = name;
     this.tagProjections = value.tagProjections();
     this.parenthesized = value.parenthesized();
     this.polymorphicTails = value.polymorphicTails();
+
+//    System.out.println("Resolved " + name);
+    for (final Runnable callback : onResolvedCallbacks) callback.run();
+    onResolvedCallbacks.clear();
   }
 
   @Override
   public boolean isResolved() { return tagProjections != null; }
+
+  @Override
+  public void runOnResolved(final @NotNull Runnable callback) {
+    if (isResolved())
+      callback.run();
+    else
+      onResolvedCallbacks.add(callback);
+  }
 
   protected void assertResolved() {
     if (!isResolved())
