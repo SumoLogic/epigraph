@@ -18,26 +18,26 @@ package ws.epigraph.projections.op.output;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
-import ws.epigraph.schema.TypeRefs;
-import ws.epigraph.schema.parser.psi.*;
-import ws.epigraph.projections.Annotation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeKind;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.getDatumType;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
@@ -54,12 +54,39 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpOutputVarProjection psi,
       @NotNull TypesResolver typesResolver,
-      @NotNull OpOutputPsiProcessingContext context)
-      throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     final SchemaOpOutputNamedVarProjection namedVarProjection = psi.getOpOutputNamedVarProjection();
-    if (namedVarProjection != null) { // named var projection init
+    if (namedVarProjection == null) {
+      final SchemaOpOutputVarProjectionRef varProjectionRef = psi.getOpOutputVarProjectionRef();
+      if (varProjectionRef == null) {
+        // usual var projection
+        final SchemaOpOutputUnnamedVarProjection unnamedVarProjection = psi.getOpOutputUnnamedVarProjection();
+        if (unnamedVarProjection == null)
+          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        else return parseUnnamedVarProjection(
+            dataType,
+            unnamedVarProjection,
+            typesResolver,
+            context
+        );
+      } else {
+        // var projection reference
+        final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
+        if (varProjectionRefPsi == null)
+          throw new PsiProcessingException(
+              "Incomplete var projection definition: name not specified",
+              psi,
+              context.errors()
+          );
 
+        final String projectionName = varProjectionRefPsi.getCanonicalName();
+        return context.varReferenceContext()
+            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+
+      }
+    } else {
+      // named var projection
       final String projectionName = namedVarProjection.getQid().getCanonicalName();
 
       final SchemaOpOutputUnnamedVarProjection unnamedVarProjection =
@@ -87,26 +114,6 @@ public final class OpOutputProjectionsPsiParser {
 
       assert reference.name() != null;
       return reference;
-
-    } else {
-      final SchemaOpOutputVarProjectionRef varProjectionRef = psi.getOpOutputVarProjectionRef();
-      if (varProjectionRef != null) { // var projection reference
-
-        final String projectionName = varProjectionRef.getQid().getCanonicalName();
-        return context.varReferenceContext()
-            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
-
-      } else { // usual var projection
-        final SchemaOpOutputUnnamedVarProjection unnamedVarProjection = psi.getOpOutputUnnamedVarProjection();
-        if (unnamedVarProjection == null)
-          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
-        else return parseUnnamedVarProjection(
-            dataType,
-            unnamedVarProjection,
-            typesResolver,
-            context
-        );
-      }
     }
   }
 
@@ -538,18 +545,21 @@ public final class OpOutputProjectionsPsiParser {
 
     if (tailPsi == null) return null;
     else {
-      List<MP> tails = new ArrayList<MP>();
+      List<MP> tails = new ArrayList<>();
 
       final SchemaOpOutputModelSingleTail singleTailPsi = tailPsi.getOpOutputModelSingleTail();
       if (singleTailPsi == null) {
         final SchemaOpOutputModelMultiTail multiTailPsi = tailPsi.getOpOutputModelMultiTail();
         assert multiTailPsi != null;
         for (SchemaOpOutputModelMultiTailItem tailItemPsi : multiTailPsi.getOpOutputModelMultiTailItemList()) {
-          tails.add(
+          final SchemaOpOutputModelProjection tailProjectionPsi = tailItemPsi.getOpOutputModelProjection();
+          if (tailProjectionPsi == null)
+            context.addError("Incomplete tail projection", tailItemPsi);
+          else tails.add(
               buildModelTailProjection(
                   modelClass,
                   tailItemPsi.getTypeRef(),
-                  tailItemPsi.getOpOutputModelProjection(),
+                  tailProjectionPsi,
                   tailItemPsi.getOpOutputModelPropertyList(),
                   typesResolver,
                   context
@@ -557,16 +567,20 @@ public final class OpOutputProjectionsPsiParser {
           );
         }
       } else {
-        tails.add(
-            buildModelTailProjection(
-                modelClass,
-                singleTailPsi.getTypeRef(),
-                singleTailPsi.getOpOutputModelProjection(),
-                singleTailPsi.getOpOutputModelPropertyList(),
-                typesResolver,
-                context
-            )
-        );
+        final SchemaOpOutputModelProjection tailProjectionPsi = singleTailPsi.getOpOutputModelProjection();
+        if (tailProjectionPsi == null)
+          context.addError("Incomplete tail projection", singleTailPsi);
+        else
+          tails.add(
+              buildModelTailProjection(
+                  modelClass,
+                  singleTailPsi.getTypeRef(),
+                  tailProjectionPsi,
+                  singleTailPsi.getOpOutputModelPropertyList(),
+                  typesResolver,
+                  context
+              )
+          );
       }
       return tails;
     }

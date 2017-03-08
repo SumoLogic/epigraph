@@ -47,6 +47,7 @@ public interface SchemaElementTypes {
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
   IElementType S_DELETE_OPERATION_BODY_PART = new SchemaElementType("S_DELETE_OPERATION_BODY_PART");
   IElementType S_DELETE_OPERATION_DEF = new SchemaElementType("S_DELETE_OPERATION_DEF");
+  IElementType S_DELETE_PROJECTION_DEF = new SchemaElementType("S_DELETE_PROJECTION_DEF");
   IElementType S_ENUM_DATUM = new SchemaElementType("S_ENUM_DATUM");
   IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
@@ -55,6 +56,7 @@ public interface SchemaElementTypes {
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
+  IElementType S_INPUT_PROJECTION_DEF = new SchemaElementType("S_INPUT_PROJECTION_DEF");
   IElementType S_LIST_DATUM = new SchemaElementType("S_LIST_DATUM");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
   IElementType S_LIST_TYPE_DEF = new SchemaListTypeDefStubElementType("S_LIST_TYPE_DEF");
@@ -88,12 +90,15 @@ public interface SchemaElementTypes {
   IElementType S_OP_DELETE_MODEL_SINGLE_TAIL = new SchemaElementType("S_OP_DELETE_MODEL_SINGLE_TAIL");
   IElementType S_OP_DELETE_MULTI_TAG_PROJECTION = new SchemaElementType("S_OP_DELETE_MULTI_TAG_PROJECTION");
   IElementType S_OP_DELETE_MULTI_TAG_PROJECTION_ITEM = new SchemaElementType("S_OP_DELETE_MULTI_TAG_PROJECTION_ITEM");
+  IElementType S_OP_DELETE_NAMED_VAR_PROJECTION = new SchemaElementType("S_OP_DELETE_NAMED_VAR_PROJECTION");
   IElementType S_OP_DELETE_RECORD_MODEL_PROJECTION = new SchemaElementType("S_OP_DELETE_RECORD_MODEL_PROJECTION");
   IElementType S_OP_DELETE_SINGLE_TAG_PROJECTION = new SchemaElementType("S_OP_DELETE_SINGLE_TAG_PROJECTION");
+  IElementType S_OP_DELETE_UNNAMED_VAR_PROJECTION = new SchemaElementType("S_OP_DELETE_UNNAMED_VAR_PROJECTION");
   IElementType S_OP_DELETE_VAR_MULTI_TAIL = new SchemaElementType("S_OP_DELETE_VAR_MULTI_TAIL");
   IElementType S_OP_DELETE_VAR_MULTI_TAIL_ITEM = new SchemaElementType("S_OP_DELETE_VAR_MULTI_TAIL_ITEM");
   IElementType S_OP_DELETE_VAR_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_DELETE_VAR_POLYMORPHIC_TAIL");
   IElementType S_OP_DELETE_VAR_PROJECTION = new SchemaElementType("S_OP_DELETE_VAR_PROJECTION");
+  IElementType S_OP_DELETE_VAR_PROJECTION_REF = new SchemaElementType("S_OP_DELETE_VAR_PROJECTION_REF");
   IElementType S_OP_DELETE_VAR_SINGLE_TAIL = new SchemaElementType("S_OP_DELETE_VAR_SINGLE_TAIL");
   IElementType S_OP_FIELD_PATH = new SchemaElementType("S_OP_FIELD_PATH");
   IElementType S_OP_FIELD_PATH_ENTRY = new SchemaElementType("S_OP_FIELD_PATH_ENTRY");
@@ -113,12 +118,15 @@ public interface SchemaElementTypes {
   IElementType S_OP_INPUT_MODEL_SINGLE_TAIL = new SchemaElementType("S_OP_INPUT_MODEL_SINGLE_TAIL");
   IElementType S_OP_INPUT_MULTI_TAG_PROJECTION = new SchemaElementType("S_OP_INPUT_MULTI_TAG_PROJECTION");
   IElementType S_OP_INPUT_MULTI_TAG_PROJECTION_ITEM = new SchemaElementType("S_OP_INPUT_MULTI_TAG_PROJECTION_ITEM");
+  IElementType S_OP_INPUT_NAMED_VAR_PROJECTION = new SchemaElementType("S_OP_INPUT_NAMED_VAR_PROJECTION");
   IElementType S_OP_INPUT_RECORD_MODEL_PROJECTION = new SchemaElementType("S_OP_INPUT_RECORD_MODEL_PROJECTION");
   IElementType S_OP_INPUT_SINGLE_TAG_PROJECTION = new SchemaElementType("S_OP_INPUT_SINGLE_TAG_PROJECTION");
+  IElementType S_OP_INPUT_UNNAMED_VAR_PROJECTION = new SchemaElementType("S_OP_INPUT_UNNAMED_VAR_PROJECTION");
   IElementType S_OP_INPUT_VAR_MULTI_TAIL = new SchemaElementType("S_OP_INPUT_VAR_MULTI_TAIL");
   IElementType S_OP_INPUT_VAR_MULTI_TAIL_ITEM = new SchemaElementType("S_OP_INPUT_VAR_MULTI_TAIL_ITEM");
   IElementType S_OP_INPUT_VAR_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_INPUT_VAR_POLYMORPHIC_TAIL");
   IElementType S_OP_INPUT_VAR_PROJECTION = new SchemaElementType("S_OP_INPUT_VAR_PROJECTION");
+  IElementType S_OP_INPUT_VAR_PROJECTION_REF = new SchemaElementType("S_OP_INPUT_VAR_PROJECTION_REF");
   IElementType S_OP_INPUT_VAR_SINGLE_TAIL = new SchemaElementType("S_OP_INPUT_VAR_SINGLE_TAIL");
   IElementType S_OP_MAP_MODEL_PATH = new SchemaElementType("S_OP_MAP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH = new SchemaElementType("S_OP_MODEL_PATH");
@@ -299,6 +307,9 @@ public interface SchemaElementTypes {
       else if (type == S_DELETE_OPERATION_DEF) {
         return new SchemaDeleteOperationDefImpl(node);
       }
+      else if (type == S_DELETE_PROJECTION_DEF) {
+        return new SchemaDeleteProjectionDefImpl(node);
+      }
       else if (type == S_ENUM_DATUM) {
         return new SchemaEnumDatumImpl(node);
       }
@@ -322,6 +333,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_IMPORT_STATEMENT) {
         return new SchemaImportStatementImpl(node);
+      }
+      else if (type == S_INPUT_PROJECTION_DEF) {
+        return new SchemaInputProjectionDefImpl(node);
       }
       else if (type == S_LIST_DATUM) {
         return new SchemaListDatumImpl(node);
@@ -422,11 +436,17 @@ public interface SchemaElementTypes {
       else if (type == S_OP_DELETE_MULTI_TAG_PROJECTION_ITEM) {
         return new SchemaOpDeleteMultiTagProjectionItemImpl(node);
       }
+      else if (type == S_OP_DELETE_NAMED_VAR_PROJECTION) {
+        return new SchemaOpDeleteNamedVarProjectionImpl(node);
+      }
       else if (type == S_OP_DELETE_RECORD_MODEL_PROJECTION) {
         return new SchemaOpDeleteRecordModelProjectionImpl(node);
       }
       else if (type == S_OP_DELETE_SINGLE_TAG_PROJECTION) {
         return new SchemaOpDeleteSingleTagProjectionImpl(node);
+      }
+      else if (type == S_OP_DELETE_UNNAMED_VAR_PROJECTION) {
+        return new SchemaOpDeleteUnnamedVarProjectionImpl(node);
       }
       else if (type == S_OP_DELETE_VAR_MULTI_TAIL) {
         return new SchemaOpDeleteVarMultiTailImpl(node);
@@ -439,6 +459,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_DELETE_VAR_PROJECTION) {
         return new SchemaOpDeleteVarProjectionImpl(node);
+      }
+      else if (type == S_OP_DELETE_VAR_PROJECTION_REF) {
+        return new SchemaOpDeleteVarProjectionRefImpl(node);
       }
       else if (type == S_OP_DELETE_VAR_SINGLE_TAIL) {
         return new SchemaOpDeleteVarSingleTailImpl(node);
@@ -497,11 +520,17 @@ public interface SchemaElementTypes {
       else if (type == S_OP_INPUT_MULTI_TAG_PROJECTION_ITEM) {
         return new SchemaOpInputMultiTagProjectionItemImpl(node);
       }
+      else if (type == S_OP_INPUT_NAMED_VAR_PROJECTION) {
+        return new SchemaOpInputNamedVarProjectionImpl(node);
+      }
       else if (type == S_OP_INPUT_RECORD_MODEL_PROJECTION) {
         return new SchemaOpInputRecordModelProjectionImpl(node);
       }
       else if (type == S_OP_INPUT_SINGLE_TAG_PROJECTION) {
         return new SchemaOpInputSingleTagProjectionImpl(node);
+      }
+      else if (type == S_OP_INPUT_UNNAMED_VAR_PROJECTION) {
+        return new SchemaOpInputUnnamedVarProjectionImpl(node);
       }
       else if (type == S_OP_INPUT_VAR_MULTI_TAIL) {
         return new SchemaOpInputVarMultiTailImpl(node);
@@ -514,6 +543,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_INPUT_VAR_PROJECTION) {
         return new SchemaOpInputVarProjectionImpl(node);
+      }
+      else if (type == S_OP_INPUT_VAR_PROJECTION_REF) {
+        return new SchemaOpInputVarProjectionRefImpl(node);
       }
       else if (type == S_OP_INPUT_VAR_SINGLE_TAIL) {
         return new SchemaOpInputVarSingleTailImpl(node);

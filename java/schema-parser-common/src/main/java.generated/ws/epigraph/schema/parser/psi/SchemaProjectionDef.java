@@ -23,7 +23,13 @@ import com.intellij.psi.PsiElement;
 
 public interface SchemaProjectionDef extends PsiElement {
 
-  @NotNull
+  @Nullable
+  SchemaDeleteProjectionDef getDeleteProjectionDef();
+
+  @Nullable
+  SchemaInputProjectionDef getInputProjectionDef();
+
+  @Nullable
   SchemaOutputProjectionDef getOutputProjectionDef();
 
 }

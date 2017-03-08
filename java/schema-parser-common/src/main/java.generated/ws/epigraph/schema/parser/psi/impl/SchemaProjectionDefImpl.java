@@ -43,9 +43,21 @@ public class SchemaProjectionDefImpl extends ASTWrapperPsiElement implements Sch
   }
 
   @Override
-  @NotNull
+  @Nullable
+  public SchemaDeleteProjectionDef getDeleteProjectionDef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDeleteProjectionDef.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaInputProjectionDef getInputProjectionDef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaInputProjectionDef.class);
+  }
+
+  @Override
+  @Nullable
   public SchemaOutputProjectionDef getOutputProjectionDef() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOutputProjectionDef.class));
+    return PsiTreeUtil.getChildOfType(this, SchemaOutputProjectionDef.class);
   }
 
 }

@@ -354,8 +354,10 @@ private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
 }
 
 // projection def
-projectionDef ::= outputProjectionDef // | inputProjectionDef | deleteProjectionDef
+projectionDef ::= outputProjectionDef | inputProjectionDef | deleteProjectionDef
 outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opOutputUnnamedVarProjection {pin=1}
+inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opInputUnnamedVarProjection {pin=1}
+deleteProjectionDef ::= 'deleteProjection' qid ':' typeRef '=' opDeleteUnnamedVarProjection {pin=1}
 
 // operation def parts
 operationName ::= 'default' | qid
@@ -534,7 +536,10 @@ opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
 
-opInputVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
+opInputVarProjection ::= opInputNamedVarProjection | opInputVarProjectionRef | opInputUnnamedVarProjection
+opInputNamedVarProjection ::= '$' qid '=' opInputUnnamedVarProjection {pin = 3}
+opInputVarProjectionRef ::= '$' qid {pin = 1}
+opInputUnnamedVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagProjection ) opInputVarPolymorphicTail?
 private opInputBracedVarProjection ::= '(' opInputVarProjection ')'
 
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
@@ -594,7 +599,10 @@ private opInputKeyProjectionRecover ::= ! ( ']' | ',' )
 // can delete current entity or a bestFriend entity
 // + :record ( bestFriend + )
 
-opDeleteVarProjection ::= '+'? ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
+opDeleteVarProjection ::= opDeleteNamedVarProjection | opDeleteVarProjectionRef | opDeleteUnnamedVarProjection
+opDeleteNamedVarProjection ::= '$' qid '=' opDeleteUnnamedVarProjection {pin = 3}
+opDeleteVarProjectionRef ::= '$' qid {pin = 1}
+opDeleteUnnamedVarProjection ::= '+'? ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
 private opDeleteBracedVarProjection ::= '(' opDeleteVarProjection ')'
 
 opDeleteMultiTagProjection ::= ':' '(' (opDeleteMultiTagProjectionItem ','?)* ')' {pin=2}

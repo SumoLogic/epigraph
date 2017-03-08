@@ -21,15 +21,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpDeleteVarProjection extends PsiElement {
+public interface SchemaOpInputNamedVarProjection extends PsiElement {
 
   @Nullable
-  SchemaOpDeleteNamedVarProjection getOpDeleteNamedVarProjection();
+  SchemaOpInputUnnamedVarProjection getOpInputUnnamedVarProjection();
 
-  @Nullable
-  SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection();
+  @NotNull
+  SchemaQid getQid();
 
-  @Nullable
-  SchemaOpDeleteVarProjectionRef getOpDeleteVarProjectionRef();
+  @NotNull
+  PsiElement getDollar();
+
+  @NotNull
+  PsiElement getEq();
 
 }

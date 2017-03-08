@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,18 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.*;
-import ws.epigraph.schema.TypeRefs;
-import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
-import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
 
@@ -57,6 +56,73 @@ public final class OpInputProjectionsPsiParser {
   public static OpInputVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpInputVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+
+    final SchemaOpInputNamedVarProjection namedVarProjection = psi.getOpInputNamedVarProjection();
+    if (namedVarProjection == null) {
+      final SchemaOpInputVarProjectionRef varProjectionRef = psi.getOpInputVarProjectionRef();
+      if (varProjectionRef == null) {
+        // usual var projection
+        final SchemaOpInputUnnamedVarProjection unnamedVarProjection = psi.getOpInputUnnamedVarProjection();
+        if (unnamedVarProjection == null)
+          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        else return parseUnnamedVarProjection(
+            dataType,
+            unnamedVarProjection,
+            typesResolver,
+            context
+        );
+      } else {
+        // var projection reference
+        final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
+        if (varProjectionRefPsi == null)
+          throw new PsiProcessingException(
+              "Incomplete var projection definition: name not specified",
+              psi,
+              context.errors()
+          );
+
+        final String projectionName = varProjectionRefPsi.getCanonicalName();
+        return context.varReferenceContext()
+            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+
+      }
+    } else {
+      // named var projection
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final SchemaOpInputUnnamedVarProjection unnamedVarProjection =
+          namedVarProjection.getOpInputUnnamedVarProjection();
+
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context.errors()
+        );
+
+      final OpInputVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final OpInputVarProjection value = parseUnnamedVarProjection(
+          dataType,
+          unnamedVarProjection,
+          typesResolver,
+          context
+      );
+
+      context.varReferenceContext()
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedVarProjection), context);
+
+      assert reference.name() != null;
+      return reference;
+    }
+  }
+
+  public static OpInputVarProjection parseUnnamedVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull SchemaOpInputUnnamedVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
@@ -582,18 +648,21 @@ public final class OpInputProjectionsPsiParser {
 
     if (tailPsi == null) return null;
     else {
-      List<MP> tails = new ArrayList<MP>();
+      List<MP> tails = new ArrayList<>();
 
       final SchemaOpInputModelSingleTail singleTailPsi = tailPsi.getOpInputModelSingleTail();
       if (singleTailPsi == null) {
         final SchemaOpInputModelMultiTail multiTailPsi = tailPsi.getOpInputModelMultiTail();
         assert multiTailPsi != null;
         for (SchemaOpInputModelMultiTailItem tailItemPsi : multiTailPsi.getOpInputModelMultiTailItemList()) {
-          tails.add(
+          final SchemaOpInputModelProjection tailProjectionPsi = tailItemPsi.getOpInputModelProjection();
+          if (tailProjectionPsi == null)
+            context.addError("Incomplete tail projection", tailItemPsi);
+          else tails.add(
               buildModelTailProjection(
                   modelClass,
                   tailItemPsi.getTypeRef(),
-                  tailItemPsi.getOpInputModelProjection(),
+                  tailProjectionPsi,
                   tailItemPsi.getOpInputModelPropertyList(),
                   typesResolver,
                   context
@@ -601,11 +670,14 @@ public final class OpInputProjectionsPsiParser {
           );
         }
       } else {
-        tails.add(
+        final SchemaOpInputModelProjection tailProjectionPsi = singleTailPsi.getOpInputModelProjection();
+        if (tailProjectionPsi == null)
+          context.addError("Incomplete tail projection", singleTailPsi);
+        else tails.add(
             buildModelTailProjection(
                 modelClass,
                 singleTailPsi.getTypeRef(),
-                singleTailPsi.getOpInputModelProjection(),
+                tailProjectionPsi,
                 singleTailPsi.getOpInputModelPropertyList(),
                 typesResolver,
                 context

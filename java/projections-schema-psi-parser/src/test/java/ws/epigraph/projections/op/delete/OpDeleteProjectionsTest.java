@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,6 +116,11 @@ public class OpDeleteProjectionsTest {
     testParsingVarProjection(
         ":( id, `record` )"
     );
+  }
+
+  @Test
+  public void testParseRecursive() throws PsiProcessingException {
+    testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
   }
 
   @Test

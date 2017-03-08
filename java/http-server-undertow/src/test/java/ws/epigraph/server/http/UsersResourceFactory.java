@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
 import ws.epigraph.tests.resources.users.operations.create.AbstractCreateOperation;
 import ws.epigraph.tests.resources.users.operations.create.input.ReqInputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.customcapitalize.AbstractCustomCapitalizeOperation;
-import ws.epigraph.tests.resources.users.operations.customcapitalize.input.ReqInputPersonRecordProjection;
-import ws.epigraph.tests.resources.users.operations.customcapitalize.path.ReqPathUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations.custom.capitalize.AbstractCustomCapitalizeOperation;
+import ws.epigraph.tests.resources.users.operations.custom.capitalize.input.ReqInputPersonRecordProjection;
+import ws.epigraph.tests.resources.users.operations.custom.capitalize.path.ReqPathUsersFieldProjection;
 import ws.epigraph.tests.resources.users.operations.delete.AbstractDeleteOperation;
 import ws.epigraph.tests.resources.users.operations.delete.delete.ReqDeletePersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations.delete.delete.ReqDeleteUsersFieldProjection;
@@ -293,8 +293,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         @NotNull PersonRecord.Builder.Data builder,
         @Nullable PersonRecord inputData,
         @NotNull ReqPathUsersFieldProjection path,
-        @Nullable ws.epigraph.tests.resources.users.operations.customcapitalize.input.ReqInputUsersFieldProjection inputFieldProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.customcapitalize.output.ReqOutputUsersFieldProjection outputProjection) {
+        @Nullable ws.epigraph.tests.resources.users.operations.custom.capitalize.input.ReqInputUsersFieldProjection inputFieldProjection,
+        @NotNull ws.epigraph.tests.resources.users.operations.custom.capitalize.output.ReqOutputUsersFieldProjection outputProjection) {
 
       PersonId.Imm key = path.dataProjection().key().value();
       final Person.Builder person = (Person.Builder) storage.users().datas().get(key);

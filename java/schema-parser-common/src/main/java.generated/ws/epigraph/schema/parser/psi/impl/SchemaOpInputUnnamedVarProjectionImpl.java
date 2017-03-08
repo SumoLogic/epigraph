@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpDeleteVarProjectionImpl extends ASTWrapperPsiElement implements SchemaOpDeleteVarProjection {
+public class SchemaOpInputUnnamedVarProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputUnnamedVarProjection {
 
-  public SchemaOpDeleteVarProjectionImpl(ASTNode node) {
+  public SchemaOpInputUnnamedVarProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpDeleteVarProjection(this);
+    visitor.visitOpInputUnnamedVarProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,20 +44,20 @@ public class SchemaOpDeleteVarProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
-  public SchemaOpDeleteNamedVarProjection getOpDeleteNamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteNamedVarProjection.class);
+  public SchemaOpInputMultiTagProjection getOpInputMultiTagProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputMultiTagProjection.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedVarProjection.class);
+  public SchemaOpInputSingleTagProjection getOpInputSingleTagProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputSingleTagProjection.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpDeleteVarProjectionRef getOpDeleteVarProjectionRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteVarProjectionRef.class);
+  public SchemaOpInputVarPolymorphicTail getOpInputVarPolymorphicTail() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputVarPolymorphicTail.class);
   }
 
 }

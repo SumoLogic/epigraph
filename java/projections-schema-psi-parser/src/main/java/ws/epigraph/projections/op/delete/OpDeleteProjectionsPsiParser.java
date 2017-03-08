@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.delete;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
-import ws.epigraph.schema.TypeRefs;
-import ws.epigraph.schema.parser.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -30,9 +30,9 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeKind;
 
 import java.text.MessageFormat;
@@ -52,6 +52,73 @@ public final class OpDeleteProjectionsPsiParser {
   public static OpDeleteVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpDeleteVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final SchemaOpDeleteNamedVarProjection namedVarProjection = psi.getOpDeleteNamedVarProjection();
+    if (namedVarProjection == null) {
+      final SchemaOpDeleteVarProjectionRef varProjectionRef = psi.getOpDeleteVarProjectionRef();
+      if (varProjectionRef == null) {
+        // usual var projection
+        final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection = psi.getOpDeleteUnnamedVarProjection();
+        if (unnamedVarProjection == null)
+          throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        else return parseUnnamedVarProjection(
+            dataType,
+            unnamedVarProjection,
+            typesResolver,
+            context
+        );
+      } else {
+        // var projection reference
+        final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
+        if (varProjectionRefPsi == null)
+          throw new PsiProcessingException(
+              "Incomplete var projection definition: name not specified",
+              psi,
+              context.errors()
+          );
+
+        final String projectionName = varProjectionRefPsi.getCanonicalName();
+        return context.varReferenceContext()
+            .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+
+      }
+    } else {
+      // named var projection
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection =
+          namedVarProjection.getOpDeleteUnnamedVarProjection();
+
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context.errors()
+        );
+
+      final OpDeleteVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final OpDeleteVarProjection value = parseUnnamedVarProjection(
+          dataType,
+          unnamedVarProjection,
+          typesResolver,
+          context
+      );
+
+      context.varReferenceContext()
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedVarProjection), context);
+
+      assert reference.name() != null;
+      return reference;
+    }
+  }
+
+  public static OpDeleteVarProjection parseUnnamedVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull SchemaOpDeleteUnnamedVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -415,18 +482,21 @@ public final class OpDeleteProjectionsPsiParser {
 
     if (tailPsi == null) return null;
     else {
-      List<MP> tails = new ArrayList<MP>();
+      List<MP> tails = new ArrayList<>();
 
       final SchemaOpDeleteModelSingleTail singleTailPsi = tailPsi.getOpDeleteModelSingleTail();
       if (singleTailPsi == null) {
         final SchemaOpDeleteModelMultiTail multiTailPsi = tailPsi.getOpDeleteModelMultiTail();
         assert multiTailPsi != null;
         for (SchemaOpDeleteModelMultiTailItem tailItemPsi : multiTailPsi.getOpDeleteModelMultiTailItemList()) {
-          tails.add(
+          final SchemaOpDeleteModelProjection tailProjectionPsi = tailItemPsi.getOpDeleteModelProjection();
+          if (tailProjectionPsi == null)
+            context.addError("Incomplete tail projection", tailItemPsi);
+          else tails.add(
               buildModelTailProjection(
                   modelClass,
                   tailItemPsi.getTypeRef(),
-                  tailItemPsi.getOpDeleteModelProjection(),
+                  tailProjectionPsi,
                   tailItemPsi.getOpDeleteModelPropertyList(),
                   typesResolver,
                   context
@@ -434,11 +504,14 @@ public final class OpDeleteProjectionsPsiParser {
           );
         }
       } else {
-        tails.add(
+        final SchemaOpDeleteModelProjection tailProjectionPsi = singleTailPsi.getOpDeleteModelProjection();
+        if (tailProjectionPsi == null)
+          context.addError("Incomplete tail projection", singleTailPsi);
+        else tails.add(
             buildModelTailProjection(
                 modelClass,
                 singleTailPsi.getTypeRef(),
-                singleTailPsi.getOpDeleteModelProjection(),
+                tailProjectionPsi,
                 singleTailPsi.getOpDeleteModelPropertyList(),
                 typesResolver,
                 context

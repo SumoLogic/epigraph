@@ -81,6 +81,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDeleteProjectionDef(@NotNull SchemaDeleteProjectionDef o) {
+    visitPsiElement(o);
+  }
+
   public void visitEnumDatum(@NotNull SchemaEnumDatum o) {
     visitDatum(o);
   }
@@ -112,6 +116,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitImports(@NotNull SchemaImports o) {
+    visitPsiElement(o);
+  }
+
+  public void visitInputProjectionDef(@NotNull SchemaInputProjectionDef o) {
     visitPsiElement(o);
   }
 
@@ -211,11 +219,19 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteNamedVarProjection(@NotNull SchemaOpDeleteNamedVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteRecordModelProjection(@NotNull SchemaOpDeleteRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpDeleteSingleTagProjection(@NotNull SchemaOpDeleteSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteUnnamedVarProjection(@NotNull SchemaOpDeleteUnnamedVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -232,6 +248,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpDeleteVarProjection(@NotNull SchemaOpDeleteVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteVarProjectionRef(@NotNull SchemaOpDeleteVarProjectionRef o) {
     visitPsiElement(o);
   }
 
@@ -311,11 +331,19 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpInputNamedVarProjection(@NotNull SchemaOpInputNamedVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpInputRecordModelProjection(@NotNull SchemaOpInputRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOpInputSingleTagProjection(@NotNull SchemaOpInputSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputUnnamedVarProjection(@NotNull SchemaOpInputUnnamedVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -332,6 +360,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpInputVarProjection(@NotNull SchemaOpInputVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpInputVarProjectionRef(@NotNull SchemaOpInputVarProjectionRef o) {
     visitPsiElement(o);
   }
 

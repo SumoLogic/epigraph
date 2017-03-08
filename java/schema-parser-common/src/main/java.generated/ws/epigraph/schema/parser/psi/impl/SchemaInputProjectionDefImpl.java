@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpDeleteVarProjectionImpl extends ASTWrapperPsiElement implements SchemaOpDeleteVarProjection {
+public class SchemaInputProjectionDefImpl extends ASTWrapperPsiElement implements SchemaInputProjectionDef {
 
-  public SchemaOpDeleteVarProjectionImpl(ASTNode node) {
+  public SchemaInputProjectionDefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpDeleteVarProjection(this);
+    visitor.visitInputProjectionDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,20 +44,38 @@ public class SchemaOpDeleteVarProjectionImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
-  public SchemaOpDeleteNamedVarProjection getOpDeleteNamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteNamedVarProjection.class);
+  public SchemaOpInputUnnamedVarProjection getOpInputUnnamedVarProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedVarProjection.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpDeleteUnnamedVarProjection getOpDeleteUnnamedVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedVarProjection.class);
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpDeleteVarProjectionRef getOpDeleteVarProjectionRef() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteVarProjectionRef.class);
+  public SchemaTypeRef getTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getColon() {
+    return findChildByType(S_COLON);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getEq() {
+    return findChildByType(S_EQ);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getInputProjection() {
+    return notNullChild(findChildByType(S_INPUT_PROJECTION));
   }
 
 }
