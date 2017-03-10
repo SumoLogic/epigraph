@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * Format grammar (some quotes omitted):<p/>
  * <p>
  * <code> <pre>
- * DATA ::= POLYDATA | MONODATA                                        // triggered by projection (polymorphic tails presence)
+ * DATA ::= RECDATA | POLYDATA | MONODATA                              // POLYDATA triggered by projection (polymorphic tails presence)
+ * RECDATA ::= '{' "REC" ':' NUMBER '}'                                // NUMBER = how many steps up the stack to take to get the same instance
  * POLYDATA ::= '{' "type" ':' TYPE, "data" ':' MONODATA '}'
  * TYPE ::= '"' ( STRING '.' )* STRING '"'                             // enquoted dot-separated type FQN string
  * MONODATA ::= MULTIDATA | VALUE                                      // triggered by projection (parenthesized flag)
