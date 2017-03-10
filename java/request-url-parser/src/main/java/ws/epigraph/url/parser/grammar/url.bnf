@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@
     HASH = '#'
     UNDERSCORE = '_'
     BANG = '!'
+    DOLLAR = '$'
     QMARK = '?'
     AMP = '&'
     PARAM_NAME = 'regexp:(\p{Alnum}+)'
@@ -323,7 +324,11 @@ reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
 // reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
 
-reqInputVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
+reqInputVarProjection ::= reqInputNamedVarProjection | reqInputUnnamedOrRefVarProjection
+reqInputUnnamedOrRefVarProjection ::= reqInputVarProjectionRef | reqInputUnnamedVarProjection
+reqInputNamedVarProjection ::= '$' qid '=' reqInputUnnamedOrRefVarProjection {pin = 3}
+reqInputVarProjectionRef ::= '$' qid {pin = 1}
+reqInputUnnamedVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
 private reqInputBracedVarProjection ::= '(' reqInputVarProjection ')'
 
 reqInputSingleTagProjection ::= ( ':' tagName)? reqInputModelProjectionWithProperties

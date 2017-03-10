@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.url.lexer;
 
@@ -69,12 +85,16 @@ public interface UrlElementTypes {
   IElementType U_REQ_INPUT_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_INPUT_MODEL_SINGLE_TAIL");
   IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION");
   IElementType U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM");
+  IElementType U_REQ_INPUT_NAMED_VAR_PROJECTION = new UrlElementType("U_REQ_INPUT_NAMED_VAR_PROJECTION");
   IElementType U_REQ_INPUT_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_INPUT_RECORD_MODEL_PROJECTION");
   IElementType U_REQ_INPUT_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_INPUT_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_INPUT_UNNAMED_OR_REF_VAR_PROJECTION = new UrlElementType("U_REQ_INPUT_UNNAMED_OR_REF_VAR_PROJECTION");
+  IElementType U_REQ_INPUT_UNNAMED_VAR_PROJECTION = new UrlElementType("U_REQ_INPUT_UNNAMED_VAR_PROJECTION");
   IElementType U_REQ_INPUT_VAR_MULTI_TAIL = new UrlElementType("U_REQ_INPUT_VAR_MULTI_TAIL");
   IElementType U_REQ_INPUT_VAR_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_INPUT_VAR_MULTI_TAIL_ITEM");
   IElementType U_REQ_INPUT_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_INPUT_VAR_POLYMORPHIC_TAIL");
   IElementType U_REQ_INPUT_VAR_PROJECTION = new UrlElementType("U_REQ_INPUT_VAR_PROJECTION");
+  IElementType U_REQ_INPUT_VAR_PROJECTION_REF = new UrlElementType("U_REQ_INPUT_VAR_PROJECTION_REF");
   IElementType U_REQ_INPUT_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_INPUT_VAR_SINGLE_TAIL");
   IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
   IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
@@ -149,6 +169,7 @@ public interface UrlElementTypes {
   IElementType U_CURLY_LEFT = new UrlElementType("{");
   IElementType U_CURLY_RIGHT = new UrlElementType("}");
   IElementType U_DEFAULT = new UrlElementType("default");
+  IElementType U_DOLLAR = new UrlElementType("$");
   IElementType U_DOT = new UrlElementType(".");
   IElementType U_EQ = new UrlElementType("=");
   IElementType U_HASH = new UrlElementType("#");
@@ -352,11 +373,20 @@ public interface UrlElementTypes {
       else if (type == U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM) {
         return new UrlReqInputMultiTagProjectionItemImpl(node);
       }
+      else if (type == U_REQ_INPUT_NAMED_VAR_PROJECTION) {
+        return new UrlReqInputNamedVarProjectionImpl(node);
+      }
       else if (type == U_REQ_INPUT_RECORD_MODEL_PROJECTION) {
         return new UrlReqInputRecordModelProjectionImpl(node);
       }
       else if (type == U_REQ_INPUT_SINGLE_TAG_PROJECTION) {
         return new UrlReqInputSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
+        return new UrlReqInputUnnamedOrRefVarProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_UNNAMED_VAR_PROJECTION) {
+        return new UrlReqInputUnnamedVarProjectionImpl(node);
       }
       else if (type == U_REQ_INPUT_VAR_MULTI_TAIL) {
         return new UrlReqInputVarMultiTailImpl(node);
@@ -369,6 +399,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_INPUT_VAR_PROJECTION) {
         return new UrlReqInputVarProjectionImpl(node);
+      }
+      else if (type == U_REQ_INPUT_VAR_PROJECTION_REF) {
+        return new UrlReqInputVarProjectionRefImpl(node);
       }
       else if (type == U_REQ_INPUT_VAR_SINGLE_TAIL) {
         return new UrlReqInputVarSingleTailImpl(node);

@@ -27,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqInputVarProjection {
+public class UrlReqInputNamedVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqInputNamedVarProjection {
 
-  public UrlReqInputVarProjectionImpl(ASTNode node) {
+  public UrlReqInputNamedVarProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqInputVarProjection(this);
+    visitor.visitReqInputNamedVarProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -43,15 +43,27 @@ public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implement
   }
 
   @Override
-  @Nullable
-  public UrlReqInputNamedVarProjection getReqInputNamedVarProjection() {
-    return findChildByClass(UrlReqInputNamedVarProjection.class);
+  @NotNull
+  public UrlQid getQid() {
+    return findNotNullChildByClass(UrlQid.class);
   }
 
   @Override
   @Nullable
   public UrlReqInputUnnamedOrRefVarProjection getReqInputUnnamedOrRefVarProjection() {
     return findChildByClass(UrlReqInputUnnamedOrRefVarProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getDollar() {
+    return findNotNullChildByType(U_DOLLAR);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getEq() {
+    return findNotNullChildByType(U_EQ);
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
@@ -40,6 +41,7 @@ import static ws.epigraph.test.TestUtil.lines;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@SuppressWarnings("ErrorNotRethrown")
 public class ReqInputProjectionsParserTest {
   private final DataType dataType = new DataType(Person.type, Person.id);
   private final TypesResolver resolver = new SimpleTypesResolver(
@@ -66,6 +68,8 @@ public class ReqInputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    )),",
+          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :id ),",
           "    friendsMap []( :(id, `record` (id, firstName) ) )",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
@@ -106,6 +110,27 @@ public class ReqInputProjectionsParserTest {
   @Test
   public void testParseList() {
     testParse(":record ( friends *( :id ) )");
+  }
+
+  @Test
+  public void testParseRecursiveWrongOp() throws PsiProcessingException {
+    try {
+      testParse("$self = :( id, record ( id, bestFriend $self ) )");
+      fail();
+    } catch (AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage().contains("Tag 'id' is not supported"));
+      assertTrue(e.getMessage(), e.getMessage().contains("Field 'bestFriend' is not supported"));
+    }
+  }
+
+  @Test
+  public void testParseRecursive() throws PsiProcessingException {
+    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )");
+  }
+
+  @Test
+  public void testParseRecursiveDifferentOpRecursion() throws PsiProcessingException {
+    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )");
   }
 
   @Test

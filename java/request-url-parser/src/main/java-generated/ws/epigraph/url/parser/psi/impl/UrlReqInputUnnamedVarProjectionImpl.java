@@ -27,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqInputVarProjection {
+public class UrlReqInputUnnamedVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqInputUnnamedVarProjection {
 
-  public UrlReqInputVarProjectionImpl(ASTNode node) {
+  public UrlReqInputUnnamedVarProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqInputVarProjection(this);
+    visitor.visitReqInputUnnamedVarProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,20 @@ public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public UrlReqInputNamedVarProjection getReqInputNamedVarProjection() {
-    return findChildByClass(UrlReqInputNamedVarProjection.class);
+  public UrlReqInputMultiTagProjection getReqInputMultiTagProjection() {
+    return findChildByClass(UrlReqInputMultiTagProjection.class);
   }
 
   @Override
   @Nullable
-  public UrlReqInputUnnamedOrRefVarProjection getReqInputUnnamedOrRefVarProjection() {
-    return findChildByClass(UrlReqInputUnnamedOrRefVarProjection.class);
+  public UrlReqInputSingleTagProjection getReqInputSingleTagProjection() {
+    return findChildByClass(UrlReqInputSingleTagProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public UrlReqInputVarPolymorphicTail getReqInputVarPolymorphicTail() {
+    return findChildByClass(UrlReqInputVarPolymorphicTail.class);
   }
 
 }

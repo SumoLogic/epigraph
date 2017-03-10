@@ -347,13 +347,16 @@ public abstract class AbstractVarProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
-    return Objects.equals(type, that.type) &&
-           Objects.equals(tagProjections, that.tagProjections) &&
+
+    return name != null && name.equals(that.name()) ||
+           Objects.equals(type, that.type) && Objects.equals(tagProjections, that.tagProjections) &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
+
   }
 
   @Override
   public int hashCode() {
+    if (name !=null) return name.hashCode();
     return Objects.hash(type, tagProjections, polymorphicTails);
   }
 }

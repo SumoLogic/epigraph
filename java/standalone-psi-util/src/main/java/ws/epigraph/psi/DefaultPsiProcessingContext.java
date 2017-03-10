@@ -34,6 +34,6 @@ public class DefaultPsiProcessingContext implements PsiProcessingContext {
 
   @Override
   public void setErrors(final @NotNull List<PsiProcessingError> errors) {
-    this.errors = errors;
+    this.errors = new ArrayList<>(errors);
   }
 }

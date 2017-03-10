@@ -27,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqInputVarProjection {
+public class UrlReqInputVarProjectionRefImpl extends ASTWrapperPsiElement implements UrlReqInputVarProjectionRef {
 
-  public UrlReqInputVarProjectionImpl(ASTNode node) {
+  public UrlReqInputVarProjectionRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqInputVarProjection(this);
+    visitor.visitReqInputVarProjectionRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,14 @@ public class UrlReqInputVarProjectionImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public UrlReqInputNamedVarProjection getReqInputNamedVarProjection() {
-    return findChildByClass(UrlReqInputNamedVarProjection.class);
+  public UrlQid getQid() {
+    return findChildByClass(UrlQid.class);
   }
 
   @Override
-  @Nullable
-  public UrlReqInputUnnamedOrRefVarProjection getReqInputUnnamedOrRefVarProjection() {
-    return findChildByClass(UrlReqInputUnnamedOrRefVarProjection.class);
+  @NotNull
+  public PsiElement getDollar() {
+    return findNotNullChildByType(U_DOLLAR);
   }
 
 }

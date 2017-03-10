@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public final class ProjectionsParsingUtil {
     final TP tagProjection = op.tagProjections().get(tagName);
     if (tagProjection == null) {
       throw new PsiProcessingException(
-          String.format("Tag '%s' is unsupported, supported tags: {%s}", tagName, listTags(op)), location, context);
+          String.format("Tag '%s' is not supported, supported tags: {%s}", tagName, listTags(op)), location, context);
     }
     return tagProjection;
   }

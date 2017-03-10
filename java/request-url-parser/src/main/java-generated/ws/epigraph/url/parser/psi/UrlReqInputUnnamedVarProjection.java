@@ -21,12 +21,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqInputVarProjection extends PsiElement {
+public interface UrlReqInputUnnamedVarProjection extends PsiElement {
 
   @Nullable
-  UrlReqInputNamedVarProjection getReqInputNamedVarProjection();
+  UrlReqInputMultiTagProjection getReqInputMultiTagProjection();
 
   @Nullable
-  UrlReqInputUnnamedOrRefVarProjection getReqInputUnnamedOrRefVarProjection();
+  UrlReqInputSingleTagProjection getReqInputSingleTagProjection();
+
+  @Nullable
+  UrlReqInputVarPolymorphicTail getReqInputVarPolymorphicTail();
 
 }

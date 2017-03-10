@@ -60,6 +60,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "#"                  { return U_HASH; }
   "_"                  { return U_UNDERSCORE; }
   "!"                  { return U_BANG; }
+  "$"                  { return U_DOLLAR; }
   "?"                  { yybegin(PARAM_NAME); return U_QMARK; }
   "&"                  { yybegin(PARAM_NAME); return U_AMP; }
 
