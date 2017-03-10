@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,17 @@ trait JavaGen {
 
   protected def relativeFilePath: Path
 
+  def shouldRun: Boolean = true
+
   protected def generate: String
 
   def children: Iterable[JavaGen] = Iterable()
 
   def writeUnder(sourcesRoot: Path): Unit = {
-    //System.out.println("Writing to '" + relativeFilePath + "'")
-    JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
+    if (shouldRun) {
+      //System.out.println("Writing to '" + relativeFilePath + "'")
+      JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
+    }
   }
 
 }

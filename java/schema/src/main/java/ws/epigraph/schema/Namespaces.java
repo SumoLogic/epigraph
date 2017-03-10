@@ -72,12 +72,11 @@ public class Namespaces {
       @NotNull OperationKind operationKind,
       @Nullable String operationName) {
 
-    Qn qn = operationsNamespace(resourceName).append(operationKind.toString().toLowerCase());
-
+    String ns = operationKind.toString().toLowerCase();
     if (operationName != null)
-      qn = qn.append(operationName.toLowerCase());
+      ns = ns + "_"+operationName.toLowerCase();
 
-    return qn;
+    return operationsNamespace(resourceName).append(ns);
   }
 
   public @NotNull Qn operationProjectionsNamespace(

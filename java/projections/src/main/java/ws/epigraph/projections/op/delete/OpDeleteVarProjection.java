@@ -49,7 +49,7 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
     this.canDelete = canDelete;
   }
 
-  protected OpDeleteVarProjection(final TypeApi type, final TextLocation location) {
+  public OpDeleteVarProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }
 

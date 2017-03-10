@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,9 +129,11 @@ Util.create$mapClass(
     ctx.imports.map{ i => s"import $i;" }.mkString("", "\n", "\n")
   }
 
-  def genFields(ctx: ServiceGenContext): String = ctx.fields.sorted.mkString("", "\n", "\n")
+  def genFields(ctx: ServiceGenContext): String = ctx.fields.toList.sorted.mkString("", "\n", "\n")
 
   def genMethods(ctx: ServiceGenContext): String = ctx.methods.foldLeft(CodeChunk.empty)(_ + _).code
+
+  def genStatic(ctx: ServiceGenContext): String = ctx.static.foldLeft(CodeChunk.empty)(_ + _).code
 
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]

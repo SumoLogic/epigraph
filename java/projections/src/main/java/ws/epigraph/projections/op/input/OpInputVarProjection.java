@@ -43,7 +43,7 @@ public class OpInputVarProjection extends AbstractVarProjection<
     super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
-  protected OpInputVarProjection(final TypeApi type, final TextLocation location) {
+  public OpInputVarProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }
 }

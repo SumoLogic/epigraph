@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,17 @@ import scala.collection.mutable
  */
 class ServiceGenContext(val gctx: GenContext) {
   private val _imports = new mutable.HashSet[String]()
-  private val _fields = new mutable.MutableList[String]()
+  private val _fields = new mutable.HashSet[String]()
   private val _methods = new mutable.MutableList[CodeChunk]()
+  private val _static = new mutable.MutableList[CodeChunk]()
+
+  private val _visited = new mutable.HashSet[String]()
 
   private val methodUID: AtomicInteger = new AtomicInteger(0)
 
   // settings: take them from command line?
 
   val generateTextLocations = false
-
-  val generateSeparateMethodsForVarProjections = false
 
   //
 
@@ -73,15 +74,29 @@ class ServiceGenContext(val gctx: GenContext) {
 
   def imports: List[String] = (_imports ++ _methods.flatMap(_.imports)).toList.sorted
 
-  def addField(f: String) { _fields += f }
+  def addField(f: String): Boolean = {
+    val res = !_fields.contains(f)
+    if (res) _fields += f
+    res
+  }
 
-  def fields: mutable.MutableList[String] = _fields
+  def fields: mutable.HashSet[String] = _fields
 
-  def addMethod(m: String) { _methods += CodeChunk(m) }
+  def addMethod(m: String) { addMethod(CodeChunk(m)) }
 
   def addMethod(m: CodeChunk) { _methods += m }
 
   def methods: mutable.MutableList[CodeChunk] = _methods
 
+  def addStatic(c: String) { addStatic(CodeChunk(c)) }
+
+  def addStatic(c: CodeChunk) { _static += c }
+
+  def static: mutable.MutableList[CodeChunk] = _static
+
   def nextMethodUID: Int = methodUID.getAndIncrement()
+
+  def visited(name: String): Boolean = _visited.contains(name)
+
+  def addVisited(name: String) { _visited.add(name) }
 }

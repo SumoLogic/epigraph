@@ -25,7 +25,7 @@ import ws.epigraph.lang.Qn
 trait ReqUpdateProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
-  override lazy val namespace: Qn = super.namespace.append("update").append(namespaceSuffix)
+  override def namespace: Qn = super.namespace.append("update").append(namespaceSuffix)
 }
 
 object ReqUpdateProjectionGen {

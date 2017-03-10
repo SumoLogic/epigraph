@@ -43,7 +43,7 @@ public class OpOutputVarProjection extends AbstractVarProjection<
     super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
 
-  protected OpOutputVarProjection(final TypeApi type, final TextLocation location) {
+  public OpOutputVarProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }
 

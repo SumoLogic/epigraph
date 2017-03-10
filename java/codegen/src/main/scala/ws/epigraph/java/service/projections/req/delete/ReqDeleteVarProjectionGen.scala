@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.JavaGenNames.{jn, ln}
+import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
@@ -36,7 +36,9 @@ class ReqDeleteVarProjectionGen(
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+
+  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqDeleteProjections
 
   override protected def tailGenerator(op: OpDeleteVarProjection, normalized: Boolean) =
     new ReqDeleteVarProjectionGen(

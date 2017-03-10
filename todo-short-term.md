@@ -6,8 +6,10 @@
   - [x] make var projections half-mutable? find a way to have var projection references/resolve them
   - [x] introduce context to op psi parsers, use it to store (potentially unfinished) named var projections
   - [x] update psi parsers
-  - [ ] update op codegen
-  - [ ] update req codegen: req projections must be reusable too
+  - [x] update op codegen
+  - [x] update req codegen: req projections must be reusable too
+  - [ ] req projections syntx
+  - [ ] req projections psi parsers
   - [ ] allow recursive data: update marshaller/unmarshaller
 
 

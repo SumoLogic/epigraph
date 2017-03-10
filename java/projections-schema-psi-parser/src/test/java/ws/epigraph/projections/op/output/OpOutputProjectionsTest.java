@@ -143,7 +143,10 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseRecursive() throws PsiProcessingException {
-    testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+    OpOutputVarProjection vp = testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+    final Qn name = vp.name();
+    assertNotNull(name);
+    assertEquals("self", name.toString());
   }
 
   @Test
@@ -415,12 +418,12 @@ public class OpOutputProjectionsTest {
     assertEquals(expected, actual);
   }
 
-  private void testParsingVarProjection(String str) {
-    testParsingVarProjection(str, str);
+  private OpOutputVarProjection testParsingVarProjection(String str) {
+    return testParsingVarProjection(str, str);
   }
 
-  private void testParsingVarProjection(String str, String expected) {
-    testParsingVarProjection(dataType, str, expected);
+  private OpOutputVarProjection testParsingVarProjection(String str, String expected) {
+    return testParsingVarProjection(dataType, str, expected);
   }
 
   private OpOutputVarProjection testParsingVarProjection(

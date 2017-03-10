@@ -25,7 +25,7 @@ import ws.epigraph.lang.Qn
 trait ReqDeleteProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
-  override lazy val namespace: Qn = super.namespace.append("delete").append(namespaceSuffix)
+  override def namespace: Qn = super.namespace.append("delete").append(namespaceSuffix)
 }
 
 object ReqDeleteProjectionGen {

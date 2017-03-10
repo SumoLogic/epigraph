@@ -102,6 +102,8 @@ public abstract class $shortClassName extends ${operationKindUpper}Operation<$sh
 
   ${i(ServiceGenUtils.genMethods(sctx))}
 
+  ${i(ServiceGenUtils.genStatic(sctx))}
+
 }
 """/*@formatter:on*/
   }

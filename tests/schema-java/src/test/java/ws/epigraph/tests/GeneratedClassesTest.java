@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,21 @@
 
 package ws.epigraph.tests;
 
+import de.uka.ilkd.pp.Layouter;
+import de.uka.ilkd.pp.NoExceptions;
+import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
+import ws.epigraph.schema.Namespaces;
+import ws.epigraph.schema.operations.OperationKind;
+import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 
@@ -31,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@SuppressWarnings("ConstantConditions")
 public class GeneratedClassesTest {
   @Test
   public void testListBuilder() {
@@ -66,5 +77,44 @@ public class GeneratedClassesTest {
     final List<@Nullable ? extends PersonRecord> datums = list.datums();
     final PersonRecord record = datums.get(0);
     assertEquals(1, record.getId().getVal().intValue());
+  }
+
+  @Test
+  public void testRecursiveOpProjection() {
+    final OpDeleteVarProjection varProjection =
+        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
+
+    assertEquals(
+        "[]( $recTest = :`record` ( id, bestFriend $recTest ) )",
+        printOpDeleteVarProjection(
+            Qn.fromDotSeparated("ws.epigraph.tests"),
+            UsersResourceDeclaration.INSTANCE.fieldName(),
+            UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.name(),
+            varProjection
+        )
+    );
+  }
+
+  public static @NotNull String printOpDeleteVarProjection(
+      Qn namespace,
+      String resourceName,
+      String operationName,
+      OpDeleteVarProjection projection
+  ) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(
+        layouter,
+        new ProjectionsPrettyPrinterContext<>(
+            new Namespaces(namespace).operationDeleteProjectionsNamespace(
+                resourceName,
+                OperationKind.DELETE,
+                operationName
+            )
+        )
+    );
+    printer.print(projection, 0);
+    layouter.close();
+    return sb.getString();
   }
 }

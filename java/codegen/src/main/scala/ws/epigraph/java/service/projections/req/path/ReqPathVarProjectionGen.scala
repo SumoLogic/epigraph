@@ -38,6 +38,8 @@ class ReqPathVarProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
+  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqPaths
+
   override protected def tailGenerator(
     op: OpVarPath,
     normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")

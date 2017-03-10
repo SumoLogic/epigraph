@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,22 +33,48 @@ class OpInputVarProjectionGen(p: OpInputVarProjection)
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
 
-    if (ctx.generateSeparateMethodsForVarProjections) {
-      val methodName = "constructInputVarProjection" + ctx.nextMethodUID
+    val opName = p.name()
+    if (opName != null) {
+      val opNameString = p.name().toString
 
-      ctx.addMethod(
-        /*@formatter:off*/sn"""\
+      val visitedKey = "projections.op.output.input." + opNameString
+      val methodName = "constructInputVarProjectionFor$" + opNameString.replace(".", "_")
+
+      if (!ctx.visited(visitedKey)) {
+
+        ctx.addVisited(visitedKey)
+        ctx.addImport("java.util.Map")
+        ctx.addImport("java.util.HashMap")
+
+        if (ctx.addField("private static Map<String, OpInputVarProjection> inputProjectionRefs = new HashMap<>();"))
+          ctx.addStatic("inputProjectionRefs = null;")
+
+        ctx.addMethod(
+          /*@formatter:off*/sn"""\
 private static OpInputVarProjection $methodName() {
-  return new OpInputVarProjection(
-    ${genTypeExpr(p.`type`(), ctx.gctx)},
-    ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
-      (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
-    ${p.parenthesized().toString},
-    ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
-    ${gen(p.location(), ctx)}
-  );
+  OpInputVarProjection ref = inputProjectionRefs.get("$opNameString");
+  if (ref != null && ref.isResolved()) return ref;
+  if (ref == null) {
+    ref = new OpInputVarProjection(
+      ${genTypeExpr(p.`type`(), ctx.gctx)},
+      ${gen(p.location(), ctx)}
+    );
+    inputProjectionRefs.put("$opNameString", ref);
+    OpInputVarProjection value = new OpInputVarProjection(
+      ${genTypeExpr(p.`type`(), ctx.gctx)},
+      ${i(genLinkedMap("String", "OpInputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+        (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
+      ${p.parenthesized().toString},
+      ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
+      ${gen(p.location(), ctx)}
+    );
+    ref.resolve(${gen(opName, ctx)}, value);
+  }
+  return ref;
 }"""/*@formatter:on*/
-      )
+        )
+        
+      }
 
       s"$methodName()"
 

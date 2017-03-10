@@ -25,7 +25,7 @@ import ws.epigraph.lang.Qn
 trait ReqInputProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
-  override lazy val namespace: Qn = super.namespace.append("input").append(namespaceSuffix)
+  override def namespace: Qn = super.namespace.append("input").append(namespaceSuffix)
 }
 
 object ReqInputProjectionGen {

@@ -82,6 +82,10 @@ public final class $resourceDeclarationClassName extends ResourceDeclaration {
 
   ${i(ServiceGenUtils.genFields(sgctx))}
 
+  static {
+    ${i(ServiceGenUtils.genStatic(sgctx))}
+  }
+
   private $resourceDeclarationClassName() {
     ${i(superCall)};
   }

@@ -158,8 +158,10 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       // run sequentially
       while (generators.nonEmpty) {
         val generator: JavaGen = generators.dequeue()
-        generators ++= generator.children
-        runner.apply(generator)
+        if (generator.shouldRun) {
+          generators ++= generator.children
+          runner.apply(generator)
+        }
       }
     } else {
       // run asynchronously
@@ -167,21 +169,23 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       val phaser = new Phaser(1) // active jobs counter + 1
 
       def submit(generator: JavaGen): Unit = {
-        phaser.register()
-        executor.submit(
-          new Runnable {
-            override def run(): Unit = {
-              try {
-                generator.children.foreach(submit)
-                runner.apply(generator)
-              } catch {
-                case e: Exception => cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
-              } finally {
-                phaser.arriveAndDeregister()
+        if (generator.shouldRun) {
+          phaser.register()
+          executor.submit(
+            new Runnable {
+              override def run(): Unit = {
+                try {
+                  generator.children.foreach(submit)
+                  runner.apply(generator)
+                } catch {
+                  case e: Exception => cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
+                } finally {
+                  phaser.arriveAndDeregister()
+                }
               }
             }
-          }
-        )
+          )
+        }
       }
 
       generators.foreach{ submit }

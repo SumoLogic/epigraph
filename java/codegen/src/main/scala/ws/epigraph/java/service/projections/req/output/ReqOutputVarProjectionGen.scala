@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.JavaGenNames.{jn, ln}
+import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
@@ -36,7 +36,9 @@ class ReqOutputVarProjectionGen(
   override type OpProjectionType = OpOutputVarProjection
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+
+  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqOutputProjections
 
   override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean) =
     new ReqOutputVarProjectionGen(

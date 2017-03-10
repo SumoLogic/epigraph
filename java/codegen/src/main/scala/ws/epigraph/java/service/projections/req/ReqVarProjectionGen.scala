@@ -36,11 +36,23 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
 
   protected def op: OpProjectionType
 
+  protected def generatedProjections: java.util.Set[Qn]
+
   protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
 
   protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqProjectionGen
 
   // -----------
+
+
+  override def shouldRun: Boolean = Option(op.name()).forall(name => !generatedProjections.contains(name))
+
+  override def namespace: Qn = Option(op.name()).map(_.removeLastSegment()).getOrElse(super.namespace)
+
+  protected def genShortClassName(prefix: String, suffix: String): String = {
+    val middle = Option(op.name()).map(_.last()).map(JavaGenUtils.up).getOrElse(ln(cType))
+    s"$prefix$middle$suffix"
+  }
 
   override lazy val children: Iterable[ReqProjectionGen] =
     tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
@@ -92,6 +104,8 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
     reqVarProjectionFqn: Qn,
     reqTagProjectionEntryFqn: Qn
   ): String = {
+
+    Option(op.name()).foreach(name => generatedProjections.add(name))
 
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\

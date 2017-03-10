@@ -5,24 +5,6 @@ import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
-/*
-
-outputProjection myProjection : MyType (foo, bar)
-
-outputProjection myProjection : map[Foo,Bar] [] ( :record (...) )
-
-read {
-  outputProjection (foo, bar $myProjection )
-}
-
-outputProjection recProjection : MyType (foo, bar $recProjection )
-
-read {
-  outputProjection $fileProjection = ( name, attributes, owner) ~Folder ( items * $fileProjection )
-}
-
-*/
-
 resource users: PersonMap {
 
   read {
@@ -99,6 +81,14 @@ resource users: PersonMap {
 
   delete {
     deleteProjection [ required ] ( + )
+
+    outputType map[PersonId, epigraph.Error]
+    outputProjection [] (code, message)
+  }
+
+  // output projection generator test
+  delete recursiveTest {
+    deleteProjection [ ] ( $recTest = :`record` (id, bestFriend $recTest ) )
 
     outputType map[PersonId, epigraph.Error]
     outputProjection [] (code, message)

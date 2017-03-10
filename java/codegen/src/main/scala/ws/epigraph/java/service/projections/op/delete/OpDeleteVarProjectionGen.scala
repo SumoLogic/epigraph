@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,28 +28,53 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpDeleteVarProjectionGen(p: OpDeleteVarProjection)
-  extends ServiceObjectGen[OpDeleteVarProjection](p) {
+class OpDeleteVarProjectionGen(p: OpDeleteVarProjection) extends ServiceObjectGen[OpDeleteVarProjection](p) {
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
 
-    if (ctx.generateSeparateMethodsForVarProjections) {
-      val methodName = "constructDeleteVarProjection" + ctx.nextMethodUID
+    val opName = p.name()
+    if (opName != null) {
+      val opNameString = p.name().toString
 
-      ctx.addMethod(
-        /*@formatter:off*/sn"""\
+      val visitedKey = "projections.op.output.delete." + opNameString
+      val methodName = "constructDeleteVarProjectionFor$" + opNameString.replace(".", "_")
+
+      if (!ctx.visited(visitedKey)) {
+
+        ctx.addVisited(visitedKey)
+        ctx.addImport("java.util.Map")
+        ctx.addImport("java.util.HashMap")
+
+        if (ctx.addField("private static Map<String, OpDeleteVarProjection> deleteProjectionRefs = new HashMap<>();"))
+           ctx.addStatic("deleteProjectionRefs = null;")
+
+        ctx.addMethod(
+          /*@formatter:off*/sn"""\
 private static OpDeleteVarProjection $methodName() {
-  return new OpDeleteVarProjection(
-    ${genTypeExpr(p.`type`(), ctx.gctx)},
-    ${gen(p.canDelete, ctx)},
-    ${i(genLinkedMap("String", "OpDeleteTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
-      (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
-    ${p.parenthesized().toString},
-    ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
-    ${gen(p.location(), ctx)}
-  );
+  OpDeleteVarProjection ref = deleteProjectionRefs.get("$opNameString");
+  if (ref != null && ref.isResolved()) return ref;
+  if (ref == null) {
+    ref = new OpDeleteVarProjection(
+      ${genTypeExpr(p.`type`(), ctx.gctx)},
+      ${gen(p.location(), ctx)}
+    );
+    deleteProjectionRefs.put("$opNameString", ref);
+    OpDeleteVarProjection value = new OpDeleteVarProjection(
+      ${genTypeExpr(p.`type`(), ctx.gctx)},
+      ${gen(p.canDelete, ctx)},
+      ${i(genLinkedMap("String", "OpDeleteTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+        (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
+      ${p.parenthesized().toString},
+      ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
+      ${gen(p.location(), ctx)}
+    );
+    ref.resolve(${gen(opName, ctx)}, value);
+  }
+  return ref;
 }"""/*@formatter:on*/
-      )
+        )
+
+      }
 
       s"$methodName()"
 

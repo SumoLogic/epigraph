@@ -30,12 +30,13 @@ import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
 import ws.epigraph.tests.resources.users.operations.create.AbstractCreateOperation;
 import ws.epigraph.tests.resources.users.operations.create.input.ReqInputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.AbstractCustomCapitalizeOperation;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.input.ReqInputPersonRecordProjection;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.path.ReqPathUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations.custom_capitalize.AbstractCustomCapitalizeOperation;
+import ws.epigraph.tests.resources.users.operations.custom_capitalize.input.ReqInputPersonRecordProjection;
+import ws.epigraph.tests.resources.users.operations.custom_capitalize.path.ReqPathUsersFieldProjection;
 import ws.epigraph.tests.resources.users.operations.delete.AbstractDeleteOperation;
 import ws.epigraph.tests.resources.users.operations.delete.delete.ReqDeletePersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations.delete.delete.ReqDeleteUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations.delete_recursivetest.AbstractDeleteRecursiveTestOperation;
 import ws.epigraph.tests.resources.users.operations.read.AbstractReadOperation;
 import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations.read.output.ReqOutputPersonMapProjection;
@@ -80,6 +81,20 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   protected @NotNull DeleteOperation<PersonId_Error_Map.Data> constructDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new DeleteOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull DeleteOperation<PersonId_Error_Map.Data> constructRecursiveTestDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new AbstractDeleteRecursiveTestOperation(operationDeclaration) {
+      @Override
+      protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
+          final @NotNull PersonId_Error_Map.Builder.Data builder,
+          final @NotNull ws.epigraph.tests.resources.users.operations.delete_recursivetest.delete.ReqDeleteUsersFieldProjection deleteProjection,
+          final @NotNull ws.epigraph.tests.resources.users.operations.delete_recursivetest.output.ReqOutputUsersFieldProjection outputProjection) {
+        throw new RuntimeException("Unimplemented");
+      }
+    };
   }
 
   @Override
@@ -293,8 +308,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         @NotNull PersonRecord.Builder.Data builder,
         @Nullable PersonRecord inputData,
         @NotNull ReqPathUsersFieldProjection path,
-        @Nullable ws.epigraph.tests.resources.users.operations.custom.capitalize.input.ReqInputUsersFieldProjection inputFieldProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.custom.capitalize.output.ReqOutputUsersFieldProjection outputProjection) {
+        @Nullable ws.epigraph.tests.resources.users.operations.custom_capitalize.input.ReqInputUsersFieldProjection inputFieldProjection,
+        @NotNull ws.epigraph.tests.resources.users.operations.custom_capitalize.output.ReqOutputUsersFieldProjection outputProjection) {
 
       PersonId.Imm key = path.dataProjection().key().value();
       final Person.Builder person = (Person.Builder) storage.users().datas().get(key);

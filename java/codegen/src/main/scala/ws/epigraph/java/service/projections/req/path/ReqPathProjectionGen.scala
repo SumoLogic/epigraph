@@ -25,7 +25,7 @@ import ws.epigraph.lang.Qn
 trait ReqPathProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
-  override lazy val namespace: Qn = super.namespace.append("path").append(namespaceSuffix)
+  override def namespace: Qn = super.namespace.append("path").append(namespaceSuffix)
 }
 
 object ReqPathProjectionGen {
