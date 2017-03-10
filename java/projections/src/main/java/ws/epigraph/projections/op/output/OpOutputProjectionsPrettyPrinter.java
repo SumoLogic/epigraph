@@ -59,7 +59,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     Annotations annotations = projection.annotations();
 
     if (params.isEmpty() && annotations.isEmpty() && metaProjection == null) {
-      l.beginCInd();
+      l.beginIInd(0);
 
       if (!isPrintoutEmpty(projection)) {
         if (tagName != null) {

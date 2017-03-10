@@ -153,11 +153,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_DELETE_MULTI_TAG_PROJECTION_ITEM) {
       r = reqDeleteMultiTagProjectionItem(b, 0);
     }
+    else if (t == U_REQ_DELETE_NAMED_VAR_PROJECTION) {
+      r = reqDeleteNamedVarProjection(b, 0);
+    }
     else if (t == U_REQ_DELETE_RECORD_MODEL_PROJECTION) {
       r = reqDeleteRecordModelProjection(b, 0);
     }
     else if (t == U_REQ_DELETE_SINGLE_TAG_PROJECTION) {
       r = reqDeleteSingleTagProjection(b, 0);
+    }
+    else if (t == U_REQ_DELETE_UNNAMED_OR_REF_VAR_PROJECTION) {
+      r = reqDeleteUnnamedOrRefVarProjection(b, 0);
+    }
+    else if (t == U_REQ_DELETE_UNNAMED_VAR_PROJECTION) {
+      r = reqDeleteUnnamedVarProjection(b, 0);
     }
     else if (t == U_REQ_DELETE_VAR_MULTI_TAIL) {
       r = reqDeleteVarMultiTail(b, 0);
@@ -170,6 +179,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_DELETE_VAR_PROJECTION) {
       r = reqDeleteVarProjection(b, 0);
+    }
+    else if (t == U_REQ_DELETE_VAR_PROJECTION_REF) {
+      r = reqDeleteVarProjectionRef(b, 0);
     }
     else if (t == U_REQ_DELETE_VAR_SINGLE_TAIL) {
       r = reqDeleteVarSingleTail(b, 0);
@@ -291,6 +303,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_OUTPUT_COMA_VAR_PROJECTION) {
       r = reqOutputComaVarProjection(b, 0);
     }
+    else if (t == U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF) {
+      r = reqOutputComaVarProjectionRef(b, 0);
+    }
     else if (t == U_REQ_OUTPUT_MODEL_META) {
       r = reqOutputModelMeta(b, 0);
     }
@@ -305,6 +320,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_OUTPUT_MODEL_SINGLE_TAIL) {
       r = reqOutputModelSingleTail(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION) {
+      r = reqOutputNamedComaVarProjection(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION) {
+      r = reqOutputNamedTrunkVarProjection(b, 0);
     }
     else if (t == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
       r = reqOutputStarTagProjection(b, 0);
@@ -326,6 +347,21 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION) {
       r = reqOutputTrunkVarProjection(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF) {
+      r = reqOutputTrunkVarProjectionRef(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION) {
+      r = reqOutputUnnamedComaVarProjection(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION) {
+      r = reqOutputUnnamedOrRefComaVarProjection(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION) {
+      r = reqOutputUnnamedOrRefTrunkVarProjection(b, 0);
+    }
+    else if (t == U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION) {
+      r = reqOutputUnnamedTrunkVarProjection(b, 0);
     }
     else if (t == U_REQ_OUTPUT_VAR_MULTI_TAIL) {
       r = reqOutputVarMultiTail(b, 0);
@@ -384,11 +420,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM) {
       r = reqUpdateMultiTagProjectionItem(b, 0);
     }
+    else if (t == U_REQ_UPDATE_NAMED_VAR_PROJECTION) {
+      r = reqUpdateNamedVarProjection(b, 0);
+    }
     else if (t == U_REQ_UPDATE_RECORD_MODEL_PROJECTION) {
       r = reqUpdateRecordModelProjection(b, 0);
     }
     else if (t == U_REQ_UPDATE_SINGLE_TAG_PROJECTION) {
       r = reqUpdateSingleTagProjection(b, 0);
+    }
+    else if (t == U_REQ_UPDATE_UNNAMED_OR_REF_VAR_PROJECTION) {
+      r = reqUpdateUnnamedOrRefVarProjection(b, 0);
+    }
+    else if (t == U_REQ_UPDATE_UNNAMED_VAR_PROJECTION) {
+      r = reqUpdateUnnamedVarProjection(b, 0);
     }
     else if (t == U_REQ_UPDATE_VAR_MULTI_TAIL) {
       r = reqUpdateVarMultiTail(b, 0);
@@ -401,6 +446,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_UPDATE_VAR_PROJECTION) {
       r = reqUpdateVarProjection(b, 0);
+    }
+    else if (t == U_REQ_UPDATE_VAR_PROJECTION_REF) {
+      r = reqUpdateVarProjectionRef(b, 0);
     }
     else if (t == U_REQ_UPDATE_VAR_SINGLE_TAIL) {
       r = reqUpdateVarSingleTail(b, 0);
@@ -1501,6 +1549,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '$' qid '=' reqDeleteUnnamedOrRefVarProjection
+  public static boolean reqDeleteNamedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteNamedVarProjection")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_NAMED_VAR_PROJECTION, null);
+    r = consumeToken(b, U_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, U_EQ);
+    p = r; // pin = 3
+    r = r && reqDeleteUnnamedOrRefVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // '(' (reqDeleteFieldProjectionEntry ','?)* ')'
   public static boolean reqDeleteRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteRecordModelProjection")) return false;
@@ -1573,6 +1637,48 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = r && tagName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // reqDeleteVarProjectionRef | reqDeleteUnnamedVarProjection
+  public static boolean reqDeleteUnnamedOrRefVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteUnnamedOrRefVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_UNNAMED_OR_REF_VAR_PROJECTION, "<req delete unnamed or ref var projection>");
+    r = reqDeleteVarProjectionRef(b, l + 1);
+    if (!r) r = reqDeleteUnnamedVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
+  public static boolean reqDeleteUnnamedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteUnnamedVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_UNNAMED_VAR_PROJECTION, "<req delete unnamed var projection>");
+    r = reqDeleteUnnamedVarProjection_0(b, l + 1);
+    r = r && reqDeleteUnnamedVarProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqDeleteMultiTagProjection | reqDeleteSingleTagProjection
+  private static boolean reqDeleteUnnamedVarProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteUnnamedVarProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqDeleteMultiTagProjection(b, l + 1);
+    if (!r) r = reqDeleteSingleTagProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqDeleteVarPolymorphicTail?
+  private static boolean reqDeleteUnnamedVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteUnnamedVarProjection_1")) return false;
+    reqDeleteVarPolymorphicTail(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1658,33 +1764,29 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
+  // reqDeleteNamedVarProjection | reqDeleteUnnamedOrRefVarProjection
   public static boolean reqDeleteVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqDeleteVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_VAR_PROJECTION, "<req delete var projection>");
-    r = reqDeleteVarProjection_0(b, l + 1);
-    r = r && reqDeleteVarProjection_1(b, l + 1);
+    r = reqDeleteNamedVarProjection(b, l + 1);
+    if (!r) r = reqDeleteUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // reqDeleteMultiTagProjection | reqDeleteSingleTagProjection
-  private static boolean reqDeleteVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqDeleteVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqDeleteMultiTagProjection(b, l + 1);
-    if (!r) r = reqDeleteSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqDeleteVarPolymorphicTail?
-  private static boolean reqDeleteVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqDeleteVarProjection_1")) return false;
-    reqDeleteVarPolymorphicTail(b, l + 1);
-    return true;
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqDeleteVarProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqDeleteVarProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_DELETE_VAR_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2792,39 +2894,29 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqOutputStarTagProjection
-  //                                | reqOutputComaMultiTagProjection
-  //                                | reqOutputComaSingleTagProjection
-  //                                ) reqOutputVarPolymorphicTail?
+  // reqOutputNamedComaVarProjection | reqOutputUnnamedOrRefComaVarProjection
   public static boolean reqOutputComaVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputComaVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_VAR_PROJECTION, "<req output coma var projection>");
-    r = reqOutputComaVarProjection_0(b, l + 1);
-    r = r && reqOutputComaVarProjection_1(b, l + 1);
+    r = reqOutputNamedComaVarProjection(b, l + 1);
+    if (!r) r = reqOutputUnnamedOrRefComaVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // reqOutputStarTagProjection
-  //                                | reqOutputComaMultiTagProjection
-  //                                | reqOutputComaSingleTagProjection
-  private static boolean reqOutputComaVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputStarTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputVarPolymorphicTail?
-  private static boolean reqOutputComaVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaVarProjection_1")) return false;
-    reqOutputVarPolymorphicTail(b, l + 1);
-    return true;
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqOutputComaVarProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputComaVarProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2955,6 +3047,38 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "reqOutputModelSingleTail_0")) return false;
     consumeToken(b, U_PLUS);
     return true;
+  }
+
+  /* ********************************************************** */
+  // '$' qid '=' reqOutputUnnamedOrRefComaVarProjection
+  public static boolean reqOutputNamedComaVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputNamedComaVarProjection")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION, null);
+    r = consumeToken(b, U_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, U_EQ);
+    p = r; // pin = 3
+    r = r && reqOutputUnnamedOrRefComaVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '$' qid '=' reqOutputUnnamedOrRefTrunkVarProjection
+  public static boolean reqOutputNamedTrunkVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputNamedTrunkVarProjection")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION, null);
+    r = consumeToken(b, U_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, U_EQ);
+    p = r; // pin = 3
+    r = r && reqOutputUnnamedOrRefTrunkVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -3175,16 +3299,102 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqOutputStarTagProjection
-  //                                 | reqOutputComaMultiTagProjection
-  //                                 | reqOutputTrunkSingleTagProjection
-  //                                 ) reqOutputVarPolymorphicTail?
+  // reqOutputNamedTrunkVarProjection | reqOutputUnnamedOrRefTrunkVarProjection
   public static boolean reqOutputTrunkVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, "<req output trunk var projection>");
-    r = reqOutputTrunkVarProjection_0(b, l + 1);
-    r = r && reqOutputTrunkVarProjection_1(b, l + 1);
+    r = reqOutputNamedTrunkVarProjection(b, l + 1);
+    if (!r) r = reqOutputUnnamedOrRefTrunkVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqOutputTrunkVarProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // ( reqOutputStarTagProjection
+  //                                       | reqOutputComaMultiTagProjection
+  //                                       | reqOutputComaSingleTagProjection
+  //                                       ) reqOutputVarPolymorphicTail?
+  public static boolean reqOutputUnnamedComaVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION, "<req output unnamed coma var projection>");
+    r = reqOutputUnnamedComaVarProjection_0(b, l + 1);
+    r = r && reqOutputUnnamedComaVarProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqOutputStarTagProjection
+  //                                       | reqOutputComaMultiTagProjection
+  //                                       | reqOutputComaSingleTagProjection
+  private static boolean reqOutputUnnamedComaVarProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqOutputStarTagProjection(b, l + 1);
+    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
+    if (!r) r = reqOutputComaSingleTagProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqOutputVarPolymorphicTail?
+  private static boolean reqOutputUnnamedComaVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection_1")) return false;
+    reqOutputVarPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // reqOutputComaVarProjectionRef | reqOutputUnnamedComaVarProjection
+  public static boolean reqOutputUnnamedOrRefComaVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedOrRefComaVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION, "<req output unnamed or ref coma var projection>");
+    r = reqOutputComaVarProjectionRef(b, l + 1);
+    if (!r) r = reqOutputUnnamedComaVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqOutputTrunkVarProjectionRef | reqOutputUnnamedTrunkVarProjection
+  public static boolean reqOutputUnnamedOrRefTrunkVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedOrRefTrunkVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION, "<req output unnamed or ref trunk var projection>");
+    r = reqOutputTrunkVarProjectionRef(b, l + 1);
+    if (!r) r = reqOutputUnnamedTrunkVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( reqOutputStarTagProjection
+  //                                 | reqOutputComaMultiTagProjection
+  //                                 | reqOutputTrunkSingleTagProjection
+  //                                 ) reqOutputVarPolymorphicTail?
+  public static boolean reqOutputUnnamedTrunkVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION, "<req output unnamed trunk var projection>");
+    r = reqOutputUnnamedTrunkVarProjection_0(b, l + 1);
+    r = r && reqOutputUnnamedTrunkVarProjection_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3192,8 +3402,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // reqOutputStarTagProjection
   //                                 | reqOutputComaMultiTagProjection
   //                                 | reqOutputTrunkSingleTagProjection
-  private static boolean reqOutputTrunkVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_0")) return false;
+  private static boolean reqOutputUnnamedTrunkVarProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqOutputStarTagProjection(b, l + 1);
@@ -3204,8 +3414,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   // reqOutputVarPolymorphicTail?
-  private static boolean reqOutputTrunkVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection_1")) return false;
+  private static boolean reqOutputUnnamedTrunkVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection_1")) return false;
     reqOutputVarPolymorphicTail(b, l + 1);
     return true;
   }
@@ -3767,6 +3977,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '$' qid '=' reqUpdateUnnamedOrRefVarProjection
+  public static boolean reqUpdateNamedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateNamedVarProjection")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_NAMED_VAR_PROJECTION, null);
+    r = consumeToken(b, U_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, U_EQ);
+    p = r; // pin = 3
+    r = r && reqUpdateUnnamedOrRefVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // '(' (reqUpdateFieldProjectionEntry ','?)* ')'
   public static boolean reqUpdateRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection")) return false;
@@ -3857,6 +4083,48 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // reqUpdateVarProjectionRef | reqUpdateUnnamedVarProjection
+  public static boolean reqUpdateUnnamedOrRefVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateUnnamedOrRefVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_UNNAMED_OR_REF_VAR_PROJECTION, "<req update unnamed or ref var projection>");
+    r = reqUpdateVarProjectionRef(b, l + 1);
+    if (!r) r = reqUpdateUnnamedVarProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
+  public static boolean reqUpdateUnnamedVarProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_UNNAMED_VAR_PROJECTION, "<req update unnamed var projection>");
+    r = reqUpdateUnnamedVarProjection_0(b, l + 1);
+    r = r && reqUpdateUnnamedVarProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqUpdateMultiTagProjection | reqUpdateSingleTagProjection
+  private static boolean reqUpdateUnnamedVarProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqUpdateMultiTagProjection(b, l + 1);
+    if (!r) r = reqUpdateSingleTagProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqUpdateVarPolymorphicTail?
+  private static boolean reqUpdateUnnamedVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection_1")) return false;
+    reqUpdateVarPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // '(' (reqUpdateVarMultiTailItem ','?)* ')'
   public static boolean reqUpdateVarMultiTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateVarMultiTail")) return false;
@@ -3939,33 +4207,29 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
+  // reqUpdateNamedVarProjection | reqUpdateUnnamedOrRefVarProjection
   public static boolean reqUpdateVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_PROJECTION, "<req update var projection>");
-    r = reqUpdateVarProjection_0(b, l + 1);
-    r = r && reqUpdateVarProjection_1(b, l + 1);
+    r = reqUpdateNamedVarProjection(b, l + 1);
+    if (!r) r = reqUpdateUnnamedOrRefVarProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // reqUpdateMultiTagProjection | reqUpdateSingleTagProjection
-  private static boolean reqUpdateVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateMultiTagProjection(b, l + 1);
-    if (!r) r = reqUpdateSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqUpdateVarPolymorphicTail?
-  private static boolean reqUpdateVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarProjection_1")) return false;
-    reqUpdateVarPolymorphicTail(b, l + 1);
-    return true;
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqUpdateVarProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateVarProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */

@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
 
@@ -41,6 +42,13 @@ public class OpInputVarProjection extends AbstractVarProjection<
       @Nullable List<OpInputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
+  }
+  
+  @Override
+  protected @NotNull VarNormalizationContext<OpInputVarProjection> newNormalizationContext() {
+    return new VarNormalizationContext<>(
+        t -> new OpInputVarProjection(t, location())
+    );
   }
 
   public OpInputVarProjection(final TypeApi type, final TextLocation location) {

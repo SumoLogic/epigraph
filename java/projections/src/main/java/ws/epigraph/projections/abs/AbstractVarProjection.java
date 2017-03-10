@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -155,10 +156,41 @@ public abstract class AbstractVarProjection<
     return polymorphicTails;
   }
 
+  protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
+
+  /*
+   * We need a way to pass normalization context around. I tried passing it explicitly, but
+   * it badly pollutes all the signatures, gets especially bad around `GenModelProjection.normalizeForType`
+   * which has to handle it too, but has no `VP` type parameter and in general should not be concerned.
+   *
+   * I don't like thread locals but this looks like a reasonable compromise for now. Should be changed to
+   * explicit parameter in case of any problems.
+   */
+  private static final ThreadLocal<VarNormalizationContext<?>> normalizationContextThreadLocal = new ThreadLocal<>();
+
+  @SuppressWarnings("unchecked")
   @Override
-  public @NotNull VP normalizedForType(final @NotNull TypeApi targetType) {
+  public @NotNull VP normalizedForType(@NotNull TypeApi targetType) {
     assertResolved();
     assert tagProjections != null;
+
+    VarNormalizationContext<VP> context = (VarNormalizationContext<VP>) normalizationContextThreadLocal.get();
+    boolean contextInitialized = context == null;
+    if (contextInitialized) {
+      context = newNormalizationContext();
+      normalizationContextThreadLocal.set(context);
+    }
+
+    VP ref = null;
+    if (name != null) {
+      ref = context.visited().get(name);
+
+      if (ref != null)
+        return ref;
+
+      ref = context.newReference(targetType);
+      context.visited().put(name, ref);
+    }
 
     final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
 
@@ -179,7 +211,17 @@ public abstract class AbstractVarProjection<
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
-    return merge(effectiveType, true, mergedNormalizedTails, effectiveProjections);
+    VP res = merge(effectiveType, true, mergedNormalizedTails, effectiveProjections);
+
+    if (contextInitialized)
+      normalizationContextThreadLocal.remove();
+
+    if (ref == null)
+      return res;
+    else {
+      ref.resolve(name, res);
+      return ref;
+    }
   }
 
   private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
@@ -305,8 +347,8 @@ public abstract class AbstractVarProjection<
     if (!type().isAssignableFrom(value.type()))
       throw new IllegalStateException(String.format(
           "Value type '%s' is incompatible with reference type '%s'",
-          value.type(),
-          this.type()
+          value.type().name(),
+          this.type().name()
       ));
 
     this.name = name;
@@ -356,7 +398,7 @@ public abstract class AbstractVarProjection<
 
   @Override
   public int hashCode() {
-    if (name !=null) return name.hashCode();
+    if (name != null) return name.hashCode();
     return Objects.hash(type, tagProjections, polymorphicTails);
   }
 }

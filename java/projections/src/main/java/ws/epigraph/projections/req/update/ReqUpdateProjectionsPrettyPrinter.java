@@ -69,7 +69,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    l.beginCInd();
+    l.beginIInd(0);
     boolean needBrk = false;
     if (isUpdateModelProjection(projection))
       l.print("+");

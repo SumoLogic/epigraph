@@ -175,11 +175,23 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqDeleteNamedVarProjection(@NotNull UrlReqDeleteNamedVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqDeleteRecordModelProjection(@NotNull UrlReqDeleteRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitReqDeleteSingleTagProjection(@NotNull UrlReqDeleteSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteUnnamedOrRefVarProjection(@NotNull UrlReqDeleteUnnamedOrRefVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteUnnamedVarProjection(@NotNull UrlReqDeleteUnnamedVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -196,6 +208,10 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqDeleteVarProjection(@NotNull UrlReqDeleteVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqDeleteVarProjectionRef(@NotNull UrlReqDeleteVarProjectionRef o) {
     visitPsiElement(o);
   }
 
@@ -359,6 +375,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqOutputComaVarProjectionRef(@NotNull UrlReqOutputComaVarProjectionRef o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqOutputModelMeta(@NotNull UrlReqOutputModelMeta o) {
     visitPsiElement(o);
   }
@@ -376,6 +396,14 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqOutputModelSingleTail(@NotNull UrlReqOutputModelSingleTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputNamedComaVarProjection(@NotNull UrlReqOutputNamedComaVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputNamedTrunkVarProjection(@NotNull UrlReqOutputNamedTrunkVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -404,6 +432,26 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqOutputTrunkVarProjection(@NotNull UrlReqOutputTrunkVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputTrunkVarProjectionRef(@NotNull UrlReqOutputTrunkVarProjectionRef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputUnnamedComaVarProjection(@NotNull UrlReqOutputUnnamedComaVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputUnnamedOrRefComaVarProjection(@NotNull UrlReqOutputUnnamedOrRefComaVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputUnnamedOrRefTrunkVarProjection(@NotNull UrlReqOutputUnnamedOrRefTrunkVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqOutputUnnamedTrunkVarProjection(@NotNull UrlReqOutputUnnamedTrunkVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -483,11 +531,23 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqUpdateNamedVarProjection(@NotNull UrlReqUpdateNamedVarProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqUpdateRecordModelProjection(@NotNull UrlReqUpdateRecordModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitReqUpdateSingleTagProjection(@NotNull UrlReqUpdateSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateUnnamedOrRefVarProjection(@NotNull UrlReqUpdateUnnamedOrRefVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateUnnamedVarProjection(@NotNull UrlReqUpdateUnnamedVarProjection o) {
     visitPsiElement(o);
   }
 
@@ -504,6 +564,10 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqUpdateVarProjection(@NotNull UrlReqUpdateVarProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUpdateVarProjectionRef(@NotNull UrlReqUpdateVarProjectionRef o) {
     visitPsiElement(o);
   }
 

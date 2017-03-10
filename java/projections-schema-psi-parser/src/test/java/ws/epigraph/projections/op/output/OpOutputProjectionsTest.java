@@ -81,11 +81,11 @@ public class OpOutputProjectionsTest {
         ":(",
         "  id,",
         "  `record`",
-        "    (",
-        "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
-        "      bestFriend :`record` ( id, bestFriend :id ),",
-        "      friends *( :id )",
-        "    ) ~ws.epigraph.tests.UserRecord ( profile )",
+        "  (",
+        "    id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+        "    bestFriend :`record` ( id, bestFriend :id ),",
+        "    friends *( :id )",
+        "  ) ~ws.epigraph.tests.UserRecord ( profile )",
         ")",
         "  ~~(",
         "    ws.epigraph.tests.User :`record` ( profile ) ~~ws.epigraph.tests.SubUser :`record` ( worstEnemy ( id ) ),",
@@ -106,13 +106,13 @@ public class OpOutputProjectionsTest {
         lines(
             ":(",
             "  `record`",
-            "    (",
-            "      worstEnemy ( id ),",
-            "      profile,",
-            "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
-            "      bestFriend :`record` ( id, bestFriend :id ),",
-            "      friends *( :id )",
-            "    ),",
+            "  (",
+            "    worstEnemy ( id ),",
+            "    profile,",
+            "    id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+            "    bestFriend :`record` ( id, bestFriend :id ),",
+            "    friends *( :id )",
+            "  ),",
             "  id",
             ") ~~ws.epigraph.tests.User2 :`record` ( worstEnemy ( id ) )"
         )
@@ -329,6 +329,21 @@ public class OpOutputProjectionsTest {
         ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
         User.type,
         ":`record` ( worstEnemy ( firstName, id ) )"
+    );
+  }
+
+  @Test
+  public void testRecursiveTailNormalization() throws PsiProcessingException {
+    testTailsNormalization(
+        "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )",
+        Person.type,
+        "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )"
+    );
+
+    testTailsNormalization(
+        "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )",
+        User.type,
+        "$self = :( `record` ( id, bestFriend $self ), id )"
     );
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
@@ -27,6 +28,8 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.lines;
 
@@ -59,6 +62,8 @@ public class ReqDeleteProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ),",
+          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :id ),",
           "    friendsMap []( :(id, `record` (id, firstName) ) )",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
@@ -94,6 +99,28 @@ public class ReqDeleteProjectionsParserTest {
   @Test
   public void testParseList() {
     testParse(":record ( friends *( :id ) )");
+  }
+
+  @Test
+  public void testParseRecursiveWrongOp() {
+    //noinspection ErrorNotRethrown
+    try {
+      testParse("$self = :( id, record ( id, bestFriend $self ) )");
+      fail();
+    } catch (AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage().contains("Tag 'id' is not supported"));
+      assertTrue(e.getMessage(), e.getMessage().contains("Field 'bestFriend' is not supported"));
+    }
+  }
+
+  @Test
+  public void testParseRecursive() {
+    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )");
+  }
+
+  @Test
+  public void testParseRecursiveDifferentOpRecursion() {
+    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )");
   }
 
   @Test

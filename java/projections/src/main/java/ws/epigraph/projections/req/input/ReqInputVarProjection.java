@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
 
@@ -45,6 +46,13 @@ public class ReqInputVarProjection extends AbstractVarProjection<
 
   public ReqInputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
+  }
+
+  @Override
+  protected @NotNull VarNormalizationContext<ReqInputVarProjection> newNormalizationContext() {
+    return new VarNormalizationContext<>(
+        t -> new ReqInputVarProjection(t , location())
+    );
   }
 
 }

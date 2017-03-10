@@ -176,7 +176,11 @@ reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
 
 // req output trunk part
 
-reqOutputTrunkVarProjection ::= ( reqOutputStarTagProjection
+reqOutputTrunkVarProjection ::= reqOutputNamedTrunkVarProjection | reqOutputUnnamedOrRefTrunkVarProjection
+reqOutputUnnamedOrRefTrunkVarProjection ::= reqOutputTrunkVarProjectionRef | reqOutputUnnamedTrunkVarProjection
+reqOutputNamedTrunkVarProjection ::= '$' qid '=' reqOutputUnnamedOrRefTrunkVarProjection {pin = 3}
+reqOutputTrunkVarProjectionRef ::= '$' qid {pin = 1}
+reqOutputUnnamedTrunkVarProjection ::= ( reqOutputStarTagProjection
                                 | reqOutputComaMultiTagProjection
                                 | reqOutputTrunkSingleTagProjection
                                 ) reqOutputVarPolymorphicTail?
@@ -204,10 +208,14 @@ private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
 
 // req output coma part
 
-reqOutputComaVarProjection ::= ( reqOutputStarTagProjection
-                               | reqOutputComaMultiTagProjection
-                               | reqOutputComaSingleTagProjection
-                               ) reqOutputVarPolymorphicTail?
+reqOutputComaVarProjection ::= reqOutputNamedComaVarProjection | reqOutputUnnamedOrRefComaVarProjection
+reqOutputUnnamedOrRefComaVarProjection ::= reqOutputComaVarProjectionRef | reqOutputUnnamedComaVarProjection
+reqOutputNamedComaVarProjection ::= '$' qid '=' reqOutputUnnamedOrRefComaVarProjection {pin = 3}
+reqOutputComaVarProjectionRef ::= '$' qid {pin = 1}
+reqOutputUnnamedComaVarProjection ::= ( reqOutputStarTagProjection
+                                      | reqOutputComaMultiTagProjection
+                                      | reqOutputComaSingleTagProjection
+                                      ) reqOutputVarPolymorphicTail?
 private reqOutputBracedComaVarProjection ::= '(' reqOutputComaVarProjection ')'
 
 reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaModelProjectionWithProperties
@@ -244,7 +252,11 @@ reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 
 //reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
 
-reqUpdateVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
+reqUpdateVarProjection ::= reqUpdateNamedVarProjection | reqUpdateUnnamedOrRefVarProjection
+reqUpdateUnnamedOrRefVarProjection ::= reqUpdateVarProjectionRef | reqUpdateUnnamedVarProjection
+reqUpdateNamedVarProjection ::= '$' qid '=' reqUpdateUnnamedOrRefVarProjection {pin = 3}
+reqUpdateVarProjectionRef ::= '$' qid {pin = 1}
+reqUpdateUnnamedVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
 private reqUpdateBracedVarProjection ::= '(' reqUpdateVarProjection ')'
 
 reqUpdateSingleTagProjection ::= ( ':' '+'? tagName?)? reqUpdateModelProjectionWithProperties // optional tag name to allow updating self-vars
@@ -284,7 +296,11 @@ reqUpdateKeyProjection ::= datum reqParamsAndAnnotations
 
 // reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
 
-reqDeleteVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
+reqDeleteVarProjection ::= reqDeleteNamedVarProjection | reqDeleteUnnamedOrRefVarProjection
+reqDeleteUnnamedOrRefVarProjection ::= reqDeleteVarProjectionRef | reqDeleteUnnamedVarProjection
+reqDeleteNamedVarProjection ::= '$' qid '=' reqDeleteUnnamedOrRefVarProjection {pin = 3}
+reqDeleteVarProjectionRef ::= '$' qid {pin = 1}
+reqDeleteUnnamedVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
 private reqDeleteBracedVarProjection ::= '(' reqDeleteVarProjection ')'
 
 reqDeleteSingleTagProjection ::= ( ':' tagName)? reqDeleteModelProjectionWithProperties

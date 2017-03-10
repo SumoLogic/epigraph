@@ -62,11 +62,11 @@ public class OpDeleteProjectionsTest {
         ":(",
         "  id,",
         "  `record`",
-        "    (",
-        "      id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
-        "      bestFriend +:`record` ( id, bestFriend :id ),",
-        "      friends *( +:id )",
-        "    )",
+        "  (",
+        "    id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+        "    bestFriend +:`record` ( id, bestFriend :id ),",
+        "    friends *( +:id )",
+        "  )",
         ")"
     );
 

@@ -41,7 +41,6 @@ import static ws.epigraph.test.TestUtil.lines;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-@SuppressWarnings("ErrorNotRethrown")
 public class ReqInputProjectionsParserTest {
   private final DataType dataType = new DataType(Person.type, Person.id);
   private final TypesResolver resolver = new SimpleTypesResolver(
@@ -113,7 +112,8 @@ public class ReqInputProjectionsParserTest {
   }
 
   @Test
-  public void testParseRecursiveWrongOp() throws PsiProcessingException {
+  public void testParseRecursiveWrongOp() {
+    //noinspection ErrorNotRethrown
     try {
       testParse("$self = :( id, record ( id, bestFriend $self ) )");
       fail();
@@ -124,12 +124,12 @@ public class ReqInputProjectionsParserTest {
   }
 
   @Test
-  public void testParseRecursive() throws PsiProcessingException {
+  public void testParseRecursive() {
     testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )");
   }
 
   @Test
-  public void testParseRecursiveDifferentOpRecursion() throws PsiProcessingException {
+  public void testParseRecursiveDifferentOpRecursion() {
     testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )");
   }
 

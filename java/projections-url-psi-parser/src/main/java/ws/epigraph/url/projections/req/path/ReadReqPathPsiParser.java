@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.url.projections.req.path;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
@@ -51,6 +52,75 @@ public final class ReadReqPathPsiParser {
       @NotNull ReqPathPsiProcessingContext context)
       throws PsiProcessingException {
 
+    final UrlReqOutputNamedTrunkVarProjection namedTrunkVarProjection = psi.getReqOutputNamedTrunkVarProjection();
+
+    if (namedTrunkVarProjection != null) {
+      final UrlReqOutputUnnamedOrRefTrunkVarProjection unnamedOrRefTrunkVarProjection =
+          namedTrunkVarProjection.getReqOutputUnnamedOrRefTrunkVarProjection();
+
+      if (unnamedOrRefTrunkVarProjection == null)
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context);
+
+      return parseUnnamedOrRefVarPath(
+          op,
+          dataType,
+          unnamedOrRefTrunkVarProjection,
+          typesResolver,
+          context
+      );
+
+    }
+
+    final UrlReqOutputUnnamedOrRefTrunkVarProjection unnamedOrRefTrunkVarProjection =
+        psi.getReqOutputUnnamedOrRefTrunkVarProjection();
+
+    if (unnamedOrRefTrunkVarProjection == null)
+      throw new PsiProcessingException("Incomplete var projection definition", psi, context);
+
+    return parseUnnamedOrRefVarPath(
+        op,
+        dataType,
+        unnamedOrRefTrunkVarProjection,
+        typesResolver,
+        context
+    );
+  }
+
+  public static ReadReqPathParsingResult<ReqVarPath> parseUnnamedOrRefVarPath(
+      @NotNull OpVarPath op,
+      @NotNull DataTypeApi dataType,
+      @NotNull UrlReqOutputUnnamedOrRefTrunkVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull ReqPathPsiProcessingContext context)
+      throws PsiProcessingException {
+
+    final UrlReqOutputTrunkVarProjectionRef refPsi = psi.getReqOutputTrunkVarProjectionRef();
+    if (refPsi != null)
+      throw new PsiProcessingException("References are not allowed in paths", refPsi, context);
+
+    final UrlReqOutputUnnamedTrunkVarProjection unnamedTrunkVarProjection =
+        psi.getReqOutputUnnamedTrunkVarProjection();
+
+    if (unnamedTrunkVarProjection == null)
+      throw new PsiProcessingException("Incomplete var projection definition", psi, context);
+
+    return parseUnnamedVarPath(
+        op,
+        dataType,
+        unnamedTrunkVarProjection,
+        typesResolver,
+        context
+    );
+  }
+
+  public static ReadReqPathParsingResult<ReqVarPath> parseUnnamedVarPath(
+      @NotNull OpVarPath op,
+      @NotNull DataTypeApi dataType,
+      @NotNull UrlReqOutputUnnamedTrunkVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull ReqPathPsiProcessingContext context)
+      throws PsiProcessingException {
+
     if (OpVarPath.isEnd(op))
       return new ReadReqPathParsingResult<>(
           new ReqVarPath(
@@ -58,7 +128,7 @@ public final class ReadReqPathPsiParser {
               null,
               EpigraphPsiUtil.getLocation(psi)
           ),
-          psi,
+          PsiTreeUtil.getParentOfType(psi, UrlReqOutputTrunkVarProjection.class),
           null
       );
 
@@ -444,7 +514,8 @@ public final class ReadReqPathPsiParser {
     final @Nullable Datum keyValue =
         getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ", context);
 
-    if (keyValue == null) throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum(), context);
+    if (keyValue == null)
+      throw new PsiProcessingException("Null path keys not allowed", mapPathPsi.getDatum(), context);
 
     return new ReqPathKeyProjection(
         keyValue,

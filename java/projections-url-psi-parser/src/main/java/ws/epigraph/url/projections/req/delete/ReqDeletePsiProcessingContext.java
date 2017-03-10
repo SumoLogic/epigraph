@@ -17,21 +17,21 @@
 package ws.epigraph.url.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.psi.DelegatingPsiProcessingContext;
+import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeletePsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final @NotNull ReqDeleteVarReferenceContext varReferenceContext;
+public class ReqDeletePsiProcessingContext extends ReqPsiProcessingContext<
+    OpDeleteVarProjection,
+    ReqDeleteVarReferenceContext
+    > {
 
   public ReqDeletePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull ReqDeleteVarReferenceContext context) {
-    super(psiProcessingContext);
-    varReferenceContext = context;
+      final @NotNull ReqDeleteVarReferenceContext varReferenceContext) {
+    super(psiProcessingContext, varReferenceContext);
   }
-
-  public @NotNull ReqDeleteVarReferenceContext varReferenceContext() { return varReferenceContext; }
 }

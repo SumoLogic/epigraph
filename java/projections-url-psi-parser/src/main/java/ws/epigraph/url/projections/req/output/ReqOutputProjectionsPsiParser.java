@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,11 +52,129 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 public final class ReqOutputProjectionsPsiParser {
   private ReqOutputProjectionsPsiParser() {}
 
+  // trunk var ================================================
+
   public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseTrunkVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpOutputVarProjection op,
       boolean required, // all models required
       @NotNull UrlReqOutputTrunkVarProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    final @Nullable UrlReqOutputNamedTrunkVarProjection namedVarProjection = psi.getReqOutputNamedTrunkVarProjection();
+    if (namedVarProjection == null) {
+      final @Nullable UrlReqOutputUnnamedOrRefTrunkVarProjection unnamedOrRefVarProjection =
+          psi.getReqOutputUnnamedOrRefTrunkVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition",
+            psi,
+            context
+        );
+
+      return parseUnnamedOrRefTrunkVarProjection(
+          dataType,
+          op,
+          required,
+          unnamedOrRefVarProjection,
+          resolver,
+          context
+      );
+    } else {
+      // named var projection
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final @Nullable UrlReqOutputUnnamedOrRefTrunkVarProjection unnamedOrRefVarProjection =
+          namedVarProjection.getReqOutputUnnamedOrRefTrunkVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context
+        );
+
+      final ReqOutputVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+          parseUnnamedOrRefTrunkVarProjection(
+              dataType,
+              op,
+              required,
+              unnamedOrRefVarProjection,
+              resolver,
+              context
+          );
+
+      context.varReferenceContext()
+          .resolve(
+              projectionName,
+              stepsAndProjection.projection(),
+              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
+              context
+          );
+
+      final Queue<OpOutputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
+      while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
+        final OpOutputVarProjection unverifiedOp = unverifiedOps.poll();
+        context.addVerifiedRefOp(projectionName, unverifiedOp);
+
+        parseUnnamedOrRefTrunkVarProjection(
+            dataType,
+            unverifiedOp,
+            required,
+            unnamedOrRefVarProjection,
+            resolver,
+            context
+        );
+      }
+
+      return new StepsAndProjection<>(
+          stepsAndProjection.pathSteps(),
+          reference
+      );
+    }
+
+  }
+
+  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseUnnamedOrRefTrunkVarProjection(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull OpOutputVarProjection op,
+      boolean required, // all models required
+      final @NotNull UrlReqOutputUnnamedOrRefTrunkVarProjection psi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    final UrlReqOutputTrunkVarProjectionRef varProjectionRef = psi.getReqOutputTrunkVarProjectionRef();
+    if (varProjectionRef == null) {
+      // usual var projection
+      final UrlReqOutputUnnamedTrunkVarProjection unnamedVarProjection = psi.getReqOutputUnnamedTrunkVarProjection();
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+      else {
+        return parseUnnamedTrunkVarProjection(
+            dataType,
+            op,
+            required,
+            unnamedVarProjection,
+            resolver,
+            context
+        );
+      }
+    } else {
+      // var projection reference
+      throw new PsiProcessingException("References are not allowed in path", psi, context);
+    }
+  }
+
+  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseUnnamedTrunkVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull OpOutputVarProjection op,
+      boolean required, // all models required
+      @NotNull UrlReqOutputUnnamedTrunkVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
@@ -190,12 +308,147 @@ public final class ReqOutputProjectionsPsiParser {
     }
   }
 
+  // coma var ================================================
 
   public static StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpOutputVarProjection op,
       boolean required, // all models required
       @NotNull UrlReqOutputComaVarProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    final UrlReqOutputNamedComaVarProjection namedVarProjection = psi.getReqOutputNamedComaVarProjection();
+    if (namedVarProjection == null) {
+      final UrlReqOutputUnnamedOrRefComaVarProjection unnamedOrRefVarProjection =
+          psi.getReqOutputUnnamedOrRefComaVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition",
+            psi,
+            context
+        );
+
+      return parseUnnamedOrRefComaVarProjection(
+          dataType,
+          op,
+          required,
+          unnamedOrRefVarProjection,
+          resolver,
+          context
+      );
+    } else {
+      // named var projection
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final @Nullable UrlReqOutputUnnamedOrRefComaVarProjection unnamedOrRefVarProjection =
+          namedVarProjection.getReqOutputUnnamedOrRefComaVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context
+        );
+
+      final ReqOutputVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = parseUnnamedOrRefComaVarProjection(
+          dataType,
+          op,
+          required,
+          unnamedOrRefVarProjection,
+          resolver,
+          context
+      );
+
+      context.varReferenceContext()
+          .resolve(
+              projectionName,
+              stepsAndProjection.projection(),
+              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
+              context
+          );
+
+      final Queue<OpOutputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
+      while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
+        final OpOutputVarProjection unverifiedOp = unverifiedOps.poll();
+        context.addVerifiedRefOp(projectionName, unverifiedOp);
+
+        parseUnnamedOrRefComaVarProjection(
+            dataType,
+            unverifiedOp,
+            required,
+            unnamedOrRefVarProjection,
+            resolver,
+            context
+        );
+      }
+
+      return new StepsAndProjection<>(
+          stepsAndProjection.pathSteps(),
+          reference
+      );
+    }
+
+  }
+
+  public static StepsAndProjection<ReqOutputVarProjection> parseUnnamedOrRefComaVarProjection(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull OpOutputVarProjection op,
+      boolean required, // all models required
+      final @NotNull UrlReqOutputUnnamedOrRefComaVarProjection psi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    final UrlReqOutputComaVarProjectionRef varProjectionRef = psi.getReqOutputComaVarProjectionRef();
+    if (varProjectionRef == null) {
+      // usual var projection
+      final UrlReqOutputUnnamedComaVarProjection unnamedVarProjection = psi.getReqOutputUnnamedComaVarProjection();
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+      else {
+        return parseUnnamedComaVarProjection(
+            dataType,
+            op,
+            required,
+            unnamedVarProjection,
+            resolver,
+            context
+        );
+      }
+    } else {
+      // var projection reference
+      final UrlQid varProjectionRefPsi = varProjectionRef.getQid();
+      if (varProjectionRefPsi == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition: name not specified",
+            psi,
+            context.errors()
+        );
+
+      final String referenceName = varProjectionRefPsi.getCanonicalName();
+
+      final Collection<OpOutputVarProjection> verifiedOps = context.verifiedRefOps(referenceName);
+      if (verifiedOps == null || !verifiedOps.contains(op))
+        context.addUnverifiedRefOp(referenceName, op);
+
+      return new StepsAndProjection<>(
+          0,
+          context.varReferenceContext()
+              .reference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi))
+      );
+    }
+
+  }
+
+  public static StepsAndProjection<ReqOutputVarProjection> parseUnnamedComaVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull OpOutputVarProjection op,
+      boolean required, // all models required
+      @NotNull UrlReqOutputUnnamedComaVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
@@ -1022,7 +1275,7 @@ public final class ReqOutputProjectionsPsiParser {
     if (opFieldProjectionEntry == null) {
       throw new PsiProcessingException(
           String.format(
-              "Unsupported field '%s', supported fields: (%s)",
+              "Field '%s' is not supported, supported fields: (%s)",
               fieldName,
               ProjectionUtils.listFields(opFields.keySet())
           ),
@@ -1186,7 +1439,7 @@ public final class ReqOutputProjectionsPsiParser {
         if (opFieldProjectionEntry == null)
           context.addError(
               String.format(
-                  "Unsupported field '%s', supported fields: (%s)",
+                  "Field '%s' is not supported, supported fields: (%s)",
                   fieldName,
                   ProjectionUtils.listFields(opFields.keySet())
               ),

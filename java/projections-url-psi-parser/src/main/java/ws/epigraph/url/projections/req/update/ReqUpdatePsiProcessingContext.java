@@ -17,22 +17,21 @@
 package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.psi.DelegatingPsiProcessingContext;
+import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.url.projections.req.update.ReqUpdateVarReferenceContext;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdatePsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final @NotNull ReqUpdateVarReferenceContext varReferenceContext;
+public class ReqUpdatePsiProcessingContext extends ReqPsiProcessingContext<
+    OpInputVarProjection,
+    ReqUpdateVarReferenceContext
+    > {
 
   public ReqUpdatePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull ReqUpdateVarReferenceContext context) {
-    super(psiProcessingContext);
-    varReferenceContext = context;
+      final @NotNull ReqUpdateVarReferenceContext varReferenceContext) {
+    super(psiProcessingContext, varReferenceContext);
   }
-
-  public @NotNull ReqUpdateVarReferenceContext varReferenceContext() { return varReferenceContext; }
 }

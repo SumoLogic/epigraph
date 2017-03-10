@@ -8,8 +8,8 @@
   - [x] update psi parsers
   - [x] update op codegen
   - [x] update req codegen: req projections must be reusable too
-  - [ ] req projections syntx
-  - [ ] req projections psi parsers
+  - [x] req projections syntax
+  - [x] req projections psi parsers
   - [ ] allow recursive data: update marshaller/unmarshaller
 
 

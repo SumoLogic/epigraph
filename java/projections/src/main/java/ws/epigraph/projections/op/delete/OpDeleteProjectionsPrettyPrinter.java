@@ -64,7 +64,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     Annotations annotations = projection.annotations();
 
     if (params.isEmpty() && annotations.isEmpty()) {
-      l.beginCInd();
+      l.beginIInd(0);
 
       if (!isPrintoutEmpty(projection)) {
         if (tagName != null) {

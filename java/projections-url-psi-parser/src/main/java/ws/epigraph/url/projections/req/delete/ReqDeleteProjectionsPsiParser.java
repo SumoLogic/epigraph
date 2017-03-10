@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +48,128 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 public final class ReqDeleteProjectionsPsiParser {
 
   private ReqDeleteProjectionsPsiParser() {}
-
+  
   public static @NotNull ReqDeleteVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpDeleteVarProjection op,
       @NotNull UrlReqDeleteVarProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final UrlReqDeleteNamedVarProjection namedVarProjection = psi.getReqDeleteNamedVarProjection();
+    if (namedVarProjection == null) {
+      final UrlReqDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
+          psi.getReqDeleteUnnamedOrRefVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition",
+            psi,
+            context.errors()
+        );
+
+      return parseUnnamedOrRefVarProjection(
+          dataType,
+          op,
+          unnamedOrRefVarProjection,
+          resolver,
+          context
+      );
+    } else {
+      // named var projection
+      final String projectionName = namedVarProjection.getQid().getCanonicalName();
+
+      final @Nullable UrlReqDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
+          namedVarProjection.getReqDeleteUnnamedOrRefVarProjection();
+
+      if (unnamedOrRefVarProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete var projection '%s' definition", projectionName),
+            psi,
+            context.errors()
+        );
+
+      final ReqDeleteVarProjection reference = context.varReferenceContext()
+          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final ReqDeleteVarProjection value = parseUnnamedOrRefVarProjection(
+          dataType,
+          op,
+          unnamedOrRefVarProjection,
+          resolver,
+          context
+      );
+
+      context.varReferenceContext()
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+
+      final Queue<OpDeleteVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
+      while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
+        final OpDeleteVarProjection unverifiedOp = unverifiedOps.poll();
+        context.addVerifiedRefOp(projectionName, unverifiedOp);
+
+        parseUnnamedOrRefVarProjection(
+            dataType,
+            unverifiedOp,
+            unnamedOrRefVarProjection,
+            resolver,
+            context
+        );
+      }
+
+      return reference;
+    }
+
+  }
+
+  public static @NotNull ReqDeleteVarProjection parseUnnamedOrRefVarProjection(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull OpDeleteVarProjection op,
+      final @NotNull UrlReqDeleteUnnamedOrRefVarProjection psi,
+      final @NotNull TypesResolver resolver,
+      final @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final UrlReqDeleteVarProjectionRef varProjectionRef = psi.getReqDeleteVarProjectionRef();
+    if (varProjectionRef == null) {
+      // usual var projection
+      final UrlReqDeleteUnnamedVarProjection unnamedVarProjection = psi.getReqDeleteUnnamedVarProjection();
+      if (unnamedVarProjection == null)
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+      else {
+        return parseUnnamedVarProjection(
+            dataType,
+            op,
+            unnamedVarProjection,
+            resolver,
+            context
+        );
+      }
+    } else {
+      // var projection reference
+      final UrlQid varProjectionRefPsi = varProjectionRef.getQid();
+      if (varProjectionRefPsi == null)
+        throw new PsiProcessingException(
+            "Incomplete var projection definition: name not specified",
+            psi,
+            context.errors()
+        );
+
+      final String referenceName = varProjectionRefPsi.getCanonicalName();
+
+      final Collection<OpDeleteVarProjection> verifiedOps = context.verifiedRefOps(referenceName);
+      if (verifiedOps == null || !verifiedOps.contains(op))
+        context.addUnverifiedRefOp(referenceName, op);
+
+      return context.varReferenceContext()
+          .reference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
+    }
+
+  }
+
+  public static @NotNull ReqDeleteVarProjection parseUnnamedVarProjection(
+      @NotNull DataTypeApi dataType,
+      @NotNull OpDeleteVarProjection op,
+      @NotNull UrlReqDeleteUnnamedVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 

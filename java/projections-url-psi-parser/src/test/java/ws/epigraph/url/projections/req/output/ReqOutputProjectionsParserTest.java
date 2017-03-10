@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static ws.epigraph.test.TestUtil.lines;
@@ -77,6 +79,8 @@ public class ReqOutputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ) ) ~~ws.epigraph.tests.User : profile ,",
+          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -140,6 +144,28 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
+  public void testParseRecursiveWrongOp() {
+    //noinspection ErrorNotRethrown
+    try {
+      testParse("$self = :( id, record ( id, bestFriend $self ) )", 0);
+      fail();
+    } catch (AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage().contains("Tag 'id' is not supported"));
+      assertTrue(e.getMessage(), e.getMessage().contains("Field 'bestFriend' is not supported"));
+    }
+  }
+
+  @Test
+  public void testParseRecursive() {
+    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )", 0);
+  }
+
+  @Test
+  public void testParseRecursiveDifferentOpRecursion() {
+    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )", 0);
+  }
+
+  @Test
   public void testParseTail() {
     testParse(
         ":id ~~User :record ( profile )",
@@ -188,7 +214,20 @@ public class ReqOutputProjectionsParserTest {
   public void testStarFields() {
     testParse(
         ":record(*)",
-        ":record ( id, firstName, bestFriend :(), friends *( :() ), friendRecords, friendsMap [ * ]( :() ), friendRecordMap )",
+        lines(
+            ":record",
+            "(",
+            "  id,",
+            "  firstName,",
+            "  bestFriend :(),",
+            "  bestFriend2 :(),",
+            "  bestFriend3 :(),",
+            "  friends *( :() ),",
+            "  friendRecords,",
+            "  friendsMap [ * ]( :() ),",
+            "  friendRecordMap",
+            ")"
+        ),
         1
     );
   }
