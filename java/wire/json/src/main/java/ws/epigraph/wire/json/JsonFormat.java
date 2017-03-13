@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ public class JsonFormat implements WireFormat {
   public static final @NotNull String ERROR_CODE_FIELD = "ERROR";
 
   public static final @NotNull String ERROR_MESSAGE_FIELD = "message";
+
+  public static final @NotNull String REC_FIELD = "REC";
 
   public static final @NotNull String POLYMORPHIC_TYPE_FIELD = "type";
 

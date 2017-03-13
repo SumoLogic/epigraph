@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,8 @@ public class JsonFormatWriterTest {
       "        firstName",
       "      ),",
       "    ),",
+      "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+      "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
       "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
       "    friends *( :id ),",
       "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -305,6 +307,62 @@ public class JsonFormatWriterTest {
     String expectedJson =
         "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
     testRender(reqProjection, PersonMap.type.createDataBuilder().set(personMap), expectedJson);
+  }
+
+  @Test
+  public void testRenderRec() throws IOException {
+    Person.Builder bf = Person.create();
+    bf.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setBestFriend2$(bf)
+    );
+
+    Person.Builder person = Person.create()
+        .setId(PersonId.create(1))
+        .setRecord(
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2$(bf)
+        );
+
+    testRender(
+        ":(id,record(id,bestFriend2 $bf= :record(id, bestFriend2 $bf) ))",
+        person,
+        "{\"id\":1,\"record\":{\"id\":1,\"bestFriend2\":{\"id\":11,\"bestFriend2\":{\"REC\":\"1}}}}"
+        );
+  }
+
+  @Test
+  public void testRenderRec2() throws IOException {
+    Person.Builder bf = Person.create();
+    bf.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setFirstName("Alfred")
+            .setLastName("Hitchcock")
+            .setBestFriend3$(bf)
+    );
+
+    Person.Builder person = Person.create()
+        .setId(PersonId.create(1))
+        .setRecord(
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3$(bf)
+        );
+
+    testRender(
+        ":(id,record(id, " +
+        "bestFriend3 :record( id, firstName, " +
+        "bestFriend3 :record( id, lastName, " +
+        "bestFriend3 :record( id, " +
+        "bestFriend3 $bf= :record(id, bestFriend3 $bf) )))))",
+        person,
+        // todo should get one step shorter with proper equals() for var projections in place
+        "{\"id\":1,\"record\":{\"id\":1," +
+        "\"bestFriend3\":{\"id\":11,\"firstName\":\"Alfred\"," +
+        "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," +
+        "\"bestFriend3\":{\"id\":11," +
+        "\"bestFriend3\":{\"id\":11," +
+        "\"bestFriend3\":{\"REC\":\"1}}}}}}}"
+    );
   }
 
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)

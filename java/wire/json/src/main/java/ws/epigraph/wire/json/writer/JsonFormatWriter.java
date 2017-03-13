@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,15 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
 public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private final @NotNull Writer out;
+  private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
+  private int dataStackDepth = 0;
 
   public JsonFormatWriter(@NotNull Writer out) { this.out = out; }
+
+  public void reset() {
+    visitedData.clear();
+    dataStackDepth = 0;
+  }
 
   @Override
   public void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException {
@@ -59,6 +66,29 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull Deque<ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
   ) throws IOException {
+
+    List<VisitedDataEntry> visitedDataEntries = visitedData.get(data);
+
+    Integer prevStackDepth = null;
+    if (visitedDataEntries == null) {
+      visitedDataEntries = new ArrayList<>();
+      visitedData.put(data, visitedDataEntries);
+    } else {
+      // NB this can lead to O(N^3), optimize if causes problems
+      VisitedDataEntry entry = visitedDataEntries.stream().filter(e -> e.matches(projections)).findFirst().orElse(null);
+      if (entry != null)
+        prevStackDepth = entry.depth;
+    }
+
+    if (prevStackDepth != null) {
+      out.write("{\"" + JsonFormat.REC_FIELD + "\":\"");
+      out.write(String.valueOf(dataStackDepth - prevStackDepth));
+      out.write('}');
+      return;
+    }
+
+    visitedDataEntries.add(new VisitedDataEntry(dataStackDepth++, projections));
+
     TypeApi type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.UNION && monoTag(projections) == null;
@@ -90,6 +120,8 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
     if (renderMulti) out.write('}');
     if (renderPoly) out.write('}');
+
+    dataStackDepth--;
   }
 
   private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?, ?>> projections, @Nullable Val value)
@@ -114,7 +146,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       projections = new ArrayDeque<>(1);
       projections.add(projection);
     } else
-     projections = modelProjections(projection, datum.type());
+      projections = modelProjections(projection, datum.type());
 
     writeDatum(projections, datum);
   }
@@ -389,7 +421,6 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     else writeError(error);
   }
 
-
   @Override
   public void writeDatum(@Nullable Datum datum) throws IOException {
     if (datum == null) {
@@ -528,5 +559,31 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   }
 
   private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
+
+  private static final class VisitedDataEntry {
+    final int depth;
+    final Collection<ReqOutputVarProjection> projections;
+
+    VisitedDataEntry(final int depth, final Collection<ReqOutputVarProjection> projections) {
+      this.depth = depth;
+      this.projections = projections;
+    }
+
+    boolean matches(Collection<ReqOutputVarProjection> projections) {
+      // N*N, optimize if needed
+      if (this.projections.size() != projections.size()) return false;
+      for (final ReqOutputVarProjection projection : projections) {
+        boolean found = false;
+        for (final ReqOutputVarProjection projection2 : this.projections) {
+          if (projection == projection2) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) return false;
+      }
+      return true;
+    }
+  }
 
 }

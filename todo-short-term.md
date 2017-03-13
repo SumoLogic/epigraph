@@ -11,6 +11,8 @@
   - [x] req projections syntax
   - [x] req projections psi parsers
   - [ ] allow recursive data: update marshaller/unmarshaller
+    - [ ] should check that recursive data corresponds to projection
+  - [ ] update data trimmer to support recursive data
 
 
 - [ ] undertow handler: remove trimmer, should be handled by marshaller

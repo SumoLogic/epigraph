@@ -56,10 +56,11 @@
 - [ ] Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
-- [ ] generated req projections: cache normalized projections
+- [ ] generated req projections: cache normalized projections?
 - [x] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing
 - [ ] remove type information from projections?
   - [ ] record projections should contain a String->FP, not String->FPE map
+- [ ] correct `equals` support, see todo on `AbstractVarProjection.equals`
 
 # Operations
 

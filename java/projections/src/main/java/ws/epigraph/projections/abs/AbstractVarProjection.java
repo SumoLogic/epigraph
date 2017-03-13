@@ -390,6 +390,11 @@ public abstract class AbstractVarProjection<
     if (o == null || getClass() != o.getClass()) return false;
     AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
 
+    // todo this doesn't cover cases like this:
+    // p1 = (foo (bar (p1))
+    // p2 = (bar( foo (p2))
+    // p1/foo equals p2
+    // need external context-aware comparator
     return name != null && name.equals(that.name()) ||
            Objects.equals(type, that.type) && Objects.equals(tagProjections, that.tagProjections) &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
