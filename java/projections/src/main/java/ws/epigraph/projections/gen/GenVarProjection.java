@@ -123,11 +123,15 @@ public interface GenVarProjection<
    * <pre><code>
    * namespace com.mycompany
    *
-   * outputProjection userProjection: UserRecord (id, firstName, lastName, company $companyProjection)
-   * outputProjection companyProjection: CompanyRecord (id, name, logo)
+   * resource myResource : My Type {
+   *   outputProjection userProjection: UserRecord (id, firstName, lastName, company $companyProjection)
+   *   outputProjection companyProjection: CompanyRecord (id, name, logo)
+   * }
    * </code></pre>
-   * {@code userProjection} will get a name of {@code com.mycompany.userProjection} and
-   * {@code companyProjection} will get a name of {@code com.mycompany.companyProjection}
+   * {@code userProjection} will get a fully qualified name of
+   * {@code com.mycompany.resources.myresource.projections.output.userProjection} and
+   * {@code companyProjection} will get a fully qualified name of
+   * {@code com.mycompany.resources.myresource.projections.output.companyProjection}
    * <p/>
    * Instances will be constructed as follows:
    * <ul>

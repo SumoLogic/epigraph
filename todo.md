@@ -12,6 +12,7 @@
 - [ ] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
 - [x] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
+- [ ] Recursive GData support? GData snippets in schema?
 
 # Type system
 - [ ] Enums
