@@ -349,19 +349,16 @@ public class JsonFormatWriterTest {
         );
 
     testRender(
-        ":(id,record(id, " +
-        "bestFriend3 :record( id, firstName, " +
-        "bestFriend3 :record( id, lastName, " +
-        "bestFriend3 :record( id, " +
-        "bestFriend3 $bf= :record(id, bestFriend3 $bf) )))))",
+        ":(id,record(id, " + // parent
+        "  bestFriend3 :record( id, firstName, " + // bf-fn
+        "    bestFriend3 :record( id, lastName, " + // bf-ln
+        "      bestFriend3 $bf= :record(id, bestFriend3 $bf) ))))", //bf-id + bf-rec
         person,
-        // todo should get one step shorter with proper equals() for var projections in place
-        "{\"id\":1,\"record\":{\"id\":1," +
-        "\"bestFriend3\":{\"id\":11,\"firstName\":\"Alfred\"," +
-        "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," +
-        "\"bestFriend3\":{\"id\":11," +
-        "\"bestFriend3\":{\"id\":11," +
-        "\"bestFriend3\":{\"REC\":1}}}}}}}"
+        "{\"id\":1,\"record\":{\"id\":1," + //parent
+        "\"bestFriend3\":{\"id\":11,\"firstName\":\"Alfred\"," + // bf-fn
+        "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," + // bf-ln
+        "\"bestFriend3\":{\"id\":11," + // bf-id
+        "\"bestFriend3\":{\"REC\":1}}}}}}" // bf-red
     );
   }
 

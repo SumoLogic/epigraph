@@ -326,16 +326,28 @@ public class ReqOutputJsonFormatReaderTest {
     );
   }
 
-  // todo fix and enable
-//  @Test
+  @Test
   public void testReadRec2() throws IOException {
+    Person.Builder bfrec = Person.create();
+    bfrec.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setBestFriend3$(bfrec)
+    );
+
     Person.Builder bf = Person.create();
     bf.setRecord(
         PersonRecord.create()
             .setId(PersonId.create(11))
             .setFirstName("Alfred")
-            .setLastName("Hitchcock")
-            .setBestFriend3$(bf)
+            .setBestFriend3$(
+                Person.create().setRecord(
+                    PersonRecord.create()
+                        .setId(PersonId.create(11))
+                        .setLastName("Hitchcock")
+                        .setBestFriend3$(bfrec)
+                )
+            )
     );
 
     Person.Builder person = Person.create()
@@ -348,15 +360,13 @@ public class ReqOutputJsonFormatReaderTest {
         ":(id,record(id, " +
         "bestFriend3 :record( id, firstName, " +
         "bestFriend3 :record( id, lastName, " +
-        "bestFriend3 :record( id, " +
-        "bestFriend3 $bf= :record(id, bestFriend3 $bf) )))))",
-        // todo should get one step shorter with proper equals() for var projections in place
+        "bestFriend3 $bf= :record(id, bestFriend3 $bf) ))))",
+
         "{\"id\":1,\"record\":{\"id\":1," +
         "\"bestFriend3\":{\"id\":11,\"firstName\":\"Alfred\"," +
         "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," +
         "\"bestFriend3\":{\"id\":11," +
-        "\"bestFriend3\":{\"id\":11," +
-        "\"bestFriend3\":{\"REC\":1}}}}}}}",
+        "\"bestFriend3\":{\"REC\":1}}}}}}",
         person
     );
   }
