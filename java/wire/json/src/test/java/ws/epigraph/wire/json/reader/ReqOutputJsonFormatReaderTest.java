@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
+import ws.epigraph.data.DataComparator;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -78,6 +79,8 @@ public class ReqOutputJsonFormatReaderTest {
           "        firstName",
           "      ),",
           "    ),",
+          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
           "    friends *( :id ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -301,6 +304,63 @@ public class ReqOutputJsonFormatReaderTest {
     );
   }
 
+  @Test
+  public void testReadRec() throws IOException {
+    Person.Builder bf = Person.create();
+    bf.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setBestFriend2$(bf)
+    );
+
+    Person.Builder person = Person.create()
+        .setId(PersonId.create(1))
+        .setRecord(
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2$(bf)
+        );
+
+    testRead(
+        ":(id,record(id,bestFriend2 $bf= :record(id, bestFriend2 $bf) ))",
+        "{\"id\":1,\"record\":{\"id\":1,\"bestFriend2\":{\"id\":11,\"bestFriend2\":{\"REC\":1}}}}",
+        person
+    );
+  }
+
+  // todo fix and enable
+//  @Test
+  public void testReadRec2() throws IOException {
+    Person.Builder bf = Person.create();
+    bf.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setFirstName("Alfred")
+            .setLastName("Hitchcock")
+            .setBestFriend3$(bf)
+    );
+
+    Person.Builder person = Person.create()
+        .setId(PersonId.create(1))
+        .setRecord(
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3$(bf)
+        );
+
+    testRead(
+        ":(id,record(id, " +
+        "bestFriend3 :record( id, firstName, " +
+        "bestFriend3 :record( id, lastName, " +
+        "bestFriend3 :record( id, " +
+        "bestFriend3 $bf= :record(id, bestFriend3 $bf) )))))",
+        // todo should get one step shorter with proper equals() for var projections in place
+        "{\"id\":1,\"record\":{\"id\":1," +
+        "\"bestFriend3\":{\"id\":11,\"firstName\":\"Alfred\"," +
+        "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," +
+        "\"bestFriend3\":{\"id\":11," +
+        "\"bestFriend3\":{\"id\":11," +
+        "\"bestFriend3\":{\"REC\":1}}}}}}}",
+        person
+    );
+  }
+
   private void testRead(
       @NotNull String reqProjectionStr,
       @NotNull String json,
@@ -324,7 +384,7 @@ public class ReqOutputJsonFormatReaderTest {
 
     final Data data = jsonReader.readData(reqProjection);
 
-    if (!expectedData.equals(data)) {
+    if (!new DataComparator().equals(expectedData, data)) {
       StringWriter writer = new StringWriter();
       JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
       jsonWriter.writeData(data);

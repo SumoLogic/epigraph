@@ -41,12 +41,14 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   private final @NotNull Writer out;
   private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
+  private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
   private int dataStackDepth = 0;
 
   public JsonFormatWriter(@NotNull Writer out) { this.out = out; }
 
   public void reset() {
     visitedData.clear();
+    visitedDataNoProjection.clear();
     dataStackDepth = 0;
   }
 
@@ -81,7 +83,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     }
 
     if (prevStackDepth != null) {
-      out.write("{\"" + JsonFormat.REC_FIELD + "\":\"");
+      out.write("{\"" + JsonFormat.REC_FIELD + "\":");
       out.write(String.valueOf(dataStackDepth - prevStackDepth));
       out.write('}');
       return;
@@ -120,6 +122,10 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
     if (renderMulti) out.write('}');
     if (renderPoly) out.write('}');
+
+    visitedDataEntries.removeIf(e -> e.depth == dataStackDepth);
+    if (visitedDataEntries.isEmpty())
+      visitedData.remove(data);
 
     dataStackDepth--;
   }
@@ -388,6 +394,16 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (data == null) {
       out.write("null");
     } else {
+      final Integer prevStackDepth = visitedDataNoProjection.get(data);
+
+      if (prevStackDepth != null) {
+        out.write("{\"" + JsonFormat.REC_FIELD + "\":");
+        out.write(String.valueOf(dataStackDepth - prevStackDepth));
+        out.write('}');
+        return;
+      }
+      visitedDataNoProjection.put(data, dataStackDepth++);
+
       Type type = data.type();
       if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
         out.write('{');
@@ -410,6 +426,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
         else writeValue(value);
       }
     }
+
+    visitedDataNoProjection.remove(data);
+    dataStackDepth--;
   }
 
   private static final ErrorValue NO_VALUE = new ErrorValue(500, "No value", null);
@@ -569,6 +588,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       this.projections = projections;
     }
 
+    // a copy of AbstractJsonFormatReader$VisitedDataEntry.matches
     boolean matches(Collection<ReqOutputVarProjection> projections) {
       // N*N, optimize if needed
       if (this.projections.size() != projections.size()) return false;

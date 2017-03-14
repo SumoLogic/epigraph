@@ -327,7 +327,7 @@ public class JsonFormatWriterTest {
     testRender(
         ":(id,record(id,bestFriend2 $bf= :record(id, bestFriend2 $bf) ))",
         person,
-        "{\"id\":1,\"record\":{\"id\":1,\"bestFriend2\":{\"id\":11,\"bestFriend2\":{\"REC\":\"1}}}}"
+        "{\"id\":1,\"record\":{\"id\":1,\"bestFriend2\":{\"id\":11,\"bestFriend2\":{\"REC\":1}}}}"
         );
   }
 
@@ -361,7 +361,7 @@ public class JsonFormatWriterTest {
         "\"bestFriend3\":{\"id\":11,\"lastName\":\"Hitchcock\"," +
         "\"bestFriend3\":{\"id\":11," +
         "\"bestFriend3\":{\"id\":11," +
-        "\"bestFriend3\":{\"REC\":\"1}}}}}}}"
+        "\"bestFriend3\":{\"REC\":1}}}}}}}"
     );
   }
 

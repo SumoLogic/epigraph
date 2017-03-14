@@ -16,6 +16,7 @@
 
 package ws.epigraph.wire.json.reader;
 
+import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -33,6 +34,7 @@ import ws.epigraph.wire.json.JsonFormatCommon;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import static ws.epigraph.types.RecordType.Field;
@@ -46,7 +48,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  * <p>
  * <code> <pre>
  * DATA ::= RECDATA | POLYDATA | MONODATA                              // POLYDATA triggered by projection (polymorphic tails presence)
- * RECDATA ::= '{' "REC" ':' NUMBER '}'                                // NUMBER = how many steps up the stack to take to get the same instance
+ * RECDATA ::= '{' "REC" ':' NUMBER '}'                                // NUMBER = how many var datas up the stack to skip to get the same instance
  * POLYDATA ::= '{' "type" ':' TYPE, "data" ':' MONODATA '}'
  * TYPE ::= '"' ( STRING '.' )* STRING '"'                             // enquoted dot-separated type FQN string
  * MONODATA ::= MULTIDATA | VALUE                                      // triggered by projection (parenthesized flag)
@@ -83,8 +85,14 @@ abstract class AbstractJsonFormatReader<
     implements FormatReader<VP, MP, IOException> {
 
   private final @NotNull JsonParser in;
+  private final @NotNull LinkedList<VisitedDataEntry> dataByLevel = new LinkedList<>();
 
   protected AbstractJsonFormatReader(@NotNull JsonParser jsonParser) { this.in = jsonParser; }
+
+  public void reset() {
+    dataByLevel.clear();
+    resetParserStateRecording();
+  }
 
   @Override
   public @Nullable Data readData(@NotNull VP projection) throws IOException {
@@ -93,13 +101,13 @@ abstract class AbstractJsonFormatReader<
     return data;
   }
 
-  // DATA ::= POLYDATA or MONODATA
+  // DATA ::= RECDATA or POLYDATA or MONODATA
   private @Nullable Data readData(
       @NotNull Type typeBound,
       @NotNull List<? extends VP> projections // non-empty, polymorphic tails respected
   ) throws IOException {
 
-    if (in.nextToken() == null) return null;
+    if (nextToken() == null) return null;
     return finishReadingData(typeBound, projections);
   }
 
@@ -110,7 +118,43 @@ abstract class AbstractJsonFormatReader<
     assert !projections.isEmpty();
     boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
+
+    // check for REC
+    if (token == JsonToken.START_OBJECT) {
+
+      // we need a simple 1-token lookahead here.
+      startParserStateRecording();
+      if (JsonFormat.REC_FIELD.equals(nextFieldName())) {
+        stepOver(JsonToken.VALUE_NUMBER_INT, "recursion depth");
+        int revStackDepth = currentValueAsInt();
+
+        int idx = dataByLevel.size() - revStackDepth;
+
+        if (idx < 0 || idx >= dataByLevel.size())
+          throw error("Invalid recursion level " + revStackDepth);
+
+        final VisitedDataEntry visitedDataEntry = dataByLevel.get(idx);
+        if (visitedDataEntry == null)
+          throw error("Can't find data by recursion level " + revStackDepth);
+
+        // assuming that exactly the same, not just structurally same projection was used for writing
+        // need full data validation in place if we want to accept structurally equal projections.
+
+        // for instance {foo{foo{foo...}}} data can be serialized with this projection:
+        // $rec=(foo $rec)
+        // and deserialized with
+        // $rec=(foo(foo $rec))
+        if (!visitedDataEntry.matches(projections))
+          throw error("Projection doesn't match recursive data");
+
+        resetParserStateRecording();
+        stepOver(JsonToken.END_OBJECT);
+
+        return visitedDataEntry.builder;
+      }
+      replayParserState();
+    }
 
     final Type type;
     if (readPoly) { // { "type": "list[epigraph.String]", "data": MONODATA }
@@ -119,8 +163,9 @@ abstract class AbstractJsonFormatReader<
       stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
       nextNonEof(); // position parser on first MONODATA token
     } else {
-      Type projectionType = (Type) projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
-       type = projectionType.isAssignableFrom(typeBound) ? typeBound : projectionType; // pick most specific
+      Type projectionType =
+          (Type) projections.get(projections.size() - 1).type(); // effectiveType; // mostSpecificType(projections);
+      type = projectionType.isAssignableFrom(typeBound) ? typeBound : projectionType; // pick most specific
       // current token is first MONODATA token
     }
 
@@ -128,38 +173,41 @@ abstract class AbstractJsonFormatReader<
     List<? extends VP> flattened = flatten(new ArrayList<>(), projections, type);
 
     String monoTagName = type.kind() == TypeKind.UNION ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
-    final Data data;
+    final Data.Builder data = type.createDataBuilder();
+
+    dataByLevel.add(new VisitedDataEntry(data, projections));
+
     if (monoTagName == null) { // MULTIDATA ::= { "tag": VALUE, ... }
-      data = finishReadingMultiData(type, flattened);
+      finishReadingMultiData(type, data, flattened);
     } else { // VALUE ::= ERROR or DATUM or null
       Tag tag = type.tagsMap().get(monoTagName);
       assert tag != null : "invalid tag";
       List<? extends MP> tagModelProjections =
           tagModelProjections(tag, flattened, () -> new ArrayList<>(flattened.size()));
       assert tagModelProjections != null : "missing mono tag";
-      final Data.Builder builder = type.createDataBuilder();
-      builder._raw().setValue(tag, finishReadingValue((DatumType) tag.type(), tagModelProjections));
-      data = builder;
+      data._raw().setValue(tag, finishReadingValue((DatumType) tag.type(), tagModelProjections));
     }
 
     if (readPoly) stepOver(JsonToken.END_OBJECT); // TODO verify it's not already consumed (by invoked code)
+
+    dataByLevel.removeLast();
     return data;
   }
 
   // MULTIDATA ::= { "tag": VALUE, ... }
-  private @NotNull Data finishReadingMultiData(
+  private @NotNull Data.Builder finishReadingMultiData(
       @NotNull Type effectiveType,
+      @NotNull Data.Builder data,
       @NotNull List<? extends VP> projections // non-empty, polymorphic tails ignored
   ) throws IOException {
 
     assert !projections.isEmpty();
 
-    JsonToken token = in.currentToken();
-    Data.Builder data = effectiveType.createDataBuilder();
+    JsonToken token = currentToken();
     ensure(token, JsonToken.START_OBJECT);
 
-    while ((token = in.nextToken()) == JsonToken.FIELD_NAME) {
-      String tagName = in.getCurrentName();
+    while ((token = nextToken()) == JsonToken.FIELD_NAME) {
+      String tagName = currentName();
       Tag tag = effectiveType.tagsMap().get(tagName);
       if (tag == null)
         throw error("Unknown tag '" + tagName + "' in type '" + effectiveType.name().toString() + "'");
@@ -204,7 +252,7 @@ abstract class AbstractJsonFormatReader<
     assert !projections.isEmpty();
     boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
     final DatumType type;
     if (readPoly) {
       ensure(token, JsonToken.START_OBJECT);
@@ -212,7 +260,8 @@ abstract class AbstractJsonFormatReader<
       stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
       nextNonEof(); // position parser on first MONODATA token
     } else {
-      DatumType projectionType = (DatumType) projections.get(projections.size() - 1).model(); // effectiveType; // mostSpecificType(projections);
+      DatumType projectionType = (DatumType) projections.get(projections.size() - 1)
+          .model(); // effectiveType; // mostSpecificType(projections);
       type = projectionType.isAssignableFrom(typeBound) ? typeBound : projectionType; // pick most specific
     }
 
@@ -229,7 +278,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull Collection<? extends MP> tagModelProjections // non-empty
   ) throws IOException {
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
     assert !tagModelProjections.isEmpty();
 
     // null?
@@ -237,7 +286,7 @@ abstract class AbstractJsonFormatReader<
     // error?
     final @Nullable String firstFieldName;
     if (token == JsonToken.START_OBJECT) { // can be a record or an error
-      firstFieldName = in.nextFieldName(); // advances to next token (field name or end object - in valid cases)
+      firstFieldName = nextFieldName(); // advances to next token (field name or end object - in valid cases)
       if (JsonFormat.ERROR_CODE_FIELD.equals(firstFieldName)) return type.createValue(finishReadingError());
     } else firstFieldName = null;
     // datum
@@ -283,14 +332,14 @@ abstract class AbstractJsonFormatReader<
           _meta = readDatumNoMeta(metaProjections, metaType);
           @NotNull JsonToken token = nextNonEof();
           if (token == JsonToken.END_OBJECT) break;
-          if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+          if (token == JsonToken.FIELD_NAME) fieldName = currentName();
           else throw expected("field name or '}'");
         } else if (Objects.equals(fieldName, JsonFormat.DATUM_VALUE_FIELD)) {
           if (_datum != null) throw error("Field '" + JsonFormat.DATUM_VALUE_FIELD + "' must only be specified once");
           _datum = readDatumNoMeta(flattened, type);
           @NotNull JsonToken token = nextNonEof();
           if (token == JsonToken.END_OBJECT) break;
-          if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+          if (token == JsonToken.FIELD_NAME) fieldName = currentName();
           else throw expected("field name or '}'");
         }
       }
@@ -311,7 +360,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull DatumType type) throws IOException {
 
     @NotNull JsonToken token = nextNonEof();
-    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? in.nextFieldName() : null;
+    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatumNoMeta(firstFieldName, modelProjections, type);
   }
 
@@ -368,10 +417,12 @@ abstract class AbstractJsonFormatReader<
   private @NotNull ErrorValue finishReadingError() throws IOException { // `: 404, "message": "blah" }`
     stepOver(JsonToken.VALUE_NUMBER_INT, "integer value");
     int errorCode;
-    try { errorCode = in.getIntValue(); } catch (JsonParseException ignored) { throw expected("integer error code"); }
+    try { errorCode = currentValueAsInt(); } catch (JsonParseException ignored) {
+      throw expected("integer error code");
+    }
     stepOver(JsonFormat.ERROR_MESSAGE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
-    String message = in.getText();
+    String message = currentText();
     // TODO read custom error properties here (if we decide to support these)
     stepOver(JsonToken.END_OBJECT);
     return new ErrorValue(errorCode, message, null);
@@ -402,7 +453,7 @@ abstract class AbstractJsonFormatReader<
 
         JsonToken token = nextNonEof();
         if (token == JsonToken.END_OBJECT) break;
-        if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+        if (token == JsonToken.FIELD_NAME) fieldName = currentName();
         else throw expected("field name or '}'");
       }
     }
@@ -424,7 +475,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull Collection<? extends MMP> projections // non-empty
   ) throws IOException {
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
     ensure(token, JsonToken.START_ARRAY);
 
     final @NotNull DatumType keyType = type.keyType();
@@ -466,7 +517,7 @@ abstract class AbstractJsonFormatReader<
 
     @NotNull final Type elementType = type.elementType().type();
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
     ensure(token, JsonToken.START_ARRAY);
 
     final ListDatum.@NotNull Builder datum = type.createBuilder();
@@ -486,24 +537,24 @@ abstract class AbstractJsonFormatReader<
   @SuppressWarnings("unchecked")
   private @NotNull PrimitiveDatum.Builder<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type) throws IOException {
 
-    JsonToken token = in.currentToken();
+    JsonToken token = currentToken();
     final Object nativeValue;
 
     if (type instanceof StringType) { // TODO introduce PrimitiveType.primitiveKind(): PrimitiveType.Kind; use switch
       ensure(token, JsonToken.VALUE_STRING);
-      nativeValue = in.getValueAsString();
+      nativeValue = currentValueAsString();
     } else if (type instanceof BooleanType) {
       ensure(token, JsonToken.VALUE_TRUE, JsonToken.VALUE_FALSE);
-      nativeValue = in.getValueAsBoolean();
+      nativeValue = currentValueAsBoolean();
     } else if (type instanceof DoubleType) {
       ensure(token, JsonToken.VALUE_NUMBER_FLOAT); // FIXME VALUE_NUMBER_INT is ok here, too (add test)
-      nativeValue = in.getValueAsDouble();
+      nativeValue = currentValueAsDouble();
     } else if (type instanceof LongType) {
       ensure(token, JsonToken.VALUE_NUMBER_INT);
-      nativeValue = in.getValueAsLong();
+      nativeValue = currentValueAsLong();
     } else if (type instanceof IntegerType) {
       ensure(token, JsonToken.VALUE_NUMBER_INT);
-      nativeValue = in.getValueAsInt();
+      nativeValue = currentValueAsInt();
     } else throw error("Unknown primitive type: '" + type.name() + "' (" + type.getClass().getName() + ")");
 
     //noinspection rawtypes
@@ -515,7 +566,7 @@ abstract class AbstractJsonFormatReader<
   ) throws IOException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
-    String typeName = in.getText();
+    String typeName = currentText();
     Type type = resolveType(projections, typeName);
     if (type == null)
       throw error("Invalid type '" + typeName + "'");
@@ -542,7 +593,7 @@ abstract class AbstractJsonFormatReader<
   ) throws IOException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
-    String typeName = in.getText();
+    String typeName = currentText();
     DatumType type = resolveModelType(projections, typeName);
     if (type == null)
       throw error("Invalid type '" + typeName + "'");
@@ -578,8 +629,8 @@ abstract class AbstractJsonFormatReader<
     if (type.kind() == TypeKind.UNION) {
       ensure(token, JsonToken.START_OBJECT);
 
-      while ((token = in.nextToken()) == JsonToken.FIELD_NAME) {
-        String tagName = in.getCurrentName();
+      while ((token = nextToken()) == JsonToken.FIELD_NAME) {
+        String tagName = currentName();
         Tag tag = type.tagsMap().get(tagName);
         if (tag == null)
           throw error("Unknown tag '" + tagName + "' in type '" + type.name().toString() + "'");
@@ -609,7 +660,7 @@ abstract class AbstractJsonFormatReader<
     // error?
     final @Nullable String firstFieldName;
     if (token == JsonToken.START_OBJECT) { // can be a record or an error
-      firstFieldName = in.nextFieldName(); // advances to next token (field name or end object - in valid cases)
+      firstFieldName = nextFieldName(); // advances to next token (field name or end object - in valid cases)
       if (JsonFormat.ERROR_CODE_FIELD.equals(firstFieldName)) return type.createValue(finishReadingError());
     } else firstFieldName = null;
     // datum
@@ -619,14 +670,14 @@ abstract class AbstractJsonFormatReader<
 
   @Override
   public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
-    String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? in.nextFieldName() : null;
+    String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum((DatumType) projection.model(), firstFieldName, Collections.singleton(projection));
   }
 
   @Override
   public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException {
     @NotNull JsonToken token = nextNonEof();
-    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? in.nextFieldName() : null;
+    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum(token, firstFieldName, type);
   }
 
@@ -638,7 +689,7 @@ abstract class AbstractJsonFormatReader<
     // error?
     final @Nullable String firstFieldName;
     if (token == JsonToken.START_OBJECT) { // can be a record or an error
-      firstFieldName = in.nextFieldName(); // advances to next token (field name or end object - in valid cases)
+      firstFieldName = nextFieldName(); // advances to next token (field name or end object - in valid cases)
       if (JsonFormat.ERROR_CODE_FIELD.equals(firstFieldName)) return type.createValue(finishReadingError());
     } else firstFieldName = null;
 
@@ -717,7 +768,7 @@ abstract class AbstractJsonFormatReader<
 
         token = nextNonEof();
         if (token == JsonToken.END_OBJECT) break;
-        if (token == JsonToken.FIELD_NAME) fieldName = in.getCurrentName();
+        if (token == JsonToken.FIELD_NAME) fieldName = currentName();
         else throw expected("field name or '}'");
       }
     }
@@ -779,56 +830,237 @@ abstract class AbstractJsonFormatReader<
     return finishReadingError();
   }
 
-  private @NotNull JsonToken nextNonEof() throws IOException {return checkEof(in.nextToken());}
+  private @NotNull JsonToken nextNonEof() throws IOException {return checkEof(nextToken());}
 
   @Contract("null -> fail")
   private @NotNull JsonToken checkEof(@Nullable JsonToken token) throws IllegalArgumentException {
-    if (token == null) throw new IllegalArgumentException("Unexpected EOF at " + in.getTokenLocation());
+    if (token == null) throw new IllegalArgumentException("Unexpected EOF at " + currentLocation());
     return token;
   }
 
   private void ensure(@Nullable JsonToken actual, @NotNull JsonToken... expected) throws IOException {
-    // FIXME premature error message construction + .toString() is bad here (enum constant names)
-    // TODO remove this method and pass hand-written expectedText to `ensure(JsonToken, String, JsonToken...)`
-    String expectedString =
-        Arrays.stream(expected).map(token -> "'" + token.toString() + "'").collect(Collectors.joining(", "));
-    ensure(actual, expectedString, expected);
+    Callable<String> expectedStringCallable =
+        () -> Arrays.stream(expected).map(token -> "'" + token.toString() + "'").collect(Collectors.joining(", "));
+    ensure(actual, null, expectedStringCallable, expected);
   }
 
   private void ensure(
       @Nullable JsonToken actual,
-      @NotNull String expectedText,
+      @Nullable String expectedText,
+      @Nullable Callable<String> expectedTextCallable,
       @NotNull JsonToken... expected)
       throws IOException, IllegalArgumentException {
 
-    for (JsonToken e : expected) if (e == actual) return;
+    for (JsonToken e : expected)
+      if (e == actual)
+        return;
+
+    if (expectedText == null) {
+      assert expectedTextCallable != null;
+      try {
+        expectedText = expectedTextCallable.call();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
     throw expected(expectedText);
   }
 
   private void ensureCurr(@Nullable JsonToken expected, @NotNull String expectedText) throws IOException {
-    ensure(in.currentToken(), expectedText, expected);
+    ensure(currentToken(), expectedText, null, expected);
   }
+
 
   private void stepOver(@NotNull JsonToken expected) throws IOException { // FIXME use `stepOver(JsonToken, String)`
     stepOver(expected, "'" + expected.toString() + "'");
   }
 
   private void stepOver(@Nullable JsonToken expected, @NotNull String expectedText) throws IOException {
-    ensure(in.nextToken(), expectedText, expected);
+    ensure(nextToken(), expectedText, null, expected);
   }
 
   private void stepOver(@NotNull String fieldName) throws IOException {
-    if (!fieldName.equals(in.nextFieldName())) throw expected('"' + fieldName + "\" field");
+    if (!fieldName.equals(nextFieldName())) throw expected('"' + fieldName + "\" field");
   }
 
   private IllegalArgumentException expected(@NotNull String expected) throws IOException {
-    return error("Expected " + expected + " but got " + str(in.getText()));
+    return error("Expected " + expected + " but got " + str(currentText()));
   }
 
+
   protected IllegalArgumentException error(@NotNull String message) {
-    return new IllegalArgumentException(message + " at " + in.getCurrentLocation());
+    return new IllegalArgumentException(message + " at " + currentLocation());
   }
 
   @Contract(pure = true)
   private static @NotNull String str(@Nullable String text) { return text == null ? "EOF" : '\'' + text + '\''; }
+
+  // parser interaction
+
+
+  private JsonToken currentToken() {
+    return replaying ? replay.peek().token : in.currentToken();
+  }
+
+  private String currentName() throws IOException {
+    return replaying ? replay.peek().name : in.getCurrentName();
+  }
+
+  private String currentText() throws IOException {
+    return replaying ? replay.peek().text : in.getText();
+  }
+
+  private int currentValueAsInt() throws IOException {
+    return replaying ? replay.peek().intValue : in.getValueAsInt();
+  }
+
+  private long currentValueAsLong() throws IOException {
+    return replaying ? replay.peek().longValue : in.getValueAsLong();
+  }
+
+  private double currentValueAsDouble() throws IOException {
+    return replaying ? replay.peek().doubleValue : in.getValueAsDouble();
+  }
+
+  private boolean currentValueAsBoolean() throws IOException {
+    return replaying ? replay.peek().booleanValue : in.getValueAsBoolean();
+  }
+
+  private String currentValueAsString() throws IOException {
+    return replaying ? replay.peek().stringValue : in.getValueAsString();
+  }
+
+  private JsonLocation currentLocation() {
+    return replaying ? replay.peek().location : in.getCurrentLocation();
+  }
+
+  // next
+
+  private @Nullable JsonToken nextToken() throws IOException {
+    if (replaying) {
+      switch (replay.size()) {
+        case 0:
+          resetParserStateRecording();
+          return in.nextToken();
+        case 1:
+          resetParserStateRecording();
+          return in.currentToken();
+        default:
+          replay.pop();
+          return currentToken();
+      }
+    } else if (replay != null) {
+      replay.add(currentParserState());
+      in.nextToken();
+      return currentToken();
+    } else
+      return in.nextToken();
+  }
+
+  private @Nullable String nextFieldName() throws IOException {
+    nextToken();
+    return currentToken() == JsonToken.FIELD_NAME ? currentName() : null;
+  }
+
+  // parser state management
+
+  private Deque<JsonState> replay = null;
+  private boolean replaying = false;
+
+  private void startParserStateRecording() throws IOException {
+    resetParserStateRecording();
+    replay = new ArrayDeque<>();
+//    replay.push(currentParserState());
+//    in.nextToken();
+  }
+
+  private void replayParserState() {
+    assert replay != null;
+    assert !replaying;
+    replaying = true;
+  }
+
+  private void resetParserStateRecording() {
+    replay = null;
+    replaying = false;
+  }
+
+  private @NotNull JsonState currentParserState() throws IOException {
+    return new JsonState(
+        in.currentToken(),
+        in.getText(),
+        in.getCurrentName(),
+        in.getValueAsInt(),
+        in.getValueAsString(),
+        in.getValueAsLong(),
+        in.getValueAsDouble(),
+        in.getValueAsBoolean(),
+        in.getCurrentLocation()
+    );
+  }
+
+  private final class JsonState {
+    final JsonToken token;
+    final String text;
+    final String name;
+
+    final int intValue;
+    final String stringValue;
+    final long longValue;
+    final double doubleValue;
+    final boolean booleanValue;
+
+    final JsonLocation location;
+
+    JsonState(
+        final JsonToken token,
+        final String text,
+        final String name,
+        final int intValue,
+        final String stringValue,
+        final long longValue,
+        final double doubleValue,
+        final boolean booleanValue,
+        final JsonLocation location) {
+
+      this.token = token;
+      this.text = text;
+      this.name = name;
+      this.intValue = intValue;
+      this.stringValue = stringValue;
+      this.longValue = longValue;
+      this.doubleValue = doubleValue;
+      this.booleanValue = booleanValue;
+      this.location = location;
+    }
+  }
+
+  private final class VisitedDataEntry {
+    final Data.Builder builder;
+    final Collection<? extends VP> projections;
+
+    private VisitedDataEntry(final Data.Builder builder, final Collection<? extends VP> projections) {
+      this.builder = builder;
+      this.projections = projections;
+    }
+
+    // a copy of JsonFormatWriter$VisitedDataEntry.matches
+    boolean matches(Collection<? extends VP> projections) {
+      // N*N, optimize if needed
+      if (this.projections.size() != projections.size()) return false;
+      for (final VP projection : projections) {
+        boolean found = false;
+        for (final VP projection2 : this.projections) {
+          if (projection == projection2) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) return false;
+      }
+      return true;
+    }
+  }
+
+
 }
