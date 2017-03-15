@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
+import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.op.input.*;
 
 import java.util.Collection;
@@ -41,6 +42,11 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     OpInputListModelProjection
     > {
 
+  @Override
+  protected GenProjectionsComparator<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?, ?, ?>, OpInputRecordModelProjection, OpInputMapModelProjection, OpInputListModelProjection, ?, OpInputFieldProjectionEntry, OpInputFieldProjection> projectionsComparator() {
+    return new GenProjectionsComparator<>();
+  }
+
   public OpInputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 
   @Override
@@ -54,7 +60,7 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
-  protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<? extends OpInputMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<OpInputMapModelProjection> projections) {
     return null;
   }
 

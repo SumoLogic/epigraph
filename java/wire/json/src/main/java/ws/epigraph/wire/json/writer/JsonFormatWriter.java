@@ -69,27 +69,33 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @NotNull Data data
   ) throws IOException {
 
+    // don't do recursion check on primitives
+    final TypeKind kind = projections.peek().type().kind();
+    boolean doRecursionCheck = kind != TypeKind.PRIMITIVE;
+
     List<VisitedDataEntry> visitedDataEntries = visitedData.get(data);
+    if (doRecursionCheck) {
+      Integer prevStackDepth = null;
+      if (visitedDataEntries == null) {
+        visitedDataEntries = new ArrayList<>();
+        visitedData.put(data, visitedDataEntries);
+      } else {
+        // NB this can lead to O(N^3), optimize if causes problems
+        VisitedDataEntry entry =
+            visitedDataEntries.stream().filter(e -> e.matches(projections)).findFirst().orElse(null);
+        if (entry != null)
+          prevStackDepth = entry.depth;
+      }
 
-    Integer prevStackDepth = null;
-    if (visitedDataEntries == null) {
-      visitedDataEntries = new ArrayList<>();
-      visitedData.put(data, visitedDataEntries);
-    } else {
-      // NB this can lead to O(N^3), optimize if causes problems
-      VisitedDataEntry entry = visitedDataEntries.stream().filter(e -> e.matches(projections)).findFirst().orElse(null);
-      if (entry != null)
-        prevStackDepth = entry.depth;
+      if (prevStackDepth != null) {
+        out.write("{\"" + JsonFormat.REC_FIELD + "\":");
+        out.write(String.valueOf(dataStackDepth - prevStackDepth));
+        out.write('}');
+        return;
+      }
+
+      visitedDataEntries.add(new VisitedDataEntry(dataStackDepth++, projections));
     }
-
-    if (prevStackDepth != null) {
-      out.write("{\"" + JsonFormat.REC_FIELD + "\":");
-      out.write(String.valueOf(dataStackDepth - prevStackDepth));
-      out.write('}');
-      return;
-    }
-
-    visitedDataEntries.add(new VisitedDataEntry(dataStackDepth++, projections));
 
     TypeApi type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
@@ -123,11 +129,13 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderMulti) out.write('}');
     if (renderPoly) out.write('}');
 
-    visitedDataEntries.removeIf(e -> e.depth == dataStackDepth);
-    if (visitedDataEntries.isEmpty())
-      visitedData.remove(data);
+    if (doRecursionCheck) {
+      visitedDataEntries.removeIf(e -> e.depth == dataStackDepth);
+      if (visitedDataEntries.isEmpty())
+        visitedData.remove(data);
+      dataStackDepth--;
+    }
 
-    dataStackDepth--;
   }
 
   private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?, ?>> projections, @Nullable Val value)
@@ -588,21 +596,9 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       this.projections = projections;
     }
 
-    // a copy of AbstractJsonFormatReader$VisitedDataEntry.matches
     boolean matches(Collection<ReqOutputVarProjection> projections) {
-      // N*N, optimize if needed
-      if (this.projections.size() != projections.size()) return false;
-      for (final ReqOutputVarProjection projection : projections) {
-        boolean found = false;
-        for (final ReqOutputVarProjection projection2 : this.projections) {
-          if (projection == projection2) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) return false;
-      }
-      return true;
+      return new ReqOutputProjectionsComparator(false, false).
+          varEquals(projections, this.projections);
     }
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
+import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.output.*;
 
 import java.util.Collection;
@@ -46,6 +47,11 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
   public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 
   @Override
+  protected GenProjectionsComparator<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?, ?>, ReqOutputRecordModelProjection, ReqOutputMapModelProjection, ReqOutputListModelProjection, ?, ReqOutputFieldProjectionEntry, ReqOutputFieldProjection> projectionsComparator() {
+    return new ReqOutputProjectionsComparator(false, false);
+  }
+
+  @Override
   protected boolean tagRequired(@NotNull ReqOutputTagProjectionEntry tagProjection) {
     return tagProjection.projection().required();
   }
@@ -57,7 +63,7 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
 
   @Override
   protected @Nullable Set<Datum> getExpectedKeys(
-      @NotNull Collection<@NotNull ? extends ReqOutputMapModelProjection> projections
+      @NotNull Collection<@NotNull ReqOutputMapModelProjection> projections
   ) {
     Set<Datum> expectedKeys = null;
     for (final ReqOutputMapModelProjection projection : projections) {

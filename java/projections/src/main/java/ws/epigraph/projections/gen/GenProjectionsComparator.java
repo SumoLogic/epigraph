@@ -38,7 +38,7 @@ public class GenProjectionsComparator<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
 
-  private Map<RecEntry, Set<RecEntry>> visited;
+  private Map<RecEntry, Set<RecEntry>> visited = new HashMap<>();
 
   /**
    * Checks if two var projections are structurally equal. Projection types are not checked.
@@ -48,11 +48,14 @@ public class GenProjectionsComparator<
    * @return {@code true} iff projections are structurally equal
    */
   public boolean equals(@NotNull VP vp1, @NotNull VP vp2) {
-    visited = new HashMap<>();
     return varEquals(Collections.singleton(vp1), Collections.singleton(vp2));
   }
 
-  protected boolean varEquals(@NotNull Collection<@NotNull VP> vps1, @NotNull Collection<@NotNull VP> vps2) {
+  public void reset() {
+    visited.clear();
+  }
+
+  public boolean varEquals(@NotNull Collection<@NotNull VP> vps1, @NotNull Collection<@NotNull VP> vps2) {
     if (vps1.isEmpty())
       return vps2.isEmpty();
 
