@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,12 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ProjectionDataTrimmer {
+  // todo move somewhere else? Generify?
+  // todo support recursive data
 
-  private ProjectionDataTrimmer() {} // todo move somewhere else? Generify?
+  public ProjectionDataTrimmer() {}
 
-  public static @NotNull Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
+  public @NotNull Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
     final @NotNull Data.Raw raw = data._raw();
     final @NotNull Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
@@ -57,7 +59,7 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public static @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+  public @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
     Datum.Builder.Raw b = trimDatumNoMeta(datum, projection);
 
     final ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
@@ -71,7 +73,7 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  private static @NotNull Datum.Builder.Raw trimDatumNoMeta(
+  private @NotNull Datum.Builder.Raw trimDatumNoMeta(
       @NotNull Datum datum,
       @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
 
@@ -93,7 +95,7 @@ public final class ProjectionDataTrimmer {
     }
   }
 
-  public static @NotNull Datum.Builder.Raw trimRecordDatum(
+  public @NotNull Datum.Builder.Raw trimRecordDatum(
       @NotNull RecordDatum datum,
       @NotNull ReqOutputRecordModelProjection projection) {
     final @NotNull RecordDatum.Raw raw = datum._raw();
@@ -114,7 +116,7 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public static @NotNull Datum.Builder.Raw trimMapDatum(
+  public @NotNull Datum.Builder.Raw trimMapDatum(
       @NotNull MapDatum datum,
       @NotNull ReqOutputMapModelProjection projection) {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -230,19 +230,14 @@ public class UndertowHandler implements HttpHandler {
 
     // todo validate response: e.g. all required parts must be present
 
-    String contentType = CONTENT_TYPE_JSON; // todo should depend on marshaller
-    String responseText = null;
-
-    Data trimmedData = data;
-
     try {
-      // FIXME change path removers so there's no need for pre-marshalling trimming
-      trimmedData = data == null ? null : ProjectionDataTrimmer.trimData(data, reqProjection);
+      String contentType = CONTENT_TYPE_JSON; // todo should depend on marshaller
+      String responseText = null;
 
-      if (trimmedData == null) {
+      if (data == null) {
         responseText = getNullResponse();
       } else {
-        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(trimmedData, pathSteps);
+        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
         if (noPathData.error == null) {
           final OutputProjectionPathRemover.PathRemovalResult noPathProjection =
@@ -271,7 +266,6 @@ public class UndertowHandler implements HttpHandler {
             //add stacktrace too?
           }
         }
-
       }
 
       if (responseText != null)
@@ -282,7 +276,7 @@ public class UndertowHandler implements HttpHandler {
           String.format(
               "Can't remove %d path steps from data: \n%s\n",
               pathSteps == 0 ? 0 : pathSteps - 1,
-              dataToString(trimmedData)
+              dataToString(data)
           ),
           CONTENT_TYPE_TEXT,
           exchange
@@ -826,7 +820,6 @@ public class UndertowHandler implements HttpHandler {
     fw.writeData(projection, data);
     writer.close();
   }
-
 
   private void writeDatum(
       @NotNull ReqOutputModelProjection<?, ?, ?> projection,

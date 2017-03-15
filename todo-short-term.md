@@ -1,6 +1,4 @@
-- [ ] simple service quick-start guide
-
-- [ ] support projection snippets in schema. Lots of code duplication otherwise!
+- [x] support projection snippets in schema. Lots of code duplication otherwise!
   - [x] change schema grammar
   - [x] attach names (FQNs?) to (op?) var projections
   - [x] make var projections half-mutable? find a way to have var projection references/resolve them
@@ -10,12 +8,10 @@
   - [x] update req codegen: req projections must be reusable too
   - [x] req projections syntax
   - [x] req projections psi parsers
-  - [ ] allow recursive data: update marshaller/unmarshaller
-    - [ ] should check that recursive data corresponds to projection
-  - [ ] update data trimmer to support recursive data
+  - [x] allow recursive data: update marshaller/unmarshaller
+    - [x] should check that recursive data corresponds to projection
 
-
-- [ ] undertow handler: remove trimmer, should be handled by marshaller
+- [x] undertow handler: remove trimmer, should be handled by marshaller
 
 - Federator prerequisites
   - [ ] `toBuilder` on data
@@ -23,6 +19,9 @@
   - [ ] introduce transformers +codegen?
 
 - Docs
+  - [ ] service quick-start guide
+    - [x] simple read
+    - [ ] search operation
   - Operations
     - [ ] Overview
     - [ ] IDL

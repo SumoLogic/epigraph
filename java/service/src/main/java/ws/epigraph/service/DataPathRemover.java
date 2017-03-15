@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,40 +20,132 @@ import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.req.output.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class DataPathRemover { // todo move somewhere?
+public final class DataPathRemover {
+  private DataPathRemover() {} // todo move somewhere?
 
-  public static @NotNull PathRemovalResult removePath(@NotNull Data data, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(
+      @NotNull ReqOutputVarProjection projection,
+      @NotNull Data data,
+      int steps) throws AmbiguousPathException {
+
     if (steps == 0) return new PathRemovalResult(data);
-    final Map<@NotNull String, @NotNull ? extends Val> tagValues = data._raw().tagValues();
-    switch (tagValues.size()) {
-      case 0:return PathRemovalResult.NULL;
-      case 1:return removePath(tagValues.values().iterator().next(), steps - 1);
-      default: throw new AmbiguousPathException();
+
+    if (projection.polymorphicTails() != null)
+      throw new AmbiguousPathException();
+
+    switch (projection.tagProjections().size()) {
+      case 0:
+        return PathRemovalResult.NULL;
+      case 1:
+        final ReqOutputTagProjectionEntry tpe =
+            projection.tagProjections().values().iterator().next();
+
+        final Val val = data._raw().tagValues().get(tpe.tag().name());
+        if (val == null)
+          return PathRemovalResult.NULL;
+
+        return removePath(
+            tpe.projection(),
+            val,
+            steps - 1
+        );
+      default:
+        throw new AmbiguousPathException();
     }
   }
 
-  public static @NotNull PathRemovalResult removePath(@NotNull Val val, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(
+      @NotNull ReqOutputModelProjection<?, ?, ?> mp,
+      @NotNull Val val,
+      int steps) throws AmbiguousPathException {
+
     if (val.getError() != null) return new PathRemovalResult(val.getError()); // error on any segment = fail?
-    @Nullable final Datum datum = val.getDatum();
-    return (datum == null) ? PathRemovalResult.NULL : removePath(datum, steps);
+    final @Nullable Datum datum = val.getDatum();
+    return (datum == null) ? PathRemovalResult.NULL : removePath(mp, datum, steps);
   }
 
-  public static @NotNull PathRemovalResult removePath(@NotNull Datum datum, int steps) throws AmbiguousPathException {
+  public static @NotNull PathRemovalResult removePath(
+      @NotNull ReqOutputModelProjection<?, ?, ?> mp,
+      @NotNull Datum datum,
+      int steps) throws AmbiguousPathException {
+
     if (steps == 0) return new PathRemovalResult(datum);
-    final Map<?, @NotNull ? extends Data> map;
-    if (datum instanceof RecordDatum) map = ((RecordDatum) datum)._raw().fieldsData();
-    else if (datum instanceof MapDatum) map = ((MapDatum) datum)._raw().elements();
-    else throw new AmbiguousPathException(); // don't know how to drill into anything else // TODO better exception
-    switch (map.size()) {
-      case 0: return PathRemovalResult.NULL;
-      case 1: return removePath(map.values().iterator().next(), steps - 1);
-      default: throw new AmbiguousPathException();
+
+    switch (mp.model().kind()) {
+      case UNION:
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
+      case RECORD:
+        ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) mp;
+        Map<String, ReqOutputFieldProjectionEntry> fieldProjections = rmp.fieldProjections();
+
+
+        switch (fieldProjections.size()) {
+          case 0:
+            return PathRemovalResult.NULL;
+          case 1:
+            ReqOutputFieldProjectionEntry entry = fieldProjections.values().iterator().next();
+            Data fieldData = ((RecordDatum) datum)._raw().fieldsData().get(entry.field().name());
+            if (fieldData == null) return PathRemovalResult.NULL;
+            return removePath(entry.fieldProjection().varProjection(), fieldData, steps - 1);
+          default:
+            throw new AmbiguousPathException();
+        }
+
+      case MAP:
+        ReqOutputMapModelProjection mmp = (ReqOutputMapModelProjection) mp;
+        List<ReqOutputKeyProjection> keys = mmp.keys();
+        Map<Datum.@NotNull Imm, @NotNull ? extends Data> mapElements = ((MapDatum) datum)._raw().elements();
+
+        if (keys == null) {
+          switch (mapElements.size()) {
+            case 0:
+              return PathRemovalResult.NULL;
+            case 1:
+              return removePath(mmp.itemsProjection(), mapElements.values().iterator().next(), steps - 1);
+            default:
+              throw new AmbiguousPathException();
+          }
+        } else {
+          switch (keys.size()) {
+            case 0:
+              return PathRemovalResult.NULL;
+            case 1:
+              final ReqOutputKeyProjection kp = keys.iterator().next();
+              final Data value = mapElements.get(kp.value().toImmutable());
+              if (value == null) return PathRemovalResult.NULL;
+              return removePath(mmp.itemsProjection(), value, steps - 1);
+            default:
+              throw new AmbiguousPathException();
+          }
+        }
+
+      case LIST:
+        ReqOutputListModelProjection lmp = (ReqOutputListModelProjection) mp;
+        final List<@NotNull ? extends Data> listElements = ((ListDatum) datum)._raw().elements();
+
+        switch (listElements.size()) {
+          case 0:
+            return PathRemovalResult.NULL;
+          case 1:
+            return removePath(lmp.itemsProjection(), listElements.get(0), steps - 1);
+          default:
+            throw new AmbiguousPathException();
+        }
+
+      case ENUM:
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
+      case PRIMITIVE:
+        throw new AmbiguousPathException();
+      default:
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
     }
   }
 

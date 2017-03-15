@@ -13,6 +13,11 @@
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
 - [x] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
 - [ ] Recursive GData support? GData snippets in schema?
+- [ ] data trimmer
+  - [ ] generify
+  - [ ] should support recursive data
+  - [ ] add tests
+  - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
 
 # Type system
 - [ ] Enums
