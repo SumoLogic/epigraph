@@ -48,21 +48,23 @@ object JavaGenNames {
 
   def pn(qn: Qn): String = qn.segments.map(jn).mkString(".").toLowerCase
 
-  /** local (short) java name for given type */
-  def ln(t: CType): String =
-    t match {
-      case t: CTypeDef => t.name.local
-      case t: CAnonListType => t.elementDataType.typeRef.resolved match {
-        case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
-        case et: CDatumType => ln(et) + "_List"
-        case unknown => throw new UnsupportedOperationException(unknown.toString)
-      }
-      case t: CAnonMapType => t.valueDataType.typeRef.resolved match {
-        case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
-        case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
-        case unknown => throw new UnsupportedOperationException(unknown.toString)
-      }
+  /** escaped (in case it conflicts with reserved) local (short) java name for given epigraph type */
+  def ln(t: CType): String = javaTypeName(ln0(t))
+
+  /** local (short) java name for given epigraph type (not escaped) */
+  private def ln0(t: CType): String = t match {
+    case t: CTypeDef => t.name.local
+    case t: CAnonListType => t.elementDataType.typeRef.resolved match {
+      case et: CVarTypeDef => ln0(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+      case et: CDatumType => ln0(et) + "_List"
+      case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
+    case t: CAnonMapType => t.valueDataType.typeRef.resolved match {
+      case vt: CVarTypeDef => ln0(t.keyTypeRef.resolved) + "_" + ln0(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+      case vt: CDatumType => ln0(t.keyTypeRef.resolved) + "_" + ln0(vt) + "_Map"
+      case unknown => throw new UnsupportedOperationException(unknown.toString)
+    }
+  }
 
   /** java type name for given typeref as seen from the context of the other type namespace */
   def lqrn(tr: CTypeRef, lt: CType, lnTrans: (String) => String = identity): String = lqn(tr.resolved, lt, lnTrans)
@@ -219,5 +221,9 @@ object JavaGenNames {
 //  def parentNames(t: CType, trans: (String) => String = identity): String =
 //    t.getLinearizedParentsReversed.map(javaQName(_, t, trans)).mkString(", ")
 
+  /** set of type names that conflict with our own generated java classes */
+  private val ReservedTypeNames: Set[String] = Set("Type", "Value", "Data", "Imm", "Builder", "Impl")
+
+  private def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else ln
 
 }

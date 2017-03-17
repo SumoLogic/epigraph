@@ -91,7 +91,7 @@ public final class JavaNames {
       // null literal (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.7)
       "null"
 
-      )));
+  )));
 
   private JavaNames() {}
 
