@@ -7,30 +7,30 @@ namespace epigraph.projections.req
  */
 
 import epigraph.projections.Annotation
-import epigraph.schema.DataTypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.EnumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
 import epigraph.data.Datum
 
 record ReqUpdateVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: map[String, ReqUpdateTagProjectionEntry]
   polymorphicTail: list[ReqUpdateVarProjection]
 }
 
 record ReqUpdateTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: ReqUpdateModelProjection
 }
 
 abstract record ReqUpdateModelProjection {
-  model: DataTypeRef
+  model: DatumType
   `update`: Boolean // update or patch?
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
@@ -38,29 +38,29 @@ abstract record ReqUpdateModelProjection {
 }
 
 record ReqUpdateRecordModelProjection extends ReqUpdateModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldProjections: list[ReqUpdateFieldProjectionEntry]
 }
 record ReqUpdateFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: ReqUpdateFieldProjection
 }
 
 record ReqUpdateFieldProjection {
   `update`: Boolean // update or patch entity?
-  field: FieldRef
+  field: Field
   // params: map[String, ReqParam]
   // annotations: map[String, Annotation]
   varProjection: ReqUpdateVarProjection
 }
 
 record ReqUpdateListModelProjection extends ReqUpdateModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   varProjection: ReqUpdateVarProjection
 }
 
 record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   keysProjection: ReqUpdateKeysProjection
   varProjection: ReqUpdateVarProjection
 }
@@ -77,9 +77,9 @@ record ReqUpdateKeyProjection {
 }
 
 record ReqUpdateEnumModelProjection extends ReqUpdateModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record ReqUpdatePrimitiveModelProjection extends ReqUpdateModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

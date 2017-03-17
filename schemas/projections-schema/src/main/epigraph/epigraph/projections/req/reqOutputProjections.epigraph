@@ -19,15 +19,15 @@ namespace epigraph.projections.req
 // /folders/123/items::record(id, name, ...)
 
 import epigraph.projections.Annotation
-import epigraph.schema.DataTypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.EnumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
 import epigraph.data.Datum
 
 // req projections also have a notion of path = number of steps without branching, e.g.
@@ -36,18 +36,18 @@ import epigraph.data.Datum
 // this is not reflected in the schema, but psi parsers return projections along with 'number of path steps' = path length
 
 record ReqOutputVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: map[String, ReqOutputTagProjectionEntry]
   polymorphicTail: list[ReqOutputVarProjection]
 }
 
 record ReqOutputTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: ReqOutputModelProjection
 }
 
 abstract record ReqOutputModelProjection {
-  model: DataTypeRef
+  model: DatumType
   `required`: Boolean
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
@@ -55,11 +55,11 @@ abstract record ReqOutputModelProjection {
 }
 
 record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldProjections: list[ReqOutputFieldProjectionEntry]
 }
 record ReqOutputFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: ReqOutputFieldProjection
 }
 
@@ -71,12 +71,12 @@ record ReqOutputFieldProjection {
 }
 
 record ReqOutputListModelProjection extends ReqOutputModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   varProjection: ReqOutputVarProjection
 }
 
 record ReqOutputMapModelProjection extends ReqOutputModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   keysRequired: Boolean // one for all keys
   keysProjection: ReqOutputKeysProjection { doc = "if `null` - all keys" }
   varProjection: ReqOutputVarProjection
@@ -94,9 +94,9 @@ record ReqOutputKeyProjection {
 }
 
 record ReqOutputEnumModelProjection extends ReqOutputModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record ReqOutputPrimitiveModelProjection extends ReqOutputModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

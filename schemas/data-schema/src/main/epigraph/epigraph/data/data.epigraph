@@ -1,18 +1,18 @@
 namespace epigraph.data
 
-import epigraph.schema.TypeData
-import epigraph.schema.VarTypeData
-import epigraph.schema.DataTypeData
-import epigraph.schema.RecordTypeData
-import epigraph.schema.MapTypeData
-import epigraph.schema.ListTypeData
-import epigraph.schema.EnumTypeData
-import epigraph.schema.PrimitiveTypeData
-import epigraph.schema.StringTypeData
-import epigraph.schema.IntegerTypeData
-import epigraph.schema.LongTypeData
-import epigraph.schema.DoubleTypeData
-import epigraph.schema.BooleanTypeData
+import epigraph.schema.Type
+import epigraph.schema.VarType
+import epigraph.schema.DatumType
+import epigraph.schema.RecordType
+import epigraph.schema.MapType
+import epigraph.schema.ListType
+import epigraph.schema.EnumType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.StringType
+import epigraph.schema.IntegerType
+import epigraph.schema.LongType
+import epigraph.schema.DoubleType
+import epigraph.schema.BooleanType
 
 record Error {
   statusCode: Integer
@@ -26,63 +26,63 @@ record Value {
 }
 
 abstract record Data {
-  abstract type: TypeData
+  abstract type: Type
 }
 
 record VarData extends Data {
-  override type: VarTypeData
+  override type: VarType
   tags: map[String, Data]
 }
 
 abstract record Datum extends Data {
-  override type: DataTypeData
+  override type: DatumType
 }
 
 record RecordDatum extends Datum {
-  override type: RecordTypeData
+  override type: RecordType
   fields: map[String, Value]
 }
 
 record MapDatum extends Datum {
-  override type: MapTypeData
+  override type: MapType
   entries: map[Data, Value]
 }
 
 record ListDatum extends Datum {
-  override type: ListTypeData
+  override type: ListType
   entries: list[Value]
 }
 
 record EnumDatum extends Datum {
-  override type: EnumTypeData
+  override type: EnumType
   value: String // TODO how do we mode this?
 }
 
 abstract record PrimitiveDatum extends Datum {
-  override type: PrimitiveTypeData
+  override type: PrimitiveType
 }
 
 record StringDatum extends PrimitiveDatum {
-  override type: StringTypeData
+  override type: StringType
   value: String
 }
 
 record IntegerDatum extends PrimitiveDatum {
-  override type: IntegerTypeData
+  override type: IntegerType
   value: Integer
 }
 
 record LongDatum extends PrimitiveDatum {
-  override type: LongTypeData
+  override type: LongType
   value: Long
 }
 
 record DoubleDatum extends PrimitiveDatum {
-  override type: DoubleTypeData
+  override type: DoubleType
   value: Double
 }
 
 record BooleanDatum extends PrimitiveDatum {
-  override type: BooleanTypeData
+  override type: BooleanType
   value: Boolean
 }

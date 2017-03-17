@@ -5,57 +5,57 @@ namespace epigraph.projections.req
  */
 
 import epigraph.projections.Annotation
-import epigraph.schema.DataTypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
+import epigraph.schema.EnumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
 import epigraph.data.Datum
+import epigraph.schema.DatumType
 
 record ReqDeleteVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: map[String, ReqDeleteTagProjectionEntry]
   polymorphicTail: list[ReqDeleteVarProjection]
 }
 
 record ReqDeleteTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: ReqDeleteModelProjection
 }
 
 abstract record ReqDeleteModelProjection {
-  model: DataTypeRef
+  model: DatumType
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
 }
 
 record ReqDeleteRecordModelProjection extends ReqDeleteModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldProjections: list[ReqDeleteFieldProjectionEntry]
 }
 record ReqDeleteFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: ReqDeleteFieldProjection
 }
 
 record ReqDeleteFieldProjection {
-  field: FieldRef
+  field: Field
   // params: map[String, ReqParam]
   // annotations: map[String, Annotation]
   varProjection: ReqDeleteVarProjection
 }
 
 record ReqDeleteListModelProjection extends ReqDeleteModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   varProjection: ReqDeleteVarProjection
 }
 
 record ReqDeleteMapModelProjection extends ReqDeleteModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   keysProjection: ReqDeleteKeysProjection { doc = "if `null` - all keys" }
   varProjection: ReqDeleteVarProjection
 }
@@ -71,9 +71,9 @@ record ReqDeleteKeyProjection {
 }
 
 record ReqDeleteEnumModelProjection extends ReqDeleteModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record ReqDeletePrimitiveModelProjection extends ReqDeleteModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

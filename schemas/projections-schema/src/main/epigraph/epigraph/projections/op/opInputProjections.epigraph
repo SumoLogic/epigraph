@@ -7,29 +7,29 @@ import epigraph.data.MapDatum
 import epigraph.data.PrimitiveDatum
 import epigraph.data.RecordDatum
 import epigraph.projections.Annotation
-import epigraph.schema.DataTypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.EnumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
 
 record OpInputVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: map[String, OpInputTagProjectionEntry]
   polymorphicTail: list[OpInputVarProjection]
 }
 
 record OpInputTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: OpInputModelProjection // OpInputTagProjection = opInputModelProjection
 }
 
 abstract record OpInputModelProjection {
-  model: DataTypeRef
+  model: DatumType
   `required`: Boolean
   defaultValue: Datum
   params: map[String, OpParam]
@@ -38,13 +38,13 @@ abstract record OpInputModelProjection {
 }
 
 record OpInputRecordModelProjection extends OpInputModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   override defaultValue: RecordDatum
   fieldProjections: map[String, OpInputFieldProjectionEntry]
 }
 
 record OpInputFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: OpInputFieldProjection
 }
 
@@ -56,13 +56,13 @@ record OpInputFieldProjection {
 }
 
 record OpInputListModelProjection extends OpInputModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   override defaultValue: ListDatum
   varProjection: OpInputVarProjection
 }
 
 record OpInputMapModelProjection extends OpInputModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   override defaultValue: MapDatum
   keyProjection: OpInputKeyProjection
   varProjection: OpInputVarProjection
@@ -75,11 +75,11 @@ record OpInputKeyProjection {
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
   override defaultValue: EnumDatum
 }
 
 record OpInputPrimitiveModelProjection extends OpInputModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
   override defaultValue: PrimitiveDatum
 }

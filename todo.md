@@ -21,7 +21,6 @@
 
 # Type system
 - [ ] Enums
-- [ ] Rename Data/Var/Union type to some common name
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
@@ -79,6 +78,11 @@
     -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
     -[x] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
   - Maven
+
+- Cleanup
+  - [ ] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
+  - [ ] DataType(Api): type should be VarType ?
+  - [ ] Rename Data/Var/Union type to some common name
 
 # Other
 - See [Short-term todo list] (todo-short-term.md)

@@ -1,43 +1,43 @@
 namespace epigraph.projections.op
 
-import epigraph.schema.DataTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.PrimitiveTypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
+import epigraph.schema.EnumType
+import epigraph.schema.PrimitiveType
 import epigraph.projections.Annotation
 
 // OpOutputProjections with canDelete on vars (we can only delete entities) and no `meta` on models
 
 record OpDeleteVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: list[OpDeleteTagProjectionEntry]
   canDelete: Boolean // true == this can be a leaf
   polymorphicTail: list[OpDeleteVarProjection]
 }
 
 record OpDeleteTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: OpDeleteModelProjection
 }
 
 abstract record OpDeleteModelProjection {
-  model: DataTypeRef
+  model: DatumType
   params: map[String, OpParam]
   annotations: map[String, Annotation]
 }
 
 record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldProjections: list[OpDeleteFieldProjectionEntry]
 }
 
 record OpDeleteFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: OpDeleteFieldProjection
 }
 
@@ -48,12 +48,12 @@ record OpDeleteFieldProjection {
 }
 
 record OpDeleteListModelProjection extends OpDeleteModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   varProjection: OpDeleteVarProjection
 }
 
 record OpDeleteMapModelProjection extends OpDeleteModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   keyProjection: OpDeleteKeyProjection
   varProjection: OpDeleteVarProjection
 }
@@ -65,9 +65,9 @@ record OpDeleteKeyProjection {
 }
 
 record OpDeleteEnumModelProjection extends OpDeleteModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record OpDeletePrimitiveModelProjection extends OpDeleteModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

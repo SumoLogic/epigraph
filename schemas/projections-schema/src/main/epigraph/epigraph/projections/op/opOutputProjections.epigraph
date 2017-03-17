@@ -1,41 +1,41 @@
 namespace epigraph.projections.op
 
-import epigraph.schema.DataTypeRef
-import epigraph.schema.EnumTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.TypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.EnumType
+import epigraph.schema.Field
+import epigraph.schema.ListType
+import epigraph.schema.MapType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.RecordType
+import epigraph.schema.Tag
+import epigraph.schema.Type
 import epigraph.projections.Annotation
 
 record OpOutputVarProjection {
-  type: TypeRef
+  type: Type
   tagProjections: list[OpOutputTagProjectionEntry]
   polymorphicTail: list[OpOutputVarProjection]
 }
 
 record OpOutputTagProjectionEntry {
-  tag: TypeMemberRef
+  tag: Tag
   projection: OpOutputModelProjection
 }
 
 abstract record OpOutputModelProjection {
-  model: DataTypeRef
+  model: DatumType
   params: map[String, OpParam]
   annotations: map[String, Annotation]
   `meta`: OpOutputModelProjection
 }
 
 record OpOutputRecordModelProjection extends OpOutputModelProjection {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldProjections: map[String, OpOutputFieldProjectionEntry]
 }
 
 record OpOutputFieldProjectionEntry {
-  field: FieldRef
+  field: Field
   projection: OpOutputFieldProjection
 }
 
@@ -46,7 +46,7 @@ record OpOutputFieldProjection {
 }
 
 record OpOutputMapModelProjection extends OpOutputModelProjection {
-  override model: MapTypeRef
+  override model: MapType
   keyProjection: OpOutputKeyProjection
   varProjection: OpOutputVarProjection
 }
@@ -58,14 +58,14 @@ record OpOutputKeyProjection {
 }
 
 record OpOutputListModelProjection extends OpOutputModelProjection {
-  override model: ListTypeRef
+  override model: ListType
   varProjection: OpOutputVarProjection
 }
 
 record OpOutputEnumModelProjection extends OpOutputModelProjection {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record OpOutputPrimitiveModelProjection extends OpOutputModelProjection {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

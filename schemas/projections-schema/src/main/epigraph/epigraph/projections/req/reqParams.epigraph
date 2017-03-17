@@ -1,9 +1,9 @@
 namespace epigraph.projections.req
 
-import epigraph.projections.op.OpParamRef
+import epigraph.projections.op.OpParam
 import epigraph.data.Datum
 
 record ReqParam {
-  opParam: OpParamRef
+  opParam: OpParam
   value: Datum
 }

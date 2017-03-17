@@ -1,37 +1,37 @@
 namespace epigraph.projections.req
 
 import epigraph.projections.Annotation
-import epigraph.schema.DataTypeRef
-import epigraph.schema.FieldRef
-import epigraph.schema.TypeMemberRef
-import epigraph.schema.RecordTypeRef
-import epigraph.schema.MapTypeRef
-import epigraph.schema.ListTypeRef
-import epigraph.schema.PrimitiveTypeRef
-import epigraph.schema.EnumTypeRef
+import epigraph.schema.DatumType
+import epigraph.schema.Field
+import epigraph.schema.Tag
+import epigraph.schema.RecordType
+import epigraph.schema.MapType
+import epigraph.schema.ListType
+import epigraph.schema.PrimitiveType
+import epigraph.schema.EnumType
 
 record ReqVarPath {
   tag: ReqTagPath
 }
 
 record ReqTagPath {
-  tag: TypeMemberRef
+  tag: Tag
   modelPath: ReqModelPath
 }
 
 record ReqModelPath {
-  model: DataTypeRef
+  model: DatumType
   params: list[ReqParam]
   annotations: list[Annotation]
 }
 
 record ReqRecordModelPath extends ReqModelPath {
-  override model: RecordTypeRef
+  override model: RecordType
   fieldEntry: ReqFieldPathEntry
 }
 
 record ReqFieldPathEntry {
-  field: FieldRef
+  field: Field
   fieldPath: ReqFieldPath
 }
 
@@ -42,7 +42,7 @@ record ReqFieldPath {
 }
 
 record ReqMapModelPath extends ReqModelPath {
-  override model: MapTypeRef
+  override model: MapType
   keyProjection: ReqPathKeyProjection
   varPath: ReqVarPath
 }
@@ -54,13 +54,13 @@ record ReqPathKeyProjection {
 }
 
 record ReqListModelPath extends ReqModelPath { // lists are terminals: we don't support indices
-  override model: ListTypeRef
+  override model: ListType
 }
 
 record ReqEnumModelPath extends ReqModelPath {
-  override model: EnumTypeRef
+  override model: EnumType
 }
 
 record ReqPrimitiveModelPath extends ReqModelPath {
-  override model: PrimitiveTypeRef
+  override model: PrimitiveType
 }

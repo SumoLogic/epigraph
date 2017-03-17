@@ -1,214 +1,95 @@
 namespace epigraph.schema
 
-
-abstract vartype ByNameRef {
-  doc = "Common interface for vartypes representing by-name references"
-
-  abstract name: Name
-
-}
-
-abstract record TypeData extends Named {
+abstract record Type extends Named {
   doc = "Common interface for data type and vartype records"
 
-  override name: QualifiedTypeName
+  override name: QualifiedName
 
-  abstract supertypes: list[TypeRef]
+  abstract supertypes: list[Type]
 
   `abstract`: Boolean { doc = "Abstract types cannot be instantiated (?)" }
-
 }
 
-abstract vartype TypeRef extends ByNameRef {
-  doc = "Common interface for by-name references to (data or var-) types"
-
-  override name: QualifiedTypeName
-
-  abstract type: TypeData
-
-}
-
-
-record VarTypeData extends TypeData {
+record VarType extends Type {
   doc = "Vartype declaration"
 
-  override supertypes: list[VarTypeRef]
+  override supertypes: list[VarType]
 
-  `retro`: TypeMemberRef { doc = "Optional type member reference to be used as default one" }
-
-  members: list[TypeMemberData] // TODO rename to `tags`?
-
+  tags: list[Tag]
 }
 
-vartype VarTypeRef extends TypeRef {
-  doc = "By-name reference to a vartype"
-
-  override type: VarTypeData
-
+record DataType {
+  `type`: Type // todo should be VarType ?
+  `retro`: Tag
 }
 
-
-record TypeMemberData extends Named {
+record Tag extends Named {
   doc = "Vartype member declaration"
 
-  override name: TypeMemberName
+  override name: TagName
 
-  dataType: DataTypeRef
-
-  `abstract`: Boolean {
-    deprecated = "No longer needed? Or keep it for documenting intent?"
-    doc = "Abstract type member's data type may be overridden (with compatible data type) in concrete sub-vartypes"
-  }
-
+  dataType: DatumType
 }
 
-vartype TypeMemberRef extends ByNameRef {
-  doc = "By-name reference to vartype member"
+record DatumType extends Type {
+  doc = "Model type"
 
-  override name: TypeMemberName
+  override supertypes: list[DatumType]
 
-  member: TypeMemberData
-
+  metaType: DatumType
 }
 
+record RecordType extends DatumType {
+  override supertypes: list[RecordType]
 
-record DataTypeData extends TypeData { // TODO extends VarTypeData?
-
-  override supertypes: list[DataTypeRef]
-
-  metaType: DataTypeRef
-
+  declaredFields: list[Field]
 }
 
-abstract vartype DataTypeRef extends TypeRef {
-  doc = "By-name reference to data type"
-
-  override abstract type: DataTypeData
-
-}
-
-
-record RecordTypeData extends DataTypeData {
-
-  override supertypes: list[RecordTypeRef]
-
-  declaredFields: list[FieldData]
-
-}
-
-vartype RecordTypeRef extends DataTypeRef {
-
-  override type: RecordTypeData
-
-}
-
-vartype FieldRef extends ByNameRef {
-  override name: FieldName
-  field: FieldData
-}
-
-record FieldData extends Named {
-
+record Field extends Named {
   override name: FieldName
 
-  `abstract`: Boolean {
-    deprecated = "No longer needed? Or keep it for documenting intent (enforce overrides then)?"
-    doc = "Abstract fields must be overridden in concrete (non-abstract) subtypes
-     and don't show-up in mutable interface inherited by subtypes"
-  }
-
-  valueType: VarTypeRef
-
-  `retro`: TypeMemberRef
-
+  valueType: DataType
 }
 
+record MapType extends DatumType {
+  override supertypes: list[MapType]
 
-record MapTypeData extends DataTypeData {
+  keyType: DatumType
 
-  override supertypes: list[MapTypeRef]
-
-  keyType: DataTypeRef
-
-  valueType: VarTypeRef
-
+  valueType: DataType
 }
 
-vartype MapTypeRef extends DataTypeRef {
+record ListType extends DatumType {
 
-  override type: MapTypeData
+  override supertypes: list[ListType]
 
+  valueType: DataType
 }
 
-
-record ListTypeData extends DataTypeData {
-
-  override supertypes: list[ListTypeRef]
-
-  valueType: VarTypeRef
-
-}
-
-vartype ListTypeRef extends DataTypeRef {
-
-  override type: ListTypeData
-
-}
-
-
-record EnumTypeData extends DataTypeData {
-
-  override supertypes: list[EnumTypeRef]
+record EnumType extends DatumType {
+  override supertypes: list[EnumType]
 
   // TODO? valueType: DataTypeRef
 
-  values: list[EnumValueData]
-
+  values: list[EnumValue]
 }
 
-vartype EnumTypeRef extends DataTypeRef {
-
-  override type: EnumTypeData
-
-}
-
-record EnumValueData extends Named {
-
+record EnumValue extends Named {
   override name: EnumValueName
 
   // TODO? value: Any??
-
 }
 
-
-abstract record PrimitiveTypeData extends DataTypeData {
-
-  override abstract supertypes: list[PrimitiveTypeRef]
-
+abstract record PrimitiveType extends DatumType {
+  override abstract supertypes: list[PrimitiveType]
 }
 
-vartype PrimitiveTypeRef extends DataTypeRef {
+record StringType extends PrimitiveType { override supertypes: list[StringType] }
 
-  override abstract type: PrimitiveTypeData
+record IntegerType extends PrimitiveType { override supertypes: list[IntegerType] }
 
-}
+record LongType extends PrimitiveType { override supertypes: list[LongType] }
 
+record DoubleType extends PrimitiveType { override supertypes: list[DoubleType] }
 
-record StringTypeData extends PrimitiveTypeData { override supertypes: list[StringTypeRef] }
-vartype StringTypeRef extends PrimitiveTypeRef { override type: StringTypeData }
-
-
-record IntegerTypeData extends PrimitiveTypeData { override supertypes: list[IntegerTypeRef] }
-vartype IntegerTypeRef extends PrimitiveTypeRef { override type: IntegerTypeData }
-
-
-record LongTypeData extends PrimitiveTypeData { override supertypes: list[LongTypeRef] }
-vartype LongTypeRef extends PrimitiveTypeRef { override type: LongTypeData }
-
-
-record DoubleTypeData extends PrimitiveTypeData { override supertypes: list[DoubleTypeRef] }
-vartype DoubleTypeRef extends PrimitiveTypeRef { override type: DoubleTypeData }
-
-
-record BooleanTypeData extends PrimitiveTypeData { override supertypes: list[BooleanTypeRef] }
-vartype BooleanTypeRef extends PrimitiveTypeRef { override type: BooleanTypeData }
+record BooleanType extends PrimitiveType { override supertypes: list[BooleanType] }

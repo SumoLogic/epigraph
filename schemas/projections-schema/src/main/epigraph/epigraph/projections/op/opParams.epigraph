@@ -3,7 +3,6 @@ namespace epigraph.projections.op
 import epigraph.data.Data
 import epigraph.data.Datum
 import epigraph.projections.ParamName
-import epigraph.schema.ByNameRef
 import epigraph.schema.Documented
 import epigraph.schema.Named
 
@@ -15,7 +14,3 @@ record OpParam extends Named, Documented {
   customParams: map[String, Data]
 }
 
-vartype OpParamRef extends ByNameRef {
-  override name: ParamName
-  param: OpParam
-}
