@@ -17,6 +17,9 @@
   - [ ] `toBuilder` on data
   - [ ] remote service invocation layer
   - [ ] introduce transformers +codegen?
+  - [ ] add `api` section to schema, listing a set of exposed resources and if they're federated
+    - [ ] codegen something from it
+    - [ ] validate at startup that stuff is actually?
 
 - Docs
   - [ ] service quick-start guide
