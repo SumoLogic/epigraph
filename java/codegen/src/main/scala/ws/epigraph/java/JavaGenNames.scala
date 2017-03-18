@@ -27,6 +27,9 @@ object JavaGenNames {
   /** java identifier name (https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.8) */
   def jn(name: String): String = JavaNames.javaName(name)
 
+  /** name for a field constant within generated record type interface (basically checks for clash with `type` constant) */
+  def fcn(f: CField): String = javaFieldName(jn(f.name)) // TODO same for tags (so far would be identical)
+
   def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 
   /** java type name for given type as seen from the context of the other type namespace */
@@ -222,8 +225,12 @@ object JavaGenNames {
 //    t.getLinearizedParentsReversed.map(javaQName(_, t, trans)).mkString(", ")
 
   /** set of type names that conflict with our own generated java classes */
-  private val ReservedTypeNames: Set[String] = Set("Type", "Value", "Data", "Imm", "Builder", "Impl")
+  private val ReservedTypeNames: Set[String] = Set("Type", "Value", "Data", "Imm", "Builder", "Impl", "Tag", "Field")
 
   private def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else ln
+
+  private val ReservedFieldNames: Set[String] = Set("type")
+
+  private def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else fn
 
 }

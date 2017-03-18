@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames.{jn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
+import ws.epigraph.java.JavaGenNames.{fcn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
@@ -45,7 +45,7 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Reco
 ${t.effectiveFields.map { f => sn"""\
 
   ${"/**"} Field `${f.name}`. */
-  @NotNull Field ${jn(f.name)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}));
+  @NotNull Field ${fcn(f)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}));
 """
   }.mkString
 }\
@@ -138,7 +138,7 @@ ${t.meta match {
     public @NotNull java.util.List<@NotNull Field> immediateFields() {
       return java.util.Arrays.asList(\
 ${t.declaredFields.map { f => sn"""
-          ${ln + '.' + jn(f.name)}"""
+          ${ln + '.' + fcn(f)}"""
   }.mkString(",")
 }
       );
@@ -246,7 +246,7 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
         /** Returns immutable `${f.name}` field data. */
         @Override
         public @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$$() {
-          return (${lqdrn(f.typeRef, t)}.Imm) _raw().getData($ln.${jn(f.name)});
+          return (${lqdrn(f.typeRef, t)}.Imm) _raw().getData($ln.${fcn(f)});
         }
 """
       case _: CDatumType => "" // no data accessors for datum fields
@@ -285,7 +285,7 @@ $getter\
         /** Returns immutable `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Imm.Value get${up(f.name)}_() {
-          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
+          return (${lqn(tt(f.typeRef, dtn), t)}.Imm.Value) _raw().getValue($ln.${fcn(f)}, ${dttr(f.valueDataType, dtn, t)});
         }
 """
     }
@@ -374,11 +374,11 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 
     /** Returns `${f.name}` field data. */
     @Override
-    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${jn(f.name)}); }
+    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${fcn(f)}); }
 
     /** Sets `${f.name}` field data. */
-    public @NotNull $ln.Builder set${up(f.name)}$$(@Nullable ${lqrn(f.typeRef, t)} ${jn(f.name)}) {
-      _raw().setData($ln.${jn(f.name)}, ${jn(f.name)}); return this;
+    public @NotNull $ln.Builder set${up(f.name)}$$(@Nullable ${lqrn(f.typeRef, t)} ${fcn(f)}) {
+      _raw().setData($ln.${fcn(f)}, ${fcn(f)}); return this;
     }
 
 """
@@ -410,19 +410,19 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
         def genPrimitiveSetter(nativeType: String): String =
         sn"""\
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
-    public @NotNull $ln.Builder set${up(f.name)}(@Nullable $nativeType ${jn(f.name)}) {
-      if (${jn(f.name)} == null)
-        _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_(${lqn(tt(f.typeRef, dtn), t)}.type.createValue(null)));
+    public @NotNull $ln.Builder set${up(f.name)}(@Nullable $nativeType ${fcn(f)}) {
+      if (${fcn(f)} == null)
+        _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_(${lqn(tt(f.typeRef, dtn), t)}.type.createValue(null)));
       else
-        _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${lqn(tt(f.typeRef, dtn), t)}.create(${jn(f.name)})));
+        _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${lqn(tt(f.typeRef, dtn), t)}.create(${fcn(f)})));
       return this;
     }
 """
         def genNonPrimitiveSetter: String =
         sn"""\
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
-    public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${jn(f.name)}) {
-      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${jn(f.name)}));
+    public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${fcn(f)}) {
+      _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${fcn(f)}));
       return this;
     }
 """
@@ -444,14 +444,14 @@ $setter\
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
     public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {
-      _raw().setData($ln.${jn(f.name)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_Error(error));
+      _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_Error(error));
       return this;
     }
 
     /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}_() {
-      return (${lqn(tt(f.typeRef, dtn), t)}.Value) _raw().getValue($ln.${jn(f.name)}, ${dttr(f.valueDataType, dtn, t)});
+      return (${lqn(tt(f.typeRef, dtn), t)}.Value) _raw().getValue($ln.${fcn(f)}, ${dttr(f.valueDataType, dtn, t)});
     }
 """
     }
