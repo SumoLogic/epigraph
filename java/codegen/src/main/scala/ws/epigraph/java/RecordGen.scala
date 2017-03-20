@@ -42,6 +42,9 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Reco
   @NotNull $ln.Type type = $ln.Type.instance();
 
   static @NotNull $ln.Builder create() { return $ln.Type.instance().createBuilder(); }
+
+  @Override
+  @NotNull $ln.Imm toImmutable();
 ${t.effectiveFields.map { f => sn"""\
 
   ${"/**"} Field `${f.name}`. */

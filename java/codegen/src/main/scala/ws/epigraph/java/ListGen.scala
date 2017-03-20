@@ -49,6 +49,9 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.List
   $ln.Type type = $ln.Type.instance();
 
   static @NotNull $ln.Builder create() { return $ln.Type.instance().createBuilder(); }
+
+  @Override
+  @NotNull $ln.Imm toImmutable();
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
       case Some(dtn) => sn"""\
