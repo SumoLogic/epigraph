@@ -1,0 +1,41 @@
+namespace ws.epigraph.services
+
+import epigraph.schema.Type
+import epigraph.schema.TypeName
+import epigraph.schema.QualifiedTypeName
+import epigraph.schema.AnonListTypeName
+import epigraph.schema.DataTypeName
+import epigraph.schema.AnonMapTypeName
+
+record Epigraph {
+  doc = "Epigraph built-in services resource root type"
+
+  types: map[TypeName, Type]
+}
+
+resource epigraph: Epigraph {
+
+  outputProjection typeNameProjection : TypeName = ( `string` ) ~ (
+    QualifiedTypeName ( segments ),
+    AnonListTypeName ( elementTypeName $dataTypeNameProjection ),
+    AnonMapTypeName (
+      keyTypeName $typeNameProjection,
+      valueTypeName $dataTypeNameProjection
+    )
+  )
+
+  outputProjection dataTypeNameProjection : DataTypeName = (
+    typeName $typeNameProjection,
+    retroTagName ( `string` )
+  )
+
+  outputProjection typeProjection : Type = (
+//    name $typeNameProjection
+  )
+
+  read {
+    outputProjection (
+      types [] ( $typeProjection )
+    )
+  }
+}

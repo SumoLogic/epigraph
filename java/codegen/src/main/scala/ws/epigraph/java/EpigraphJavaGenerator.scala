@@ -130,6 +130,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     val generateImplementationStubs = ctx.settings.generateImplementationStubs
 
     for (entry <- cctx.resourcesSchemas.entrySet) {
+      // todo: check that there are no duplicate resource declarations
       val rs: ResourcesSchema = entry.getValue
       val namespace: Qn = rs.namespace
 

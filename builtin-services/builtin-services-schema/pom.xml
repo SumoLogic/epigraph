@@ -19,52 +19,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>examples-library-service</artifactId>
+  <artifactId>epigraph-builtin-services-schema</artifactId>
 
   <parent>
-    <groupId>ws.epigraph.examples</groupId>
-    <artifactId>examples-library</artifactId>
+    <groupId>ws.epigraph</groupId>
+    <artifactId>epigraph-builtin-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>examples-library-schema</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>ws.epigraph</groupId>
-      <artifactId>epigraph-java-http-server-undertow</artifactId>
+      <artifactId>epigraph-schema-schema</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.22</version>
-    </dependency>
   </dependencies>
 
   <build>
+
+    <sourceDirectory>${project.basedir}/src/main/epigraph</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/epigraph</testSourceDirectory>
+
     <plugins>
 
       <plugin>
         <groupId>ws.epigraph</groupId>
-        <artifactId>epigraph-java-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <configuration>
-          <mainClass>ws.epigraph.examples.library.LibraryServer</mainClass>
-        </configuration>
+        <artifactId>epigraph-maven-plugin</artifactId>
       </plugin>
 
     </plugins>
+
   </build>
 
 </project>

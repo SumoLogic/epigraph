@@ -3,7 +3,7 @@ namespace epigraph.schema
 abstract record Type extends Named {
   doc = "Common interface for data type and vartype records"
 
-  override name: QualifiedName
+  override name: TypeName
 
   abstract supertypes: list[Type]
 
@@ -12,6 +12,8 @@ abstract record Type extends Named {
 
 record VarType extends Type {
   doc = "Vartype declaration"
+
+  override name: QualifiedTypeName
 
   override supertypes: list[VarType]
 
@@ -42,6 +44,8 @@ record DatumType extends Type {
 record RecordType extends DatumType {
   override supertypes: list[RecordType]
 
+  override name: QualifiedTypeName
+
   declaredFields: list[Field]
 }
 
@@ -69,6 +73,8 @@ record ListType extends DatumType {
 record EnumType extends DatumType {
   override supertypes: list[EnumType]
 
+  override name: QualifiedTypeName
+
   // TODO? valueType: DataTypeRef
 
   values: list[EnumValue]
@@ -81,6 +87,8 @@ record EnumValue extends Named {
 }
 
 abstract record PrimitiveType extends DatumType {
+  override name: QualifiedTypeName
+
   override abstract supertypes: list[PrimitiveType]
 }
 

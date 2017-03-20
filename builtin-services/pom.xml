@@ -30,7 +30,8 @@
   <description>Epigraph built-in services</description>
 
   <modules>
-    <module>introspection</module>
+    <module>builtin-services-schema</module>
+    <module>builtin-services-service</module>
   </modules>
 
 </project>

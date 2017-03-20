@@ -18,6 +18,7 @@
   - [ ] should support recursive data
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
+- [ ] add support for resource overlays? adding operations to other resources (e.g. with paths)
 
 # Type system
 - [ ] Enums

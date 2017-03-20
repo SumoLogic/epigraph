@@ -36,8 +36,8 @@ Map<String, String> modules = [
     'gradle-plugin-common'                : 'epigraph-gradle-plugin-common',
     'idea-plugin'                         : 'idea-plugin',
 
-    'builtin-services/introspection/introspection-schema'  : 'epigraph-introspection-schema',
-    'builtin-services/introspection/introspection-service' : 'epigraph-introspection-service',
+    'builtin-services/builtin-services-schema'   : 'epigraph-builtin-services-schema',
+    'builtin-services/builtin-services-service'  : 'epigraph-builtin-services-service',
 
     'compiler'                            : 'epigraph-compiler',
     'java/codegen'                        : 'epigraph-java-codegen',

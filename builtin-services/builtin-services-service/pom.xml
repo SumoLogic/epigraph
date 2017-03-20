@@ -19,18 +19,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-introspection-service</artifactId>
+  <artifactId>epigraph-builtin-services-service</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
-    <artifactId>epigraph-introspection</artifactId>
+    <artifactId>epigraph-builtin-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-introspection-schema</artifactId>
+      <artifactId>epigraph-builtin-services-schema</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

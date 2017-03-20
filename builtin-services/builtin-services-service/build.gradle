@@ -18,10 +18,8 @@ plugins {
   id 'ws.epigraph.java' version '0.0.1'
 }
 
-group = 'ws.epigraph'
-
 dependencies {
-  epigraph project(':epigraph-introspection-schema')
+  epigraph project(':epigraph-builtin-services-schema')
 
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-schema')
@@ -30,9 +28,9 @@ dependencies {
   testCompile 'junit:junit'
 }
 
-epigraph {
-  generateImplementationStubs = [
-      "ws.epigraph.tests.User",
-      "ws.epigraph.tests.Users"
-  ]
-}
+//epigraph {
+//  generateImplementationStubs = [
+//      "ws.epigraph.tests.User",
+//      "ws.epigraph.tests.Users"
+//  ]
+//}
