@@ -29,11 +29,12 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputRecordModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   protected val op: OpOutputRecordModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqOutputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpOutputRecordModelProjection
 
@@ -55,6 +56,7 @@ class ReqOutputRecordModelProjectionGen(
     op: OpOutputRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqOutputRecordModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

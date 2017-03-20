@@ -25,11 +25,12 @@ import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputPrimitiveModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpInputPrimitiveModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqInputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpInputPrimitiveModelProjection
 
@@ -37,6 +38,7 @@ class ReqInputPrimitiveModelProjectionGen(
     op: OpInputPrimitiveModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqInputPrimitiveModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

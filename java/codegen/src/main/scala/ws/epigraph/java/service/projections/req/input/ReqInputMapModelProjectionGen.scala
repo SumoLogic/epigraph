@@ -27,11 +27,12 @@ import ws.epigraph.projections.op.input.OpInputMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputMapModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   override protected val op: OpInputMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqInputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 
@@ -56,6 +57,7 @@ class ReqInputMapModelProjectionGen(
     op: OpInputMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqInputMapModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

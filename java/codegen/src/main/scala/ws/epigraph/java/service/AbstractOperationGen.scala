@@ -99,11 +99,8 @@ public abstract class $shortClassName extends ${operationKindUpper}Operation<$sh
   protected $shortClassName(@NotNull ${operationKindUpper}OperationDeclaration declaration) {
     super(declaration);
   }
-
-  ${i(ServiceGenUtils.genMethods(sctx))}
-
+  ${i(ServiceGenUtils.genMethods(sctx))}\
   ${i(ServiceGenUtils.genStatic(sctx))}
-
 }
 """/*@formatter:on*/
   }

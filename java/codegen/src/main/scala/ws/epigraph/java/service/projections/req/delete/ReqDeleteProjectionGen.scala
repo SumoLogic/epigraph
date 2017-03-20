@@ -26,6 +26,8 @@ trait ReqDeleteProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
   override def namespace: Qn = super.namespace.append("delete").append(namespaceSuffix)
+
+  protected def generatedProjections: java.util.Set[Qn] = ctx.reqDeleteProjections
 }
 
 object ReqDeleteProjectionGen {

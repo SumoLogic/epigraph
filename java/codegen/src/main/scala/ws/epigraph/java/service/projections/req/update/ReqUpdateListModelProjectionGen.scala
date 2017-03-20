@@ -25,11 +25,12 @@ import ws.epigraph.projections.op.input.OpInputListModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateListModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpInputListModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpInputListModelProjection
 
@@ -44,6 +45,7 @@ class ReqUpdateListModelProjectionGen(
     op: OpInputListModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqUpdateListModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

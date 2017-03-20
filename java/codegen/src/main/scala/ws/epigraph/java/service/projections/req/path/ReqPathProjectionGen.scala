@@ -26,6 +26,8 @@ trait ReqPathProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
   override def namespace: Qn = super.namespace.append("path").append(namespaceSuffix)
+
+  protected def generatedProjections: java.util.Set[Qn] = throw new RuntimeException
 }
 
 object ReqPathProjectionGen {

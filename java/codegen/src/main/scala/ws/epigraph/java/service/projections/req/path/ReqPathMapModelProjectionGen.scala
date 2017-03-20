@@ -16,6 +16,8 @@
 
 package ws.epigraph.java.service.projections.req.path
 
+import java.util
+
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen}
@@ -34,6 +36,8 @@ class ReqPathMapModelProjectionGen(
   extends ReqPathModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelPath
+
+  override protected def name: Option[Qn] = None
 
   protected override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
     operationInfo,

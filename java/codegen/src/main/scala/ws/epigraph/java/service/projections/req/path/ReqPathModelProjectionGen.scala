@@ -36,6 +36,8 @@ abstract class ReqPathModelProjectionGen(
   override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpModelPath[_, _, _ <: DatumTypeApi]
 
+  override protected def name: Option[Qn] = None
+
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   override protected def reqVarProjectionFqn: Qn =

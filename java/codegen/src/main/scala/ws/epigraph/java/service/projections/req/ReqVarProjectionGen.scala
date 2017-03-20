@@ -30,13 +30,11 @@ import scala.collection.mutable
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqVarProjectionGen extends ReqProjectionGen {
+trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
 
   protected def op: OpProjectionType
-
-  protected def generatedProjections: java.util.Set[Qn]
 
   protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
 
@@ -44,15 +42,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
 
   // -----------
 
-
-  override def shouldRun: Boolean = Option(op.name()).forall(name => !generatedProjections.contains(name))
-
-  override def namespace: Qn = Option(op.name()).map(_.removeLastSegment()).getOrElse(super.namespace)
-
-  protected def genShortClassName(prefix: String, suffix: String): String = {
-    val middle = Option(op.name()).map(_.last()).map(JavaGenUtils.up).getOrElse(ln(cType))
-    s"$prefix$middle$suffix"
-  }
+  protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override lazy val children: Iterable[ReqProjectionGen] =
     tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
@@ -105,7 +95,7 @@ trait ReqVarProjectionGen extends ReqProjectionGen {
     reqTagProjectionEntryFqn: Qn
   ): String = {
 
-    Option(op.name()).foreach(name => generatedProjections.add(name))
+    name.foreach(name => generatedProjections.add(name))
 
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\

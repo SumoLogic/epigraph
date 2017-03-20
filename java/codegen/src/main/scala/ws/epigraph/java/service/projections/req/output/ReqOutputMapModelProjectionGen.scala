@@ -27,11 +27,12 @@ import ws.epigraph.projections.op.output.OpOutputMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputMapModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   override protected val op: OpOutputMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqOutputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpOutputMapModelProjection
 
@@ -52,11 +53,11 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-
   override protected def tailGenerator(
     op: OpOutputMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqOutputMapModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

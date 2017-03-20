@@ -25,11 +25,12 @@ import ws.epigraph.projections.op.delete.OpDeleteListModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteListModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpDeleteListModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpDeleteListModelProjection
 
@@ -44,6 +45,7 @@ class ReqDeleteListModelProjectionGen(
     op: OpDeleteListModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeleteListModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

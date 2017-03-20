@@ -31,7 +31,7 @@ import scala.collection.mutable
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqModelProjectionGen extends ReqProjectionGen {
+trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
   type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
 
@@ -52,6 +52,8 @@ trait ReqModelProjectionGen extends ReqProjectionGen {
     throw new RuntimeException("tail projections not supported")
 
   // -----------
+
+  protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override def children: Iterable[JavaGen] =
     super.children ++ metaGeneratorOpt.iterator ++ tailGenerators.values ++ normalizedTailGenerators.values

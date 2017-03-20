@@ -29,6 +29,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqOutputModelProjectionGen(
+  protected val name: Option[Qn],
   protected val operationInfo: OperationInfo,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
   protected val namespaceSuffix: Qn,
@@ -55,6 +56,7 @@ abstract class ReqOutputModelProjectionGen(
 
   override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
+      None,
       operationInfo,
       metaOp,
       namespaceSuffix.append("meta"),
@@ -64,6 +66,7 @@ abstract class ReqOutputModelProjectionGen(
 
 object ReqOutputModelProjectionGen {
   def dataProjectionGen(
+    name: Option[Qn],
     operationInfo: OperationInfo,
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     namespaceSuffix: Qn,
@@ -71,6 +74,7 @@ object ReqOutputModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpOutputRecordModelProjection],
         namespaceSuffix,
@@ -78,6 +82,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqOutputMapModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpOutputMapModelProjection],
         namespaceSuffix,
@@ -85,6 +90,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqOutputListModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpOutputListModelProjection],
         namespaceSuffix,
@@ -92,6 +98,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqOutputPrimitiveModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpOutputPrimitiveModelProjection],
         namespaceSuffix,

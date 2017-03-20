@@ -20,7 +20,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -29,6 +29,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqUpdateModelProjectionGen(
+  protected val name: Option[Qn],
   protected val operationInfo: OperationInfo,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   protected val namespaceSuffix: Qn,
@@ -56,6 +57,7 @@ abstract class ReqUpdateModelProjectionGen(
 
 object ReqUpdateModelProjectionGen {
   def dataProjectionGen(
+    name: Option[Qn],
     operationInfo: OperationInfo,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     namespaceSuffix: Qn,
@@ -63,6 +65,7 @@ object ReqUpdateModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputRecordModelProjection],
         namespaceSuffix,
@@ -70,6 +73,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqUpdateMapModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputMapModelProjection],
         namespaceSuffix,
@@ -77,6 +81,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqUpdateListModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputListModelProjection],
         namespaceSuffix,
@@ -84,6 +89,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqUpdatePrimitiveModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         namespaceSuffix,

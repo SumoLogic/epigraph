@@ -29,11 +29,12 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteRecordModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   protected val op: OpDeleteRecordModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpDeleteRecordModelProjection
 
@@ -55,6 +56,7 @@ class ReqDeleteRecordModelProjectionGen(
     op: OpDeleteRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeleteRecordModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

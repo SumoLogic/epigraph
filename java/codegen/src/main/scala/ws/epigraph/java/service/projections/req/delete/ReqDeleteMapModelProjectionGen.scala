@@ -27,11 +27,12 @@ import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteMapModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   override protected val op: OpDeleteMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpDeleteMapModelProjection
 
@@ -56,6 +57,7 @@ class ReqDeleteMapModelProjectionGen(
     op: OpDeleteMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeleteMapModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

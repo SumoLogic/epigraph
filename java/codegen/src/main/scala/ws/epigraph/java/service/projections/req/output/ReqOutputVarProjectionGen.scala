@@ -36,9 +36,9 @@ class ReqOutputVarProjectionGen(
   override type OpProjectionType = OpOutputVarProjection
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
-  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+  override protected def name: Option[Qn] = Option(op.name())
 
-  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqOutputProjections
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean) =
     new ReqOutputVarProjectionGen(
@@ -55,6 +55,7 @@ class ReqOutputVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
+      None, // can't use named projections in tags yet
       operationInfo,
       tpe.projection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -78,6 +79,7 @@ object ReqOutputVarProjectionGen {
       new ReqOutputVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputRecordModelProjection],
         namespaceSuffix,
@@ -85,6 +87,7 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqOutputMapModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputMapModelProjection],
         namespaceSuffix,
@@ -92,6 +95,7 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqOutputListModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputListModelProjection],
         namespaceSuffix,
@@ -99,6 +103,7 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqOutputPrimitiveModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputPrimitiveModelProjection],
         namespaceSuffix,

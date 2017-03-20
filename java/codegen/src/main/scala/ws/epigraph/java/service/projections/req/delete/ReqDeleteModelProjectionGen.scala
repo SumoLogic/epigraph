@@ -28,6 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqDeleteModelProjectionGen(
+  protected val name: Option[Qn],
   protected val operationInfo: OperationInfo,
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   protected val namespaceSuffix: Qn,
@@ -48,6 +49,7 @@ abstract class ReqDeleteModelProjectionGen(
 
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
+    name: Option[Qn],
     operationInfo: OperationInfo,
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     namespaceSuffix: Qn,
@@ -55,6 +57,7 @@ object ReqDeleteModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpDeleteRecordModelProjection],
         namespaceSuffix,
@@ -62,6 +65,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpDeleteMapModelProjection],
         namespaceSuffix,
@@ -69,6 +73,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpDeleteListModelProjection],
         namespaceSuffix,
@@ -76,6 +81,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpDeletePrimitiveModelProjection],
         namespaceSuffix,

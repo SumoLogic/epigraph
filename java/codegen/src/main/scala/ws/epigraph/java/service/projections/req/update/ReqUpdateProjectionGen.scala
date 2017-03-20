@@ -26,6 +26,8 @@ trait ReqUpdateProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
   override def namespace: Qn = super.namespace.append("update").append(namespaceSuffix)
+
+  protected def generatedProjections: java.util.Set[Qn] = ctx.reqUpdateProjections
 }
 
 object ReqUpdateProjectionGen {

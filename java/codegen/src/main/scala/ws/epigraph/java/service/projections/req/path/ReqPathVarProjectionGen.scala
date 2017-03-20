@@ -36,6 +36,8 @@ class ReqPathVarProjectionGen(
   override type OpProjectionType = OpVarPath
   override type OpTagProjectionEntryType = OpTagPath
 
+  override protected def name: Option[Qn] = Option(op.name())
+
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   override protected def generatedProjections: java.util.Set[Qn] = ctx.reqPaths

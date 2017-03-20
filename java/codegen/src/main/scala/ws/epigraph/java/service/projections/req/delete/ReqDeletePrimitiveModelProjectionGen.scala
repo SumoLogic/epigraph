@@ -25,11 +25,12 @@ import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeletePrimitiveModelProjectionGen(
+  name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpDeletePrimitiveModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
@@ -37,6 +38,7 @@ class ReqDeletePrimitiveModelProjectionGen(
     op: OpDeletePrimitiveModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeletePrimitiveModelProjectionGen(
+      None,
       operationInfo,
       op,
       namespaceSuffix.append(

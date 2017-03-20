@@ -36,9 +36,9 @@ class ReqDeleteVarProjectionGen(
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
 
-  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+  override protected def name: Option[Qn] = Option(op.name())
 
-  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqDeleteProjections
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpDeleteVarProjection, normalized: Boolean) =
     new ReqDeleteVarProjectionGen(
@@ -55,6 +55,7 @@ class ReqDeleteVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
+      None,
       operationInfo,
       tpe.projection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -78,6 +79,7 @@ object ReqDeleteVarProjectionGen {
       new ReqDeleteVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
         namespaceSuffix,
@@ -85,6 +87,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
         namespaceSuffix,
@@ -92,6 +95,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
         namespaceSuffix,
@@ -99,6 +103,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
         namespaceSuffix,

@@ -36,9 +36,9 @@ class ReqUpdateVarProjectionGen(
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
 
-  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+  override protected def name: Option[Qn] = Option(op.name())
 
-  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqUpdateProjections
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpInputVarProjection, normalized: Boolean) =
     new ReqUpdateVarProjectionGen(
@@ -55,6 +55,7 @@ class ReqUpdateVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =
     ReqUpdateModelProjectionGen.dataProjectionGen(
+      None,
       operationInfo,
       tpe.projection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -78,6 +79,7 @@ object ReqUpdateVarProjectionGen {
       new ReqUpdateVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
         namespaceSuffix,
@@ -85,6 +87,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqUpdateMapModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
         namespaceSuffix,
@@ -92,6 +95,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqUpdateListModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
         namespaceSuffix,
@@ -99,6 +103,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqUpdatePrimitiveModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
         namespaceSuffix,

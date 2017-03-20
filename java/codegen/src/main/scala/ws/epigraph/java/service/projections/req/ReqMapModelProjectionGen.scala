@@ -71,6 +71,8 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
   }
 
   protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+    name.foreach(name => generatedProjections.add(name))
+
     val elementProjectionClass = elementGen.shortClassName
     val _keys = keys
 

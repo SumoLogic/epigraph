@@ -36,9 +36,9 @@ class ReqInputVarProjectionGen(
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
 
-  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
+  override protected def name: Option[Qn] = Option(op.name())
 
-  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqInputProjections
+  override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpInputVarProjection, normalized: Boolean) =
     new ReqInputVarProjectionGen(
@@ -55,6 +55,7 @@ class ReqInputVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =
     ReqInputModelProjectionGen.dataProjectionGen(
+      None,
       operationInfo,
       tpe.projection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -78,6 +79,7 @@ object ReqInputVarProjectionGen {
       new ReqInputVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
         namespaceSuffix,
@@ -85,6 +87,7 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqInputMapModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
         namespaceSuffix,
@@ -92,6 +95,7 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqInputListModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
         namespaceSuffix,
@@ -99,6 +103,7 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqInputPrimitiveModelProjectionGen(
+        Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
         namespaceSuffix,

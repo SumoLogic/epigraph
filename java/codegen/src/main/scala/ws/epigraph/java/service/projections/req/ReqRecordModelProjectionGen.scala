@@ -49,6 +49,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   }
 
   protected def generate(reqRecordModelProjectionFqn: Qn, reqFieldProjectionEntryFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+    name.foreach(name => generatedProjections.add(name))
 
     def genField(field: CField, fieldGenerator: ReqFieldProjectionGen): CodeChunk = {
 

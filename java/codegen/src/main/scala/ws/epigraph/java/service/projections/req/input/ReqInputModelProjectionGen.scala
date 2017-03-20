@@ -28,6 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqInputModelProjectionGen(
+  protected val name: Option[Qn],
   protected val operationInfo: OperationInfo,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   protected val namespaceSuffix: Qn,
@@ -48,6 +49,7 @@ abstract class ReqInputModelProjectionGen(
 
 object ReqInputModelProjectionGen {
   def dataProjectionGen(
+    name: Option[Qn],
     operationInfo: OperationInfo,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     namespaceSuffix: Qn,
@@ -55,6 +57,7 @@ object ReqInputModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputRecordModelProjection],
         namespaceSuffix,
@@ -62,6 +65,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqInputMapModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputMapModelProjection],
         namespaceSuffix,
@@ -69,6 +73,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqInputListModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputListModelProjection],
         namespaceSuffix,
@@ -76,6 +81,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqInputPrimitiveModelProjectionGen(
+        name,
         operationInfo,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         namespaceSuffix,

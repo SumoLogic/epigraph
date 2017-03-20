@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.input
+package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
+import ws.epigraph.compiler.CType
+import ws.epigraph.java.JavaGenNames.ln
+import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqInputProjectionGen extends ReqProjectionGen {
-  protected def namespaceSuffix: Qn
+trait ReqTypeProjectionGen extends ReqProjectionGen {
 
-  override def namespace: Qn = super.namespace.append("input").append(namespaceSuffix)
+  protected def generatedProjections: java.util.Set[Qn]
 
-  protected def generatedProjections: java.util.Set[Qn] = ctx.reqInputProjections
-}
+  protected def name: Option[Qn]
 
-object ReqInputProjectionGen {
-  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Input"
-  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
+  // -----------
+
+  override def shouldRun: Boolean = name.forall(name => !generatedProjections.contains(name))
+
+  override def namespace: Qn = name.map(_.removeLastSegment()).getOrElse(super.namespace)
+
+  protected def genShortClassName(prefix: String, suffix: String, cType: CType): String = {
+    val middle = name.map(_.last()).map(JavaGenUtils.up).getOrElse(ln(cType))
+    s"$prefix$middle$suffix"
+  }
 }

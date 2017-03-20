@@ -26,6 +26,8 @@ trait ReqOutputProjectionGen extends ReqProjectionGen {
   protected def namespaceSuffix: Qn
 
   override def namespace: Qn = super.namespace.append("output").append(namespaceSuffix)
+
+  protected def generatedProjections: java.util.Set[Qn] = ctx.reqOutputProjections
 }
 
 object ReqOutputProjectionGen {

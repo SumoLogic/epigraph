@@ -67,6 +67,7 @@
 - [ ] remove type information from projections?
   - [ ] record projections should contain a String->FP, not String->FPE map
 - [ ] correct `equals` support, see todo on `AbstractVarProjection.equals`
+- [ ] enable real named model projections. Currently they can't be used for tags, meta or model tails
 
 # Operations
 
