@@ -30,7 +30,16 @@ object JavaGenNames {
   def jn(name: String): String = JavaNames.javaName(name)
 
   /** name for a field constant within generated record type interface (basically checks for clash with `type` constant) */
-  def fcn(f: CField): String = javaFieldName(jn(f.name)) // TODO same for tags (so far would be identical)
+  def fcn(f: CField): String = fcn(f.name)
+
+  /** name for a field constant within generated record type interface (basically checks for clash with `type` constant) */
+  def fcn(fname: String): String = javaFieldName(jn(fname))
+
+  /** name for a tag constant within generated record type interface (basically checks for clash with `type` constant) */
+  def tcn(f: CField): String = tcn(f.name)
+
+  /** name for a tag constant within generated record type interface (basically checks for clash with `type` constant) */
+  def tcn(fname: String): String = javaFieldName(jn(fname)) // todo javaTagName ?
 
   def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 

@@ -19,9 +19,8 @@ package ws.epigraph.java.service
 import ws.epigraph.compiler.{CDatumType, CTypeApiWrapper}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.CodeChunk
-import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGenNames, JavaGenUtils}
 import ws.epigraph.types._
-import ws.epigraph.util.JavaNames
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -156,10 +155,10 @@ Util.create$mapClass(
     if (tagName == CDatumType.ImpliedDefaultTagName)
       genTypeExpr(t, ctx) + ".self()"
     else
-      genTypeClassRef(t, ctx) + "." + JavaNames.javaName(tagName)
+      genTypeClassRef(t, ctx) + "." + JavaGenNames.tcn(tagName)
 
   def genFieldExpr(t: TypeApi, fieldName: String, ctx: GenContext): String =
-    genTypeClassRef(t, ctx) + "." + JavaNames.javaName(fieldName)
+    genTypeClassRef(t, ctx) + "." + JavaGenNames.fcn(fieldName)
 
   def genDataTypeExpr(dt: DataTypeApi, gctx: GenContext): String = dt.`type`() match {
     case a: DatumTypeApi => genTypeExpr(a, gctx) + ".dataType()"
