@@ -28,15 +28,24 @@ class ReqDeleteListModelProjectionGen(
   name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpDeleteListModelProjection,
-  namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(
+    name,
+    operationInfo,
+    op,
+    _baseNamespace,
+    _namespaceSuffix,
+    ctx
+  ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpDeleteListModelProjection
 
   protected val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
+    baseNamespace,
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -48,10 +57,8 @@ class ReqDeleteListModelProjectionGen(
       None,
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
-        + ReqModelProjectionGen.tailPackageSuffix(normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.model(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpDeleteListModelProjection, ReqModelProjectionGen] = Map()

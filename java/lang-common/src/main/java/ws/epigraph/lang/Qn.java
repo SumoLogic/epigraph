@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +49,13 @@ public class Qn implements Comparable<Qn> {
 
   public Qn(@NotNull Collection<String> segments) {
     this(segments.toArray(new String[segments.size()]));
+  }
+
+  private Qn(@NotNull String[] segments, boolean copy) {
+    if (copy) {
+      this.segments = new String[segments.length];
+      System.arraycopy(segments, 0, this.segments, 0, segments.length);
+    } else this.segments = segments;
   }
 
   public static @NotNull Qn fromDotSeparated(@NotNull String fqn) {
@@ -91,7 +99,8 @@ public class Qn implements Comparable<Qn> {
   }
 
   public @NotNull Qn removeHeadSegments(int n) {
-    if (n < 0 || size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (n < 0 || size() < n)
+      throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
     if (n == 0) return this;
 
@@ -101,7 +110,8 @@ public class Qn implements Comparable<Qn> {
   }
 
   public @NotNull Qn removeTailSegments(int n) {
-    if (n < 0 || size() < n) throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
+    if (n < 0 || size() < n)
+      throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
     if (size() == n) return EMPTY;
     if (n == 0) return this;
 
@@ -150,6 +160,18 @@ public class Qn implements Comparable<Qn> {
     return true;
   }
 
+  public @NotNull Qn map(@NotNull Function<String, String> f) {
+    Qn res = new Qn(new String[size()], false);
+    for (int i = 0; i < size(); i++) {
+      res.segments[i] = f.apply(segments[i]);
+    }
+    return res;
+  }
+
+  public @NotNull Qn toLower() {
+    return map(String::toLowerCase);
+  }
+
   @Override
   public String toString() {
     StringBuilder r = new StringBuilder();
@@ -191,9 +213,9 @@ public class Qn implements Comparable<Qn> {
   public static Collection<Qn> getMatchingWithPrefixRemoved(@NotNull Collection<Qn> qns, @NotNull Qn prefix) {
     if (prefix.isEmpty()) return qns;
     return qns.stream()
-              .filter(fqn -> fqn.startsWith(prefix))
-              .map(fqn -> fqn.removeHeadSegments(prefix.size()))
+        .filter(fqn -> fqn.startsWith(prefix))
+        .map(fqn -> fqn.removeHeadSegments(prefix.size()))
 //        .filter(fqn -> !fqn.isEmpty())
-              .collect(Collectors.toSet());
+        .collect(Collectors.toSet());
   }
 }

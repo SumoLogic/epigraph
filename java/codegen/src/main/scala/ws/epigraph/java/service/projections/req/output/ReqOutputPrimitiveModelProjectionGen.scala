@@ -28,9 +28,10 @@ class ReqOutputPrimitiveModelProjectionGen(
   name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpOutputPrimitiveModelProjection,
-  namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqOutputModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
@@ -42,10 +43,8 @@ class ReqOutputPrimitiveModelProjectionGen(
       None,
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
-        + ReqModelProjectionGen.tailPackageSuffix(normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.model(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpOutputPrimitiveModelProjection, ReqModelProjectionGen] = Map()

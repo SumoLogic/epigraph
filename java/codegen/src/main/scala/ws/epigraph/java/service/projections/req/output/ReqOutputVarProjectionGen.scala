@@ -30,7 +30,8 @@ import ws.epigraph.types.TypeKind
 class ReqOutputVarProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val op: OpOutputVarProjection,
-  protected val namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpOutputVarProjection
@@ -38,16 +39,18 @@ class ReqOutputVarProjectionGen(
 
   override protected def name: Option[Qn] = Option(op.name())
 
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
+
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean) =
     new ReqOutputVarProjectionGen(
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqVarProjectionGen.typeNameToPackageName(cType, namespace.toString) + ReqVarProjectionGen.tailPackageSuffix(
-          normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpOutputVarProjection, ReqProjectionGen] = Map()
@@ -58,6 +61,7 @@ class ReqOutputVarProjectionGen(
       None, // can't use named projections in tags yet
       operationInfo,
       tpe.projection(),
+      baseNamespace,
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -72,16 +76,18 @@ object ReqOutputVarProjectionGen {
   def dataProjectionGen(
     operationInfo: OperationInfo,
     op: OpOutputVarProjection,
+    baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqOutputProjectionGen = op.`type`().kind() match {
 
     case TypeKind.UNION =>
-      new ReqOutputVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
+      new ReqOutputVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputRecordModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -90,6 +96,7 @@ object ReqOutputVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputMapModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -98,6 +105,7 @@ object ReqOutputVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputListModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -106,6 +114,7 @@ object ReqOutputVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputPrimitiveModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )

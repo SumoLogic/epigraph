@@ -30,7 +30,7 @@ class ReqPathFieldProjectionGen(
   protected val operationInfo: OperationInfo,
   fieldName: String,
   protected val op: OpFieldPath,
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpFieldPath

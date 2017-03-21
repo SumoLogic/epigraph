@@ -30,10 +30,13 @@ class ReqDeleteFieldProjectionGen(
   protected val operationInfo: OperationInfo,
   fieldName: String,
   protected val op: OpDeleteFieldProjection,
-  protected val namespaceSuffix: Qn,
+  baseNamespaceOpt: Option[Qn],
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpDeleteFieldProjection
+
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
@@ -41,6 +44,7 @@ class ReqDeleteFieldProjectionGen(
     ReqDeleteVarProjectionGen.dataProjectionGen(
       operationInfo,
       op.varProjection(),
+      baseNamespace,
       namespaceSuffix,
       ctx
     )

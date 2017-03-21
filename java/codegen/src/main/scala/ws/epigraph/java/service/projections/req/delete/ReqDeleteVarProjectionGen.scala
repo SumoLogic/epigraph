@@ -30,7 +30,8 @@ import ws.epigraph.types.TypeKind
 class ReqDeleteVarProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val op: OpDeleteVarProjection,
-  protected val namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpDeleteVarProjection
@@ -38,16 +39,18 @@ class ReqDeleteVarProjectionGen(
 
   override protected def name: Option[Qn] = Option(op.name())
 
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
+
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpDeleteVarProjection, normalized: Boolean) =
     new ReqDeleteVarProjectionGen(
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqVarProjectionGen.typeNameToPackageName(cType, namespace.toString) + ReqVarProjectionGen.tailPackageSuffix(
-          normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
@@ -58,6 +61,7 @@ class ReqDeleteVarProjectionGen(
       None,
       operationInfo,
       tpe.projection(),
+      baseNamespace,
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -72,16 +76,18 @@ object ReqDeleteVarProjectionGen {
   def dataProjectionGen(
     operationInfo: OperationInfo,
     op: OpDeleteVarProjection,
+    baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqDeleteProjectionGen = op.`type`().kind() match {
 
     case TypeKind.UNION =>
-      new ReqDeleteVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
+      new ReqDeleteVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -90,6 +96,7 @@ object ReqDeleteVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -98,6 +105,7 @@ object ReqDeleteVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -106,6 +114,7 @@ object ReqDeleteVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )

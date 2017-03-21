@@ -30,7 +30,7 @@ class ReqUpdateMapKeyProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val cMapType: CMapType,
   protected val op: OpInputKeyProjection,
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpInputKeyProjection

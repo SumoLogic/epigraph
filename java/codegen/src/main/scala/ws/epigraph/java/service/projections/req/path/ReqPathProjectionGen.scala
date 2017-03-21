@@ -23,9 +23,7 @@ import ws.epigraph.lang.Qn
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqPathProjectionGen extends ReqProjectionGen {
-  protected def namespaceSuffix: Qn
-
-  override def namespace: Qn = super.namespace.append("path").append(namespaceSuffix)
+  override protected def baseNamespace: Qn = super.baseNamespace.append("path")
 
   protected def generatedProjections: java.util.Set[Qn] = throw new RuntimeException
 }

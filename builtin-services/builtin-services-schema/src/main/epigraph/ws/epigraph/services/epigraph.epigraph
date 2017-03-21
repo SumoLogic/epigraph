@@ -30,7 +30,7 @@ resource epigraph: Epigraph {
   )
 
   outputProjection typeProjection : Type = (
-//    name $typeNameProjection
+    name $typeNameProjection
   )
 
   read {

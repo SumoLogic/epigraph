@@ -39,6 +39,7 @@ class AbstractCustomOperationGen(
         operationInfo,
         rd.fieldName(),
         inputProjection,
+        None,
         Qn.EMPTY,
         ctx
       )

@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.CDatumType
-import ws.epigraph.java.JavaGenNames.{jn, lqn2}
+import ws.epigraph.java.JavaGenNames.lqn2
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.ReqModelProjectionGen._
+import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.AbstractOpModelProjection
@@ -37,7 +37,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   protected def op: OpProjectionType
 
-  protected val cType: CDatumType = JavaGenUtils.toCType(op.model())
+  override protected val cType: CDatumType = JavaGenUtils.toCType(op.model())
 
   protected def reqVarProjectionFqn: Qn
 
@@ -126,7 +126,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   /**
    * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
    */
-  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype, namespace.toString)}${tailMethodSuffix(false)}() {
+  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(false)}() {
     ${reqModelProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
     return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
   }
@@ -147,7 +147,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
    *
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
    */
-  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype, namespace.toString)}${tailMethodSuffix(true)}() {
+  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
     return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
   }
 """/*@formatter:on*/ ,
@@ -161,18 +161,4 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
  */
 """/*@formatter:on*/
 
-}
-
-object ReqModelProjectionGen {
-  def tailPackageSuffix(normalized: Boolean): String = if (normalized) "_normalized" else "_tail"
-
-  def tailMethodPrefix(normalized: Boolean): String = if (normalized) "normalizedFor_" else ""
-
-  def tailMethodSuffix(normalized: Boolean): String = if (normalized) "" else "Tail"
-
-  def typeNameToPackageName(cType: CDatumType, currentNamespace: String): String =
-    jn(lqn2(cType, currentNamespace)).replace('.', '_').toLowerCase
-
-  def typeNameToMethodName(cType: CDatumType, currentNamespace: String): String =
-    JavaGenUtils.lo(jn(lqn2(cType, currentNamespace)).replace('.', '_'))
 }

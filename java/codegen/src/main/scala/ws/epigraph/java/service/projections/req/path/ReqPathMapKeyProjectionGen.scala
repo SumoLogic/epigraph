@@ -30,7 +30,7 @@ class ReqPathMapKeyProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val cMapType: CMapType,
   protected val op: OpPathKeyProjection,
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpPathKeyProjection

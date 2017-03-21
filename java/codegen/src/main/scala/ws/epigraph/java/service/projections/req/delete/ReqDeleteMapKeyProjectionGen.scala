@@ -30,7 +30,7 @@ class ReqDeleteMapKeyProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val cMapType: CMapType,
   protected val op: OpDeleteKeyProjection,
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpDeleteKeyProjection

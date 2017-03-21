@@ -32,12 +32,15 @@ import ws.epigraph.types.DatumTypeApi
 trait ReqProjectionGen extends JavaGen {
   protected val operationInfo: OperationInfo
 
-  def namespace: Qn =
-    ServiceNames.operationNamespace(
-      operationInfo.resourceNamespace,
-      operationInfo.resourceFieldName,
-      operationInfo.operation
-    )
+  protected def baseNamespace: Qn = ServiceNames.operationNamespace(
+    operationInfo.resourceNamespace,
+    operationInfo.resourceFieldName,
+    operationInfo.operation
+  )
+
+  protected def namespaceSuffix: Qn = Qn.EMPTY
+
+  final def namespace: Qn = baseNamespace.append(namespaceSuffix)
 
   def shortClassName: String
 
@@ -52,10 +55,14 @@ object ReqProjectionGen {
   val classNamePrefix: String = "Req"
   val classNameSuffix: String = "Projection"
 
+  def baseNamespace(name: Option[Qn], default: Qn): Qn = name.map(n => JavaGenNames.pnq(n)).getOrElse(default)
+
+  def namespaceSuffix(name: Option[Qn], default: Qn): Qn = name.map(_ => Qn.EMPTY).getOrElse(default)
+
   def generateParams(op: OpParams, namespace: String, reqParamsExpr: String): CodeChunk = {
     import scala.collection.JavaConversions._
 
-    op.asMap().values().map{ p =>
+    op.asMap().values().map { p =>
 
       val datumType: CDatumType = JavaGenUtils.toCType(p.projection().model().asInstanceOf[DatumTypeApi])
       // Scala doesn't get it
@@ -93,10 +100,12 @@ object ReqProjectionGen {
         case _ => genNonPrimitiveParam
       }
 
-      CodeChunk(paramCode, Set(
-        "org.jetbrains.annotations.Nullable",
-        "ws.epigraph.projections.req.ReqParam"
-      ))
+      CodeChunk(
+        paramCode, Set(
+          "org.jetbrains.annotations.Nullable",
+          "ws.epigraph.projections.req.ReqParam"
+        )
+      )
     }.foldLeft(CodeChunk.empty)(_ + _)
   }
 

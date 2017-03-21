@@ -30,7 +30,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
 abstract class ReqPathModelProjectionGen(
   protected val operationInfo: OperationInfo,
   op: OpModelPath[_, _, _ <: DatumTypeApi],
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]

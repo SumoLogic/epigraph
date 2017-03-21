@@ -28,9 +28,10 @@ class ReqDeletePrimitiveModelProjectionGen(
   name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpDeletePrimitiveModelProjection,
-  namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
@@ -41,10 +42,8 @@ class ReqDeletePrimitiveModelProjectionGen(
       None,
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
-        + ReqModelProjectionGen.tailPackageSuffix(normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.model(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpDeletePrimitiveModelProjection, ReqModelProjectionGen] = Map()

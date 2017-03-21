@@ -30,7 +30,7 @@ import ws.epigraph.types.TypeKind
 class ReqPathVarProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val op: OpVarPath,
-  protected val namespaceSuffix: Qn,
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpVarPath

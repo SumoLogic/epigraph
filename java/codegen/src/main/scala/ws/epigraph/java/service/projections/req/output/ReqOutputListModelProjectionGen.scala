@@ -28,15 +28,17 @@ class ReqOutputListModelProjectionGen(
   name: Option[Qn],
   operationInfo: OperationInfo,
   val op: OpOutputListModelProjection,
-  namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqOutputModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
   protected val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     operationInfo,
     op.itemsProjection(),
+    baseNamespace,
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -48,10 +50,8 @@ class ReqOutputListModelProjectionGen(
       None,
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
-        + ReqModelProjectionGen.tailPackageSuffix(normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.model(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpOutputListModelProjection, ReqModelProjectionGen] = Map()

@@ -38,6 +38,7 @@ class AbstractCreateOperationGen(
       operationInfo,
       rd.fieldName(),
       op.inputProjection(),
+      None,
       Qn.EMPTY,
       ctx
     )

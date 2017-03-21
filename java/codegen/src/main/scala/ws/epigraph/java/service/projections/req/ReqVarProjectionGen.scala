@@ -20,7 +20,7 @@ import ws.epigraph.compiler.{CTag, CType, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.ReqVarProjectionGen._
+import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
 
@@ -47,7 +47,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   override lazy val children: Iterable[ReqProjectionGen] =
     tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
 
-  protected val cType: CVarTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
+  override protected val cType: CVarTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
 
   protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map { tpe => findTag(tpe.tag().name()) -> tagGenerator(tpe) }.toMap
@@ -121,7 +121,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   /**
    * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
    */
-  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype, namespace.toString)}${tailMethodSuffix(false)}() {
+  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(false)}() {
     ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
     return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
   }
@@ -142,7 +142,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
    *
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
    */
-  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype, namespace.toString)}${tailMethodSuffix(true)}() {
+  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
     return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
   }
 """/*@formatter:on*/ ,
@@ -179,18 +179,4 @@ public class $shortClassName {
   public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/
   }
-}
-
-object ReqVarProjectionGen {
-  def tailPackageSuffix(normalized: Boolean): String = if (normalized) "_normalized" else "_tail"
-
-  def tailMethodPrefix(normalized: Boolean): String = if (normalized) "normalizedFor_" else ""
-
-  def tailMethodSuffix(normalized: Boolean): String = if (normalized) "" else "Tail"
-
-  def typeNameToPackageName(cType: CType, currentNamespace: String): String =
-    jn(lqn2(cType, currentNamespace)).replace('.', '_').toLowerCase
-
-  def typeNameToMethodName(cType: CType, currentNamespace: String): String =
-    JavaGenUtils.lo(jn(lqn2(cType, currentNamespace)).replace('.', '_'))
 }

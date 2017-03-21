@@ -38,6 +38,7 @@ class AbstractDeleteOperationGen(
       operationInfo,
       rd.fieldName(),
       op.deleteProjection(),
+      None,
       Qn.EMPTY,
       ctx
     )

@@ -30,7 +30,8 @@ import ws.epigraph.types.TypeKind
 class ReqUpdateVarProjectionGen(
   protected val operationInfo: OperationInfo,
   protected val op: OpInputVarProjection,
-  protected val namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
@@ -38,16 +39,18 @@ class ReqUpdateVarProjectionGen(
 
   override protected def name: Option[Qn] = Option(op.name())
 
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
+
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpInputVarProjection, normalized: Boolean) =
     new ReqUpdateVarProjectionGen(
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqVarProjectionGen.typeNameToPackageName(cType, namespace.toString) + ReqVarProjectionGen.tailPackageSuffix(
-          normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
@@ -58,6 +61,7 @@ class ReqUpdateVarProjectionGen(
       None,
       operationInfo,
       tpe.projection(),
+      baseNamespace,
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -72,16 +76,18 @@ object ReqUpdateVarProjectionGen {
   def dataProjectionGen(
     operationInfo: OperationInfo,
     op: OpInputVarProjection,
+    baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqUpdateProjectionGen = op.`type`().kind() match {
 
     case TypeKind.UNION =>
-      new ReqUpdateVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
+      new ReqUpdateVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -90,6 +96,7 @@ object ReqUpdateVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -98,6 +105,7 @@ object ReqUpdateVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -106,6 +114,7 @@ object ReqUpdateVarProjectionGen {
         Option(op.name()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )

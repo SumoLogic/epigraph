@@ -32,9 +32,10 @@ class ReqUpdateRecordModelProjectionGen(
   name: Option[Qn],
   operationInfo: OperationInfo,
   protected val op: OpInputRecordModelProjection,
-  namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(name, operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
 
@@ -46,6 +47,7 @@ class ReqUpdateRecordModelProjectionGen(
           operationInfo,
           fpe.field().name(),
           fpe.fieldProjection(),
+          Some(baseNamespace),
           namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
           ctx
         )
@@ -59,10 +61,8 @@ class ReqUpdateRecordModelProjectionGen(
       None,
       operationInfo,
       op,
-      namespaceSuffix.append(
-        ReqModelProjectionGen.typeNameToPackageName(cType, namespace.toString)
-        + ReqModelProjectionGen.tailPackageSuffix(normalized)
-      ),
+      baseNamespace,
+      tailNamespaceSuffix(op.model(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpInputRecordModelProjection, ReqModelProjectionGen] = Map()

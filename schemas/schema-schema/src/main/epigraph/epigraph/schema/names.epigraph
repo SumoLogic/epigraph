@@ -1,7 +1,7 @@
 namespace epigraph.schema
 
 abstract record Name {
-  `string`: String
+  `string`: String // or 'name' ?
 }
 
 abstract record TypeName extends Name

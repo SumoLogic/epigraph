@@ -16,6 +16,8 @@
 
 package ws.epigraph.java
 
+import java.util.function.Function
+
 import ws.epigraph.compiler._
 import ws.epigraph.lang.Qn
 import ws.epigraph.util.JavaNames
@@ -50,6 +52,10 @@ object JavaGenNames {
   def pn(t: CType): String = pn(getNamedTypeComponent(t).name.fqn.removeLastSegment())
 
   def pn(qn: Qn): String = qn.segments.map(jn).mkString(".").toLowerCase
+
+  def pnq(qn: Qn): Qn = qn.map(new Function[String, String] {
+    override def apply(t: String): String = jn(t).toLowerCase
+  })
 
   /** escaped (in case it conflicts with reserved) local (short) java name for given epigraph type */
   def ln(t: CType): String = javaTypeName(ln0(t))

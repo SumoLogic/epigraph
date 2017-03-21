@@ -30,10 +30,13 @@ class ReqInputFieldProjectionGen(
   protected val operationInfo: OperationInfo,
   fieldName: String,
   protected val op: OpInputFieldProjection,
-  protected val namespaceSuffix: Qn,
+  baseNamespaceOpt: Option[Qn],
+  override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqInputProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpInputFieldProjection
+
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
@@ -41,6 +44,7 @@ class ReqInputFieldProjectionGen(
     ReqInputVarProjectionGen.dataProjectionGen(
       operationInfo,
       op.varProjection(),
+      baseNamespace,
       namespaceSuffix,
       ctx
     )

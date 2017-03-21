@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +114,9 @@ object JavaGenUtils {
   def up(name: String): String = Character.toUpperCase(name.charAt(0)) + name.substring(1)
 
   def lo(name: String): String = Character.toLowerCase(name.charAt(0)) + name.substring(1)
+
+//  def javadocLink(t: CType, currentType: CType): String =
+//    s"{@link ${JavaGenNames.lqn(t, currentType)} ${JavaGenNames.ln(t)}}"
 
   def javadocLink(t: CType, namespace: Qn): String =
     s"{@link ${JavaGenNames.lqn2(t, namespace.toString)} ${JavaGenNames.ln(t)}}"

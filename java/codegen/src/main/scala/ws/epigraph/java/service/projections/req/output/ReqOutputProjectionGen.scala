@@ -23,9 +23,7 @@ import ws.epigraph.lang.Qn
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqOutputProjectionGen extends ReqProjectionGen {
-  protected def namespaceSuffix: Qn
-
-  override def namespace: Qn = super.namespace.append("output").append(namespaceSuffix)
+  override protected def baseNamespace: Qn = super.baseNamespace.append("output")
 
   protected def generatedProjections: java.util.Set[Qn] = ctx.reqOutputProjections
 }

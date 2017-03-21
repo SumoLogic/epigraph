@@ -32,11 +32,16 @@ abstract class ReqOutputModelProjectionGen(
   protected val name: Option[Qn],
   protected val operationInfo: OperationInfo,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
-  protected val namespaceSuffix: Qn,
+  _baseNamespace: Qn,
+  _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
+
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
@@ -59,6 +64,7 @@ abstract class ReqOutputModelProjectionGen(
       None,
       operationInfo,
       metaOp,
+      baseNamespace,
       namespaceSuffix.append("meta"),
       ctx
     )
@@ -69,6 +75,7 @@ object ReqOutputModelProjectionGen {
     name: Option[Qn],
     operationInfo: OperationInfo,
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
+    baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqOutputModelProjectionGen = op.model().kind() match {
 
@@ -77,6 +84,7 @@ object ReqOutputModelProjectionGen {
         name,
         operationInfo,
         op.asInstanceOf[OpOutputRecordModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -85,6 +93,7 @@ object ReqOutputModelProjectionGen {
         name,
         operationInfo,
         op.asInstanceOf[OpOutputMapModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -93,6 +102,7 @@ object ReqOutputModelProjectionGen {
         name,
         operationInfo,
         op.asInstanceOf[OpOutputListModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
@@ -101,6 +111,7 @@ object ReqOutputModelProjectionGen {
         name,
         operationInfo,
         op.asInstanceOf[OpOutputPrimitiveModelProjection],
+        baseNamespace,
         namespaceSuffix,
         ctx
       )
