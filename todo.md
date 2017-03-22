@@ -46,8 +46,10 @@
   - [ ] Revert gradle/maven build changes added to avoid circular dependencies
 
 # Maven plugin
+- [ ] use slf4j for logging
 
 # Gradle plugin
+- [ ] use slf4j for logging
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
@@ -68,6 +70,7 @@
   - [ ] record projections should contain a String->FP, not String->FPE map
 - [ ] correct `equals` support, see todo on `AbstractVarProjection.equals`
 - [ ] enable real named model projections. Currently they can't be used for tags, meta or model tails
+- [ ] allow attaching tails to references? e.g. `$foo ~Bar(..)`
 
 # Operations
 
