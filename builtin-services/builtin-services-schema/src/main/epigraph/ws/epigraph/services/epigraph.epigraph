@@ -10,6 +10,10 @@ import epigraph.schema.VarType
 import epigraph.schema.DatumType
 import epigraph.schema.DataType
 import epigraph.schema.Tag
+import epigraph.schema.RecordType
+import epigraph.schema.MapType
+import epigraph.schema.ListType
+import epigraph.schema.Field
 
 record Epigraph {
   doc = "Epigraph built-in services resource root type"
@@ -40,13 +44,30 @@ resource epigraph: Epigraph {
   ) ~ (
     VarType ( tags * $tagProjection ),
     DatumType (
-      // todo meta, tails
+      metaType $typeProjection,
+    ) ~ (
+      RecordType (
+        declaredFields * $fieldProjection
+        // add `computed` fields too?
+      )
+      MapType (
+        keyType $typeProjection
+        valueType $dataTypeProjection
+      )
+      ListType (
+        valueType $dataTypeProjection
+      )
     )
   )
 
   outputProjection tagProjection: Tag = (
     name ( `string` ),
-    type $typeProjection
+    type $typeProjection // todo: should the system normalize it to DatumType here?
+  )
+
+  outputProjection fieldProjection: Field = (
+    name ( `string` ),
+    valueType $dataTypeProjection
   )
 
   outputProjection dataTypeProjection : DataType = (
