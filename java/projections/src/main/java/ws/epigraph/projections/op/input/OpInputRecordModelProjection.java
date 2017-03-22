@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class OpInputRecordModelProjection
     super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
     this.fieldProjections = fieldProjections;
 
-    RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+    RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
   public static @NotNull LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
@@ -71,10 +71,6 @@ public class OpInputRecordModelProjection
 
   @Override
   public @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
-
-  public void addFieldProjectionEntry(@NotNull OpInputFieldProjectionEntry fieldProjection) {
-    fieldProjections.put(fieldProjection.field().name(), fieldProjection);
-  }
 
   @Override
   public boolean equals(Object o) {

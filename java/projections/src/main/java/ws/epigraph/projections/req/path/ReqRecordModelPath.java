@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class ReqRecordModelPath
     super(model, params, annotations, location);
     this.fieldProjections = Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
 
-    RecordModelProjectionHelper.checkFieldsBelongsToModel(fieldProjections.keySet(), model);
+    RecordModelProjectionHelper.checkFields(fieldProjections, model);
 
     if (pathFieldProjection() == null) throw new IllegalArgumentException("Path field must be present");
   }

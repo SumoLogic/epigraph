@@ -19,6 +19,7 @@ package ws.epigraph.projections;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -111,6 +112,32 @@ public final class ProjectionsParsingUtil {
               type.name(),
               listTags(type)
           ), location, context);
+  }
+
+  public static <VP extends GenVarProjection<VP, ?, ?>> void verifyData(
+      @NotNull DataTypeApi dataType,
+      @NotNull VP varProjection,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    if (!varProjection.type().isAssignableFrom(dataType.type())) {
+      final Qn projectionName = varProjection.name();
+      final String message;
+
+      if (projectionName == null)
+        message = String.format(
+            "Projection type '%s' is not compatible with type '%s'",
+            varProjection.type().name(), dataType.type().name()
+        );
+      else
+        message = String.format(
+            "Projection '%s' type '%s' is not compatible with type '%s'",
+            projectionName, varProjection.type().name(), dataType.type().name()
+        );
+
+      //context.addError(message, location);
+      throw new PsiProcessingException(message, location, context);
+    }
   }
 
   private static String listTags(@NotNull TypeApi type) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,6 +219,24 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
         if (reference == null || reference.resolve() == null) {
           holder.createErrorAnnotation(tagRef.getNode(), SchemaBundle.message("annotator.unresolved.reference"));
         }
+      }
+
+      @Override
+      public void visitOpInputVarProjectionRef(@NotNull final SchemaOpInputVarProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
+      }
+      
+      @Override
+      public void visitOpOutputVarProjectionRef(@NotNull final SchemaOpOutputVarProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
+      }
+
+      @Override
+      public void visitOpDeleteVarProjectionRef(@NotNull final SchemaOpDeleteVarProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }
     });
   }

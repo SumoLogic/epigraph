@@ -23,7 +23,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -44,6 +46,8 @@ import static ws.epigraph.test.TestUtil.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputProjectionsTest {
+  private final TestConfig DEFAULT_CONFIG = new TestConfig();
+
   private final DataType dataType = new DataType(Person.type, Person.id);
 
   @Test
@@ -138,12 +142,12 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseMultipleTags() throws PsiProcessingException {
-    testParsingVarProjection( ":( id, `record` )" );
+    testParsingVarProjection(":( id, `record` )");
   }
 
   @Test
   public void testParseRecursive() throws PsiProcessingException {
-    OpOutputVarProjection vp = testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+    OpOutputVarProjection vp = testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
     final Qn name = vp.name();
     assertNotNull(name);
     assertEquals("self", name.toString());
@@ -156,6 +160,64 @@ public class OpOutputProjectionsTest {
       fail("Expected to get an error");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage().contains("is not defined"));
+    }
+  }
+
+  @Test
+  public void testSuperTypeRef() throws PsiProcessingException {
+    // todo add to other parser tests too
+    OpOutputVarProjection personProjection = testParsingVarProjection(":id");
+
+    final OpOutputVarReferenceContext referenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    referenceContext.reference(Person.type, "ref", false, TextLocation.UNKNOWN);
+
+    PsiProcessingContext ppc = new DefaultPsiProcessingContext();
+    referenceContext.resolve("ref", personProjection, TextLocation.UNKNOWN, ppc);
+    failIfHasErrors(ppc.errors());
+
+    TestConfig testConfig = new TestConfig() {
+      @Override
+      @NotNull DataType dataType() {
+        return new DataType(User.type, null);
+      }
+
+      @Override
+      @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
+        return referenceContext;
+      }
+    };
+
+    testParsingVarProjection(testConfig, ":`record` ( bestFriend4 $ref )", ":`record` ( bestFriend4 $ref = :id )");
+  }
+
+  @Test
+  public void testParseWrongTypeRef() throws PsiProcessingException {
+    // todo add to other parser tests too
+    OpOutputVarProjection paginationProjection =
+        testParsingVarProjection(new DataType(PaginationInfo.type, null), "()", "");
+
+    final OpOutputVarReferenceContext referenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    referenceContext.reference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
+
+    PsiProcessingContext ppc = new DefaultPsiProcessingContext();
+    referenceContext.resolve("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
+    failIfHasErrors(ppc.errors());
+
+    TestConfig testConfig = new TestConfig() {
+      @Override
+      @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
+        return referenceContext;
+      }
+    };
+
+    try {
+      testParsingVarProjection(testConfig, ":`record` ( bestFriend $ref )", ":`record` ( bestFriend )");
+      fail("Var reference built for an incompatible type should not be accepted");
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains(
+          "Projection 'ref' type 'ws.epigraph.tests.PaginationInfo' is not compatible with type 'ws.epigraph.tests.Person'"
+          )
+      );
     }
   }
 
@@ -340,11 +402,13 @@ public class OpOutputProjectionsTest {
         "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )"
     );
 
-    testTailsNormalization(
-        "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )",
-        User.type,
-        "$self = :( `record` ( id, bestFriend $self ), id )"
-    );
+    // bestFriend is Person, can't apply User projection to it
+
+//    testTailsNormalization(
+//        "$self = :( id, `record` ( bestFriend $self ) ) ~~ws.epigraph.tests.User :`record` ( id )",
+//        User.type,
+//        "$self = :( `record` ( id, bestFriend $self ), id )"
+//    );
   }
 
   @Test
@@ -401,14 +465,14 @@ public class OpOutputProjectionsTest {
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {
-    OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
     final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
     String actual = printOpOutputVarProjection(normalized);
     assertEquals(expected, actual);
   }
 
   private void testModelTailsNormalization(String str, DatumType type, String expected) {
-    OpOutputVarProjection varProjection = parseOpOutputVarProjection(dataType, str);
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
     final OpOutputTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
     final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
@@ -438,15 +502,32 @@ public class OpOutputProjectionsTest {
   }
 
   private OpOutputVarProjection testParsingVarProjection(String str, String expected) {
-    return testParsingVarProjection(dataType, str, expected);
+    return testParsingVarProjection(DEFAULT_CONFIG, str, expected);
   }
 
   private OpOutputVarProjection testParsingVarProjection(
-      DataType varDataType,
+      DataType dt,
       String projectionString,
       String expected) {
 
-    OpOutputVarProjection varProjection = parseOpOutputVarProjection(varDataType, projectionString);
+    return testParsingVarProjection(
+        new TestConfig() {
+          @Override
+          @NotNull DataType dataType() {
+            return dt;
+          }
+        },
+        projectionString,
+        expected
+    );
+  }
+
+  private OpOutputVarProjection testParsingVarProjection(
+      TestConfig config,
+      String projectionString,
+      String expected) {
+
+    OpOutputVarProjection varProjection = parseOpOutputVarProjection(config, projectionString);
 
     String actual = printOpOutputVarProjection(varProjection);
 
@@ -456,35 +537,13 @@ public class OpOutputProjectionsTest {
     return varProjection;
   }
 
-  private OpOutputVarProjection parseOpOutputVarProjection(DataType varDataType, String projectionString) {
-    TypesResolver
-        resolver = new SimpleTypesResolver(
-        PersonId.type,
-        Person.type,
-        User.type,
-        UserId.type,
-        UserRecord.type,
-        User2.type,
-        UserId2.type,
-        UserRecord2.type,
-        UserRecord3.type,
-        SubUser.type,
-        SubUserId.type,
-        SubUserRecord.type,
-        String_Person_Map.type,
-        PersonMap.type,
-        PaginationInfo.type,
-        epigraph.String.type,
-        epigraph.Integer.type
-    );
-
-    return parseOpOutputVarProjection(varDataType, projectionString, resolver);
+  private @NotNull OpOutputVarProjection parseOpOutputVarProjection(@NotNull String projectionString) {
+    return parseOpOutputVarProjection(DEFAULT_CONFIG, projectionString);
   }
 
   private static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
-      @NotNull DataType varDataType,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
+      @NotNull TestConfig config,
+      @NotNull String projectionString) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
@@ -497,8 +556,8 @@ public class OpOutputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputVarReferenceContext inputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
-      OpOutputVarReferenceContext outputVarReferenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+      OpInputVarReferenceContext inputVarReferenceContext = config.inputVarReferenceContext();
+      OpOutputVarReferenceContext outputVarReferenceContext = config.outputVarReferenceContext();
 
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputVarReferenceContext);
@@ -507,9 +566,9 @@ public class OpOutputProjectionsTest {
           new OpOutputPsiProcessingContext(context, inputPsiProcessingContext, outputVarReferenceContext);
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
-          varDataType,
+          config.dataType(),
           psiVarProjection,
-          resolver,
+          config.resolver(),
           outputPsiProcessingContext
       );
 
@@ -518,6 +577,40 @@ public class OpOutputProjectionsTest {
 
       return vp;
     });
+  }
+
+  private class TestConfig {
+    @NotNull DataType dataType() { return dataType; }
+
+    @NotNull TypesResolver resolver() {
+      return new SimpleTypesResolver(
+          PersonId.type,
+          Person.type,
+          User.type,
+          UserId.type,
+          UserRecord.type,
+          User2.type,
+          UserId2.type,
+          UserRecord2.type,
+          UserRecord3.type,
+          SubUser.type,
+          SubUserId.type,
+          SubUserRecord.type,
+          String_Person_Map.type,
+          PersonMap.type,
+          PaginationInfo.type,
+          epigraph.String.type,
+          epigraph.Integer.type
+      );
+    }
+
+    @NotNull OpInputVarReferenceContext inputVarReferenceContext() {
+      return new OpInputVarReferenceContext(Qn.EMPTY, null);
+    }
+
+    @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
+      return new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    }
   }
 
 }

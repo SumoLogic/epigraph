@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -777,40 +778,44 @@ public final class OpOutputProjectionsPsiParser {
         psi.getOpOutputFieldProjectionEntryList();
 
     for (SchemaOpOutputFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
-      final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
-      FieldApi field = type.fieldsMap().get(fieldName);
+      try {
+        final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
+        FieldApi field = type.fieldsMap().get(fieldName);
 
-      if (field == null) {
-        context.addError(
-            String.format(
-                "Unknown field '%s' in type '%s'; known fields: {%s}",
-                fieldName,
-                type.name(),
-                String.join(", ", type.fieldsMap().keySet())
-            ),
-            fieldProjectionEntryPsi
+        if (field == null) {
+          context.addError(
+              String.format(
+                  "Unknown field '%s' in type '%s'; known fields: {%s}",
+                  fieldName,
+                  type.name(),
+                  String.join(", ", type.fieldsMap().keySet())
+              ),
+              fieldProjectionEntryPsi
+          );
+          continue;
+        }
+
+        final @NotNull SchemaOpOutputFieldProjection fieldProjectionPsi =
+            fieldProjectionEntryPsi.getOpOutputFieldProjection();
+
+        final OpOutputFieldProjection opOutputFieldProjection = parseFieldProjection(
+            field.dataType(),
+            fieldProjectionPsi,
+            typesResolver,
+            context
         );
-        continue;
+
+        fieldProjections.put(
+            fieldName,
+            new OpOutputFieldProjectionEntry(
+                field,
+                opOutputFieldProjection,
+                EpigraphPsiUtil.getLocation(fieldProjectionPsi)
+            )
+        );
+      } catch (PsiProcessingException e) {
+        context.addException(e);
       }
-
-      final @NotNull SchemaOpOutputFieldProjection fieldProjectionPsi =
-          fieldProjectionEntryPsi.getOpOutputFieldProjection();
-
-      final OpOutputFieldProjection opOutputFieldProjection = parseFieldProjection(
-          field.dataType(),
-          fieldProjectionPsi,
-          typesResolver,
-          context
-      );
-
-      fieldProjections.put(
-          fieldName,
-          new OpOutputFieldProjectionEntry(
-              field,
-              opOutputFieldProjection,
-              EpigraphPsiUtil.getLocation(fieldProjectionPsi)
-          )
-      );
     }
 
     return new OpOutputRecordModelProjection(
@@ -842,10 +847,15 @@ public final class OpOutputProjectionsPsiParser {
 //      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), context);
 //    }
 
+    final OpOutputVarProjection varProjection =
+        parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, context);
+
+    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+
     return new OpOutputFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),
 //        Annotations.fromMap(fieldAnnotationsMap),
-        parseVarProjection(fieldType, psi.getOpOutputVarProjection(), resolver, context),
+        varProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
   }

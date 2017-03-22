@@ -1402,6 +1402,8 @@ public final class ReqOutputProjectionsPsiParser {
     varProjection = stepsAndProjection.projection();
     steps = stepsAndProjection.pathSteps() + 1;
 
+    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+
     return new StepsAndProjection<>(
         steps,
         new ReqOutputFieldProjection(

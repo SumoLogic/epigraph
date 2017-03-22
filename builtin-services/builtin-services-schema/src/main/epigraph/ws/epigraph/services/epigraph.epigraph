@@ -6,6 +6,10 @@ import epigraph.schema.QualifiedTypeName
 import epigraph.schema.AnonListTypeName
 import epigraph.schema.DataTypeName
 import epigraph.schema.AnonMapTypeName
+import epigraph.schema.VarType
+import epigraph.schema.DatumType
+import epigraph.schema.DataType
+import epigraph.schema.Tag
 
 record Epigraph {
   doc = "Epigraph built-in services resource root type"
@@ -30,7 +34,24 @@ resource epigraph: Epigraph {
   )
 
   outputProjection typeProjection : Type = (
-    name $typeNameProjection
+    name $typeNameProjection,
+    supertypes * $typeProjection,
+    `abstract`
+  ) ~ (
+    VarType ( tags * $tagProjection ),
+    DatumType (
+      // todo meta, tails
+    )
+  )
+
+  outputProjection tagProjection: Tag = (
+    name ( `string` ),
+    type $typeProjection
+  )
+
+  outputProjection dataTypeProjection : DataType = (
+    type $typeProjection,
+    `retro` $tagProjection
   )
 
   read {

@@ -925,6 +925,8 @@ public final class ReqUpdateProjectionsPsiParser {
             context
         );
 
+    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+
     return new ReqUpdateFieldProjection(
 //        fieldParams,
 //        fieldAnnotations,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey DECL_TYPE_NAME = DefaultLanguageHighlighterColors.CLASS_NAME;
   public static final TextAttributesKey TYPE_REF = DefaultLanguageHighlighterColors.CLASS_REFERENCE;
+  public static final TextAttributesKey PROJECTION_REF = DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
 
   public static final TextAttributesKey PARAM_NAME = DefaultLanguageHighlighterColors.METADATA;
 

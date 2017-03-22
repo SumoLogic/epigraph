@@ -105,7 +105,7 @@ public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>>
         );
       } else if (!ref.type().isAssignableFrom(value.type())) {
         context.addError(
-            String.format("Projection type '%s' is not compatible with reference type '%s'", value.type(), ref.type()),
+            String.format("Projection '%s' type '%s' is not compatible with reference type '%s'", name, value.type().name(), ref.type().name()),
             location
         );
       } else {

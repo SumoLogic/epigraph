@@ -916,6 +916,8 @@ public final class ReqInputProjectionsPsiParser {
             context
         );
 
+    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+
     return new ReqInputFieldProjection(
 //        fieldParams,
 //        fieldAnnotations,

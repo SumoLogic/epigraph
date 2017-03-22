@@ -21,7 +21,8 @@ record VarType extends Type {
 }
 
 record DataType {
-  `type`: Type // todo should be VarType ?
+  type: Type // todo should be VarType ?
+
   `retro`: Tag
 }
 
@@ -30,7 +31,7 @@ record Tag extends Named {
 
   override name: TagName
 
-  dataType: DatumType
+  type: DatumType
 }
 
 record DatumType extends Type {

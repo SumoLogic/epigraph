@@ -891,6 +891,8 @@ public final class ReqDeleteProjectionsPsiParser {
             context
         );
 
+    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+
     return new ReqDeleteFieldProjection(
 //        fieldParams,
 //        fieldAnnotations,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.*;
 
@@ -79,13 +80,30 @@ public final class RecordModelProjectionHelper {
     return res;
   }
 
-  public static void checkFieldsBelongsToModel(@NotNull Collection<String> fieldNames, @NotNull RecordTypeApi model) {
+  public static <
+      VP extends GenVarProjection<VP, ?, ?>,
+      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
+      FP extends GenFieldProjection<VP, ?, ?, FP>>
+  void checkFields(@NotNull Map<String, FPE> fieldProjections, @NotNull RecordTypeApi model) {
     final Set<String> modelFieldNames = model.fieldsMap().keySet();
-    for (String fieldName : fieldNames) {
-      if (!modelFieldNames.contains(fieldName))
+
+    for (final Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
+      String fieldName = entry.getKey();
+
+      final FieldApi field = model.fieldsMap().get(fieldName);
+
+      if (field == null)
         throw new IllegalArgumentException(
             String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
                 fieldName, model.name(), ProjectionUtils.listFields(modelFieldNames)
+            )
+        );
+
+      final TypeApi projectionType = entry.getValue().fieldProjection().varProjection().type();
+      if (!projectionType.isAssignableFrom(field.dataType().type()))
+        throw new IllegalArgumentException(
+            String.format("Field '%s' projection type '%s' is not compatible with field type '%s'",
+                fieldName, projectionType.name(), field.dataType().name()
             )
         );
     }
