@@ -15,13 +15,13 @@ import epigraph.schema.MapType
 import epigraph.schema.ListType
 import epigraph.schema.Field
 
-record Epigraph {
+record EpigraphResource {
   doc = "Epigraph built-in services resource root type"
 
   types: map[TypeName, Type]
 }
 
-resource epigraph: Epigraph {
+resource epigraph: EpigraphResource {
 
   outputProjection typeNameProjection : TypeName = ( `string` ) ~ (
     QualifiedTypeName ( segments ),
