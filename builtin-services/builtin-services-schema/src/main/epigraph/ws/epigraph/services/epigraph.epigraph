@@ -14,30 +14,31 @@ import epigraph.schema.RecordType
 import epigraph.schema.MapType
 import epigraph.schema.ListType
 import epigraph.schema.Field
+import epigraph.schema.NameString
 
 record EpigraphResource {
   doc = "Epigraph built-in services resource root type"
 
-  types: map[TypeName, Type]
+  types: map[NameString, Type]
 }
 
 resource epigraph: EpigraphResource {
 
-  outputProjection typeNameProjection : TypeName = ( `string` ) ~ (
-    QualifiedTypeName ( segments ),
-    AnonListTypeName ( elementTypeName $dataTypeNameProjection ),
-    AnonMapTypeName (
+  outputProjection typeNameProjection: TypeName = :`string` ~~ (
+    QualifiedTypeName :segments,
+    // AnonListTypeName :elementTypeName $dataTypeNameProjection, TODO
+    AnonMapTypeName :`record`(
       keyTypeName $typeNameProjection,
       valueTypeName $dataTypeNameProjection
     )
   )
 
-  outputProjection dataTypeNameProjection : DataTypeName = (
+  outputProjection dataTypeNameProjection: DataTypeName = (
     typeName $typeNameProjection,
-    retroTagName ( `string` )
+    retroTagName :`string`
   )
 
-  outputProjection typeProjection : Type = (
+  outputProjection typeProjection: Type = (
     name $typeNameProjection,
     supertypes * $typeProjection,
     `abstract`
@@ -61,12 +62,12 @@ resource epigraph: EpigraphResource {
   )
 
   outputProjection tagProjection: Tag = (
-    name ( `string` ),
+    name :`string`,
     type $typeProjection // todo: should the system normalize it to DatumType here?
   )
 
   outputProjection fieldProjection: Field = (
-    name ( `string` ),
+    name :`string`,
     valueType $dataTypeProjection
   )
 

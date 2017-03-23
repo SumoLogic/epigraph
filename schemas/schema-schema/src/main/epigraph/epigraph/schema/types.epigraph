@@ -64,11 +64,18 @@ record MapType extends DatumType {
   valueType: DataType
 }
 
-record ListType extends DatumType {
+record AnonMapType extends MapType {
+  override name: AnonMapTypeName
+}
 
+record ListType extends DatumType {
   override supertypes: list[ListType]
 
   valueType: DataType
+}
+
+record AnonListType extends ListType {
+  override name: AnonListTypeName
 }
 
 record EnumType extends DatumType {
