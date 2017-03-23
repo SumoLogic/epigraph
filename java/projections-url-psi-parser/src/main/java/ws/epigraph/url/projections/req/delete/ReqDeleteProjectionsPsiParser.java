@@ -445,7 +445,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 
-    DatumTypeApi model = op.model();
+    DatumTypeApi model = op.type();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
@@ -861,7 +861,7 @@ public final class ReqDeleteProjectionsPsiParser {
     }
 
     return new ReqDeleteRecordModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         fieldProjections,
@@ -922,7 +922,7 @@ public final class ReqDeleteProjectionsPsiParser {
         try {
           final @NotNull UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
           final @Nullable Datum keyValue =
-              getDatum(keyValuePsi, op.model().keyType(), resolver, "Error processing map key:", context);
+              getDatum(keyValuePsi, op.type().keyType(), resolver, "Error processing map key:", context);
 
           if (keyValue == null) context.addError("Null keys are not allowed", keyValuePsi);
           else {
@@ -944,11 +944,11 @@ public final class ReqDeleteProjectionsPsiParser {
     final @Nullable UrlReqDeleteVarProjection elementsVarProjectionPsi = psi.getReqDeleteVarProjection();
     final @NotNull ReqDeleteVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull TypeApi type = op.model().valueType().type();
+      final @NotNull TypeApi type = op.type().valueType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().valueType(),
+          op.type().valueType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -957,7 +957,7 @@ public final class ReqDeleteProjectionsPsiParser {
     }
 
     return new ReqDeleteMapModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         keyProjections,
@@ -980,11 +980,11 @@ public final class ReqDeleteProjectionsPsiParser {
 
     final @NotNull ReqDeleteVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull TypeApi type = op.model().elementType().type();
+      final @NotNull TypeApi type = op.type().elementType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().elementType(),
+          op.type().elementType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -993,7 +993,7 @@ public final class ReqDeleteProjectionsPsiParser {
     }
 
     return new ReqDeleteListModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         elementsVarProjection,
@@ -1010,7 +1010,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull PsiElement locationPsi) {
 
     return new ReqDeletePrimitiveModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         tails,

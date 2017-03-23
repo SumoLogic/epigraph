@@ -171,7 +171,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
       @Nullable Datum datum)
       throws IOException {
 
-    DatumTypeApi model = projections.peekLast().model();
+    DatumTypeApi model = projections.peekLast().type();
     boolean renderPoly = projections.stream().anyMatch(p -> p.polymorphicTails() != null);
 
     Deque<? extends ReqOutputModelProjection<?, ?, ?>> metaProjections = projections.stream()
@@ -240,7 +240,7 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
   ) throws IOException {
     out.write('{');
     // TODO take type from announced type tag (same for other datum kinds)?
-    RecordTypeApi type = projections.peekLast().model();
+    RecordTypeApi type = projections.peekLast().type();
     boolean comma = false;
     for (FieldApi field : type.fields()) {
       Deque<ReqOutputVarProjection> varProjections =

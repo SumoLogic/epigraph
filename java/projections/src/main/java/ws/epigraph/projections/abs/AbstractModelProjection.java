@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -61,7 +62,7 @@ public abstract class AbstractModelProjection<
   }
 
   @Override
-  public @NotNull M model() { return model; }
+  public @NotNull M type() { return model; }
 
   @Override
   public @Nullable MP metaProjection() { return metaProjection; }
@@ -80,8 +81,8 @@ public abstract class AbstractModelProjection<
 
     final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(
         targetType,
-        linearizedTails.isEmpty() ? this.model() : linearizedTails.get(0).model(),
-        this.model()
+        linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
+        this.type()
     );
 
     final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
@@ -90,7 +91,7 @@ public abstract class AbstractModelProjection<
     final List<SMP> mergedTails = mergeTails(effectiveProjections);
     final List<SMP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
         .stream()
-        .filter(t -> !t.model().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
+        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
@@ -159,7 +160,7 @@ public abstract class AbstractModelProjection<
       if (tails != null) {
         if (tailsByType == null) tailsByType = new LinkedHashMap<>();
         for (SMP tail : tails) {
-          List<SMP> collectedTails = tailsByType.computeIfAbsent(tail.model(), k -> new ArrayList<>());
+          List<SMP> collectedTails = tailsByType.computeIfAbsent(tail.type(), k -> new ArrayList<>());
           collectedTails.add(tail);
         }
       }
@@ -196,18 +197,38 @@ public abstract class AbstractModelProjection<
     final @Nullable List<SMP> tails = polymorphicTails();
     if (tails != null) {
       for (final SMP tail : tails) {
-        if (tail.model().isAssignableFrom(model())) {
+        if (tail.type().isAssignableFrom(type())) {
           throw new IllegalArgumentException(
               String.format(
                   "Tail type '%s' is assignable from model type '%s'. Tail defined at %s",
-                  tail.model().name(),
-                  model().name(),
+                  tail.type().name(),
+                  type().name(),
                   tail.location()
               )
           );
         }
       }
     }
+  }
+
+  @Override
+  public @Nullable Qn name() {
+    return null;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+
+  }
+
+  @Override
+  public boolean isResolved() {
+    return false;
+  }
+
+  @Override
+  public void runOnResolved(final @NotNull Runnable callback) {
+
   }
 
   @Override

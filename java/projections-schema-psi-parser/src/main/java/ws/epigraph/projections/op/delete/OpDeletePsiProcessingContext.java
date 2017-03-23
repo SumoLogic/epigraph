@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,12 +28,12 @@ public class OpDeletePsiProcessingContext extends DelegatingPsiProcessingContext
   @NotNull
   private final OpInputPsiProcessingContext inputPsiProcessingContext;
   @NotNull
-  private final OpDeleteVarReferenceContext varReferenceContext;
+  private final OpDeleteReferenceContext varReferenceContext;
 
   public OpDeletePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
       final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext,
-      final @NotNull OpDeleteVarReferenceContext varReferenceContext) {
+      final @NotNull OpDeleteReferenceContext varReferenceContext) {
     super(psiProcessingContext);
     this.inputPsiProcessingContext = inputPsiProcessingContext;
     this.varReferenceContext = varReferenceContext;
@@ -46,7 +43,7 @@ public class OpDeletePsiProcessingContext extends DelegatingPsiProcessingContext
     return inputPsiProcessingContext;
   }
 
-  public OpDeleteVarReferenceContext varReferenceContext() {
+  public OpDeleteReferenceContext varReferenceContext() {
     return varReferenceContext;
   }
 }

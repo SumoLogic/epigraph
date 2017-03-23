@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class OpOutputListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     OpOutputListModelProjection n = super.normalizedForType(targetType);
     return new OpOutputListModelProjection(
-        n.model(),
+        n.type(),
         n.params(),
         n.annotations(),
         n.metaProjection(),

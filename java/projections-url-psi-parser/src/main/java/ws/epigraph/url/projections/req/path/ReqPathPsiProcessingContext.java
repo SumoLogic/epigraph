@@ -19,7 +19,6 @@ package ws.epigraph.url.projections.req.path;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputVarReferenceContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

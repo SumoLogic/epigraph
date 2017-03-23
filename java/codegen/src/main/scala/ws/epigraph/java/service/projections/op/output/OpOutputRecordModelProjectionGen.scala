@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,12 +36,12 @@ class OpOutputRecordModelProjectionGen(p: OpOutputRecordModelProjection)
 
     /*@formatter:off*/sn"""\
 new OpOutputRecordModelProjection(
-  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
+  ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
   ${i(genLinkedMap("String", "OpOutputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
-      ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.model(), e.getValue, ctx))}, ctx))},
+      ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/

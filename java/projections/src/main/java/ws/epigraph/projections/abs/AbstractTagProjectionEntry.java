@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,11 +45,11 @@ public abstract class AbstractTagProjectionEntry<
     this.projection = projection;
     this.location = location;
 
-    if (!tag.type().isAssignableFrom(projection.model()))
+    if (!tag.type().isAssignableFrom(projection.type()))
       throw new IllegalArgumentException(
           String.format(
               "Tag '%s' type '%s' is not compatible with '%s' projection",
-              tag.name(), tag.type().name(), projection().model().name()
+              tag.name(), tag.type().name(), projection().type().name()
           )
       );
 
@@ -70,7 +70,7 @@ public abstract class AbstractTagProjectionEntry<
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
     final @NotNull MP mp = models.get(0);
-    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.model(), models);
+    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }

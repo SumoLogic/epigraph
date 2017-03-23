@@ -54,7 +54,7 @@ object ReqPathModelProjectionGen {
     operationInfo: OperationInfo,
     op: OpModelPath[_, _, _ <: DatumTypeApi],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqPathModelProjectionGen = op.model().kind() match {
+    ctx: GenContext): ReqPathModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(

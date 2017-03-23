@@ -16,10 +16,9 @@
 
 package ws.epigraph.url.projections.req;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.VarReferenceContext;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -31,7 +30,7 @@ import java.util.*;
  */
 public abstract class ReqPsiProcessingContext<
     OVP extends GenVarProjection<OVP, ?, ?>,
-    VRC extends VarReferenceContext<?>
+    VRC extends ReferenceContext<?>
     > extends DelegatingPsiProcessingContext {
 
   private final @NotNull VRC varReferenceContext;

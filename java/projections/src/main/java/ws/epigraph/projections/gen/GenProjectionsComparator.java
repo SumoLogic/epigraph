@@ -121,10 +121,10 @@ public class GenProjectionsComparator<
     if (mps1.isEmpty())
       return mps2.isEmpty();
 
-    final TypeKind kind = mps1.iterator().next().model().kind();
+    final TypeKind kind = mps1.iterator().next().type().kind();
 
-    assert mps1.stream().allMatch(m -> m.model().kind() == kind);
-    assert mps2.stream().allMatch(m -> m.model().kind() == kind);
+    assert mps1.stream().allMatch(m -> m.type().kind() == kind);
+    assert mps2.stream().allMatch(m -> m.type().kind() == kind);
 
     final List<@Nullable ?> metas1 =
         mps1.stream().map(m -> m.metaProjection()).filter(Objects::nonNull).collect(Collectors.toList());

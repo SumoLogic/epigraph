@@ -128,7 +128,7 @@ public class OpOutputRecordModelProjection
             );
 
     return new OpOutputRecordModelProjection(
-        n.model(),
+        n.type(),
         n.params(),
         n.annotations(),
         n.metaProjection(),

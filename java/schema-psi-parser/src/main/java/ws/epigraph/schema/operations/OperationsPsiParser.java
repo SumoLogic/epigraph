@@ -22,10 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
-import ws.epigraph.projections.op.delete.OpDeleteVarReferenceContext;
+import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -177,7 +177,7 @@ public final class OperationsPsiParser {
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
-    OpInputVarReferenceContext referenceContext =
+    OpInputReferenceContext referenceContext =
         createInputVarReferenceContext(OperationKind.CREATE, operationName, context);
     OpInputPsiProcessingContext opInputPsiProcessingContext = new OpInputPsiProcessingContext(
         context,
@@ -254,7 +254,7 @@ public final class OperationsPsiParser {
 
     final @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
-    OpInputVarReferenceContext referenceContext =
+    OpInputReferenceContext referenceContext =
         createInputVarReferenceContext(OperationKind.UPDATE, operationName, context);
     OpInputPsiProcessingContext psiProcessingContext = new OpInputPsiProcessingContext(
         context,
@@ -327,7 +327,7 @@ public final class OperationsPsiParser {
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
-    OpDeleteVarReferenceContext deleteReferenceContext = new OpDeleteVarReferenceContext(
+    OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(
         new Namespaces(context.namespace())
             .operationDeleteProjectionsNamespace(
                 context.resourceName(),
@@ -337,7 +337,7 @@ public final class OperationsPsiParser {
         context.deleteVarReferenceContext()
     );
 
-    OpInputVarReferenceContext inputReferenceContext =
+    OpInputReferenceContext inputReferenceContext =
         createInputVarReferenceContext(OperationKind.DELETE, operationName, context);
 
     OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
@@ -421,7 +421,7 @@ public final class OperationsPsiParser {
     final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
         inputProjectionPsi == null ? null : inputProjectionPsi.getOpInputFieldProjection();
 
-    OpInputVarReferenceContext referenceContext =
+    OpInputReferenceContext referenceContext =
         createInputVarReferenceContext(OperationKind.CUSTOM, operationName, context);
 
     OpInputPsiProcessingContext psiProcessingContext = new OpInputPsiProcessingContext(
@@ -481,7 +481,7 @@ public final class OperationsPsiParser {
     final @Nullable SchemaOpOutputFieldProjection outputFieldProjectionPsi =
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
-    OpOutputVarReferenceContext outputVarReferenceContext = new OpOutputVarReferenceContext(
+    OpOutputReferenceContext outputVarReferenceContext = new OpOutputReferenceContext(
         new Namespaces(context.namespace())
             .operationOutputProjectionsNamespace(
                 context.resourceName(),
@@ -490,7 +490,7 @@ public final class OperationsPsiParser {
             ),
         context.outputVarReferenceContext()
     );
-    OpInputVarReferenceContext inputVarReferenceContext =
+    OpInputReferenceContext inputVarReferenceContext =
         createInputVarReferenceContext(operationKind, operationName, context);
 
     OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
@@ -628,7 +628,7 @@ public final class OperationsPsiParser {
         context.addError("Path expression missing", pathPsi);
         return null;
       }
-      OpInputVarReferenceContext inputVarReferenceContext =
+      OpInputReferenceContext inputVarReferenceContext =
           createInputVarReferenceContext(operationKind, operationName, context);
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
@@ -652,12 +652,12 @@ public final class OperationsPsiParser {
     return qid.getCanonicalName();
   }
 
-  private static @NotNull OpInputVarReferenceContext createInputVarReferenceContext(
+  private static @NotNull OpInputReferenceContext createInputVarReferenceContext(
       final @NotNull OperationKind operationKind,
       final @Nullable String operationName,
       final @NotNull ResourcePsiProcessingContext context) {
 
-    return new OpInputVarReferenceContext(
+    return new OpInputReferenceContext(
         new Namespaces(context.namespace())
             .operationInputProjectionsNamespace(
                 context.resourceName(),

@@ -98,7 +98,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
-    return projection.update() && projection.model().kind() != TypeKind.PRIMITIVE;
+    return projection.update() && projection.type().kind() != TypeKind.PRIMITIVE;
   }
 
   @Override

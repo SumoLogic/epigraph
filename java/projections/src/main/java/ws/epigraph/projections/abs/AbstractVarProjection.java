@@ -94,7 +94,7 @@ public abstract class AbstractVarProjection<
 
       final TP tagProjection = entry.getValue();
       final @NotNull DatumTypeApi tagType = tagProjection.tag().type();
-      final DatumTypeApi tagProjectionModel = tagProjection.projection().model();
+      final DatumTypeApi tagProjectionModel = tagProjection.projection().type();
 
       if (!type.tagsMap().containsKey(tagName))
         throw new IllegalArgumentException(

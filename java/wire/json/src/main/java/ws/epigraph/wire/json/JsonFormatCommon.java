@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,10 +86,10 @@ public final class JsonFormatCommon {
     // effectively this is
     // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(modelProjection).stream()));
 
-    if (modelProjection.model().isAssignableFrom(type)) acc.add(modelProjection);
+    if (modelProjection.type().isAssignableFrom(type)) acc.add(modelProjection);
     Iterable<MP> tails = (Iterable<MP>) modelProjection.polymorphicTails();
     if (tails != null) for (MP tail : tails) {
-      if (tail.model().isAssignableFrom(type)) return append(acc, tail, type); // dfs
+      if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
     }
     return acc;
   }

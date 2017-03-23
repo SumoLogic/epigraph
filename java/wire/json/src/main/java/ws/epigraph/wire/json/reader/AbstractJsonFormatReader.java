@@ -263,7 +263,7 @@ abstract class AbstractJsonFormatReader<
       nextNonEof(); // position parser on first MONODATA token
     } else {
       DatumType projectionType = (DatumType) projections.get(projections.size() - 1)
-          .model(); // effectiveType; // mostSpecificType(projections);
+          .type(); // effectiveType; // mostSpecificType(projections);
       type = projectionType.isAssignableFrom(typeBound) ? typeBound : projectionType; // pick most specific
     }
 
@@ -610,7 +610,7 @@ abstract class AbstractJsonFormatReader<
   ) {
     if (projections == null) return null;
     for (MP vp : projections) {
-      DatumType type = (DatumType) vp.model();
+      DatumType type = (DatumType) vp.type();
       if (typeName.equals(type.name().toString())) return type;
       final List<MP> polymorphicTails = (List<MP>) vp.polymorphicTails();
       type = resolveModelType(polymorphicTails, typeName); // dfs
@@ -673,7 +673,7 @@ abstract class AbstractJsonFormatReader<
   @Override
   public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
     String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? nextFieldName() : null;
-    return finishReadingDatum((DatumType) projection.model(), firstFieldName, Collections.singleton(projection));
+    return finishReadingDatum((DatumType) projection.type(), firstFieldName, Collections.singleton(projection));
   }
 
   @Override

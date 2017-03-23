@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,16 +55,16 @@ import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
 import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
-import ws.epigraph.url.projections.req.delete.ReqDeleteVarReferenceContext;
+import ws.epigraph.url.projections.req.delete.ReqDeleteReferenceContext;
 import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.input.ReqInputPsiProcessingContext;
-import ws.epigraph.url.projections.req.input.ReqInputVarReferenceContext;
+import ws.epigraph.url.projections.req.input.ReqInputReferenceContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputVarReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdatePsiProcessingContext;
-import ws.epigraph.url.projections.req.update.ReqUpdateVarReferenceContext;
+import ws.epigraph.url.projections.req.update.ReqUpdateReferenceContext;
 
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.*;
@@ -135,7 +135,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqOutputVarReferenceContext reqOutputVarReferenceContext = new ReqOutputVarReferenceContext(Qn.EMPTY, null);
+      ReqOutputReferenceContext reqOutputVarReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
 
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
@@ -221,7 +221,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+      ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
       ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
           new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
 
@@ -256,7 +256,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqInputVarReferenceContext reqInputVarReferenceContext = new ReqInputVarReferenceContext(Qn.EMPTY, null);
+      ReqInputReferenceContext reqInputVarReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
 
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
           new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);
@@ -292,7 +292,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqDeleteVarReferenceContext reqDeleteVarReferenceContext = new ReqDeleteVarReferenceContext(Qn.EMPTY, null);
+      ReqDeleteReferenceContext reqDeleteVarReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
 
       ReqDeletePsiProcessingContext reqDeletePsiProcessingContext = new ReqDeletePsiProcessingContext(context, reqDeleteVarReferenceContext);
       ReqDeleteVarProjection vp = ReqDeleteProjectionsPsiParser.parseVarProjection(

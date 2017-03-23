@@ -18,9 +18,9 @@ package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.op.delete.OpDeleteVarReferenceContext;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarReferenceContext;
+import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
+import ws.epigraph.projections.op.input.OpInputReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -30,9 +30,9 @@ import ws.epigraph.psi.PsiProcessingContext;
 public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext {
   private final @NotNull Qn namespace;
   private final @NotNull String resourceName;
-  private final @NotNull OpInputVarReferenceContext inputVarReferenceContext;
-  private final @NotNull OpOutputVarReferenceContext outputVarReferenceContext;
-  private final @NotNull OpDeleteVarReferenceContext deleteVarReferenceContext;
+  private final @NotNull OpInputReferenceContext inputVarReferenceContext;
+  private final @NotNull OpOutputReferenceContext outputVarReferenceContext;
+  private final @NotNull OpDeleteReferenceContext deleteVarReferenceContext;
 
   public ResourcePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
@@ -46,17 +46,17 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
     final Namespaces namespaces = new Namespaces(namespace);
 
-    inputVarReferenceContext = new OpInputVarReferenceContext(
+    inputVarReferenceContext = new OpInputReferenceContext(
         namespaces.inputProjectionsNamespace(resourceName),
         null
     );
 
-    outputVarReferenceContext = new OpOutputVarReferenceContext(
+    outputVarReferenceContext = new OpOutputReferenceContext(
         namespaces.outputProjectionsNamespace(resourceName),
         null
     );
 
-    deleteVarReferenceContext = new OpDeleteVarReferenceContext(
+    deleteVarReferenceContext = new OpDeleteReferenceContext(
         namespaces.deleteProjectionsNamespace(resourceName),
         null
     );
@@ -66,9 +66,9 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
   public @NotNull String resourceName() { return resourceName; }
 
-  public @NotNull OpInputVarReferenceContext inputVarReferenceContext() { return inputVarReferenceContext; }
+  public @NotNull OpInputReferenceContext inputVarReferenceContext() { return inputVarReferenceContext; }
 
-  public @NotNull OpOutputVarReferenceContext outputVarReferenceContext() { return outputVarReferenceContext; }
+  public @NotNull OpOutputReferenceContext outputVarReferenceContext() { return outputVarReferenceContext; }
 
-  public @NotNull OpDeleteVarReferenceContext deleteVarReferenceContext() { return deleteVarReferenceContext; }
+  public @NotNull OpDeleteReferenceContext deleteVarReferenceContext() { return deleteVarReferenceContext; }
 }

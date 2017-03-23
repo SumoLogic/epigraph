@@ -59,7 +59,7 @@ object ReqInputModelProjectionGen {
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqInputModelProjectionGen = op.model().kind() match {
+    ctx: GenContext): ReqInputModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(

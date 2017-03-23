@@ -64,7 +64,7 @@ object ReqProjectionGen {
 
     op.asMap().values().map { p =>
 
-      val datumType: CDatumType = JavaGenUtils.toCType(p.projection().model().asInstanceOf[DatumTypeApi])
+      val datumType: CDatumType = JavaGenUtils.toCType(p.projection().`type`().asInstanceOf[DatumTypeApi])
       // Scala doesn't get it
       val valueType = JavaGenNames.lqn2(datumType, namespace)
 

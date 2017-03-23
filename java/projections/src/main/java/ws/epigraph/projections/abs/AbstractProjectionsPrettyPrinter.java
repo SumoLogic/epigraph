@@ -178,7 +178,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         l.print("~");
         MP tail = polymorphicTails.iterator().next();
         l.print(modelTailTypeNamePrefix(tail));
-        l.print(tail.model().name().toString());
+        l.print(tail.type().name().toString());
         l.brk();
         print(tail, 0);
       } else {
@@ -191,7 +191,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
           l.brk();
           l.beginIInd(0);
           l.print(modelTailTypeNamePrefix(tail));
-          l.print(tail.model().name().toString()).brk();
+          l.print(tail.type().name().toString()).brk();
           print(tail, 0);
           l.end();
         }

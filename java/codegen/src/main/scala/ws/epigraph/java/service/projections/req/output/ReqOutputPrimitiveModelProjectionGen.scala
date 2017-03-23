@@ -44,7 +44,7 @@ class ReqOutputPrimitiveModelProjectionGen(
       operationInfo,
       op,
       baseNamespace,
-      tailNamespaceSuffix(op.model(), normalized),
+      tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
       override protected lazy val normalizedTailGenerators: Map[OpOutputPrimitiveModelProjection, ReqModelProjectionGen] = Map()

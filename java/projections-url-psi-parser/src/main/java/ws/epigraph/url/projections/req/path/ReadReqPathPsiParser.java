@@ -476,7 +476,7 @@ public final class ReadReqPathPsiParser {
 
     @NotNull ReqPathKeyProjection keyProjection = parseKeyProjection(
         op.keyProjection(),
-        op.model().keyType(),
+        op.type().keyType(),
         psi,
         resolver,
         context

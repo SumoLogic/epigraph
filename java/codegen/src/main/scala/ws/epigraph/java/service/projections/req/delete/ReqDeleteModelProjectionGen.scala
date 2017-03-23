@@ -59,7 +59,7 @@ object ReqDeleteModelProjectionGen {
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqDeleteModelProjectionGen = op.model().kind() match {
+    ctx: GenContext): ReqDeleteModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(

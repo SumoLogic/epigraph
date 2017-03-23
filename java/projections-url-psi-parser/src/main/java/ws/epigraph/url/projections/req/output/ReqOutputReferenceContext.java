@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.types.TypeApi;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputVarReferenceContext extends VarReferenceContext<OpOutputVarProjection> {
+public class ReqOutputReferenceContext extends ReferenceContext<ReqOutputVarProjection> {
 
-  public OpOutputVarReferenceContext(
+  public ReqOutputReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable VarReferenceContext<OpOutputVarProjection> parent) {
+      final @Nullable ReferenceContext<ReqOutputVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 
   @Override
-  protected @NotNull OpOutputVarProjection newReference(
-      final @NotNull TypeApi type, final @NotNull TextLocation location) {
-    return new OpOutputVarProjection(type, location);
+  protected @NotNull ReqOutputVarProjection newReference(
+      final @NotNull TypeApi type,
+      final @NotNull TextLocation location) {
+
+    return new ReqOutputVarProjection(type, location);
   }
 }

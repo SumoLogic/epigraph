@@ -183,7 +183,7 @@ public class ReqInputProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
-        ReqInputVarReferenceContext reqInputVarReferenceContext = new ReqInputVarReferenceContext(Qn.EMPTY, null);
+        ReqInputReferenceContext reqInputVarReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
 
         ReqInputPsiProcessingContext reqInputPsiProcessingContext =
             new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);

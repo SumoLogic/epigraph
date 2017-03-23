@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;

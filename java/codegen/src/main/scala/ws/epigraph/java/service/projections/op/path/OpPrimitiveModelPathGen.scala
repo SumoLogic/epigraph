@@ -33,7 +33,7 @@ class OpPrimitiveModelPathGen(p: OpPrimitiveModelPath) extends ServiceObjectGen[
 
     /*@formatter:off*/sn"""\
 new OpInputPrimitiveModelProjection(
-  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
+  ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${gen(p.location(), ctx)}

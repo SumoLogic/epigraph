@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -304,7 +304,7 @@ public final class UrlProjectionsPsiParserUtil {
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
       OpInputModelProjection<?, ?, ?, ?> projection = opParam.projection();
-      final DatumTypeApi model = projection.model();
+      final DatumTypeApi model = projection.type();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
       @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, context);
@@ -312,7 +312,7 @@ public final class UrlProjectionsPsiParserUtil {
         final GDatum gDatum = projection.defaultValue();
         if (gDatum != null)
           try {
-            value = (Datum) GDataToData.transform((DatumType) projection.model(), gDatum, resolver);
+            value = (Datum) GDataToData.transform((DatumType) projection.type(), gDatum, resolver);
           } catch (GDataToData.ProcessingException e) {
             throw new PsiProcessingException(e, reqParamPsi, context);
           }

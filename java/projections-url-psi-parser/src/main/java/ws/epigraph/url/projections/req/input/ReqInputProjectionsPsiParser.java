@@ -452,7 +452,7 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqInputPsiProcessingContext context) throws PsiProcessingException {
 
-    DatumTypeApi model = op.model();
+    DatumTypeApi model = op.type();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
@@ -886,7 +886,7 @@ public final class ReqInputProjectionsPsiParser {
     }
 
     return new ReqInputRecordModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         fieldProjections,
@@ -953,7 +953,7 @@ public final class ReqInputProjectionsPsiParser {
         try {
           final @NotNull UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
           final @Nullable Datum keyValue =
-              getDatum(keyValuePsi, op.model().keyType(), resolver, "Error processing map key:", context);
+              getDatum(keyValuePsi, op.type().keyType(), resolver, "Error processing map key:", context);
 
           if (keyValue == null)
             context.addError("Null keys are not allowed", keyValuePsi);
@@ -978,11 +978,11 @@ public final class ReqInputProjectionsPsiParser {
     final @Nullable UrlReqInputVarProjection elementsVarProjectionPsi = psi.getReqInputVarProjection();
     final @NotNull ReqInputVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull TypeApi type = op.model().valueType().type();
+      final @NotNull TypeApi type = op.type().valueType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().valueType(),
+          op.type().valueType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -991,7 +991,7 @@ public final class ReqInputProjectionsPsiParser {
     }
 
     return new ReqInputMapModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         keyProjections,
@@ -1014,11 +1014,11 @@ public final class ReqInputProjectionsPsiParser {
 
     final @NotNull ReqInputVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull TypeApi type = op.model().elementType().type();
+      final @NotNull TypeApi type = op.type().elementType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().elementType(),
+          op.type().elementType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -1027,7 +1027,7 @@ public final class ReqInputProjectionsPsiParser {
     }
 
     return new ReqInputListModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         elementsVarProjection,
@@ -1044,7 +1044,7 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull PsiElement locationPsi) {
 
     return new ReqInputPrimitiveModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         tails,

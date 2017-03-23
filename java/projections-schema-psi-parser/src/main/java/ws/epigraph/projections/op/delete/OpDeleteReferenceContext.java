@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.input;
+package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqInputVarReferenceContext extends VarReferenceContext<ReqInputVarProjection> {
+public class OpDeleteReferenceContext extends ReferenceContext<OpDeleteVarProjection> {
 
-  public ReqInputVarReferenceContext(
+  public OpDeleteReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable VarReferenceContext<ReqInputVarProjection> parent) {
+      final @Nullable ReferenceContext<OpDeleteVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 
+  @NotNull
   @Override
-  protected @NotNull ReqInputVarProjection newReference(
-      final @NotNull TypeApi type,
-      final @NotNull TextLocation location) {
+  protected OpDeleteVarProjection newReference(
+      @NotNull final TypeApi type,
+      @NotNull final TextLocation location) {
 
-    return new ReqInputVarProjection(type, location);
+    return new OpDeleteVarProjection(type, location);
   }
+
 }

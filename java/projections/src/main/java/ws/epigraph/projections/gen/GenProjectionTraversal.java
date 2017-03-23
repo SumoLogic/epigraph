@@ -61,7 +61,7 @@ public abstract class GenProjectionTraversal<
   protected boolean traverse(@NotNull MP projection) {
     if (visitModelProjection(projection)) {
 
-      switch (projection.model().kind()) {
+      switch (projection.type().kind()) {
 
         case RECORD:
           if (!traverse((RMP) projection)) return false;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.DatumTypeApi;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,9 +37,10 @@ public interface GenModelProjection<
     MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     SMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     TMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
-    M extends DatumTypeApi> {
+    M extends DatumTypeApi
+    > extends GenProjectionReference<SMP> {
 
-  @NotNull M model();
+  @NotNull M type();
 
   @Nullable MP metaProjection();
 
@@ -49,7 +50,7 @@ public interface GenModelProjection<
     Collection<TMP> tails = polymorphicTails();
     return tails == null
            ? null
-           : tails.stream().filter(t -> t.model().name().equals(type.name())).findFirst().orElse(null);
+           : tails.stream().filter(t -> t.type().name().equals(type.name())).findFirst().orElse(null);
   }
 
   /**
@@ -75,7 +76,13 @@ public interface GenModelProjection<
   /* static */
   SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
 
-  @NotNull Annotations annotations();
+  @SuppressWarnings("unchecked")
+  default @NotNull SMP mergeWith(@NotNull SMP other) {
+    List<SMP> toMerge = new ArrayList<>(2);
+    toMerge.add((SMP) this);
+    toMerge.add(other);
+    return merge(type(), toMerge);
+  }
 
-  @NotNull TextLocation location();
+  @NotNull Annotations annotations();
 }

@@ -454,7 +454,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
 
-    DatumTypeApi model = op.model();
+    DatumTypeApi model = op.type();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
     switch (model.kind()) {
@@ -893,7 +893,7 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     return new ReqUpdateRecordModelProjection(
-        op.model(),
+        op.type(),
         update,
         params,
         annotations,
@@ -946,7 +946,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
 
-    final @NotNull MapTypeApi model = op.model();
+    final @NotNull MapTypeApi model = op.type();
 
     final @NotNull Collection<UrlReqUpdateKeyProjection> keysPsi =
         psi.getReqUpdateKeysProjection().getReqUpdateKeyProjectionList();
@@ -1016,11 +1016,11 @@ public final class ReqUpdateProjectionsPsiParser {
 
     final @NotNull ReqUpdateVarProjection elementsVarProjection;
     if (elementsVarProjectionPsi == null) {
-      final @NotNull TypeApi type = op.model().elementType().type();
+      final @NotNull TypeApi type = op.type().elementType().type();
       elementsVarProjection = getDefaultVarProjection(type, psi);
     } else {
       elementsVarProjection = parseVarProjection(
-          op.model().elementType(),
+          op.type().elementType(),
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -1029,7 +1029,7 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     return new ReqUpdateListModelProjection(
-        op.model(),
+        op.type(),
         update,
         params,
         annotations,
@@ -1047,7 +1047,7 @@ public final class ReqUpdateProjectionsPsiParser {
       @NotNull PsiElement locationPsi) {
 
     return new ReqUpdatePrimitiveModelProjection(
-        op.model(),
+        op.type(),
         params,
         annotations,
         tails,

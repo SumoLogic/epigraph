@@ -37,7 +37,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   protected def op: OpProjectionType
 
-  override protected val cType: CDatumType = JavaGenUtils.toCType(op.model())
+  override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
 
   protected def reqVarProjectionFqn: Qn
 
@@ -96,7 +96,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
       visited: mutable.Set[CDatumType],
       includeSelf: Boolean): Map[OpProjectionType, ReqModelProjectionGen] = {
 
-      val ct = JavaGenUtils.toCType(op.model())
+      val ct = JavaGenUtils.toCType(op.`type`())
       if (visited.contains(ct)) Map()
       else {
         visited.add(ct)
@@ -120,7 +120,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   }
 
   private def genTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = {
-    val tailCtype = JavaGenUtils.toCType(tail.model())
+    val tailCtype = JavaGenUtils.toCType(tail.`type`())
     CodeChunk(
       /*@formatter:off*/sn"""\
   /**
@@ -138,7 +138,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   }
 
   def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = {
-    val tailCtype = JavaGenUtils.toCType(tail.model())
+    val tailCtype = JavaGenUtils.toCType(tail.`type`())
     val tailTypeExpr = lqn2(tailCtype, namespace.toString)
     CodeChunk(
       /*@formatter:off*/sn"""\

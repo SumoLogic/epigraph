@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import ws.epigraph.url.parser.psi.UrlReqDeleteFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
 import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
-import ws.epigraph.url.projections.req.delete.ReqDeleteVarReferenceContext;
+import ws.epigraph.url.projections.req.delete.ReqDeleteReferenceContext;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 
@@ -104,7 +104,7 @@ public final class DeleteRequestUrlPsiParser {
 
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    ReqDeleteVarReferenceContext reqDeleteVarReferenceContext = new ReqDeleteVarReferenceContext(Qn.EMPTY, null);
+    ReqDeleteReferenceContext reqDeleteVarReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteVarReferenceContext);
 
@@ -149,7 +149,7 @@ public final class DeleteRequestUrlPsiParser {
             context
         );
 
-    ReqDeleteVarReferenceContext reqDeleteVarReferenceContext = new ReqDeleteVarReferenceContext(Qn.EMPTY, null);
+    ReqDeleteReferenceContext reqDeleteVarReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteVarReferenceContext);
 

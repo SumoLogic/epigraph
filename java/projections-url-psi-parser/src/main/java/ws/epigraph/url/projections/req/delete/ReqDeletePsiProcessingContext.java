@@ -26,12 +26,12 @@ import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
  */
 public class ReqDeletePsiProcessingContext extends ReqPsiProcessingContext<
     OpDeleteVarProjection,
-    ReqDeleteVarReferenceContext
+    ReqDeleteReferenceContext
     > {
 
   public ReqDeletePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull ReqDeleteVarReferenceContext varReferenceContext) {
+      final @NotNull ReqDeleteReferenceContext varReferenceContext) {
     super(psiProcessingContext, varReferenceContext);
   }
 }

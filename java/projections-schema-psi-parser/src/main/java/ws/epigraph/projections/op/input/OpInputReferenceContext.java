@@ -19,21 +19,17 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.types.TypeApi;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputVarReferenceContext extends VarReferenceContext<OpInputVarProjection> {
+public class OpInputReferenceContext extends ReferenceContext<OpInputVarProjection> {
 
-  public OpInputVarReferenceContext(
+  public OpInputReferenceContext(
       final Qn referencesNamespace,
-      final VarReferenceContext<OpInputVarProjection> parent) {
+      final ReferenceContext<OpInputVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 

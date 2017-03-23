@@ -21,20 +21,20 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.VarReferenceContext;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.delete.OpDeleteVarReferenceContext;
+import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.op.output.OpOutputVarReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -229,7 +229,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
         resolver,
         context.outputVarReferenceContext(),
-        projectionName -> new OpOutputVarReferenceContext(
+        projectionName -> new OpOutputReferenceContext(
             new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName),
             context.outputVarReferenceContext()
         ),
@@ -254,7 +254,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getOpInputUnnamedOrRefVarProjection(),
         resolver,
         context.inputVarReferenceContext(),
-        projectionName -> new OpInputVarReferenceContext(
+        projectionName -> new OpInputReferenceContext(
             new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName),
             context.inputVarReferenceContext()
         ),
@@ -279,7 +279,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getOpDeleteUnnamedOrRefVarProjection(),
         resolver,
         context.deleteVarReferenceContext(),
-        projectionName -> new OpDeleteVarReferenceContext(
+        projectionName -> new OpDeleteReferenceContext(
             new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName),
             context.deleteVarReferenceContext()
         ),
@@ -291,7 +291,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
   private static <
       VP extends GenVarProjection<VP, ?, ?>,
-      RC extends VarReferenceContext<VP>,
+      RC extends ReferenceContext<VP>,
       UP extends PsiElement>
   void parseGenProjectionDef(
       @NotNull String projectionKind,
@@ -358,7 +358,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
   private interface UnnamedVarParser<
       VP extends GenVarProjection<VP, ?, ?>,
-      RC extends VarReferenceContext<VP>,
+      RC extends ReferenceContext<VP>,
       UP extends PsiElement
       > {
     VP parse(
@@ -371,7 +371,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private static class OutputUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpOutputVarProjection, OpOutputVarReferenceContext, SchemaOpOutputUnnamedOrRefVarProjection> {
+      implements UnnamedVarParser<OpOutputVarProjection, OpOutputReferenceContext, SchemaOpOutputUnnamedOrRefVarProjection> {
 
     static final OutputUnnamedVarReferenceParser INSTANCE = new OutputUnnamedVarReferenceParser();
 
@@ -380,7 +380,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         final @NotNull DataTypeApi type,
         final @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
-        final @NotNull OpOutputVarReferenceContext referenceContext,
+        final @NotNull OpOutputReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
@@ -403,7 +403,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private static class InputUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpInputVarProjection, OpInputVarReferenceContext, SchemaOpInputUnnamedOrRefVarProjection> {
+      implements UnnamedVarParser<OpInputVarProjection, OpInputReferenceContext, SchemaOpInputUnnamedOrRefVarProjection> {
 
     static final InputUnnamedVarReferenceParser INSTANCE = new InputUnnamedVarReferenceParser();
 
@@ -412,7 +412,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         final @NotNull DataTypeApi type,
         final @NotNull SchemaOpInputUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
-        final @NotNull OpInputVarReferenceContext referenceContext,
+        final @NotNull OpInputReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
@@ -430,7 +430,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private static class DeleteUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpDeleteVarProjection, OpDeleteVarReferenceContext, SchemaOpDeleteUnnamedOrRefVarProjection> {
+      implements UnnamedVarParser<OpDeleteVarProjection, OpDeleteReferenceContext, SchemaOpDeleteUnnamedOrRefVarProjection> {
 
     static final DeleteUnnamedVarReferenceParser INSTANCE = new DeleteUnnamedVarReferenceParser();
 
@@ -439,7 +439,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         final @NotNull DataTypeApi type,
         final @NotNull SchemaOpDeleteUnnamedOrRefVarProjection psi,
         final @NotNull TypesResolver resolver,
-        final @NotNull OpDeleteVarReferenceContext referenceContext,
+        final @NotNull OpDeleteReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(

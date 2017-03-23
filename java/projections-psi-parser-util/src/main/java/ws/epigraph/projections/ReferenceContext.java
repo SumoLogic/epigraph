@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.TypeApi;
 
@@ -31,18 +31,18 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
-public abstract class VarReferenceContext<VP extends GenVarProjection<VP, ?, ?>> {
+public abstract class ReferenceContext<VP extends GenProjectionReference<VP>> {
   @NotNull
   private final Qn referencesNamespace;
 
   @Nullable
-  private final VarReferenceContext<VP> parent;
+  private final ReferenceContext<VP> parent;
   private final Map<String, VP> references = new HashMap<>();
   private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
-  protected VarReferenceContext(
+  protected ReferenceContext(
       @NotNull final Qn referencesNamespace,
-      @Nullable final VarReferenceContext<VP> parent) {
+      @Nullable final ReferenceContext<VP> parent) {
 
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;

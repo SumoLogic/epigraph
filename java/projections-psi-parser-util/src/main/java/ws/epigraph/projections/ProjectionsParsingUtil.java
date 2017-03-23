@@ -269,6 +269,6 @@ public final class ProjectionsParsingUtil {
   private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp, Set<String> acc) {
     final List<GenModelProjection<?, ?, ?, ?>> tails = (List<GenModelProjection<?, ?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
-      tails.stream().map(t -> t.model().name().toString()).forEach(acc::add);
+      tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }
 }

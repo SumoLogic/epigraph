@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ public class ReqOutputMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     @NotNull ReqOutputMapModelProjection n =  super.normalizedForType(targetType);
     return new ReqOutputMapModelProjection(
-        n.model(),
+        n.type(),
         n.required(),
         n.params(),
         n.annotations(),

@@ -79,9 +79,9 @@ public final class DataPathRemover {
 
     if (steps == 0) return new PathRemovalResult(datum);
 
-    switch (mp.model().kind()) {
+    switch (mp.type().kind()) {
       case UNION:
-        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.type().kind());
       case RECORD:
         ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) mp;
         Map<String, ReqOutputFieldProjectionEntry> fieldProjections = rmp.fieldProjections();
@@ -141,11 +141,11 @@ public final class DataPathRemover {
         }
 
       case ENUM:
-        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.type().kind());
       case PRIMITIVE:
         throw new AmbiguousPathException();
       default:
-        throw new IllegalArgumentException("Unsupported model kind: " + mp.model().kind());
+        throw new IllegalArgumentException("Unsupported model kind: " + mp.type().kind());
     }
   }
 

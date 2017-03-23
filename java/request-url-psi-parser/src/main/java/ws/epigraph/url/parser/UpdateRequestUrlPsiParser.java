@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdatePsiProcessingContext;
-import ws.epigraph.url.projections.req.update.ReqUpdateVarReferenceContext;
+import ws.epigraph.url.projections.req.update.ReqUpdateReferenceContext;
 
 import java.util.Map;
 
@@ -106,7 +106,7 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+    ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
         new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
 
@@ -143,7 +143,7 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+    ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
         new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
 

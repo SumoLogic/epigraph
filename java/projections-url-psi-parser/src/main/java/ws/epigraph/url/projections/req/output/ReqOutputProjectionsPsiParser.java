@@ -646,7 +646,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     if (metaOp == null) {
       context.addError(
-          String.format("Meta projection not supported on type '%s'", op.model().name()),
+          String.format("Meta projection not supported on type '%s'", op.type().name()),
           modelMetaPsi
       );
       return null;
@@ -662,7 +662,7 @@ public final class ReqOutputProjectionsPsiParser {
         Annotations.EMPTY,
         null,
         modelMetaPsi.getReqOutputComaModelProjection(),
-        addTypeNamespace(metaOp.model(), resolver),
+        addTypeNamespace(metaOp.type(), resolver),
         context
     );
   }
@@ -797,10 +797,10 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    final @NotNull TypesResolver subResolver = addTypeNamespace(op.model(), typesResolver);
+    final @NotNull TypesResolver subResolver = addTypeNamespace(op.type(), typesResolver);
 
     //noinspection SwitchStatementWithoutDefaultBranch,EnumSwitchStatementWhichMissesCases
-    switch (op.model().kind()) {
+    switch (op.type().kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
         @Nullable
@@ -885,7 +885,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    DatumTypeApi model = op.model();
+    DatumTypeApi model = op.type();
     final @NotNull TypesResolver subResolver = addTypeNamespace(model, typesResolver);
 
     switch (model.kind()) {
@@ -1358,7 +1358,7 @@ public final class ReqOutputProjectionsPsiParser {
     return new StepsAndProjection<>(
         steps,
         new ReqOutputRecordModelProjection(
-            op.model(),
+            op.type(),
             required,
             params,
             annotations,
@@ -1521,7 +1521,7 @@ public final class ReqOutputProjectionsPsiParser {
     }
 
     return new ReqOutputRecordModelProjection(
-        op.model(),
+        op.type(),
         required,
         params,
         annotations,
@@ -1548,7 +1548,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     @NotNull UrlDatum valuePsi = psi.getDatum();
     @Nullable Datum keyValue =
-        getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ", context);
+        getDatum(valuePsi, op.type().keyType(), resolver, "Error processing map key: ", context);
     if (keyValue == null) throw new PsiProcessingException("Null keys are not allowed", valuePsi, context);
 
     ReqOutputKeyProjection keyProjection = new ReqOutputKeyProjection(
@@ -1564,7 +1564,7 @@ public final class ReqOutputProjectionsPsiParser {
     @Nullable UrlReqOutputTrunkVarProjection valueProjectionPsi = psi.getReqOutputTrunkVarProjection();
     StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
         parseTrunkVarProjection(
-            op.model().valueType(),
+            op.type().valueType(),
             op.itemsProjection(),
             false,
             valueProjectionPsi,
@@ -1578,7 +1578,7 @@ public final class ReqOutputProjectionsPsiParser {
     return new StepsAndProjection<>(
         steps,
         new ReqOutputMapModelProjection(
-            op.model(),
+            op.type(),
             required,
             params,
             annotations,
@@ -1618,7 +1618,7 @@ public final class ReqOutputProjectionsPsiParser {
         try {
           @NotNull UrlDatum valuePsi = keyProjectionPsi.getDatum();
           @Nullable Datum keyValue =
-              getDatum(valuePsi, op.model().keyType(), resolver, "Error processing map key: ", context);
+              getDatum(valuePsi, op.type().keyType(), resolver, "Error processing map key: ", context);
 
           if (keyValue == null) context.addError("Null keys are not allowed", valuePsi);
           else {
@@ -1644,7 +1644,7 @@ public final class ReqOutputProjectionsPsiParser {
     final @NotNull ReqOutputVarProjection valueProjection;
     if (valueProjectionPsi == null) {
       valueProjection = createDefaultVarProjection(
-          op.model().valueType().type(),
+          op.type().valueType().type(),
           op.itemsProjection(),
           false,
           psi,
@@ -1652,7 +1652,7 @@ public final class ReqOutputProjectionsPsiParser {
       );
     } else {
       valueProjection = parseComaVarProjection(
-          op.model().valueType(),
+          op.type().valueType(),
           op.itemsProjection(),
           false,
           valueProjectionPsi,
@@ -1663,7 +1663,7 @@ public final class ReqOutputProjectionsPsiParser {
 
 
     return new ReqOutputMapModelProjection(
-        op.model(),
+        op.type(),
         required,
         params,
         annotations,
@@ -1689,11 +1689,11 @@ public final class ReqOutputProjectionsPsiParser {
     ReqOutputVarProjection itemsProjection;
     @Nullable UrlReqOutputComaVarProjection reqOutputVarProjectionPsi = psi.getReqOutputComaVarProjection();
     if (reqOutputVarProjectionPsi == null)
-      itemsProjection = createDefaultVarProjection(op.model().elementType(), op.itemsProjection(), true, psi, context);
+      itemsProjection = createDefaultVarProjection(op.type().elementType(), op.itemsProjection(), true, psi, context);
     else
       itemsProjection =
           parseComaVarProjection(
-              op.model().elementType(),
+              op.type().elementType(),
               op.itemsProjection(),
               false,
               reqOutputVarProjectionPsi,
@@ -1703,7 +1703,7 @@ public final class ReqOutputProjectionsPsiParser {
 
 
     return new ReqOutputListModelProjection(
-        op.model(),
+        op.type(),
         required,
         params,
         annotations,

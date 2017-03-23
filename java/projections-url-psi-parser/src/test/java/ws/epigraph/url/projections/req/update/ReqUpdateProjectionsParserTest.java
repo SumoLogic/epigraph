@@ -194,7 +194,7 @@ public class ReqUpdateProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
-        ReqUpdateVarReferenceContext reqUpdateVarReferenceContext = new ReqUpdateVarReferenceContext(Qn.EMPTY, null);
+        ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
 
         ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
             new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);

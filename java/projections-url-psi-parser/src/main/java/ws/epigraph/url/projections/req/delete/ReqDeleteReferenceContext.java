@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.update;
+package ws.epigraph.url.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarReferenceContext;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateVarReferenceContext extends VarReferenceContext<ReqUpdateVarProjection> {
+public class ReqDeleteReferenceContext extends ReferenceContext<ReqDeleteVarProjection> {
 
-  public ReqUpdateVarReferenceContext(
+  public ReqDeleteReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable VarReferenceContext<ReqUpdateVarProjection> parent) {
+      final @Nullable ReferenceContext<ReqDeleteVarProjection> parent) {
     super(referencesNamespace, parent);
   }
 
   @Override
-  protected @NotNull ReqUpdateVarProjection newReference(
+  protected @NotNull ReqDeleteVarProjection newReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
 
-    return new ReqUpdateVarProjection(type, location);
+    return new ReqDeleteVarProjection(type, location);
   }
 }

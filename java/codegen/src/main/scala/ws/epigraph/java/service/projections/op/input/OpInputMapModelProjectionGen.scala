@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class OpInputMapModelProjectionGen(p: OpInputMapModelProjection)
 
     /*@formatter:off*/sn"""\
 new OpInputMapModelProjection(
-  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
+  ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.required().toString},
   ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},

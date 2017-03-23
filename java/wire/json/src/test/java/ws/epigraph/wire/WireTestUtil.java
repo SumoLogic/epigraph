@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputVarReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -101,7 +101,7 @@ public final class WireTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqOutputVarReferenceContext referenceContext = new ReqOutputVarReferenceContext(Qn.EMPTY, null);
+      ReqOutputReferenceContext referenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
       StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(

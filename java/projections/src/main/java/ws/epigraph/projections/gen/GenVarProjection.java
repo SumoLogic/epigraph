@@ -19,7 +19,6 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Collection;
@@ -33,7 +32,7 @@ public interface GenVarProjection<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>
-    > {
+    > extends GenProjectionReference<VP> {
 
   /**
    * Type this projection applies to.
@@ -42,6 +41,7 @@ public interface GenVarProjection<
    *
    * @return type this projection was constructed for
    */
+  @Override
   @NotNull TypeApi type();
 
   @NotNull Map<String, TP> tagProjections();
@@ -146,6 +146,7 @@ public interface GenVarProjection<
    *
    * @return qualified projection name or {@code null} if there is no name.
    */
+  @Override
   @Nullable Qn name();
 
   /**
@@ -157,22 +158,6 @@ public interface GenVarProjection<
    * @param value projection instance to copy state from
    * @see #name()
    */
+  @Override
   void resolve(@NotNull Qn name, @NotNull VP value);
-
-  /**
-   * Checks if this projection is resolved, i.e. it's not an empty placeholder instance.
-   *
-   * @return {@code false} iff this is a reference and is not resolved
-   * @see #name()
-   */
-  boolean isResolved();
-
-  /**
-   * Registers a callback to be called after this reference is resolved. Multiple callbacks may be registered.
-   *
-   * @param callback callback to call when this reference is resolved
-   */
-  void runOnResolved(@NotNull Runnable callback);
-
-  @NotNull TextLocation location();
 }

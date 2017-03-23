@@ -135,7 +135,7 @@ public class ReqOutputRecordModelProjection
             );
 
     return new ReqOutputRecordModelProjection(
-        n.model(),
+        n.type(),
         n.required(),
         n.params(),
         n.annotations(),

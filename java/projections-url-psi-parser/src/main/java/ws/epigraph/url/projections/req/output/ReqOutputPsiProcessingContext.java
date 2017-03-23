@@ -26,12 +26,12 @@ import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
  */
 public class ReqOutputPsiProcessingContext extends ReqPsiProcessingContext<
     OpOutputVarProjection,
-    ReqOutputVarReferenceContext
+    ReqOutputReferenceContext
     > {
 
   public ReqOutputPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull ReqOutputVarReferenceContext varReferenceContext) {
+      final @NotNull ReqOutputReferenceContext varReferenceContext) {
     super(psiProcessingContext, varReferenceContext);
   }
 }

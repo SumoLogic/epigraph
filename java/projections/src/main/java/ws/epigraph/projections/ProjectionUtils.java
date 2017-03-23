@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public final class ProjectionUtils {
       lastDataType = tagProjection.tag().type().dataType();
 
       final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
-      final DatumTypeApi model = modelPath.model();
+      final DatumTypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
           GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
@@ -81,7 +81,7 @@ public final class ProjectionUtils {
         case MAP:
           GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
 
-          lastDataType = mapPath.model().valueType();
+          lastDataType = mapPath.type().valueType();
           path = mapPath.itemsProjection();
           break;
         default:
@@ -103,7 +103,7 @@ public final class ProjectionUtils {
       len++;
 
       final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
-      final DatumTypeApi model = modelPath.model();
+      final DatumTypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
           GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
@@ -201,7 +201,7 @@ public final class ProjectionUtils {
     if (tails == null) return Collections.emptyList();
 
     return linearizeTails(
-        m -> m.model(),
+        m -> m.type(),
         MP::polymorphicTails,
         t,
         tails
@@ -215,7 +215,7 @@ public final class ProjectionUtils {
       @NotNull LinkedList<MP> linearizedTails) {
 
     return linearizeTails(
-        m -> m.model(),
+        m -> m.type(),
         MP::polymorphicTails,
         type,
         tails,

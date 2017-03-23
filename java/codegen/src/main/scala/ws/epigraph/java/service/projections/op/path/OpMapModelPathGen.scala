@@ -34,7 +34,7 @@ class OpMapModelPathGen(p: OpMapModelPath)
 
     /*@formatter:off*/sn"""\
 new OpMapModelPath(
-  ${genTypeExpr(p.model().asInstanceOf[TypeApi], ctx.gctx)},
+  ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.keyProjection(), ctx))},

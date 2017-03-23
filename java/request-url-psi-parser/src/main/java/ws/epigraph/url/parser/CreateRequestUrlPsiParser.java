@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import ws.epigraph.url.parser.psi.UrlReqInputFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.input.ReqInputPsiProcessingContext;
-import ws.epigraph.url.projections.req.input.ReqInputVarReferenceContext;
+import ws.epigraph.url.projections.req.input.ReqInputReferenceContext;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 
@@ -125,7 +125,7 @@ public final class CreateRequestUrlPsiParser {
 
       final TypeApi inputType = op.inputType();
 
-      ReqInputVarReferenceContext reqInputVarReferenceContext = new ReqInputVarReferenceContext(Qn.EMPTY, null);
+      ReqInputReferenceContext reqInputVarReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
           new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);
 

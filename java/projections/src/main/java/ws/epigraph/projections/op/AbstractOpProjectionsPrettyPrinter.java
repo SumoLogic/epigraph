@@ -76,7 +76,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.print(";");
     if (projection.required()) l.print("+");
     l.print(escape(p.name())).print(":").brk();
-    l.print(projection.model().name().toString());
+    l.print(projection.type().name().toString());
 
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
     if (!ipp.isPrintoutEmpty(projection)) {

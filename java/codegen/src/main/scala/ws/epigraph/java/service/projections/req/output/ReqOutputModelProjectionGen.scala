@@ -77,7 +77,7 @@ object ReqOutputModelProjectionGen {
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqOutputModelProjectionGen = op.model().kind() match {
+    ctx: GenContext): ReqOutputModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(

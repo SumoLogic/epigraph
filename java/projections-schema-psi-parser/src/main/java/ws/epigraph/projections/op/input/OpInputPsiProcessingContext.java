@@ -17,29 +17,25 @@
 package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext {
   @NotNull
-  private final OpInputVarReferenceContext varReferenceContext;
+  private final OpInputReferenceContext varReferenceContext;
 
   public OpInputPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull OpInputVarReferenceContext varReferenceContext) {
+      final @NotNull OpInputReferenceContext varReferenceContext) {
     super(psiProcessingContext);
     this.varReferenceContext = varReferenceContext;
   }
 
   @NotNull
-  public OpInputVarReferenceContext varReferenceContext() {
+  public OpInputReferenceContext varReferenceContext() {
     return varReferenceContext;
   }
 }
