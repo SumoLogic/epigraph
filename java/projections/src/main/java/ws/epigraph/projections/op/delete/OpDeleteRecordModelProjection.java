@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -25,6 +26,7 @@ import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.RecordTypeApi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteRecordModelProjection
-    extends OpDeleteModelProjection<OpDeleteModelProjection<?,?,?>, OpDeleteRecordModelProjection, RecordTypeApi>
+    extends OpDeleteModelProjection<OpDeleteModelProjection<?, ?, ?>, OpDeleteRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
     OpDeleteVarProjection,
     OpDeleteTagProjectionEntry,
@@ -43,7 +45,7 @@ public class OpDeleteRecordModelProjection
     RecordTypeApi
     > {
 
-  private final @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections;
 
   public OpDeleteRecordModelProjection(
       @NotNull RecordTypeApi model,
@@ -58,8 +60,22 @@ public class OpDeleteRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
+  protected OpDeleteRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    this.fieldProjections = Collections.emptyMap();
+  }
+
   @Override
-  public @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections() {
+    assert isResolved();
+    return fieldProjections;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteRecordModelProjection value) {
+    super.resolve(name, value);
+    this.fieldProjections = value.fieldProjections();
+  }
 
   @Override
   public boolean equals(Object o) {

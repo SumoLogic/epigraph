@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GRecordDatum;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -26,10 +27,7 @@ import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.RecordTypeApi;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -46,7 +44,7 @@ public class OpInputRecordModelProjection
     RecordTypeApi
     > {
 
-  private final @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections;
 
   public OpInputRecordModelProjection(
       @NotNull RecordTypeApi model,
@@ -65,12 +63,26 @@ public class OpInputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
+  public OpInputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    this.fieldProjections = Collections.emptyMap();
+  }
+
   public static @NotNull LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
 
   @Override
-  public @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections() {
+    assert isResolved();
+    return fieldProjections;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpInputRecordModelProjection value) {
+    super.resolve(name, value);
+    this.fieldProjections = value.fieldProjections();
+  }
 
   @Override
   public boolean equals(Object o) {

@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.output;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -42,7 +43,7 @@ public class ReqOutputListModelProjection
     ListTypeApi
     > {
 
-  private final @NotNull ReqOutputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable ReqOutputVarProjection itemsProjection;
 
   public ReqOutputListModelProjection(
       @NotNull ListTypeApi model,
@@ -57,8 +58,16 @@ public class ReqOutputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
+  public ReqOutputListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
   @Override
-  public @NotNull ReqOutputVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull ReqOutputVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
 
   /* static */
   @Override
@@ -104,6 +113,12 @@ public class ReqOutputListModelProjection
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqOutputListModelProjection value) {
+    super.resolve(name, value);
+    itemsProjection = value.itemsProjection();
   }
 
   @Override

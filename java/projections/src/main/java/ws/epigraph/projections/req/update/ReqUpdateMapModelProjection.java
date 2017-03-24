@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -24,6 +25,7 @@ import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,9 +42,9 @@ public class ReqUpdateMapModelProjection
     MapTypeApi
     > {
 
-  private final boolean updateKeys;
-  private final @NotNull List<ReqUpdateKeyProjection> keys;
-  private final @NotNull ReqUpdateVarProjection valuesProjection;
+  private /*final*/ boolean updateKeys;
+  private /*final*/ @NotNull List<ReqUpdateKeyProjection> keys;
+  private /*final @NotNull*/ @Nullable ReqUpdateVarProjection valuesProjection;
 
   public ReqUpdateMapModelProjection(
       @NotNull MapTypeApi model,
@@ -60,12 +62,35 @@ public class ReqUpdateMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
+  public ReqUpdateMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    keys = Collections.emptyList();
+  }
+
   @Override
-  public @NotNull ReqUpdateVarProjection itemsProjection() { return valuesProjection; }
+  public @NotNull ReqUpdateVarProjection itemsProjection() {
+    assert isResolved();
+    assert valuesProjection != null;
+    return valuesProjection;
+  }
 
-  public boolean updateKeys() { return updateKeys; }
+  public boolean updateKeys() {
+    assert isResolved();
+    return updateKeys;
+  }
 
-  public @NotNull List<ReqUpdateKeyProjection> keys() { return keys; }
+  public @NotNull List<ReqUpdateKeyProjection> keys() {
+    assert isResolved();
+    return keys;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqUpdateMapModelProjection value) {
+    super.resolve(name, value);
+    updateKeys = value.updateKeys();
+    keys = value.keys();
+    valuesProjection = value.itemsProjection();
+  }
 
   @Override
   public boolean equals(final Object o) {

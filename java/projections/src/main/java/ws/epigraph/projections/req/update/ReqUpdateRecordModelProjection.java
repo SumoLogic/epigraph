@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.update;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -42,7 +43,7 @@ public class ReqUpdateRecordModelProjection
     RecordTypeApi
     > {
 
-  private final @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections;
 
   public ReqUpdateRecordModelProjection(
       @NotNull RecordTypeApi model,
@@ -58,12 +59,27 @@ public class ReqUpdateRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
+  protected ReqUpdateRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    fieldProjections = Collections.emptyMap();
+  }
+
   @Override
-  public @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections() {
+    assert isResolved();
+    return fieldProjections;
+  }
 
   @Override
   public @Nullable ReqUpdateFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+    assert isResolved();
     return fieldProjections.get(fieldName);
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqUpdateRecordModelProjection value) {
+    super.resolve(name, value);
+    fieldProjections = value.fieldProjections();
   }
 
   @Override

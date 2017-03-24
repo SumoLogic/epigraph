@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
@@ -36,7 +37,7 @@ public abstract class ReqUpdateModelProjection<
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
-  protected final boolean update;
+  protected /*final*/ boolean update;
 
   protected ReqUpdateModelProjection(
       @NotNull M model,
@@ -50,10 +51,23 @@ public abstract class ReqUpdateModelProjection<
     this.update = update;
   }
 
+  protected ReqUpdateModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
   /**
    * @return {@code true} if this model must be updated (replaced), {@code false} if it must be patched
    */
-  public boolean update() { return update; }
+  public boolean update() {
+    assert isResolved();
+    return update;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+    super.resolve(name, value);
+    update = value.update();
+  }
 
   @Override
   public boolean equals(final Object o) {

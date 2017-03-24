@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -27,6 +28,7 @@ import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class OpOutputRecordModelProjection
     RecordTypeApi
     > {
 
-  private final @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections;
 
   public OpOutputRecordModelProjection(
       @NotNull RecordTypeApi model,
@@ -63,8 +65,16 @@ public class OpOutputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
+  public OpOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    this.fieldProjections = Collections.emptyMap();
+  }
+
   @Override
-  public @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections() {
+    assert isResolved();
+    return fieldProjections;
+  }
 
   @Override
   protected OpOutputRecordModelProjection merge(
@@ -109,6 +119,7 @@ public class OpOutputRecordModelProjection
     final Map<String, OpOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 
+    // todo move to RecordModelProjectionHelper?
     final Map<String, OpOutputFieldProjectionEntry> normalizedFieldEntries =
         normalizedFields.entrySet()
             .stream()
@@ -136,6 +147,12 @@ public class OpOutputRecordModelProjection
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpOutputRecordModelProjection value) {
+    super.resolve(name, value);
+    this.fieldProjections = value.fieldProjections();
   }
 
   @Override

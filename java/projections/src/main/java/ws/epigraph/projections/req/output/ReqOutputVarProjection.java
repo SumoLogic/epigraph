@@ -47,7 +47,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
   }
 
-  public ReqOutputVarProjection( final @NotNull TypeApi type, final @NotNull TextLocation location) {
+  public ReqOutputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
   }
 
@@ -71,7 +71,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
   @Override
   protected @NotNull VarNormalizationContext<ReqOutputVarProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(
-        t -> new ReqOutputVarProjection(t , location())
+        t -> new ReqOutputVarProjection(t, location())
     );
   }
 

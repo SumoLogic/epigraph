@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -42,7 +43,7 @@ public class OpOutputListModelProjection
     ListTypeApi
     > {
 
-  private final @NotNull OpOutputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpOutputVarProjection itemsProjection;
 
   public OpOutputListModelProjection(
       @NotNull ListTypeApi model,
@@ -56,8 +57,16 @@ public class OpOutputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
+  protected OpOutputListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
   @Override
-  public @NotNull OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull OpOutputVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
 
   /* static */
   @Override
@@ -101,6 +110,13 @@ public class OpOutputListModelProjection
         TextLocation.UNKNOWN
     );
   }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpOutputListModelProjection value) {
+    super.resolve(name, value);
+    this.itemsProjection = value.itemsProjection();
+  }
+
 
   @Override
   public boolean equals(Object o) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -40,8 +41,16 @@ public class OpDeleteMapModelProjection
     MapTypeApi
     > {
 
-  private final @NotNull OpDeleteVarProjection itemsProjection;
-  private final @NotNull OpDeleteKeyProjection keyProjection;
+  private /*final @NotNull*/ @Nullable OpDeleteVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpDeleteKeyProjection keyProjection;
+
+  public OpDeleteMapModelProjection(
+      final @NotNull MapTypeApi model,
+      final @NotNull TextLocation location) {
+    super(model, location);
+    itemsProjection = null;
+    keyProjection = null;
+  }
 
   public OpDeleteMapModelProjection(
       @NotNull MapTypeApi model,
@@ -57,9 +66,24 @@ public class OpDeleteMapModelProjection
   }
 
   @Override
-  public @NotNull OpDeleteVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull OpDeleteVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
 
-  public @NotNull OpDeleteKeyProjection keyProjection() { return keyProjection; }
+  public @NotNull OpDeleteKeyProjection keyProjection() {
+    assert isResolved();
+    assert keyProjection != null;
+    return keyProjection;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteMapModelProjection value) {
+    super.resolve(name, value);
+    this.itemsProjection = value.itemsProjection();
+    this.keyProjection = value.keyProjection();
+  }
 
   @Override
   public boolean equals(Object o) {

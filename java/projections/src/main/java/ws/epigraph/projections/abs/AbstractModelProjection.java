@@ -39,11 +39,17 @@ public abstract class AbstractModelProjection<
     M extends DatumTypeApi> implements GenModelProjection<MP, SMP, SMP, M> {
 
   protected final @NotNull M model;
-  protected final @Nullable MP metaProjection;
-  protected final @NotNull Annotations annotations;
-  protected final @Nullable List<SMP> polymorphicTails;
+  private /*final*/ @Nullable Qn name;
+  protected /*final*/ @Nullable MP metaProjection;
+  protected /*final*/ @NotNull Annotations annotations;
+  protected /*final*/ @Nullable List<SMP> polymorphicTails;
 
   private final @NotNull TextLocation location;
+
+  protected boolean isReference;
+  protected boolean isResolved;
+
+  private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -58,7 +64,20 @@ public abstract class AbstractModelProjection<
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
+    isReference = false;
+    isResolved = true;
+
     validateTails();
+  }
+
+  protected AbstractModelProjection(@NotNull M model, @NotNull TextLocation location) {
+    this.model = model;
+    metaProjection = null;
+    annotations = Annotations.EMPTY;
+    this.location = location;
+
+    isReference = true;
+    isResolved = false;
   }
 
   @Override
@@ -212,23 +231,41 @@ public abstract class AbstractModelProjection<
   }
 
   @Override
-  public @Nullable Qn name() {
-    return null;
-  }
+  public @Nullable Qn name() { return name; }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+    if (!isReference)
+      throw new IllegalStateException("Non-reference projection can't be resolved");
+    if (isResolved())
+      throw new IllegalStateException("Attempt to resolve already resolved reference: " + this.name);
+    if (!type().isAssignableFrom(value.type()))
+      throw new IllegalStateException(String.format(
+          "Value type '%s' is incompatible with reference type '%s'",
+          value.type().name(),
+          this.type().name()
+      ));
 
+    this.isResolved = true;
+    this.name = name;
+    this.metaProjection = (MP) value.metaProjection();
+    this.annotations = value.annotations();
+    this.polymorphicTails = value.polymorphicTails();
+
+    for (final Runnable callback : onResolvedCallbacks) callback.run();
+    onResolvedCallbacks.clear();
   }
 
   @Override
-  public boolean isResolved() {
-    return false;
-  }
+  public boolean isResolved() { return isResolved; }
 
   @Override
   public void runOnResolved(final @NotNull Runnable callback) {
-
+    if (isResolved())
+      callback.run();
+    else
+      onResolvedCallbacks.add(callback);
   }
 
   @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GMapDatum;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -41,8 +42,8 @@ public class OpInputMapModelProjection
     MapTypeApi
     > {
 
-  private final @NotNull OpInputKeyProjection keyProjection;
-  private final @NotNull OpInputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpInputKeyProjection keyProjection;
+  private /*final @NotNull*/ @Nullable OpInputVarProjection itemsProjection;
 
   public OpInputMapModelProjection(
       @NotNull MapTypeApi model,
@@ -60,10 +61,25 @@ public class OpInputMapModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  public @NotNull OpInputKeyProjection keyProjection() { return keyProjection; }
+  public @NotNull OpInputKeyProjection keyProjection() {
+    assert isResolved();
+    assert keyProjection != null;
+    return keyProjection;
+  }
 
   @Override
-  public @NotNull OpInputVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull OpInputVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpInputMapModelProjection value) {
+    super.resolve(name, value);
+    this.keyProjection = value.keyProjection();
+    this.itemsProjection = value.itemsProjection();
+  }
 
   @Override
   public boolean equals(final Object o) {

@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -43,8 +44,8 @@ public class OpOutputMapModelProjection
     MapTypeApi
     > {
 
-  private final @NotNull OpOutputKeyProjection keyProjection;
-  private final @NotNull OpOutputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpOutputKeyProjection keyProjection;
+  private /*final @NotNull*/ @Nullable OpOutputVarProjection itemsProjection;
 
   public OpOutputMapModelProjection(
       @NotNull MapTypeApi model,
@@ -60,10 +61,31 @@ public class OpOutputMapModelProjection
     this.keyProjection = keyProjection;
   }
 
-  public @NotNull OpOutputKeyProjection keyProjection() { return keyProjection; }
+  public OpOutputMapModelProjection(
+      final @NotNull MapTypeApi model,
+      final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
+  public @NotNull OpOutputKeyProjection keyProjection() {
+    assert isResolved();
+    assert keyProjection != null;
+    return keyProjection;
+  }
 
   @Override
-  public @NotNull OpOutputVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull OpOutputVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpOutputMapModelProjection value) {
+    super.resolve(name, value);
+    this.keyProjection = value.keyProjection();
+    this.itemsProjection = value.itemsProjection();
+  }
 
   /* static */
   @Override
@@ -130,7 +152,7 @@ public class OpOutputMapModelProjection
   @Override
   public @NotNull OpOutputMapModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    @NotNull OpOutputMapModelProjection n =  super.normalizedForType(targetType);
+    @NotNull OpOutputMapModelProjection n = super.normalizedForType(targetType);
     return new OpOutputMapModelProjection(
         n.type(),
         n.params(),

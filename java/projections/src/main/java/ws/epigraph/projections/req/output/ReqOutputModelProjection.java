@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
@@ -36,7 +37,7 @@ public abstract class ReqOutputModelProjection<
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
-  protected final boolean required;
+  protected /*final*/ boolean required;
 
   protected ReqOutputModelProjection(
       @NotNull M model,
@@ -50,7 +51,14 @@ public abstract class ReqOutputModelProjection<
     this.required = required;
   }
 
-  public boolean required() { return required; }
+  protected ReqOutputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
+  public boolean required() {
+    assert isResolved();
+    return required;
+  }
 
   @Override
   protected SMP merge(
@@ -82,6 +90,12 @@ public abstract class ReqOutputModelProjection<
       final @Nullable List<SMP> mergedTails) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+    super.resolve(name, value);
+    required = value.required();
   }
 
   @Override

@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -43,8 +44,8 @@ public class ReqOutputMapModelProjection
     MapTypeApi
     > {
 
-  private final @Nullable List<ReqOutputKeyProjection> keys;
-  private final @NotNull ReqOutputVarProjection valuesProjection;
+  private /*final*/ @Nullable List<ReqOutputKeyProjection> keys;
+  private /*final @NotNull*/ @Nullable ReqOutputVarProjection valuesProjection;
 
   public ReqOutputMapModelProjection(
       @NotNull MapTypeApi model,
@@ -61,10 +62,21 @@ public class ReqOutputMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @Override
-  public @NotNull ReqOutputVarProjection itemsProjection() { return valuesProjection; }
+  public ReqOutputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
 
-  public @Nullable List<ReqOutputKeyProjection> keys() { return keys; }
+  @Override
+  public @NotNull ReqOutputVarProjection itemsProjection() {
+    assert isResolved();
+    assert valuesProjection != null;
+    return valuesProjection;
+  }
+
+  public @Nullable List<ReqOutputKeyProjection> keys() {
+    assert isResolved();
+    return keys;
+  }
 
   @Override
   protected ReqOutputMapModelProjection merge(
@@ -109,11 +121,11 @@ public class ReqOutputMapModelProjection
         TextLocation.UNKNOWN
     );
   }
-  
+
   @Override
   public @NotNull ReqOutputMapModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    @NotNull ReqOutputMapModelProjection n =  super.normalizedForType(targetType);
+    @NotNull ReqOutputMapModelProjection n = super.normalizedForType(targetType);
     return new ReqOutputMapModelProjection(
         n.type(),
         n.required(),
@@ -125,6 +137,13 @@ public class ReqOutputMapModelProjection
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqOutputMapModelProjection value) {
+    super.resolve(name, value);
+    keys = value.keys();
+    valuesProjection = value.itemsProjection();
   }
 
   @Override

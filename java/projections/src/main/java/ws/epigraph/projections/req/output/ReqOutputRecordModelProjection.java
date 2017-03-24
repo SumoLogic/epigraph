@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.req.output;
 
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
@@ -45,7 +46,7 @@ public class ReqOutputRecordModelProjection
     RecordTypeApi
     > {
 
-  private final @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
 
   public ReqOutputRecordModelProjection(
       @NotNull RecordTypeApi model,
@@ -62,12 +63,20 @@ public class ReqOutputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
+  protected ReqOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    fieldProjections = Collections.emptyMap();
+  }
+
   @Override
-  public @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections() { return fieldProjections; }
+  public @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections() {
+    assert isResolved();
+    return fieldProjections;
+  }
 
   @Override
   public @Nullable ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
-    return fieldProjections.get(fieldName);
+    return fieldProjections().get(fieldName);
   }
 
   @Override
@@ -144,6 +153,12 @@ public class ReqOutputRecordModelProjection
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqOutputRecordModelProjection value) {
+    super.resolve(name, value);
+    fieldProjections = value.fieldProjections();
   }
 
   @Override

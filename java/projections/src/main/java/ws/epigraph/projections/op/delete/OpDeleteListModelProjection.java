@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
@@ -40,7 +41,7 @@ public class OpDeleteListModelProjection
     ListTypeApi
     > {
 
-  private final @NotNull OpDeleteVarProjection itemsProjection;
+  private /*final*/ @Nullable OpDeleteVarProjection itemsProjection;
 
   public OpDeleteListModelProjection(
       @NotNull ListTypeApi model,
@@ -53,8 +54,23 @@ public class OpDeleteListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
+  public OpDeleteListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+    this.itemsProjection = null;
+  }
+
   @Override
-  public @NotNull OpDeleteVarProjection itemsProjection() { return itemsProjection; }
+  public @NotNull OpDeleteVarProjection itemsProjection() {
+    assert isResolved();
+    assert itemsProjection != null;
+    return itemsProjection;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteListModelProjection value) {
+    super.resolve(name, value);
+    this.itemsProjection = value.itemsProjection();
+  }
 
   @Override
   public boolean equals(Object o) {

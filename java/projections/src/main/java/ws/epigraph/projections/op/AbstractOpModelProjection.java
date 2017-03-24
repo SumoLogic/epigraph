@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
@@ -37,7 +38,8 @@ public abstract class AbstractOpModelProjection<
     SMP extends AbstractOpModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
     extends AbstractModelProjection<MP, SMP, M> {
-  protected final @NotNull OpParams params;
+
+  protected /*final*/ @NotNull OpParams params;
 
   protected AbstractOpModelProjection(
       final @NotNull M model,
@@ -48,6 +50,11 @@ public abstract class AbstractOpModelProjection<
       final @NotNull TextLocation location) {
     super(model, metaProjection, annotations, tails, location);
     this.params = params;
+  }
+
+  protected AbstractOpModelProjection(@NotNull M model, @NotNull TextLocation location) {
+    super(model, location);
+    params = OpParams.EMPTY;
   }
 
   public @NotNull OpParams params() { return params; }
@@ -85,6 +92,12 @@ public abstract class AbstractOpModelProjection<
       @Nullable List<SMP> mergedTails) {
 
     throw new RuntimeException("not implemented"); // todo
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+    super.resolve(name, value);
+    this.params = value.params();
   }
 
   @Override

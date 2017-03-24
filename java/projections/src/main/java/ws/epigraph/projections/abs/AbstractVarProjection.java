@@ -59,8 +59,8 @@ public abstract class AbstractVarProjection<
       boolean parenthesized,
       @Nullable List<VP> polymorphicTails,
       @NotNull TextLocation location) {
+
     this.type = type;
-    this.name = null;
     this.tagProjections = tagProjections;
     this.parenthesized = parenthesized;
     this.polymorphicTails = polymorphicTails;

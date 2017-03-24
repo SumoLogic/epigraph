@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,5 +40,11 @@ public class ReqUpdatePrimitiveModelProjection
       @Nullable List<ReqUpdatePrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, true, params, annotations, tails, location);
+  }
+
+  protected ReqUpdatePrimitiveModelProjection(
+      final @NotNull PrimitiveTypeApi model,
+      final @NotNull TextLocation location) {
+    super(model, location);
   }
 }

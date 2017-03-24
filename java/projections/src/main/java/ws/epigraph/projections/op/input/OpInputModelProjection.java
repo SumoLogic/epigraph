@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
@@ -38,8 +39,8 @@ public abstract class OpInputModelProjection<
     D extends GDatum>
     extends AbstractOpModelProjection<MP, SMP, M> {
 
-  protected final boolean required;
-  protected final @Nullable D defaultValue;
+  protected /*final*/ boolean required;
+  protected /*final*/ @Nullable D defaultValue;
 
   protected OpInputModelProjection(
       @NotNull M model,
@@ -56,9 +57,21 @@ public abstract class OpInputModelProjection<
     this.defaultValue = defaultValue;
   }
 
+  protected OpInputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
   public boolean required() { return required; }
 
   public @Nullable D defaultValue() { return defaultValue; }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+    super.resolve(name, value);
+    this.required = value.required();
+    this.defaultValue = (D) value.defaultValue();
+  }
 
   @Override
   public boolean equals(Object o) {

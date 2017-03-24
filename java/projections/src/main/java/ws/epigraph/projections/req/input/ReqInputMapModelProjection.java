@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.projections.req.input;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
@@ -40,8 +41,8 @@ public class ReqInputMapModelProjection
     MapTypeApi
     > {
 
-  private final @Nullable List<ReqInputKeyProjection> keys;
-  private final @NotNull ReqInputVarProjection valuesProjection;
+  private /*final*/ @Nullable List<ReqInputKeyProjection> keys;
+  private /*final @NotNull*/ @Nullable ReqInputVarProjection valuesProjection;
 
   public ReqInputMapModelProjection(
       @NotNull MapTypeApi model,
@@ -56,10 +57,28 @@ public class ReqInputMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  @Override
-  public @NotNull ReqInputVarProjection itemsProjection() { return valuesProjection; }
+  public ReqInputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
 
-  public @Nullable List<ReqInputKeyProjection> keys() { return keys; }
+  @Override
+  public @NotNull ReqInputVarProjection itemsProjection() {
+    assert isResolved();
+    assert valuesProjection != null;
+    return valuesProjection;
+  }
+
+  public @Nullable List<ReqInputKeyProjection> keys() {
+    assert isResolved();
+    return keys;
+  }
+
+  @Override
+  public void resolve(final @NotNull Qn name, final @NotNull ReqInputMapModelProjection value) {
+    super.resolve(name, value);
+    this.keys = value.keys();
+    this.valuesProjection = value.itemsProjection();
+  }
 
   @Override
   public boolean equals(Object o) {
