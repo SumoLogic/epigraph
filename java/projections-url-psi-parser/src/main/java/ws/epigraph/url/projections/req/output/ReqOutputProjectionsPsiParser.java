@@ -97,7 +97,7 @@ public final class ReqOutputProjectionsPsiParser {
         );
 
       final ReqOutputVarProjection reference = context.varReferenceContext()
-          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
           parseUnnamedOrRefTrunkVarProjection(
@@ -110,7 +110,7 @@ public final class ReqOutputProjectionsPsiParser {
           );
 
       context.varReferenceContext()
-          .resolve(
+          .resolveVar(
               projectionName,
               stepsAndProjection.projection(),
               EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
@@ -252,7 +252,7 @@ public final class ReqOutputProjectionsPsiParser {
     try {
       return new StepsAndProjection<>(
           steps,
-          new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
+          new ReqOutputVarProjection(type, tagProjections, parenthesized, tails, EpigraphPsiUtil.getLocation(psi))
       );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, context);
@@ -353,7 +353,7 @@ public final class ReqOutputProjectionsPsiParser {
         );
 
       final ReqOutputVarProjection reference = context.varReferenceContext()
-          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = parseUnnamedOrRefComaVarProjection(
           dataType,
@@ -365,7 +365,7 @@ public final class ReqOutputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(
+          .resolveVar(
               projectionName,
               stepsAndProjection.projection(),
               EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
@@ -438,7 +438,7 @@ public final class ReqOutputProjectionsPsiParser {
       return new StepsAndProjection<>(
           0,
           context.varReferenceContext()
-              .reference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi))
+              .varReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi))
       );
     }
 
@@ -519,7 +519,7 @@ public final class ReqOutputProjectionsPsiParser {
     try {
       return new StepsAndProjection<>(
           0,
-          new ReqOutputVarProjection(type, tagProjections, tails, parenthesized, EpigraphPsiUtil.getLocation(psi))
+          new ReqOutputVarProjection(type, tagProjections, parenthesized, tails, EpigraphPsiUtil.getLocation(psi))
       );
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, context);
@@ -729,8 +729,7 @@ public final class ReqOutputProjectionsPsiParser {
     return new ReqOutputVarProjection(
         type,
         tagProjections,
-        null,
-        op.parenthesized() || tagProjections.size() != 1,
+        op.parenthesized() || tagProjections.size() != 1, null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

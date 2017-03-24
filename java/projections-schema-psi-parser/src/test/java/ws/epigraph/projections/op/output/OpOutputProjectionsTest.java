@@ -168,11 +168,12 @@ public class OpOutputProjectionsTest {
     // todo add to other parser tests too
     OpOutputVarProjection personProjection = testParsingVarProjection(":id");
 
-    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
-    referenceContext.reference(Person.type, "ref", false, TextLocation.UNKNOWN);
-
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
-    referenceContext.resolve("ref", personProjection, TextLocation.UNKNOWN, ppc);
+
+    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
+
+    referenceContext.resolveVar("ref", personProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {
@@ -182,7 +183,7 @@ public class OpOutputProjectionsTest {
       }
 
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext() {
+      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -196,16 +197,17 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection paginationProjection =
         testParsingVarProjection(new DataType(PaginationInfo.type, null), "()", "");
 
-    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
-    referenceContext.reference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
-
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
-    referenceContext.resolve("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
+
+    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
+
+    referenceContext.resolveVar("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext() {
+      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -556,8 +558,8 @@ public class OpOutputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext = config.inputReferenceContext();
-      OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext();
+      OpInputReferenceContext inputReferenceContext = config.inputReferenceContext(context);
+      OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext(context);
 
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);
@@ -572,8 +574,8 @@ public class OpOutputProjectionsTest {
           outputPsiProcessingContext
       );
 
-      outputReferenceContext.ensureAllReferencesResolved(context);
-      inputReferenceContext.ensureAllReferencesResolved(context);
+      outputReferenceContext.ensureAllReferencesResolved();
+      inputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -604,12 +606,12 @@ public class OpOutputProjectionsTest {
       );
     }
 
-    @NotNull OpInputReferenceContext inputReferenceContext() {
-      return new OpInputReferenceContext(Qn.EMPTY, null);
+    @NotNull OpInputReferenceContext inputReferenceContext(PsiProcessingContext ctx) {
+      return new OpInputReferenceContext(Qn.EMPTY, null, ctx);
     }
 
-    @NotNull OpOutputReferenceContext outputReferenceContext() {
-      return new OpOutputReferenceContext(Qn.EMPTY, null);
+    @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      return new OpOutputReferenceContext(Qn.EMPTY, null, ctx);
     }
   }
 

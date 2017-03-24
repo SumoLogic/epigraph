@@ -207,7 +207,7 @@ public class OpInputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext varReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext varReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(context, varReferenceContext);
 
       OpInputVarProjection vp =  OpInputProjectionsPsiParser.parseVarProjection(
@@ -217,7 +217,7 @@ public class OpInputProjectionsTest {
           inputPsiProcessingContext
       );
 
-      varReferenceContext.ensureAllReferencesResolved(context);
+      varReferenceContext.ensureAllReferencesResolved();
       return vp;
     });
 

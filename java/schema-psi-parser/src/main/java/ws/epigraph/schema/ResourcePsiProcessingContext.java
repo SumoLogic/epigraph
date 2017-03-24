@@ -48,17 +48,20 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
     inputReferenceContext = new OpInputReferenceContext(
         namespaces.inputProjectionsNamespace(resourceName),
-        null
+        null,
+        psiProcessingContext
     );
 
     outputReferenceContext = new OpOutputReferenceContext(
         namespaces.outputProjectionsNamespace(resourceName),
-        null
+        null,
+        psiProcessingContext
     );
 
     deleteReferenceContext = new OpDeleteReferenceContext(
         namespaces.deleteProjectionsNamespace(resourceName),
-        null
+        null,
+        psiProcessingContext
     );
   }
 

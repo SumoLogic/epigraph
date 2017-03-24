@@ -22,19 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.delete.*;
+import ws.epigraph.projections.op.input.*;
+import ws.epigraph.projections.op.output.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -183,9 +175,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context.addException(e);
       }
 
-    resourcePsiProcessingContext.inputReferenceContext().ensureAllReferencesResolved(context);
-    resourcePsiProcessingContext.outputReferenceContext().ensureAllReferencesResolved(context);
-    resourcePsiProcessingContext.deleteReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.inputReferenceContext().ensureAllReferencesResolved();
+    resourcePsiProcessingContext.outputReferenceContext().ensureAllReferencesResolved();
+    resourcePsiProcessingContext.deleteReferenceContext().ensureAllReferencesResolved();
 
     return new ResourceDeclaration(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
@@ -231,7 +223,8 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context.outputReferenceContext(),
         projectionName -> new OpOutputReferenceContext(
             new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName),
-            context.outputReferenceContext()
+            context.outputReferenceContext(),
+            context
         ),
         context,
         OutputUnnamedVarReferenceParser.INSTANCE
@@ -256,7 +249,8 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context.inputReferenceContext(),
         projectionName -> new OpInputReferenceContext(
             new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName),
-            context.inputReferenceContext()
+            context.inputReferenceContext(),
+            context
         ),
         context,
         InputUnnamedVarReferenceParser.INSTANCE
@@ -281,7 +275,8 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context.deleteReferenceContext(),
         projectionName -> new OpDeleteReferenceContext(
             new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName),
-            context.deleteReferenceContext()
+            context.deleteReferenceContext(),
+            context
         ),
         context,
         DeleteUnnamedVarReferenceParser.INSTANCE
@@ -290,8 +285,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private static <
-      VP extends GenVarProjection<VP, ?, ?>,
-      RC extends ReferenceContext<VP>,
+      VP extends GenVarProjection<VP, ?, MP>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
+      RC extends ReferenceContext<VP, MP>,
       UP extends PsiElement>
   void parseGenProjectionDef(
       @NotNull String projectionKind,
@@ -303,7 +299,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       @NotNull RC referenceContext,
       @NotNull Function<String, RC> innerReferenceContextFactory,
       @NotNull ResourcePsiProcessingContext context,
-      @NotNull UnnamedVarParser<VP, RC, UP> psiParser) throws PsiProcessingException {
+      @NotNull UnnamedVarParser<VP, MP, RC, UP> psiParser) throws PsiProcessingException {
 
     String projectionKindUp = projectionKind.substring(0, 1).toUpperCase() + projectionKind.substring(1);
 
@@ -337,7 +333,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
             );
           else {
             //final VP reference =
-            referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
+            referenceContext.varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
 
             final RC innerReferenceContext = innerReferenceContextFactory.apply(projectionName);
             final VP value = psiParser.parse(
@@ -347,9 +343,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
                 innerReferenceContext,
                 context
             );
-            innerReferenceContext.ensureAllReferencesResolved(context);
+            innerReferenceContext.ensureAllReferencesResolved();
 
-            referenceContext.resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
+            referenceContext.resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
           }
         }
       }
@@ -357,8 +353,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
   }
 
   private interface UnnamedVarParser<
-      VP extends GenVarProjection<VP, ?, ?>,
-      RC extends ReferenceContext<VP>,
+      VP extends GenVarProjection<VP, ?, MP>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
+      RC extends ReferenceContext<VP, MP>,
       UP extends PsiElement
       > {
     VP parse(
@@ -370,8 +367,11 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     ) throws PsiProcessingException;
   }
 
-  private static class OutputUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpOutputVarProjection, OpOutputReferenceContext, SchemaOpOutputUnnamedOrRefVarProjection> {
+  private static class OutputUnnamedVarReferenceParser implements UnnamedVarParser<
+      OpOutputVarProjection,
+      OpOutputModelProjection<?, ?, ?>,
+      OpOutputReferenceContext,
+      SchemaOpOutputUnnamedOrRefVarProjection> {
 
     static final OutputUnnamedVarReferenceParser INSTANCE = new OutputUnnamedVarReferenceParser();
 
@@ -402,8 +402,11 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     }
   }
 
-  private static class InputUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpInputVarProjection, OpInputReferenceContext, SchemaOpInputUnnamedOrRefVarProjection> {
+  private static class InputUnnamedVarReferenceParser implements UnnamedVarParser<
+      OpInputVarProjection,
+      OpInputModelProjection<?, ?, ?, ?>,
+      OpInputReferenceContext,
+      SchemaOpInputUnnamedOrRefVarProjection> {
 
     static final InputUnnamedVarReferenceParser INSTANCE = new InputUnnamedVarReferenceParser();
 
@@ -429,8 +432,11 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     }
   }
 
-  private static class DeleteUnnamedVarReferenceParser
-      implements UnnamedVarParser<OpDeleteVarProjection, OpDeleteReferenceContext, SchemaOpDeleteUnnamedOrRefVarProjection> {
+  private static class DeleteUnnamedVarReferenceParser implements UnnamedVarParser<
+      OpDeleteVarProjection,
+      OpDeleteModelProjection<?, ?, ?>,
+      OpDeleteReferenceContext,
+      SchemaOpDeleteUnnamedOrRefVarProjection> {
 
     static final DeleteUnnamedVarReferenceParser INSTANCE = new DeleteUnnamedVarReferenceParser();
 

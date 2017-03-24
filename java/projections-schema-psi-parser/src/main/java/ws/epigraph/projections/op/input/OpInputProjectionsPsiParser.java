@@ -92,7 +92,7 @@ public final class OpInputProjectionsPsiParser {
         );
 
       final OpInputVarProjection reference = context.varReferenceContext()
-          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpInputVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -102,7 +102,7 @@ public final class OpInputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
       return reference;
     }
@@ -139,7 +139,7 @@ public final class OpInputProjectionsPsiParser {
 
       final String projectionName = varProjectionRefPsi.getCanonicalName();
       return context.varReferenceContext()
-          .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
 
     }
   }

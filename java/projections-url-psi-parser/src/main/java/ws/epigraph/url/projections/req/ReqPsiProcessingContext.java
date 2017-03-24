@@ -30,7 +30,7 @@ import java.util.*;
  */
 public abstract class ReqPsiProcessingContext<
     OVP extends GenVarProjection<OVP, ?, ?>,
-    VRC extends ReferenceContext<?>
+    VRC extends ReferenceContext<?, ?>
     > extends DelegatingPsiProcessingContext {
 
   private final @NotNull VRC varReferenceContext;
@@ -66,7 +66,7 @@ public abstract class ReqPsiProcessingContext<
   public void addUnverifiedRefOp(@NotNull String name, OVP op) {
     Queue<OVP> ops = unverifiedRefOps(name);
     if (ops == null) {
-      ops = new ArrayDeque<>(); {};
+      ops = new ArrayDeque<>();
       unverifiedRefOps.put(name, ops);
     }
     ops.add(op);

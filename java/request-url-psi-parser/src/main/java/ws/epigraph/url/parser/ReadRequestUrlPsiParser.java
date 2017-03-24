@@ -104,7 +104,7 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull ReqOutputVarProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
-    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -138,13 +138,12 @@ public final class ReadRequestUrlPsiParser {
       varProjection = new ReqOutputVarProjection(
           pathTipType.type(),
           Collections.emptyMap(),
-          null,
-          false,
+          false, null,
           TextLocation.UNKNOWN
       );
       fieldLocation = TextLocation.UNKNOWN;
     }
-    reqOutputReferenceContext.ensureAllReferencesResolved(context);
+    reqOutputReferenceContext.ensureAllReferencesResolved();
 
     return new ReadRequestUrl(
         psi.getQid().getCanonicalName(),
@@ -175,7 +174,7 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
-    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -188,7 +187,7 @@ public final class ReadRequestUrlPsiParser {
             reqOutputPsiProcessingContext
         );
 
-    reqOutputReferenceContext.ensureAllReferencesResolved(context);
+    reqOutputReferenceContext.ensureAllReferencesResolved();
 
     int pathSteps = stepsAndProjection.pathSteps();
 

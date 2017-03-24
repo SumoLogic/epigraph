@@ -395,8 +395,7 @@ public class ReqOutputProjectionsParserTest {
                 TextLocation.UNKNOWN
             )
         ),
-        null,
-        varProjection.parenthesized(),
+        varProjection.parenthesized(), null,
         TextLocation.UNKNOWN
     );
     String actual = printReqOutputVarProjection(normalizedVar, 0);

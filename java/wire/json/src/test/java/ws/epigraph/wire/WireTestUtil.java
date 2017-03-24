@@ -62,8 +62,8 @@ public final class WireTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
-      OpOutputReferenceContext outputReferenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
+      OpOutputReferenceContext outputReferenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);
@@ -77,8 +77,8 @@ public final class WireTestUtil {
           outputPsiProcessingContext
       );
 
-      outputReferenceContext.ensureAllReferencesResolved(context);
-      inputReferenceContext.ensureAllReferencesResolved(context);
+      outputReferenceContext.ensureAllReferencesResolved();
+      inputReferenceContext.ensureAllReferencesResolved();
       return vp;
 
     });
@@ -101,7 +101,7 @@ public final class WireTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqOutputReferenceContext referenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+      ReqOutputReferenceContext referenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
       StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
@@ -113,7 +113,7 @@ public final class WireTestUtil {
           psiProcessingContext
       );
 
-      referenceContext.ensureAllReferencesResolved(context);
+      referenceContext.ensureAllReferencesResolved();
 
       return res;
     });

@@ -154,7 +154,7 @@ public class OpOutputPathTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);
 
@@ -163,7 +163,7 @@ public class OpOutputPathTest {
 
       OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, pathPsiProcessingContext);
 
-      inputReferenceContext.ensureAllReferencesResolved(context);
+      inputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     };

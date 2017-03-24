@@ -232,8 +232,8 @@ public class OpDeleteProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
-      OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
+      OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);
@@ -247,8 +247,8 @@ public class OpDeleteProjectionsTest {
           deletePsiProcessingContext
       );
 
-      deleteReferenceContext.ensureAllReferencesResolved(context);
-      inputReferenceContext.ensureAllReferencesResolved(context);
+      deleteReferenceContext.ensureAllReferencesResolved();
+      inputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });

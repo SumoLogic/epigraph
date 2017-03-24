@@ -104,7 +104,7 @@ public final class DeleteRequestUrlPsiParser {
 
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
+    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null, context);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
 
@@ -122,7 +122,7 @@ public final class DeleteRequestUrlPsiParser {
         requestParams
     );
 
-    reqDeleteReferenceContext.ensureAllReferencesResolved(context);
+    reqDeleteReferenceContext.ensureAllReferencesResolved();
 
     return res;
   }
@@ -149,7 +149,7 @@ public final class DeleteRequestUrlPsiParser {
             context
         );
 
-    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
+    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null, context);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
 
@@ -167,7 +167,7 @@ public final class DeleteRequestUrlPsiParser {
         requestParams
     );
 
-    reqDeleteReferenceContext.ensureAllReferencesResolved(context);
+    reqDeleteReferenceContext.ensureAllReferencesResolved();
 
     return res;
   }

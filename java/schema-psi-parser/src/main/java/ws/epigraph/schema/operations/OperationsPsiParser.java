@@ -191,7 +191,7 @@ public final class OperationsPsiParser {
         resolver,
         opInputPsiProcessingContext
     );
-    referenceContext.ensureAllReferencesResolved(context);
+    referenceContext.ensureAllReferencesResolved();
 
     return new CreateOperationDeclaration(
         operationName,
@@ -268,7 +268,7 @@ public final class OperationsPsiParser {
         resolver,
         psiProcessingContext
     );
-    referenceContext.ensureAllReferencesResolved(context);
+    referenceContext.ensureAllReferencesResolved();
 
     return new UpdateOperationDeclaration(
         operationName,
@@ -334,7 +334,8 @@ public final class OperationsPsiParser {
                 OperationKind.DELETE,
                 operationName
             ),
-        context.deleteReferenceContext()
+        context.deleteReferenceContext(),
+        context
     );
 
     OpInputReferenceContext inputReferenceContext =
@@ -354,8 +355,8 @@ public final class OperationsPsiParser {
         resolver,
         psiProcessingContext
     );
-    inputReferenceContext.ensureAllReferencesResolved(context);
-    deleteReferenceContext.ensureAllReferencesResolved(context);
+    inputReferenceContext.ensureAllReferencesResolved();
+    deleteReferenceContext.ensureAllReferencesResolved();
 
     return new DeleteOperationDeclaration(
         operationName,
@@ -445,7 +446,7 @@ public final class OperationsPsiParser {
             resolver,
             psiProcessingContext
         );
-    referenceContext.ensureAllReferencesResolved(context);
+    referenceContext.ensureAllReferencesResolved();
 
     return new CustomOperationDeclaration(
         method,
@@ -488,7 +489,8 @@ public final class OperationsPsiParser {
                 operationKind,
                 operationName
             ),
-        context.outputReferenceContext()
+        context.outputReferenceContext(),
+        context
     );
     OpInputReferenceContext inputReferenceContext =
         createInputReferenceContext(operationKind, operationName, context);
@@ -524,8 +526,8 @@ public final class OperationsPsiParser {
           psiProcessingContext
       );
     }
-    inputReferenceContext.ensureAllReferencesResolved(context);
-    outputReferenceContext.ensureAllReferencesResolved(context);
+    inputReferenceContext.ensureAllReferencesResolved();
+    outputReferenceContext.ensureAllReferencesResolved();
 
     return fieldProjection;
   }
@@ -638,7 +640,7 @@ public final class OperationsPsiParser {
           new OpPathPsiProcessingContext(context, inputPsiProcessingContext);
 
       final OpFieldPath fieldPath = OpPathPsiParser.parseFieldPath(type, varPathPsi, resolver, psiProcessingContext);
-      inputReferenceContext.ensureAllReferencesResolved(context);
+      inputReferenceContext.ensureAllReferencesResolved();
 
       return fieldPath;
     }
@@ -663,7 +665,8 @@ public final class OperationsPsiParser {
                 context.resourceName(),
                 operationKind,
                 operationName
-            ), context.inputReferenceContext()
+            ), context.inputReferenceContext(),
+        context
     );
 
   }

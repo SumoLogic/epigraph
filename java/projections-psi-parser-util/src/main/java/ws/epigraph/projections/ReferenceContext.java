@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.TypeApi;
 
@@ -31,63 +33,91 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
-public abstract class ReferenceContext<VP extends GenProjectionReference<VP>> {
+public abstract class ReferenceContext<
+    VP extends GenVarProjection<VP, ?, MP>,
+    MP extends GenModelProjection<?, ?, ?, ?>
+    > {
+
   @NotNull
   private final Qn referencesNamespace;
+  @NotNull
+  private final PsiProcessingContext psiProcessingContext;
 
   @Nullable
-  private final ReferenceContext<VP> parent;
-  private final Map<String, VP> references = new HashMap<>();
+  private final ReferenceContext<VP, MP> parent;
+  private final Map<String, GenProjectionReference<?>> references = new HashMap<>();
   private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
   protected ReferenceContext(
       @NotNull final Qn referencesNamespace,
-      @Nullable final ReferenceContext<VP> parent) {
+      @Nullable final ReferenceContext<VP, MP> parent,
+      @NotNull PsiProcessingContext context) {
 
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;
+    psiProcessingContext = context;
   }
 
   @NotNull
-  public VP reference(@NotNull TypeApi type, @NotNull String name, boolean useParent, @NotNull TextLocation location) {
-    VP ref = useParent ? lookupReference(name) : references.get(name);
+  public VP varReference(
+      @NotNull TypeApi type,
+      @NotNull String name,
+      boolean useParent,
+      @NotNull TextLocation location) {
+    VP ref = lookupVarReference(name, useParent);
 
     if (ref == null) {
-      ref = newReference(type, location);
+      ref = newVarReference(type, location);
       references.put(name, ref);
       return ref;
     } else return ref;
   }
 
   public boolean isResolved(@NotNull String name) {
-    final VP reference = lookupReference(name);
+    final GenProjectionReference<?> reference = lookupReference(name, true);
     return reference != null && reference.isResolved();
   }
 
   @Nullable
-  protected VP lookupReference(@NotNull String name) {
-    VP ref = references.get(name);
+  protected VP lookupVarReference(@NotNull String name, boolean useParent) {
+    final GenProjectionReference<?> reference = lookupReference(name, useParent);
+
+    if (reference == null)
+      return null;
+
+    else if (reference instanceof GenVarProjection)
+      return (VP) reference;
+
+    else if (reference instanceof GenModelProjection)
+      return toSelfVar((MP) reference);
+
+    throw new RuntimeException(String.format("Unreachable: '%s'", name));
+  }
+
+  @Nullable
+  protected GenProjectionReference<?> lookupReference(@NotNull String name, boolean useParent) {
+    GenProjectionReference<?> ref = references.get(name);
 
     if (ref != null) return ref;
-    if (parent == null) return null;
-    else return parent.lookupReference(name);
+    if (!useParent || parent == null) return null;
+    else return parent.lookupReference(name, true);
   }
 
   @NotNull
-  protected abstract VP newReference(@NotNull TypeApi type, @NotNull TextLocation location);
+  protected abstract VP newVarReference(@NotNull TypeApi type, @NotNull TextLocation location);
 
-  public void resolve(
+  public <R extends GenProjectionReference<R>> void resolveVar(
       @NotNull final String name,
       @NotNull final VP value,
       @NotNull final TextLocation location,
       @NotNull final PsiProcessingContext context) {
 
     value.runOnResolved(() -> {
-      VP ref = references.get(name);
+      R ref = (R) references.get(name);
 
       if (ref == null) {
 
-        if (parent != null && parent.lookupReference(name) != null) {
+        if (parent != null && parent.lookupReference(name, true) != null) {
 
           // a = c
           //    b = a
@@ -105,23 +135,28 @@ public abstract class ReferenceContext<VP extends GenProjectionReference<VP>> {
         );
       } else if (!ref.type().isAssignableFrom(value.type())) {
         context.addError(
-            String.format("Projection '%s' type '%s' is not compatible with reference type '%s'", name, value.type().name(), ref.type().name()),
+            String.format(
+                "Projection '%s' type '%s' is not compatible with reference type '%s'",
+                name,
+                value.type().name(),
+                ref.type().name()
+            ),
             location
         );
       } else {
         resolvedAt.put(name, location);
-        ref.resolve(referencesNamespace.append(name), value);
+        ref.resolve(referencesNamespace.append(name), (R) value);
       }
 
     });
 
   }
 
-  public void ensureAllReferencesResolved(@NotNull PsiProcessingContext context) {
-    for (final Map.Entry<String, VP> entry : references.entrySet()) {
+  public void ensureAllReferencesResolved() {
+    for (final Map.Entry<String, GenProjectionReference<?>> entry : references.entrySet()) {
       String name = entry.getKey();
       assert name != null;
-      final VP vp = entry.getValue();
+      final GenProjectionReference<?> vp = entry.getValue();
 
       if (!vp.isResolved()) {
         // delegate it to parent if possible:
@@ -130,14 +165,14 @@ public abstract class ReferenceContext<VP extends GenProjectionReference<VP>> {
         // a = 1
 
         if (parent == null) {
-          context.addError(String.format("Projection '%s' is not defined", name), vp.location());
+          psiProcessingContext.addError(String.format("Projection '%s' is not defined", name), vp.location());
         } else {
-          final VP parentRef = parent.references.get(name);
+          final GenProjectionReference<?> parentRef = parent.references.get(name);
           if (parentRef == null) {
             parent.references.put(name, vp);
           } else if (parentRef != vp) {
             //?? can't happen
-            context.addError(
+            psiProcessingContext.addError(
                 String.format(
                     "Internal error: different references to projection '%s' in this and parent context",
                     name
@@ -149,5 +184,7 @@ public abstract class ReferenceContext<VP extends GenProjectionReference<VP>> {
       }
     }
   }
+
+  protected abstract @NotNull VP toSelfVar(@NotNull MP mRef);
 
 }

@@ -19,24 +19,48 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputReferenceContext extends ReferenceContext<OpInputVarProjection> {
+public class OpInputReferenceContext
+    extends ReferenceContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> {
 
   public OpInputReferenceContext(
-      final Qn referencesNamespace,
-      final ReferenceContext<OpInputVarProjection> parent) {
-    super(referencesNamespace, parent);
+      final @NotNull Qn referencesNamespace,
+      final ReferenceContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> parent,
+      final @NotNull PsiProcessingContext context) {
+    super(referencesNamespace, parent, context);
   }
 
-  @NotNull
   @Override
-  protected OpInputVarProjection newReference(
-      @NotNull final TypeApi type, @NotNull final TextLocation location) {
+  protected @NotNull OpInputVarProjection newVarReference(
+      final @NotNull TypeApi type,
+      final @NotNull TextLocation location) {
     return new OpInputVarProjection(type, location);
+  }
+
+  @Override
+  protected @NotNull OpInputVarProjection toSelfVar(final @NotNull OpInputModelProjection<?, ?, ?, ?> mRef) {
+    final DatumTypeApi modelType = mRef.type();
+    return new OpInputVarProjection(
+        modelType,
+        ProjectionUtils.singletonLinkedHashMap(
+            modelType.self().name(),
+            new OpInputTagProjectionEntry(
+                modelType.self(),
+                mRef,
+                TextLocation.UNKNOWN
+            )
+        ),
+        false,
+        null,
+        TextLocation.UNKNOWN
+    );
   }
 }

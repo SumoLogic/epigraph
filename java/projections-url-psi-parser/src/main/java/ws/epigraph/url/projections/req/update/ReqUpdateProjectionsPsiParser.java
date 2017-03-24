@@ -90,7 +90,7 @@ public final class ReqUpdateProjectionsPsiParser {
         );
 
       final ReqUpdateVarProjection reference = context.varReferenceContext()
-          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final ReqUpdateVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -101,7 +101,7 @@ public final class ReqUpdateProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
       final Queue<OpInputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
       while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
@@ -161,7 +161,7 @@ public final class ReqUpdateProjectionsPsiParser {
         context.addUnverifiedRefOp(referenceName, op);
 
       return context.varReferenceContext()
-          .reference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
     }
 
   }

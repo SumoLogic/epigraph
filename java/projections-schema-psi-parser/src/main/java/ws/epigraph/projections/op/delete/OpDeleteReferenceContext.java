@@ -20,27 +20,50 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpDeleteReferenceContext extends ReferenceContext<OpDeleteVarProjection> {
+public class OpDeleteReferenceContext
+    extends ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> {
 
   public OpDeleteReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable ReferenceContext<OpDeleteVarProjection> parent) {
-    super(referencesNamespace, parent);
+      final @Nullable ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> parent,
+      final @NotNull PsiProcessingContext context) {
+    super(referencesNamespace, parent, context);
   }
 
-  @NotNull
   @Override
-  protected OpDeleteVarProjection newReference(
-      @NotNull final TypeApi type,
-      @NotNull final TextLocation location) {
+  protected @NotNull OpDeleteVarProjection newVarReference(
+      final @NotNull TypeApi type,
+      final @NotNull TextLocation location) {
 
     return new OpDeleteVarProjection(type, location);
   }
 
+  @Override
+  protected @NotNull OpDeleteVarProjection toSelfVar(final @NotNull OpDeleteModelProjection<?, ?, ?> mRef) {
+    final DatumTypeApi modelType = mRef.type();
+    return new OpDeleteVarProjection(
+        modelType,
+        false, // ???
+        ProjectionUtils.singletonLinkedHashMap(
+            modelType.self().name(),
+            new OpDeleteTagProjectionEntry(
+                modelType.self(),
+                mRef,
+                TextLocation.UNKNOWN
+            )
+        ),
+        false,
+        null,
+        TextLocation.UNKNOWN
+    );
+  }
 }

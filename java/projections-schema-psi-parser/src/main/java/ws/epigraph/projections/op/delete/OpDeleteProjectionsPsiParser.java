@@ -88,7 +88,7 @@ public final class OpDeleteProjectionsPsiParser {
         );
 
       final OpDeleteVarProjection reference = context.varReferenceContext()
-          .reference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -98,7 +98,7 @@ public final class OpDeleteProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
       return reference;
     }
@@ -135,7 +135,7 @@ public final class OpDeleteProjectionsPsiParser {
 
       final String projectionName = varProjectionRefPsi.getCanonicalName();
       return context.varReferenceContext()
-          .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
 
     }
   }

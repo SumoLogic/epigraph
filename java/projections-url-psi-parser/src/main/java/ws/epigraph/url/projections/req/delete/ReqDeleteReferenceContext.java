@@ -20,26 +20,52 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.req.delete.ReqDeleteModelProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqDeleteReferenceContext extends ReferenceContext<ReqDeleteVarProjection> {
+public class ReqDeleteReferenceContext
+    extends ReferenceContext<ReqDeleteVarProjection, ReqDeleteModelProjection<?, ?, ?>> {
 
   public ReqDeleteReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable ReferenceContext<ReqDeleteVarProjection> parent) {
-    super(referencesNamespace, parent);
+      final @Nullable ReferenceContext<ReqDeleteVarProjection, ReqDeleteModelProjection<?, ?, ?>> parent,
+      final @NotNull PsiProcessingContext context) {
+    super(referencesNamespace, parent, context);
   }
 
   @Override
-  protected @NotNull ReqDeleteVarProjection newReference(
+  protected @NotNull ReqDeleteVarProjection newVarReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
 
     return new ReqDeleteVarProjection(type, location);
+  }
+
+  @Override
+  protected @NotNull ReqDeleteVarProjection toSelfVar(final @NotNull ReqDeleteModelProjection<?, ?, ?> mRef) {
+    final DatumTypeApi modelType = mRef.type();
+    return new ReqDeleteVarProjection(
+        modelType,
+        ProjectionUtils.singletonLinkedHashMap(
+            modelType.self().name(),
+            new ReqDeleteTagProjectionEntry(
+                modelType.self(),
+                mRef,
+                TextLocation.UNKNOWN
+            )
+        ),
+        false,
+        null,
+        TextLocation.UNKNOWN
+    );
   }
 }

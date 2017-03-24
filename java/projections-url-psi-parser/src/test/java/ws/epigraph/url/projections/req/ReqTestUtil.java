@@ -92,8 +92,8 @@ public final class ReqTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
-      OpOutputReferenceContext opOutputReferenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
+      OpOutputReferenceContext opOutputReferenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, opInputReferenceContext);
@@ -110,8 +110,8 @@ public final class ReqTestUtil {
           opOutputPsiProcessingContext
       );
 
-      opOutputReferenceContext.ensureAllReferencesResolved(context);
-      opInputReferenceContext.ensureAllReferencesResolved(context);
+      opOutputReferenceContext.ensureAllReferencesResolved();
+      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -135,7 +135,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+      ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
 
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
@@ -149,7 +149,7 @@ public final class ReqTestUtil {
           reqOutputPsiProcessingContext
       );
 
-      reqOutputReferenceContext.ensureAllReferencesResolved(context);
+      reqOutputReferenceContext.ensureAllReferencesResolved();
 
       return res;
     });
@@ -187,7 +187,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, opInputReferenceContext);
@@ -196,7 +196,7 @@ public final class ReqTestUtil {
 
       OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, opPathPsiProcessingContext);
 
-      opInputReferenceContext.ensureAllReferencesResolved(context);
+      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     };
@@ -221,7 +221,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
+      ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null, context);
       ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
           new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
 
@@ -233,7 +233,7 @@ public final class ReqTestUtil {
           reqUpdatePsiProcessingContext
       );
 
-      reqUpdateReferenceContext.ensureAllReferencesResolved(context);
+      reqUpdateReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -256,7 +256,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
+      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null, context);
 
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
           new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
@@ -269,7 +269,7 @@ public final class ReqTestUtil {
           reqInputPsiProcessingContext
       );
 
-      reqInputReferenceContext.ensureAllReferencesResolved(context);
+      reqInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -292,7 +292,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(context -> {
-      ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null);
+      ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null, context);
 
       ReqDeletePsiProcessingContext reqDeletePsiProcessingContext = new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
       ReqDeleteVarProjection vp = ReqDeleteProjectionsPsiParser.parseVarProjection(
@@ -303,7 +303,7 @@ public final class ReqTestUtil {
           reqDeletePsiProcessingContext
       );
 
-      reqDeleteReferenceContext.ensureAllReferencesResolved(context);
+      reqDeleteReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -325,7 +325,7 @@ public final class ReqTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, opInputReferenceContext);
@@ -337,7 +337,7 @@ public final class ReqTestUtil {
           opInputPsiProcessingContext
       );
 
-      opInputReferenceContext.ensureAllReferencesResolved(context);
+      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -360,8 +360,8 @@ public final class ReqTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpDeleteReferenceContext opDeleteReferenceContext = new OpDeleteReferenceContext(Qn.EMPTY, null);
-      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpDeleteReferenceContext opDeleteReferenceContext = new OpDeleteReferenceContext(Qn.EMPTY, null, context);
+      OpInputReferenceContext opInputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, opInputReferenceContext);
@@ -375,8 +375,8 @@ public final class ReqTestUtil {
           opDeletePsiProcessingContext
       );
 
-      opDeleteReferenceContext.ensureAllReferencesResolved(context);
-      opInputReferenceContext.ensureAllReferencesResolved(context);
+      opDeleteReferenceContext.ensureAllReferencesResolved();
+      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });

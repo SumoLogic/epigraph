@@ -49,7 +49,7 @@ public final class RequestUrlPsiParserUtil {
 
     final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection;
 
-    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -89,7 +89,7 @@ public final class RequestUrlPsiParserUtil {
       );
     }
 
-    reqOutputReferenceContext.ensureAllReferencesResolved(context);
+    reqOutputReferenceContext.ensureAllReferencesResolved();
 
     return stepsAndProjection;
   }

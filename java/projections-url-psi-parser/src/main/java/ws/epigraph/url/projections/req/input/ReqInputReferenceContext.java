@@ -20,26 +20,52 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.req.input.ReqInputModelProjection;
+import ws.epigraph.projections.req.input.ReqInputTagProjectionEntry;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqInputReferenceContext extends ReferenceContext<ReqInputVarProjection> {
+public class ReqInputReferenceContext
+    extends ReferenceContext<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> {
 
   public ReqInputReferenceContext(
       final @NotNull Qn referencesNamespace,
-      final @Nullable ReferenceContext<ReqInputVarProjection> parent) {
-    super(referencesNamespace, parent);
+      final @Nullable ReferenceContext<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> parent,
+      final @NotNull PsiProcessingContext context) {
+    super(referencesNamespace, parent, context);
   }
 
   @Override
-  protected @NotNull ReqInputVarProjection newReference(
+  protected @NotNull ReqInputVarProjection newVarReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
 
     return new ReqInputVarProjection(type, location);
+  }
+
+  @Override
+  protected @NotNull ReqInputVarProjection toSelfVar(final @NotNull ReqInputModelProjection<?, ?, ?> mRef) {
+    final DatumTypeApi modelType = mRef.type();
+    return new ReqInputVarProjection(
+        modelType,
+        ProjectionUtils.singletonLinkedHashMap(
+            modelType.self().name(),
+            new ReqInputTagProjectionEntry(
+                modelType.self(),
+                mRef,
+                TextLocation.UNKNOWN
+            )
+        ),
+        false,
+        null,
+        TextLocation.UNKNOWN
+    );
   }
 }

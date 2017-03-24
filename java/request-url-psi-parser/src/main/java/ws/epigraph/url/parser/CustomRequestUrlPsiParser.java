@@ -165,7 +165,7 @@ public final class CustomRequestUrlPsiParser {
             context
         );
 
-      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
+      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null, context);
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
           new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
 
@@ -178,7 +178,7 @@ public final class CustomRequestUrlPsiParser {
           reqInputPsiProcessingContext
       );
 
-      reqInputReferenceContext.ensureAllReferencesResolved(context);
+      reqInputReferenceContext.ensureAllReferencesResolved();
     }
     return inputProjection;
   }

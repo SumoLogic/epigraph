@@ -38,8 +38,8 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
   public ReqOutputVarProjection(
       @NotNull TypeApi type,
       @NotNull Map<String, ReqOutputTagProjectionEntry> tagProjections,
-      @Nullable List<ReqOutputVarProjection> polymorphicTails,
       boolean parenthesized,
+      @Nullable List<ReqOutputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
 
@@ -62,8 +62,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     return new ReqOutputVarProjection(
         effectiveType,
         mergedTags,
-        mergedTails,
-        mergedParenthesized,
+        mergedParenthesized, mergedTails,
         TextLocation.UNKNOWN
     );
   }
