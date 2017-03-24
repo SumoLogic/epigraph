@@ -22,7 +22,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -168,7 +168,7 @@ public class OpOutputProjectionsTest {
     // todo add to other parser tests too
     OpOutputVarProjection personProjection = testParsingVarProjection(":id");
 
-    final OpOutputVarReferenceContext referenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
     referenceContext.reference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
@@ -182,7 +182,7 @@ public class OpOutputProjectionsTest {
       }
 
       @Override
-      @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
+      @NotNull OpOutputReferenceContext outputReferenceContext() {
         return referenceContext;
       }
     };
@@ -196,7 +196,7 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection paginationProjection =
         testParsingVarProjection(new DataType(PaginationInfo.type, null), "()", "");
 
-    final OpOutputVarReferenceContext referenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
     referenceContext.reference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
@@ -205,7 +205,7 @@ public class OpOutputProjectionsTest {
 
     TestConfig testConfig = new TestConfig() {
       @Override
-      @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
+      @NotNull OpOutputReferenceContext outputReferenceContext() {
         return referenceContext;
       }
     };
@@ -556,14 +556,14 @@ public class OpOutputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputVarReferenceContext inputVarReferenceContext = config.inputVarReferenceContext();
-      OpOutputVarReferenceContext outputVarReferenceContext = config.outputVarReferenceContext();
+      OpInputReferenceContext inputReferenceContext = config.inputReferenceContext();
+      OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext();
 
       OpInputPsiProcessingContext inputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputVarReferenceContext);
+          new OpInputPsiProcessingContext(context, inputReferenceContext);
 
       OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, inputPsiProcessingContext, outputVarReferenceContext);
+          new OpOutputPsiProcessingContext(context, inputPsiProcessingContext, outputReferenceContext);
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           config.dataType(),
@@ -572,8 +572,8 @@ public class OpOutputProjectionsTest {
           outputPsiProcessingContext
       );
 
-      outputVarReferenceContext.ensureAllReferencesResolved(context);
-      inputVarReferenceContext.ensureAllReferencesResolved(context);
+      outputReferenceContext.ensureAllReferencesResolved(context);
+      inputReferenceContext.ensureAllReferencesResolved(context);
 
       return vp;
     });
@@ -604,12 +604,12 @@ public class OpOutputProjectionsTest {
       );
     }
 
-    @NotNull OpInputVarReferenceContext inputVarReferenceContext() {
-      return new OpInputVarReferenceContext(Qn.EMPTY, null);
+    @NotNull OpInputReferenceContext inputReferenceContext() {
+      return new OpInputReferenceContext(Qn.EMPTY, null);
     }
 
-    @NotNull OpOutputVarReferenceContext outputVarReferenceContext() {
-      return new OpOutputVarReferenceContext(Qn.EMPTY, null);
+    @NotNull OpOutputReferenceContext outputReferenceContext() {
+      return new OpOutputReferenceContext(Qn.EMPTY, null);
     }
   }
 

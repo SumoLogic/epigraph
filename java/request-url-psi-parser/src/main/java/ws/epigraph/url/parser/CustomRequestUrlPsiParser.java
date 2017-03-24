@@ -165,9 +165,9 @@ public final class CustomRequestUrlPsiParser {
             context
         );
 
-      ReqInputReferenceContext reqInputVarReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
+      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null);
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
-          new ReqInputPsiProcessingContext(context, reqInputVarReferenceContext);
+          new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
 
       @NotNull DataTypeApi inputDataType = opInputType.dataType();
       inputProjection = ReqInputProjectionsPsiParser.parseFieldProjection(
@@ -178,7 +178,7 @@ public final class CustomRequestUrlPsiParser {
           reqInputPsiProcessingContext
       );
 
-      reqInputVarReferenceContext.ensureAllReferencesResolved(context);
+      reqInputReferenceContext.ensureAllReferencesResolved(context);
     }
     return inputProjection;
   }

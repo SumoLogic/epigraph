@@ -30,9 +30,9 @@ import ws.epigraph.psi.PsiProcessingContext;
 public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext {
   private final @NotNull Qn namespace;
   private final @NotNull String resourceName;
-  private final @NotNull OpInputReferenceContext inputVarReferenceContext;
-  private final @NotNull OpOutputReferenceContext outputVarReferenceContext;
-  private final @NotNull OpDeleteReferenceContext deleteVarReferenceContext;
+  private final @NotNull OpInputReferenceContext inputReferenceContext;
+  private final @NotNull OpOutputReferenceContext outputReferenceContext;
+  private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
 
   public ResourcePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
@@ -46,17 +46,17 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
     final Namespaces namespaces = new Namespaces(namespace);
 
-    inputVarReferenceContext = new OpInputReferenceContext(
+    inputReferenceContext = new OpInputReferenceContext(
         namespaces.inputProjectionsNamespace(resourceName),
         null
     );
 
-    outputVarReferenceContext = new OpOutputReferenceContext(
+    outputReferenceContext = new OpOutputReferenceContext(
         namespaces.outputProjectionsNamespace(resourceName),
         null
     );
 
-    deleteVarReferenceContext = new OpDeleteReferenceContext(
+    deleteReferenceContext = new OpDeleteReferenceContext(
         namespaces.deleteProjectionsNamespace(resourceName),
         null
     );
@@ -66,9 +66,9 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
   public @NotNull String resourceName() { return resourceName; }
 
-  public @NotNull OpInputReferenceContext inputVarReferenceContext() { return inputVarReferenceContext; }
+  public @NotNull OpInputReferenceContext inputReferenceContext() { return inputReferenceContext; }
 
-  public @NotNull OpOutputReferenceContext outputVarReferenceContext() { return outputVarReferenceContext; }
+  public @NotNull OpOutputReferenceContext outputReferenceContext() { return outputReferenceContext; }
 
-  public @NotNull OpDeleteReferenceContext deleteVarReferenceContext() { return deleteVarReferenceContext; }
+  public @NotNull OpDeleteReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
 }

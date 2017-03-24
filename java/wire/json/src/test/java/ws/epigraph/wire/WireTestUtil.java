@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputVarReferenceContext;
+import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.op.output.OpOutputVarReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
@@ -62,13 +62,13 @@ public final class WireTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputVarReferenceContext inputVarReferenceContext = new OpInputVarReferenceContext(Qn.EMPTY, null);
-      OpOutputVarReferenceContext outputVarReferenceContext = new OpOutputVarReferenceContext(Qn.EMPTY, null);
+      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null);
+      OpOutputReferenceContext outputReferenceContext = new OpOutputReferenceContext(Qn.EMPTY, null);
 
       OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputVarReferenceContext);
+          new OpInputPsiProcessingContext(context, inputReferenceContext);
       OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, opInputPsiProcessingContext, outputVarReferenceContext);
+          new OpOutputPsiProcessingContext(context, opInputPsiProcessingContext, outputReferenceContext);
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           varDataType,
@@ -77,8 +77,8 @@ public final class WireTestUtil {
           outputPsiProcessingContext
       );
 
-      outputVarReferenceContext.ensureAllReferencesResolved(context);
-      inputVarReferenceContext.ensureAllReferencesResolved(context);
+      outputReferenceContext.ensureAllReferencesResolved(context);
+      inputReferenceContext.ensureAllReferencesResolved(context);
       return vp;
 
     });

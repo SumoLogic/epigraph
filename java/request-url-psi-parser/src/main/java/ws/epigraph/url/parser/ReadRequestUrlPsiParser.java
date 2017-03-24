@@ -104,9 +104,9 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull ReqOutputVarProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
-    ReqOutputReferenceContext reqOutputVarReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
+        new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
     if (trunkVarProjection != null) {
       @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
@@ -144,7 +144,7 @@ public final class ReadRequestUrlPsiParser {
       );
       fieldLocation = TextLocation.UNKNOWN;
     }
-    reqOutputVarReferenceContext.ensureAllReferencesResolved(context);
+    reqOutputReferenceContext.ensureAllReferencesResolved(context);
 
     return new ReadRequestUrl(
         psi.getQid().getCanonicalName(),
@@ -175,9 +175,9 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
-    ReqOutputReferenceContext reqOutputVarReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
+    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, reqOutputVarReferenceContext);
+        new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
@@ -188,7 +188,7 @@ public final class ReadRequestUrlPsiParser {
             reqOutputPsiProcessingContext
         );
 
-    reqOutputVarReferenceContext.ensureAllReferencesResolved(context);
+    reqOutputReferenceContext.ensureAllReferencesResolved(context);
 
     int pathSteps = stepsAndProjection.pathSteps();
 

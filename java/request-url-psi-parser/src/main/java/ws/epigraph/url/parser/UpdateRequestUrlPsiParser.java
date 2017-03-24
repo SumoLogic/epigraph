@@ -106,9 +106,9 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
+    ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
-        new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
+        new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
 
     final ReqUpdateFieldProjection updateProjection =
         updateProjectionPsi == null ? null : ReqUpdateProjectionsPsiParser.parseFieldProjection(
@@ -120,7 +120,7 @@ public final class UpdateRequestUrlPsiParser {
             reqUpdatePsiProcessingContext
         );
 
-    reqUpdateVarReferenceContext.ensureAllReferencesResolved(context);
+    reqUpdateReferenceContext.ensureAllReferencesResolved(context);
 
     return new UpdateRequestUrl(
         psi.getQid().getCanonicalName(),
@@ -143,9 +143,9 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateReferenceContext reqUpdateVarReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
+    ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
-        new ReqUpdatePsiProcessingContext(context, reqUpdateVarReferenceContext);
+        new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
 
     final ReqUpdateFieldProjection updateProjection =
         updateProjectionPsi == null ? null : ReqUpdateProjectionsPsiParser.parseFieldProjection(
@@ -157,7 +157,7 @@ public final class UpdateRequestUrlPsiParser {
             reqUpdatePsiProcessingContext
         );
 
-    reqUpdateVarReferenceContext.ensureAllReferencesResolved(context);
+    reqUpdateReferenceContext.ensureAllReferencesResolved(context);
 
     TypesResolver outputResolver = addTypeNamespace(resourceType.type(), typesResolver);
     final @Nullable UrlReqOutputTrunkFieldProjection outputProjectionPsi = psi.getReqOutputTrunkFieldProjection();

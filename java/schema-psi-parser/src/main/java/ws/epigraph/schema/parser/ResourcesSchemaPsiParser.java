@@ -183,9 +183,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         context.addException(e);
       }
 
-    resourcePsiProcessingContext.inputVarReferenceContext().ensureAllReferencesResolved(context);
-    resourcePsiProcessingContext.outputVarReferenceContext().ensureAllReferencesResolved(context);
-    resourcePsiProcessingContext.deleteVarReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.inputReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.outputReferenceContext().ensureAllReferencesResolved(context);
+    resourcePsiProcessingContext.deleteReferenceContext().ensureAllReferencesResolved(context);
 
     return new ResourceDeclaration(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
@@ -228,10 +228,10 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getTypeRef(),
         projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
         resolver,
-        context.outputVarReferenceContext(),
+        context.outputReferenceContext(),
         projectionName -> new OpOutputReferenceContext(
             new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName),
-            context.outputVarReferenceContext()
+            context.outputReferenceContext()
         ),
         context,
         OutputUnnamedVarReferenceParser.INSTANCE
@@ -253,10 +253,10 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getTypeRef(),
         projectionDefPsi.getOpInputUnnamedOrRefVarProjection(),
         resolver,
-        context.inputVarReferenceContext(),
+        context.inputReferenceContext(),
         projectionName -> new OpInputReferenceContext(
             new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName),
-            context.inputVarReferenceContext()
+            context.inputReferenceContext()
         ),
         context,
         InputUnnamedVarReferenceParser.INSTANCE
@@ -278,10 +278,10 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi.getTypeRef(),
         projectionDefPsi.getOpDeleteUnnamedOrRefVarProjection(),
         resolver,
-        context.deleteVarReferenceContext(),
+        context.deleteReferenceContext(),
         projectionName -> new OpDeleteReferenceContext(
             new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName),
-            context.deleteVarReferenceContext()
+            context.deleteReferenceContext()
         ),
         context,
         DeleteUnnamedVarReferenceParser.INSTANCE
@@ -385,7 +385,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
           context,
-          context.inputVarReferenceContext()
+          context.inputReferenceContext()
       );
       OpOutputPsiProcessingContext outputPsiProcessingContext = new OpOutputPsiProcessingContext(
           context,
@@ -444,7 +444,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
           context,
-          context.inputVarReferenceContext()
+          context.inputReferenceContext()
       );
       OpDeletePsiProcessingContext deletePsiProcessingContext = new OpDeletePsiProcessingContext(
           context,
