@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,23 +30,35 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class PsiProcessingException extends Exception {
-  private final @NotNull PsiElement psi;
+  private final @NotNull TextLocation location;
   private final @NotNull List<PsiProcessingError> errors; // last item = this exception
+
+  public PsiProcessingException(
+      @NotNull String message,
+      @NotNull TextLocation location,
+      @NotNull List<PsiProcessingError> precedingErrors) {
+
+    super(message);
+    this.location = location;
+
+    if (precedingErrors.isEmpty())
+      errors = Collections.singletonList(new PsiProcessingError(message, location));
+    else {
+      this.errors = new ArrayList<>(precedingErrors);
+      errors.add(new PsiProcessingError(message, location));
+    }
+  }
 
   public PsiProcessingException(
       @NotNull String message,
       @NotNull PsiElement psi,
       @NotNull List<PsiProcessingError> precedingErrors) {
 
-    super(message);
-    this.psi = psi;
-
-    if (precedingErrors.isEmpty())
-      errors = Collections.singletonList(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
-    else {
-      this.errors = new ArrayList<>(precedingErrors);
-      errors.add(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
-    }
+    this(
+        message,
+        EpigraphPsiUtil.getLocation(psi),
+        precedingErrors
+    );
   }
 
   public PsiProcessingException(
@@ -58,12 +70,20 @@ public class PsiProcessingException extends Exception {
   }
 
   public PsiProcessingException(
+      @NotNull String message,
+      @NotNull TextLocation location,
+      @NotNull PsiProcessingContext context) {
+
+    this(message, location, context.errors());
+  }
+
+  public PsiProcessingException(
       @NotNull Exception cause,
       @NotNull PsiElement psi,
       @NotNull List<PsiProcessingError> precedingErrors) {
 
     super(cause);
-    this.psi = psi;
+    this.location = EpigraphPsiUtil.getLocation(psi);
     final String message = cause.getMessage();
 
     if (precedingErrors.isEmpty())
@@ -82,8 +102,6 @@ public class PsiProcessingException extends Exception {
     this(cause, psi, context.errors());
   }
 
-  public @NotNull PsiElement psi() { return psi; }
-
   /**
    * @return list of errors, including this one (will be the last item)
    */
@@ -94,7 +112,7 @@ public class PsiProcessingException extends Exception {
    */
   public @NotNull PsiProcessingError toError() { return errors.get(errors.size() - 1); }
 
-  public @NotNull TextLocation location() { return toError().location(); }
+  public @NotNull TextLocation location() { return location; }
 
   @Override
   public String toString() {

@@ -61,6 +61,10 @@ public class OpInputMapModelProjection
     this.itemsProjection = itemsProjection;
   }
 
+  public OpInputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+    super(model, location);
+  }
+
   public @NotNull OpInputKeyProjection keyProjection() {
     assert isResolved();
     assert keyProjection != null;

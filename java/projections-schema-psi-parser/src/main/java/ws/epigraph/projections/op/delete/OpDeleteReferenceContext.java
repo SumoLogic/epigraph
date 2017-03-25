@@ -23,8 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -45,6 +44,30 @@ public class OpDeleteReferenceContext
       final @NotNull TextLocation location) {
 
     return new OpDeleteVarProjection(type, location);
+  }
+
+  @Override
+  protected OpDeleteModelProjection<?, ?, ?> newRecordModelReference(
+      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
+    return new OpDeleteRecordModelProjection(type, location);
+  }
+
+  @Override
+  protected OpDeleteModelProjection<?, ?, ?> newMapModelReference(
+      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
+    return new OpDeleteMapModelProjection(type, location);
+  }
+
+  @Override
+  protected OpDeleteModelProjection<?, ?, ?> newListModelReference(
+      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
+    return new OpDeleteListModelProjection(type, location);
+  }
+
+  @Override
+  protected OpDeleteModelProjection<?, ?, ?> newPrimitiveModelReference(
+      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
+    return new OpDeletePrimitiveModelProjection(type, location);
   }
 
   @Override

@@ -42,7 +42,7 @@ public class ReqUpdatePrimitiveModelProjection
     super(model, true, params, annotations, tails, location);
   }
 
-  protected ReqUpdatePrimitiveModelProjection(
+  public ReqUpdatePrimitiveModelProjection(
       final @NotNull PrimitiveTypeApi model,
       final @NotNull TextLocation location) {
     super(model, location);

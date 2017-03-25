@@ -22,12 +22,9 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
-import ws.epigraph.projections.req.delete.ReqDeleteModelProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry;
-import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.projections.req.delete.*;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -48,6 +45,30 @@ public class ReqDeleteReferenceContext
       final @NotNull TextLocation location) {
 
     return new ReqDeleteVarProjection(type, location);
+  }
+
+  @Override
+  protected ReqDeleteModelProjection<?, ?, ?> newRecordModelReference(
+      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
+    return new ReqDeleteRecordModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqDeleteModelProjection<?, ?, ?> newMapModelReference(
+      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
+    return new ReqDeleteMapModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqDeleteModelProjection<?, ?, ?> newListModelReference(
+      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
+    return new ReqDeleteListModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqDeleteModelProjection<?, ?, ?> newPrimitiveModelReference(
+      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
+    return new ReqDeletePrimitiveModelProjection(type, location);
   }
 
   @Override

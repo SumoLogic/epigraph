@@ -22,12 +22,9 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.output.*;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -48,6 +45,30 @@ public class ReqOutputReferenceContext
       final @NotNull TextLocation location) {
 
     return new ReqOutputVarProjection(type, location);
+  }
+
+  @Override
+  protected ReqOutputModelProjection<?, ?, ?> newRecordModelReference(
+      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
+    return new ReqOutputRecordModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqOutputModelProjection<?, ?, ?> newMapModelReference(
+      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
+    return new ReqOutputMapModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqOutputModelProjection<?, ?, ?> newListModelReference(
+      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
+    return new ReqOutputListModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqOutputModelProjection<?, ?, ?> newPrimitiveModelReference(
+      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
+    return new ReqOutputPrimitiveModelProjection(type, location);
   }
 
   @Override

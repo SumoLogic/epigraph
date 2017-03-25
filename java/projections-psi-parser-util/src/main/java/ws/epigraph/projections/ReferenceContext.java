@@ -24,7 +24,8 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,9 +103,6 @@ public abstract class ReferenceContext<
     if (!useParent || parent == null) return null;
     else return parent.lookupReference(name, true);
   }
-
-  @NotNull
-  protected abstract VP newVarReference(@NotNull TypeApi type, @NotNull TextLocation location);
 
   public <R extends GenProjectionReference<R>> void resolveVar(
       @NotNull final String name,
@@ -184,6 +182,62 @@ public abstract class ReferenceContext<
       }
     }
   }
+
+  @NotNull
+  protected MP newModelReference(@NotNull DatumTypeApi type, @NotNull TextLocation location)
+      throws PsiProcessingException {
+    switch (type.kind()) {
+
+      case RECORD:
+        if (type instanceof RecordTypeApi)
+          return newRecordModelReference((RecordTypeApi) type, location);
+        else throw new PsiProcessingException(String.format(
+            "Can't create record model projection for type '%s'",
+            type.name()
+        ), location, psiProcessingContext);
+
+      case MAP:
+        if (type instanceof MapTypeApi)
+          return newMapModelReference((MapTypeApi) type, location);
+        else throw new PsiProcessingException(String.format(
+            "Can't create map model projection for type '%s'",
+            type.name()
+        ), location, psiProcessingContext);
+
+      case LIST:
+        if (type instanceof ListTypeApi)
+          return newListModelReference((ListTypeApi) type, location);
+        else throw new PsiProcessingException(String.format(
+            "Can't create list model projection for type '%s'",
+            type.name()
+        ), location, psiProcessingContext);
+
+      case PRIMITIVE:
+        if (type instanceof PrimitiveTypeApi)
+          return newPrimitiveModelReference((PrimitiveTypeApi) type, location);
+        else throw new PsiProcessingException(String.format(
+            "Can't create primitive model projection for type '%s'",
+            type.name()
+        ), location, psiProcessingContext);
+
+      default:
+        throw new PsiProcessingException(String.format(
+            "Can't create model projection for type '%s'",
+            type.name()
+        ), location, psiProcessingContext);
+    }
+  }
+
+  @NotNull
+  protected abstract VP newVarReference(@NotNull TypeApi type, @NotNull TextLocation location);
+
+  protected abstract MP newRecordModelReference(@NotNull RecordTypeApi type, @NotNull TextLocation location);
+
+  protected abstract MP newMapModelReference(@NotNull MapTypeApi type, @NotNull TextLocation location);
+
+  protected abstract MP newListModelReference(@NotNull ListTypeApi type, @NotNull TextLocation location);
+
+  protected abstract MP newPrimitiveModelReference(@NotNull PrimitiveTypeApi type, @NotNull TextLocation location);
 
   protected abstract @NotNull VP toSelfVar(@NotNull MP mRef);
 

@@ -59,7 +59,7 @@ public class ReqUpdateRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
-  protected ReqUpdateRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+  public ReqUpdateRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
   }

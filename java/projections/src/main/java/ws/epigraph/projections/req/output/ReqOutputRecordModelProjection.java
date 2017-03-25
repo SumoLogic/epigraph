@@ -63,7 +63,7 @@ public class ReqOutputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
-  protected ReqOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+  public ReqOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
   }

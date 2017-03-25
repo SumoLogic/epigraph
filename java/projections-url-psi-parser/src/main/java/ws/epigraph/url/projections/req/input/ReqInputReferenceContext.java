@@ -22,12 +22,9 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
-import ws.epigraph.projections.req.input.ReqInputModelProjection;
-import ws.epigraph.projections.req.input.ReqInputTagProjectionEntry;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.projections.req.input.*;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -48,6 +45,30 @@ public class ReqInputReferenceContext
       final @NotNull TextLocation location) {
 
     return new ReqInputVarProjection(type, location);
+  }
+
+  @Override
+  protected ReqInputModelProjection<?, ?, ?> newRecordModelReference(
+      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
+    return new ReqInputRecordModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqInputModelProjection<?, ?, ?> newMapModelReference(
+      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
+    return new ReqInputMapModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqInputModelProjection<?, ?, ?> newListModelReference(
+      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
+    return new ReqInputListModelProjection(type, location);
+  }
+
+  @Override
+  protected ReqInputModelProjection<?, ?, ?> newPrimitiveModelReference(
+      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
+    return new ReqInputPrimitiveModelProjection(type, location);
   }
 
   @Override

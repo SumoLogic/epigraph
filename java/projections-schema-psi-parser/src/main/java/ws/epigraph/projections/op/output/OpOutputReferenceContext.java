@@ -23,8 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -44,6 +43,30 @@ public class OpOutputReferenceContext
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
     return new OpOutputVarProjection(type, location);
+  }
+
+  @Override
+  protected OpOutputModelProjection<?, ?, ?> newRecordModelReference(
+      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
+    return new OpOutputRecordModelProjection(type, location);
+  }
+
+  @Override
+  protected OpOutputModelProjection<?, ?, ?> newMapModelReference(
+      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
+    return new OpOutputMapModelProjection(type, location);
+  }
+
+  @Override
+  protected OpOutputModelProjection<?, ?, ?> newListModelReference(
+      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
+    return new OpOutputListModelProjection(type, location);
+  }
+
+  @Override
+  protected OpOutputModelProjection<?, ?, ?> newPrimitiveModelReference(
+      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
+    return new OpOutputPrimitiveModelProjection(type, location);
   }
 
   @Override
