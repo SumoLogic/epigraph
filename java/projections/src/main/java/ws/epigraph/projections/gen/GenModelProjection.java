@@ -40,6 +40,7 @@ public interface GenModelProjection<
     M extends DatumTypeApi
     > extends GenProjectionReference<SMP> {
 
+  @Override
   @NotNull M type();
 
   @Nullable MP metaProjection();

@@ -174,6 +174,9 @@ public abstract class AbstractVarProjection<
     assertResolved();
     assert tagProjections != null;
 
+    if (targetType.equals(type()))
+      return self();
+
     VarNormalizationContext<VP> context = (VarNormalizationContext<VP>) normalizationContextThreadLocal.get();
     boolean contextInitialized = context == null;
     if (contextInitialized) {

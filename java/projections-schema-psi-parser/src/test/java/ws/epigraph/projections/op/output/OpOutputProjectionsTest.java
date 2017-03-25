@@ -173,7 +173,7 @@ public class OpOutputProjectionsTest {
     final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
     referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
-    referenceContext.resolveVar("ref", personProjection, TextLocation.UNKNOWN, ppc);
+    referenceContext.resolve("ref", personProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {
@@ -202,7 +202,7 @@ public class OpOutputProjectionsTest {
     final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
     referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
-    referenceContext.resolveVar("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
+    referenceContext.resolve("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {

@@ -102,7 +102,7 @@ public final class OpInputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
       return reference;
     }

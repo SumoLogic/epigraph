@@ -345,7 +345,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
             );
             innerReferenceContext.ensureAllReferencesResolved();
 
-            referenceContext.resolveVar(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
+            referenceContext.resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
           }
         }
       }

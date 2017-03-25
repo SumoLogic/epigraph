@@ -22,6 +22,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -65,6 +66,7 @@ public abstract class ReferenceContext<
       @NotNull String name,
       boolean useParent,
       @NotNull TextLocation location) {
+
     VP ref = lookupVarReference(name, useParent);
 
     if (ref == null) {
@@ -72,6 +74,24 @@ public abstract class ReferenceContext<
       references.put(name, ref);
       return ref;
     } else return ref;
+
+  }
+
+  @NotNull
+  public MP modelReference(
+      @NotNull DatumTypeApi type,
+      @NotNull String name,
+      boolean useParent,
+      @NotNull TextLocation location) throws PsiProcessingException {
+
+    MP ref = lookupModelReference(name, useParent, location);
+
+    if (ref == null) {
+      ref = newModelReference(type, location);
+      references.put(name, ref);
+      return ref;
+    } else return ref;
+
   }
 
   public boolean isResolved(@NotNull String name) {
@@ -80,7 +100,7 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  protected VP lookupVarReference(@NotNull String name, boolean useParent) {
+  private VP lookupVarReference(@NotNull String name, boolean useParent) {
     final GenProjectionReference<?> reference = lookupReference(name, useParent);
 
     if (reference == null)
@@ -96,7 +116,40 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  protected GenProjectionReference<?> lookupReference(@NotNull String name, boolean useParent) {
+  private MP lookupModelReference(@NotNull String name, boolean useParent, @NotNull TextLocation location)
+      throws PsiProcessingException {
+    final GenProjectionReference<?> reference = lookupReference(name, useParent);
+
+    if (reference == null)
+      return null;
+
+    else if (reference instanceof GenVarProjection) {
+      VP varRef = (VP) reference;
+      final TypeApi varType = varRef.type();
+
+      if (varType.kind() == TypeKind.UNION)
+        throw new PsiProcessingException(
+            String.format(
+                "Expected reference '%s' to be a model reference, got var reference instead",
+                name
+            ),
+            location, psiProcessingContext
+        );
+      else {
+        final TagApi selfTag = ((DatumTypeApi) varType).self();
+        final GenTagProjectionEntry<?, MP> tpe = varRef.tagProjections().get(selfTag.name());
+        if (tpe == null) return null;
+        else return tpe.projection();
+      }
+
+    } else if (reference instanceof GenModelProjection)
+      return (MP) reference;
+
+    throw new RuntimeException(String.format("Unreachable: '%s'", name));
+  }
+
+  @Nullable
+  private GenProjectionReference<?> lookupReference(@NotNull String name, boolean useParent) {
     GenProjectionReference<?> ref = references.get(name);
 
     if (ref != null) return ref;
@@ -104,11 +157,13 @@ public abstract class ReferenceContext<
     else return parent.lookupReference(name, true);
   }
 
-  public <R extends GenProjectionReference<R>> void resolveVar(
+  public <R extends GenProjectionReference<R>> void resolve(
       @NotNull final String name,
-      @NotNull final VP value,
+      @NotNull final R value,
       @NotNull final TextLocation location,
       @NotNull final PsiProcessingContext context) {
+
+    // R should also be super of VP & MP but Java can't express this
 
     value.runOnResolved(() -> {
       R ref = (R) references.get(name);
@@ -131,19 +186,35 @@ public abstract class ReferenceContext<
         context.addError(
             String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
         );
-      } else if (!ref.type().isAssignableFrom(value.type())) {
-        context.addError(
-            String.format(
-                "Projection '%s' type '%s' is not compatible with reference type '%s'",
-                name,
-                value.type().name(),
-                ref.type().name()
-            ),
-            location
-        );
       } else {
-        resolvedAt.put(name, location);
-        ref.resolve(referencesNamespace.append(name), (R) value);
+
+        if (ref.type().isAssignableFrom(value.type())) {
+          final R normalized;
+
+          if (value instanceof GenVarProjection<?, ?, ?>) {
+            VP varValue = (VP) value;
+            normalized = (R) varValue.normalizedForType(ref.type());
+          } else if (value instanceof GenModelProjection<?, ?, ?, ?>) {
+            MP modelValue = (MP) value;
+            normalized = (R) modelValue.normalizedForType((DatumTypeApi) ref.type());
+          } else
+            throw new RuntimeException(String.format("Unreachable: '%s'", name));
+
+          resolvedAt.put(name, location);
+          ref.resolve(referencesNamespace.append(name), normalized);
+
+        } else {
+          context.addError(
+              String.format(
+                  "Projection '%s' type '%s' is not compatible with reference type '%s'",
+                  name,
+                  value.type().name(),
+                  ref.type().name()
+              ),
+              location
+          );
+        }
+
       }
 
     });

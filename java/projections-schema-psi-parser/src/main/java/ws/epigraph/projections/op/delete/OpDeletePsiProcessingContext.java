@@ -25,25 +25,23 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeletePsiProcessingContext extends DelegatingPsiProcessingContext {
-  @NotNull
-  private final OpInputPsiProcessingContext inputPsiProcessingContext;
-  @NotNull
-  private final OpDeleteReferenceContext varReferenceContext;
+  private final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext;
+  private final @NotNull OpDeleteReferenceContext referenceContext;
 
   public OpDeletePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
       final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext,
-      final @NotNull OpDeleteReferenceContext varReferenceContext) {
+      final @NotNull OpDeleteReferenceContext referenceContext) {
     super(psiProcessingContext);
     this.inputPsiProcessingContext = inputPsiProcessingContext;
-    this.varReferenceContext = varReferenceContext;
+    this.referenceContext = referenceContext;
   }
 
   public OpInputPsiProcessingContext inputPsiProcessingContext() {
     return inputPsiProcessingContext;
   }
 
-  public OpDeleteReferenceContext varReferenceContext() {
-    return varReferenceContext;
+  public OpDeleteReferenceContext referenceContext() {
+    return referenceContext;
   }
 }

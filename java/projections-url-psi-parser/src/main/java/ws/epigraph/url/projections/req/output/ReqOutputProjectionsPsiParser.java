@@ -110,7 +110,7 @@ public final class ReqOutputProjectionsPsiParser {
           );
 
       context.varReferenceContext()
-          .resolveVar(
+          .resolve(
               projectionName,
               stepsAndProjection.projection(),
               EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
@@ -365,7 +365,7 @@ public final class ReqOutputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolveVar(
+          .resolve(
               projectionName,
               stepsAndProjection.projection(),
               EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),

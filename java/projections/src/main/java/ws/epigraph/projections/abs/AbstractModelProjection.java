@@ -96,6 +96,9 @@ public abstract class AbstractModelProjection<
   @Override
   public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType) {
 
+    if (targetType.equals(type()))
+      return self();
+
     final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
 
     final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(
