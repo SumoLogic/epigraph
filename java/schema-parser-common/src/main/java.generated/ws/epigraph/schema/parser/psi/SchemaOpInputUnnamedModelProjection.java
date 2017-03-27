@@ -21,12 +21,27 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpInputModelSingleTail extends PsiElement {
+public interface SchemaOpInputUnnamedModelProjection extends PsiElement {
+
+  @Nullable
+  SchemaOpInputListModelProjection getOpInputListModelProjection();
+
+  @Nullable
+  SchemaOpInputMapModelProjection getOpInputMapModelProjection();
+
+  @Nullable
+  SchemaOpInputModelPolymorphicTail getOpInputModelPolymorphicTail();
 
   @NotNull
-  SchemaOpInputModelProjection getOpInputModelProjection();
+  List<SchemaOpInputModelProperty> getOpInputModelPropertyList();
 
-  @NotNull
-  SchemaTypeRef getTypeRef();
+  @Nullable
+  SchemaOpInputRecordModelProjection getOpInputRecordModelProjection();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

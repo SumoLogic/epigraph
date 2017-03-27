@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi.impl;
 
@@ -27,27 +43,9 @@ public class SchemaOpOutputModelProjectionImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @Nullable
-  public SchemaOpOutputListModelProjection getOpOutputListModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputListModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpOutputMapModelProjection getOpOutputMapModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputMapModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpOutputModelPolymorphicTail getOpOutputModelPolymorphicTail() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelPolymorphicTail.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpOutputRecordModelProjection getOpOutputRecordModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputRecordModelProjection.class);
+  @NotNull
+  public SchemaOpOutputUnnamedModelProjection getOpOutputUnnamedModelProjection() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpOutputUnnamedModelProjection.class));
   }
 
 }

@@ -21,12 +21,27 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpInputModelSingleTail extends PsiElement {
+public interface SchemaOpDeleteUnnamedModelProjection extends PsiElement {
+
+  @Nullable
+  SchemaOpDeleteListModelProjection getOpDeleteListModelProjection();
+
+  @Nullable
+  SchemaOpDeleteMapModelProjection getOpDeleteMapModelProjection();
+
+  @Nullable
+  SchemaOpDeleteModelPolymorphicTail getOpDeleteModelPolymorphicTail();
 
   @NotNull
-  SchemaOpInputModelProjection getOpInputModelProjection();
+  List<SchemaOpDeleteModelProperty> getOpDeleteModelPropertyList();
 
-  @NotNull
-  SchemaTypeRef getTypeRef();
+  @Nullable
+  SchemaOpDeleteRecordModelProjection getOpDeleteRecordModelProjection();
+
+  @Nullable
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
 
 }

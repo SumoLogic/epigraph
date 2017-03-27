@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElement implements SchemaOpInputMultiTagProjectionItem {
+public class SchemaOpDeleteUnnamedModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpDeleteUnnamedModelProjection {
 
-  public SchemaOpInputMultiTagProjectionItemImpl(ASTNode node) {
+  public SchemaOpDeleteUnnamedModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputMultiTagProjectionItem(this);
+    visitor.visitOpDeleteUnnamedModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -43,21 +43,45 @@ public class SchemaOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElemen
   }
 
   @Override
-  @NotNull
-  public SchemaOpInputModelProjection getOpInputModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class));
-  }
-
-  @Override
-  @NotNull
-  public SchemaTagName getTagName() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTagName.class));
+  @Nullable
+  public SchemaOpDeleteListModelProjection getOpDeleteListModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteListModelProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+  public SchemaOpDeleteMapModelProjection getOpDeleteMapModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteMapModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaOpDeleteModelPolymorphicTail getOpDeleteModelPolymorphicTail() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelPolymorphicTail.class);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaOpDeleteModelProperty> getOpDeleteModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpDeleteModelProperty.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaOpDeleteRecordModelProjection getOpDeleteRecordModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteRecordModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }

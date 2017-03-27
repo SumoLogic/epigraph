@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi.impl;
 
@@ -27,27 +43,9 @@ public class SchemaOpDeleteModelProjectionImpl extends ASTWrapperPsiElement impl
   }
 
   @Override
-  @Nullable
-  public SchemaOpDeleteListModelProjection getOpDeleteListModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteListModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpDeleteMapModelProjection getOpDeleteMapModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteMapModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpDeleteModelPolymorphicTail getOpDeleteModelPolymorphicTail() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelPolymorphicTail.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpDeleteRecordModelProjection getOpDeleteRecordModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteRecordModelProjection.class);
+  @NotNull
+  public SchemaOpDeleteUnnamedModelProjection getOpDeleteUnnamedModelProjection() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedModelProjection.class));
   }
 
 }

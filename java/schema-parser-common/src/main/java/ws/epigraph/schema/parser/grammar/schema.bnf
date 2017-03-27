@@ -474,8 +474,6 @@ opPathKeyProjectionPart ::= opParam | annotation
 
 // output --------------------------------------------------------
 
-opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
-
 opOutputVarProjection ::= opOutputNamedVarProjection | opOutputUnnamedOrRefVarProjection
 opOutputUnnamedOrRefVarProjection ::= opOutputVarProjectionRef | opOutputUnnamedVarProjection
 opOutputNamedVarProjection ::= '$' qid '=' opOutputUnnamedOrRefVarProjection {pin = 3}
@@ -484,8 +482,8 @@ opOutputUnnamedVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTa
 private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputSingleTagProjection ::= ( ':' tagName)? opOutputModelProjectionWithProperties
-opOutputMultiTagProjectionItem ::= tagName opOutputModelProjectionWithProperties
+opOutputSingleTagProjection ::= ( ':' tagName)? opOutputModelProjection
+opOutputMultiTagProjectionItem ::= tagName opOutputModelProjection
 
 //
 opOutputVarPolymorphicTail ::= '~' '~' ( opOutputVarSingleTail | opOutputVarMultiTail ) {pin=2}
@@ -494,20 +492,22 @@ opOutputVarMultiTail ::= '(' (opOutputVarMultiTailItem ','?)* ')' {pin=1}
 opOutputVarMultiTailItem ::= typeRef opOutputVarProjection
 //
 opOutputModelPolymorphicTail ::= '~' ( opOutputModelSingleTail | opOutputModelMultiTail ) // {pin=1}
-opOutputModelSingleTail ::= typeRef opOutputModelProjectionWithProperties
+opOutputModelSingleTail ::= typeRef opOutputModelProjection
 opOutputModelMultiTail ::= '(' (opOutputModelMultiTailItem ','?)* ')' {pin=1}
-opOutputModelMultiTailItem ::= typeRef opOutputModelProjectionWithProperties
+opOutputModelMultiTailItem ::= typeRef opOutputModelProjection
 
-private opOutputModelProjectionWithProperties ::= opOutputModelProjectionWithProperties_ | opOutputModelProjection
-private opOutputModelProjectionWithProperties_ ::= '{' (opOutputModelProperty ','?)* '}' opOutputModelProjection {pin=1}
+opOutputModelProjection ::= opOutputUnnamedModelProjection
+opOutputUnnamedModelProjection ::= opOutputModelProjectionProperties ?
+                                   ( ( opOutputRecordModelProjection
+                                     | opOutputListModelProjection
+                                     | opOutputMapModelProjection
+                                     ) opOutputModelPolymorphicTail?
+                                   )?
 
+private opOutputModelProjectionProperties ::= '{' (opOutputModelProperty ','?)* '}' {pin=1}
 opOutputModelProperty ::= opParam | annotation | opOutputModelMeta
+opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
 
-opOutputModelProjection ::= ( ( opOutputRecordModelProjection
-                              | opOutputListModelProjection
-                              | opOutputMapModelProjection
-                              ) opOutputModelPolymorphicTail?
-                            )?
 
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
@@ -531,13 +531,6 @@ private opOutputKeyProjectionRecover ::= ! ( ']' | ',' )
 
 // input --------------------------------------------------------
 
-opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
-  recoverWhile = opInputModelPropertyRecover
-}
-private opInputModelPropertyRecover ::= ! ( '}' )
-opInputDefaultValue ::= 'default' ':' datum {pin=1}
-
-opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
 
 opInputVarProjection ::= opInputNamedVarProjection | opInputUnnamedOrRefVarProjection
 opInputUnnamedOrRefVarProjection ::= opInputVarProjectionRef | opInputUnnamedVarProjection
@@ -547,8 +540,8 @@ opInputUnnamedVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagPr
 private opInputBracedVarProjection ::= '(' opInputVarProjection ')'
 
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputSingleTagProjection ::= ( ':' '+'? tagName)? opInputModelProjectionWithProperties
-opInputMultiTagProjectionItem ::= '+'? tagName opInputModelProjectionWithProperties
+opInputSingleTagProjection ::= ( ':' '+'? tagName)? opInputModelProjection
+opInputMultiTagProjectionItem ::= '+'? tagName opInputModelProjection
 
 opInputVarPolymorphicTail ::= '~' '~' ( opInputVarSingleTail | opInputVarMultiTail ) {pin=2}
 opInputVarSingleTail ::= typeRef opInputVarProjection
@@ -558,23 +551,31 @@ opInputVarMultiTailItem ::= typeRef opInputVarProjection // {recoverWhile = opIn
 //private opInputVarMultiTailItemRecover ::= ! ( ')' )
 //
 opInputModelPolymorphicTail ::= '~' ( opInputModelSingleTail | opInputModelMultiTail ) // {pin=1}
-opInputModelSingleTail ::= typeRef opInputModelProjectionWithProperties
+opInputModelSingleTail ::= typeRef opInputModelProjection
 opInputModelMultiTail ::= '(' (opInputModelMultiTailItem ','?)* ')' {pin=1}
-opInputModelMultiTailItem ::= typeRef opInputModelProjectionWithProperties
+opInputModelMultiTailItem ::= typeRef opInputModelProjection
 
 // todo: recovery. Commented out one breaks parsing tests
 //opInputFieldProjectionBodyPart ::= opParam | annotation // {recoverWhile=opInputFieldProjectionBodyPartRecover}
 //private opInputFieldProjectionBodyPartRecover ::= ! ( '}' )
 
-private opInputModelProjectionWithProperties ::= opInputModelProjectionWithProperties_ | opInputModelProjection
-private opInputModelProjectionWithProperties_ ::= '{' (opInputModelProperty ','?)* '}' opInputModelProjection {pin=1}
 //
 
-opInputModelProjection ::= ( ( opInputRecordModelProjection
-                             | opInputListModelProjection
-                             | opInputMapModelProjection
-                             ) opInputModelPolymorphicTail?
-                           )?
+opInputModelProjection ::= opInputUnnamedModelProjection
+opInputUnnamedModelProjection ::= opInputModelProjectionProperties ?
+                                  ( ( opInputRecordModelProjection
+                                    | opInputListModelProjection
+                                    | opInputMapModelProjection
+                                    ) opInputModelPolymorphicTail?
+                                  )?
+private opInputModelProjectionProperties ::= '{' (opInputModelProperty ','?)* '}' {pin=1}
+opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
+  recoverWhile = opInputModelPropertyRecover
+}
+private opInputModelPropertyRecover ::= ! ( '}' )
+opInputDefaultValue ::= 'default' ':' datum {pin=1}
+
+opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
 
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjectionEntry ','?)* ')' { pin=1 }
@@ -614,8 +615,8 @@ opDeleteUnnamedVarProjection ::= '+'? ( opDeleteMultiTagProjection | opDeleteSin
 private opDeleteBracedVarProjection ::= '(' opDeleteVarProjection ')'
 
 opDeleteMultiTagProjection ::= ':' '(' (opDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
-opDeleteSingleTagProjection ::= ( ':' tagName)? opDeleteModelProjectionWithProperties
-opDeleteMultiTagProjectionItem ::= tagName opDeleteModelProjectionWithProperties
+opDeleteSingleTagProjection ::= ( ':' tagName)? opDeleteModelProjection
+opDeleteMultiTagProjectionItem ::= tagName opDeleteModelProjection
 
 //
 opDeleteVarPolymorphicTail ::= '~' '~' ( opDeleteVarSingleTail | opDeleteVarMultiTail ) {pin=2}
@@ -624,20 +625,21 @@ opDeleteVarMultiTail ::= '(' (opDeleteVarMultiTailItem ','?)* ')' {pin=1}
 opDeleteVarMultiTailItem ::= typeRef opDeleteVarProjection
 //
 opDeleteModelPolymorphicTail ::= '~' ( opDeleteModelSingleTail | opDeleteModelMultiTail ) // {pin=1}
-opDeleteModelSingleTail ::= typeRef opDeleteModelProjectionWithProperties
+opDeleteModelSingleTail ::= typeRef opDeleteModelProjection
 opDeleteModelMultiTail ::= '(' (opDeleteModelMultiTailItem ','?)* ')' {pin=1}
-opDeleteModelMultiTailItem ::= typeRef opDeleteModelProjectionWithProperties
+opDeleteModelMultiTailItem ::= typeRef opDeleteModelProjection
 
-private opDeleteModelProjectionWithProperties ::= opDeleteModelProjectionWithProperties_ | opDeleteModelProjection
-private opDeleteModelProjectionWithProperties_ ::= '{' (opDeleteModelProperty ','?)* '}' opDeleteModelProjection {pin=1}
 
+opDeleteModelProjection ::= opDeleteUnnamedModelProjection
+opDeleteUnnamedModelProjection ::= opDeleteModelProjectionProperties ?
+                                   ( ( opDeleteRecordModelProjection
+                                     | opDeleteListModelProjection
+                                     | opDeleteMapModelProjection
+                                     ) opDeleteModelPolymorphicTail?
+                                   )?
+
+private opDeleteModelProjectionProperties ::= '{' (opDeleteModelProperty ','?)* '}' {pin=1}
 opDeleteModelProperty ::= opParam | annotation
-
-opDeleteModelProjection ::= ( ( opDeleteRecordModelProjection
-                              | opDeleteListModelProjection
-                              | opDeleteMapModelProjection
-                              ) opDeleteModelPolymorphicTail?
-                            )?
 
 // op delete record
 opDeleteRecordModelProjection ::= '(' (opDeleteFieldProjectionEntry ','?)* ')' { pin=1 }

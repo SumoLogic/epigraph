@@ -160,29 +160,19 @@ public final class OpDeleteProjectionsPsiParser {
           multiTagProjection.getOpDeleteMultiTagProjectionItemList();
 
       for (SchemaOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final TagApi tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
-
-        @NotNull DatumTypeApi tagType = tag.type();
-        @Nullable SchemaOpDeleteModelProjection modelProjection = tagProjectionPsi.getOpDeleteModelProjection();
-        assert modelProjection != null; // todo when it can be null?
-
-        @NotNull Collection<SchemaOpDeleteModelProperty> modelPropertiesPsi =
-            tagProjectionPsi.getOpDeleteModelPropertyList();
-
-        final OpDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
-            tagType,
-            parseModelParams(modelPropertiesPsi, typesResolver, context),
-            parseModelAnnotations(modelPropertiesPsi, context),
-            modelProjection,
-            typesResolver,
-            context
-        );
+        final TagApi tag =
+            getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
 
         tagProjections.put(
             tag.name(),
             new OpDeleteTagProjectionEntry(
                 tag,
-                parsedModelProjection,
+                parseModelProjection(
+                    tag.type(),
+                    tagProjectionPsi.getOpDeleteModelProjection(),
+                    typesResolver,
+                    context
+                ),
                 EpigraphPsiUtil.getLocation(tagProjectionPsi)
             )
         );
@@ -205,26 +195,16 @@ public final class OpDeleteProjectionsPsiParser {
               context
           );
 
-        @Nullable SchemaOpDeleteModelProjection modelProjection = singleTagProjectionPsi.getOpDeleteModelProjection();
-        assert modelProjection != null; // todo when it can be null?
-
-        @NotNull Collection<SchemaOpDeleteModelProperty> modelPropertiesPsi =
-            singleTagProjectionPsi.getOpDeleteModelPropertyList();
-
-        final OpDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
-            tag.type(),
-            parseModelParams(modelPropertiesPsi, typesResolver, context),
-            parseModelAnnotations(modelPropertiesPsi, context),
-            modelProjection,
-            typesResolver,
-            context
-        );
-
         tagProjections.put(
             tag.name(),
             new OpDeleteTagProjectionEntry(
                 tag,
-                parsedModelProjection,
+                parseModelProjection(
+                    tag.type(),
+                    singleTagProjectionPsi.getOpDeleteModelProjection(),
+                    typesResolver,
+                    context
+                ),
                 EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
             )
         );
@@ -370,8 +350,6 @@ public final class OpDeleteProjectionsPsiParser {
 
   public static @NotNull OpDeleteModelProjection<?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -379,8 +357,6 @@ public final class OpDeleteProjectionsPsiParser {
     return parseModelProjection(
         OpDeleteModelProjection.class,
         type,
-        params,
-        annotations,
         psi,
         typesResolver,
         context
@@ -392,28 +368,33 @@ public final class OpDeleteProjectionsPsiParser {
   /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
       @NotNull SchemaOpDeleteModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final SchemaOpDeleteUnnamedModelProjection unnamedModelProjectionPsi = psi.getOpDeleteUnnamedModelProjection();
+
+    final Collection<SchemaOpDeleteModelProperty> modelProperties = unnamedModelProjectionPsi.getOpDeleteModelPropertyList();
+
+    final OpParams params = parseModelParams(modelProperties, typesResolver, context);
+    final Annotations annotations = parseModelAnnotations(modelProperties, context);
 
     switch (type.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(OpDeleteRecordModelProjection.class);
 
-        @Nullable SchemaOpDeleteRecordModelProjection recordModelProjectionPsi = psi.getOpDeleteRecordModelProjection();
+        @Nullable SchemaOpDeleteRecordModelProjection recordModelProjectionPsi = unnamedModelProjectionPsi.getOpDeleteRecordModelProjection();
         if (recordModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(type, params, annotations, unnamedModelProjectionPsi, context);
 
-        ensureModelKind(psi, TypeKind.RECORD, context);
+        ensureModelKind(unnamedModelProjectionPsi, TypeKind.RECORD, context);
         return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
             annotations,
             parseModelTails(
                 OpDeleteRecordModelProjection.class,
-                psi.getOpDeleteModelPolymorphicTail(),
+                unnamedModelProjectionPsi.getOpDeleteModelPolymorphicTail(),
                 typesResolver,
                 context
             ),
@@ -425,11 +406,11 @@ public final class OpDeleteProjectionsPsiParser {
       case MAP:
         assert modelClass.isAssignableFrom(OpDeleteMapModelProjection.class);
 
-        @Nullable SchemaOpDeleteMapModelProjection mapModelProjectionPsi = psi.getOpDeleteMapModelProjection();
+        @Nullable SchemaOpDeleteMapModelProjection mapModelProjectionPsi = unnamedModelProjectionPsi.getOpDeleteMapModelProjection();
         if (mapModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(type, params, annotations, unnamedModelProjectionPsi, context);
 
-        ensureModelKind(psi, TypeKind.MAP, context);
+        ensureModelKind(unnamedModelProjectionPsi, TypeKind.MAP, context);
 
         return (MP) parseMapModelProjection(
             (MapTypeApi) type,
@@ -437,7 +418,7 @@ public final class OpDeleteProjectionsPsiParser {
             annotations,
             parseModelTails(
                 OpDeleteMapModelProjection.class,
-                psi.getOpDeleteModelPolymorphicTail(),
+                unnamedModelProjectionPsi.getOpDeleteModelPolymorphicTail(),
                 typesResolver,
                 context
             ),
@@ -449,10 +430,10 @@ public final class OpDeleteProjectionsPsiParser {
       case LIST:
         assert modelClass.isAssignableFrom(OpDeleteListModelProjection.class);
 
-        @Nullable SchemaOpDeleteListModelProjection listModelProjectionPsi = psi.getOpDeleteListModelProjection();
+        @Nullable SchemaOpDeleteListModelProjection listModelProjectionPsi = unnamedModelProjectionPsi.getOpDeleteListModelProjection();
         if (listModelProjectionPsi == null)
-          return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
-        ensureModelKind(psi, TypeKind.LIST, context);
+          return (MP) createDefaultModelProjection(type, params, annotations, unnamedModelProjectionPsi, context);
+        ensureModelKind(unnamedModelProjectionPsi, TypeKind.LIST, context);
 
         return (MP) parseListModelProjection(
             (ListTypeApi) type,
@@ -460,7 +441,7 @@ public final class OpDeleteProjectionsPsiParser {
             annotations,
             parseModelTails(
                 OpDeleteListModelProjection.class,
-                psi.getOpDeleteModelPolymorphicTail(),
+                unnamedModelProjectionPsi.getOpDeleteModelPolymorphicTail(),
                 typesResolver,
                 context
             ),
@@ -470,7 +451,7 @@ public final class OpDeleteProjectionsPsiParser {
         );
 
       case ENUM:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), unnamedModelProjectionPsi, context);
 
       case PRIMITIVE:
         assert modelClass.isAssignableFrom(OpDeletePrimitiveModelProjection.class);
@@ -481,18 +462,18 @@ public final class OpDeleteProjectionsPsiParser {
             annotations,
             parseModelTails(
                 OpDeletePrimitiveModelProjection.class,
-                psi.getOpDeleteModelPolymorphicTail(),
+                unnamedModelProjectionPsi.getOpDeleteModelPolymorphicTail(),
                 typesResolver,
                 context
             ),
-            psi
+            unnamedModelProjectionPsi
         );
 
       case UNION:
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), unnamedModelProjectionPsi, context);
 
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), unnamedModelProjectionPsi, context);
     }
   }
 
@@ -513,30 +494,22 @@ public final class OpDeleteProjectionsPsiParser {
         final SchemaOpDeleteModelMultiTail multiTailPsi = tailPsi.getOpDeleteModelMultiTail();
         assert multiTailPsi != null;
         for (SchemaOpDeleteModelMultiTailItem tailItemPsi : multiTailPsi.getOpDeleteModelMultiTailItemList()) {
-          final SchemaOpDeleteModelProjection tailProjectionPsi = tailItemPsi.getOpDeleteModelProjection();
-          if (tailProjectionPsi == null)
-            context.addError("Incomplete tail projection", tailItemPsi);
-          else tails.add(
+          tails.add(
               buildModelTailProjection(
                   modelClass,
                   tailItemPsi.getTypeRef(),
-                  tailProjectionPsi,
-                  tailItemPsi.getOpDeleteModelPropertyList(),
+                  tailItemPsi.getOpDeleteModelProjection(),
                   typesResolver,
                   context
               )
           );
         }
       } else {
-        final SchemaOpDeleteModelProjection tailProjectionPsi = singleTailPsi.getOpDeleteModelProjection();
-        if (tailProjectionPsi == null)
-          context.addError("Incomplete tail projection", singleTailPsi);
-        else tails.add(
+        tails.add(
             buildModelTailProjection(
                 modelClass,
                 singleTailPsi.getTypeRef(),
-                tailProjectionPsi,
-                singleTailPsi.getOpDeleteModelPropertyList(),
+                singleTailPsi.getOpDeleteModelProjection(),
                 typesResolver,
                 context
             )
@@ -551,7 +524,6 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull Class<MP> modelClass,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteModelProjection modelProjectionPsi,
-      @NotNull List<SchemaOpDeleteModelProperty> modelPropertiesPsi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -561,8 +533,6 @@ public final class OpDeleteProjectionsPsiParser {
     return parseModelProjection(
         modelClass,
         tailType,
-        parseModelParams(modelPropertiesPsi, typesResolver, context),
-        parseModelAnnotations(modelPropertiesPsi, context),
         modelProjectionPsi,
         typesResolver,
         context
@@ -570,7 +540,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static void ensureModelKind(
-      @NotNull SchemaOpDeleteModelProjection psi,
+      @NotNull SchemaOpDeleteUnnamedModelProjection psi,
       @NotNull TypeKind expectedKind,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -584,7 +554,7 @@ public final class OpDeleteProjectionsPsiParser {
       ), psi, context);
   }
 
-  private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpDeleteModelProjection psi) {
+  private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpDeleteUnnamedModelProjection psi) {
     // todo move to common
     if (psi.getOpDeleteRecordModelProjection() != null) return TypeKind.RECORD;
     if (psi.getOpDeleteMapModelProjection() != null) return TypeKind.MAP;
@@ -720,19 +690,24 @@ public final class OpDeleteProjectionsPsiParser {
             context
         );
 
-      fieldProjections.put(
-          fieldName,
-          new OpDeleteFieldProjectionEntry(
-              field,
-              parseFieldProjection(
-                  field.dataType(),
-                  fieldProjectionEntryPsi.getOpDeleteFieldProjection(),
-                  typesResolver,
-                  context
-              ),
-              EpigraphPsiUtil.getLocation(fieldProjectionEntryPsi)
-          )
-      );
+      final SchemaOpDeleteFieldProjection fieldProjectionPsi = fieldProjectionEntryPsi.getOpDeleteFieldProjection();
+      if (fieldProjectionPsi == null)
+        context.addError("Incomplete field '" + fieldName + "' projection", fieldProjectionEntryPsi);
+      else {
+        fieldProjections.put(
+            fieldName,
+            new OpDeleteFieldProjectionEntry(
+                field,
+                parseFieldProjection(
+                    field.dataType(),
+                    fieldProjectionPsi,
+                    typesResolver,
+                    context
+                ),
+                EpigraphPsiUtil.getLocation(fieldProjectionEntryPsi)
+            )
+        );
+      }
     }
 
     return new OpDeleteRecordModelProjection(
@@ -780,7 +755,8 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull OpDeleteKeyProjection keyProjection = parseKeyProjection(psi.getOpDeleteKeyProjection(), resolver, context);
+    @NotNull OpDeleteKeyProjection keyProjection =
+        parseKeyProjection(psi.getOpDeleteKeyProjection(), resolver, context);
 
     @Nullable SchemaOpDeleteVarProjection valueProjectionPsi = psi.getOpDeleteVarProjection();
     @NotNull OpDeleteVarProjection valueProjection =

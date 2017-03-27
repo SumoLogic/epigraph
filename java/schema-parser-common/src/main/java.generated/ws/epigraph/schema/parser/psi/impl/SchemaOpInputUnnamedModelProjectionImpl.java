@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElement implements SchemaOpInputMultiTagProjectionItem {
+public class SchemaOpInputUnnamedModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputUnnamedModelProjection {
 
-  public SchemaOpInputMultiTagProjectionItemImpl(ASTNode node) {
+  public SchemaOpInputUnnamedModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputMultiTagProjectionItem(this);
+    visitor.visitOpInputUnnamedModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -43,21 +43,45 @@ public class SchemaOpInputMultiTagProjectionItemImpl extends ASTWrapperPsiElemen
   }
 
   @Override
-  @NotNull
-  public SchemaOpInputModelProjection getOpInputModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class));
-  }
-
-  @Override
-  @NotNull
-  public SchemaTagName getTagName() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTagName.class));
+  @Nullable
+  public SchemaOpInputListModelProjection getOpInputListModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputListModelProjection.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
+  public SchemaOpInputMapModelProjection getOpInputMapModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputMapModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaOpInputModelPolymorphicTail getOpInputModelPolymorphicTail() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelPolymorphicTail.class);
+  }
+
+  @Override
+  @NotNull
+  public List<SchemaOpInputModelProperty> getOpInputModelPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaOpInputModelProperty.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaOpInputRecordModelProjection getOpInputRecordModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputRecordModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
 }
