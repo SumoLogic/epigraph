@@ -42,7 +42,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
   public OpInputProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> context) {
     super(layouter, context);
   }
 
@@ -51,7 +51,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void print(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printModel(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?, ?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
     final OpParams params = projection.params();
@@ -68,7 +68,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
           l.print(escape(tagName));
           l.brk();
         }
-        print(projection, pathSteps);
+        printModel(projection, pathSteps);
       } else if (tagName != null) l.print(escape(tagName));
 
       l.end();
@@ -91,19 +91,19 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
         if (metaProjection.required()) l.print("+");
-        print(metaProjection, 0);
+        printModel(metaProjection, 0);
         l.end();
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) print(annotations);
+      if (!annotations.isEmpty()) printModel(annotations);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
 
       if (!isPrintoutEmpty(projection)) {
         l.beginIInd();
         l.brk();
-        print(projection, 0);
+        printModel(projection, 0);
         l.end();
       }
     }
@@ -136,7 +136,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   private void printModelOnly(OpInputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection(), 0);
+    printModel(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

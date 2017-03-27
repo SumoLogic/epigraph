@@ -23,6 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.DatumTypeApi;
@@ -393,14 +394,17 @@ public abstract class AbstractVarProjection<
     if (o == null || getClass() != o.getClass()) return false;
     AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
 
-    // todo this doesn't cover cases like this:
-    // p1 = (foo (bar (p1))
-    // p2 = (bar( foo (p2))
-    // p1/foo equals p2
-    // need external context-aware comparator
-    return name != null && name.equals(that.name()) ||
-           Objects.equals(type, that.type) && Objects.equals(tagProjections, that.tagProjections) &&
-           Objects.equals(polymorphicTails, that.polymorphicTails);
+    //noinspection unchecked,rawtypes
+    return new GenProjectionsComparator().equals(this, that);
+
+//    // todo this doesn't cover cases like this:
+//    // p1 = (foo (bar (p1))
+//    // p2 = (bar( foo (p2))
+//    // p1/foo equals p2
+//    // need external context-aware comparator
+//    return name != null && name.equals(that.name()) ||
+//           Objects.equals(type, that.type) && Objects.equals(tagProjections, that.tagProjections) &&
+//           Objects.equals(polymorphicTails, that.polymorphicTails);
 
   }
 

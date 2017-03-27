@@ -18,7 +18,7 @@
   - [ ] should support recursive data
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
-- [ ] add support for resource overlays? adding operations to other resources (e.g. with paths)
+- [ ] Feature: add support for resource overlays? adding operations to other resources (e.g. with paths)
 
 # Type system
 - [ ] Enums
@@ -26,8 +26,8 @@
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 - [ ] **Add `type.createBuilder(data)` similar to `toImmutable`**
-- [ ] Introduce real epigraph (record?) type for holding error values
-- [ ] Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/merged
+- [ ] Feature: Introduce real epigraph (record?) type for holding error values
+- [ ] Feature: Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/merged
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
@@ -53,7 +53,6 @@
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
-- [ ] support for recursive projections
 - [ ] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
   - [ ] update parser
   - [ ] input parser
@@ -61,16 +60,18 @@
 - [ ] Perform full tails normalization in parsers
 - [ ] Unify req projections pretty printers, there's lots of code duplication
 - [ ] Unify op projections pretty printers, there's lots of code duplication
-- [ ] Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
-- [ ] Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
 - [ ] generated req projections: cache normalized projections?
 - [x] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing
-- [ ] remove type information from projections?
-  - [ ] record projections should contain a String->FP, not String->FPE map
-- [ ] correct `equals` support, see todo on `AbstractVarProjection.equals`
-- [ ] enable real named model projections. Currently they can't be used for tags, meta or model tails
-- [ ] allow attaching tails to references? e.g. `$foo ~Bar(..)`
+- [ ] ~~remove type information from projections?~~
+  - [ ] ~~record projections should contain a String->FP, not String->FPE map~~
+- [x] support for recursive projections
+- [x] correct `equals` support, see todo on `AbstractVarProjection.equals`
+- [x] enable real named model projections. Currently they can't be used for tags, meta or model tails
+- [x] allow attaching tails to references? e.g. `$foo ~Bar(..)`
+- [ ] enable model projection references for req projections
+- [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
+- [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 
 # Operations
 

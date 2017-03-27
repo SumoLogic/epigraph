@@ -43,7 +43,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
   public OpOutputProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> context) {
     super(layouter, context);
   }
 
@@ -52,7 +52,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printModel(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
     OpOutputModelProjection<?, ?, ?> projection = tp.projection();
     OpOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -66,7 +66,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
           l.print(escape(tagName));
           l.brk();
         }
-        print(projection, 0);
+        printModel(projection, 0);
       } else if (tagName != null) l.print(escape(tagName));
 
       l.end();
@@ -80,11 +80,11 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) print(annotations);
+      if (!annotations.isEmpty()) printModel(annotations);
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
-        print(metaProjection, 0);
+        printModel(metaProjection, 0);
         l.end();
       }
 
@@ -93,7 +93,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       if (!isPrintoutEmpty(projection)) {
         l.beginIInd();
         l.brk();
-        print(projection, 0);
+        printModel(projection, 0);
         l.end();
       }
     }
@@ -117,7 +117,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   private void printModelOnly(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection(), 0);
+    printModel(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

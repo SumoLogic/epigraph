@@ -20,11 +20,15 @@ import de.uka.ilkd.pp.Layouter;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
+import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.schema.operations.OperationDeclaration;
@@ -93,7 +97,8 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     for (OperationDeclaration operation : resource.operations()) {
 
-      ProjectionsPrettyPrinterContext<OpOutputVarProjection> operationOutputProjectionsContext =
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>
+          operationOutputProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               namespaces.operationOutputProjectionsNamespace(
                   resourceName,
@@ -101,7 +106,8 @@ public class SchemaPrettyPrinter<E extends Exception> {
                   operation.name()
               )
           );
-      ProjectionsPrettyPrinterContext<OpInputVarProjection> operationInputProjectionsContext =
+      ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>>
+          operationInputProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               namespaces.operationInputProjectionsNamespace(
                   resourceName,
@@ -109,7 +115,8 @@ public class SchemaPrettyPrinter<E extends Exception> {
                   operation.name()
               )
           );
-      ProjectionsPrettyPrinterContext<OpDeleteVarProjection> operationDeleteProjectionsContext =
+      ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+          operationDeleteProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               namespaces.operationDeleteProjectionsNamespace(
                   resourceName,
@@ -126,14 +133,15 @@ public class SchemaPrettyPrinter<E extends Exception> {
           operationDeleteProjectionsContext
       );
 
-      globalOutputProjections.addAll(operationOutputProjectionsContext.otherNamespaceProjections());
-      globalInputProjections.addAll(operationInputProjectionsContext.otherNamespaceProjections());
-      globalDeleteProjections.addAll(operationDeleteProjectionsContext.otherNamespaceProjections());
+      globalOutputProjections.addAll(operationOutputProjectionsContext.otherNamespaceVarProjections());
+      globalInputProjections.addAll(operationInputProjectionsContext.otherNamespaceVarProjections());
+      globalDeleteProjections.addAll(operationDeleteProjectionsContext.otherNamespaceVarProjections());
     }
 
     printGlobalProjections(
         "outputProjection",
         globalOutputProjections,
+        Collections.emptyList(),
         projectionName -> new ProjectionsPrettyPrinterContext<>(
             namespaces.outputProjectionNamespace(
                 resourceName,
@@ -146,6 +154,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
     printGlobalProjections(
         "inputProjection",
         globalInputProjections,
+        Collections.emptyList(),
         projectionName -> new ProjectionsPrettyPrinterContext<>(
             namespaces.inputProjectionNamespace(
                 resourceName,
@@ -158,6 +167,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
     printGlobalProjections(
         "deleteProjection",
         globalDeleteProjections,
+        Collections.emptyList(),
         projectionName -> new ProjectionsPrettyPrinterContext<>(
             namespaces.deleteProjectionNamespace(
                 resourceName,
@@ -173,36 +183,45 @@ public class SchemaPrettyPrinter<E extends Exception> {
   }
 
   @SuppressWarnings("unchecked")
-  private <VP extends GenVarProjection<VP, ?, ?>> void printGlobalProjections(
+  private <VP extends GenVarProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> void printGlobalProjections(
       @NotNull String prefix,
-      @NotNull Collection<VP> projections,
-      @NotNull Function<String, ProjectionsPrettyPrinterContext<VP>> prettyPrinterContextFactory,
-      @NotNull Function<ProjectionsPrettyPrinterContext<VP>, AbstractProjectionsPrettyPrinter<VP, ?, ?, E>> prettyPrinterFactory
+      @NotNull Collection<VP> varProjections,
+      @NotNull Collection<MP> modelProjections,
+      @NotNull Function<String, ProjectionsPrettyPrinterContext<VP, MP>> prettyPrinterContextFactory,
+      @NotNull Function<ProjectionsPrettyPrinterContext<VP, MP>, AbstractProjectionsPrettyPrinter<VP, ?, MP, E>> prettyPrinterFactory
   ) throws E {
 
-    List<String> printedRefs = projections.stream()
+    List<String> printedVarRefs = varProjections.stream()
         .map(GenVarProjection::name)
         .map(Qn::last)
         .collect(Collectors.toList());
 
-    Set<String> printedNames = new HashSet<>();
+    List<String> printedModelRefs = modelProjections.stream()
+        .map(GenModelProjection::name)
+        .map(Qn::last)
+        .collect(Collectors.toList());
 
-    while (!projections.isEmpty()) {
-      Collection<VP> nextProjections = new ArrayList<>(); // projections referenced from printed projections
+    Set<String> printedVarNames = new HashSet<>();
+    Set<String> printedModelNames = new HashSet<>();
 
-      for (final VP outputProjection : projections) {
+    while (!varProjections.isEmpty() || !modelProjections.isEmpty()) {
+
+      Collection<VP> nextVarProjections = new ArrayList<>(); // projections referenced from printed projections
+      Collection<MP> nextModelProjections = new ArrayList<>(); // projections referenced from printed projections
+
+      for (final VP outputProjection : varProjections) {
         final Qn name = outputProjection.name();
         assert name != null;
         final String shortName = name.last();
 
-        if (!printedNames.contains(shortName)) {
-          printedNames.add(shortName);
+        if (!printedVarNames.contains(shortName)) {
+          printedVarNames.add(shortName);
 
-          final ProjectionsPrettyPrinterContext<VP> printerContext = prettyPrinterContextFactory.apply(shortName);
+          final ProjectionsPrettyPrinterContext<VP, MP> printerContext = prettyPrinterContextFactory.apply(shortName);
           final AbstractProjectionsPrettyPrinter<VP, ?, ?, E> projectionsPrettyPrinter =
               prettyPrinterFactory.apply(printerContext);
 
-          projectionsPrettyPrinter.addVisitedRefs(printedRefs);
+          projectionsPrettyPrinter.addVisitedRefs(printedVarRefs);
 
           l.nl();
           l.beginIInd();
@@ -211,16 +230,57 @@ public class SchemaPrettyPrinter<E extends Exception> {
           projectionsPrettyPrinter.printVarNoRefCheck(outputProjection, 0);
           l.end();
 
-          final Collection<VP> extra = printerContext.otherNamespaceProjections();
-          for (VP vp : extra) {
-            nextProjections.add(vp);
+          for (VP vp : printerContext.otherNamespaceVarProjections()) {
+            nextVarProjections.add(vp);
             //noinspection ConstantConditions
-            printedRefs.add(vp.name().last());
+            printedVarRefs.add(vp.name().last());
+          }
+
+          for (MP mp : printerContext.otherNamespaceModelProjections()) {
+            nextModelProjections.add(mp);
+            //noinspection ConstantConditions
+            printedModelRefs.add(mp.name().last());
           }
         }
       }
 
-      projections = nextProjections;
+      for (final MP outputProjection : modelProjections) {
+        final Qn name = outputProjection.name();
+        assert name != null;
+        final String shortName = name.last();
+
+        if (!printedModelNames.contains(shortName)) {
+          printedModelNames.add(shortName);
+
+          final ProjectionsPrettyPrinterContext<VP, MP> printerContext = prettyPrinterContextFactory.apply(shortName);
+          final AbstractProjectionsPrettyPrinter<VP, ?, MP, E> projectionsPrettyPrinter =
+              prettyPrinterFactory.apply(printerContext);
+
+          projectionsPrettyPrinter.addVisitedRefs(printedModelRefs);
+
+          l.nl();
+          l.beginIInd();
+          l.print(prefix).brk().print(shortName).print(":").brk();
+          l.print(outputProjection.type().name().toString()).brk().print("=").brk();
+          projectionsPrettyPrinter.printModelNoRefCheck(outputProjection, 0);
+          l.end();
+
+          for (VP vp : printerContext.otherNamespaceVarProjections()) {
+            nextVarProjections.add(vp);
+            //noinspection ConstantConditions
+            printedVarRefs.add(vp.name().last());
+          }
+
+          for (MP mp : printerContext.otherNamespaceModelProjections()) {
+            nextModelProjections.add(mp);
+            //noinspection ConstantConditions
+            printedModelRefs.add(mp.name().last());
+          }
+        }
+      }
+
+      varProjections = nextVarProjections;
+      modelProjections = nextModelProjections;
     }
   }
 }

@@ -496,7 +496,10 @@ opOutputModelSingleTail ::= typeRef opOutputModelProjection
 opOutputModelMultiTail ::= '(' (opOutputModelMultiTailItem ','?)* ')' {pin=1}
 opOutputModelMultiTailItem ::= typeRef opOutputModelProjection
 
-opOutputModelProjection ::= opOutputUnnamedModelProjection
+opOutputModelProjection ::= opOutputNamedModelProjection | opOutputUnnamedOrRefModelProjection
+opOutputUnnamedOrRefModelProjection ::= opOutputModelProjectionRef | opOutputUnnamedModelProjection
+opOutputNamedModelProjection ::= '$' qid '=' opOutputUnnamedOrRefModelProjection {pin = 3}
+opOutputModelProjectionRef ::= '$' qid {pin = 1}
 opOutputUnnamedModelProjection ::= opOutputModelProjectionProperties ?
                                    ( ( opOutputRecordModelProjection
                                      | opOutputListModelProjection

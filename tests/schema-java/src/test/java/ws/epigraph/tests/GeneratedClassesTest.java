@@ -113,7 +113,7 @@ public class GeneratedClassesTest {
             )
         )
     );
-    printer.print(projection, 0);
+    printer.printModel(projection, 0);
     layouter.close();
     return sb.getString();
   }

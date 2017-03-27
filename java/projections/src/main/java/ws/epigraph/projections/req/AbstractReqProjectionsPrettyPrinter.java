@@ -45,7 +45,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   protected AbstractReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
     dataPrinter = new DataPrinter<>(layouter);
   }
@@ -122,7 +122,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk();
-      print(fieldVarProjection, pathSteps);
+      printModel(fieldVarProjection, pathSteps);
     }
     l.end();
   }
@@ -179,7 +179,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(itemsProjection)) {
       l.brk();
-      print(itemsProjection, 0);
+      printModel(itemsProjection, 0);
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
 

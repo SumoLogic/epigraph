@@ -18,6 +18,7 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 
 import java.util.Collection;
@@ -27,9 +28,13 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsPrettyPrinterContext<VP extends GenVarProjection<VP, ?, ?>> {
+public class ProjectionsPrettyPrinterContext<
+    VP extends GenVarProjection<VP, ?, MP>,
+    MP extends GenModelProjection<?, ?, ?, ?>> {
+
   private final @NotNull Qn projectionsNamespace;
-  private final Map<Qn, VP> otherNamespaceProjections = new HashMap<>();
+  private final Map<Qn, VP> otherNamespaceVarProjections = new HashMap<>();
+  private final Map<Qn, MP> otherNamespaceModelProjections = new HashMap<>();
 
   public ProjectionsPrettyPrinterContext(final @NotNull Qn namespace) {projectionsNamespace = namespace;}
 
@@ -37,22 +42,29 @@ public class ProjectionsPrettyPrinterContext<VP extends GenVarProjection<VP, ?, 
     return projectionName.removeLastSegment().equals(projectionsNamespace);
   }
 
-  public void addOtherNamespaceProjection(@NotNull VP projection) {
-    @SuppressWarnings("unchecked")
-    final Qn projectionName = projection.name();
+  public void addOtherNamespaceVarProjection(@NotNull VP projection) {
+    @SuppressWarnings("unchecked") final Qn projectionName = projection.name();
 
     assert projectionName != null;
     assert !inNamespace(projectionName);
-    assert !otherNamespaceProjections.containsKey(projectionName) : projectionName.toString();
+    assert !otherNamespaceVarProjections.containsKey(projectionName) : projectionName.toString();
 
-    otherNamespaceProjections.put(projectionName, projection);
+    otherNamespaceVarProjections.put(projectionName, projection);
   }
 
-  public boolean isEmpty() { return otherNamespaceProjections.isEmpty(); }
+  public void addOtherNamespaceModelProjection(@NotNull MP projection) {
+    @SuppressWarnings("unchecked") final Qn projectionName = projection.name();
 
-  public Collection<VP> otherNamespaceProjections() {
-    return otherNamespaceProjections.values();
+    assert projectionName != null;
+    assert !inNamespace(projectionName);
+    assert !otherNamespaceModelProjections.containsKey(projectionName) : projectionName.toString();
+
+    otherNamespaceModelProjections.put(projectionName, projection);
   }
 
-  public void reset() { otherNamespaceProjections.clear(); }
+  public Collection<VP> otherNamespaceVarProjections() { return otherNamespaceVarProjections.values(); }
+
+  public Collection<MP> otherNamespaceModelProjections() { return otherNamespaceModelProjections.values(); }
+
+  public void reset() { otherNamespaceVarProjections.clear(); }
 }

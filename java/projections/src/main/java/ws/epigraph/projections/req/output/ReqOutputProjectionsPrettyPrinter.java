@@ -45,7 +45,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
   public ReqOutputProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<ReqOutputVarProjection> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> context) {
     super(layouter, context);
   }
 
@@ -54,7 +54,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printModel(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
     ReqOutputModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
@@ -81,14 +81,14 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
     if (!isPrintoutEmpty(projection)) {
       if (needBrk) l.brk();
-      print(projection, pathSteps);
+      printModel(projection, pathSteps);
     }
 
     ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     if (metaProjection != null) {
       l.print("@");
       if (metaProjection.required()) l.print("+");
-      print(metaProjection, 0);
+      printModel(metaProjection, 0);
     }
 
 
@@ -131,7 +131,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         );
 
       l.brk();
-      print(mp.itemsProjection(), decSteps(pathSteps));
+      printModel(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
       l.beginIInd();
@@ -156,7 +156,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
         l.brk();
-        print(mp.itemsProjection(), 0);
+        printModel(mp.itemsProjection(), 0);
       }
       l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -168,7 +168,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     );
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection(), 0);
+    printModel(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

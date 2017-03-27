@@ -46,7 +46,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   protected AbstractOpProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
   }
 
@@ -81,7 +81,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
     if (!ipp.isPrintoutEmpty(projection)) {
       l.brk();
-      ipp.print(projection, 0);
+      ipp.printModel(projection, 0);
     }
 
     Annotations annotations = projection.annotations();
@@ -95,7 +95,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     if (!annotations.isEmpty()) {
       l.beginCInd();
       l.print(" {");
-      print(annotations);
+      printModel(annotations);
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
 //    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      print(fieldVarProjection, 0);
+      printModel(fieldVarProjection, 0);
     }
 //    } else {
 //      l.beginCInd();
@@ -170,13 +170,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       }
 
       @NotNull Annotations keyAnnotations = keyProjection.annotations();
-      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
+      if (!keyAnnotations.isEmpty()) printModel(keyAnnotations, true, !commaNeeded);
 
       if (commaNeeded) l.brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
     l.print("(").brk();
-    print(itemsProjection, 0);
+    printModel(itemsProjection, 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

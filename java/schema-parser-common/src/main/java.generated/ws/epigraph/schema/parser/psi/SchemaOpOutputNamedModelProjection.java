@@ -21,12 +21,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputModelProjection extends PsiElement {
-
-  @Nullable
-  SchemaOpOutputNamedModelProjection getOpOutputNamedModelProjection();
+public interface SchemaOpOutputNamedModelProjection extends PsiElement {
 
   @Nullable
   SchemaOpOutputUnnamedOrRefModelProjection getOpOutputUnnamedOrRefModelProjection();
+
+  @NotNull
+  SchemaQid getQid();
+
+  @NotNull
+  PsiElement getDollar();
+
+  @NotNull
+  PsiElement getEq();
 
 }

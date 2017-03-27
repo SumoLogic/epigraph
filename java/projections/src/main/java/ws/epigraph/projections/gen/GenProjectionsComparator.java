@@ -51,6 +51,20 @@ public class GenProjectionsComparator<
     return varEquals(Collections.singleton(vp1), Collections.singleton(vp2));
   }
 
+  public static <
+      VP extends GenVarProjection<VP, TP, MP>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
+      RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
+      MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
+      LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
+      PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
+      FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
+      FP extends GenFieldProjection<VP, TP, MP, FP>
+      > boolean varEquals(@NotNull VP vp1, @NotNull VP vp2) {
+    return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().equals(vp1, vp2);
+  }
+
   public void reset() {
     visited.clear();
   }

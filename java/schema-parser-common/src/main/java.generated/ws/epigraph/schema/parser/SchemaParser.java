@@ -351,6 +351,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_OUTPUT_MODEL_PROJECTION) {
       r = opOutputModelProjection(b, 0);
     }
+    else if (t == S_OP_OUTPUT_MODEL_PROJECTION_REF) {
+      r = opOutputModelProjectionRef(b, 0);
+    }
     else if (t == S_OP_OUTPUT_MODEL_PROPERTY) {
       r = opOutputModelProperty(b, 0);
     }
@@ -363,6 +366,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM) {
       r = opOutputMultiTagProjectionItem(b, 0);
     }
+    else if (t == S_OP_OUTPUT_NAMED_MODEL_PROJECTION) {
+      r = opOutputNamedModelProjection(b, 0);
+    }
     else if (t == S_OP_OUTPUT_NAMED_VAR_PROJECTION) {
       r = opOutputNamedVarProjection(b, 0);
     }
@@ -374,6 +380,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_OUTPUT_UNNAMED_MODEL_PROJECTION) {
       r = opOutputUnnamedModelProjection(b, 0);
+    }
+    else if (t == S_OP_OUTPUT_UNNAMED_OR_REF_MODEL_PROJECTION) {
+      r = opOutputUnnamedOrRefModelProjection(b, 0);
     }
     else if (t == S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
       r = opOutputUnnamedOrRefVarProjection(b, 0);
@@ -3955,12 +3964,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opOutputUnnamedModelProjection
+  // opOutputNamedModelProjection | opOutputUnnamedOrRefModelProjection
   public static boolean opOutputModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputModelProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MODEL_PROJECTION, "<op output model projection>");
-    r = opOutputUnnamedModelProjection(b, l + 1);
+    r = opOutputNamedModelProjection(b, l + 1);
+    if (!r) r = opOutputUnnamedOrRefModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -4008,6 +4018,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opOutputModelProjectionProperties_1_0_1")) return false;
     consumeToken(b, S_COMMA);
     return true;
+  }
+
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean opOutputModelProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputModelProjectionRef")) return false;
+    if (!nextTokenIs(b, S_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_MODEL_PROJECTION_REF, null);
+    r = consumeToken(b, S_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4091,6 +4115,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && opOutputModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '$' qid '=' opOutputUnnamedOrRefModelProjection
+  public static boolean opOutputNamedModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputNamedModelProjection")) return false;
+    if (!nextTokenIs(b, S_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_NAMED_MODEL_PROJECTION, null);
+    r = consumeToken(b, S_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, S_EQ);
+    p = r; // pin = 3
+    r = r && opOutputUnnamedOrRefModelProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4258,6 +4298,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opOutputUnnamedModelProjection_1_0_1")) return false;
     opOutputModelPolymorphicTail(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // opOutputModelProjectionRef | opOutputUnnamedModelProjection
+  public static boolean opOutputUnnamedOrRefModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opOutputUnnamedOrRefModelProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_UNNAMED_OR_REF_MODEL_PROJECTION, "<op output unnamed or ref model projection>");
+    r = opOutputModelProjectionRef(b, l + 1);
+    if (!r) r = opOutputUnnamedModelProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

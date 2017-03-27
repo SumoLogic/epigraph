@@ -44,7 +44,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
   public OpDeleteProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?,?,?>> context) {
     super(layouter, context);
   }
   public OpDeleteProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
@@ -57,7 +57,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@Nullable String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
+  public void printModel(@Nullable String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
     OpDeleteModelProjection<?, ?, ?> projection = tp.projection();
     OpDeleteModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -71,7 +71,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
           l.print(escape(tagName));
           l.brk();
         }
-        print(projection, 0);
+        printModel(projection, 0);
       } else if (tagName!=null) l.print(escape(tagName));
 
       l.end();
@@ -85,11 +85,11 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) print(annotations);
+      if (!annotations.isEmpty()) printModel(annotations);
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
-        print(metaProjection, 0);
+        printModel(metaProjection, 0);
         l.end();
       }
 
@@ -98,7 +98,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       if (!isPrintoutEmpty(projection)) {
         l.beginIInd();
         l.brk();
-        print(projection, 0);
+        printModel(projection, 0);
         l.end();
       }
     }
@@ -122,7 +122,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   private void printModelOnly(OpDeleteListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    print(mp.itemsProjection(), 0);
+    printModel(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

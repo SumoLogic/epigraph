@@ -51,7 +51,7 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@Nullable String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
+  public void printModel(@Nullable String tagName, @NotNull OpTagPath tp, int pathSteps) throws E {
     OpModelPath<?, ?, ?> projection = tp.projection();
     OpParams params = projection.params();
     Annotations annotations = projection.annotations();
@@ -68,7 +68,7 @@ public class OpPathPrettyPrinter<E extends Exception>
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) print(annotations);
+      if (!annotations.isEmpty()) printModel(annotations);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
       brkNeeded = true;
@@ -80,7 +80,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     if (!isPrintoutEmpty(projection)) {
       l.beginCInd();
       if (brkNeeded) l.brk();
-      print(projection, 0);
+      printModel(projection, 0);
       l.end();
     }
 
@@ -127,14 +127,14 @@ public class OpPathPrettyPrinter<E extends Exception>
         commaNeeded = !keyParams.isEmpty();
       }
 
-      if (!keyAnnotations.isEmpty()) print(keyAnnotations, true, !commaNeeded);
+      if (!keyAnnotations.isEmpty()) printModel(keyAnnotations, true, !commaNeeded);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     } else {
       if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
     }
 
-    print(mp.itemsProjection(), 0);
+    printModel(mp.itemsProjection(), 0);
 
     l.end();
   }

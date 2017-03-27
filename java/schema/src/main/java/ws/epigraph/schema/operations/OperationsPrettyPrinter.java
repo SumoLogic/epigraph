@@ -21,11 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
@@ -50,9 +53,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
   public void printOperation(
       @NotNull OperationDeclaration operation,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection> outputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection> inputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection> deleteProjectionsPrinterContext
+      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> outputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> inputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> deleteProjectionsPrinterContext
   ) throws E {
     opOutputPrinter = new OpOutputProjectionsPrettyPrinter<>(l, outputProjectionsPrinterContext);
     opInputPrinter = new OpInputProjectionsPrettyPrinter<>(l, inputProjectionsPrinterContext);
@@ -74,7 +77,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     first = printMethod(operation, first);
 
     @Nullable Annotations annotations = operation.annotations();
-    if (annotations != null) first = opOutputPrinter.print(annotations, true, first);
+    if (annotations != null) first = opOutputPrinter.printModel(annotations, true, first);
 
     first = printPath(operation, first);
 

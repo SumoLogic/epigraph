@@ -43,23 +43,24 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected final @NotNull Layouter<E> l;
   protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
-  protected final @NotNull ProjectionsPrettyPrinterContext<VP> context;
+  protected final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context;
 
-  private final Collection<String> visitedRefs = new HashSet<>();
+  private final Collection<String> visitedVarRefs = new HashSet<>();
+  private final Collection<String> visitedModelRefs = new HashSet<>();
 
   protected AbstractProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<VP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     l = layouter;
     this.context = context;
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
   public void addVisitedRefs(@NotNull Collection<String> names) {
-    visitedRefs.addAll(names);
+    visitedVarRefs.addAll(names);
   }
 
-  public final void print(@NotNull VP p, int pathSteps) throws E {
+  public final void printModel(@NotNull VP p, int pathSteps) throws E {
     final Qn name = p.name();
 
     boolean shouldPrint = true;
@@ -68,14 +69,14 @@ public abstract class AbstractProjectionsPrettyPrinter<
       String shortName = name.last();
 
       if (!context.inNamespace(name)) {
-        context.addOtherNamespaceProjection(p);
+        context.addOtherNamespaceVarProjection(p);
         l.print("$").print(shortName);
         shouldPrint = false;
-      } else if (visitedRefs.contains(shortName)) {
+      } else if (visitedVarRefs.contains(shortName)) {
         l.print("$").print(shortName);
         shouldPrint = false;
       } else {
-        visitedRefs.add(shortName);
+        visitedVarRefs.add(shortName);
         l.print("$").print(shortName).print(" = ");
       }
     }
@@ -95,11 +96,11 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (p.type().kind() != TypeKind.UNION) {
       // samovar
       TP tp = tagProjections.values().iterator().next();
-      print(null, tp, decSteps(pathSteps));
+      printModel(null, tp, decSteps(pathSteps));
     } else if (!p.parenthesized()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
-      print(entry.getKey(), entry.getValue(), decSteps(pathSteps));
+      printModel(entry.getKey(), entry.getValue(), decSteps(pathSteps));
     } else if (tagProjections.isEmpty()) {
       l.print(":()");
     } else {
@@ -118,7 +119,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         if (first) first = false;
         else l.print(",");
         l.brk();
-        print(entry.getKey(), entry.getValue(), 0);
+        printModel(entry.getKey(), entry.getValue(), 0);
       }
       l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -137,7 +138,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         VP tail = polymorphicTails.iterator().next();
         l.print(tail.type().name().toString());
         l.brk();
-        print(tail, 0);
+        printModel(tail, 0);
       } else {
         l.beginCInd();
         l.print("~~(");
@@ -148,7 +149,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
           l.brk();
           l.beginIInd(0);
           l.print(tail.type().name().toString()).brk();
-          print(tail, 0);
+          printModel(tail, 0);
           l.end();
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -157,10 +158,34 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  public abstract void print(@Nullable String tagName, @NotNull TP tp, int pathSteps) throws E;
+  public abstract void printModel(@Nullable String tagName, @NotNull TP tp, int pathSteps) throws E;
 
-  public void print(@NotNull MP mp, int pathSteps) throws E {
-    // check recursion?
+  public void printModel(@NotNull MP mp, int pathSteps) throws E {
+    final Qn name = mp.name();
+
+    boolean shouldPrint = true;
+
+    if (name != null) {
+      String shortName = name.last();
+
+      if (!context.inNamespace(name)) {
+        context.addOtherNamespaceModelProjection(mp);
+        l.print("$").print(shortName);
+        shouldPrint = false;
+      } else if (visitedModelRefs.contains(shortName)) {
+        l.print("$").print(shortName);
+        shouldPrint = false;
+      } else {
+        visitedModelRefs.add(shortName);
+        l.print("$").print(shortName).print(" = ");
+      }
+    }
+
+    if (shouldPrint)
+      printModelNoRefCheck(mp, pathSteps);
+  }
+
+  public void printModelNoRefCheck(@NotNull MP mp, int pathSteps) throws E {
     printModelOnly(mp, pathSteps);
     printModelTailsOnly(mp);
   }
@@ -180,7 +205,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         l.print(modelTailTypeNamePrefix(tail));
         l.print(tail.type().name().toString());
         l.brk();
-        print(tail, 0);
+        printModel(tail, 0);
       } else {
         l.beginCInd();
         l.print("~(");
@@ -192,7 +217,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
           l.beginIInd(0);
           l.print(modelTailTypeNamePrefix(tail));
           l.print(tail.type().name().toString()).brk();
-          print(tail, 0);
+          printModel(tail, 0);
           l.end();
         }
         l.brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -205,11 +230,11 @@ public abstract class AbstractProjectionsPrettyPrinter<
     return "";
   }
 
-  public void print(@NotNull Annotations cp) throws E {
-    print(cp, false, true);
+  public void printModel(@NotNull Annotations cp) throws E {
+    printModel(cp, false, true);
   }
 
-  public boolean print(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
+  public boolean printModel(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
     for (Map.Entry<String, Annotation> entry : cp.asMap().entrySet()) {
       if (needCommas) {
         if (first) first = false;

@@ -164,6 +164,11 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseModelRecursive() throws PsiProcessingException {
+    testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+  }
+
+  @Test
   public void testSuperTypeRef() throws PsiProcessingException {
     // todo add to other parser tests too
     OpOutputVarProjection personProjection = testParsingVarProjection(":id");
