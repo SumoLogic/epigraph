@@ -205,23 +205,26 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   @SuppressWarnings("unchecked")
   public void printModelNoRefCheck(@NotNull MP mp, int pathSteps) throws E {
-    l.beginIInd(0);
+    if (mp.isResolved()) {
+      l.beginIInd(0);
 
-    boolean empty = printModelParams(mp);
-    if (!empty && !isPrintoutNoParamsEmpty(mp))
-      l.print(" ");
+      boolean empty = printModelParams(mp);
+      if (!empty && !isPrintoutNoParamsEmpty(mp))
+        l.print(" ");
       //l.brk();
 
-    if (!isPrintoutNoParamsEmpty(mp))
-      printModelOnly(mp, pathSteps);
+      if (!isPrintoutNoParamsEmpty(mp))
+        printModelOnly(mp, pathSteps);
 
-    printModelTailsOnly(mp);
+      printModelTailsOnly(mp);
 
-    final MP meta = (MP) mp.metaProjection();
-    if (meta != null)
-      printModelMeta(meta);
+      final MP meta = (MP) mp.metaProjection();
+      if (meta != null)
+        printModelMeta(meta);
 
-    l.end();
+      l.end();
+    } else
+      l.print("<unresolved>");
   }
 
   protected abstract boolean printModelParams(@NotNull MP mp) throws E;
@@ -311,6 +314,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   @SuppressWarnings("unchecked")
   public boolean isPrintoutNoParamsEmpty(@NotNull MP mp) {
+    if (!mp.isResolved()) return false;
     switch (mp.type().kind()) {
       case RECORD:
         return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();

@@ -26,15 +26,15 @@ import ws.epigraph.psi.PsiProcessingContext;
  */
 public class OpOutputPsiProcessingContext extends DelegatingPsiProcessingContext {
   private final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext;
-  private final @NotNull OpOutputReferenceContext varReferenceContext;
+  private final @NotNull OpOutputReferenceContext referenceContext;
 
   public OpOutputPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
       final @NotNull OpInputPsiProcessingContext context,
-      final @NotNull OpOutputReferenceContext varReferenceContext) {
+      final @NotNull OpOutputReferenceContext referenceContext) {
     super(psiProcessingContext);
     inputPsiProcessingContext = context;
-    this.varReferenceContext = varReferenceContext;
+    this.referenceContext = referenceContext;
   }
 
   public OpInputPsiProcessingContext inputPsiProcessingContext() {
@@ -42,6 +42,6 @@ public class OpOutputPsiProcessingContext extends DelegatingPsiProcessingContext
   }
 
   public OpOutputReferenceContext referenceContext() {
-    return varReferenceContext;
+    return referenceContext;
   }
 }

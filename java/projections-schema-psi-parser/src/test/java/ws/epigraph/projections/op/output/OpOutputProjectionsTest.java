@@ -225,7 +225,7 @@ public class OpOutputProjectionsTest {
 
     final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
     referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
-    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
+//    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {
@@ -240,9 +240,13 @@ public class OpOutputProjectionsTest {
       }
     };
 
-    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` ( id )");
+    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` <unresolved>");
+//    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` ( id )");
     // we don't get reference name here because it belongs to var, not model projection ( personRecordVar )
 //    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` $ref = ( id )");
+
+    // should not result in class cast
+    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
   }
 
   @Test
@@ -628,8 +632,10 @@ public class OpOutputProjectionsTest {
           outputPsiProcessingContext
       );
 
-      outputReferenceContext.ensureAllReferencesResolved();
-      inputReferenceContext.ensureAllReferencesResolved();
+      if (config.ensureReferencesResolved()) {
+        outputReferenceContext.ensureAllReferencesResolved();
+        inputReferenceContext.ensureAllReferencesResolved();
+      }
 
       return vp;
     });
@@ -667,6 +673,8 @@ public class OpOutputProjectionsTest {
     @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
       return new OpOutputReferenceContext(Qn.EMPTY, null, ctx);
     }
+
+    boolean ensureReferencesResolved() { return true; }
   }
 
 }

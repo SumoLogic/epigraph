@@ -137,6 +137,7 @@ public abstract class ReferenceContext<
         );
       else {
         final TagApi selfTag = ((DatumTypeApi) varType).self();
+        if (!varRef.isResolved()) return null;
         final GenTagProjectionEntry<?, MP> tpe = varRef.tagProjections().get(selfTag.name());
         if (tpe == null) return null;
         else return tpe.projection();
@@ -191,9 +192,24 @@ public abstract class ReferenceContext<
         if (ref.type().isAssignableFrom(value.type())) {
           final R normalized;
 
+          // resolve model ref from var projection
           if (value instanceof GenVarProjection<?, ?, ?>) {
             VP varValue = (VP) value;
-            normalized = (R) varValue.normalizedForType(ref.type());
+            VP _normalized = varValue.normalizedForType(ref.type());
+
+            if (ref instanceof GenModelProjection<?, ?, ?, ?>) {
+              if (_normalized.type().kind() == TypeKind.UNION)
+                throw new RuntimeException(
+                    String.format("Broken isAssignableFrom between %s and %s", ref.type().name(), value.type().name())
+                );
+              else {
+                final GenTagProjectionEntry<?, MP> tpe = _normalized.singleTagProjection();
+                assert tpe != null;
+                normalized = (R) tpe.projection();
+              }
+            } else
+              normalized = (R) _normalized;
+
           } else if (value instanceof GenModelProjection<?, ?, ?, ?>) {
             MP modelValue = (MP) value;
             normalized = (R) modelValue.normalizedForType((DatumTypeApi) ref.type());
@@ -225,28 +241,28 @@ public abstract class ReferenceContext<
     for (final Map.Entry<String, GenProjectionReference<?>> entry : references.entrySet()) {
       String name = entry.getKey();
       assert name != null;
-      final GenProjectionReference<?> vp = entry.getValue();
+      final GenProjectionReference<?> ref = entry.getValue();
 
-      if (!vp.isResolved()) {
+      if (!ref.isResolved()) {
         // delegate it to parent if possible:
         //
         //    b = a
         // a = 1
 
         if (parent == null) {
-          psiProcessingContext.addError(String.format("Projection '%s' is not defined", name), vp.location());
+          psiProcessingContext.addError(String.format("Projection '%s' is not defined", name), ref.location());
         } else {
           final GenProjectionReference<?> parentRef = parent.references.get(name);
           if (parentRef == null) {
-            parent.references.put(name, vp);
-          } else if (parentRef != vp) {
+            parent.references.put(name, ref);
+          } else if (parentRef != ref) {
             //?? can't happen
             psiProcessingContext.addError(
                 String.format(
                     "Internal error: different references to projection '%s' in this and parent context",
                     name
                 ),
-                vp.location()
+                ref.location()
             );
           }
         }
