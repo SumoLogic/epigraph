@@ -51,7 +51,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void printModel(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printTag(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
     OpInputModelProjection<?, ?, ?, ?> projection = tp.projection();
     OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
     final OpParams params = projection.params();
@@ -96,7 +96,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) printModel(annotations);
+      if (!annotations.isEmpty()) printAnnotations(annotations);
 
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
 
@@ -136,7 +136,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   private void printModelOnly(OpInputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    printModel(mp.itemsProjection(), 0);
+    printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

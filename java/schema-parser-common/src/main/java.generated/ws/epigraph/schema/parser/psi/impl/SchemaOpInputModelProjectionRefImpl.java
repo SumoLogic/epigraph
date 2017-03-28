@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputModelProjection {
+public class SchemaOpInputModelProjectionRefImpl extends ASTWrapperPsiElement implements SchemaOpInputModelProjectionRef {
 
-  public SchemaOpInputModelProjectionImpl(ASTNode node) {
+  public SchemaOpInputModelProjectionRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputModelProjection(this);
+    visitor.visitOpInputModelProjectionRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,14 @@ public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement imple
 
   @Override
   @Nullable
-  public SchemaOpInputNamedModelProjection getOpInputNamedModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputNamedModelProjection.class);
+  public SchemaQid getQid() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQid.class);
   }
 
   @Override
-  @Nullable
-  public SchemaOpInputUnnamedOrRefModelProjection getOpInputUnnamedOrRefModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedOrRefModelProjection.class);
+  @NotNull
+  public PsiElement getDollar() {
+    return notNullChild(findChildByType(S_DOLLAR));
   }
 
 }

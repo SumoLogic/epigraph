@@ -52,7 +52,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModel(@Nullable String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
+  public void printTag(@Nullable String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
     ReqModelPath<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
@@ -116,7 +116,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk(); // FIXME don't need a break if model parameters will be printed next
-      printModel(fieldVarProjection, 1);
+      printVar(fieldVarProjection, 1);
     }
     l.end();
   }
@@ -133,7 +133,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
     if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
 
-    printModel(mp.itemsProjection(), 1);
+    printVar(mp.itemsProjection(), 1);
     l.end();
   }
 
@@ -168,7 +168,8 @@ public class ReqPathPrettyPrinter<E extends Exception>
     return varPath.singleTagProjection().projection().params().isEmpty();
   }
 
-  private void printAnnotations(@NotNull Annotations annotations) throws E {
+  @Override
+  public void printAnnotations(@NotNull Annotations annotations) throws E {
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
         l.beginIInd();

@@ -51,8 +51,9 @@ public class OpOutputPathTest {
 
   @Test
   public void testParseParam() throws PsiProcessingException {
+    // todo: fix PP
     testVarPathParsing(
-        ":`record` { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
+        ":`record` { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { deprecated = true, default : ( \"foo\": < id: 123 > ) } []( :id ) }"
         ,
         lines(
             ":`record` { ;foo: epigraph.String }",

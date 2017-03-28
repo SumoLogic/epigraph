@@ -1,5 +1,6 @@
 namespace epigraph.schema
 
+// todo should be a name+record vartype
 abstract record Type extends Named {
   doc = "Common interface for data type and vartype records"
 

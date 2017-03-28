@@ -77,7 +77,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
     first = printMethod(operation, first);
 
     @Nullable Annotations annotations = operation.annotations();
-    if (annotations != null) first = opOutputPrinter.printModel(annotations, true, first);
+    if (annotations != null) first = opOutputPrinter.printAnnotations(annotations, true, first);
 
     first = printPath(operation, first);
 

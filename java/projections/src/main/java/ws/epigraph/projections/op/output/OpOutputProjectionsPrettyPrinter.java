@@ -52,7 +52,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModel(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printTag(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
     OpOutputModelProjection<?, ?, ?> projection = tp.projection();
     OpOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     OpParams params = projection.params();
@@ -80,7 +80,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       }
 
       if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) printModel(annotations);
+      if (!annotations.isEmpty()) printAnnotations(annotations);
 
       if (metaProjection != null) {
         l.brk().beginIInd(0).print("meta:").brk();
@@ -117,7 +117,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   private void printModelOnly(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*(").brk();
-    printModel(mp.itemsProjection(), 0);
+    printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

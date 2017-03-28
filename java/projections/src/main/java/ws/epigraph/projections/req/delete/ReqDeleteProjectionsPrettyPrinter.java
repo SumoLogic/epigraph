@@ -52,7 +52,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModel(@Nullable String tagName, @NotNull ReqDeleteTagProjectionEntry tp, int pathSteps) throws E {
+  public void printTag(@Nullable String tagName, @NotNull ReqDeleteTagProjectionEntry tp, int pathSteps) throws E {
     ReqDeleteModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
@@ -104,7 +104,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
     );
     l.beginIInd();
     l.print("*(").brk();
-    printModel(mp.itemsProjection(), 0);
+    printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

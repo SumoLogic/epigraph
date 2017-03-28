@@ -436,10 +436,10 @@ customOperationBodyPart ::= operationMethod |
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? opParamBody? { pin = 1 }
+opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? /* opParamBody? */ { pin = 1 }
 private opParamDefault ::= '=' datum { pin=1 }
-private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
-private opParamBodyPart ::= opParam | annotation
+//private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
+//private opParamBodyPart ::= opParam | annotation
 
 private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
@@ -564,18 +564,22 @@ opInputModelMultiTailItem ::= typeRef opInputModelProjection
 
 //
 
-opInputModelProjection ::= opInputUnnamedModelProjection
+opInputModelProjection ::= opInputNamedModelProjection | opInputUnnamedOrRefModelProjection
+opInputUnnamedOrRefModelProjection ::= opInputModelProjectionRef | opInputUnnamedModelProjection
+opInputNamedModelProjection ::= '$' qid '=' opInputUnnamedOrRefModelProjection {pin = 3}
+opInputModelProjectionRef ::= '$' qid {pin = 1}
 opInputUnnamedModelProjection ::= opInputModelProjectionProperties ?
                                   ( ( opInputRecordModelProjection
                                     | opInputListModelProjection
                                     | opInputMapModelProjection
                                     ) opInputModelPolymorphicTail?
                                   )?
+
 private opInputModelProjectionProperties ::= '{' (opInputModelProperty ','?)* '}' {pin=1}
 opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
   recoverWhile = opInputModelPropertyRecover
 }
-private opInputModelPropertyRecover ::= ! ( '}' )
+private opInputModelPropertyRecover ::= ! ( '}' | ',' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection

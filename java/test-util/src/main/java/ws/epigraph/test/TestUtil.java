@@ -282,7 +282,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
-    printer.printModel(path, 0);
+    printer.printVar(path, 0);
     layouter.close();
     return sb.getString();
   }
@@ -292,7 +292,7 @@ public final class TestUtil {
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
     int len = ProjectionUtils.pathLength(path);
-    printer.printModel(path, len);
+    printer.printVar(path, len);
     layouter.close();
     return sb.getString();
   }
@@ -314,7 +314,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, pathSteps);
+    printer.printVar(projection, pathSteps);
     layouter.close();
     return sb.getString();
   }
@@ -323,7 +323,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, 0);
+    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }
@@ -343,7 +343,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, 0);
+    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }
@@ -352,7 +352,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer = new ReqDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, 0);
+    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }
@@ -361,7 +361,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, pathSteps);
+    printer.printVar(projection, pathSteps);
     layouter.close();
     return sb.getString();
   }
@@ -370,7 +370,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, 0);
+    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }
@@ -379,7 +379,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printModel(projection, 0);
+    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }

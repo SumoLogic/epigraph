@@ -58,7 +58,7 @@ public class ReqInputProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" }",
+          "      ;param1 : epigraph.String = \"hello world\"",
           "    },",
           "    bestFriend :(+id, `record` (",
           "      +id,",

@@ -85,9 +85,7 @@ public class SchemaParserTest {
             "  read {",
             "    doc = \"dome doc string\"",
             "    outputProjection {",
-            "      ;superUser: UserRecord (id) = { id : 1337 } {",
-            "        doc = \"super user account\"",
-            "      }",
+            "      ;superUser: UserRecord { default : { id : 1337 }, doc = \"super user account\" } (id)",
             "    } [required]( :`record` (id, firstName) )",
             "  }",
             "  read readWithPath {",
@@ -124,6 +122,8 @@ public class SchemaParserTest {
             "  }",
             "}"
         ),
+
+        // todo fix PP
         lines(
             "namespace test",
             "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",

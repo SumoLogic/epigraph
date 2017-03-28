@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputModelProjection {
+public class SchemaOpInputNamedModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputNamedModelProjection {
 
-  public SchemaOpInputModelProjectionImpl(ASTNode node) {
+  public SchemaOpInputNamedModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputModelProjection(this);
+    visitor.visitOpInputNamedModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,26 @@ public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement imple
 
   @Override
   @Nullable
-  public SchemaOpInputNamedModelProjection getOpInputNamedModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputNamedModelProjection.class);
+  public SchemaOpInputUnnamedOrRefModelProjection getOpInputUnnamedOrRefModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedOrRefModelProjection.class);
   }
 
   @Override
-  @Nullable
-  public SchemaOpInputUnnamedOrRefModelProjection getOpInputUnnamedOrRefModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedOrRefModelProjection.class);
+  @NotNull
+  public SchemaQid getQid() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getDollar() {
+    return notNullChild(findChildByType(S_DOLLAR));
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getEq() {
+    return notNullChild(findChildByType(S_EQ));
   }
 
 }

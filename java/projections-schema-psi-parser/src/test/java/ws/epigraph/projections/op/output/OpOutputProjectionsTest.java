@@ -59,7 +59,7 @@ public class OpOutputProjectionsTest {
         "  id,",
         "  `record` (",
         "    id {",
-        "      ; +param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+        "      ; +param1 : epigraph.String { doc = \"some doc\", default : \"hello world\" },",
         "    },",
         "    bestFriend :`record` (",
         "      id,",
@@ -81,6 +81,7 @@ public class OpOutputProjectionsTest {
     );
 
 
+    // todo fix PP
     String expected = lines(
         ":(",
         "  id,",
@@ -135,7 +136,9 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseParam() throws PsiProcessingException {
+    // todo: fix PP
     testParsingVarProjection(
+        ":id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { deprecated = true, default : ( \"foo\": < id: 123 > ) } []( :id ) }",
         ":id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
     );
   }

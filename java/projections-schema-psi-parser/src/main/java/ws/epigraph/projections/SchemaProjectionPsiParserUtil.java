@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataValue;
-import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
@@ -149,13 +148,13 @@ public final class SchemaProjectionPsiParserUtil {
 
     @Nullable SchemaOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
 
-    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, context);
-    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), context);
-
-    @Nullable SchemaDatum defaultValuePsi = paramPsi.getDatum();
-    @Nullable GDatum defaultValue = defaultValuePsi == null
-                                    ? null
-                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, context);
+//    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, context);
+//    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), context);
+//
+//    @Nullable SchemaDatum defaultValuePsi = paramPsi.getDatum();
+//    @Nullable GDatum defaultValue = defaultValuePsi == null
+//                                    ? null
+//                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, context);
 
     final OpInputModelProjection<?, ?, ?, ?> paramModelProjection;
 
@@ -163,9 +162,12 @@ public final class SchemaProjectionPsiParserUtil {
       paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(
           paramType,
           paramPsi.getPlus() != null,
-          defaultValue,
-          params,
-          annotations,
+//          defaultValue,
+//          params,
+//          annotations,
+          null,
+          OpParams.EMPTY,
+          Annotations.EMPTY,
           paramPsi,
           resolver,
           context
@@ -173,10 +175,10 @@ public final class SchemaProjectionPsiParserUtil {
     else paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
         paramType,
         paramPsi.getPlus() != null,
-        defaultValue,
-        params,
-        annotations,
-        null, // TODO do we want to support metadata on parameters?
+//        defaultValue,
+//        params,
+//        annotations,
+//        null, // TODO do we want to support metadata on parameters?
         paramModelProjectionPsi,
         resolver,
         context

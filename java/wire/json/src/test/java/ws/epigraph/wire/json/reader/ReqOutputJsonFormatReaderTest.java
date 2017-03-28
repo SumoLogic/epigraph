@@ -70,7 +70,7 @@ public class ReqOutputJsonFormatReaderTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+          "      ;param1 : epigraph.String = \"hello world\",",
           "    },",
           "    bestFriend :`record` (",
           "      id,",

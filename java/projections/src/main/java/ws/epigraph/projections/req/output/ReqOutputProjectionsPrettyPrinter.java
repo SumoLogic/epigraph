@@ -54,7 +54,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModel(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
+  public void printTag(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
     ReqOutputModelProjection<?, ?, ?> projection = tp.projection();
 
     ReqParams params = projection.params();
@@ -131,7 +131,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         );
 
       l.brk();
-      printModel(mp.itemsProjection(), decSteps(pathSteps));
+      printVar(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
       l.beginIInd();
@@ -156,7 +156,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
         l.brk();
-        printModel(mp.itemsProjection(), 0);
+        printVar(mp.itemsProjection(), 0);
       }
       l.brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -168,7 +168,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     );
     l.beginIInd();
     l.print("*(").brk();
-    printModel(mp.itemsProjection(), 0);
+    printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

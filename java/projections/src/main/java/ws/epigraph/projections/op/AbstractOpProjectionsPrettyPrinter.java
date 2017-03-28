@@ -95,7 +95,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     if (!annotations.isEmpty()) {
       l.beginCInd();
       l.print(" {");
-      printModel(annotations);
+      printAnnotations(annotations);
       l.brk(1, -l.getDefaultIndentation()).end().print("}");
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
 //    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      printModel(fieldVarProjection, 0);
+      printVar(fieldVarProjection, 0);
     }
 //    } else {
 //      l.beginCInd();
@@ -170,13 +170,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       }
 
       @NotNull Annotations keyAnnotations = keyProjection.annotations();
-      if (!keyAnnotations.isEmpty()) printModel(keyAnnotations, true, !commaNeeded);
+      if (!keyAnnotations.isEmpty()) printAnnotations(keyAnnotations, true, !commaNeeded);
 
       if (commaNeeded) l.brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
     l.print("(").brk();
-    printModel(itemsProjection, 0);
+    printVar(itemsProjection, 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

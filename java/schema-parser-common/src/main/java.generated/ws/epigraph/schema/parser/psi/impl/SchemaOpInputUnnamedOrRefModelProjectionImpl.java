@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputModelProjection {
+public class SchemaOpInputUnnamedOrRefModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpInputUnnamedOrRefModelProjection {
 
-  public SchemaOpInputModelProjectionImpl(ASTNode node) {
+  public SchemaOpInputUnnamedOrRefModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputModelProjection(this);
+    visitor.visitOpInputUnnamedOrRefModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,14 @@ public class SchemaOpInputModelProjectionImpl extends ASTWrapperPsiElement imple
 
   @Override
   @Nullable
-  public SchemaOpInputNamedModelProjection getOpInputNamedModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputNamedModelProjection.class);
+  public SchemaOpInputModelProjectionRef getOpInputModelProjectionRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjectionRef.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpInputUnnamedOrRefModelProjection getOpInputUnnamedOrRefModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedOrRefModelProjection.class);
+  public SchemaOpInputUnnamedModelProjection getOpInputUnnamedModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputUnnamedModelProjection.class);
   }
 
 }

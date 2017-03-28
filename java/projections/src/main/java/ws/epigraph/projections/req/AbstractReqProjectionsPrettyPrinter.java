@@ -63,7 +63,8 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.end();
   }
 
-  protected void printAnnotations(@NotNull Annotations annotations) throws E {
+  @Override
+  public void printAnnotations(@NotNull Annotations annotations) throws E {
     l.beginCInd();
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
@@ -122,7 +123,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       l.brk();
-      printModel(fieldVarProjection, pathSteps);
+      printVar(fieldVarProjection, pathSteps);
     }
     l.end();
   }
@@ -179,7 +180,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(itemsProjection)) {
       l.brk();
-      printModel(itemsProjection, 0);
+      printVar(itemsProjection, 0);
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
 

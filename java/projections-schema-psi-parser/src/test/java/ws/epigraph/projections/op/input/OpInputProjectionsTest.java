@@ -84,6 +84,11 @@ public class OpInputProjectionsTest {
   }
 
   @Test
+  public void testParseModelRecursive() throws PsiProcessingException {
+    testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+  }
+
+  @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
         "~~ws.epigraph.tests.User :id",

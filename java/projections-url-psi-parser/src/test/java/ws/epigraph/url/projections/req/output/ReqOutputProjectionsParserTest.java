@@ -69,7 +69,7 @@ public class ReqOutputProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String = \"hello world\" { doc = \"some doc\" },",
+          "      ;param1 : epigraph.String = \"hello world\",",
           "    },",
           "    firstName{;param:epigraph.String},",
           "    bestFriend :( id, `record` (",

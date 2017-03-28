@@ -24,8 +24,7 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext {
-  @NotNull
-  private final OpInputReferenceContext varReferenceContext;
+  private final @NotNull OpInputReferenceContext varReferenceContext;
 
   public OpInputPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
@@ -34,8 +33,7 @@ public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext 
     this.varReferenceContext = varReferenceContext;
   }
 
-  @NotNull
-  public OpInputReferenceContext varReferenceContext() {
+  public @NotNull OpInputReferenceContext referenceContext() {
     return varReferenceContext;
   }
 }

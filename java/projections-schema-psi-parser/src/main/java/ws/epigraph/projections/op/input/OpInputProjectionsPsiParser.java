@@ -91,7 +91,7 @@ public final class OpInputProjectionsPsiParser {
             context.errors()
         );
 
-      final OpInputVarProjection reference = context.varReferenceContext()
+      final OpInputVarProjection reference = context.referenceContext()
           .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpInputVarProjection value = parseUnnamedOrRefVarProjection(
@@ -101,7 +101,7 @@ public final class OpInputProjectionsPsiParser {
           context
       );
 
-      context.varReferenceContext()
+      context.referenceContext()
           .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
 
       return reference;
@@ -138,7 +138,7 @@ public final class OpInputProjectionsPsiParser {
         );
 
       final String projectionName = varProjectionRefPsi.getCanonicalName();
-      return context.varReferenceContext()
+      return context.referenceContext()
           .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
 
     }
@@ -474,44 +474,165 @@ public final class OpInputProjectionsPsiParser {
         context
     );
   }
-
-  public static @NotNull OpInputModelProjection<?, ?, ?, ?> parseModelProjection(
-      @NotNull DatumTypeApi type,
-      boolean required,
-      @Nullable GDatum defaultValue,
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull SchemaOpInputModelProjection psi,
-      @NotNull TypesResolver typesResolver,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
-
-    return parseModelProjection(
-        OpInputModelProjection.class,
-        type,
-        required,
-        defaultValue,
-        params,
-        annotations,
-        metaProjection,
-        psi.getOpInputUnnamedModelProjection(),
-        typesResolver,
-        context
-    );
-  }
+//
+//  public static @NotNull OpInputModelProjection<?, ?, ?, ?> parseModelProjection(
+//      @NotNull DatumTypeApi type,
+//      boolean required,
+//      @Nullable GDatum defaultValue,
+//      @NotNull OpParams params,
+//      @NotNull Annotations annotations,
+//      @Nullable OpInputModelProjection<?, ?, ?, ?> metaProjection,
+//      @NotNull SchemaOpInputModelProjection psi,
+//      @NotNull TypesResolver typesResolver,
+//      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+//
+//    return parseModelProjection(
+//        OpInputModelProjection.class,
+//        type,
+//        required,
+//        defaultValue,
+//        params,
+//        annotations,
+//        metaProjection,
+//        psi.getOpInputUnnamedModelProjection(),
+//        typesResolver,
+//        context
+//    );
+//  }
+//
+  
+// ----------------
 
   @SuppressWarnings("unchecked")
-  public static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
+  private static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
   /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       boolean required,
       @NotNull SchemaOpInputModelProjection psi,
       @NotNull TypesResolver typesResolver,
+      @NotNull OpInputPsiProcessingContext context)
+      throws PsiProcessingException {
+
+    // this follows `parseVarProjection` logic
+
+    final SchemaOpInputNamedModelProjection namedModelProjection = psi.getOpInputNamedModelProjection();
+    if (namedModelProjection == null) {
+      final SchemaOpInputUnnamedOrRefModelProjection unnamedOrRefModelProjection =
+          psi.getOpInputUnnamedOrRefModelProjection();
+
+      if (unnamedOrRefModelProjection == null)
+        throw new PsiProcessingException(
+            "Incomplete model projection definition",
+            psi,
+            context.errors()
+        );
+
+      return parseUnnamedOrRefModelProjection(
+          modelClass,
+          type,
+          required,
+          unnamedOrRefModelProjection,
+          typesResolver,
+          context
+      );
+    } else {
+      // named model projection
+      final String projectionName = namedModelProjection.getQid().getCanonicalName();
+
+      final @Nullable SchemaOpInputUnnamedOrRefModelProjection unnamedOrRefModelProjection =
+          namedModelProjection.getOpInputUnnamedOrRefModelProjection();
+
+      if (unnamedOrRefModelProjection == null)
+        throw new PsiProcessingException(
+            String.format("Incomplete model projection '%s' definition", projectionName),
+            psi,
+            context.errors()
+        );
+
+      final MP reference = (MP) context.referenceContext()
+          .modelReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+      final MP value = parseUnnamedOrRefModelProjection(
+          modelClass,
+          type,
+          required,
+          unnamedOrRefModelProjection,
+          typesResolver,
+          context
+      );
+
+      //noinspection rawtypes
+      context.referenceContext().<OpInputModelProjection>resolve(
+          projectionName,
+          value,
+          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection),
+          context
+      );
+
+      return reference;
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
+  /*@NotNull*/ MP parseUnnamedOrRefModelProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull DatumTypeApi type,
+      boolean required,
+      @NotNull SchemaOpInputUnnamedOrRefModelProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpInputPsiProcessingContext context)
+      throws PsiProcessingException {
+
+    // this follows `parseUnnamedOrRefVarProjection` logic
+
+    final SchemaOpInputModelProjectionRef modelProjectionRef = psi.getOpInputModelProjectionRef();
+    if (modelProjectionRef == null) {
+      // usual model projection
+      final SchemaOpInputUnnamedModelProjection unnamedModelProjection = psi.getOpInputUnnamedModelProjection();
+      if (unnamedModelProjection == null)
+        throw new PsiProcessingException("Incomplete model projection definition", psi, context.errors());
+      else return parseUnnamedModelProjection(
+          modelClass,
+          type,
+          required,
+          unnamedModelProjection,
+          typesResolver,
+          context
+      );
+    } else {
+      // model projection reference
+      final SchemaQid modelProjectionRefPsi = modelProjectionRef.getQid();
+      if (modelProjectionRefPsi == null)
+        throw new PsiProcessingException(
+            "Incomplete model projection definition: name not specified",
+            psi,
+            context.errors()
+        );
+
+      final String projectionName = modelProjectionRefPsi.getCanonicalName();
+      return (MP) context.referenceContext().modelReference(
+          type,
+          projectionName,
+          true,
+          EpigraphPsiUtil.getLocation(psi)
+      );
+
+    }
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
+  /*@NotNull*/ MP parseUnnamedModelProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull DatumTypeApi type,
+      boolean required,
+      @NotNull SchemaOpInputUnnamedModelProjection psi,
+      @NotNull TypesResolver typesResolver,
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
-    final SchemaOpInputUnnamedModelProjection unnamedModelProjectionPsi = psi.getOpInputUnnamedModelProjection();
-    final List<SchemaOpInputModelProperty> modelProperties = unnamedModelProjectionPsi.getOpInputModelPropertyList();
+    final List<SchemaOpInputModelProperty> modelProperties = psi.getOpInputModelPropertyList();
 
     final GDatum defaultValue = getModelDefaultValue(modelProperties, context);
     final OpParams params = parseModelParams(modelProperties, typesResolver, context);
@@ -519,7 +640,7 @@ public final class OpInputProjectionsPsiParser {
     final OpInputModelProjection<?, ?, ?, ?> metaProjection =
         parseModelMetaProjection(type, modelProperties, typesResolver, context);
 
-    return parseModelProjection(
+    return parseUnnamedModelProjection(
         modelClass,
         type,
         required,
@@ -527,15 +648,16 @@ public final class OpInputProjectionsPsiParser {
         params,
         annotations,
         metaProjection,
-        unnamedModelProjectionPsi,
+        psi,
         typesResolver,
         context
     );
   }
+  
 
   @SuppressWarnings("unchecked")
   public static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
-  /*@NotNull*/ MP parseModelProjection(
+  /*@NotNull*/ MP parseUnnamedModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       boolean required,
