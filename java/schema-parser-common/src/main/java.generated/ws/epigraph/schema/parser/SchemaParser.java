@@ -171,6 +171,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_DELETE_MODEL_PROJECTION) {
       r = opDeleteModelProjection(b, 0);
     }
+    else if (t == S_OP_DELETE_MODEL_PROJECTION_REF) {
+      r = opDeleteModelProjectionRef(b, 0);
+    }
     else if (t == S_OP_DELETE_MODEL_PROPERTY) {
       r = opDeleteModelProperty(b, 0);
     }
@@ -183,6 +186,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_DELETE_MULTI_TAG_PROJECTION_ITEM) {
       r = opDeleteMultiTagProjectionItem(b, 0);
     }
+    else if (t == S_OP_DELETE_NAMED_MODEL_PROJECTION) {
+      r = opDeleteNamedModelProjection(b, 0);
+    }
     else if (t == S_OP_DELETE_NAMED_VAR_PROJECTION) {
       r = opDeleteNamedVarProjection(b, 0);
     }
@@ -194,6 +200,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_DELETE_UNNAMED_MODEL_PROJECTION) {
       r = opDeleteUnnamedModelProjection(b, 0);
+    }
+    else if (t == S_OP_DELETE_UNNAMED_OR_REF_MODEL_PROJECTION) {
+      r = opDeleteUnnamedOrRefModelProjection(b, 0);
     }
     else if (t == S_OP_DELETE_UNNAMED_OR_REF_VAR_PROJECTION) {
       r = opDeleteUnnamedOrRefVarProjection(b, 0);
@@ -2242,12 +2251,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opDeleteUnnamedModelProjection
+  // opDeleteNamedModelProjection | opDeleteUnnamedOrRefModelProjection
   public static boolean opDeleteModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_PROJECTION, "<op delete model projection>");
-    r = opDeleteUnnamedModelProjection(b, l + 1);
+    r = opDeleteNamedModelProjection(b, l + 1);
+    if (!r) r = opDeleteUnnamedOrRefModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2295,6 +2305,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opDeleteModelProjectionProperties_1_0_1")) return false;
     consumeToken(b, S_COMMA);
     return true;
+  }
+
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean opDeleteModelProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteModelProjectionRef")) return false;
+    if (!nextTokenIs(b, S_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_PROJECTION_REF, null);
+    r = consumeToken(b, S_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2378,6 +2402,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = r && opDeleteModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '$' qid '=' opDeleteUnnamedOrRefModelProjection
+  public static boolean opDeleteNamedModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteNamedModelProjection")) return false;
+    if (!nextTokenIs(b, S_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_NAMED_MODEL_PROJECTION, null);
+    r = consumeToken(b, S_DOLLAR);
+    r = r && qid(b, l + 1);
+    r = r && consumeToken(b, S_EQ);
+    p = r; // pin = 3
+    r = r && opDeleteUnnamedOrRefModelProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -2545,6 +2585,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opDeleteUnnamedModelProjection_1_0_1")) return false;
     opDeleteModelPolymorphicTail(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // opDeleteModelProjectionRef | opDeleteUnnamedModelProjection
+  public static boolean opDeleteUnnamedOrRefModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteUnnamedOrRefModelProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_UNNAMED_OR_REF_MODEL_PROJECTION, "<op delete unnamed or ref model projection>");
+    r = opDeleteModelProjectionRef(b, l + 1);
+    if (!r) r = opDeleteUnnamedModelProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */

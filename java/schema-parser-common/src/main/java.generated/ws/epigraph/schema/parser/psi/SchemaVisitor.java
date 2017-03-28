@@ -203,6 +203,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteModelProjectionRef(@NotNull SchemaOpDeleteModelProjectionRef o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteModelProperty(@NotNull SchemaOpDeleteModelProperty o) {
     visitPsiElement(o);
   }
@@ -219,6 +223,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpDeleteNamedModelProjection(@NotNull SchemaOpDeleteNamedModelProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpDeleteNamedVarProjection(@NotNull SchemaOpDeleteNamedVarProjection o) {
     visitPsiElement(o);
   }
@@ -232,6 +240,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpDeleteUnnamedModelProjection(@NotNull SchemaOpDeleteUnnamedModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpDeleteUnnamedOrRefModelProjection(@NotNull SchemaOpDeleteUnnamedOrRefModelProjection o) {
     visitPsiElement(o);
   }
 

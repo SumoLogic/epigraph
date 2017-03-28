@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpDeleteModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpDeleteModelProjection {
+public class SchemaOpDeleteUnnamedOrRefModelProjectionImpl extends ASTWrapperPsiElement implements SchemaOpDeleteUnnamedOrRefModelProjection {
 
-  public SchemaOpDeleteModelProjectionImpl(ASTNode node) {
+  public SchemaOpDeleteUnnamedOrRefModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpDeleteModelProjection(this);
+    visitor.visitOpDeleteUnnamedOrRefModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +44,14 @@ public class SchemaOpDeleteModelProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public SchemaOpDeleteNamedModelProjection getOpDeleteNamedModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteNamedModelProjection.class);
+  public SchemaOpDeleteModelProjectionRef getOpDeleteModelProjectionRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelProjectionRef.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpDeleteUnnamedOrRefModelProjection getOpDeleteUnnamedOrRefModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedOrRefModelProjection.class);
+  public SchemaOpDeleteUnnamedModelProjection getOpDeleteUnnamedModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedModelProjection.class);
   }
 
 }

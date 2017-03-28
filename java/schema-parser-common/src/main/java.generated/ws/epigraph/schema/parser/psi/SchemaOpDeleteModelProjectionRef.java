@@ -21,12 +21,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpDeleteModelProjection extends PsiElement {
+public interface SchemaOpDeleteModelProjectionRef extends PsiElement {
 
   @Nullable
-  SchemaOpDeleteNamedModelProjection getOpDeleteNamedModelProjection();
+  SchemaQid getQid();
 
-  @Nullable
-  SchemaOpDeleteUnnamedOrRefModelProjection getOpDeleteUnnamedOrRefModelProjection();
+  @NotNull
+  PsiElement getDollar();
 
 }

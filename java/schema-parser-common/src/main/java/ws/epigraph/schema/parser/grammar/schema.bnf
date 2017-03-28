@@ -636,8 +636,10 @@ opDeleteModelSingleTail ::= typeRef opDeleteModelProjection
 opDeleteModelMultiTail ::= '(' (opDeleteModelMultiTailItem ','?)* ')' {pin=1}
 opDeleteModelMultiTailItem ::= typeRef opDeleteModelProjection
 
-
-opDeleteModelProjection ::= opDeleteUnnamedModelProjection
+opDeleteModelProjection ::= opDeleteNamedModelProjection | opDeleteUnnamedOrRefModelProjection
+opDeleteUnnamedOrRefModelProjection ::= opDeleteModelProjectionRef | opDeleteUnnamedModelProjection
+opDeleteNamedModelProjection ::= '$' qid '=' opDeleteUnnamedOrRefModelProjection {pin = 3}
+opDeleteModelProjectionRef ::= '$' qid {pin = 1}
 opDeleteUnnamedModelProjection ::= opDeleteModelProjectionProperties ?
                                    ( ( opDeleteRecordModelProjection
                                      | opDeleteListModelProjection
