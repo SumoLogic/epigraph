@@ -149,6 +149,11 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     return true;
   }
 
+  @Override
+  public boolean modelParamsEmpty(final @NotNull MP mp) {
+    return super.modelParamsEmpty(mp) && mp.params().isEmpty();
+  }
+
   protected void printReqKey(final ReqKeyProjection key) throws E {
     dataPrinter.print(key.value());
     printParams(key.params());

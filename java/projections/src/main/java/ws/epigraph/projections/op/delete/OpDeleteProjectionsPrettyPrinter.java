@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
@@ -25,9 +26,6 @@ import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -155,12 +153,6 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {
-    if (mp instanceof OpDeleteRecordModelProjection) {
-      OpDeleteRecordModelProjection recordModelProjection = (OpDeleteRecordModelProjection) mp;
-      Map<String, OpDeleteFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
     if (mp instanceof OpDeleteMapModelProjection) {
       OpDeleteMapModelProjection mapModelProjection = (OpDeleteMapModelProjection) mp;
       @NotNull OpDeleteKeyProjection keyProjection = mapModelProjection.keyProjection();
@@ -170,13 +162,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
       if (!keyProjection.annotations().isEmpty()) return false;
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof OpDeleteListModelProjection) {
-      OpDeleteListModelProjection deleteListModelProjection = (OpDeleteListModelProjection) mp;
-      return isPrintoutEmpty(deleteListModelProjection.itemsProjection());
-    }
-
-    return true;
+    } else
+      return super.isPrintoutEmpty(mp);
   }
 }

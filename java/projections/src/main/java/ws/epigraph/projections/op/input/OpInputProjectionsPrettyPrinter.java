@@ -26,8 +26,6 @@ import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
 
-import java.util.Map;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -138,28 +136,6 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     l.print("*(").brk();
     printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
-  }
-
-
-  @Override
-  public boolean isPrintoutEmpty(@NotNull OpInputModelProjection<?, ?, ?, ?> mp) {
-    if (mp instanceof OpInputRecordModelProjection) {
-      OpInputRecordModelProjection recordModelProjection = (OpInputRecordModelProjection) mp;
-      Map<String, OpInputFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
-    if (mp instanceof OpInputMapModelProjection) {
-      OpInputMapModelProjection mapModelProjection = (OpInputMapModelProjection) mp;
-      return isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof OpInputListModelProjection) {
-      OpInputListModelProjection inputListModelProjection = (OpInputListModelProjection) mp;
-      return isPrintoutEmpty(inputListModelProjection.itemsProjection());
-    }
-
-    return true;
   }
 
 }

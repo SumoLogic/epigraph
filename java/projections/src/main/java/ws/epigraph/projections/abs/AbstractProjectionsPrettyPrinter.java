@@ -24,9 +24,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.TypeKind;
 import org.jetbrains.annotations.NotNull;
 
@@ -269,7 +267,26 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
 
-  public abstract boolean isPrintoutEmpty(@NotNull MP mp);
+  @SuppressWarnings("unchecked")
+  public boolean isPrintoutEmpty(@NotNull MP mp) {
+    switch (mp.type().kind()) {
+      case RECORD:
+        return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();
+      case MAP:
+        return isPrintoutEmpty((VP) ((GenMapModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+      case LIST:
+        return isPrintoutEmpty((VP) ((GenListModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+      default:
+        return true;
+    }
+  }
+
+  public boolean modelParamsEmpty(@NotNull MP mp) {
+    GenModelProjection<?, ?, ?, ?> metaProjection = mp.metaProjection();
+    Annotations annotations = mp.annotations();
+
+    return metaProjection == null && annotations.isEmpty();
+  }
 
   protected int decSteps(int pathSteps) {
     return pathSteps == 0 ? 0 : pathSteps - 1;

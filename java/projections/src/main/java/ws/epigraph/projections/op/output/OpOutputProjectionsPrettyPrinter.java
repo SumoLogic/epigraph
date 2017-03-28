@@ -123,12 +123,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?, ?, ?> mp) {
-    if (mp instanceof OpOutputRecordModelProjection) {
-      OpOutputRecordModelProjection recordModelProjection = (OpOutputRecordModelProjection) mp;
-      Map<String, OpOutputFieldProjectionEntry> fieldProjections = recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
     if (mp instanceof OpOutputMapModelProjection) {
       OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
       @NotNull OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
@@ -138,13 +132,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       if (!keyProjection.annotations().isEmpty()) return false;
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof OpOutputListModelProjection) {
-      OpOutputListModelProjection outputListModelProjection = (OpOutputListModelProjection) mp;
-      return isPrintoutEmpty(outputListModelProjection.itemsProjection());
-    }
-
-    return true;
+    } else
+      return super.isPrintoutEmpty(mp);
   }
 }

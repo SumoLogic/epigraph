@@ -26,7 +26,6 @@ import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParams;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -179,25 +178,12 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
-    if (mp instanceof ReqOutputRecordModelProjection) {
-      ReqOutputRecordModelProjection recordModelProjection = (ReqOutputRecordModelProjection) mp;
-      Map<String, ReqOutputFieldProjectionEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
     if (mp instanceof ReqOutputMapModelProjection) {
       ReqOutputMapModelProjection mapModelProjection = (ReqOutputMapModelProjection) mp;
       @Nullable List<ReqOutputKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof ReqOutputListModelProjection) {
-      ReqOutputListModelProjection inputListModelProjection = (ReqOutputListModelProjection) mp;
-      return isPrintoutEmpty(inputListModelProjection.itemsProjection());
-    }
-
-    return true;
+    } else
+      return super.isPrintoutEmpty(mp);
   }
 
 }

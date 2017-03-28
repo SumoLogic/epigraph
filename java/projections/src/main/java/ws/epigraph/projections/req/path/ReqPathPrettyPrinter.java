@@ -139,11 +139,8 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?, ?> mp) {
-    if (mp instanceof ReqRecordModelPath) {
-      ReqRecordModelPath recordModelProjection = (ReqRecordModelPath) mp;
-      Map<String, ReqFieldPathEntry> fieldProjections = recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
+    if (mp instanceof ReqRecordModelPath)
+      return super.isPrintoutEmpty(mp);
 
     return !(mp instanceof ReqMapModelPath); // map key always present
   }

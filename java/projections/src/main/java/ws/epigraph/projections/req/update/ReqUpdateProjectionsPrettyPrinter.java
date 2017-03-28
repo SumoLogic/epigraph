@@ -152,27 +152,4 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-
-  @Override
-  public boolean isPrintoutEmpty(@NotNull ReqUpdateModelProjection<?, ?, ?> mp) {
-    if (mp instanceof ReqUpdateRecordModelProjection) {
-      ReqUpdateRecordModelProjection recordModelProjection = (ReqUpdateRecordModelProjection) mp;
-      Map<String, ReqUpdateFieldProjectionEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
-    if (mp instanceof ReqUpdateMapModelProjection) {
-      ReqUpdateMapModelProjection mapModelProjection = (ReqUpdateMapModelProjection) mp;
-      return !mapModelProjection.updateKeys() && isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof ReqUpdateListModelProjection) {
-      ReqUpdateListModelProjection inputListModelProjection = (ReqUpdateListModelProjection) mp;
-      return isPrintoutEmpty(inputListModelProjection.itemsProjection());
-    }
-
-    return true;
-  }
-
 }

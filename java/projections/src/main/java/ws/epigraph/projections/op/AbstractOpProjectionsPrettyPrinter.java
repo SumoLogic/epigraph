@@ -211,6 +211,11 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     return true;
   }
 
+  @Override
+  public boolean modelParamsEmpty(final @NotNull MP mp) {
+    return super.modelParamsEmpty(mp) && mp.params().isEmpty();
+  }
+
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
     @NotNull VP fieldVarProjection = fieldProjection.varProjection();
     return !isBlockProjection(fieldProjection) && isPrintoutEmpty(fieldVarProjection);

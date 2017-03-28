@@ -111,25 +111,12 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   public boolean isPrintoutEmpty(@NotNull ReqDeleteModelProjection<?, ?, ?> mp) {
-    if (mp instanceof ReqDeleteRecordModelProjection) {
-      ReqDeleteRecordModelProjection recordModelProjection = (ReqDeleteRecordModelProjection) mp;
-      Map<String, ReqDeleteFieldProjectionEntry> fieldProjections =
-          recordModelProjection.fieldProjections();
-      return fieldProjections.isEmpty();
-    }
-
     if (mp instanceof ReqDeleteMapModelProjection) {
       ReqDeleteMapModelProjection mapModelProjection = (ReqDeleteMapModelProjection) mp;
       @Nullable List<ReqDeleteKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
-    }
-
-    if (mp instanceof ReqDeleteListModelProjection) {
-      ReqDeleteListModelProjection inputListModelProjection = (ReqDeleteListModelProjection) mp;
-      return isPrintoutEmpty(inputListModelProjection.itemsProjection());
-    }
-
-    return true;
+    } else
+      return super.isPrintoutEmpty(mp);
   }
 
 }
