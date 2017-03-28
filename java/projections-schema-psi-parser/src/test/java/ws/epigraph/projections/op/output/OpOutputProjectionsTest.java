@@ -200,6 +200,52 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseModelRef() throws PsiProcessingException {
+    OpOutputVarProjection personProjection = testParsingVarProjection(":`record` ( id )");
+
+    @SuppressWarnings("ConstantConditions")
+    OpOutputModelProjection<?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
+
+    OpOutputVarProjection personRecordVarProjection = new OpOutputVarProjection(
+        PersonRecord.type,
+        ProjectionUtils.singletonLinkedHashMap(
+            DatumType.MONO_TAG_NAME,
+            new OpOutputTagProjectionEntry(
+                PersonRecord.type.self(),
+                personRecordProjection,
+                TextLocation.UNKNOWN
+            )
+        ),
+        false,
+        null,
+        TextLocation.UNKNOWN
+    );
+
+    PsiProcessingContext ppc = new DefaultPsiProcessingContext();
+
+    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
+    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
+    failIfHasErrors(ppc.errors());
+
+    TestConfig testConfig = new TestConfig() {
+      @Override
+      @NotNull DataType dataType() {
+        return new DataType(Person.type, null);
+      }
+
+      @Override
+      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+        return referenceContext;
+      }
+    };
+
+    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` ( id )");
+    // we don't get reference name here because it belongs to var, not model projection ( personRecordVar )
+//    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` $ref = ( id )");
+  }
+
+  @Test
   public void testParseWrongTypeRef() throws PsiProcessingException {
     // todo add to other parser tests too
     OpOutputVarProjection paginationProjection =
