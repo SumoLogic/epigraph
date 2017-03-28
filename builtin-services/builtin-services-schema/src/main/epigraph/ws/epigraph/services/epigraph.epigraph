@@ -26,7 +26,7 @@ resource epigraph: EpigraphResource {
 
   outputProjection typeNameProjection: TypeName = :`string` ~~ (
     QualifiedTypeName :segments,
-    // AnonListTypeName :elementTypeName $dataTypeNameProjection, TODO
+    AnonListTypeName :elementTypeName $dataTypeNameProjection,
     AnonMapTypeName :`record`(
       keyTypeName $typeNameProjection,
       valueTypeName $dataTypeNameProjection
@@ -63,7 +63,7 @@ resource epigraph: EpigraphResource {
 
   outputProjection tagProjection: Tag = (
     name :`string`,
-    type $typeProjection // todo: should the system normalize it to DatumType here?
+    type $typeProjection
   )
 
   outputProjection fieldProjection: Field = (
