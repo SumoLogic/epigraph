@@ -53,45 +53,18 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull ReqOutputTagProjectionEntry tp, int pathSteps) throws E {
-    ReqOutputModelProjection<?, ?, ?> projection = tp.projection();
-
-    ReqParams params = projection.params();
-    Annotations annotations = projection.annotations();
-
-    l.beginIInd(0);
-    boolean needBrk = false;
+  protected void printTagName(
+      final @NotNull String tagName,
+      final @NotNull ReqOutputModelProjection<?, ?, ?> projection) throws E {
     if (projection.required()) l.print("+");
+    super.printTagName(tagName, projection);
+  }
 
-    if (tagName != null) {
-      l.print(tagName);
-      needBrk = true;
-    }
-
-    if (!params.isEmpty()) {
-      printParams(params);
-      needBrk = true;
-    }
-
-    if (!annotations.isEmpty()) {
-      printAnnotations(annotations);
-      needBrk = true;
-    }
-
-    if (!isPrintoutEmpty(projection)) {
-      if (needBrk) l.brk();
-      printModel(projection, pathSteps);
-    }
-
-    ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
-    if (metaProjection != null) {
-      l.print("@");
-      if (metaProjection.required()) l.print("+");
-      printModel(metaProjection, 0);
-    }
-
-
-    l.end();
+  @Override
+  protected void printModelMeta(final @NotNull ReqOutputModelProjection<?, ?, ?> metaProjection) throws E {
+    l.print("@");
+    if (metaProjection.required()) l.print("+");
+    printModel(metaProjection, 0);
   }
 
   @Override
@@ -177,13 +150,13 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqOutputMapModelProjection) {
       ReqOutputMapModelProjection mapModelProjection = (ReqOutputMapModelProjection) mp;
       @Nullable List<ReqOutputKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
-      return super.isPrintoutEmpty(mp);
+      return super.isPrintoutNoParamsEmpty(mp);
   }
 
 }

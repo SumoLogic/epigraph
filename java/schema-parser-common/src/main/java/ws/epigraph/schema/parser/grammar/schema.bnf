@@ -579,7 +579,7 @@ private opInputModelProjectionProperties ::= '{' (opInputModelProperty ','?)* '}
 opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
   recoverWhile = opInputModelPropertyRecover
 }
-private opInputModelPropertyRecover ::= ! ( '}' | ',' )
+private opInputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | (qid '=') | 'meta' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection

@@ -20,10 +20,8 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.TypeKind;
 
 import java.util.Map;
@@ -63,47 +61,25 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull ReqUpdateTagProjectionEntry tp, int pathSteps) throws E {
-    ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
+  public void printTag(
+      final @Nullable String tagName,
+      final @NotNull ReqUpdateTagProjectionEntry entry,
+      final int pathSteps)
+      throws E {
 
-    ReqParams params = projection.params();
-    Annotations annotations = projection.annotations();
+    final ReqUpdateModelProjection<?, ?, ?> projection = entry.projection();
+    if (isUpdateModelProjection(projection)) l.print("+");
 
-    l.beginIInd(0);
-    boolean needBrk = false;
-    if (isUpdateModelProjection(projection))
-      l.print("+");
-
-    if (tagName != null) {
-      l.print(tagName);
-      needBrk = true;
-    }
-
-    if (!params.isEmpty()) {
-      printParams(params);
-      needBrk = true;
-    }
-
-    if (!annotations.isEmpty()) {
-      printAnnotations(annotations);
-      needBrk = true;
-    }
-
-    if (!isPrintoutEmpty(projection)) {
-      if (needBrk) l.brk();
-      printModel(projection, pathSteps);
-    }
-
-    l.end();
-  }
-
-  private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
-    return projection.update() && projection.type().kind() != TypeKind.PRIMITIVE;
+    super.printTag(tagName, entry, pathSteps);
   }
 
   @Override
   protected String modelTailTypeNamePrefix(final @NotNull ReqUpdateModelProjection<?, ?, ?> projection) {
-    return projection.update() ? "+" : super.modelTailTypeNamePrefix(projection);
+    return isUpdateModelProjection(projection) ? "+" : super.modelTailTypeNamePrefix(projection);
+  }
+
+  private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
+    return projection.update() && projection.type().kind() != TypeKind.PRIMITIVE;
   }
 
   @Override

@@ -17,18 +17,20 @@
 package ws.epigraph.projections.abs;
 
 import de.uka.ilkd.pp.Layouter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
-import ws.epigraph.lang.Keywords;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.TypeKind;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -156,7 +158,25 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  public abstract void printTag(@Nullable String tagName, @NotNull TP tp, int pathSteps) throws E;
+  public void printTag(final @Nullable String tagName, final @NotNull TP tp, final int pathSteps) throws E {
+    final MP projection = tp.projection();
+
+    l.beginIInd(0);
+
+    if (tagName != null)
+      printTagName(tagName, projection);
+
+    if (!isPrintoutEmpty(projection)) {
+      if (tagName != null) // name was printed
+        l.print(" ");
+//        l.brk();
+      printModel(projection, pathSteps);
+    }
+
+    l.end();
+  }
+
+  protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E { l.print(tagName); }
 
   public void printModel(@NotNull MP mp, int pathSteps) throws E {
     final Qn name = mp.name();
@@ -183,14 +203,32 @@ public abstract class AbstractProjectionsPrettyPrinter<
       printModelNoRefCheck(mp, pathSteps);
   }
 
+  @SuppressWarnings("unchecked")
   public void printModelNoRefCheck(@NotNull MP mp, int pathSteps) throws E {
-    printModelOnly(mp, pathSteps);
+    l.beginIInd(0);
+
+    boolean empty = printModelParams(mp);
+    if (!empty && !isPrintoutNoParamsEmpty(mp))
+      l.print(" ");
+      //l.brk();
+
+    if (!isPrintoutNoParamsEmpty(mp))
+      printModelOnly(mp, pathSteps);
+
     printModelTailsOnly(mp);
+
+    final MP meta = (MP) mp.metaProjection();
+    if (meta != null)
+      printModelMeta(meta);
+
+    l.end();
   }
 
-//  public abstract void printModelParams(@NotNull MP mp) throws E;
+  protected abstract boolean printModelParams(@NotNull MP mp) throws E;
 
-  public abstract void printModelOnly(@NotNull MP mp, int pathSteps) throws E;
+  protected abstract void printModelOnly(@NotNull MP mp, int pathSteps) throws E;
+
+  protected void printModelMeta(@NotNull MP meta) throws E { }
 
   @SuppressWarnings("unchecked") // todo introduce TMP extends MP
   private void printModelTailsOnly(@NotNull MP p) throws E {
@@ -236,11 +274,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   public boolean printAnnotations(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
     for (Map.Entry<String, Annotation> entry : cp.asMap().entrySet()) {
-      if (needCommas) {
-        if (first) first = false;
-        else l.print(",");
+      if (first) {
+        first = false;
+      } else {
+        if (needCommas) l.print(",");
+        l.brk();
       }
-      l.brk();
       l.beginCInd(0);
       l.print(entry.getKey()).brk().print("=").brk();
       gdataPrettyPrinter.print(entry.getValue().value());
@@ -258,17 +297,20 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     for (TP tagProjection : vp.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();
-      if (!isPrintoutEmpty(modelProjection)) return false;
+      if (!modelParamsEmpty(modelProjection)) return false;
+      if (!isPrintoutNoParamsEmpty(modelProjection)) return false;
       if (!modelProjection.annotations().isEmpty()) return false;
     }
 
     return true;
   }
 
-  protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
+  protected boolean isPrintoutEmpty(@NotNull MP mp) {
+    return isPrintoutNoParamsEmpty(mp) && modelParamsEmpty(mp);
+  }
 
   @SuppressWarnings("unchecked")
-  public boolean isPrintoutEmpty(@NotNull MP mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull MP mp) {
     switch (mp.type().kind()) {
       case RECORD:
         return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();

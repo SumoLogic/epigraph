@@ -18,8 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.gdata.GDataValue;
+import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
@@ -49,68 +48,54 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull OpInputTagProjectionEntry tp, int pathSteps) throws E {
-    OpInputModelProjection<?, ?, ?, ?> projection = tp.projection();
-    OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
+  protected boolean printModelParamsInBlock(final @NotNull OpInputModelProjection<?, ?, ?, ?> projection) throws E {
     final OpParams params = projection.params();
     final Annotations annotations = projection.annotations();
+    final GDatum defaultValue = projection.defaultValue();
+    final OpInputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
 
-    final GDataValue defaultValue = projection.defaultValue();
-    if (defaultValue == null && annotations.isEmpty() && params.isEmpty() && metaProjection == null) {
+    boolean first = true;
+    if (!params.isEmpty())
+      //noinspection ConstantConditions
+      first = printOpParams(params, false, first);
+    if (!annotations.isEmpty())
+      first = printAnnotations(annotations, false, first);
 
-      l.beginIInd(0);
-      if (projection.required() && tagName != null) l.print("+");
-
-      if (!isPrintoutEmpty(projection)) {
-        if (tagName != null) {
-          l.print(escape(tagName));
-          l.brk();
-        }
-        printModel(projection, pathSteps);
-      } else if (tagName != null) l.print(escape(tagName));
-
-      l.end();
-    } else {
-      l.beginCInd();
-      if (projection.required() && tagName != null) l.print("+");
-
-      if (tagName == null) l.print("{");
-      else {
-        l.print(escape(tagName));
-        l.print(" {");
-      }
-
-      if (defaultValue != null) {
-        l.brk().beginIInd(0).print("default:").brk();
-        gdataPrettyPrinter.print(defaultValue);
-        l.end();
-      }
-
-      if (metaProjection != null) {
-        l.brk().beginIInd(0).print("meta:").brk();
-        if (metaProjection.required()) l.print("+");
-        printModel(metaProjection, 0);
-        l.end();
-      }
-
-      if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) printAnnotations(annotations);
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-
-      if (!isPrintoutEmpty(projection)) {
-        l.beginIInd();
+    if (defaultValue != null) {
+      if (first)
+        first = false;
+      else
         l.brk();
-        printModel(projection, 0);
-        l.end();
-      }
+      l.beginIInd(0).print("default:").brk();
+      gdataPrettyPrinter.print(defaultValue);
+      l.end();
     }
+
+    if (metaProjection != null) {
+      if (first)
+        first = false;
+      else
+        l.brk();
+
+      l.beginIInd(0).print("meta:").brk();
+      if (metaProjection.required()) l.print("+");
+      printModel(metaProjection, 0);
+      l.end();
+    }
+
+    return first;
+  }
+
+  @Override
+  protected void printTagName(@NotNull String tagName, @NotNull OpInputModelProjection<?, ?, ?, ?> mp) throws E {
+    if (mp.required) l.print("+");
+    l.print(escape(tagName));
   }
 
   @Override
   public void printModelOnly(@NotNull OpInputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpInputRecordModelProjection)
-      print((OpInputRecordModelProjection) mp);
+      printRecordProjection((OpInputRecordModelProjection) mp);
     else if (mp instanceof OpInputMapModelProjection)
       printModelOnly((OpInputMapModelProjection) mp);
     else if (mp instanceof OpInputListModelProjection)
@@ -138,4 +123,8 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
+  @Override
+  public boolean modelParamsEmpty(final @NotNull OpInputModelProjection<?, ?, ?, ?> projection) {
+    return projection.defaultValue() == null && super.modelParamsEmpty(projection);
+  }
 }

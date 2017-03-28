@@ -19,7 +19,7 @@ package ws.epigraph.projections.op;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.gdata.GDatum;
+import ws.epigraph.lang.Keywords;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
@@ -50,26 +50,78 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     super(layouter, context);
   }
 
-  public void print(@NotNull OpParams p) throws E {
-    print(p, false, true);
+  @Override
+  protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E {
+    l.print(escape(tagName));
   }
 
-  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
-    for (OpParam param : p.asMap().values()) {
-      if (needCommas) {
-        if (first) first = false;
-        else l.print(",");
-      }
-      l.brk();
-      l.beginCInd(0);
-      print(param);
+  @Override
+  protected boolean printModelParams(@NotNull MP mp) throws E {
+    if (!modelParamsEmpty(mp)) {
+      l.beginCInd();
+      l.print("{").brk();
+
+      boolean empty = printModelParamsInBlock(mp);
+
+      if (!empty) l.brk(1, -l.getDefaultIndentation());
+      l.end();
+      l.print("}");
+
+      return false;
+    }
+
+    return true;
+  }
+
+  @SuppressWarnings("unchecked")
+  protected boolean printModelParamsInBlock(final @NotNull MP projection) throws E {
+    final OpParams params = projection.params();
+    final Annotations annotations = projection.annotations();
+    final MP metaProjection = (MP) projection.metaProjection();
+
+    boolean first = true;
+    if (!params.isEmpty())
+      //noinspection ConstantConditions
+      first = printOpParams(params, false, first);
+    if (!annotations.isEmpty())
+      first = printAnnotations(annotations, false, first);
+
+    if (metaProjection != null) {
+      if (first)
+        first = false;
+      else
+        l.brk();
+
+      l.beginIInd(0).print("meta:").brk();
+      printModel(metaProjection, 0);
       l.end();
     }
 
     return first;
   }
 
-  public void print(@NotNull OpParam p) throws E {
+  public void printOpParams(@NotNull OpParams p) throws E {
+    printOpParams(p, false, true);
+  }
+
+  public boolean printOpParams(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
+    for (OpParam param : p.asMap().values()) {
+      if (first) {
+        first = false;
+      } else {
+        if (needCommas)
+          l.print(",");
+        l.brk();
+      }
+      l.beginCInd(0);
+      printOpParam(param);
+      l.end();
+    }
+
+    return first;
+  }
+
+  public void printOpParam(@NotNull OpParam p) throws E {
     OpInputModelProjection<?, ?, ?, ?> projection = p.projection();
 
     l.beginIInd();
@@ -79,30 +131,28 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.print(projection.type().name().toString());
 
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
-    if (!ipp.isPrintoutEmpty(projection)) {
+    if (!ipp.modelParamsEmpty(projection) || !ipp.isPrintoutNoParamsEmpty(projection)) {
       l.brk();
       ipp.printModel(projection, 0);
     }
 
-    Annotations annotations = projection.annotations();
-
-    GDatum defaultValue = projection.defaultValue();
-    if (defaultValue != null) {
-      l.brk().print("=").brk();
-      gdataPrettyPrinter.print(defaultValue);
-    }
-
-    if (!annotations.isEmpty()) {
-      l.beginCInd();
-      l.print(" {");
-      printAnnotations(annotations);
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-    }
-
+//    Annotations annotations = projection.annotations();
+//
+//    GDatum defaultValue = projection.defaultValue();
+//    if (defaultValue != null) {
+//      l.brk().print("=").brk();
+//      gdataPrettyPrinter.print(defaultValue);
+//    }
+//
+//    if (!annotations.isEmpty()) {
+//      l.beginCInd();
+//      l.print(" {");
+//      printAnnotations(annotations);
+//      l.brk(1, -l.getDefaultIndentation()).end().print("}");
     l.end();
   }
 
-  public void print(@NotNull RP recordProjection) throws E {
+  public void printRecordProjection(@NotNull RP recordProjection) throws E {
     @SuppressWarnings("unchecked")
     Map<String, FPE> fieldProjections = recordProjection.fieldProjections();
 
@@ -116,9 +166,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       @NotNull String prefix = fieldNamePrefix(entry.getValue());
       @NotNull FP fieldProjection = entry.getValue().fieldProjection();
 
-      print(prefix + escape(entry.getKey()), fieldProjection);
+      printFieldProjection(prefix + escape(entry.getKey()), fieldProjection);
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
+
   }
 
   protected String fieldNamePrefix(@NotNull FPE fieldEntry) { return ""; }
@@ -155,24 +206,30 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.beginIInd();
     { // keys
       l.beginCInd();
-      l.print("[");
+      l.print("[").brk();
       boolean commaNeeded = false;
+      boolean first = true;
 
       if (keysProjectionPrefix != null) {
-        l.brk().print(keysProjectionPrefix);
+        l.print(keysProjectionPrefix);
         commaNeeded = true;
+        first = false;
       }
 
       @NotNull OpParams keyParams = keyProjection.params();
       if (!keyParams.isEmpty()) {
-        print(keyParams, true, !commaNeeded);
+//        if (commaNeeded) l.brk();
+        first = printOpParams(keyParams, true, first);
         commaNeeded = !keyParams.isEmpty();
       }
 
       @NotNull Annotations keyAnnotations = keyProjection.annotations();
-      if (!keyAnnotations.isEmpty()) printAnnotations(keyAnnotations, true, !commaNeeded);
+      if (!keyAnnotations.isEmpty()) {
+//        if (commaNeeded) l.brk();
+        first = printAnnotations(keyAnnotations, true, first);
+      }
 
-      if (commaNeeded) l.brk(1, -l.getDefaultIndentation());
+      if (!first) l.brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
     l.print("(").brk();
@@ -180,7 +237,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
-  public void print(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
+  public void printFieldProjection(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
     if (isPrintoutEmpty(fieldProjection)) {
       l.print(prefix);
     } else {
@@ -225,5 +282,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     //return !fieldProjection.params().isEmpty() || !fieldProjection.annotations().isEmpty();
     return false;
   }
+
+  protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
 
 }

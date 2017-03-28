@@ -215,8 +215,7 @@ public class ReqOutputProjectionsParserTest {
     testParse(
         ":record(*)",
         lines(
-            ":record",
-            "(",
+            ":record (",
             "  id,",
             "  firstName,",
             "  bestFriend :(),",

@@ -58,13 +58,11 @@ public class OpDeleteProjectionsTest {
     );
 
 
-    // todo fix PP
     String expected = lines(
         ":(",
         "  id,",
-        "  `record`",
-        "  (",
-        "    id { ;+param1: epigraph.String = \"hello world\" { doc = \"some doc\" } },",
+        "  `record` (",
+        "    id { ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
         "    bestFriend +:`record` ( id, bestFriend :id ),",
         "    friends *( +:id )",
         "  )",
@@ -100,19 +98,20 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseParam() throws PsiProcessingException {
-    // todo: fix PP
     testParsingVarProjection(
-        ":id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { deprecated = true, default : ( \"foo\": < id: 123 > ) } []( :id ) }",
-        ":id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] []( :id ) = ( \"foo\": < id: 123 > ) { deprecated = true } }"
+        lines(
+            ":id {",
+            "  ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
+            "    { deprecated = true default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
+            "}"
+        )
     );
   }
 
   @Test
   public void testParseParam2() throws PsiProcessingException {
-    // todo: fix PP
     testParsingVarProjection(
-        ":id { ;+param: ws.epigraph.tests.UserRecord { default : { id: 1 } } }",
-        ":id { ;+param: ws.epigraph.tests.UserRecord = { id: 1 } }"
+        ":id { ;+param: ws.epigraph.tests.UserRecord { default: { id: 1 } } }"
     );
   }
 
@@ -125,7 +124,7 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseRecursive() throws PsiProcessingException {
-    testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+    testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
   }
 
   @Test

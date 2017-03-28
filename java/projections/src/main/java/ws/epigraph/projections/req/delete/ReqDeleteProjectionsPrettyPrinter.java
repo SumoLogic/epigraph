@@ -20,13 +20,10 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqParams;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -49,39 +46,6 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
   public ReqDeleteProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
     this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
-  }
-
-  @Override
-  public void printTag(@Nullable String tagName, @NotNull ReqDeleteTagProjectionEntry tp, int pathSteps) throws E {
-    ReqDeleteModelProjection<?, ?, ?> projection = tp.projection();
-
-    ReqParams params = projection.params();
-    Annotations annotations = projection.annotations();
-
-    l.beginIInd(0);
-    boolean needBrk = false;
-
-    if (tagName != null) {
-      l.print(tagName);
-      needBrk = true;
-    }
-
-    if (!params.isEmpty()) {
-      printParams(params);
-      needBrk = true;
-    }
-
-    if (!annotations.isEmpty()) {
-      printAnnotations(annotations);
-      needBrk = true;
-    }
-
-    if (!isPrintoutEmpty(projection)) {
-      if (needBrk) l.brk();
-      printModel(projection, pathSteps);
-    }
-
-    l.end();
   }
 
   @Override
@@ -110,13 +74,13 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
 
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqDeleteModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull ReqDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqDeleteMapModelProjection) {
       ReqDeleteMapModelProjection mapModelProjection = (ReqDeleteMapModelProjection) mp;
       @Nullable List<ReqDeleteKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
-      return super.isPrintoutEmpty(mp);
+      return super.isPrintoutNoParamsEmpty(mp);
   }
 
 }

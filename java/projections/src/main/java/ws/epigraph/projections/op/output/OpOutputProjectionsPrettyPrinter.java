@@ -18,15 +18,10 @@ package ws.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpParams;
-
-import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -52,57 +47,9 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull OpOutputTagProjectionEntry tp, int pathSteps) throws E {
-    OpOutputModelProjection<?, ?, ?> projection = tp.projection();
-    OpOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
-    OpParams params = projection.params();
-    Annotations annotations = projection.annotations();
-
-    if (params.isEmpty() && annotations.isEmpty() && metaProjection == null) {
-      l.beginIInd(0);
-
-      if (!isPrintoutEmpty(projection)) {
-        if (tagName != null) {
-          l.print(escape(tagName));
-          l.brk();
-        }
-        printModel(projection, 0);
-      } else if (tagName != null) l.print(escape(tagName));
-
-      l.end();
-    } else {
-      l.beginCInd();
-
-      if (tagName == null) l.print("{");
-      else {
-        l.print(escape(tagName));
-        l.print(" {");
-      }
-
-      if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) printAnnotations(annotations);
-
-      if (metaProjection != null) {
-        l.brk().beginIInd(0).print("meta:").brk();
-        printModel(metaProjection, 0);
-        l.end();
-      }
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-
-      if (!isPrintoutEmpty(projection)) {
-        l.beginIInd();
-        l.brk();
-        printModel(projection, 0);
-        l.end();
-      }
-    }
-  }
-
-  @Override
   public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
-      print((OpOutputRecordModelProjection) mp);
+      printRecordProjection((OpOutputRecordModelProjection) mp);
     else if (mp instanceof OpOutputMapModelProjection)
       printModelOnly((OpOutputMapModelProjection) mp);
     else if (mp instanceof OpOutputListModelProjection)
@@ -122,7 +69,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpOutputModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull OpOutputModelProjection<?, ?, ?> mp) {
     if (mp instanceof OpOutputMapModelProjection) {
       OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
       @NotNull OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
@@ -133,6 +80,6 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
-      return super.isPrintoutEmpty(mp);
+      return super.isPrintoutNoParamsEmpty(mp);
   }
 }

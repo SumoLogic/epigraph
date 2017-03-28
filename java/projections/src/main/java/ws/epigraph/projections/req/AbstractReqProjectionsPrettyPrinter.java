@@ -50,6 +50,35 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     dataPrinter = new DataPrinter<>(layouter);
   }
 
+  @Override
+  protected boolean printModelParams(final @NotNull MP projection) throws E {
+    ReqParams params = projection.params();
+    Annotations annotations = projection.annotations();
+
+    l.beginIInd(0);
+    boolean empty = true;
+
+    if (!params.isEmpty()) {
+      printParams(params);
+      empty = false;
+    }
+
+    if (!annotations.isEmpty()) {
+      printAnnotations(annotations);
+      empty = false;
+    }
+
+    l.end();
+
+    return empty;
+  }
+
+  @Override
+  protected void printModelMeta(final @NotNull MP metaProjection) throws E {
+    l.print("@");
+    printModel(metaProjection, 0);
+  }
+
   protected void printParams(@NotNull ReqParams params) throws E { // move to req common?
     l.beginCInd();
     if (!params.isEmpty()) {
@@ -173,8 +202,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
         if (first) {
           l.brk();
           first = false;
-        }
-        else l.print(", ");
+        } else l.print(", ");
 
         printReqKey(key);
       }

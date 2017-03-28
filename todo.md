@@ -58,8 +58,8 @@
   - [ ] input parser
   - [ ] delete parser
 - [ ] Perform full tails normalization in parsers
-- [ ] Unify req projections pretty printers, there's lots of code duplication
-- [ ] Unify op projections pretty printers, there's lots of code duplication
+- [x] Unify req projections pretty printers, there's lots of code duplication
+- [x] Unify op projections pretty printers, there's lots of code duplication
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
 - [ ] generated req projections: cache normalized projections?
 - [x] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing

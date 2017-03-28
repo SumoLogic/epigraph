@@ -77,7 +77,10 @@ public class OperationsPrettyPrinter<E extends Exception> {
     first = printMethod(operation, first);
 
     @Nullable Annotations annotations = operation.annotations();
-    if (annotations != null) first = opOutputPrinter.printAnnotations(annotations, true, first);
+    if (annotations != null && !annotations.isEmpty()) {
+      if (first) l.brk();
+      first = opOutputPrinter.printAnnotations(annotations, true, first);
+    }
 
     first = printPath(operation, first);
 
@@ -189,7 +192,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      opOutputPrinter.print("outputProjection", operation.outputProjection());
+      opOutputPrinter.printFieldProjection("outputProjection", operation.outputProjection());
 
     }
 
@@ -205,7 +208,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      opDeletePrinter.print("deleteProjection", deleteOperation.deleteProjection());
+      opDeletePrinter.printFieldProjection("deleteProjection", deleteOperation.deleteProjection());
     }
 
     return first;

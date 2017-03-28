@@ -55,57 +55,9 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull OpDeleteTagProjectionEntry tp, int pathSteps) throws E {
-    OpDeleteModelProjection<?, ?, ?> projection = tp.projection();
-    OpDeleteModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
-    OpParams params = projection.params();
-    Annotations annotations = projection.annotations();
-
-    if (params.isEmpty() && annotations.isEmpty()) {
-      l.beginIInd(0);
-
-      if (!isPrintoutEmpty(projection)) {
-        if (tagName != null) {
-          l.print(escape(tagName));
-          l.brk();
-        }
-        printModel(projection, 0);
-      } else if (tagName!=null) l.print(escape(tagName));
-
-      l.end();
-    } else {
-      l.beginCInd();
-
-      if (tagName == null) l.print("{");
-      else {
-        l.print(escape(tagName));
-        l.print(" {");
-      }
-
-      if (!params.isEmpty()) print(params);
-      if (!annotations.isEmpty()) printAnnotations(annotations);
-
-      if (metaProjection != null) {
-        l.brk().beginIInd(0).print("meta:").brk();
-        printModel(metaProjection, 0);
-        l.end();
-      }
-
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
-
-      if (!isPrintoutEmpty(projection)) {
-        l.beginIInd();
-        l.brk();
-        printModel(projection, 0);
-        l.end();
-      }
-    }
-  }
-
-  @Override
   public void printModelOnly(@NotNull OpDeleteModelProjection<?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpDeleteRecordModelProjection)
-      print((OpDeleteRecordModelProjection) mp);
+      printRecordProjection((OpDeleteRecordModelProjection) mp);
     else if (mp instanceof OpDeleteMapModelProjection)
       printModelOnly((OpDeleteMapModelProjection) mp);
     else if (mp instanceof OpDeleteListModelProjection)
@@ -125,20 +77,21 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void print(@NotNull OpParams p) throws E {
-    print(p, false, true);
+  public void printOpParams(@NotNull OpParams p) throws E {
+    printOpParams(p, false, true);
   }
 
   @Override
-  public boolean print(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
+  public boolean printOpParams(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     l.beginCInd(0);
     for (OpParam param : p.asMap().values()) {
-      if (needCommas) {
-        if (first) first = false;
-        else l.print(",");
+      if (first) {
+        first = false;
+      } else {
+        if (needCommas) l.print(",");
+        l.brk();
       }
-      l.brk();
-      print(param);
+      printOpParam(param);
     }
     l.end();
 
@@ -152,7 +105,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof OpDeleteMapModelProjection) {
       OpDeleteMapModelProjection mapModelProjection = (OpDeleteMapModelProjection) mp;
       @NotNull OpDeleteKeyProjection keyProjection = mapModelProjection.keyProjection();
@@ -163,6 +116,6 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
-      return super.isPrintoutEmpty(mp);
+      return super.isPrintoutNoParamsEmpty(mp);
   }
 }

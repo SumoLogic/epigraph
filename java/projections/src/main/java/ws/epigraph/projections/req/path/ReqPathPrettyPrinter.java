@@ -28,8 +28,6 @@ import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
 
-import java.util.Map;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -52,36 +50,26 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printTag(@Nullable String tagName, @NotNull ReqTagPath tp, int pathSteps) throws E {
-    ReqModelPath<?, ?, ?> projection = tp.projection();
-
+  protected boolean printModelParams(final @NotNull ReqModelPath<?, ?, ?> projection) throws E {
     ReqParams params = projection.params();
     Annotations annotations = projection.annotations();
 
-    l.beginCInd();
-    boolean needBrk = false;
-
-    if (tagName != null) {
-      l.print(tagName);
-      needBrk = true;
-    }
+    l.beginIInd(0);
+    boolean empty = true;
 
     if (!params.isEmpty()) {
       printParams(params);
-      needBrk = true;
+      empty = false;
     }
 
     if (!annotations.isEmpty()) {
       printAnnotations(annotations);
-      needBrk = true;
-    }
-
-    if (!isPrintoutEmpty(projection)) {
-      if (needBrk) l.brk();
-      printModel(projection, pathSteps);
+      empty = false;
     }
 
     l.end();
+
+    return empty;
   }
 
   @Override
@@ -138,9 +126,9 @@ public class ReqPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutEmpty(@NotNull ReqModelPath<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull ReqModelPath<?, ?, ?> mp) {
     if (mp instanceof ReqRecordModelPath)
-      return super.isPrintoutEmpty(mp);
+      return super.isPrintoutNoParamsEmpty(mp);
 
     return !(mp instanceof ReqMapModelPath); // map key always present
   }
@@ -154,6 +142,11 @@ public class ReqPathPrettyPrinter<E extends Exception>
         l.end();
       }
     }
+  }
+
+  @Override
+  public boolean modelParamsEmpty(final @NotNull ReqModelPath<?, ?, ?> path) {
+    return super.modelParamsEmpty(path) && path.params().isEmpty();
   }
 
   @Override

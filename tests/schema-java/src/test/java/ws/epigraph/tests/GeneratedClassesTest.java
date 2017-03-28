@@ -85,7 +85,7 @@ public class GeneratedClassesTest {
         UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
 
     assertEquals(
-        "[]( $recTest = :`record` ( id, bestFriend $recTest ) )",
+        "[ ]( $recTest = :`record` ( id, bestFriend $recTest ) )",
         printOpDeleteVarProjection(
             Qn.fromDotSeparated("ws.epigraph.tests"),
             UsersResourceDeclaration.INSTANCE.fieldName(),
