@@ -20,7 +20,6 @@ import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
-import ws.epigraph.projections.op.input.OpInputFieldProjectionEntry
 import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath}
 import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 
@@ -32,12 +31,14 @@ class OpRecordModelPathGen(p: OpRecordModelPath) extends ServiceObjectGen[OpReco
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
 
+    val fieldPathEntry = p.fieldPathEntry
+
     /*@formatter:off*/sn"""\
 new OpRecordModelPath(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
-  ${i(gen(p.pathFieldProjection(), ctx))},
+  ${i(if(p.fieldPathEntry() == null) "null" else genFieldPathEntry(p.`type`(), p.fieldPathEntry(), ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
 

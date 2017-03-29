@@ -21,7 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path.OpRecordModelPath
+import ws.epigraph.projections.op.path.{OpRecordModelPath, OpVarPath}
 
 import scala.collection.JavaConversions._
 
@@ -38,21 +38,25 @@ class ReqPathRecordModelProjectionGen(
   override type OpProjectionType = OpRecordModelPath
 
   override protected lazy val fieldGenerators: Map[CField, ReqPathFieldProjectionGen] =
-    op.fieldProjections().values().map{ fpe =>
-      (
-        findField(fpe.field().name()),
-        new ReqPathFieldProjectionGen(
-          operationInfo,
-          fpe.field().name(),
-          fpe.fieldProjection(),
-          namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
-          ctx
+    op.fieldProjections().values()
+      .filter { fpe =>
+        !OpVarPath.isEnd(fpe.fieldProjection().varProjection()) // todo same for maps/lists?
+      }
+      .map { fpe =>
+        (
+          findField(fpe.field().name()),
+          new ReqPathFieldProjectionGen(
+            operationInfo,
+            fpe.field().name(),
+            fpe.fieldProjection(),
+            namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
+            ctx
+          )
         )
-      )
-    }.toMap
+      }.toMap
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPathRecordModelProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPathFieldProjectionEntry")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqRecordModelPath"),
+    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqFieldPath")
   )
 }

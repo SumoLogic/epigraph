@@ -44,18 +44,21 @@ public class OpRecordModelPath
     > {
 
   private final @NotNull Map<String, OpFieldPathEntry> fieldProjections;
+  private @Nullable OpFieldPathEntry fieldPathEntry;
 
   public OpRecordModelPath(
       @NotNull RecordTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPathEntry fieldProjection,
+      @Nullable OpFieldPathEntry fieldPathEntry,
       @NotNull TextLocation location) {
     super(model, params, annotations, location);
 
-    this.fieldProjections = fieldProjection == null ?
+    this.fieldPathEntry = fieldPathEntry;
+
+    this.fieldProjections = fieldPathEntry == null ?
                             Collections.emptyMap() :
-                            Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
+                            Collections.singletonMap(fieldPathEntry.field().name(), fieldPathEntry);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
 
@@ -64,6 +67,8 @@ public class OpRecordModelPath
 
   @Override
   public @NotNull Map<String, OpFieldPathEntry> fieldProjections() { return fieldProjections; }
+
+  public @Nullable OpFieldPathEntry fieldPathEntry() { return fieldPathEntry; }
 
   @Override
   public boolean equals(Object o) {
