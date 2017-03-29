@@ -76,9 +76,8 @@ resource epigraph: EpigraphResource {
     `retro` $tagProjection
   )
 
-  read {
-    outputProjection (
-      types [] ( $typeProjection )
-    )
+  read types {
+    path /types
+    outputProjection [] ( $typeProjection )
   }
 }

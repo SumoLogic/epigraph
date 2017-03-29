@@ -1,6 +1,6 @@
 namespace epigraph.schema
 
-record NameString
+string NameString
 
 abstract vartype Name {
   `string`: NameString // or 'name' ?
