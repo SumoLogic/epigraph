@@ -19,14 +19,14 @@ package ws.epigraph.examples.library;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.examples.library.resources.books.operations.read.AbstractReadOperation;
-import ws.epigraph.examples.library.resources.books.operations.read.output.ReqOutputBookId_BookRecord_MapKeyProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.ReqOutputBookId_BookRecord_MapProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.ReqOutputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.ReqOutputBookRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.ReqOutputAuthorProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.record.ReqOutputAuthorRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.ReqOutputTextProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.plain.ReqOutputPlainTextProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBookId_BookRecord_MapKeyProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBookId_BookRecord_MapProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.elements.OutputBookRecordProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.OutputAuthorProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.record.OutputAuthorRecordProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.OutputTextProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.plain.OutputPlainTextProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 
 import java.util.concurrent.CompletableFuture;
@@ -40,13 +40,13 @@ public class BooksReadOperation extends AbstractReadOperation{
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
       @NotNull final BookId_BookRecord_Map.Builder.Data booksDataBuilder,
-      @NotNull final ReqOutputBooksFieldProjection booksFieldProjection) {
+      @NotNull final OutputBooksFieldProjection booksFieldProjection) {
 
     final BookId_BookRecord_Map.Builder booksMap = BookId_BookRecord_Map.create();
-    final ReqOutputBookId_BookRecord_MapProjection booksMapProjection = booksFieldProjection.dataProjection();
-    final ReqOutputBookRecordProjection bookRecordProjection = booksMapProjection.itemsProjection();
+    final OutputBookId_BookRecord_MapProjection booksMapProjection = booksFieldProjection.dataProjection();
+    final OutputBookRecordProjection bookRecordProjection = booksMapProjection.itemsProjection();
 
-    for (final ReqOutputBookId_BookRecord_MapKeyProjection keyProjection : booksMapProjection.keys()) {
+    for (final OutputBookId_BookRecord_MapKeyProjection keyProjection : booksMapProjection.keys()) {
       final BookId.Imm bookId = keyProjection.value();
       booksMap.put_(bookId, getBook(bookId.getVal(), bookRecordProjection));
     }
@@ -55,7 +55,7 @@ public class BooksReadOperation extends AbstractReadOperation{
     return CompletableFuture.completedFuture(booksDataBuilder);
   }
 
-  private BookRecord.Value getBook(long bookId, final ReqOutputBookRecordProjection bookRecordProjection) {
+  private BookRecord.Value getBook(long bookId, final OutputBookRecordProjection bookRecordProjection) {
     final BooksBackend.BookData bookData = BooksBackend.get(bookId);
 
     if (bookData == null) {
@@ -67,12 +67,12 @@ public class BooksReadOperation extends AbstractReadOperation{
       book.setTitle(bookData.title);
 
       // only get author if requested
-      final ReqOutputAuthorProjection authorProjection = bookRecordProjection.author();
+      final OutputAuthorProjection authorProjection = bookRecordProjection.author();
       if (authorProjection != null)
         book.setAuthor$(getAuthor(bookData.authorId, authorProjection));
 
       // only get text if requested
-      final ReqOutputTextProjection textProjection = bookRecordProjection.text();
+      final OutputTextProjection textProjection = bookRecordProjection.text();
       if (textProjection != null)
         book.setText$(getText(bookData, textProjection));
 
@@ -80,18 +80,18 @@ public class BooksReadOperation extends AbstractReadOperation{
     }
   }
 
-  private Author getAuthor(long authorId, ReqOutputAuthorProjection authorProjection) {
+  private Author getAuthor(long authorId, OutputAuthorProjection authorProjection) {
     Author.Builder author = Author.create();
     author.setId(AuthorId.create(authorId));
 
-    final ReqOutputAuthorRecordProjection authorRecordProjection = authorProjection.record();
+    final OutputAuthorRecordProjection authorRecordProjection = authorProjection.record();
     if (authorRecordProjection !=null)
       author.setRecord_(getAuthorRecord(authorId, authorRecordProjection));
 
     return author;
   }
 
-  private AuthorRecord.Value getAuthorRecord(long authorId, ReqOutputAuthorRecordProjection authorRecordProjection) {
+  private AuthorRecord.Value getAuthorRecord(long authorId, OutputAuthorRecordProjection authorRecordProjection) {
     final AuthorsBackend.AuthorData authorData = AuthorsBackend.get(authorId);
 
     if (authorData == null) {
@@ -114,10 +114,10 @@ public class BooksReadOperation extends AbstractReadOperation{
     }
   }
 
-  private Text getText(BooksBackend.BookData bookData, ReqOutputTextProjection textProjection) {
+  private Text getText(BooksBackend.BookData bookData, OutputTextProjection textProjection) {
     Text.Builder text = Text.create();
 
-    final ReqOutputPlainTextProjection plainTextProjection = textProjection.plain();
+    final OutputPlainTextProjection plainTextProjection = textProjection.plain();
     if (plainTextProjection != null) {
       String bookText = bookData.text;
       long textLength = bookText.length();

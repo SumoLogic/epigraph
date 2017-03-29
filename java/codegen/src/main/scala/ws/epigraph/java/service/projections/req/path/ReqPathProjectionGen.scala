@@ -29,6 +29,6 @@ trait ReqPathProjectionGen extends ReqProjectionGen {
 }
 
 object ReqPathProjectionGen {
-  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Path"
-  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
+  val classNamePrefix: String = ReqProjectionGen.classNamePrefix // + "Path"
+  val classNameSuffix: String = "Path" // ReqProjectionGen.classNameSuffix
 }

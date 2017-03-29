@@ -52,7 +52,7 @@ trait ReqProjectionGen extends JavaGen {
 }
 
 object ReqProjectionGen {
-  val classNamePrefix: String = "Req"
+  val classNamePrefix: String = "" // "Req" // we don't generate "Op", so this should be OK ?
   val classNameSuffix: String = "Projection"
 
   def baseNamespace(name: Option[Qn], default: Qn): Qn = name.map(n => JavaGenNames.pnq(n)).getOrElse(default)
