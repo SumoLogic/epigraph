@@ -53,7 +53,7 @@ ${t.effectiveFields.map { f => sn"""\
   }.mkString
 }\
 ${t.effectiveFields.map { f =>
-    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -183,7 +183,7 @@ ${t.declaredFields.map { f => sn"""
    */
   interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.RecordDatum.Imm.Static {
 ${t.effectiveFields.map { f =>
-    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -247,7 +247,7 @@ ${t.meta match {
 
       private Impl(@NotNull ws.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveFields.map { f =>
-    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -377,7 +377,7 @@ ${t.meta match {
 
     private Builder(@NotNull ws.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 ${t.effectiveFields.map { f => // for each effective field
-    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
