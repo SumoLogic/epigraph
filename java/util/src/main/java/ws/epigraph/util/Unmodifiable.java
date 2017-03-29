@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,13 @@ public final class Unmodifiable {
 
   @Contract(pure = true)
   public static @NotNull <K, V> Map<K, ? extends V> map(@NotNull Map<K, ? extends V> map) {
+//    for (Class<?> unmodifiableMapClass : UnmodifiableMapClasses) if (unmodifiableMapClass.isInstance(map)) return map;
+//    return Collections.unmodifiableMap(map);
+    return UnmodifiableMapClass.isInstance(map) ? map : Collections.unmodifiableMap(map);
+  }
+
+  @Contract(pure = true)
+  public static @NotNull <K, V> Map<K, V> map_(@NotNull Map<K, V> map) { // todo get rid of the previous one?
 //    for (Class<?> unmodifiableMapClass : UnmodifiableMapClasses) if (unmodifiableMapClass.isInstance(map)) return map;
 //    return Collections.unmodifiableMap(map);
     return UnmodifiableMapClass.isInstance(map) ? map : Collections.unmodifiableMap(map);
