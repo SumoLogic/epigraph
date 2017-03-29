@@ -315,13 +315,13 @@ public class JsonFormatWriterTest {
     bf.setRecord(
         PersonRecord.create()
             .setId(PersonId.create(11))
-            .setBestFriend2$(bf)
+            .setBestFriend2(bf)
     );
 
     Person.Builder person = Person.create()
         .setId(PersonId.create(1))
         .setRecord(
-            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2$(bf)
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2(bf)
         );
 
     testRender(
@@ -339,13 +339,13 @@ public class JsonFormatWriterTest {
             .setId(PersonId.create(11))
             .setFirstName("Alfred")
             .setLastName("Hitchcock")
-            .setBestFriend3$(bf)
+            .setBestFriend3(bf)
     );
 
     Person.Builder person = Person.create()
         .setId(PersonId.create(1))
         .setRecord(
-            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3$(bf)
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3(bf)
         );
 
     testRender(

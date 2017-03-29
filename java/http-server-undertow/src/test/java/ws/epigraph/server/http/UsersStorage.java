@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class UsersStorage {
             .setFirstName("First" + id)
             .setLastName("Last" + id)
             .setProfile_Error(new ErrorValue(404, "Not Found", null))
-            .setBestFriend$(bestFriend)
+            .setBestFriend(bestFriend)
             .setWorstEnemy(UserRecord.create()
                 .setId(PersonId.create(id + 2))
                 .setFirstName("First" + (id + 2))

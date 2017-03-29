@@ -310,13 +310,13 @@ public class ReqOutputJsonFormatReaderTest {
     bf.setRecord(
         PersonRecord.create()
             .setId(PersonId.create(11))
-            .setBestFriend2$(bf)
+            .setBestFriend2(bf)
     );
 
     Person.Builder person = Person.create()
         .setId(PersonId.create(1))
         .setRecord(
-            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2$(bf)
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2(bf)
         );
 
     testRead(
@@ -332,7 +332,7 @@ public class ReqOutputJsonFormatReaderTest {
     bfrec.setRecord(
         PersonRecord.create()
             .setId(PersonId.create(11))
-            .setBestFriend3$(bfrec)
+            .setBestFriend3(bfrec)
     );
 
     Person.Builder bf = Person.create();
@@ -340,12 +340,12 @@ public class ReqOutputJsonFormatReaderTest {
         PersonRecord.create()
             .setId(PersonId.create(11))
             .setFirstName("Alfred")
-            .setBestFriend3$(
+            .setBestFriend3(
                 Person.create().setRecord(
                     PersonRecord.create()
                         .setId(PersonId.create(11))
                         .setLastName("Hitchcock")
-                        .setBestFriend3$(bfrec)
+                        .setBestFriend3(bfrec)
                 )
             )
     );
@@ -353,7 +353,7 @@ public class ReqOutputJsonFormatReaderTest {
     Person.Builder person = Person.create()
         .setId(PersonId.create(1))
         .setRecord(
-            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3$(bf)
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend3(bf)
         );
 
     testRead(

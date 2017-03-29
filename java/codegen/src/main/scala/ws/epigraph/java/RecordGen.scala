@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenNames.{fcn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, 
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
-    with DatumTypeJavaGen {
+  with DatumTypeJavaGen {
 
   protected def generate: String = /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -52,13 +52,15 @@ ${t.effectiveFields.map { f => sn"""\
 """
   }.mkString
 }\
-${t.effectiveFields.map { f => sn"""\
+${t.effectiveFields.map { f =>
+    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
 
   /** Returns `${f.name}` field data. */
   //@Override TODO where applicable
-  @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$();
+  @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$d();
 """
       case _: CDatumType => "" // no data accessors for datum fields
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
@@ -180,13 +182,15 @@ ${t.declaredFields.map { f => sn"""
    * Immutable interface for `${t.name.name}` datum.
    */
   interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.RecordDatum.Imm.Static {
-${t.effectiveFields.map { f => sn"""\
+${t.effectiveFields.map { f =>
+    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
 
     /** Returns immutable `${f.name}` field data. */
     @Override
-    @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$$();
+    @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$d();
 """
       case _: CDatumType => "" // no data accessors for datum fields
       case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
@@ -242,13 +246,15 @@ ${t.meta match {
     final class Impl extends ws.epigraph.data.RecordDatum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
 
       private Impl(@NotNull ws.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
-${t.effectiveFields.map { f => sn"""\
+${t.effectiveFields.map { f =>
+    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
+    sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
 
         /** Returns immutable `${f.name}` field data. */
         @Override
-        public @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$$() {
+        public @Nullable ${lqdrn(f.typeRef, t)}.Imm get${up(f.name)}$d() {
           return (${lqdrn(f.typeRef, t)}.Imm) _raw().getData($ln.${fcn(f)});
         }
 """
@@ -371,16 +377,17 @@ ${t.meta match {
 
     private Builder(@NotNull ws.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 ${t.effectiveFields.map { f => // for each effective field
+    val d = f.effectiveDefaultTagName.map(_ => "$").getOrElse("") // append '$' to getters/ setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
 
     /** Returns `${f.name}` field data. */
     @Override
-    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$$() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${fcn(f)}); }
+    public @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$d() { return (${lqdrn(f.typeRef, t)}) _raw().getData($ln.${fcn(f)}); }
 
     /** Sets `${f.name}` field data. */
-    public @NotNull $ln.Builder set${up(f.name)}$$(@Nullable ${lqrn(f.typeRef, t)} ${fcn(f)}) {
+    public @NotNull $ln.Builder set${up(f.name)}$d(@Nullable ${lqrn(f.typeRef, t)} ${fcn(f)}) {
       _raw().setData($ln.${fcn(f)}, ${fcn(f)}); return this;
     }
 

@@ -69,12 +69,12 @@ public class BooksReadOperation extends AbstractReadOperation{
       // only get author if requested
       final OutputAuthorProjection authorProjection = bookRecordProjection.author();
       if (authorProjection != null)
-        book.setAuthor$(getAuthor(bookData.authorId, authorProjection));
+        book.setAuthor(getAuthor(bookData.authorId, authorProjection));
 
       // only get text if requested
       final OutputTextProjection textProjection = bookRecordProjection.text();
       if (textProjection != null)
-        book.setText$(getText(bookData, textProjection));
+        book.setText(getText(bookData, textProjection));
 
       return book.asValue();
     }
