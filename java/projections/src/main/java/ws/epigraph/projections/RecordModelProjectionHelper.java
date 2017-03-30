@@ -158,15 +158,18 @@ public final class RecordModelProjectionHelper {
       FP extends GenFieldProjection<VP, ?, ?, FP>>
   Map<String, FP> normalizeFields(@NotNull RecordTypeApi effectiveType, @NotNull RMP projection) {
 
-    Map<String, FP> result = new LinkedHashMap<>(projection.fieldProjections().size());
+    if (projection.type().isAssignableFrom(effectiveType)) {
+      Map<String, FP> result = new LinkedHashMap<>(projection.fieldProjections().size());
 
-    for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
-      final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
-      FP fp = entry.getValue().fieldProjection();
-      final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type());
-      result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
-    }
+      for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
+        final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
+        FP fp = entry.getValue().fieldProjection();
+        final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type());
+        result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
+      }
 
-    return result;
+      return result;
+    } else
+      return Collections.emptyMap();
   }
 }

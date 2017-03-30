@@ -220,8 +220,7 @@ public abstract class AbstractVarProjection<
     final List<VP> mergedTails = mergeTails(effectiveProjections);
     final List<VP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
         .stream()
-        .filter(t -> !t.type()
-            .isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
+        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
