@@ -71,6 +71,13 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
+  public @NotNull OpOutputRecordModelProjection newReference(
+      final @NotNull RecordTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpOutputRecordModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
@@ -150,7 +157,7 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpOutputRecordModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull OpOutputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

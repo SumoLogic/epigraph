@@ -492,9 +492,9 @@ public class OpOutputProjectionsTest {
   @Test
   public void testModelTailsNormalization() throws PsiProcessingException {
     testModelTailsNormalization(
-        ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
+        ":`record`(id, lastName)~ws.epigraph.tests.UserRecord(firstName)~ws.epigraph.tests.UserRecord2(worstEnemy)",
         UserRecord.type,
-        ":`record` ( firstName, id )"
+        ":`record` ( firstName, id, lastName ) ~ws.epigraph.tests.UserRecord2 ( worstEnemy )"
     );
 
     testModelTailsNormalization(

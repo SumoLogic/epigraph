@@ -60,6 +60,13 @@ public class ReqUpdateListModelProjection
   }
 
   @Override
+  public @NotNull ReqUpdateListModelProjection newReference(
+      final @NotNull ListTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqUpdateListModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqUpdateVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
@@ -67,7 +74,7 @@ public class ReqUpdateListModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqUpdateListModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqUpdateListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
   }

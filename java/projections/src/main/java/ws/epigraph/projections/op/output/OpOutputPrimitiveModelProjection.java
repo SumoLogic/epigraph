@@ -65,4 +65,11 @@ public class OpOutputPrimitiveModelProjection
         TextLocation.UNKNOWN
     );
   }
+
+  @Override
+  public @NotNull OpOutputPrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpOutputPrimitiveModelProjection(type, location);
+  }
 }

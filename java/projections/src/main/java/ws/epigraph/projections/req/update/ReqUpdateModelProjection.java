@@ -64,7 +64,7 @@ public abstract class ReqUpdateModelProjection<
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull SMP value) {
+  public void resolve(final @Nullable Qn name, final @NotNull SMP value) {
     super.resolve(name, value);
     update = value.update();
   }

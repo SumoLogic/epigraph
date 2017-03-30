@@ -68,6 +68,13 @@ public class OpInputRecordModelProjection
     this.fieldProjections = Collections.emptyMap();
   }
 
+  @Override
+  public @NotNull OpInputRecordModelProjection newReference(
+      final @NotNull RecordTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpInputRecordModelProjection(type, location);
+  }
+
   public static @NotNull LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
     return new LinkedHashSet<>(Arrays.asList(fieldProjections));
   }
@@ -79,7 +86,7 @@ public class OpInputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpInputRecordModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull OpInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

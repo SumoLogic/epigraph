@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import ws.epigraph.data.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class AnonMapTypeName implements TypeName, Immutable {
 
   public final @NotNull TypeName keyTypeName;
@@ -41,4 +43,17 @@ public class AnonMapTypeName implements TypeName, Immutable {
     return toString;
   }
 
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    final AnonMapTypeName name = (AnonMapTypeName) o;
+    return Objects.equals(keyTypeName, name.keyTypeName) &&
+           Objects.equals(valueTypeName, name.valueTypeName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(keyTypeName, valueTypeName);
+  }
 }

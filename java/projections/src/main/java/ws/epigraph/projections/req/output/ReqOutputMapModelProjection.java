@@ -67,6 +67,13 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
+  public @NotNull ReqOutputMapModelProjection newReference(
+      final @NotNull MapTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqOutputMapModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqOutputVarProjection itemsProjection() {
     assert isResolved();
     assert valuesProjection != null;
@@ -140,7 +147,7 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqOutputMapModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqOutputMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

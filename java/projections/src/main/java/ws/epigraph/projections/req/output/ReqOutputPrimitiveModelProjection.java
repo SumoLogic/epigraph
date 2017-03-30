@@ -50,6 +50,13 @@ public class ReqOutputPrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  public @NotNull ReqOutputPrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqOutputPrimitiveModelProjection(type, location);
+  }
+
   /* static */
   @Override
   protected ReqOutputPrimitiveModelProjection merge(

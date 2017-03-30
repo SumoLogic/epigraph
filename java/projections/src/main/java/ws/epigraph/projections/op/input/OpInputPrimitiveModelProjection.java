@@ -49,4 +49,11 @@ public class OpInputPrimitiveModelProjection
   public OpInputPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  @Override
+  public @NotNull OpInputPrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpInputPrimitiveModelProjection(type, location);
+  }
 }

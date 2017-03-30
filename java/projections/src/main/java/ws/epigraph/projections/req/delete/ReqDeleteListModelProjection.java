@@ -59,6 +59,13 @@ public class ReqDeleteListModelProjection
   }
 
   @Override
+  public @NotNull ReqDeleteListModelProjection newReference(
+      final @NotNull ListTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqDeleteListModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqDeleteVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
@@ -66,7 +73,7 @@ public class ReqDeleteListModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqDeleteListModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqDeleteListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
   }

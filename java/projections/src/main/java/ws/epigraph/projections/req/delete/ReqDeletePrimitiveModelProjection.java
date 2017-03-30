@@ -47,4 +47,11 @@ public class ReqDeletePrimitiveModelProjection
       final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  @Override
+  public @NotNull ReqDeletePrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqDeletePrimitiveModelProjection(type, location);
+  }
 }

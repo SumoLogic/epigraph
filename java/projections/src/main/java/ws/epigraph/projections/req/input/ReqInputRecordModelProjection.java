@@ -64,6 +64,13 @@ public class ReqInputRecordModelProjection
   }
 
   @Override
+  public @NotNull ReqInputRecordModelProjection newReference(
+      final @NotNull RecordTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqInputRecordModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull Map<String, ReqInputFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
@@ -75,7 +82,7 @@ public class ReqInputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqInputRecordModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

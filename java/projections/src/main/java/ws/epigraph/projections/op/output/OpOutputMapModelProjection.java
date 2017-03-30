@@ -67,6 +67,13 @@ public class OpOutputMapModelProjection
     super(model, location);
   }
 
+  @Override
+  public @NotNull OpOutputMapModelProjection newReference(
+      final @NotNull MapTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpOutputMapModelProjection(type, location);
+  }
+
   public @NotNull OpOutputKeyProjection keyProjection() {
     assert isResolved();
     assert keyProjection != null;
@@ -81,7 +88,7 @@ public class OpOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpOutputMapModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull OpOutputMapModelProjection value) {
     super.resolve(name, value);
     this.keyProjection = value.keyProjection();
     this.itemsProjection = value.itemsProjection();

@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.op.delete;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
@@ -23,7 +24,6 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.MapTypeApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,14 +45,6 @@ public class OpDeleteMapModelProjection
   private /*final @NotNull*/ @Nullable OpDeleteKeyProjection keyProjection;
 
   public OpDeleteMapModelProjection(
-      final @NotNull MapTypeApi model,
-      final @NotNull TextLocation location) {
-    super(model, location);
-    itemsProjection = null;
-    keyProjection = null;
-  }
-
-  public OpDeleteMapModelProjection(
       @NotNull MapTypeApi model,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -63,6 +55,21 @@ public class OpDeleteMapModelProjection
     super(model, params, annotations, tails, location);
     this.itemsProjection = valuesProjection;
     this.keyProjection = keyProjection;
+  }
+
+  public OpDeleteMapModelProjection(
+      final @NotNull MapTypeApi model,
+      final @NotNull TextLocation location) {
+    super(model, location);
+    itemsProjection = null;
+    keyProjection = null;
+  }
+
+  @Override
+  public @NotNull OpDeleteMapModelProjection newReference(
+      final @NotNull MapTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpDeleteMapModelProjection(type, location);
   }
 
   @Override
@@ -79,7 +86,7 @@ public class OpDeleteMapModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteMapModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull OpDeleteMapModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
     this.keyProjection = value.keyProjection();

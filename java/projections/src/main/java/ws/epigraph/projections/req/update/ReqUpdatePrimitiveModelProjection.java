@@ -47,4 +47,11 @@ public class ReqUpdatePrimitiveModelProjection
       final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  @Override
+  public @NotNull ReqUpdatePrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqUpdatePrimitiveModelProjection(type, location);
+  }
 }

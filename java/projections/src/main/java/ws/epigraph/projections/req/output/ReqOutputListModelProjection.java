@@ -63,6 +63,13 @@ public class ReqOutputListModelProjection
   }
 
   @Override
+  public @NotNull ReqOutputListModelProjection newReference(
+      final @NotNull ListTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqOutputListModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqOutputVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
@@ -116,7 +123,7 @@ public class ReqOutputListModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqOutputListModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqOutputListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
   }

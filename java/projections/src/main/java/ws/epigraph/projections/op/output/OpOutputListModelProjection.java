@@ -62,6 +62,13 @@ public class OpOutputListModelProjection
   }
 
   @Override
+  public @NotNull OpOutputListModelProjection newReference(
+      final @NotNull ListTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpOutputListModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull OpOutputVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;

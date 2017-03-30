@@ -60,6 +60,13 @@ public class OpDeleteListModelProjection
   }
 
   @Override
+  public @NotNull OpDeleteListModelProjection newReference(
+      final @NotNull ListTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpDeleteListModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull OpDeleteVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;

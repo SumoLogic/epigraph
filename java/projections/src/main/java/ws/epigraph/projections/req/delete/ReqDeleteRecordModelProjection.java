@@ -16,6 +16,8 @@
 
 package ws.epigraph.projections.req.delete;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
@@ -23,10 +25,10 @@ import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.RecordTypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -64,6 +66,13 @@ public class ReqDeleteRecordModelProjection
   }
 
   @Override
+  public @NotNull ReqDeleteRecordModelProjection newReference(
+      final @NotNull RecordTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqDeleteRecordModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull Map<String, ReqDeleteFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
@@ -75,7 +84,7 @@ public class ReqDeleteRecordModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqDeleteRecordModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqDeleteRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

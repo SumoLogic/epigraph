@@ -45,4 +45,11 @@ public class OpDeletePrimitiveModelProjection
   public OpDeletePrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  @Override
+  public @NotNull OpDeletePrimitiveModelProjection newReference(
+      final @NotNull PrimitiveTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpDeletePrimitiveModelProjection(type, location);
+  }
 }

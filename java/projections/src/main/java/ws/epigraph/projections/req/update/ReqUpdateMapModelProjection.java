@@ -68,6 +68,13 @@ public class ReqUpdateMapModelProjection
   }
 
   @Override
+  public @NotNull ReqUpdateMapModelProjection newReference(
+      final @NotNull MapTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqUpdateMapModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqUpdateVarProjection itemsProjection() {
     assert isResolved();
     assert valuesProjection != null;
@@ -85,7 +92,7 @@ public class ReqUpdateMapModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqUpdateMapModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqUpdateMapModelProjection value) {
     super.resolve(name, value);
     updateKeys = value.updateKeys();
     keys = value.keys();

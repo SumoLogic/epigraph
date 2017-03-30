@@ -66,13 +66,20 @@ public class OpDeleteRecordModelProjection
   }
 
   @Override
+  public @NotNull OpDeleteRecordModelProjection newReference(
+      final @NotNull RecordTypeApi type,
+      final @NotNull TextLocation location) {
+    return new OpDeleteRecordModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull Map<String, OpDeleteFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteRecordModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull OpDeleteRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

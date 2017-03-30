@@ -36,7 +36,7 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
    * @param value projection instance to copy state from
    * @see #name()
    */
-  void resolve(@NotNull Qn name, @NotNull R value);
+  void resolve(@Nullable Qn name, @NotNull R value);
 
   /**
    * Checks if this projection is resolved, i.e. it's not an empty placeholder instance.

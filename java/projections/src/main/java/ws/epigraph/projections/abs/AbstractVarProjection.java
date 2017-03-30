@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.gen.GenModelProjection;
@@ -50,9 +51,11 @@ public abstract class AbstractVarProjection<
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
 
+  private final @NotNull TextLocation location;
+
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
-  private final @NotNull TextLocation location;
+  private final Map<TypeName, VP> normalizedCache = new HashMap<>();
 
   protected AbstractVarProjection(
       @NotNull TypeApi type,
@@ -178,22 +181,16 @@ public abstract class AbstractVarProjection<
     if (targetType.equals(type()))
       return self();
 
+
+    VP ref = normalizedCache.get(targetType.name());
+    if (ref != null)
+      return ref;
+
     VarNormalizationContext<VP> context = (VarNormalizationContext<VP>) normalizationContextThreadLocal.get();
     boolean contextInitialized = context == null;
     if (contextInitialized) {
       context = newNormalizationContext();
       normalizationContextThreadLocal.set(context);
-    }
-
-    VP ref = null;
-    if (name != null) {
-      ref = context.visited().get(name);
-
-      if (ref != null)
-        return ref;
-
-      ref = context.newReference(targetType);
-      context.visited().put(name, ref);
     }
 
     final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
@@ -203,6 +200,19 @@ public abstract class AbstractVarProjection<
         linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
         this.type()
     );
+
+    if (name == null) {
+      ref = context.newReference(effectiveType);
+      normalizedCache.put(targetType.name(), ref);
+    } else {
+      ref = context.visited().get(name);
+
+      if (ref != null)
+        return ref;
+
+      ref = context.newReference(effectiveType);
+      context.visited().put(name, ref);
+    }
 
     final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
     effectiveProjections.add(self()); //we're the least specific projection
@@ -215,17 +225,18 @@ public abstract class AbstractVarProjection<
         .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
-    VP res = merge(effectiveType, true, mergedNormalizedTails, effectiveProjections);
+    List<VP> projectionsToMerge = effectiveProjections
+        .stream()
+        .filter(p -> p.type().isAssignableFrom(effectiveType))
+        .collect(Collectors.toList());
+
+    VP res = merge(effectiveType, true, mergedNormalizedTails, projectionsToMerge);
 
     if (contextInitialized)
       normalizationContextThreadLocal.remove();
 
-    if (ref == null)
-      return res;
-    else {
-      ref.resolve(name, res);
-      return ref;
-    }
+    ref.resolve(name, res);
+    return ref;
   }
 
   private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
@@ -343,7 +354,7 @@ public abstract class AbstractVarProjection<
   public @Nullable Qn name() { return name; }
 
   @Override
-  public void resolve(@NotNull Qn name, @NotNull VP value) {
+  public void resolve(@Nullable Qn name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (this.name != null)

@@ -62,6 +62,13 @@ public class ReqDeleteMapModelProjection
   }
 
   @Override
+  public @NotNull ReqDeleteMapModelProjection newReference(
+      final @NotNull MapTypeApi type,
+      final @NotNull TextLocation location) {
+    return new ReqDeleteMapModelProjection(type, location);
+  }
+
+  @Override
   public @NotNull ReqDeleteVarProjection itemsProjection() {
     assert isResolved();
     assert valuesProjection != null;
@@ -74,7 +81,7 @@ public class ReqDeleteMapModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull ReqDeleteMapModelProjection value) {
+  public void resolve(final @Nullable Qn name, final @NotNull ReqDeleteMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

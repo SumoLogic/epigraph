@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ package ws.epigraph.names;
 import ws.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public abstract class QualifiedName {
 
@@ -44,4 +46,17 @@ public abstract class QualifiedName {
     return namespaceName == null ? localName : namespaceName.toString() + '.' + localName;
   }
 
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    final QualifiedName name = (QualifiedName) o;
+    return Objects.equals(namespaceName, name.namespaceName) &&
+           Objects.equals(localName, name.localName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(namespaceName, localName);
+  }
 }
