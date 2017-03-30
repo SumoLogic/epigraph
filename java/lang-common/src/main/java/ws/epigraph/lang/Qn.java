@@ -20,31 +20,20 @@ import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Fqn is a collection of string segments
+ * Qualified name is a collection of string segments
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @Immutable
-public class Qn implements Comparable<Qn> {
-  // todo this often acts as Fqn prefix/suffix. Rename to Qn ?
-
+public class Qn extends GenQn<String, Qn> implements Comparable<Qn> {
   public static final Qn EMPTY = new Qn();
 
-  public final @NotNull String[] segments;
-
   public Qn(@NotNull String... segments) {
-    this.segments = new String[segments.length];
-    System.arraycopy(segments, 0, this.segments, 0, segments.length);
-
-    // auto-canonicalize
-    for (int i = 0; i < segments.length; i++)
-      this.segments[i] = NamingConventions.unquote(this.segments[i]);
+    super(String.class, segments);
   }
 
   public Qn(@NotNull Collection<String> segments) {
@@ -52,11 +41,16 @@ public class Qn implements Comparable<Qn> {
   }
 
   private Qn(@NotNull String[] segments, boolean copy) {
-    if (copy) {
-      this.segments = new String[segments.length];
-      System.arraycopy(segments, 0, this.segments, 0, segments.length);
-    } else this.segments = segments;
+    super(String.class, segments, copy);
   }
+
+  @Override
+  protected Qn newInstance(final @NotNull String[] segments, final boolean copy) {
+    return new Qn(segments, copy);
+  }
+
+  @Override
+  protected Qn emptyInstance() { return EMPTY; }
 
   public static @NotNull Qn fromDotSeparated(@NotNull String fqn) {
     // todo will break if dot is inside back-ticks..
@@ -67,136 +61,12 @@ public class Qn implements Comparable<Qn> {
     return fqn == null ? null : fromDotSeparated(fqn);
   }
 
-  public int size() {
-    return segments.length;
-  }
-
-  public boolean isEmpty() {
-    return size() == 0;
-  }
-
-  public @Nullable String first() {
-    if (isEmpty()) return null;
-    return segments[0];
-  }
-
-  public @Nullable String last() {
-    if (isEmpty()) return null;
-    return segments[size() - 1];
-  }
-
-  public @NotNull Qn takeHeadSegments(int n) {
-    if (size() < n) throw new IllegalArgumentException("Can't take " + n + " segments from '" + toString() + "'");
-    return removeTailSegments(size() - n);
-  }
-
-  public @NotNull Qn removeLastSegment() {
-    return removeTailSegments(1);
-  }
-
-  public @NotNull Qn removeFirstSegment() {
-    return removeHeadSegments(1);
-  }
-
-  public @NotNull Qn removeHeadSegments(int n) {
-    if (n < 0 || size() < n)
-      throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
-    if (size() == n) return EMPTY;
-    if (n == 0) return this;
-
-    String[] f = new String[size() - n];
-    System.arraycopy(segments, n, f, 0, size() - n);
-    return new Qn(f);
-  }
-
-  public @NotNull Qn removeTailSegments(int n) {
-    if (n < 0 || size() < n)
-      throw new IllegalArgumentException("Can't remove " + n + " segments from '" + toString() + "'");
-    if (size() == n) return EMPTY;
-    if (n == 0) return this;
-
-    String[] f = new String[size() - n];
-    System.arraycopy(segments, 0, f, 0, size() - n);
-    return new Qn(f);
-  }
-
-  public @NotNull Qn append(@NotNull Qn suffix) {
-    if (isEmpty()) return suffix;
-    if (suffix.isEmpty()) return this;
-
-    String[] f = new String[size() + suffix.size()];
-    System.arraycopy(segments, 0, f, 0, size());
-    System.arraycopy(suffix.segments, 0, f, size(), suffix.size());
-    return new Qn(f);
-  }
-
-  public @NotNull Qn append(@NotNull String segment) {
-    String[] f = new String[size() + 1];
-    System.arraycopy(segments, 0, f, 0, size());
-    f[size()] = NamingConventions.unquote(segment);
-    return new Qn(f);
-  }
-
-  public boolean startsWith(@NotNull Qn prefix) {
-    if (prefix.isEmpty()) return true;
-    if (size() < prefix.size()) return false;
-
-    for (int i = 0; i < prefix.size(); i++) {
-      if (!segments[i].equals(prefix.segments[i])) return false;
-    }
-
-    return true;
-  }
-
-  public boolean endsWith(@NotNull Qn suffix) {
-    if (suffix.isEmpty()) return true;
-    int diff = size() - suffix.size();
-    if (diff < 0) return false;
-
-    for (int i = 0; i < suffix.size(); i++) {
-      if (!segments[i + diff].equals(suffix.segments[i])) return false;
-    }
-
-    return true;
-  }
-
-  public @NotNull Qn map(@NotNull Function<String, String> f) {
-    Qn res = new Qn(new String[size()], false);
-    for (int i = 0; i < size(); i++) {
-      res.segments[i] = f.apply(segments[i]);
-    }
-    return res;
-  }
-
-  public @NotNull Qn toLower() {
-    return map(String::toLowerCase);
-  }
-
   @Override
-  public String toString() {
-    StringBuilder r = new StringBuilder();
-    for (String segment : segments) {
-      if (r.length() > 0) r.append('.');
-      r.append(segment);
-    }
-
-    return r.toString();
+  protected @NotNull String sanitize(final @NotNull String segment) {
+    return NamingConventions.unquote(segment);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Qn fqn = (Qn) o;
-
-    return Arrays.equals(segments, fqn.segments);
-  }
-
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(segments);
-  }
+  public @NotNull Qn toLower() { return map(String::toLowerCase); }
 
   public static @Nullable String toNullableString(@Nullable Qn fqn) {
     return fqn == null ? null : fqn.toString();
