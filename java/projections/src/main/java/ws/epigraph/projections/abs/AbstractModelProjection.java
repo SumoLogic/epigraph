@@ -121,10 +121,10 @@ public abstract class AbstractModelProjection<
 
     final List<SMP> mergedTails = mergeTails(effectiveProjections);
 
-    final List<SMP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
+    final List<SMP> filteredMergedTails = mergedTails == null ? null : mergedTails
         .stream()
         .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
-        .map(t -> t.normalizedForType(targetType))
+//        .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
     List<SMP> projectionsToMerge = effectiveProjections
@@ -132,7 +132,7 @@ public abstract class AbstractModelProjection<
         .filter(p -> p.type().isAssignableFrom(effectiveType))
         .collect(Collectors.toList());
 
-    final SMP mergeResult = merge((M) effectiveType, mergedNormalizedTails, projectionsToMerge);
+    final SMP mergeResult = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
     assert mergeResult != null; // since effectiveProjections is non-empty, at least self is there
     ((GenProjectionReference<SMP>) res).resolve(null, mergeResult);
     return res;

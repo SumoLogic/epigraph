@@ -218,10 +218,10 @@ public abstract class AbstractVarProjection<
     effectiveProjections.add(self()); //we're the least specific projection
 
     final List<VP> mergedTails = mergeTails(effectiveProjections);
-    final List<VP> mergedNormalizedTails = mergedTails == null ? null : mergedTails
+    final List<VP> filteredMergedTails = mergedTails == null ? null : mergedTails
         .stream()
         .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
-        .map(t -> t.normalizedForType(targetType))
+//        .map(t -> t.normalizedForType(targetType))
         .collect(Collectors.toList());
 
     List<VP> projectionsToMerge = effectiveProjections
@@ -229,7 +229,7 @@ public abstract class AbstractVarProjection<
         .filter(p -> p.type().isAssignableFrom(effectiveType))
         .collect(Collectors.toList());
 
-    VP res = merge(effectiveType, true, mergedNormalizedTails, projectionsToMerge);
+    VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge);
 
     if (contextInitialized)
       normalizationContextThreadLocal.remove();
