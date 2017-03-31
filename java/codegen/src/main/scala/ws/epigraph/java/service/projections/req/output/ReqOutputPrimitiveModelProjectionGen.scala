@@ -19,13 +19,14 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputPrimitiveModelProjectionGen(
-  name: Option[Qn],
+  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   val op: OpOutputPrimitiveModelProjection,
   _baseNamespace: Qn,

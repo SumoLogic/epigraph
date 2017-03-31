@@ -22,6 +22,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -29,7 +30,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqOutputModelProjectionGen(
-  protected val name: Option[Qn],
+  protected val referenceName: Option[ProjectionReferenceName],
   protected val operationInfo: OperationInfo,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
   _baseNamespace: Qn,
@@ -39,9 +40,9 @@ abstract class ReqOutputModelProjectionGen(
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
@@ -72,7 +73,7 @@ abstract class ReqOutputModelProjectionGen(
 
 object ReqOutputModelProjectionGen {
   def dataProjectionGen(
-    name: Option[Qn],
+    name: Option[ProjectionReferenceName],
     operationInfo: OperationInfo,
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,

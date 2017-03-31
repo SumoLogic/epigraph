@@ -21,6 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input.OpInputRecordModelProjection
 
 import scala.collection.JavaConversions._
@@ -29,7 +30,7 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateRecordModelProjectionGen(
-  name: Option[Qn],
+  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   protected val op: OpInputRecordModelProjection,
   _baseNamespace: Qn,

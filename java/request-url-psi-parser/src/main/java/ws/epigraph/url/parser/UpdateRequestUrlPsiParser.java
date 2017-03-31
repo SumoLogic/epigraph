@@ -19,8 +19,8 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
@@ -106,7 +106,8 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null, context);
+    ReqUpdateReferenceContext reqUpdateReferenceContext =
+        new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
         new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
 
@@ -143,7 +144,8 @@ public final class UpdateRequestUrlPsiParser {
 
     final @Nullable UrlReqUpdateFieldProjection updateProjectionPsi = psi.getReqUpdateFieldProjection();
 
-    ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null, context);
+    ReqUpdateReferenceContext reqUpdateReferenceContext =
+        new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
         new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
 

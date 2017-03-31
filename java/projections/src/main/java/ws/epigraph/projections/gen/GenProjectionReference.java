@@ -17,8 +17,6 @@
 package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TypeApi;
 
@@ -26,23 +24,23 @@ import ws.epigraph.types.TypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>> {
-  /** @return qualified projection name or {@code null} if there is no name */
-  @Nullable Qn name();
+  /** @return qualified projection reference name or {@code null} if there is no name */
+  ProjectionReferenceName referenceName();
 
   /**
    * Resolves this projection reference from another instance.
    *
-   * @param name  qualified projection name
+   * @param name  projection reference name
    * @param value projection instance to copy state from
-   * @see #name()
+   * @see #referenceName()
    */
-  void resolve(@Nullable Qn name, @NotNull R value);
+  void resolve(ProjectionReferenceName name, @NotNull R value);
 
   /**
    * Checks if this projection is resolved, i.e. it's not an empty placeholder instance.
    *
    * @return {@code false} iff this is a reference and is not resolved
-   * @see #name()
+   * @see #referenceName()
    */
   boolean isResolved();
 

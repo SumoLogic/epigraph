@@ -18,10 +18,10 @@ package ws.epigraph.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapTypeApi;
 
@@ -81,7 +81,7 @@ public class ReqDeleteMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqDeleteMapModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqDeleteMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

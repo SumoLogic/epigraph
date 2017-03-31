@@ -18,11 +18,11 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public abstract class AbstractOpModelProjection<
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull SMP value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     this.params = value.params();
   }

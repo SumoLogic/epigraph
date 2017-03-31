@@ -21,8 +21,10 @@ import java.nio.file.Path
 import ws.epigraph.compiler._
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.ServiceNames
+import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.java.{JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.OpParams
 import ws.epigraph.types.DatumTypeApi
 
@@ -55,9 +57,10 @@ object ReqProjectionGen {
   val classNamePrefix: String = "" // "Req" // we don't generate "Op", so this should be OK ?
   val classNameSuffix: String = "Projection"
 
-  def baseNamespace(name: Option[Qn], default: Qn): Qn = name.map(n => JavaGenNames.pnq(n)).getOrElse(default)
+  def baseNamespace(referenceName: Option[ProjectionReferenceName], default: Qn): Qn =
+    referenceName.map(n => JavaGenNames.pnq(ProjectionGenUtil.toQn(n))).getOrElse(default)
 
-  def namespaceSuffix(name: Option[Qn], default: Qn): Qn = name.map(_ => Qn.EMPTY).getOrElse(default)
+  def namespaceSuffix(name: Option[ProjectionReferenceName], default: Qn): Qn = name.map(_ => Qn.EMPTY).getOrElse(default)
 
   def generateParams(op: OpParams, namespace: String, reqParamsExpr: String): CodeChunk = {
     import scala.collection.JavaConversions._

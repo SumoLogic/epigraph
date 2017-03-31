@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.delete;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -241,8 +242,10 @@ public class OpDeleteProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
-      OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(Qn.EMPTY, null, context);
+      OpInputReferenceContext inputReferenceContext =
+          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      OpDeleteReferenceContext deleteReferenceContext =
+          new OpDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);

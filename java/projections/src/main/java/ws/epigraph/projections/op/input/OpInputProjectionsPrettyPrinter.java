@@ -22,6 +22,7 @@ import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
 
@@ -44,7 +45,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   public OpInputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override

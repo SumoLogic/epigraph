@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -32,9 +32,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
 
@@ -183,7 +181,8 @@ public class ReqInputProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
-        ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null, context);
+        ReqInputReferenceContext reqInputReferenceContext =
+            new ReqInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
         ReqInputPsiProcessingContext reqInputPsiProcessingContext =
             new ReqInputPsiProcessingContext(context, reqInputReferenceContext);

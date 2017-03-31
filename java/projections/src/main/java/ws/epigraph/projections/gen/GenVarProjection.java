@@ -18,7 +18,6 @@ package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Collection;
@@ -117,7 +116,7 @@ public interface GenVarProjection<
   // references
 
   /**
-   * Gets projection qualified name, if there exists one.
+   * Gets projection reference qualified name, if there exists one.
    * <p/>
    * Named projections are used to extract common parts and enable code reuse. For example:
    * <pre><code>
@@ -138,26 +137,26 @@ public interface GenVarProjection<
    * <li>{@code userProjection} reference (empty instance) is created and put in then context</li>
    * <li>projection definition is parsed</li>
    * <li>when {@code companyProjection} name is found: reference is created and put in the context</li>
-   * <li>{@code userProjection} construction is complete and reference is {@link #resolve(Qn, GenVarProjection)} resolved}</li>
+   * <li>{@code userProjection} construction is complete and reference is {@link GenProjectionReference#resolve(ProjectionReferenceName, GenProjectionReference)} resolved}</li>
    * <li>{@code companyProjection} is already in the context, so another reference is not created</li>
    * <li>after {@code companyProjection} construction is complete, this reference is also resolved</li>
    * <li>as the last step it is checked that all projections are {@link #isResolved() resolved}</li>
    * </ul>
    *
-   * @return qualified projection name or {@code null} if there is no name.
+   * @return qualified projection reference name or {@code null} if there is no name.
    */
   @Override
-  @Nullable Qn name();
+  ProjectionReferenceName referenceName();
 
   /**
    * Resolves this projection reference from another instance. Acts as a copy constructor for all
-   * parts except for {@link #type()}, {@link #name()} and {@link #location()}.
+   * parts except for {@link #type()}, {@link #referenceName()} and {@link #location()}.
    * Is only applicable to reference instances.
    *
    * @param name qualified projection name
    * @param value projection instance to copy state from
-   * @see #name()
+   * @see #referenceName()
    */
   @Override
-  void resolve(@NotNull Qn name, @NotNull VP value);
+  void resolve(ProjectionReferenceName name, @NotNull VP value);
 }

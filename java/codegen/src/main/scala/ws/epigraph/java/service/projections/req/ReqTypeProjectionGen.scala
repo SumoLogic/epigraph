@@ -19,7 +19,9 @@ package ws.epigraph.java.service.projections.req
 import ws.epigraph.compiler.CType
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn}
 import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.types.TypeApi
 
 /**
@@ -27,20 +29,20 @@ import ws.epigraph.types.TypeApi
  */
 trait ReqTypeProjectionGen extends ReqProjectionGen {
 
-  protected def generatedProjections: java.util.Set[Qn]
+  protected def generatedProjections: java.util.Set[ProjectionReferenceName]
 
   protected def cType: CType
 
-  protected def name: Option[Qn]
+  protected def referenceName: Option[ProjectionReferenceName]
 
   // -----------
 
-  override def shouldRun: Boolean = name.forall(name => !generatedProjections.contains(name))
+  override def shouldRun: Boolean = referenceName.forall(name => !generatedProjections.contains(name))
 
 //  override def namespace: Qn = name.map(_.removeLastSegment()).getOrElse(super.namespace)
 
   protected def genShortClassName(prefix: String, suffix: String, cType: CType): String = {
-    val middle = name.map(_.last()).map(JavaGenUtils.up).getOrElse(ln(cType))
+    val middle = referenceName.map(s => JavaGenUtils.up(ProjectionGenUtil.toString(s.last()))).getOrElse(ln(cType))
     s"$prefix$middle$suffix"
   }
 

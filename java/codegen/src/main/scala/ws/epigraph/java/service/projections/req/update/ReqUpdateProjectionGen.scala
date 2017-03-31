@@ -18,6 +18,7 @@ package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.java.service.projections.req.ReqProjectionGen
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -25,7 +26,7 @@ import ws.epigraph.lang.Qn
 trait ReqUpdateProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("update")
 
-  protected def generatedProjections: java.util.Set[Qn] = ctx.reqUpdateProjections
+  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqUpdateProjections
 }
 
 object ReqUpdateProjectionGen {

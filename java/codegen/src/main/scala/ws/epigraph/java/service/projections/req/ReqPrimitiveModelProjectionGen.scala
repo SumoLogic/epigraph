@@ -30,7 +30,7 @@ trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
   override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenPrimitiveModelProjection[_, _, _ <: DatumTypeApi]
 
   protected def generate(reqPrimitiveModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
-    name.foreach(name => generatedProjections.add(name))
+    referenceName.foreach(name => generatedProjections.add(name))
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",

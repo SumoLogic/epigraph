@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -194,7 +194,8 @@ public class ReqUpdateProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
-        ReqUpdateReferenceContext reqUpdateReferenceContext = new ReqUpdateReferenceContext(Qn.EMPTY, null, context);
+        ReqUpdateReferenceContext reqUpdateReferenceContext =
+            new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
         ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
             new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);

@@ -23,6 +23,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -121,7 +122,7 @@ public final class ProjectionsParsingUtil {
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (!varProjection.type().isAssignableFrom(dataType.type())) {
-      final Qn projectionName = varProjection.name();
+      final ProjectionReferenceName projectionName = varProjection.referenceName();
       final String message;
 
       if (projectionName == null)

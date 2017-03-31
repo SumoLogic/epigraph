@@ -18,10 +18,10 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
@@ -33,7 +33,7 @@ public class ReqOutputReferenceContext
     extends ReferenceContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {
 
   public ReqOutputReferenceContext(
-      final @NotNull Qn referencesNamespace,
+      final @NotNull ProjectionReferenceName referencesNamespace,
       final @Nullable ReferenceContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);

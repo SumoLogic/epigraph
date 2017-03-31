@@ -16,10 +16,10 @@
 
 package ws.epigraph.projections.op.delete;
 
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +60,7 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteVarProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull OpDeleteVarProjection value) {
     super.resolve(name, value);
     this.canDelete = value.canDelete();
   }

@@ -19,8 +19,8 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
@@ -104,7 +104,8 @@ public final class DeleteRequestUrlPsiParser {
 
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
-    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null, context);
+    ReqDeleteReferenceContext reqDeleteReferenceContext =
+        new ReqDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
 
@@ -149,7 +150,8 @@ public final class DeleteRequestUrlPsiParser {
             context
         );
 
-    ReqDeleteReferenceContext reqDeleteReferenceContext = new ReqDeleteReferenceContext(Qn.EMPTY, null, context);
+    ReqDeleteReferenceContext reqDeleteReferenceContext =
+        new ReqDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
         new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
 

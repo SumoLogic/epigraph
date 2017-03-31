@@ -18,10 +18,10 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
 
@@ -32,7 +32,7 @@ public class OpDeleteReferenceContext
     extends ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> {
 
   public OpDeleteReferenceContext(
-      final @NotNull Qn referencesNamespace,
+      final @NotNull ProjectionReferenceName referencesNamespace,
       final @Nullable ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);

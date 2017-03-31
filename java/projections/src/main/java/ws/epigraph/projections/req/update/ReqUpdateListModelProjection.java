@@ -17,10 +17,10 @@
 package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public class ReqUpdateListModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqUpdateListModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqUpdateListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
   }

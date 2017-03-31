@@ -25,6 +25,7 @@ import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
 
@@ -37,7 +38,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   protected @NotNull DataPrinter<E> dataPrinter;
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
     dataPrinter = new DataPrinter<>(layouter);
   }
 

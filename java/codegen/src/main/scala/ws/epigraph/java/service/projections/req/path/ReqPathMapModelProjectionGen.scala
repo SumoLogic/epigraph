@@ -35,8 +35,6 @@ class ReqPathMapModelProjectionGen(
 
   override type OpProjectionType = OpMapModelPath
 
-  override protected def name: Option[Qn] = None
-
   protected override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
     operationInfo,
     cType.asInstanceOf[CMapType],

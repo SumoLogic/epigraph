@@ -20,6 +20,7 @@ import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
 
@@ -27,7 +28,7 @@ import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteMapModelProjectionGen(
-  name: Option[Qn],
+  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   override protected val op: OpDeleteMapModelProjection,
   _baseNamespace: Qn,

@@ -17,10 +17,10 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListTypeApi;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public class OpDeleteListModelProjection
   }
 
   @Override
-  public void resolve(final @NotNull Qn name, final @NotNull OpDeleteListModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull OpDeleteListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }

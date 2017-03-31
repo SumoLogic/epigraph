@@ -16,11 +16,11 @@
 
 package ws.epigraph.projections.req.output;
 
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
@@ -163,7 +163,7 @@ public class ReqOutputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqOutputRecordModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqOutputRecordModelProjection value) {
     super.resolve(name, value);
     fieldProjections = value.fieldProjections();
   }

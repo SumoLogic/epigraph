@@ -18,15 +18,11 @@ package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.VarNormalizationContext;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenProjectionsComparator;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
@@ -46,7 +42,7 @@ public abstract class AbstractVarProjection<
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
-  private /*final*/ @Nullable Qn name;
+  private /*final*/ @Nullable ProjectionReferenceName name;
   private /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
@@ -350,10 +346,10 @@ public abstract class AbstractVarProjection<
   private @NotNull VP self() { return (VP) this; }
 
   @Override
-  public @Nullable Qn name() { return name; }
+  public ProjectionReferenceName referenceName() { return name; }
 
   @Override
-  public void resolve(@Nullable Qn name, @NotNull VP value) {
+  public void resolve(ProjectionReferenceName name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (this.name != null)

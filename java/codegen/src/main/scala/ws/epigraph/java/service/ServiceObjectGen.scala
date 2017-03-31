@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.service.projections.{AnnotationGen, AnnotationsGen}
 import ws.epigraph.lang.{Qn, TextLocation}
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.projections.op.input._
 import ws.epigraph.projections.op.output._
@@ -63,6 +64,9 @@ object ServiceObjectGen {
       case b: java.lang.Boolean => b.toString
 
       case qn: Qn => new QnGen(qn).generate(ctx)
+      case prn: ProjectionReferenceName => new ProjectionReferenceNameGen(prn).generate(ctx)
+      case prns: ProjectionReferenceName.StringRefNameSegment =>
+        new ProjectionReferenceName_StringSegmentGen(prns).generate(ctx)
       case tr: TypeRef => new TypeRefGen(tr).generate(ctx)
       case vtr: ValueTypeRef => new ValueTypeRefGen(vtr).generate(ctx)
       case tl: TextLocation => new TextLocationGen(tl).generate(ctx)
@@ -99,7 +103,7 @@ object ServiceObjectGen {
       case ookp: OpOutputKeyProjection => new OpOutputKeyProjectionGen(ookp).generate(ctx)
       case oolmp: OpOutputListModelProjection => new OpOutputListModelProjectionGen(oolmp).generate(ctx)
       case oopmp: OpOutputPrimitiveModelProjection => new OpOutputPrimitiveModelProjectionGen(oopmp).generate(ctx)
-        
+
       case odvp: OpDeleteVarProjection => new OpDeleteVarProjectionGen(odvp).generate(ctx)
       case odrmp: OpDeleteRecordModelProjection => new OpDeleteRecordModelProjectionGen(odrmp).generate(ctx)
       case odfp: OpDeleteFieldProjection => new OpDeleteFieldProjectionGen(odfp).generate(ctx)

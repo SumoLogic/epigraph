@@ -19,13 +19,14 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqListModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input.OpInputListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateListModelProjectionGen(
-  name: Option[Qn],
+  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   val op: OpInputListModelProjection,
   _baseNamespace: Qn,

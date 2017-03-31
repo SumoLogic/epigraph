@@ -17,10 +17,10 @@
 package ws.epigraph.projections.req.input;
 
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,7 @@ public class ReqInputMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqInputMapModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqInputMapModelProjection value) {
     super.resolve(name, value);
     this.keys = value.keys();
     this.valuesProjection = value.itemsProjection();

@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.path;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -154,7 +155,8 @@ public class OpOutputPathTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpInputReferenceContext inputReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
+      OpInputReferenceContext inputReferenceContext =
+          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpInputPsiProcessingContext inputPsiProcessingContext =
           new OpInputPsiProcessingContext(context, inputReferenceContext);
 

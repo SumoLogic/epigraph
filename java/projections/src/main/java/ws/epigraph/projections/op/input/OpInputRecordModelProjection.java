@@ -19,11 +19,11 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GRecordDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.RecordTypeApi;
 
@@ -86,7 +86,7 @@ public class OpInputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull OpInputRecordModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull OpInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

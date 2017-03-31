@@ -18,6 +18,7 @@ package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputReferenceContext;
@@ -47,25 +48,31 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
     final Namespaces namespaces = new Namespaces(namespace);
 
     inputReferenceContext = new OpInputReferenceContext(
-        namespaces.inputProjectionsNamespace(resourceName),
+        ProjectionReferenceName.fromQn(
+            namespaces.inputProjectionsNamespace(resourceName)
+        ),
         null,
         psiProcessingContext
     );
 
     outputReferenceContext = new OpOutputReferenceContext(
-        namespaces.outputProjectionsNamespace(resourceName),
+        ProjectionReferenceName.fromQn(
+            namespaces.outputProjectionsNamespace(resourceName)
+        ),
         null,
         psiProcessingContext
     );
 
     deleteReferenceContext = new OpDeleteReferenceContext(
-        namespaces.deleteProjectionsNamespace(resourceName),
+        ProjectionReferenceName.fromQn(
+            namespaces.deleteProjectionsNamespace(resourceName)
+        ),
         null,
         psiProcessingContext
     );
   }
 
-  public @NotNull  Qn namespace() { return namespace; }
+  public @NotNull Qn namespace() { return namespace; }
 
   public @NotNull String resourceName() { return resourceName; }
 

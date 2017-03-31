@@ -18,12 +18,8 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenProjectionReference;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.types.*;
@@ -41,7 +37,7 @@ public abstract class ReferenceContext<
     > {
 
   @NotNull
-  private final Qn referencesNamespace;
+  private final ProjectionReferenceName referencesNamespace;
   @NotNull
   private final PsiProcessingContext psiProcessingContext;
 
@@ -51,7 +47,7 @@ public abstract class ReferenceContext<
   private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
   protected ReferenceContext(
-      @NotNull final Qn referencesNamespace,
+      @NotNull final ProjectionReferenceName referencesNamespace,
       @Nullable final ReferenceContext<VP, MP> parent,
       @NotNull PsiProcessingContext context) {
 
@@ -217,7 +213,7 @@ public abstract class ReferenceContext<
             throw new RuntimeException(String.format("Unreachable: '%s'", name));
 
           resolvedAt.put(name, location);
-          ref.resolve(referencesNamespace.append(name), normalized);
+          ref.resolve(referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)), normalized);
 
         } else {
           context.addError(

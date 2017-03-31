@@ -17,10 +17,10 @@
 package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.MapTypeApi;
 import org.jetbrains.annotations.NotNull;
@@ -92,7 +92,7 @@ public class ReqUpdateMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqUpdateMapModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqUpdateMapModelProjection value) {
     super.resolve(name, value);
     updateKeys = value.updateKeys();
     keys = value.keys();

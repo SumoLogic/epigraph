@@ -26,6 +26,7 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.schema.Namespaces;
@@ -106,10 +107,12 @@ public class GeneratedClassesTest {
     OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(
         layouter,
         new ProjectionsPrettyPrinterContext<>(
-            new Namespaces(namespace).operationDeleteProjectionsNamespace(
-                resourceName,
-                OperationKind.DELETE,
-                operationName
+            ProjectionReferenceName.fromQn(
+                new Namespaces(namespace).operationDeleteProjectionsNamespace(
+                    resourceName,
+                    OperationKind.DELETE,
+                    operationName
+                )
             )
         )
     );

@@ -18,8 +18,8 @@ package ws.epigraph.projections.req.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 
 /**
@@ -42,7 +42,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   public ReqInputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override

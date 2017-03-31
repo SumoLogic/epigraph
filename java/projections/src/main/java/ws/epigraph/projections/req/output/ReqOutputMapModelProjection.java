@@ -18,10 +18,10 @@ package ws.epigraph.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
@@ -147,7 +147,7 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqOutputMapModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqOutputMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

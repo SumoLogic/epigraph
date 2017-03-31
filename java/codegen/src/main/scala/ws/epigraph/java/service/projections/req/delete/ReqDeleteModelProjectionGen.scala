@@ -21,6 +21,7 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -28,7 +29,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqDeleteModelProjectionGen(
-  protected val name: Option[Qn],
+  protected val referenceName: Option[ProjectionReferenceName],
   protected val operationInfo: OperationInfo,
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   _baseNamespace: Qn,
@@ -37,9 +38,9 @@ abstract class ReqDeleteModelProjectionGen(
 
   override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(name, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(name, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
@@ -54,7 +55,7 @@ abstract class ReqDeleteModelProjectionGen(
 
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
-    name: Option[Qn],
+    name: Option[ProjectionReferenceName],
     operationInfo: OperationInfo,
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,

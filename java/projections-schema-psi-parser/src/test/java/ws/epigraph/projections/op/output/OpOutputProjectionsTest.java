@@ -18,9 +18,9 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
@@ -151,7 +151,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseRecursive() throws PsiProcessingException {
     OpOutputVarProjection vp = testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
-    final Qn name = vp.name();
+    final ProjectionReferenceName name = vp.referenceName();
     assertNotNull(name);
     assertEquals("self", name.toString());
   }
@@ -178,7 +178,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    final OpOutputReferenceContext referenceContext =
+        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolve("ref", personProjection, TextLocation.UNKNOWN, ppc);
@@ -223,7 +224,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    final OpOutputReferenceContext referenceContext =
+        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
 //    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(ppc.errors());
@@ -257,7 +259,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext = new OpOutputReferenceContext(Qn.EMPTY, null, ppc);
+    final OpOutputReferenceContext referenceContext =
+        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolve("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
@@ -667,11 +670,11 @@ public class OpOutputProjectionsTest {
     }
 
     @NotNull OpInputReferenceContext inputReferenceContext(PsiProcessingContext ctx) {
-      return new OpInputReferenceContext(Qn.EMPTY, null, ctx);
+      return new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, ctx);
     }
 
     @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
-      return new OpOutputReferenceContext(Qn.EMPTY, null, ctx);
+      return new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ctx);
     }
 
     boolean ensureReferencesResolved() { return true; }

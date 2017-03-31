@@ -19,8 +19,8 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
@@ -165,7 +165,8 @@ public final class CustomRequestUrlPsiParser {
             context
         );
 
-      ReqInputReferenceContext reqInputReferenceContext = new ReqInputReferenceContext(Qn.EMPTY, null, context);
+      ReqInputReferenceContext reqInputReferenceContext =
+          new ReqInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqInputPsiProcessingContext reqInputPsiProcessingContext =
           new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
 

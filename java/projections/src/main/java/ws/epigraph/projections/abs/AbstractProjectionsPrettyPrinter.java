@@ -20,7 +20,6 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
@@ -45,8 +44,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
   protected final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context;
 
-  private final Collection<String> visitedVarRefs = new HashSet<>();
-  private final Collection<String> visitedModelRefs = new HashSet<>();
+  private final Collection<ProjectionReferenceName.RefNameSegment> visitedVarRefs = new HashSet<>();
+  private final Collection<ProjectionReferenceName.RefNameSegment> visitedModelRefs = new HashSet<>();
 
   protected AbstractProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
@@ -56,28 +55,29 @@ public abstract class AbstractProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
-  public void addVisitedRefs(@NotNull Collection<String> names) {
+  public void addVisitedRefs(@NotNull Collection<ProjectionReferenceName.RefNameSegment> names) {
     visitedVarRefs.addAll(names);
   }
 
   public final void printVar(@NotNull VP p, int pathSteps) throws E {
-    final Qn name = p.name();
+    final ProjectionReferenceName name = p.referenceName();
 
     boolean shouldPrint = true;
 
-    if (name != null) {
-      String shortName = name.last();
+    if (name != null && !name.isEmpty()) {
+      ProjectionReferenceName.@Nullable RefNameSegment shortName = name.last();
+      assert shortName != null;
 
       if (!context.inNamespace(name)) {
         context.addOtherNamespaceVarProjection(p);
-        l.print("$").print(shortName);
+        l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else if (visitedVarRefs.contains(shortName)) {
-        l.print("$").print(shortName);
+        l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
         visitedVarRefs.add(shortName);
-        l.print("$").print(shortName).print(" = ");
+        l.print("$").print(shortName.toString()).print(" = ");
       }
     }
 
@@ -179,23 +179,24 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E { l.print(tagName); }
 
   public void printModel(@NotNull MP mp, int pathSteps) throws E {
-    final Qn name = mp.name();
+    final ProjectionReferenceName name = mp.referenceName();
 
     boolean shouldPrint = true;
 
-    if (name != null) {
-      String shortName = name.last();
+    if (name != null && !name.isEmpty()) {
+      ProjectionReferenceName.RefNameSegment shortName = name.last();
+      assert shortName != null;
 
       if (!context.inNamespace(name)) {
         context.addOtherNamespaceModelProjection(mp);
-        l.print("$").print(shortName);
+        l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else if (visitedModelRefs.contains(shortName)) {
-        l.print("$").print(shortName);
+        l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
         visitedModelRefs.add(shortName);
-        l.print("$").print(shortName).print(" = ");
+        l.print("$").print(shortName.toString()).print(" = ");
       }
     }
 

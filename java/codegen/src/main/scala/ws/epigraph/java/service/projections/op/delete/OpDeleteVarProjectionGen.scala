@@ -32,9 +32,9 @@ class OpDeleteVarProjectionGen(p: OpDeleteVarProjection) extends ServiceObjectGe
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
 
-    val opName = p.name()
+    val opName = p.referenceName()
     if (opName != null) {
-      val opNameString = p.name().toString
+      val opNameString = p.referenceName().toString
 
       val visitedKey = "projections.op.output.delete." + opNameString
       val methodName = "constructDeleteVarProjectionFor$" + opNameString.replace(".", "_")

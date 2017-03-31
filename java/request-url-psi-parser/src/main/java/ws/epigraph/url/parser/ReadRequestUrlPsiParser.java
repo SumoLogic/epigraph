@@ -19,10 +19,10 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
@@ -104,7 +104,8 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull ReqOutputVarProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
-    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
+    ReqOutputReferenceContext reqOutputReferenceContext =
+        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -174,7 +175,8 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
-    ReqOutputReferenceContext reqOutputReferenceContext = new ReqOutputReferenceContext(Qn.EMPTY, null, context);
+    ReqOutputReferenceContext reqOutputReferenceContext =
+        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 

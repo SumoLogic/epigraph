@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
-import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
+import ws.epigraph.java.service.ServiceObjectGen.gen
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqOutputProjectionGen extends ReqProjectionGen {
-  override protected def baseNamespace: Qn = super.baseNamespace.append("output")
+class ProjectionReferenceNameGen(private val rn: ProjectionReferenceName)
+  extends ServiceObjectGen[ProjectionReferenceName](rn) {
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqOutputProjections
-}
-
-object ReqOutputProjectionGen {
-  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Output"
-  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
+  override protected def generateObject(ctx: ServiceGenContext): String =
+  // todo: make it shorter? introduce constructor taking String varargs and use it here
+    s"""new ProjectionReferenceName(${ rn.segments.map(s => gen(s, ctx)).mkString(", ") })"""
 }

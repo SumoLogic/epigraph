@@ -21,6 +21,7 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -36,7 +37,7 @@ abstract class ReqPathModelProjectionGen(
   override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpModelPath[_, _, _ <: DatumTypeApi]
 
-  override protected def name: Option[Qn] = None
+  override protected def referenceName: Option[ProjectionReferenceName] = None
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 

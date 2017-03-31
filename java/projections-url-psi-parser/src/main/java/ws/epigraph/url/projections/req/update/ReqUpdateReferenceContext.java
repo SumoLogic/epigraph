@@ -18,10 +18,10 @@ package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.update.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
@@ -33,7 +33,7 @@ public class ReqUpdateReferenceContext
     extends ReferenceContext<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> {
 
   public ReqUpdateReferenceContext(
-      final @NotNull Qn referencesNamespace,
+      final @NotNull ProjectionReferenceName referencesNamespace,
       final @Nullable ReferenceContext<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);

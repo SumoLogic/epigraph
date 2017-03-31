@@ -21,6 +21,7 @@ import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.TypeKind
 
@@ -36,11 +37,9 @@ class ReqPathVarProjectionGen(
   override type OpProjectionType = OpVarPath
   override type OpTagProjectionEntryType = OpTagPath
 
-  override protected def name: Option[Qn] = Option(op.name())
+  override protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
-
-  override protected def generatedProjections: java.util.Set[Qn] = ctx.reqPaths
 
   override protected def tailGenerator(
     op: OpVarPath,

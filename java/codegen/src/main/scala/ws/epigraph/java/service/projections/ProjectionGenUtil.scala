@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service.projections
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
+import ws.epigraph.java.{JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqOutputProjectionGen extends ReqProjectionGen {
-  override protected def baseNamespace: Qn = super.baseNamespace.append("output")
+object ProjectionGenUtil {
+  def toQn(projectionReferenceName: ProjectionReferenceName): Qn = {
+    new Qn(projectionReferenceName.segments.map(toString), false)
+  }
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqOutputProjections
-}
+  def toString(segment: ProjectionReferenceName.RefNameSegment): String = segment match {
+    case ss: ProjectionReferenceName.StringRefNameSegment => ss.string
+    case tns: ProjectionReferenceName.TypeRefNameSegment =>
+      val cType = JavaGenUtils.toCType(tns.`type`)
+      val shortName = JavaGenNames.ln(cType)
+      if (tns.shortName)
+        shortName
+      else
+        JavaGenNames.pn(cType).replace(".", "_") + shortName
 
-object ReqOutputProjectionGen {
-  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Output"
-  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
+  }
 }

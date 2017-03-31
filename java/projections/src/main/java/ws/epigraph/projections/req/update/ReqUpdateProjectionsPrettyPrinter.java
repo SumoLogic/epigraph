@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 import ws.epigraph.types.TypeKind;
 
@@ -46,7 +47,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   public ReqUpdateProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override

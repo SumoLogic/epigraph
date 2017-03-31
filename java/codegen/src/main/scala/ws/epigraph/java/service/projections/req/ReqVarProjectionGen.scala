@@ -95,7 +95,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     reqTagProjectionEntryFqn: Qn
   ): String = {
 
-    name.foreach(name => generatedProjections.add(name))
+    referenceName.foreach(name => generatedProjections.add(name))
 
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\

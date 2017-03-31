@@ -18,9 +18,9 @@ package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
@@ -64,7 +64,7 @@ public abstract class ReqUpdateModelProjection<
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull SMP value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     update = value.update();
   }

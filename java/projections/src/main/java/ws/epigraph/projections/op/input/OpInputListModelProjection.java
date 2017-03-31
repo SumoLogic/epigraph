@@ -19,10 +19,10 @@ package ws.epigraph.projections.op.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GListDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.ListTypeApi;
 
@@ -77,7 +77,7 @@ public class OpInputListModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull OpInputListModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull OpInputListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }

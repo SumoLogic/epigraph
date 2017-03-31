@@ -17,10 +17,10 @@
 package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
 
@@ -31,7 +31,7 @@ public class OpInputReferenceContext
     extends ReferenceContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> {
 
   public OpInputReferenceContext(
-      final @NotNull Qn referencesNamespace,
+      final @NotNull ProjectionReferenceName referencesNamespace,
       final ReferenceContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);

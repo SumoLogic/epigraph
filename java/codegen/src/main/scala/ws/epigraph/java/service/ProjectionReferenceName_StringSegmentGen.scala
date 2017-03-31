@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.output
+package ws.epigraph.java.service
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
-import ws.epigraph.lang.Qn
+import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqOutputProjectionGen extends ReqProjectionGen {
-  override protected def baseNamespace: Qn = super.baseNamespace.append("output")
+class ProjectionReferenceName_StringSegmentGen(private val s: ProjectionReferenceName.StringRefNameSegment)
+  extends ServiceObjectGen[ProjectionReferenceName.StringRefNameSegment](s) {
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqOutputProjections
-}
-
-object ReqOutputProjectionGen {
-  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Output"
-  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
+  override protected def generateObject(ctx: ServiceGenContext): String =
+    s"""new ProjectionReferenceName.StringRefNameSegment("${ s.string }")"""
 }

@@ -16,11 +16,11 @@
 
 package ws.epigraph.projections.req.input;
 
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.RecordTypeApi;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +82,7 @@ public class ReqInputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull ReqInputRecordModelProjection value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull ReqInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

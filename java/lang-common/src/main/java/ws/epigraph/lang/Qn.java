@@ -40,7 +40,7 @@ public class Qn extends GenQn<String, Qn> implements Comparable<Qn> {
     this(segments.toArray(new String[segments.size()]));
   }
 
-  private Qn(@NotNull String[] segments, boolean copy) {
+  public Qn(@NotNull String[] segments, boolean copy) {
     super(String.class, segments, copy);
   }
 

@@ -24,6 +24,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.*;
 import ws.epigraph.projections.op.input.*;
 import ws.epigraph.projections.op.output.*;
@@ -222,7 +223,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         resolver,
         context.outputReferenceContext(),
         projectionName -> new OpOutputReferenceContext(
-            new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName),
+            ProjectionReferenceName.fromQn(
+                new Namespaces(namespace).outputProjectionNamespace(resourceName, projectionName)
+            ),
             context.outputReferenceContext(),
             context
         ),
@@ -248,7 +251,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         resolver,
         context.inputReferenceContext(),
         projectionName -> new OpInputReferenceContext(
-            new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName),
+            ProjectionReferenceName.fromQn(
+                new Namespaces(namespace).inputProjectionNamespace(resourceName, projectionName)
+            ),
             context.inputReferenceContext(),
             context
         ),
@@ -274,7 +279,9 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         resolver,
         context.deleteReferenceContext(),
         projectionName -> new OpDeleteReferenceContext(
-            new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName),
+            ProjectionReferenceName.fromQn(
+                new Namespaces(namespace).deleteProjectionNamespace(resourceName, projectionName)
+            ),
             context.deleteReferenceContext(),
             context
         ),

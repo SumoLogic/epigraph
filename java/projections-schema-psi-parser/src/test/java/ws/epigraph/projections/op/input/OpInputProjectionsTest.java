@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -212,7 +212,7 @@ public class OpInputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext varReferenceContext = new OpInputReferenceContext(Qn.EMPTY, null, context);
+      OpInputReferenceContext varReferenceContext = new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(context, varReferenceContext);
 
       OpInputVarProjection vp =  OpInputProjectionsPsiParser.parseVarProjection(

@@ -17,9 +17,9 @@
 package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,18 +32,18 @@ public class ProjectionsPrettyPrinterContext<
     VP extends GenVarProjection<VP, ?, MP>,
     MP extends GenModelProjection<?, ?, ?, ?>> {
 
-  private final @NotNull Qn projectionsNamespace;
-  private final Map<Qn, VP> otherNamespaceVarProjections = new HashMap<>();
-  private final Map<Qn, MP> otherNamespaceModelProjections = new HashMap<>();
+  private final @NotNull ProjectionReferenceName projectionsNamespace;
+  private final Map<ProjectionReferenceName, VP> otherNamespaceVarProjections = new HashMap<>();
+  private final Map<ProjectionReferenceName, MP> otherNamespaceModelProjections = new HashMap<>();
 
-  public ProjectionsPrettyPrinterContext(final @NotNull Qn namespace) {projectionsNamespace = namespace;}
+  public ProjectionsPrettyPrinterContext(final @NotNull ProjectionReferenceName namespace) {projectionsNamespace = namespace;}
 
-  public boolean inNamespace(@NotNull Qn projectionName) {
+  public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
     return projectionName.removeLastSegment().equals(projectionsNamespace);
   }
 
   public void addOtherNamespaceVarProjection(@NotNull VP projection) {
-    @SuppressWarnings("unchecked") final Qn projectionName = projection.name();
+    @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
     assert projectionName != null;
     assert !inNamespace(projectionName);
@@ -53,7 +53,7 @@ public class ProjectionsPrettyPrinterContext<
   }
 
   public void addOtherNamespaceModelProjection(@NotNull MP projection) {
-    @SuppressWarnings("unchecked") final Qn projectionName = projection.name();
+    @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
     assert projectionName != null;
     assert !inNamespace(projectionName);

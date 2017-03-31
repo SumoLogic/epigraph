@@ -20,6 +20,7 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
 
@@ -43,7 +44,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   public OpOutputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override

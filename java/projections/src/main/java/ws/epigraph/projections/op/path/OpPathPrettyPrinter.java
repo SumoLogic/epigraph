@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpParams;
 
@@ -39,7 +40,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter, new ProjectionsPrettyPrinterContext<>(Qn.EMPTY));
+    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override

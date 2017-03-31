@@ -18,8 +18,8 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ import java.util.function.Function;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>> {
-  private final @NotNull Map<Qn, VP> visited = new HashMap<>();
+  private final @NotNull Map<ProjectionReferenceName, VP> visited = new HashMap<>();
   private final @NotNull Function<TypeApi, VP> referenceFactory;
 
   public VarNormalizationContext(final @NotNull Function<TypeApi, VP> referenceFactory) {
@@ -38,7 +38,7 @@ public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>
   }
 
   @Contract(pure = true)
-  public @NotNull Map<Qn, VP> visited() { return visited; }
+  public @NotNull Map<ProjectionReferenceName, VP> visited() { return visited; }
 
   public @NotNull VP newReference(@NotNull TypeApi type) { return referenceFactory.apply(type); }
 }

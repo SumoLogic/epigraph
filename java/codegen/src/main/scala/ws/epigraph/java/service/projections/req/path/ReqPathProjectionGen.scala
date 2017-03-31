@@ -18,6 +18,7 @@ package ws.epigraph.java.service.projections.req.path
 
 import ws.epigraph.java.service.projections.req.ReqProjectionGen
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -25,7 +26,7 @@ import ws.epigraph.lang.Qn
 trait ReqPathProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("path")
 
-  protected def generatedProjections: java.util.Set[Qn] = throw new RuntimeException
+  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = throw new RuntimeException
 }
 
 object ReqPathProjectionGen {

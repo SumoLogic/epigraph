@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
 import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
@@ -328,12 +329,14 @@ public final class OperationsPsiParser {
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
     OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(
-        new Namespaces(context.namespace())
-            .operationDeleteProjectionsNamespace(
-                context.resourceName(),
-                OperationKind.DELETE,
-                operationName
-            ),
+        ProjectionReferenceName.fromQn(
+            new Namespaces(context.namespace())
+                .operationDeleteProjectionsNamespace(
+                    context.resourceName(),
+                    OperationKind.DELETE,
+                    operationName
+                )
+        ),
         context.deleteReferenceContext(),
         context
     );
@@ -483,12 +486,14 @@ public final class OperationsPsiParser {
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
 
     OpOutputReferenceContext outputReferenceContext = new OpOutputReferenceContext(
-        new Namespaces(context.namespace())
-            .operationOutputProjectionsNamespace(
-                context.resourceName(),
-                operationKind,
-                operationName
-            ),
+        ProjectionReferenceName.fromQn(
+            new Namespaces(context.namespace())
+                .operationOutputProjectionsNamespace(
+                    context.resourceName(),
+                    operationKind,
+                    operationName
+                )
+        ),
         context.outputReferenceContext(),
         context
     );
@@ -660,12 +665,15 @@ public final class OperationsPsiParser {
       final @NotNull ResourcePsiProcessingContext context) {
 
     return new OpInputReferenceContext(
-        new Namespaces(context.namespace())
-            .operationInputProjectionsNamespace(
-                context.resourceName(),
-                operationKind,
-                operationName
-            ), context.inputReferenceContext(),
+        ProjectionReferenceName.fromQn(
+            new Namespaces(context.namespace())
+                .operationInputProjectionsNamespace(
+                    context.resourceName(),
+                    operationKind,
+                    operationName
+                )
+        ),
+        context.inputReferenceContext(),
         context
     );
 

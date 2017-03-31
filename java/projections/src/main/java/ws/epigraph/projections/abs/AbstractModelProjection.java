@@ -18,13 +18,13 @@ package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public abstract class AbstractModelProjection<
     M extends DatumTypeApi> implements GenModelProjection<MP, SMP, SMP, M> {
 
   protected final @NotNull M model;
-  private /*final*/ @Nullable Qn name;
+  private /*final*/ @Nullable ProjectionReferenceName name;
   protected /*final*/ @Nullable MP metaProjection;
   protected /*final*/ @NotNull Annotations annotations;
   protected /*final*/ @Nullable List<SMP> polymorphicTails;
@@ -251,11 +251,11 @@ public abstract class AbstractModelProjection<
   public abstract @NotNull SMP newReference(@NotNull M type, @NotNull TextLocation location);
 
   @Override
-  public @Nullable Qn name() { return name; }
+  public ProjectionReferenceName referenceName() { return name; }
 
   @SuppressWarnings("unchecked")
   @Override
-  public void resolve(final @Nullable Qn name, final @NotNull SMP value) {
+  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
     if (!isReference)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())

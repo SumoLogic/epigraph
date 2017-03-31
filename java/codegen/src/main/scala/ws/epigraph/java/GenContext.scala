@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 import ws.epigraph.compiler.CTypeName
 import ws.epigraph.lang.Qn
+import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author yegor 2016-12-15.
@@ -29,9 +30,9 @@ class GenContext(val settings: GenSettings) {
   // type name -> Java type class FQN
   val generatedTypes: ConcurrentHashMap[CTypeName, Qn] = new ConcurrentHashMap
 
-  val reqOutputProjections: java.util.Set[Qn] = ConcurrentHashMap.newKeySet()
-  val reqInputProjections: java.util.Set[Qn] = ConcurrentHashMap.newKeySet()
-  val reqUpdateProjections: java.util.Set[Qn] = ConcurrentHashMap.newKeySet()
-  val reqDeleteProjections: java.util.Set[Qn] = ConcurrentHashMap.newKeySet()
-  val reqPaths: java.util.Set[Qn] = ConcurrentHashMap.newKeySet()
+  val reqOutputProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
+  val reqInputProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
+  val reqUpdateProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
+  val reqDeleteProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
+  val reqPaths: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
 }
