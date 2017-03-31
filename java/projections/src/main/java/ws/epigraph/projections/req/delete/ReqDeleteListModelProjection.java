@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -59,10 +60,8 @@ public class ReqDeleteListModelProjection
   }
 
   @Override
-  public @NotNull ReqDeleteListModelProjection newReference(
-      final @NotNull ListTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqDeleteListModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<ListTypeApi, ReqDeleteListModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqDeleteListModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

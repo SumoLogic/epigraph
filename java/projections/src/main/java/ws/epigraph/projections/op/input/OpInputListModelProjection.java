@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GListDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
@@ -63,10 +64,8 @@ public class OpInputListModelProjection
   }
 
   @Override
-  public @NotNull OpInputListModelProjection newReference(
-      final @NotNull ListTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpInputListModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<ListTypeApi, OpInputListModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpInputListModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

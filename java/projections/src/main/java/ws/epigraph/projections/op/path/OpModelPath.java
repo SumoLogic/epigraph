@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.path;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
@@ -42,7 +43,7 @@ public abstract class OpModelPath<
   }
 
   @Override
-  public @NotNull SMP newReference(final @NotNull M type, final @NotNull TextLocation location) {
-    throw new RuntimeException("Path references not supported");
+  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
+    throw new RuntimeException("path references not supported");
   }
 }

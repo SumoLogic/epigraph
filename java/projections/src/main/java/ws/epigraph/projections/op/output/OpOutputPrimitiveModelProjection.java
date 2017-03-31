@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -48,6 +49,11 @@ public class OpOutputPrimitiveModelProjection
   }
 
   @Override
+  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, OpOutputPrimitiveModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpOutputPrimitiveModelProjection(m, TextLocation.UNKNOWN));
+  }
+
+  @Override
   protected OpOutputPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
       final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
@@ -66,10 +72,4 @@ public class OpOutputPrimitiveModelProjection
     );
   }
 
-  @Override
-  public @NotNull OpOutputPrimitiveModelProjection newReference(
-      final @NotNull PrimitiveTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpOutputPrimitiveModelProjection(type, location);
-  }
 }

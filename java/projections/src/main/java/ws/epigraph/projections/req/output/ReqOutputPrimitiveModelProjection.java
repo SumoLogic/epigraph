@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -51,10 +52,8 @@ public class ReqOutputPrimitiveModelProjection
   }
 
   @Override
-  public @NotNull ReqOutputPrimitiveModelProjection newReference(
-      final @NotNull PrimitiveTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqOutputPrimitiveModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, ReqOutputPrimitiveModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqOutputPrimitiveModelProjection(m, TextLocation.UNKNOWN));
   }
 
   /* static */

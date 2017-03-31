@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -42,16 +43,12 @@ public class ReqDeletePrimitiveModelProjection
     super(model, params, annotations, tails, location);
   }
 
-  public ReqDeletePrimitiveModelProjection(
-      final @NotNull PrimitiveTypeApi model,
-      final @NotNull TextLocation location) {
+  public ReqDeletePrimitiveModelProjection( final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
   @Override
-  public @NotNull ReqDeletePrimitiveModelProjection newReference(
-      final @NotNull PrimitiveTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqDeletePrimitiveModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, ReqDeletePrimitiveModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqDeletePrimitiveModelProjection(m, TextLocation.UNKNOWN));
   }
 }

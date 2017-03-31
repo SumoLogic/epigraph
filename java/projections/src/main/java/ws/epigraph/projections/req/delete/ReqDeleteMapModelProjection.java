@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -62,10 +63,8 @@ public class ReqDeleteMapModelProjection
   }
 
   @Override
-  public @NotNull ReqDeleteMapModelProjection newReference(
-      final @NotNull MapTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqDeleteMapModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<MapTypeApi, ReqDeleteMapModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqDeleteMapModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GPrimitiveDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -51,9 +52,7 @@ public class OpInputPrimitiveModelProjection
   }
 
   @Override
-  public @NotNull OpInputPrimitiveModelProjection newReference(
-      final @NotNull PrimitiveTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpInputPrimitiveModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, OpInputPrimitiveModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpInputPrimitiveModelProjection(m, TextLocation.UNKNOWN));
   }
 }

@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -47,9 +48,8 @@ public class ReqInputPrimitiveModelProjection
   }
 
   @Override
-  public @NotNull ReqInputPrimitiveModelProjection newReference(
-      final @NotNull PrimitiveTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqInputPrimitiveModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, ReqInputPrimitiveModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqInputPrimitiveModelProjection(m, TextLocation.UNKNOWN));
   }
+
 }

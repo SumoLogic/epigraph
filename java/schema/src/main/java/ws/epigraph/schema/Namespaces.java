@@ -74,7 +74,7 @@ public class Namespaces {
 
     String ns = operationKind.toString().toLowerCase();
     if (operationName != null)
-      ns = ns + "_"+operationName.toLowerCase();
+      ns = ns + "_" + operationName.toLowerCase();
 
     return operationsNamespace(resourceName).append(ns);
   }

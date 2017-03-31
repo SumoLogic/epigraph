@@ -165,6 +165,12 @@ public abstract class GenQn<T, S extends GenQn<T, S>> {
     return res;
   }
 
+  public boolean sameNamespace(@NotNull S other) {
+    if (size() != other.size()) return false;
+    if (size() <= 1) return true;
+    return removeLastSegment().equals(other.removeLastSegment());
+  }
+
   @Override
   public String toString() {
     StringBuilder r = new StringBuilder();

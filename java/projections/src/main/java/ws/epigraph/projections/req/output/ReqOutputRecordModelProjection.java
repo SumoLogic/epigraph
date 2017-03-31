@@ -18,6 +18,7 @@ package ws.epigraph.projections.req.output;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -69,10 +70,8 @@ public class ReqOutputRecordModelProjection
   }
 
   @Override
-  public @NotNull ReqOutputRecordModelProjection newReference(
-      final @NotNull RecordTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqOutputRecordModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<RecordTypeApi, ReqOutputRecordModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqOutputRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

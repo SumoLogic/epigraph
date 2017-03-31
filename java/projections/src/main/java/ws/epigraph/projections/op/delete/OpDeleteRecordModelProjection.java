@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -66,10 +67,8 @@ public class OpDeleteRecordModelProjection
   }
 
   @Override
-  public @NotNull OpDeleteRecordModelProjection newReference(
-      final @NotNull RecordTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpDeleteRecordModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<RecordTypeApi, OpDeleteRecordModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpDeleteRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
@@ -62,17 +63,15 @@ public class OpOutputListModelProjection
   }
 
   @Override
-  public @NotNull OpOutputListModelProjection newReference(
-      final @NotNull ListTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpOutputListModelProjection(type, location);
-  }
-
-  @Override
   public @NotNull OpOutputVarProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
+  }
+  
+  @Override
+  protected @NotNull ModelNormalizationContext<ListTypeApi, OpOutputListModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpOutputListModelProjection(m, TextLocation.UNKNOWN));
   }
 
   /* static */

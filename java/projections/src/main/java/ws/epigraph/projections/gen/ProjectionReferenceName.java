@@ -88,9 +88,9 @@ public class ProjectionReferenceName extends GenQn<ProjectionReferenceName.RefNa
     public final @NotNull TypeApi type;
     public final boolean shortName;
 
-    public TypeRefNameSegment(final @NotNull TypeApi type, final boolean name) {
+    public TypeRefNameSegment(final @NotNull TypeApi type, final boolean shortName) {
       this.type = type;
-      shortName = name;
+      this.shortName = shortName;
     }
 
     @Override

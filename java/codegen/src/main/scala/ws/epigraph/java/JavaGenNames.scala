@@ -169,6 +169,10 @@ object JavaGenNames {
 
   def qnameArgs(fqn: Qn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
 
+  def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else ln
+
+  def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else fn
+
 //  def objName(s: String): String = s
 //
 //  def objName(t: CTypeDef): String = javaLocalName(t, objName)
@@ -242,10 +246,6 @@ object JavaGenNames {
   /** set of type names that conflict with our own generated java classes */
   private val ReservedTypeNames: Set[String] = Set("Type", "Value", "Data", "Imm", "Builder", "Impl", "Tag", "Field")
 
-  private def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else ln
-
   private val ReservedFieldNames: Set[String] = Set("type")
-
-  private def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else fn
 
 }

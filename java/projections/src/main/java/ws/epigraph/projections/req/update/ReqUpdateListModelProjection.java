@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.update;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -60,10 +61,8 @@ public class ReqUpdateListModelProjection
   }
 
   @Override
-  public @NotNull ReqUpdateListModelProjection newReference(
-      final @NotNull ListTypeApi type,
-      final @NotNull TextLocation location) {
-    return new ReqUpdateListModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<ListTypeApi, ReqUpdateListModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new ReqUpdateListModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

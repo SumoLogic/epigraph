@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpKeyPresence;
@@ -61,17 +62,13 @@ public class OpOutputMapModelProjection
     this.keyProjection = keyProjection;
   }
 
-  public OpOutputMapModelProjection(
-      final @NotNull MapTypeApi model,
-      final @NotNull TextLocation location) {
+  public OpOutputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
   @Override
-  public @NotNull OpOutputMapModelProjection newReference(
-      final @NotNull MapTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpOutputMapModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<MapTypeApi, OpOutputMapModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpOutputMapModelProjection(m, TextLocation.UNKNOWN));
   }
 
   public @NotNull OpOutputKeyProjection keyProjection() {

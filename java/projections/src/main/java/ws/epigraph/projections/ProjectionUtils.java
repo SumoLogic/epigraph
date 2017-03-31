@@ -19,6 +19,10 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.names.AnonListTypeName;
+import ws.epigraph.names.AnonMapTypeName;
+import ws.epigraph.names.QualifiedTypeName;
+import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
@@ -269,5 +273,53 @@ public final class ProjectionUtils {
     }
 
     return linearizedTails;
+  }
+
+  public static @NotNull ProjectionReferenceName normalizedTailNamespace(
+      @NotNull ProjectionReferenceName baseProjectionName,
+      @NotNull TypeApi tailType,
+      boolean sameNamespace) {
+
+    // keep in sync with ReqTypeProjectionGen
+    // todo find some common place
+
+    return baseProjectionName
+        .append(new ProjectionReferenceName.StringRefNameSegment("_normalized"))
+        .append(new ProjectionReferenceName.TypeRefNameSegment(tailType, sameNamespace));
+  }
+
+  public static boolean sameNamespace(@NotNull TypeName n1, @NotNull TypeName n2) {
+    if (n1 instanceof QualifiedTypeName) {
+      QualifiedTypeName qn1 = (QualifiedTypeName) n1;
+
+      if (n2 instanceof QualifiedTypeName) {
+        QualifiedTypeName qn2 = (QualifiedTypeName) n2;
+
+        return qn1.toFqn().sameNamespace(qn2.toFqn());
+      } else return false;
+    }
+
+    if (n1 instanceof AnonListTypeName) {
+      AnonListTypeName ltn1 = (AnonListTypeName) n1;
+
+      if (n2 instanceof AnonListTypeName) {
+        AnonListTypeName ltn2 = (AnonListTypeName) n2;
+
+        return sameNamespace(ltn1.elementTypeName.typeName, ltn2.elementTypeName.typeName);
+      } else return false;
+    }
+
+    if (n1 instanceof AnonMapTypeName) {
+      AnonMapTypeName mtn1 = (AnonMapTypeName) n1;
+
+      if (n2 instanceof AnonMapTypeName) {
+        AnonMapTypeName mtn2 = (AnonMapTypeName) n2;
+
+        return sameNamespace(mtn1.keyTypeName, mtn2.keyTypeName) &&
+               sameNamespace(mtn1.valueTypeName.typeName, mtn2.valueTypeName.typeName);
+      } else return false;
+    }
+
+    throw new RuntimeException("unreachable");
   }
 }

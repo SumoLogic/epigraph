@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -71,16 +72,14 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public @NotNull OpOutputRecordModelProjection newReference(
-      final @NotNull RecordTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpOutputRecordModelProjection(type, location);
-  }
-
-  @Override
   public @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
+  }
+
+  @Override
+  protected @NotNull ModelNormalizationContext<RecordTypeApi, OpOutputRecordModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpOutputRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

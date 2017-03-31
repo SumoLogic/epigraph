@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
@@ -96,46 +97,75 @@ public abstract class AbstractModelProjection<
   @Override
   public @Nullable List<SMP> polymorphicTails() { return polymorphicTails; }
 
+  protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
+
   @SuppressWarnings("unchecked")
   @Override
   public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType) {
+    // keep in sync with AbstractVarProjection.normalizedForType
+    assertResolved();
     if (targetType.equals(type()))
       return self();
 
-    SMP res = normalizedCache.get(targetType.name());
-    if (res != null) return res;
+    return ModelNormalizationContext.withContext(
+        this::newNormalizationContext,
+        context -> {
+          SMP ref = normalizedCache.get(targetType.name());
+          if (ref != null)
+            return ref;
 
-    final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
+          final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
 
-    final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(
-        targetType,
-        linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
-        this.type()
+          final DatumTypeApi effectiveType = ProjectionUtils.mostSpecific(
+              targetType,
+              linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
+              this.type()
+          );
+
+          ProjectionReferenceName normalizedRefName = null;
+          if (name == null) {
+            ref = context.newReference((M) effectiveType);
+            normalizedCache.put(targetType.name(), ref);
+          } else {
+            ref = context.visited().get(name);
+
+            if (ref != null)
+              return ref;
+
+            ref = context.newReference((M) effectiveType);
+            context.visited().put(name, ref);
+            normalizedRefName = ProjectionUtils.normalizedTailNamespace(
+                this.name,
+                effectiveType,
+                ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
+            );
+          }
+
+          final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
+          effectiveProjections.add(self()); //we're the least specific projection
+
+          final List<SMP> mergedTails = mergeTails(effectiveProjections);
+
+          final List<SMP> filteredMergedTails = mergedTails == null ? null : mergedTails
+              .stream()
+              // remove 'uninteresting' tails that aren't specific enough
+              .filter(t -> !t.type().isAssignableFrom(effectiveType))
+//            .map(t -> t.normalizedForType(targetType))
+              .collect(Collectors.toList());
+
+          List<SMP> projectionsToMerge = effectiveProjections
+              .stream()
+              .filter(p -> p.type().isAssignableFrom(effectiveType))
+              .collect(Collectors.toList());
+
+          final SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
+          assert res != null; // since effectiveProjections is non-empty, at least self is there
+
+          ((GenProjectionReference<SMP>) ref).resolve(normalizedRefName, res);
+          return ref;
+        }
     );
 
-    res = newReference((M) effectiveType, TextLocation.UNKNOWN);
-    normalizedCache.put(targetType.name(), res);
-
-    final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
-    effectiveProjections.add(self()); //we're the least specific projection
-
-    final List<SMP> mergedTails = mergeTails(effectiveProjections);
-
-    final List<SMP> filteredMergedTails = mergedTails == null ? null : mergedTails
-        .stream()
-        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
-//        .map(t -> t.normalizedForType(targetType))
-        .collect(Collectors.toList());
-
-    List<SMP> projectionsToMerge = effectiveProjections
-        .stream()
-        .filter(p -> p.type().isAssignableFrom(effectiveType))
-        .collect(Collectors.toList());
-
-    final SMP mergeResult = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
-    assert mergeResult != null; // since effectiveProjections is non-empty, at least self is there
-    ((GenProjectionReference<SMP>) res).resolve(null, mergeResult);
-    return res;
   }
 
   @SuppressWarnings("unchecked")
@@ -248,8 +278,6 @@ public abstract class AbstractModelProjection<
     }
   }
 
-  public abstract @NotNull SMP newReference(@NotNull M type, @NotNull TextLocation location);
-
   @Override
   public ProjectionReferenceName referenceName() { return name; }
 
@@ -286,6 +314,11 @@ public abstract class AbstractModelProjection<
       callback.run();
     else
       onResolvedCallbacks.add(callback);
+  }
+
+  protected void assertResolved() {
+    if (!isResolved())
+      throw new IllegalStateException("Projection is not resolved: " + name);
   }
 
   @Override

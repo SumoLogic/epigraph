@@ -158,80 +158,73 @@ public abstract class AbstractVarProjection<
 
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
 
-  /*
-   * We need a way to pass normalization context around. I tried passing it explicitly, but
-   * it badly pollutes all the signatures, gets especially bad around `GenModelProjection.normalizeForType`
-   * which has to handle it too, but has no `VP` type parameter and in general should not be concerned.
-   *
-   * I don't like thread locals but this looks like a reasonable compromise for now. Should be changed to
-   * explicit parameter in case of any problems.
-   */
-  private static final ThreadLocal<VarNormalizationContext<?>> normalizationContextThreadLocal = new ThreadLocal<>();
-
   @SuppressWarnings("unchecked")
   @Override
   public @NotNull VP normalizedForType(@NotNull TypeApi targetType) {
+    // keep in sync with AbstractModelProjection.normalizedForType
     assertResolved();
     assert tagProjections != null;
 
     if (targetType.equals(type()))
       return self();
 
+    return VarNormalizationContext.withContext(
+        this::newNormalizationContext,
+        context -> {
+          VP ref = normalizedCache.get(targetType.name());
+          if (ref != null)
+            return ref;
 
-    VP ref = normalizedCache.get(targetType.name());
-    if (ref != null)
-      return ref;
+          final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
 
-    VarNormalizationContext<VP> context = (VarNormalizationContext<VP>) normalizationContextThreadLocal.get();
-    boolean contextInitialized = context == null;
-    if (contextInitialized) {
-      context = newNormalizationContext();
-      normalizationContextThreadLocal.set(context);
-    }
+          final TypeApi effectiveType = ProjectionUtils.mostSpecific(
+              targetType,
+              linearizedTails.isEmpty() ? type() : linearizedTails.get(0).type(),
+              type()
+          );
 
-    final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
+          ProjectionReferenceName normalizedRefName = null;
+          if (name == null) {
+            ref = context.newReference(effectiveType);
+            normalizedCache.put(targetType.name(), ref);
+          } else {
+            ref = context.visited().get(name);
 
-    final TypeApi effectiveType = ProjectionUtils.mostSpecific(
-        targetType,
-        linearizedTails.isEmpty() ? this.type() : linearizedTails.get(0).type(),
-        this.type()
+            if (ref != null)
+              return ref;
+
+            ref = context.newReference(effectiveType);
+            context.visited().put(name, ref);
+
+            normalizedRefName = ProjectionUtils.normalizedTailNamespace(
+                name,
+                effectiveType,
+                ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
+            );
+          }
+
+          final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
+          effectiveProjections.add(self()); //we're the least specific projection
+
+          final List<VP> mergedTails = mergeTails(effectiveProjections);
+          final List<VP> filteredMergedTails = mergedTails == null ? null : mergedTails
+              .stream()
+              // remove 'uninteresting' tails that aren't specific enough
+              .filter(t -> !t.type().isAssignableFrom(effectiveType))
+//            .map(t -> t.normalizedForType(targetType))
+              .collect(Collectors.toList());
+
+          List<VP> projectionsToMerge = effectiveProjections
+              .stream()
+              .filter(p -> p.type().isAssignableFrom(effectiveType))
+              .collect(Collectors.toList());
+
+          VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge);
+
+          ref.resolve(normalizedRefName, res);
+          return ref;
+        }
     );
-
-    if (name == null) {
-      ref = context.newReference(effectiveType);
-      normalizedCache.put(targetType.name(), ref);
-    } else {
-      ref = context.visited().get(name);
-
-      if (ref != null)
-        return ref;
-
-      ref = context.newReference(effectiveType);
-      context.visited().put(name, ref);
-    }
-
-    final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
-    effectiveProjections.add(self()); //we're the least specific projection
-
-    final List<VP> mergedTails = mergeTails(effectiveProjections);
-    final List<VP> filteredMergedTails = mergedTails == null ? null : mergedTails
-        .stream()
-        .filter(t -> !t.type().isAssignableFrom(effectiveType)) // remove 'uninteresting' tails that aren't specific enough
-//        .map(t -> t.normalizedForType(targetType))
-        .collect(Collectors.toList());
-
-    List<VP> projectionsToMerge = effectiveProjections
-        .stream()
-        .filter(p -> p.type().isAssignableFrom(effectiveType))
-        .collect(Collectors.toList());
-
-    VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge);
-
-    if (contextInitialized)
-      normalizationContextThreadLocal.remove();
-
-    ref.resolve(name, res);
-    return ref;
   }
 
   private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {

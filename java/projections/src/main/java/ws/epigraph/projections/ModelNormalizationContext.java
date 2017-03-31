@@ -17,7 +17,8 @@
 package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 
 import java.util.function.Function;
@@ -25,26 +26,26 @@ import java.util.function.Function;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>>
-    extends NormalizationContext<TypeApi, VP> {
+public final class ModelNormalizationContext<M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?/*M*/>>
+    extends NormalizationContext<M, MP> {
   // here we heavily assume that the same thread can't be normalizing two projections of different
   // families at the same time, e.g. that normalizing OpOutput projection can't entail
   // normalizing OpInputProjection
   // see also javadoc comment in NormalizationContext
 
-  private static final ThreadLocal<VarNormalizationContext<?>> tl = new ThreadLocal<>();
+  private static final ThreadLocal<ModelNormalizationContext<?, ?>> tl = new ThreadLocal<>();
 
-  public VarNormalizationContext(final @NotNull Function<TypeApi, VP> referenceFactory) {
+  public ModelNormalizationContext(final @NotNull Function<M, MP> referenceFactory) {
     super(referenceFactory);
   }
 
   @SuppressWarnings("unchecked")
-  public static <VP extends GenVarProjection<VP, ?, ?>, G>
+  public static <M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?/*M*/>, G>
   G withContext(
-      @NotNull Function0<VarNormalizationContext<VP>> contextFactory,
-      @NotNull Function<VarNormalizationContext<VP>, G> function) {
+      @NotNull Function0<ModelNormalizationContext<M, MP>> contextFactory,
+      @NotNull Function<ModelNormalizationContext<M, MP>, G> function) {
     return withContext(
-        (ThreadLocal<VarNormalizationContext<VP>>) (Object) tl,
+        (ThreadLocal<ModelNormalizationContext<M, MP>>) (Object) tl,
         contextFactory,
         function
     );

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GRecordDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -69,10 +70,8 @@ public class OpInputRecordModelProjection
   }
 
   @Override
-  public @NotNull OpInputRecordModelProjection newReference(
-      final @NotNull RecordTypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpInputRecordModelProjection(type, location);
+  protected @NotNull ModelNormalizationContext<RecordTypeApi, OpInputRecordModelProjection> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> new OpInputRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   public static @NotNull LinkedHashSet<OpInputFieldProjectionEntry> fields(OpInputFieldProjectionEntry... fieldProjections) {
