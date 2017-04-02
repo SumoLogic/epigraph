@@ -679,7 +679,7 @@ public final class ReqOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    @NotNull OpOutputVarProjection opTail = op.normalizedForType(tailType);
+    @NotNull OpOutputVarProjection opTail = op.normalizedForType(tailType, true);
 
     return parseComaVarProjection(
         tailType.dataType(dataType.defaultTag()),

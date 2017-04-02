@@ -160,7 +160,7 @@ public abstract class AbstractVarProjection<
 
   @SuppressWarnings("unchecked")
   @Override
-  public @NotNull VP normalizedForType(@NotNull TypeApi targetType) {
+  public VP normalizedForType(@NotNull TypeApi targetType, final boolean keepPhantomTails) {
     // keep in sync with AbstractModelProjection.normalizedForType
     assertResolved();
     assert tagProjections != null;
@@ -206,20 +206,26 @@ public abstract class AbstractVarProjection<
           final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
           effectiveProjections.add(self()); //we're the least specific projection
 
-          final List<VP> mergedTails = mergeTails(effectiveProjections);
-          final List<VP> filteredMergedTails = mergedTails == null ? null : mergedTails
-              .stream()
-              // remove 'uninteresting' tails that aren't specific enough
-              .filter(t -> !t.type().isAssignableFrom(effectiveType))
+          final List<VP> mergedTails = mergeTails(effectiveProjections, keepPhantomTails);
+          final List<VP> filteredMergedTails;
+          if (mergedTails == null)
+            filteredMergedTails = null;
+          else {
+            filteredMergedTails = mergedTails
+                .stream()
+                // remove 'uninteresting' tails which already describe `effectiveType`
+                .filter(t -> (!t.type().isAssignableFrom(effectiveType)) &&
+                             (keepPhantomTails || effectiveType.isAssignableFrom(t.type())))
 //            .map(t -> t.normalizedForType(targetType))
-              .collect(Collectors.toList());
+                .collect(Collectors.toList());
+          }
 
           List<VP> projectionsToMerge = effectiveProjections
               .stream()
               .filter(p -> p.type().isAssignableFrom(effectiveType))
               .collect(Collectors.toList());
 
-          VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge);
+          VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge, keepPhantomTails);
 
           ref.resolve(normalizedRefName, res);
           return ref;
@@ -243,7 +249,8 @@ public abstract class AbstractVarProjection<
       TypeApi effectiveType,
       boolean normalizeTags,
       final @NotNull Map<String, TagApi> tags,
-      final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+      final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources,
+      final boolean keepPhantomTails) {
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
@@ -255,7 +262,8 @@ public abstract class AbstractVarProjection<
           if (normalizeTags) {
             final DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
             final DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type(), tag.type());
-            final MP normalizedModel = (MP) tagProjection.projection().normalizedForType(minModelType);
+            final MP normalizedModel =
+                (MP) tagProjection.projection().normalizedForType(minModelType, keepPhantomTails);
             tagProjections.add(tagProjection.setModelProjection(normalizedModel));
           } else {
             tagProjections.add(tagProjection);
@@ -264,7 +272,7 @@ public abstract class AbstractVarProjection<
       }
 
       if (!tagProjections.isEmpty()) {
-        final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections);
+        final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections, keepPhantomTails);
         if (mergedTag != null)
           mergedTags.put(tag.name(), mergedTag);
       }
@@ -280,26 +288,31 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public @NotNull VP merge(final @NotNull List<VP> varProjections) {
-    return merge(type(), false, mergeTails(varProjections), varProjections);
+  public VP merge(final @NotNull List<VP> varProjections, final boolean keepPhantomTails) {
+    return merge(type(), false, mergeTails(varProjections, keepPhantomTails), varProjections, keepPhantomTails);
   }
 
   protected @NotNull VP merge(
       final @NotNull TypeApi effectiveType,
       final boolean normalizeTags,
       final @Nullable List<VP> mergedTails,
-      final @NotNull List<VP> varProjections) {
+      final @NotNull List<VP> varProjections,
+      final boolean keepPhantomTails) {
 
     if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
 
     final @NotNull Map<String, TagApi> tags = collectTags(varProjections);
 
-    final @NotNull Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags, varProjections);
+    final @NotNull Map<String, TP> mergedTags =
+        mergeTags(effectiveType, normalizeTags, tags, varProjections, keepPhantomTails);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
     return merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
   }
 
-  private @Nullable List<VP> mergeTails(final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+  private @Nullable List<VP> mergeTails(
+      final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources,
+      final boolean keepPhantomTails
+  ) {
 
     Map<TypeApi, List<VP>> tailsByType = null;
 
@@ -319,7 +332,15 @@ public abstract class AbstractVarProjection<
     List<VP> mergedTails = new ArrayList<>(tailsByType.size());
 
     for (final Map.Entry<TypeApi, List<VP>> entry : tailsByType.entrySet()) {
-      mergedTails.add(merge(entry.getKey(), false, mergeTails(entry.getValue()), entry.getValue()));
+      mergedTails.add(
+          merge(
+              entry.getKey(),
+              false,
+              mergeTails(entry.getValue(), keepPhantomTails),
+              entry.getValue(),
+              keepPhantomTails
+          )
+      );
     }
 
     return mergedTails;

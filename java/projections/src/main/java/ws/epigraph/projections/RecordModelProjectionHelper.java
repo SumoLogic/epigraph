@@ -116,7 +116,7 @@ public final class RecordModelProjectionHelper {
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
 
-  Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections) {
+  Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections, final boolean keepPhantomTails) {
 
     Set<FieldApi> collectedFields = new LinkedHashSet<>();
     for (final RMP projection : recordProjections)
@@ -139,7 +139,7 @@ public final class RecordModelProjectionHelper {
 
       assert !fieldProjectionsToMerge.isEmpty();
       final @NotNull FP mergedFieldProjections =
-          fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge);
+          fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge, keepPhantomTails);
 
       mergedFields.put(
           field,
@@ -156,7 +156,11 @@ public final class RecordModelProjectionHelper {
       RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
-  Map<String, FP> normalizeFields(@NotNull RecordTypeApi effectiveType, @NotNull RMP projection) {
+
+  Map<String, FP> normalizeFields(
+      @NotNull RecordTypeApi effectiveType,
+      @NotNull RMP projection,
+      boolean keepPhantomTails) {
 
     if (projection.type().isAssignableFrom(effectiveType)) {
       Map<String, FP> result = new LinkedHashMap<>(projection.fieldProjections().size());
@@ -164,7 +168,7 @@ public final class RecordModelProjectionHelper {
       for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
         final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
         FP fp = entry.getValue().fieldProjection();
-        final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type());
+        final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type(), keepPhantomTails);
         result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
       }
 

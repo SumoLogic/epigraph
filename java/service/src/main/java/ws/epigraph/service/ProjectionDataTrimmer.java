@@ -40,7 +40,7 @@ public final class ProjectionDataTrimmer {
     final @NotNull Data.Raw raw = data._raw();
     final @NotNull Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    ReqOutputVarProjection normalizedProjection = projection.normalizedForType(data.type());
+    ReqOutputVarProjection normalizedProjection = projection.normalizedForType(data.type(), true);
 
     for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();

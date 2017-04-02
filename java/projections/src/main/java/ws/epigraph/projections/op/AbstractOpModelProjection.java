@@ -65,7 +65,8 @@ public abstract class AbstractOpModelProjection<
       final @NotNull List<SMP> modelProjections,
       final @NotNull Annotations mergedAnnotations,
       final MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails) {
+      final @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
 
     if (modelProjections.isEmpty()) return null;
 
@@ -78,7 +79,12 @@ public abstract class AbstractOpModelProjection<
 
     return merge(
         model,
-        modelProjections, OpParams.merge(paramsList), mergedAnnotations, mergedMetaProjection, mergedTails
+        modelProjections,
+        OpParams.merge(paramsList),
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedTails,
+        keepPhantomTails
     );
   }
 
@@ -89,7 +95,8 @@ public abstract class AbstractOpModelProjection<
       @NotNull OpParams mergedParams,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails) {
+      @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
 
     throw new RuntimeException("not implemented"); // todo
   }

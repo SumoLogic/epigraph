@@ -13,6 +13,15 @@
 
 - [x] undertow handler: remove trimmer, should be handled by marshaller
 
+- [ ] Fix recursive projections gen
+  - [x] introduce `keepPhantomTails` parameter to `normalizeForType`
+  - [ ] write unit cases that ensure that projection reference names stay when merged
+  - [ ] write tests ensuring that merging a recursive and non-recursive projections works
+  - [ ] try to detect cases when merging two or more recursive projections
+  - [ ] update wiki on projections merging, move to a separate page?
+  - [ ] figure out why generation fails when tails are normalized (see `ReqModelProjectionGen`)
+  - [ ] do tails normalization for var generator too
+
 - Federator prerequisites
   - [ ] `toBuilder` on data
   - [ ] remote service invocation layer

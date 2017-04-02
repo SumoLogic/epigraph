@@ -455,6 +455,19 @@ public class OpOutputProjectionsTest {
         User.type,
         ":`record` ( worstEnemy ( firstName, id ) )"
     );
+
+    testTailsNormalization(
+        ":`record`( worstEnemy(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName)))",
+        User.type,
+        ":`record` ( worstEnemy ( firstName, id ) ~ws.epigraph.tests.UserRecord2 ( lastName ) )"
+    );
+
+    testTailsNormalization(
+        ":`record`( worstEnemy(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName)))",
+        User.type,
+        ":`record` ( worstEnemy ( firstName, id ) )",
+        false
+    );
   }
 
   @Test
@@ -528,8 +541,12 @@ public class OpOutputProjectionsTest {
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {
+    testTailsNormalization(str, type, expected, true);
+  }
+
+  private void testTailsNormalization(String str, Type type, String expected, boolean keepPhantomTails) {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
-    final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
+    final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type, keepPhantomTails);
     String actual = printOpOutputVarProjection(normalized);
     assertEquals(expected, actual);
   }
@@ -541,7 +558,7 @@ public class OpOutputProjectionsTest {
     final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
-    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type, true);
     final OpOutputVarProjection normalizedVar = new OpOutputVarProjection(
         varProjection.type(),
         ProjectionUtils.singletonLinkedHashMap(

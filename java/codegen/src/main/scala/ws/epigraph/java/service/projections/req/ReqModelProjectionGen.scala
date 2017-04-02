@@ -148,7 +148,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
    */
   public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
-    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
+    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance(), false));
   }
 """/*@formatter:on*/ ,
       Set()

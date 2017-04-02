@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -46,12 +45,13 @@ public interface GenFieldProjection<
    * iterate over all the items being merged.
    *
    * @param type             resulting field type
+   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
+   *                         may be applicable to some of it's subtypes.
    * @param fieldProjections field projections to merge, guaranteed to contain at least one element
    * @return merged field projections
    */
-  @NotNull
   /* static */
-  FP merge(@NotNull DataTypeApi type, @NotNull List<FP> fieldProjections);
+  FP merge(@NotNull DataTypeApi type, @NotNull List<FP> fieldProjections, boolean keepPhantomTails);
 
   @NotNull TextLocation location();
 }

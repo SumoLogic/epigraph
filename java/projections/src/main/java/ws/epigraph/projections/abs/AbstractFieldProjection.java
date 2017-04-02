@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package ws.epigraph.projections.abs;
 
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
@@ -61,7 +60,10 @@ public abstract class AbstractFieldProjection<
   public @NotNull VP varProjection() { return projection; }
 
   @Override
-  public @NotNull FP merge(final @NotNull DataTypeApi type, final @NotNull List<FP> fieldProjections) {
+  public FP merge(
+      final @NotNull DataTypeApi type,
+      final @NotNull List<FP> fieldProjections,
+      final boolean keepPhantomTails) {
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
@@ -70,12 +72,12 @@ public abstract class AbstractFieldProjection<
     final List<@NotNull VP> varProjections =
         fieldProjections
             .stream()
-            .map(fp -> fp.varProjection().normalizedForType(type.type()))
+            .map(fp -> fp.varProjection().normalizedForType(type.type(), keepPhantomTails))
             .collect(Collectors.toList());
 
     assert varProjections.size() >= 1;
 
-    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections);
+    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections, keepPhantomTails);
 
     return merge(
         type,

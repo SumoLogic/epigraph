@@ -67,7 +67,8 @@ public abstract class ReqOutputModelProjection<
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails) {
+      final @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
 
     return merge(
         model,
@@ -76,7 +77,8 @@ public abstract class ReqOutputModelProjection<
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
-        mergedTails
+        mergedTails,
+        keepPhantomTails
     );
   }
 
@@ -87,7 +89,8 @@ public abstract class ReqOutputModelProjection<
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails) {
+      final @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
 
     throw new RuntimeException("not implemented"); // todo make abstract
   }

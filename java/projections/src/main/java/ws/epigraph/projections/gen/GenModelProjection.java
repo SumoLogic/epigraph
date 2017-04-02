@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.DatumTypeApi;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -58,10 +57,12 @@ public interface GenModelProjection<
    * Builds normalized view of this model projection for a given type
    *
    * @param type target type
+   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
+   *                         may be applicable to some of it's subtypes.
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type); // should become `x=tailByType(type); return x==null?this:x;` for fully normalized projections
+  TMP normalizedForType(@NotNull DatumTypeApi type, boolean keepPhantomTails);
 
   /**
    * Merges a list of models together
@@ -72,18 +73,20 @@ public interface GenModelProjection<
    *
    * @param model            resulting model's type
    * @param modelProjections models to merge
+   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
+   *                         may be applicable to some of it's subtypes.
    * @return merged models or {@code null} if {@code modelProjections} is empty
    */
   /* static */
-  SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
+  SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections, boolean keepPhantomTails);
 
-  @SuppressWarnings("unchecked")
-  default @NotNull SMP mergeWith(@NotNull SMP other) {
-    List<SMP> toMerge = new ArrayList<>(2);
-    toMerge.add((SMP) this);
-    toMerge.add(other);
-    return merge(type(), toMerge);
-  }
+//  @SuppressWarnings("unchecked")
+//  default @NotNull SMP mergeWith(@NotNull SMP other) {
+//    List<SMP> toMerge = new ArrayList<>(2);
+//    toMerge.add((SMP) this);
+//    toMerge.add(other);
+//    return merge(type(), toMerge, );
+//  }
 
   @NotNull Annotations annotations();
 }

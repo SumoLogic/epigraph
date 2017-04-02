@@ -99,7 +99,8 @@ public class OpOutputMapModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputMapModelProjection> mergedTails) {
+      final @Nullable List<OpOutputMapModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
@@ -147,23 +148,25 @@ public class OpOutputMapModelProjection
             Annotations.merge(keysAnnotations),
             TextLocation.UNKNOWN
         ),
-        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),
+        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge, keepPhantomTails),
         mergedTails,
         TextLocation.UNKNOWN
     );
   }
 
   @Override
-  public @NotNull OpOutputMapModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+  public OpOutputMapModelProjection normalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    @NotNull OpOutputMapModelProjection n = super.normalizedForType(targetType);
+    @NotNull OpOutputMapModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
     return new OpOutputMapModelProjection(
         n.type(),
         n.params(),
         n.annotations(),
         n.metaProjection(),
         n.keyProjection(),
-        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type(), keepPhantomTails),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );

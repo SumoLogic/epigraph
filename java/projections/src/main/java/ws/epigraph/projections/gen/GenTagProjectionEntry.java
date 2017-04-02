@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package ws.epigraph.projections.gen;
 
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +34,7 @@ public interface GenTagProjectionEntry<
 
   @NotNull MP projection();
 
-  @Nullable
-  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
+  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries, boolean keepPhantomTails);
 
   @NotNull TP setModelProjection(@NotNull MP modelProjection);
 

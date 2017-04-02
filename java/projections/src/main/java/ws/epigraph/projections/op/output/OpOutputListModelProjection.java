@@ -68,7 +68,7 @@ public class OpOutputListModelProjection
     assert itemsProjection != null;
     return itemsProjection;
   }
-  
+
   @Override
   protected @NotNull ModelNormalizationContext<ListTypeApi, OpOutputListModelProjection> newNormalizationContext() {
     return new ModelNormalizationContext<>(m -> new OpOutputListModelProjection(m, TextLocation.UNKNOWN));
@@ -82,14 +82,16 @@ public class OpOutputListModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputListModelProjection> mergedTails) {
+      final @Nullable List<OpOutputListModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
 
     List<OpOutputVarProjection> itemProjections =
         modelProjections.stream()
             .map(OpOutputListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull OpOutputVarProjection mergedItemsVarType = itemProjections.get(0).merge(itemProjections);
+    final @NotNull OpOutputVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
 
     return new OpOutputListModelProjection(
         model,
@@ -103,15 +105,17 @@ public class OpOutputListModelProjection
   }
 
   @Override
-  public @NotNull OpOutputListModelProjection normalizedForType(final @NotNull DatumTypeApi targetType) {
+  public OpOutputListModelProjection normalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
-    OpOutputListModelProjection n = super.normalizedForType(targetType);
+    OpOutputListModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
     return new OpOutputListModelProjection(
         n.type(),
         n.params(),
         n.annotations(),
         n.metaProjection(),
-        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
