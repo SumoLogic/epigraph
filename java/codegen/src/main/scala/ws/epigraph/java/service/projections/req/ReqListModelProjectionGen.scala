@@ -36,8 +36,6 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
   override def children: Iterable[JavaGen] = super.children ++ Iterable(elementGen)
 
   protected def generate(reqListModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
-    referenceName.foreach(name => generatedProjections.add(name))
-
     val elementProjectionClass = elementGen.shortClassName
 
     val imports: Set[String] = Set(

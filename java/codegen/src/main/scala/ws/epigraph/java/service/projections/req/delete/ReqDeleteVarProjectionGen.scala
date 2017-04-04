@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.TypeKind
 
@@ -37,8 +36,6 @@ class ReqDeleteVarProjectionGen(
 
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
-
-  override protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
 
@@ -59,7 +56,6 @@ class ReqDeleteVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
-      None,
       operationInfo,
       tpe.projection(),
       baseNamespace,
@@ -85,7 +81,6 @@ object ReqDeleteVarProjectionGen {
       new ReqDeleteVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
         baseNamespace,
@@ -94,7 +89,6 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
         baseNamespace,
@@ -103,7 +97,6 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
         baseNamespace,
@@ -112,7 +105,6 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
         baseNamespace,

@@ -21,8 +21,10 @@ package ws.epigraph.java
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class GenSettings(
+sealed class GenSettings(
   val generateTextLocations: Boolean,
   val generateSeparateMethodsForVarProjections: Boolean,
   val generateImplementationStubs: java.util.List[String]
-)
+) {
+  def debug: Boolean = "true" == System.getProperty("epigraph.debug") // get from build file?
+}

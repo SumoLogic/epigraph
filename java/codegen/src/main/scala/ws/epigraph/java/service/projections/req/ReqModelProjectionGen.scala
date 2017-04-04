@@ -26,16 +26,13 @@ import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqModelProjectionGen extends ReqTypeProjectionGen {
-  type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
   type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
-
-  protected def op: OpProjectionType
 
   override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
 
@@ -76,11 +73,15 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
     case None => CodeChunk.empty
   }
 
-  protected lazy val tails: CodeChunk = tailGenerators
+  protected val buildTails = true
+
+  protected val buildNormalizedTails = true
+
+  protected lazy val tails: CodeChunk = if (!buildTails) CodeChunk.empty else tailGenerators
     .map { case (tail, gen) => genTail(tail, gen) }
     .foldLeft(CodeChunk.empty)(_ + _)
 
-  protected lazy val normalizedTails: CodeChunk = normalizedTailGenerators
+  protected lazy val normalizedTails: CodeChunk = if (!buildNormalizedTails) CodeChunk.empty else normalizedTailGenerators
     .map { case (tail, gen) => genNormalizedTail(tail, gen) }
     .foldLeft(CodeChunk.empty)(_ + _)
 
@@ -90,34 +91,12 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
         .map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
     ).getOrElse(Map())
 
-  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] = {
-    def ntg(
-      op: OpProjectionType,
-      visited: mutable.Set[CDatumType],
-      includeSelf: Boolean): Map[OpProjectionType, ReqModelProjectionGen] = {
-
-      val ct = JavaGenUtils.toCType(op.`type`())
-      if (visited.contains(ct)) Map()
-      else {
-        visited.add(ct)
-        var _res: Map[OpProjectionType, ReqModelProjectionGen] =
-          if (includeSelf) Map(op -> tailGenerator(op, normalized = true)) else Map()
-
-        Option(op.polymorphicTails()) match {
-          case Some(_tails) =>
-
-            for (tail <- _tails)
-              _res ++= ntg(tail.asInstanceOf[OpProjectionType], visited, includeSelf = true)
-
-          case None =>
-        }
-
-        _res
-      }
-    }
-
-    ntg(op, mutable.Set(), includeSelf = false)
-  }
+  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
+    Option(op.polymorphicTails()).map(
+      _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
+        t -> tailGenerator(op.normalizedForType(t.`type`(), false).asInstanceOf[OpProjectionType], normalized = true)
+      }.toMap
+    ).getOrElse(Map())
 
   private def genTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = {
     val tailCtype = JavaGenUtils.toCType(tail.`type`())

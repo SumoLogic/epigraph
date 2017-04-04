@@ -31,6 +31,7 @@ import ws.epigraph.types.DatumTypeApi;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
 import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
 
 /**
@@ -164,14 +165,25 @@ public abstract class AbstractModelProjection<
               .filter(p -> p.type().isAssignableFrom(effectiveType))
               .collect(Collectors.toList());
 
-          final SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge, keepPhantomTails);
+          SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge, keepPhantomTails);
           assert res != null; // since effectiveProjections is non-empty, at least self is there
+          res = postNormalizedForType(targetType, keepPhantomTails, res);
 
           ((GenProjectionReference<SMP>) ref).resolve(normalizedRefName, res);
           return ref;
         }
     );
 
+  }
+
+  /**
+   * Called after {@code normalizeForType} is performed. Can perform any extra steps and return a modified version.
+   */
+  protected SMP postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      boolean keepPhantomTails,
+      @NotNull SMP normalizationResult) {
+    return normalizationResult;
   }
 
   @SuppressWarnings("unchecked")
@@ -217,7 +229,7 @@ public abstract class AbstractModelProjection<
           .normalizedForType(metaModel, keepPhantomTails);
     }
 
-    return merge(
+    SMP res = merge(
         effectiveType,
         modelProjections,
         Annotations.merge(annotationsList),
@@ -225,6 +237,9 @@ public abstract class AbstractModelProjection<
         mergedTails,
         keepPhantomTails
     );
+    final ProjectionReferenceName mergedRefName = findUniqueName(modelProjections);
+    if (mergedRefName != null) res.setReferenceName(mergedRefName);
+    return res;
   }
 
   @SuppressWarnings("unchecked")
@@ -296,7 +311,16 @@ public abstract class AbstractModelProjection<
   }
 
   @Override
-  public ProjectionReferenceName referenceName() { return name; }
+  public @Nullable ProjectionReferenceName referenceName() { return name; }
+
+  @Override
+  public void setReferenceName(final @NotNull ProjectionReferenceName referenceName) {
+    if (name != null) throw new
+        IllegalArgumentException(
+        String.format("Can't override reference name (%s => %s)", name, referenceName)
+    );
+    this.name = referenceName;
+  }
 
   @SuppressWarnings("unchecked")
   @Override

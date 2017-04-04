@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
@@ -69,11 +68,6 @@ public class OpOutputListModelProjection
     return itemsProjection;
   }
 
-  @Override
-  protected @NotNull ModelNormalizationContext<ListTypeApi, OpOutputListModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new OpOutputListModelProjection(m, TextLocation.UNKNOWN));
-  }
-
   /* static */
   @Override
   protected OpOutputListModelProjection merge(
@@ -105,11 +99,11 @@ public class OpOutputListModelProjection
   }
 
   @Override
-  public OpOutputListModelProjection normalizedForType(
+  public OpOutputListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails) {
+      final boolean keepPhantomTails,
+      final @NotNull OpOutputListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
-    OpOutputListModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
     return new OpOutputListModelProjection(
         n.type(),
         n.params(),

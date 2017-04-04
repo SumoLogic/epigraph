@@ -19,20 +19,18 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqListModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input.OpInputListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputListModelProjectionGen(
-  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   val op: OpInputListModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqInputModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpInputListModelProjection
 
@@ -48,14 +46,14 @@ class ReqInputListModelProjectionGen(
     op: OpInputListModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqInputListModelProjectionGen(
-      None,
       operationInfo,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpInputListModelProjection, ReqModelProjectionGen] = Map()
+      override protected val buildTails: Boolean = !normalized
+      override protected val buildNormalizedTails: Boolean = normalized
     }
 
   override protected def generate: String = generate(

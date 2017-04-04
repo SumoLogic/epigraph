@@ -16,9 +16,10 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -26,10 +27,11 @@ import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -67,11 +69,6 @@ public class ReqOutputRecordModelProjection
   public ReqOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
-  }
-
-  @Override
-  protected @NotNull ModelNormalizationContext<RecordTypeApi, ReqOutputRecordModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new ReqOutputRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

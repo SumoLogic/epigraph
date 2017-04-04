@@ -21,7 +21,6 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input.OpInputRecordModelProjection
 
 import scala.collection.JavaConversions._
@@ -30,13 +29,12 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateRecordModelProjectionGen(
-  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   protected val op: OpInputRecordModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
 
@@ -59,14 +57,14 @@ class ReqUpdateRecordModelProjectionGen(
     op: OpInputRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqUpdateRecordModelProjectionGen(
-      None,
       operationInfo,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpInputRecordModelProjection, ReqModelProjectionGen] = Map()
+      override protected val buildTails: Boolean = !normalized
+      override protected val buildNormalizedTails: Boolean = normalized
     }
 
   override protected def generate: String = generate(

@@ -17,7 +17,7 @@
 /* Created by yegor on 7/6/16. */
 package ws.epigraph.java
 
-import java.io.{File, IOException}
+import java.io.{File, IOException, PrintWriter, StringWriter}
 import java.nio.file.Path
 import java.util.concurrent._
 
@@ -30,7 +30,6 @@ import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
 
 class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: GenSettings) {
-
   private val ctx: GenContext = new GenContext(settings)
 
   def this(ctx: CContext, outputRoot: File, settings: GenSettings) {
@@ -149,19 +148,33 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
 
     val endTime: Long = System.currentTimeMillis
-    System.out.println(s"Epigraph Java code generation took ${endTime - startTime}ms")
+    System.out.println(s"Epigraph Java code generation took ${ endTime - startTime }ms")
 
     JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
   }
 
   private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
-    if (generators.size() < 5) { // todo find correct break-even point
+    def exceptionHandler(e: Exception) = {
+      def msg = if (ctx.settings.debug) {
+        val sw = new StringWriter
+        e.printStackTrace(new PrintWriter(sw))
+        sw.toString
+      } else e.toString
+
+      cctx.errors.add(CError(null, CErrorPosition.NA, msg))
+    }
+
+    if (ctx.settings.debug) {
       // run sequentially
       while (generators.nonEmpty) {
         val generator: JavaGen = generators.dequeue()
         if (generator.shouldRun) {
-          generators ++= generator.children
-          runner.apply(generator)
+          try {
+            generators ++= generator.children
+            runner.apply(generator)
+          } catch {
+            case e: Exception => exceptionHandler(e)
+          }
         }
       }
     } else {
@@ -179,7 +192,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
                   generator.children.foreach(submit)
                   runner.apply(generator)
                 } catch {
-                  case e: Exception => cctx.errors.add(CError(null, CErrorPosition.NA, e.toString))
+                  case e: Exception => exceptionHandler(e)
                 } finally {
                   phaser.arriveAndDeregister()
                 }
@@ -189,7 +202,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         }
       }
 
-      generators.foreach{ submit }
+      generators.foreach { submit }
       generators.clear()
 
       phaser.arriveAndAwaitAdvance()
@@ -210,7 +223,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
   private def handleErrors() {
     if (!cctx.errors.isEmpty) {
       EpigraphCompiler.renderErrors(cctx)
-      System.exit(10)
+      throw new Exception("Build failed") // todo better integration with mvn/gradle/...
+      //System.exit(10)
     }
   }
 

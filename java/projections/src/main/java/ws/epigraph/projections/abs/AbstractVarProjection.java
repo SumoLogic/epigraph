@@ -26,10 +26,12 @@ import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
 import static ws.epigraph.projections.ProjectionUtils.linearizeVarTails;
 
 /**
@@ -68,6 +70,19 @@ public abstract class AbstractVarProjection<
 
     validateTags();
     validateTails();
+
+    // set model projection name in case of self-var
+    if (type.kind() != TypeKind.UNION) {
+      final TP tp = singleTagProjection();
+      if (tp != null) {
+        tp.projection().runOnResolved(
+            () -> {
+              if (name == null)
+                name = tp.projection().referenceName();
+            }
+        );
+      }
+    }
   }
 
   /**
@@ -306,7 +321,10 @@ public abstract class AbstractVarProjection<
     final @NotNull Map<String, TP> mergedTags =
         mergeTags(effectiveType, normalizeTags, tags, varProjections, keepPhantomTails);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
-    return merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
+    VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
+    final ProjectionReferenceName mergedRefName = findUniqueName(varProjections);
+    if (mergedRefName != null) res.setReferenceName(mergedRefName);
+    return res;
   }
 
   private @Nullable List<VP> mergeTails(
@@ -363,6 +381,11 @@ public abstract class AbstractVarProjection<
   public ProjectionReferenceName referenceName() { return name; }
 
   @Override
+  public void setReferenceName(final @NotNull ProjectionReferenceName referenceName) {
+    this.name = referenceName;
+  }
+
+  @Override
   public void resolve(ProjectionReferenceName name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
@@ -383,6 +406,16 @@ public abstract class AbstractVarProjection<
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks) callback.run();
     onResolvedCallbacks.clear();
+
+    // set model projection name in case of self-var
+    if (type().kind() != TypeKind.UNION) {
+      final TP tp = singleTagProjection();
+      if (tp != null) {
+        final MP mp = tp.projection();
+        if (mp.referenceName() == null)
+          mp.setReferenceName(name);
+      }
+    }
   }
 
   @Override
@@ -408,23 +441,15 @@ public abstract class AbstractVarProjection<
     return location;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
 
-    //noinspection unchecked,rawtypes
+    //noinspection rawtypes
     return new GenProjectionsComparator().equals(this, that);
-
-//    // todo this doesn't cover cases like this:
-//    // p1 = (foo (bar (p1))
-//    // p2 = (bar( foo (p2))
-//    // p1/foo equals p2
-//    // need external context-aware comparator
-//    return name != null && name.equals(that.name()) ||
-//           Objects.equals(type, that.type) && Objects.equals(tagProjections, that.tagProjections) &&
-//           Objects.equals(polymorphicTails, that.polymorphicTails);
 
   }
 

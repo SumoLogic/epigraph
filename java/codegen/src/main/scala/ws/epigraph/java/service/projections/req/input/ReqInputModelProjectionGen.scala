@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -29,7 +28,6 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqInputModelProjectionGen(
-  protected val referenceName: Option[ProjectionReferenceName],
   protected val operationInfo: OperationInfo,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   _baseNamespace: Qn,
@@ -55,7 +53,6 @@ abstract class ReqInputModelProjectionGen(
 
 object ReqInputModelProjectionGen {
   def dataProjectionGen(
-    name: Option[ProjectionReferenceName],
     operationInfo: OperationInfo,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespace: Qn,
@@ -64,7 +61,6 @@ object ReqInputModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
@@ -73,7 +69,6 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqInputMapModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
@@ -82,7 +77,6 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqInputListModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputListModelProjection],
         baseNamespace,
@@ -91,7 +85,6 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqInputPrimitiveModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,

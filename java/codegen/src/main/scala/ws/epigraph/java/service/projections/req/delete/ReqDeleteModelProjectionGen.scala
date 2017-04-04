@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -29,7 +28,6 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqDeleteModelProjectionGen(
-  protected val referenceName: Option[ProjectionReferenceName],
   protected val operationInfo: OperationInfo,
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   _baseNamespace: Qn,
@@ -55,7 +53,6 @@ abstract class ReqDeleteModelProjectionGen(
 
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
-    name: Option[ProjectionReferenceName],
     operationInfo: OperationInfo,
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,
@@ -64,7 +61,6 @@ object ReqDeleteModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpDeleteRecordModelProjection],
         baseNamespace,
@@ -73,7 +69,6 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpDeleteMapModelProjection],
         baseNamespace,
@@ -82,7 +77,6 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpDeleteListModelProjection],
         baseNamespace,
@@ -91,7 +85,6 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpDeletePrimitiveModelProjection],
         baseNamespace,

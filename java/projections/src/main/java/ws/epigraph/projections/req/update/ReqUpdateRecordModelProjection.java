@@ -16,18 +16,19 @@
 
 package ws.epigraph.projections.req.update;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.RecordTypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -63,11 +64,6 @@ public class ReqUpdateRecordModelProjection
   public ReqUpdateRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
-  }
-
-  @Override
-  protected @NotNull ModelNormalizationContext<RecordTypeApi, ReqUpdateRecordModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new ReqUpdateRecordModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

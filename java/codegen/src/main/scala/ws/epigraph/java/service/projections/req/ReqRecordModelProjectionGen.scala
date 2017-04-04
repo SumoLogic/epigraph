@@ -49,8 +49,6 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   }
 
   protected def generate(reqRecordModelProjectionFqn: Qn, reqFieldProjectionEntryFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
-    referenceName.foreach(name => generatedProjections.add(name))
-
     def genField(field: CField, fieldGenerator: ReqFieldProjectionGen): CodeChunk = {
 
       lazy val fieldProjection = /*@formatter:off*/sn"""\

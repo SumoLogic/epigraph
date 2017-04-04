@@ -20,9 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.*;
 
 import java.util.List;
 
@@ -48,5 +49,24 @@ public abstract class OpOutputModelProjection<
 
   protected OpOutputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> {
+      switch (m.kind()) {
+        case RECORD:
+          return (SMP) new OpOutputRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
+        case MAP:
+          return (SMP) new OpOutputMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
+        case LIST:
+          return (SMP) new OpOutputListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
+        case PRIMITIVE:
+          return (SMP) new OpOutputPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
+        default:
+          throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
+      }
+    });
   }
 }

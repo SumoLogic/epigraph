@@ -42,7 +42,11 @@ trait ReqProjectionGen extends JavaGen {
 
   protected def namespaceSuffix: Qn = Qn.EMPTY
 
-  final def namespace: Qn = baseNamespace.append(namespaceSuffix)
+  final def namespace: Qn = {
+    val r = baseNamespace.append(namespaceSuffix)
+//    System.out.println(s"namespace for $shortClassName = $r")
+    r
+  }
 
   def shortClassName: String
 
@@ -60,7 +64,11 @@ object ReqProjectionGen {
   def baseNamespace(referenceName: Option[ProjectionReferenceName], default: Qn): Qn =
     referenceName.map(n => JavaGenNames.pnq(ProjectionGenUtil.toQn(n))).getOrElse(default)
 
-  def namespaceSuffix(name: Option[ProjectionReferenceName], default: Qn): Qn = name.map(_ => Qn.EMPTY).getOrElse(default)
+  def namespaceSuffix(name: Option[ProjectionReferenceName], default: Qn): Qn = {
+    val r = name.map(_ => Qn.EMPTY).getOrElse(default)
+//    System.out.println(s"namespaceSuffix($name, $default)->$r")
+    r
+  }
 
   def generateParams(op: OpParams, namespace: String, reqParamsExpr: String): CodeChunk = {
     import scala.collection.JavaConversions._

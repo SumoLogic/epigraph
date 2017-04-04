@@ -14,6 +14,7 @@
 - [x] undertow handler: remove trimmer, should be handled by marshaller
 
 - [ ] Fix recursive projections gen
+  - [x] check that there's an equivalent of `normalizeFields` for map/list elements
   - [x] introduce `keepPhantomTails` parameter to `normalizeForType`
   - [ ] write unit cases that ensure that projection reference names stay when merged
   - [ ] write tests ensuring that merging a recursive and non-recursive projections works

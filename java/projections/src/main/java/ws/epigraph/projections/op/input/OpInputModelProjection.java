@@ -21,10 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -71,6 +72,25 @@ public abstract class OpInputModelProjection<
     super.resolve(name, value);
     this.required = value.required();
     this.defaultValue = (D) value.defaultValue();
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> {
+      switch (m.kind()) {
+        case RECORD:
+          return (SMP) new OpInputRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
+        case MAP:
+          return (SMP) new OpInputMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
+        case LIST:
+          return (SMP) new OpInputListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
+        case PRIMITIVE:
+          return (SMP) new OpInputPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
+        default:
+          throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
+      }
+    });
   }
 
   @Override

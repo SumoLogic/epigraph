@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.TypeKind
 
@@ -37,8 +36,6 @@ class ReqInputVarProjectionGen(
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
-
-  override protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
 
@@ -59,7 +56,6 @@ class ReqInputVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =
     ReqInputModelProjectionGen.dataProjectionGen(
-      None,
       operationInfo,
       tpe.projection(),
       baseNamespace,
@@ -85,7 +81,6 @@ object ReqInputVarProjectionGen {
       new ReqInputVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
@@ -94,7 +89,6 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqInputMapModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
@@ -103,7 +97,6 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqInputListModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
         baseNamespace,
@@ -112,7 +105,6 @@ object ReqInputVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqInputPrimitiveModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,

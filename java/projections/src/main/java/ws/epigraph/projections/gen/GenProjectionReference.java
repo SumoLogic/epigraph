@@ -27,6 +27,8 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
   /** @return qualified projection reference name or {@code null} if there is no name */
   ProjectionReferenceName referenceName();
 
+  void setReferenceName(@NotNull ProjectionReferenceName referenceName);
+
   /**
    * Resolves this projection reference from another instance.
    *

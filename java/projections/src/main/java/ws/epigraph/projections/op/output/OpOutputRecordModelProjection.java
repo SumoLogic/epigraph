@@ -78,11 +78,6 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  protected @NotNull ModelNormalizationContext<RecordTypeApi, OpOutputRecordModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new OpOutputRecordModelProjection(m, TextLocation.UNKNOWN));
-  }
-
-  @Override
   protected OpOutputRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
       final @NotNull List<OpOutputRecordModelProjection> modelProjections,
@@ -119,11 +114,11 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public OpOutputRecordModelProjection normalizedForType(
+  public OpOutputRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails) {
+      final boolean keepPhantomTails,
+      final @NotNull OpOutputRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
-    OpOutputRecordModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
 
     final Map<String, OpOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);

@@ -19,20 +19,18 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeletePrimitiveModelProjectionGen(
-  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   val op: OpDeletePrimitiveModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
@@ -40,14 +38,14 @@ class ReqDeletePrimitiveModelProjectionGen(
     op: OpDeletePrimitiveModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeletePrimitiveModelProjectionGen(
-      None,
       operationInfo,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpDeletePrimitiveModelProjection, ReqModelProjectionGen] = Map()
+      override protected val buildTails: Boolean = !normalized
+      override protected val buildNormalizedTails: Boolean = normalized
     }
 
   override protected def generate: String = generate(

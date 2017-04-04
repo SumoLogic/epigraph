@@ -21,23 +21,36 @@ import ws.epigraph.java.JavaGenNames.{jn, ln, lqn}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
+import ws.epigraph.projections.gen.{GenProjectionReference, ProjectionReferenceName}
 import ws.epigraph.types.TypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqTypeProjectionGen extends ReqProjectionGen {
+  type OpProjectionType <: GenProjectionReference[_]
+
+  protected def op: OpProjectionType
 
   protected def generatedProjections: java.util.Set[ProjectionReferenceName]
 
   protected def cType: CType
 
-  protected def referenceName: Option[ProjectionReferenceName]
+  protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   // -----------
 
-  override def shouldRun: Boolean = referenceName.forall(name => !generatedProjections.contains(name))
+  override def shouldRun: Boolean =
+    ReqTypeProjectionGen.synchronized {
+      referenceName.forall { name =>
+        if (generatedProjections.contains(name))
+          false
+        else {
+          generatedProjections.add(name)
+          true
+        }
+      }
+    }
 
 //  override def namespace: Qn = name.map(_.removeLastSegment()).getOrElse(super.namespace)
 

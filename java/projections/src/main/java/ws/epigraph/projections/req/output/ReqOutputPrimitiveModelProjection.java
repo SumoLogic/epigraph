@@ -16,14 +16,13 @@
 
 package ws.epigraph.projections.req.output;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -49,11 +48,6 @@ public class ReqOutputPrimitiveModelProjection
       final @NotNull PrimitiveTypeApi model,
       final @NotNull TextLocation location) {
     super(model, location);
-  }
-
-  @Override
-  protected @NotNull ModelNormalizationContext<PrimitiveTypeApi, ReqOutputPrimitiveModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new ReqOutputPrimitiveModelProjection(m, TextLocation.UNKNOWN));
   }
 
   /* static */

@@ -26,6 +26,7 @@ trait JavaGen {
 
   protected def relativeFilePath: Path
 
+  /** checks if this generator should be invoked. This method may have side effects and should only be called once */
   def shouldRun: Boolean = true
 
   protected def generate: String
@@ -33,10 +34,10 @@ trait JavaGen {
   def children: Iterable[JavaGen] = Iterable()
 
   def writeUnder(sourcesRoot: Path): Unit = {
-    if (shouldRun) {
+//    if (shouldRun) {
       //System.out.println("Writing to '" + relativeFilePath + "'")
       JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
-    }
+//    }
   }
 
 }

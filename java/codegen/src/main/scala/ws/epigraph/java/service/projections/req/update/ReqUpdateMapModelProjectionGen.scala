@@ -21,7 +21,6 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
 
@@ -29,13 +28,12 @@ import ws.epigraph.projections.op.input.OpInputMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateMapModelProjectionGen(
-  name: Option[ProjectionReferenceName],
   operationInfo: OperationInfo,
   override protected val op: OpInputMapModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(name, operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 
@@ -61,14 +59,14 @@ class ReqUpdateMapModelProjectionGen(
     op: OpInputMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqUpdateMapModelProjectionGen(
-      None,
       operationInfo,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpInputMapModelProjection, ReqModelProjectionGen] = Map()
+      override protected val buildTails: Boolean = !normalized
+      override protected val buildNormalizedTails: Boolean = normalized
     }
 
   override protected def generate: String = generate(

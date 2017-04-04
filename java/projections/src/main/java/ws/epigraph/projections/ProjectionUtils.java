@@ -322,4 +322,25 @@ public final class ProjectionUtils {
 
     throw new RuntimeException("unreachable");
   }
+
+  public static @Nullable ProjectionReferenceName findUniqueName(
+      @NotNull Collection<? extends GenProjectionReference<?>> elements) {
+
+    ProjectionReferenceName res = null;
+
+    for (final GenProjectionReference<?> element : elements) {
+      final ProjectionReferenceName rn = element.referenceName();
+      if (rn != null) {
+        if (res == null) res = rn;
+        else throw new IllegalArgumentException(
+            String.format(
+                "Merging multiple projection references is not yet supported. '%s' conflicts with '%s'",
+                rn.toString(), res.toString()
+            )
+        );
+      }
+    }
+
+    return res;
+  }
 }

@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqKeyProjection;
@@ -65,11 +64,6 @@ public class ReqOutputMapModelProjection
 
   public ReqOutputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
-  }
-
-  @Override
-  protected @NotNull ModelNormalizationContext<MapTypeApi, ReqOutputMapModelProjection> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> new ReqOutputMapModelProjection(m, TextLocation.UNKNOWN));
   }
 
   @Override

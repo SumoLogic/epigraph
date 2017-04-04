@@ -22,7 +22,6 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
@@ -30,7 +29,6 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqUpdateModelProjectionGen(
-  protected val referenceName: Option[ProjectionReferenceName],
   protected val operationInfo: OperationInfo,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   _baseNamespace: Qn,
@@ -63,7 +61,6 @@ abstract class ReqUpdateModelProjectionGen(
 
 object ReqUpdateModelProjectionGen {
   def dataProjectionGen(
-    name: Option[ProjectionReferenceName],
     operationInfo: OperationInfo,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespace: Qn,
@@ -72,7 +69,6 @@ object ReqUpdateModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
@@ -81,7 +77,6 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqUpdateMapModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
@@ -90,7 +85,6 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqUpdateListModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputListModelProjection],
         baseNamespace,
@@ -99,7 +93,6 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqUpdatePrimitiveModelProjectionGen(
-        name,
         operationInfo,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,

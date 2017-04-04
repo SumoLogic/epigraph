@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.TypeKind
 
@@ -38,7 +37,6 @@ class ReqOutputVarProjectionGen(
   override type OpProjectionType = OpOutputVarProjection
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
 
-  override protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
 
@@ -59,7 +57,6 @@ class ReqOutputVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
-      None, // can't use named projections in tags yet
       operationInfo,
       tpe.projection(),
       baseNamespace,
@@ -85,7 +82,6 @@ object ReqOutputVarProjectionGen {
       new ReqOutputVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputRecordModelProjection],
         baseNamespace,
@@ -94,7 +90,6 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqOutputMapModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputMapModelProjection],
         baseNamespace,
@@ -103,7 +98,6 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqOutputListModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputListModelProjection],
         baseNamespace,
@@ -112,7 +106,6 @@ object ReqOutputVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqOutputPrimitiveModelProjectionGen(
-        Option(op.referenceName()),
         operationInfo,
         op.singleTagProjection().projection().asInstanceOf[OpOutputPrimitiveModelProjection],
         baseNamespace,

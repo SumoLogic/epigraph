@@ -20,10 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +59,25 @@ public abstract class ReqOutputModelProjection<
   public boolean required() {
     assert isResolved();
     return required;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
+    return new ModelNormalizationContext<>(m -> {
+      switch (m.kind()) {
+        case RECORD:
+          return (SMP) new ReqOutputRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
+        case MAP:
+          return (SMP) new ReqOutputMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
+        case LIST:
+          return (SMP) new ReqOutputListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
+        case PRIMITIVE:
+          return (SMP) new ReqOutputPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
+        default:
+          throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
+      }
+    });
   }
 
   @Override

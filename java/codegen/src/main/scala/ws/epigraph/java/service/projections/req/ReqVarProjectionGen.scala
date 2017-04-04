@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CTag, CType, CVarTypeDef}
+import ws.epigraph.compiler.{CTag, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
@@ -25,16 +25,13 @@ import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqVarProjectionGen extends ReqTypeProjectionGen {
-  type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
+  override type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
-
-  protected def op: OpProjectionType
 
   protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
 
@@ -61,41 +58,17 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
       _.map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
     ).getOrElse(Map())
 
-  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] = {
-    def ntg(
-      op: OpProjectionType,
-      visited: mutable.Set[CType],
-      includeSelf: Boolean): Map[OpProjectionType, ReqProjectionGen] = {
-
-      val ct = JavaGenUtils.toCType(op.`type`())
-      if (visited.contains(ct)) Map()
-      else {
-        visited.add(ct)
-        var _res: Map[OpProjectionType, ReqProjectionGen] =
-          if (includeSelf) Map(op -> tailGenerator(op, normalized = true)) else Map()
-
-        Option(op.polymorphicTails()) match {
-          case Some(tails) =>
-
-            for (tail <- tails)
-              _res ++= ntg(tail, visited, includeSelf = true)
-
-          case None =>
-        }
-
-        _res
-      }
-    }
-
-    ntg(op, mutable.Set(), includeSelf = false)
-  }
+  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] =
+    Option(op.polymorphicTails()).map(
+      _.map { t: OpProjectionType =>
+        t -> tailGenerator(op.normalizedForType(t.`type`(), false), normalized = true)
+      }.toMap
+    ).getOrElse(Map())
 
   protected def generate(
     reqVarProjectionFqn: Qn,
     reqTagProjectionEntryFqn: Qn
   ): String = {
-
-    referenceName.foreach(name => generatedProjections.add(name))
 
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\
