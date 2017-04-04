@@ -50,4 +50,27 @@ public class OpInputPrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  protected OpInputPrimitiveModelProjection merge(
+      final @NotNull PrimitiveTypeApi model,
+      final boolean mergedRequired,
+      final @Nullable GPrimitiveDatum mergedDefault,
+      final @NotNull List<OpInputPrimitiveModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpInputModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpInputPrimitiveModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+
+    return new OpInputPrimitiveModelProjection(
+        model,
+        mergedRequired,
+        mergedDefault,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 }

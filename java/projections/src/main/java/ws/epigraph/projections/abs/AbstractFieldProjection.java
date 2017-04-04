@@ -93,7 +93,7 @@ public abstract class AbstractFieldProjection<
 //      @NotNull Annotations mergedAnnotations,
       @NotNull VP mergedVarProjection) {
 
-    throw new RuntimeException("not implemented"); // todo make abstract
+    throw new RuntimeException("not implemented: "+getClass().getName()); // todo make abstract
   }
 
   @Override

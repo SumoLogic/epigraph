@@ -99,7 +99,7 @@ public class OpOutputListModelProjection
   }
 
   @Override
-  public OpOutputListModelProjection postNormalizedForType(
+  public @NotNull OpOutputListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       final boolean keepPhantomTails,
       final @NotNull OpOutputListModelProjection n) {

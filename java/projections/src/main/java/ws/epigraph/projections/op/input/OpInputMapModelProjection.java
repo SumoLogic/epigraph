@@ -23,9 +23,12 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,6 +79,93 @@ public class OpInputMapModelProjection
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
+  }
+
+  @Override
+  protected OpInputMapModelProjection merge(
+      final @NotNull MapTypeApi model,
+      final boolean mergedRequired,
+      final @Nullable GMapDatum mergedDefault,
+      final @NotNull List<OpInputMapModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpInputModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpInputMapModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+
+    // todo unify this code with OpOutputMapModelProjection
+    List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
+    List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
+    OpKeyPresence mergedKeysPresence = null;
+    List<OpInputVarProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
+
+    OpInputMapModelProjection prevProjection = null;
+    for (final OpInputMapModelProjection projection : modelProjections) {
+
+      final @NotNull OpInputKeyProjection keyProjection = projection.keyProjection();
+      keysParams.add(keyProjection.params());
+      keysAnnotations.add(keyProjection.annotations());
+      final OpKeyPresence presence = keyProjection.presence();
+
+      if (mergedKeysPresence == null) mergedKeysPresence = presence;
+      else {
+        @Nullable OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        if (newKeysPresence == null)
+          throw new IllegalArgumentException(
+              String.format(
+                  "Can't merge key projection defined at %s and key projection defined at %s: incompatible keys presence modes",
+                  prevProjection.location(),
+                  projection.location()
+              )
+          );
+        mergedKeysPresence = newKeysPresence;
+      }
+
+      itemsProjectionsToMerge.add(projection.itemsProjection());
+
+      prevProjection = projection;
+    }
+
+    assert mergedKeysPresence != null; // modelProjections should have at least one element
+    assert !itemsProjectionsToMerge.isEmpty();
+
+    return new OpInputMapModelProjection(
+        model,
+        mergedRequired,
+        mergedDefault,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        new OpInputKeyProjection(
+            mergedKeysPresence,
+            OpParams.merge(keysParams),
+            Annotations.merge(keysAnnotations),
+            TextLocation.UNKNOWN
+        ),
+        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge, keepPhantomTails),
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public @NotNull OpInputMapModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpInputMapModelProjection n) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    return new OpInputMapModelProjection(
+        n.type(),
+        n.required(),
+        n.defaultValue(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        n.keyProjection(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type(), keepPhantomTails),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

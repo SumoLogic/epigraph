@@ -18,6 +18,7 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
@@ -27,6 +28,7 @@ import ws.epigraph.types.RecordTypeApi;
 import ws.epigraph.types.TypeApi;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Helper class for {@link ws.epigraph.projections.gen.GenRecordModelProjection} implementations.
@@ -157,7 +159,7 @@ public final class RecordModelProjectionHelper {
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
 
-  Map<String, FP> normalizeFields(
+  @NotNull Map<String, FP> normalizeFields(
       @NotNull RecordTypeApi effectiveType,
       @NotNull RMP projection,
       boolean keepPhantomTails) {
@@ -168,7 +170,8 @@ public final class RecordModelProjectionHelper {
       for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
         final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
         FP fp = entry.getValue().fieldProjection();
-        final VP normalizedVp = fp.varProjection().normalizedForType(effectiveField.dataType().type(), keepPhantomTails);
+        final VP normalizedVp =
+            fp.varProjection().normalizedForType(effectiveField.dataType().type(), keepPhantomTails);
         result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
       }
 
@@ -176,4 +179,42 @@ public final class RecordModelProjectionHelper {
     } else
       return Collections.emptyMap();
   }
+
+  @SuppressWarnings("unchecked")
+  public static <
+      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
+      FP extends GenFieldProjection<?, ?, ?, FP>>
+  @NotNull Map<String, FPE> reattachFields(
+      @NotNull RecordTypeApi recordType,
+      @NotNull Map<String, FP> fields,
+      @NotNull FieldProjectionEntryFactory<FPE, FP> factory) {
+
+    return fields.entrySet()
+        .stream()
+        .collect(
+            Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> factory.newFieldProjectionEntry(
+                    recordType.fieldsMap().get(entry.getKey()),
+                    entry.getValue(),
+                    TextLocation.UNKNOWN
+                ),
+                (u, v) -> {
+                  throw new IllegalStateException(String.format("Duplicate key %s", u));
+                },
+                LinkedHashMap::new
+            )
+        );
+  }
+
+  public interface FieldProjectionEntryFactory<
+      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
+      FP extends GenFieldProjection<?, ?, ?, FP>> {
+
+    @NotNull FPE newFieldProjectionEntry(
+        @NotNull FieldApi fieldType,
+        @NotNull FP fieldProjection,
+        @NotNull TextLocation location);
+  }
+
 }

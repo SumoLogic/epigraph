@@ -80,7 +80,7 @@ public abstract class AbstractTagProjectionEntry<
       final @NotNull List<TP> tagsEntries,
       @NotNull MP mergedModel) {
 
-    throw new RuntimeException("Unsupported operation"); // todo remove this method from here
+    throw new RuntimeException("Unsupported operation: "+getClass().getName()); // todo make abstract
   }
 
   @Override

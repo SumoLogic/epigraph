@@ -23,8 +23,8 @@ import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.types.TypeApi;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,21 +37,32 @@ public class OpInputVarProjection extends AbstractVarProjection<
 
   public OpInputVarProjection(
       @NotNull TypeApi type,
-      @NotNull LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections,
+      @NotNull Map<String, OpInputTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<OpInputVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
   }
   
+  public OpInputVarProjection(final TypeApi type, final TextLocation location) {
+    super(type, location);
+  }
+
+  @Override
+  protected OpInputVarProjection merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<OpInputVarProjection> varProjections,
+      final @NotNull Map<String, OpInputTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
+      final @Nullable List<OpInputVarProjection> mergedTails) {
+
+    return new OpInputVarProjection(effectiveType, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
+  }
+
   @Override
   protected @NotNull VarNormalizationContext<OpInputVarProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(
         t -> new OpInputVarProjection(t, location())
     );
-  }
-
-  public OpInputVarProjection(final TypeApi type, final TextLocation location) {
-    super(type, location);
   }
 }

@@ -79,7 +79,7 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
     }
   }
 
-  public interface Function0<R> {
+  public interface Function0<R> { // todo move to some common utils?
     R apply();
   }
 }

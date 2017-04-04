@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.AbstractOpFieldProjection;
-import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DataTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,6 +51,19 @@ public class OpInputFieldProjection extends AbstractOpFieldProjection<
   @Override
   public @NotNull OpInputFieldProjection setVarProjection(final @NotNull OpInputVarProjection varProjection) {
     return new OpInputFieldProjection(varProjection, required, TextLocation.UNKNOWN);
+  }
+
+  @Override
+  protected OpInputFieldProjection merge(
+      final @NotNull DataTypeApi type,
+      final @NotNull List<OpInputFieldProjection> fieldProjections,
+      final @NotNull OpInputVarProjection mergedVarProjection) {
+
+    return new OpInputFieldProjection(
+        mergedVarProjection,
+        fieldProjections.stream().anyMatch(OpInputFieldProjection::required),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

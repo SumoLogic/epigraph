@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
-import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -33,7 +32,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -114,7 +114,7 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public OpOutputRecordModelProjection postNormalizedForType(
+  public @NotNull OpOutputRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       final boolean keepPhantomTails,
       final @NotNull OpOutputRecordModelProjection n) {
@@ -123,24 +123,11 @@ public class OpOutputRecordModelProjection
     final Map<String, OpOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
 
-    // todo move to RecordModelProjectionHelper?
-    final Map<String, OpOutputFieldProjectionEntry> normalizedFieldEntries =
-        normalizedFields.entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry -> new OpOutputFieldProjectionEntry(
-                        targetRecordType.fieldsMap().get(entry.getKey()),
-                        entry.getValue(),
-                        TextLocation.UNKNOWN
-                    ),
-                    (u, v) -> {
-                      throw new IllegalStateException(String.format("Duplicate key %s", u));
-                    },
-                    LinkedHashMap::new
-                )
-            );
+    final Map<String, OpOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        OpOutputFieldProjectionEntry::new
+    );
 
     return new OpOutputRecordModelProjection(
         n.type(),

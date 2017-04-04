@@ -96,6 +96,7 @@ public class OpOutputMapModelProjection
       final @Nullable List<OpOutputMapModelProjection> mergedTails,
       final boolean keepPhantomTails) {
 
+    // todo unify this code with OpInputMapModelProjection
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
     OpKeyPresence mergedKeysPresence = null;
@@ -149,7 +150,7 @@ public class OpOutputMapModelProjection
   }
 
   @Override
-  public OpOutputMapModelProjection postNormalizedForType(
+  public @NotNull OpOutputMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       final boolean keepPhantomTails,
       final @NotNull OpOutputMapModelProjection n) {

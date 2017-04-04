@@ -98,7 +98,7 @@ public abstract class AbstractOpModelProjection<
       @Nullable List<SMP> mergedTails,
       final boolean keepPhantomTails) {
 
-    throw new RuntimeException("not implemented"); // todo
+    throw new RuntimeException("not implemented"); // todo make abstract
   }
 
   @Override

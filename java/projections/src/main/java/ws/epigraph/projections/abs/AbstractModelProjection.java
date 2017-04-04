@@ -179,6 +179,7 @@ public abstract class AbstractModelProjection<
   /**
    * Called after {@code normalizeForType} is performed. Can perform any extra steps and return a modified version.
    */
+  @NotNull
   protected SMP postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       boolean keepPhantomTails,

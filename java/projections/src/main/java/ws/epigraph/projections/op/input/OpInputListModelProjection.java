@@ -24,10 +24,12 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -68,6 +70,58 @@ public class OpInputListModelProjection
     assert itemsProjection != null;
     return itemsProjection;
   }
+
+  @Override
+  protected OpInputListModelProjection merge(
+      final @NotNull ListTypeApi model,
+      final boolean mergedRequired,
+      final @Nullable GListDatum mergedDefault,
+      final @NotNull List<OpInputListModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpInputModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpInputListModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+    List<OpInputVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(OpInputListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull OpInputVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
+
+    return new OpInputListModelProjection(
+        model,
+        mergedRequired, 
+        mergedDefault, 
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+  
+  @Override
+  public @NotNull OpInputListModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpInputListModelProjection n) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    return new OpInputListModelProjection(
+        n.type(),
+        n.required(),
+        n.defaultValue(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
+  }
+
 
   @Override
   public void resolve(final ProjectionReferenceName name, final @NotNull OpInputListModelProjection value) {

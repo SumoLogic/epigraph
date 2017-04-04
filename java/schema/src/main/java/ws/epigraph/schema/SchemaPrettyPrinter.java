@@ -21,6 +21,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
@@ -231,30 +232,43 @@ public class SchemaPrettyPrinter<E extends Exception> {
         if (!printedVarNames.contains(shortName)) {
           printedVarNames.add(shortName);
 
-          final ProjectionsPrettyPrinterContext<VP, MP> printerContext =
-              prettyPrinterContextFactory.apply(shortName.toString());
-          final AbstractProjectionsPrettyPrinter<VP, ?, ?, E> projectionsPrettyPrinter =
-              prettyPrinterFactory.apply(printerContext);
+          if (outputProjection.type().kind() == TypeKind.UNION) { // real var
 
-          projectionsPrettyPrinter.addVisitedRefs(printedVarRefs);
+            final ProjectionsPrettyPrinterContext<VP, MP> printerContext =
+                prettyPrinterContextFactory.apply(shortName.toString());
+            final AbstractProjectionsPrettyPrinter<VP, ?, ?, E> projectionsPrettyPrinter =
+                prettyPrinterFactory.apply(printerContext);
 
-          l.nl();
-          l.beginIInd();
-          l.print(prefix).brk().print(shortName.toString()).print(":").brk();
-          l.print(outputProjection.type().name().toString()).brk().print("=").brk();
-          projectionsPrettyPrinter.printVarNoRefCheck(outputProjection, 0);
-          l.end();
+            projectionsPrettyPrinter.addVisitedRefs(printedVarRefs);
 
-          for (VP vp : printerContext.otherNamespaceVarProjections()) {
-            nextVarProjections.add(vp);
-            //noinspection ConstantConditions
-            printedVarRefs.add(vp.referenceName().last());
-          }
+            l.nl();
+            l.beginIInd();
+            l.print(prefix).brk().print(shortName.toString()).print(":").brk();
+            l.print(outputProjection.type().name().toString()).brk().print("=").brk();
+            projectionsPrettyPrinter.printVarNoRefCheck(outputProjection, 0);
+            l.end();
 
-          for (MP mp : printerContext.otherNamespaceModelProjections()) {
-            nextModelProjections.add(mp);
-            //noinspection ConstantConditions
-            printedModelRefs.add(mp.referenceName().last());
+            for (VP vp : printerContext.otherNamespaceVarProjections()) {
+              nextVarProjections.add(vp);
+              //noinspection ConstantConditions
+              printedVarRefs.add(vp.referenceName().last());
+            }
+
+            for (MP mp : printerContext.otherNamespaceModelProjections()) {
+              nextModelProjections.add(mp);
+              //noinspection ConstantConditions
+              printedModelRefs.add(mp.referenceName().last());
+            }
+
+          } else { // self-var
+            final GenTagProjectionEntry<?, MP> tp = outputProjection.singleTagProjection();
+
+            if (tp != null) {
+              final MP mp = tp.projection();
+              if (mp.referenceName() != null)
+                nextModelProjections.add(mp);
+
+            }
           }
         }
       }

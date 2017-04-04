@@ -25,9 +25,13 @@ import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
 import java.util.*;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -76,6 +80,75 @@ public class OpInputRecordModelProjection
   public @NotNull Map<String, OpInputFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
+  }
+
+  @Override
+  protected OpInputRecordModelProjection merge(
+      final @NotNull RecordTypeApi model,
+      boolean mergedRequired,
+      @Nullable GRecordDatum mergedDefault,
+      final @NotNull List<OpInputRecordModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpInputModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpInputRecordModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+    
+    Map<FieldApi, OpInputFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections, keepPhantomTails);
+
+    Map<String, OpInputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, OpInputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new OpInputFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
+    }
+
+    return new OpInputRecordModelProjection(
+        model,
+        mergedRequired,
+        mergedDefault,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedFieldEntries,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+  
+  @Override
+  public @NotNull OpInputRecordModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpInputRecordModelProjection n) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+
+    final Map<String, OpInputFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
+
+    final Map<String, OpInputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        OpInputFieldProjectionEntry::new
+    );
+
+    return new OpInputRecordModelProjection(
+        n.type(),
+        n.required(),
+        n.defaultValue(),
+        n.params(),
+        n.annotations(),
+        n.metaProjection(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

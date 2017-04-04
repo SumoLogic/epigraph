@@ -68,6 +68,49 @@ public abstract class OpInputModelProjection<
 
   @SuppressWarnings("unchecked")
   @Override
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
+
+    boolean mergedRequired = modelProjections.stream().anyMatch(mp -> mp.required());
+    D mergedDefault = modelProjections.stream()
+        .map(m -> (D) m.defaultValue())
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null); // todo detect clashes and throw proper exception
+
+    return merge(
+        model,
+        mergedRequired,
+        mergedDefault,
+        modelProjections,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedTails,
+        keepPhantomTails
+    );
+  }
+
+  protected abstract SMP merge(
+      @NotNull M model,
+      boolean mergedRequired,
+      @Nullable D mergedDefault,
+      @NotNull List<SMP> modelProjections,
+      @NotNull OpParams mergedParams,
+      @NotNull Annotations mergedAnnotations,
+      @Nullable MP mergedMetaProjection,
+      @Nullable List<SMP> mergedTails,
+      boolean keepPhantomTails
+  );
+
+  @SuppressWarnings("unchecked")
+  @Override
   public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     this.required = value.required();
