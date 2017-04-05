@@ -18,6 +18,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.names.QualifiedTypeName;
 
 import java.util.Collection;
 
@@ -27,6 +28,9 @@ import java.util.Collection;
 public interface UnionTypeApi extends TypeApi {
 //  @Override
 //  default @NotNull TypeKind kind() { return TypeKind.UNION;}
+
+  @Override
+  @NotNull QualifiedTypeName name();
 
   @Override
   @NotNull Collection<@NotNull ? extends UnionTypeApi> supertypes();

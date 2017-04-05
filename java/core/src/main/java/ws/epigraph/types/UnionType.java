@@ -18,10 +18,10 @@
 
 package ws.epigraph.types;
 
-import ws.epigraph.data.Data;
-import ws.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
+import ws.epigraph.names.QualifiedTypeName;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +37,11 @@ public abstract class UnionType extends Type implements UnionTypeApi {
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.UNION; }
+
+  @Override
+  public @NotNull QualifiedTypeName name() {
+    return (QualifiedTypeName) super.name();
+  }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -65,7 +70,7 @@ public abstract class UnionType extends Type implements UnionTypeApi {
 
   // TODO .Raw
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends UnionType implements Type.Static<MyImmData, MyDataBuilder> {

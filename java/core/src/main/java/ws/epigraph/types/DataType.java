@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * Declares type of data held by container type components (record fields, list elements, map values).
  */
-public final class DataType implements DataTypeApi {
+public final class DataType implements DataTypeApi { // rename to ValueType?
 
   public final @NotNull Type type;
 

@@ -18,7 +18,6 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
 import epigraph.schema.NameString_Type_Map;
-import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
@@ -36,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static ws.epigraph.services.resources.epigraph.types.TypeBuilder.buildType;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -83,7 +84,4 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
     return CompletableFuture.completedFuture(builder);
   }
 
-  protected @NotNull Type_ buildType(@NotNull Type type, @NotNull OutputType_Projection typeProjection) {
-    return null; // todo
-  }
 }

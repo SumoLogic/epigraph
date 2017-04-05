@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
+package ws.epigraph.services.resources.epigraph.types;
 
+import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.names.QualifiedTypeName;
-
-import java.util.Collection;
-import java.util.Map;
+import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface RecordTypeApi extends DatumTypeApi {
-  @Override
-  @NotNull QualifiedTypeName name();
+public final class TypeBuilder {
+  private TypeBuilder() {}
 
-  @NotNull Collection<@NotNull ? extends FieldApi> immediateFields(); // rename to `declaredFields` ?
+  public static @NotNull Type_ buildType(@NotNull TypeApi type, @NotNull OutputType_Projection projection) {
+    // todo: `abstract` and `doc` fields support
 
-  @NotNull Collection<@NotNull ? extends FieldApi> fields();
-
-  @NotNull Map<@NotNull String, @NotNull ? extends FieldApi> fieldsMap();
-
-//  @Override
-//  default @NotNull TypeKind kind() { return TypeKind.RECORD; }
-
-  @Override
-  @NotNull Collection<@NotNull ? extends RecordTypeApi> supertypes();
+    if (type.kind() == ws.epigraph.types.TypeKind.UNION)
+      return VarTypeBuilder.buildVarType((UnionTypeApi) type, projection.normalizedFor_varType());
+    else
+      return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_datumType());
+  }
 }

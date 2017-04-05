@@ -27,7 +27,8 @@
 - [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 - [ ] **Add `type.createBuilder(data)` similar to `toImmutable`**
 - [ ] Feature: Introduce real epigraph (record?) type for holding error values
-- [ ] Feature: Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/merged
+- [ ] Feature: Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/mern.segments[i];
+- [ ] Feature: add `final` on fields. Codegen: record builders should implement special `FinalFields` interfaces which should inherit each other
 
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?

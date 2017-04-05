@@ -107,7 +107,7 @@ class CTagWrapper(private val cTag: CTag) extends TagApi {
 
 trait CTypeDefApiWrapper extends CTypeApiWrapper {
   override val cType: CTypeDef
-  override val name: TypeName = QualifiedTypeName.fromFqn(cType.name.fqn)
+  override val name: QualifiedTypeName = QualifiedTypeName.fromFqn(cType.name.fqn)
 }
 
 class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper with UnionTypeApi {
@@ -174,6 +174,8 @@ class CRecordTypeDefApiWrapper(val cType: CRecordTypeDef)
   override lazy val supertypes: util.Collection[_ <: RecordTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[RecordTypeApi]}
 
   override lazy val fields: util.Collection[_ <: FieldApi] = cType.effectiveFields.map{ cf => new CFieldApiWrapper(cf) }
+
+  override lazy val immediateFields: util.Collection[_ <: FieldApi] = cType.declaredFields.map{ cf => new CFieldApiWrapper(cf) }
 
   override lazy val fieldsMap: util.Map[String, _ <: FieldApi] =
     mapAsJavaMap(cType.effectiveFields.map{ cf => cf.name -> new CFieldApiWrapper(cf) }.toMap)

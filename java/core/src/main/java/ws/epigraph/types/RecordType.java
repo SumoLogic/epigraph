@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
   @SuppressWarnings("unchecked")
   public @NotNull Collection<@NotNull RecordType> supertypes() { return (Collection<RecordType>) super.supertypes(); }
 
+  @Override
   public abstract @NotNull List<@NotNull ? extends Field> immediateFields(); // TODO could be protected but used by pretty-printer
 
   public abstract @NotNull RecordDatum.Builder createBuilder();
