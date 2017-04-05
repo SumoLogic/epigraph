@@ -22,6 +22,10 @@
   - [ ] update wiki on projections merging, move to a separate page?
   - [ ] figure out why generation fails when tails are normalized (see `ReqModelProjectionGen`)
   - [ ] do tails normalization for var generator too
+  
+- [ ] return `setters_` in codegen
+- [ ] there must be some inheritance on generated req. projections (fields, not tails)
+  - [ ] update reflection api
 
 - Federator prerequisites
   - [ ] `toBuilder` on data

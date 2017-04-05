@@ -34,11 +34,7 @@ public final class TagBuilder {
     final Tag_.Builder builder = Tag_.create();
 
     // name
-    builder.setName(
-        TagName.create().setString(
-            NameString.create(tag.name())
-        )
-    );
+    builder.setName(TagName.create().setString(NameString.create(tag.name())));
 
     // todo doc
 

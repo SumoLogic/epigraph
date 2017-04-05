@@ -41,7 +41,7 @@ public final class VarTypeBuilder {
     final OutputQualifiedTypeNameProjection nameProjection = projection.name();
     if (nameProjection != null) {
       builder.setName(
-          QualifiedTypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection)
+          TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection)
       );
     }
 

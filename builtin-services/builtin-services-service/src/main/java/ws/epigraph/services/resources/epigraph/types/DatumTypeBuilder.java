@@ -19,8 +19,7 @@ package ws.epigraph.services.resources.epigraph.types;
 import epigraph.schema.DatumType;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services.resources.epigraph.projections.output.typeprojection._normalized.datumtype.OutputDatumTypeProjection;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.RecordTypeApi;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,7 +36,15 @@ public final class DatumTypeBuilder {
     switch (type.kind()) {
       case RECORD:
         return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_recordType());
-      //todo rest
+      case MAP:
+        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_mapType());
+      case LIST:
+        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_listType());
+      case PRIMITIVE:
+        return PrimitiveTypeBuilder.buildPrimitiveType(
+            (PrimitiveTypeApi) type,
+            projection.normalizedFor_primitiveType()
+        );
       default:
         throw new IllegalArgumentException("Unsupported kind: " + type.kind());
     }

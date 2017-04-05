@@ -42,9 +42,11 @@ import static ws.epigraph.services.resources.epigraph.types.TypeBuilder.buildTyp
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class TypesReadOperation extends AbstractReadTypesOperation {
-  private final @NotNull Map<String, Type> types;
+  private final @NotNull Map<String, ? extends Type> types;
 
-  public TypesReadOperation(final @NotNull ReadOperationDeclaration declaration, @NotNull Map<String, Type> types) {
+  public TypesReadOperation(
+      final @NotNull ReadOperationDeclaration declaration,
+      @NotNull Map<String, ? extends Type> types) {
     super(declaration);
     this.types = types;
   }

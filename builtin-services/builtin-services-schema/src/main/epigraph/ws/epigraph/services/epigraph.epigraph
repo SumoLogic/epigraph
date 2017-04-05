@@ -15,6 +15,7 @@ import epigraph.schema.MapType
 import epigraph.schema.ListType
 import epigraph.schema.Field
 import epigraph.schema.NameString
+import epigraph.schema.PrimitiveType
 
 record EpigraphResource {
   doc = "Epigraph built-in services resource root type"
@@ -50,14 +51,15 @@ resource epigraph: EpigraphResource {
       RecordType (
         declaredFields * $fieldProjection
         // add `computed` fields too?
-      )
+      ),
       MapType (
         keyType $typeProjection
         valueType $dataTypeProjection
-      )
+      ),
       ListType (
         valueType $dataTypeProjection
-      )
+      ),
+      PrimitiveType // empty, but gives us properly typed `name` and `supertypes` projections
     )
   )
 
@@ -76,7 +78,7 @@ resource epigraph: EpigraphResource {
     `retro` $tagProjection
   )
 
-  read types {
+  read types { // todo remove name
     path /types
     outputProjection [] ( $typeProjection )
   }

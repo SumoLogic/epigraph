@@ -43,7 +43,7 @@ public final class RecordTypeBuilder {
     // name
     final OutputQualifiedTypeNameProjection nameProjection = projection.name();
     if (nameProjection != null)
-      builder.setName(QualifiedTypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection));
+      builder.setName(TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection));
 
     // supertypes
     final OutputRecordType_ListProjection supertypesProjection = projection.supertypes();

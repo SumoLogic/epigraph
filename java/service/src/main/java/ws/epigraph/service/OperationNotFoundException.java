@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,14 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OperationNotFoundException extends Exception {
-  @NotNull
-  private final String resourceName;
-  @NotNull
-  private final OperationKind operationKind;
-  @Nullable
-  private final String operationName;
+  private final @NotNull String resourceName;
+  private final @NotNull OperationKind operationKind;
+  private final @Nullable String operationName;
 
-  public OperationNotFoundException(@NotNull String resourceName,
-                                    @NotNull OperationKind operationKind,
-                                    @Nullable String operationName) {
+  public OperationNotFoundException(
+      @NotNull String resourceName,
+      @NotNull OperationKind operationKind,
+      @Nullable String operationName) {
 
     super(
         String.format(
@@ -47,12 +45,9 @@ public class OperationNotFoundException extends Exception {
     this.operationName = operationName;
   }
 
-  @NotNull
-  public String resourceName() { return resourceName; }
+  public @NotNull String resourceName() { return resourceName; }
 
-  @NotNull
-  public OperationKind operationType() { return operationKind; }
+  public @NotNull OperationKind operationType() { return operationKind; }
 
-  @Nullable
-  public String operationName() { return operationName; }
+  public @Nullable String operationName() { return operationName; }
 }

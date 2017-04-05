@@ -25,7 +25,10 @@ dependencies {
   compile project(':epigraph-java-schema')
   compile project(':epigraph-java-service')
 
+  testCompile project(':epigraph-java-http-server-undertow')
+  testCompile 'io.undertow:undertow-core'
   testCompile 'junit:junit'
+  testCompile 'org.slf4j:slf4j-simple'
 }
 
 //epigraph {

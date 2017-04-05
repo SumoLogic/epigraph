@@ -30,9 +30,9 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class EpigraphResourceFactory extends AbstractEpigraphResourceFactory {
-  private final @NotNull Map<String, Type> types;
+  private final @NotNull Map<String, ? extends Type> types;
 
-  public EpigraphResourceFactory(final @NotNull Map<String, Type> types) {this.types = types;}
+  public EpigraphResourceFactory(final @NotNull Map<String, ? extends Type> types) {this.types = types;}
 
   @Override
   protected @NotNull ReadOperation<NameString_Type_Map.Data> constructTypesReadOperation(

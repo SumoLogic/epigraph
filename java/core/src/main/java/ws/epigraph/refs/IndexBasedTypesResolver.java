@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 @SuppressWarnings("unchecked")
 public final class IndexBasedTypesResolver implements TypesResolver {
-  public static final TypesResolver INSTANCE = new IndexBasedTypesResolver();
+  public static final IndexBasedTypesResolver INSTANCE = new IndexBasedTypesResolver();
 
   public static final String INDEX_CLASS_NAME = Constants.TypesIndex.namespace + "." + Constants.TypesIndex.className;
 
@@ -47,6 +47,8 @@ public final class IndexBasedTypesResolver implements TypesResolver {
   }
 
   private IndexBasedTypesResolver() {}
+
+  public @NotNull Map<String, ? extends Type> index() { return index; }
 
   @Override
   public @Nullable TypeApi resolve(final @NotNull QnTypeRef reference) {

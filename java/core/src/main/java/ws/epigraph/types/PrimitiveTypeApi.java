@@ -17,6 +17,8 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.names.QualifiedTypeName;
+import ws.epigraph.names.TypeName;
 
 import java.util.Collection;
 
@@ -26,6 +28,9 @@ import java.util.Collection;
 public interface PrimitiveTypeApi extends DatumTypeApi {
 //  @Override
 //  default @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
+
+  @Override
+  @NotNull QualifiedTypeName name();
 
   @Override
   @NotNull Collection<@NotNull ? extends PrimitiveTypeApi> supertypes();
