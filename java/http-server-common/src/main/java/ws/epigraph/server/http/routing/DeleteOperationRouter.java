@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,13 @@ public final class DeleteOperationRouter
   private DeleteOperationRouter() {}
 
   @Override
-  protected @Nullable DeleteOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
+  protected @Nullable DeleteOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
     return resource.namedDeleteOperation(name);
   }
 
   @Override
-  protected @NotNull Collection<? extends DeleteOperation<?>> unnamedOperations(final @NotNull Resource resource) {
-    return resource.unnamedDeleteOperations();
+  protected @NotNull Collection<? extends DeleteOperation<?>> operations(final @NotNull Resource resource) {
+    return resource.deleteOperations();
   }
 
   @Override

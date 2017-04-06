@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public abstract class AbstractOperationRouter<
 
   @Override
   public @NotNull OperationSearchResult<O> findOperation(
-      final String operationName,
+      final @Nullable String operationName,
       final @NotNull U urlPsi,
       final @NotNull Resource resource,
       final @NotNull TypesResolver resolver)
@@ -65,7 +65,7 @@ public abstract class AbstractOperationRouter<
     if (operationName == null) {
       final Map<O, List<PsiProcessingError>> matchingErrors = new HashMap<>();
 
-      for (final O operation : unnamedOperations(resource)) {
+      for (final O operation : operations(resource)) {
         @NotNull OperationSearchResult<O> matchingResult =
             matchOperation(operation, resourceFieldType, urlPsi, resolver);
 
@@ -90,9 +90,9 @@ public abstract class AbstractOperationRouter<
     }
   }
 
-  protected abstract @Nullable O namedOperation(@NotNull String name, @NotNull Resource resource);
+  protected abstract @Nullable O namedOperation(@Nullable String name, @NotNull Resource resource);
 
-  protected abstract @NotNull Collection<? extends O> unnamedOperations(@NotNull Resource resource);
+  protected abstract @NotNull Collection<? extends O> operations(@NotNull Resource resource);
 
   private @NotNull OperationSearchResult<O> matchOperation(
       @Nullable O operation,

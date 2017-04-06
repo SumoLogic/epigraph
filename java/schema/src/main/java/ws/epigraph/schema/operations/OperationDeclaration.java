@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,10 @@ public abstract class OperationDeclaration {
 
   public @Nullable String name() { return name; }
 
+  public @NotNull String nameOrDefaultName() { return name == null ? defaultName() : name; }
+
+  protected abstract @NotNull String defaultName();
+
   public boolean isDefault() { return name == null; }
 
   public @NotNull Annotations annotations() { return annotations; }
@@ -90,7 +94,7 @@ public abstract class OperationDeclaration {
 
   public @NotNull TextLocation location() { return location; }
 
-  protected void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) { }
+  public void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) { }
 
   protected void ensureProjectionStartsWithResourceType(
       @NotNull ResourceDeclaration resource,

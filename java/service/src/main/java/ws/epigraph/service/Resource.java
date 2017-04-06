@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package ws.epigraph.service;
 
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.HttpMethod;
-import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.service.operations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.operations.HttpMethod;
+import ws.epigraph.service.operations.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,102 +86,52 @@ public class Resource {
             .collect(Collectors.toList())
     );
 
-    verifyCustomOpNameClashes(declaration, customOperations);
-  }
-
-  private void verifyCustomOpNameClashes(
-      final @NotNull ResourceDeclaration declaration,
-      final @NotNull Iterable<? extends CustomOperation<?>> customOperations) throws ServiceInitializationException {
-
-    // check that custom operations don't intersect with the others
-    for (final CustomOperation<?> customOperation : customOperations) {
-      final OperationDeclaration customDecl = customOperation.declaration();
-      final @Nullable String customOpName = customDecl.name();
-      if (customOpName == null)
-        throw new ServiceInitializationException(
-            String.format(
-                "Resource '%s': custom operation without a name declared at: %s",
-                declaration.fieldName(),
-                customDecl.location()
-            )
-        );
-
-      final Operations<?> ops;
-      switch (customDecl.method()) {
-        case GET:
-          ops = this.readOperations;
-          break;
-        case POST:
-          ops = this.createOperations;
-          break;
-        case PUT:
-          ops = this.updateOperations;
-          break;
-        case DELETE:
-          ops = this.deleteOperations;
-          break;
-        default:
-          throw new ServiceInitializationException("Unknown HTTP method: " + customDecl.method());
-      }
-
-      final Operation<?, ?, ?> otherOp = ops.namedOperations.get(customOpName);
-      if (otherOp != null)
-        throw new ServiceInitializationException(
-            String.format(
-                "Custom operation '%s declared at: %s clashes with %s operation declared at %s",
-                customOpName,
-                customOperation.declaration().location(),
-                otherOp.declaration().kind(),
-                otherOp.declaration().location()
-            )
-        );
-    }
   }
 
   public @NotNull ResourceDeclaration declaration() { return declaration; }
 
   /**
-   * @return unnamed read operations sorted by path length in descending order
+   * @return read operations sorted by path length in descending order
    */
-  public List<? extends ReadOperation<?>> unnamedReadOperations() {
-    return readOperations.unnamedOperations;
+  public List<? extends ReadOperation<?>> readOperations() {
+    return readOperations.allOperations;
   }
 
-  public @Nullable ReadOperation<?> namedReadOperation(@NotNull String name) {
-    return readOperations.namedOperations.get(name);
+  public @Nullable ReadOperation<?> namedReadOperation(@Nullable String name) {
+    return name == null ? readOperations.unnamedOperation : readOperations.namedOperations.get(name);
   }
 
   /**
-   * @return unnamed create operations sorted by path length in descending order
+   * @return create operations sorted by path length in descending order
    */
-  public List<? extends CreateOperation<?>> unnamedCreateOperations() {
-    return createOperations.unnamedOperations;
+  public List<? extends CreateOperation<?>> createOperations() {
+    return createOperations.allOperations;
   }
 
-  public @Nullable CreateOperation<?> namedCreateOperation(@NotNull String name) {
-    return createOperations.namedOperations.get(name);
+  public @Nullable CreateOperation<?> namedCreateOperation(@Nullable String name) {
+    return name == null ? createOperations.unnamedOperation : createOperations.namedOperations.get(name);
   }
 
   /**
-   * @return unnamed update operations sorted by path length in descending order
+   * @return update operations sorted by path length in descending order
    */
-  public List<? extends UpdateOperation<?>> unnamedUpdateOperations() {
-    return updateOperations.unnamedOperations;
+  public List<? extends UpdateOperation<?>> updateOperations() {
+    return updateOperations.allOperations;
   }
 
-  public @Nullable UpdateOperation<?> namedUpdateOperation(@NotNull String name) {
-    return updateOperations.namedOperations.get(name);
+  public @Nullable UpdateOperation<?> namedUpdateOperation(@Nullable String name) {
+    return name == null ? updateOperations.unnamedOperation : updateOperations.namedOperations.get(name);
   }
 
   /**
-   * @return unnamed delete operations sorted by path length in descending order
+   * @return delete operations sorted by path length in descending order
    */
-  public List<? extends DeleteOperation<?>> unnamedDeleteOperations() {
-    return deleteOperations.unnamedOperations;
+  public List<? extends DeleteOperation<?>> deleteOperations() {
+    return deleteOperations.allOperations;
   }
 
-  public @Nullable DeleteOperation<?> namedDeleteOperation(@NotNull String name) {
-    return deleteOperations.namedOperations.get(name);
+  public @Nullable DeleteOperation<?> namedDeleteOperation(@Nullable String name) {
+    return name == null ? deleteOperations.unnamedOperation : deleteOperations.namedOperations.get(name);
   }
 
   public @Nullable CustomOperation<?> customOperation(@NotNull HttpMethod method, @NotNull String name) {
@@ -207,19 +156,28 @@ public class Resource {
   }
 
   private static class Operations<O extends Operation<?, ?, ?>> {
-    final @NotNull List<O> unnamedOperations;
+    final @Nullable O unnamedOperation;
     final @NotNull Map<String, O> namedOperations;
+    final @NotNull List<O> allOperations;
 
     Operations(@NotNull String resourceName, @NotNull Iterable<O> operations)
         throws ServiceInitializationException {
 
-      unnamedOperations = new ArrayList<>();
       namedOperations = new HashMap<>();
+      allOperations = new ArrayList<>();
 
+      O _unnamedOperation = null;
       for (O operation : operations) {
         @Nullable String name = operation.declaration().name();
         if (name == null) {
-          unnamedOperations.add(operation);
+          if (_unnamedOperation == null) {
+            _unnamedOperation = operation;
+            namedOperations.put(operation.declaration().nameOrDefaultName(), operation); // should still be reachable by name, e.g. ?op=_create
+          } else throw new ServiceInitializationException(
+              String.format("Default %s operation specified twice for resource '%s'",
+                  operation.declaration().kind(), resourceName
+              )
+          );
         } else {
           if (namedOperations.containsKey(name))
             throw new ServiceInitializationException(
@@ -229,12 +187,16 @@ public class Resource {
             );
           else namedOperations.put(name, operation);
         }
+
+        allOperations.add(operation);
       }
+
+      unnamedOperation = _unnamedOperation;
 
       // sort by path length, from longest to shortest. This is stable sort: operations with the same
       // path length stay in the order of declaration
 
-      unnamedOperations.sort((o1, o2) -> {
+      allOperations.sort((o1, o2) -> {
         final @Nullable OpFieldPath path1 = o1.declaration().path();
         final @Nullable OpFieldPath path2 = o2.declaration().path();
 

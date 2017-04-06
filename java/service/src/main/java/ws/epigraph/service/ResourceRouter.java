@@ -40,7 +40,7 @@ public final class ResourceRouter { // todo move to service?
       throws OperationNotFoundException {
 
     ReadOperation<?> operation = operationName == null
-                                 ? resource.unnamedReadOperations().iterator().next()
+                                 ? resource.readOperations().iterator().next()
                                  : resource.namedReadOperation(operationName);
 
     if (operation == null)

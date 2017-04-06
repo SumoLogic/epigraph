@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,13 @@ public final class UpdateOperationRouter
   private UpdateOperationRouter() {}
 
   @Override
-  protected @Nullable UpdateOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
+  protected @Nullable UpdateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
     return resource.namedUpdateOperation(name);
   }
 
   @Override
-  protected @NotNull Collection<? extends UpdateOperation<?>> unnamedOperations(final @NotNull Resource resource) {
-    return resource.unnamedUpdateOperations();
+  protected @NotNull Collection<? extends UpdateOperation<?>> operations(final @NotNull Resource resource) {
+    return resource.updateOperations();
   }
 
   @Override

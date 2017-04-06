@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package ws.epigraph.server.http.routing;
 
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
@@ -44,13 +43,13 @@ public final class ReadOperationRouter
 
   @Override
 
-  protected @Nullable ReadOperation<?> namedOperation(final @NotNull String name, final @NotNull Resource resource) {
+  protected @Nullable ReadOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
     return resource.namedReadOperation(name);
   }
 
   @Override
-  protected @NotNull Collection<? extends ReadOperation<?>> unnamedOperations(final @NotNull Resource resource) {
-    return resource.unnamedReadOperations();
+  protected @NotNull Collection<? extends ReadOperation<?>> operations(final @NotNull Resource resource) {
+    return resource.readOperations();
   }
 
   @Override

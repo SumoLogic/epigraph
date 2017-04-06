@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,18 +80,18 @@ public class DeleteOperationRouterTest {
       "    deleteProjection []( :`record` (id, firstName) )",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
-      "  delete {",
+      "  delete pathless2 {",
       "    id = \"pathless.2\"",
       "    deleteProjection []( :`record` (id, firstName, lastName) )",
       "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
-      "  delete {",
+      "  delete path1 {",
       "    id = \"path.1\"",
       "    path /.",
       "    deleteProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
-      "  delete {",
+      "  delete path2 {",
       "    id = \"path.2\"",
       "    path /.:`record`/bestFriend",
       "    deleteProjection :`record` (id, firstName)",

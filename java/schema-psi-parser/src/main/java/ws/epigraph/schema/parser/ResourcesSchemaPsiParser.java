@@ -39,9 +39,8 @@ import ws.epigraph.schema.*;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationsPsiParser;
 import ws.epigraph.schema.parser.psi.*;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
+import ws.epigraph.types.TypeKind;
 
 import java.util.*;
 import java.util.function.Function;
@@ -142,7 +141,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
     // convert datum kind to samovar
     @NotNull TypeApi type = resourceType.type();
-    if (resourceType.defaultTag() == null && valueTypeRef.defaultOverride() == null && type instanceof DatumTypeApi) {
+    if (resourceType.defaultTag() == null && valueTypeRef.defaultOverride() == null && type.kind() != TypeKind.UNION) {
       resourceType = type.dataType();
     }
 
@@ -180,9 +179,20 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     resourcePsiProcessingContext.outputReferenceContext().ensureAllReferencesResolved();
     resourcePsiProcessingContext.deleteReferenceContext().ensureAllReferencesResolved();
 
-    return new ResourceDeclaration(
+    final ResourceDeclaration resourceDeclaration = new ResourceDeclaration(
         fieldName, resourceType, operations, EpigraphPsiUtil.getLocation(psi)
     );
+
+    final ArrayList<ResourceDeclarationError> resourceDeclarationErrors = new ArrayList<>();
+    resourceDeclaration.validate(resourceDeclarationErrors);
+    for (ResourceDeclarationError resourceDeclarationError : resourceDeclarationErrors) {
+      context.addError(
+          resourceDeclarationError.message(),
+          resourceDeclarationError.location()
+      );
+    }
+
+    return resourceDeclaration;
   }
 
   private static void parseProjectionDef(

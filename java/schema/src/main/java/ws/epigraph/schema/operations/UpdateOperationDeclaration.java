@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,9 @@ public class UpdateOperationDeclaration extends OperationDeclaration {
           path, inputProjection, outputProjection, location
     );
   }
+
+  @Override
+  protected @NotNull String defaultName() { return "_update"; }
 
   @Override
   public @NotNull OpInputFieldProjection inputProjection() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,10 @@ public class ReadOperationDeclaration extends OperationDeclaration {
   }
 
   @Override
-  protected void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) {
+  protected @NotNull String defaultName() { return "_read"; }
+
+  @Override
+  public void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) {
     super.validate(resource, errors);
 
     ensureProjectionStartsWithResourceType(

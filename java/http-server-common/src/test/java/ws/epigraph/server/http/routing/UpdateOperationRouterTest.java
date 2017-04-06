@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,26 +80,26 @@ public class UpdateOperationRouterTest {
       "    inputProjection []( :`record` (id, firstName) )",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
-      "  update {",
+      "  update pathless2 {",
       "    id = \"pathless.2\"",
       "    inputProjection []( :`record` (id, firstName, lastName) )",
       "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
-      "  update {",
+      "  update path1 {",
       "    id = \"path.1\"",
       "    path /.",
       "    inputType UserRecord",
       "    inputProjection (id, firstName )",
       "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
-      "  update {",
+      "  update path2 {",
       "    id = \"path.2\"",
       "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
       "    inputProjection (id, +firstName )",
       "    outputProjection :`record` (id, firstName)",
       "  }",
-      "  update {",
+      "  update path3 {",
       "    id = \"path.3\"",
       "    path /.:`record`/bestFriend",
       "    inputType UserRecord",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,14 +66,14 @@ public class ReadRequestUrlPsiParserTest {
       "  read {",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
-      "  read {",
+      "  read r2 {",
       "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
-      "  read {",
+      "  read r3 {",
       "    path /.",
       "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
-      "  read {",
+      "  read r4 {",
       "    path /.:`record`/bestFriend",
       "    outputProjection :`record` (id, firstName)",
       "  }",
