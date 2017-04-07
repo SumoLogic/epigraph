@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id 'org.jetbrains.intellij' version "0.2.5"
+  id 'org.jetbrains.intellij' version "0.2.7"
 }
 
 apply plugin: 'java'

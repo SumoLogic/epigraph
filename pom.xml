@@ -114,7 +114,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.1.6</version>
+        <version>1.2.3</version>
       </dependency>
 
       <dependency>
@@ -144,7 +144,7 @@
       <dependency>
         <groupId>com.typesafe.scala-logging</groupId>
         <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
-        <version>3.1.0</version>
+        <version>3.5.0</version>
       </dependency>
 
       <dependency>
@@ -221,8 +221,7 @@
       <dependency>
         <groupId>org.pegdown</groupId>
         <artifactId>pegdown</artifactId>
-        <!-- https://github.com/maiflai/gradle-scalatest/issues/16 don't try to use newer versions -->
-        <version>1.1.0</version>
+        <version>1.6.0</version>
       </dependency>
 
       <dependency>
@@ -250,26 +249,26 @@
       <dependency>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest_${scala.version.major.minor}</artifactId>
-        <version>3.0.1</version>
+        <version>3.2.0-SNAP4</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.22</version>
+        <version>1.7.25</version>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-nop</artifactId>
-        <version>1.7.22</version>
+        <version>1.7.25</version>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.7.22</version>
+        <version>1.7.25</version>
       </dependency>
 
       <dependency>
