@@ -1132,10 +1132,10 @@ public final class ReqOutputProjectionsPsiParser {
       throw new PsiProcessingException(
           String.format(
               "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
-              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op)),
-              tailType.name()
+              tailType.name(),
+              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op))
           ),
-          modelProjectionPsi,
+          tailTypeRefPsi,
           context
       );
 
