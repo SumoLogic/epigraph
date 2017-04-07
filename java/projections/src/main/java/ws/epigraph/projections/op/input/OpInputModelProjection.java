@@ -111,7 +111,7 @@ public abstract class OpInputModelProjection<
 
   @SuppressWarnings("unchecked")
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
+  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     this.required = value.required();
     this.defaultValue = (D) value.defaultValue();

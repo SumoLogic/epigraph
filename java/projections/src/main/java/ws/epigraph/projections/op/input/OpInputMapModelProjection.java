@@ -169,7 +169,7 @@ public class OpInputMapModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull OpInputMapModelProjection value) {
+  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpInputMapModelProjection value) {
     super.resolve(name, value);
     this.keyProjection = value.keyProjection();
     this.itemsProjection = value.itemsProjection();

@@ -77,7 +77,7 @@ public class ReqDeleteRecordModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqDeleteRecordModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqDeleteRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

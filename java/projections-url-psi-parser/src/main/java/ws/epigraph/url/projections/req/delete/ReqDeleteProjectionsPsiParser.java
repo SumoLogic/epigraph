@@ -456,8 +456,10 @@ public final class ReqDeleteProjectionsPsiParser {
         @Nullable UrlReqDeleteRecordModelProjection recordModelProjectionPsi =
             psi.getReqDeleteRecordModelProjection();
 
-        if (recordModelProjectionPsi == null)
+        if (recordModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
@@ -482,8 +484,10 @@ public final class ReqDeleteProjectionsPsiParser {
         final OpDeleteMapModelProjection opMap = (OpDeleteMapModelProjection) op;
         @Nullable UrlReqDeleteMapModelProjection mapModelProjectionPsi = psi.getReqDeleteMapModelProjection();
 
-        if (mapModelProjectionPsi == null)
+        if (mapModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
@@ -509,8 +513,10 @@ public final class ReqDeleteProjectionsPsiParser {
         @Nullable UrlReqDeleteListModelProjection listModelProjectionPsi =
             psi.getReqDeleteListModelProjection();
 
-        if (listModelProjectionPsi == null)
+        if (listModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
@@ -556,6 +562,27 @@ public final class ReqDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + model.kind(), psi, context);
     }
 
+  }
+
+  private static void checkModelPsi(
+      @NotNull UrlReqDeleteModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull ReqDeletePsiProcessingContext context) {
+
+    TypeKind actualKind = null;
+
+    if (psi.getReqDeleteRecordModelProjection() != null) actualKind = TypeKind.RECORD;
+    else if (psi.getReqDeleteMapModelProjection() != null) actualKind = TypeKind.MAP;
+    else if (psi.getReqDeleteListModelProjection() != null) actualKind = TypeKind.LIST;
+
+    if (actualKind != null && actualKind != expectedKind)
+      context.addError(
+          String.format(
+              "Expected '%s', got '%s' model kind",
+              expectedKind,
+              actualKind
+          ), psi
+      );
   }
 
   @Contract("_, _, null, _, _ -> null")

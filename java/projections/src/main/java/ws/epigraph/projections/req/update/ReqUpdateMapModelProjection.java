@@ -85,7 +85,7 @@ public class ReqUpdateMapModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqUpdateMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateMapModelProjection value) {
     super.resolve(name, value);
     updateKeys = value.updateKeys();
     keys = value.keys();

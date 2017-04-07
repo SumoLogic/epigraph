@@ -124,7 +124,7 @@ public class OpInputListModelProjection
 
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull OpInputListModelProjection value) {
+  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpInputListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }

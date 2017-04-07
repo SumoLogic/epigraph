@@ -91,11 +91,6 @@ public class UndertowHandler implements HttpHandler {
     this.responseTimeout = responseTimeout;
   }
 
-  private boolean isDebugMode() {
-    // todo move to some configuration
-    return "true".equals(System.getProperty("epigraph.debug"));
-  }
-
   @Override
   public void handleRequest(HttpServerExchange exchange) {
     // dispatch to a worker thread so we can go to blocking mode and enable streaming
@@ -120,7 +115,6 @@ public class UndertowHandler implements HttpHandler {
         final CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
         if (customOperation != null) {
           UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, exchange);
-          if (isDebugMode()) LOG.info(Util.dumpUrl(urlPsi));
           handleCustomRequest(resource, urlPsi, customOperation, exchange);
           return;
         }
@@ -128,19 +122,15 @@ public class UndertowHandler implements HttpHandler {
 
       if (requestMethod == HttpMethod.GET) {
         UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, exchange);
-        if (isDebugMode()) LOG.info(Util.dumpUrl(urlPsi));
         handleReadRequest(resource, operationName, urlPsi, exchange);
       } else if (requestMethod == HttpMethod.POST) {
         UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, exchange);
-        if (isDebugMode()) LOG.info(Util.dumpUrl(urlPsi));
         handleCreateRequest(resource, operationName, urlPsi, exchange);
       } else if (requestMethod == HttpMethod.PUT) {
         UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, exchange);
-        if (isDebugMode()) LOG.info(Util.dumpUrl(urlPsi));
         handleUpdateRequest(resource, operationName, urlPsi, exchange);
       } else if (requestMethod == HttpMethod.DELETE) {
         UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, exchange);
-        if (isDebugMode()) LOG.info(Util.dumpUrl(urlPsi));
         handleDeleteRequest(resource, operationName, urlPsi, exchange);
       } else {
         badRequest("Unsupported HTTP method '" + requestMethod + "'\n", CONTENT_TYPE_TEXT, exchange);
@@ -199,6 +189,11 @@ public class UndertowHandler implements HttpHandler {
   private @Nullable String getOperationName(@NotNull HttpServerExchange exchange) {
     final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.OPERATION_NAME);
     return headerValues == null ? null : headerValues.getFirst(); // warn if more than one?
+  }
+
+  private boolean isDebugMode(@NotNull HttpServerExchange exchange) {
+    final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.DEBUG_MODE);
+    return headerValues != null && "true".equals(headerValues.getFirst());
   }
 
   @SuppressWarnings("unchecked")
@@ -316,6 +311,8 @@ public class UndertowHandler implements HttpHandler {
         errorsAccumulator
     );
 
+    if (isDebugMode(exchange)) LOG.info(Util.dumpUrl(urlPsi));
+
     if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
 
@@ -423,6 +420,8 @@ public class UndertowHandler implements HttpHandler {
         errorsAccumulator
     );
 
+    if (isDebugMode(exchange)) LOG.info(Util.dumpUrl(urlPsi));
+
     if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
 
@@ -522,6 +521,8 @@ public class UndertowHandler implements HttpHandler {
         errorsAccumulator
     );
 
+    if (isDebugMode(exchange)) LOG.info(Util.dumpUrl(urlPsi));
+
     if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
 
@@ -618,6 +619,8 @@ public class UndertowHandler implements HttpHandler {
         errorsAccumulator
     );
 
+    if (isDebugMode(exchange)) LOG.info(Util.dumpUrl(urlPsi));
+
     if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);
 
@@ -700,6 +703,8 @@ public class UndertowHandler implements HttpHandler {
         UrlSubParserDefinitions.CUSTOM_URL,
         errorsAccumulator
     );
+
+    if (isDebugMode(exchange)) LOG.info(Util.dumpUrl(urlPsi));
 
     if (errorsAccumulator.hasErrors())
       reportPsiProcessingErrorsAndFail(urlString, psiErrorsToPsiProcessingErrors(errorsAccumulator.errors()), exchange);

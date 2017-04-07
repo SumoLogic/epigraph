@@ -73,6 +73,7 @@
 - [ ] enable model projection references for req projections
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
+- [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags
 
 # Operations
 

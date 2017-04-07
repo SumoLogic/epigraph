@@ -232,6 +232,7 @@ public final class ReadReqPathPsiParser {
       case RECORD:
         final OpRecordModelPath opRecordPath = (OpRecordModelPath) op;
 
+        checkModelPsi(psi, TypeKind.RECORD, context);
         if (psi.getReqOutputComaRecordModelProjection() != null) {
           final @Nullable OpFieldPathEntry opFieldPath = opRecordPath.pathFieldProjection();
           assert opFieldPath != null;
@@ -260,6 +261,8 @@ public final class ReadReqPathPsiParser {
             context
         );
       case MAP:
+        checkModelPsi(psi, TypeKind.MAP, context);
+
         if (psi.getReqOutputComaMapModelProjection() != null) {
           throw new PathNotMatchedException(
               "Operation path not matched, map key must be present",
@@ -304,6 +307,27 @@ public final class ReadReqPathPsiParser {
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
     }
+  }
+  
+  private static void checkModelPsi(
+      @NotNull UrlReqOutputComaModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull ReqPathPsiProcessingContext context) {
+
+    TypeKind actualKind = null;
+
+    if (psi.getReqOutputComaRecordModelProjection() != null) actualKind = TypeKind.RECORD;
+    else if (psi.getReqOutputComaMapModelProjection() != null) actualKind = TypeKind.MAP;
+    else if (psi.getReqOutputComaListModelProjection() != null) actualKind = TypeKind.LIST;
+
+    if (actualKind != null && actualKind != expectedKind)
+      context.addError(
+          String.format(
+              "Expected '%s', got '%s' model kind",
+              expectedKind,
+              actualKind
+          ), psi
+      );
   }
 
   private static void ensureModelKind(

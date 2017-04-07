@@ -465,8 +465,10 @@ public final class ReqUpdateProjectionsPsiParser {
         @Nullable UrlReqUpdateRecordModelProjection recordModelProjectionPsi =
             psi.getReqUpdateRecordModelProjection();
 
-        if (recordModelProjectionPsi == null)
+        if (recordModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, update, opRecord, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
@@ -492,8 +494,10 @@ public final class ReqUpdateProjectionsPsiParser {
         final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
         @Nullable UrlReqUpdateMapModelProjection mapModelProjectionPsi = psi.getReqUpdateMapModelProjection();
 
-        if (mapModelProjectionPsi == null)
+        if (mapModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, update, opMap, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
@@ -520,8 +524,10 @@ public final class ReqUpdateProjectionsPsiParser {
         @Nullable UrlReqUpdateListModelProjection listModelProjectionPsi =
             psi.getReqUpdateListModelProjection();
 
-        if (listModelProjectionPsi == null)
+        if (listModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, update, opList, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
@@ -568,6 +574,27 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + model.kind(), psi, context);
     }
 
+  }
+
+  private static void checkModelPsi(
+      @NotNull UrlReqUpdateModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull ReqUpdatePsiProcessingContext context) {
+
+    TypeKind actualKind = null;
+
+    if (psi.getReqUpdateRecordModelProjection() != null) actualKind = TypeKind.RECORD;
+    else if (psi.getReqUpdateMapModelProjection() != null) actualKind = TypeKind.MAP;
+    else if (psi.getReqUpdateListModelProjection() != null) actualKind = TypeKind.LIST;
+
+    if (actualKind != null && actualKind != expectedKind)
+      context.addError(
+          String.format(
+              "Expected '%s', got '%s' model kind",
+              expectedKind,
+              actualKind
+          ), psi
+      );
   }
 
   @Contract("_, _, null, _, _ -> null")

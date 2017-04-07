@@ -105,6 +105,8 @@ public abstract class AbstractModelProjection<
   public SMP normalizedForType(final @NotNull DatumTypeApi targetType, boolean keepPhantomTails) {
     // keep in sync with AbstractVarProjection.normalizedForType
     assertResolved();
+    assert (type().kind() == targetType.kind());
+
     if (targetType.equals(type()))
       return self();
 
@@ -324,7 +326,7 @@ public abstract class AbstractModelProjection<
 
   @SuppressWarnings("unchecked")
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     if (!isReference)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())

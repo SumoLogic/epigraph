@@ -92,7 +92,7 @@ public interface GenVarProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  VP normalizedForType( @NotNull TypeApi type, boolean keepPhantomTails);
+  VP normalizedForType(@NotNull TypeApi type, boolean keepPhantomTails);
 
   /**
    * Merges var projections together.
@@ -101,7 +101,7 @@ public interface GenVarProjection<
    * to be the first item of the list anyways). Such design allows for easier implementations that have to
    * iterate over all the items being merged.
    *
-   * @param varProjections var projections to merge, guaranteed to contain at least one element
+   * @param varProjections   var projections to merge, guaranteed to contain at least one element
    * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
    *                         may be applicable to some of it's subtypes.
    * @return merged var projection
@@ -152,15 +152,4 @@ public interface GenVarProjection<
   @Override
   ProjectionReferenceName referenceName();
 
-  /**
-   * Resolves this projection reference from another instance. Acts as a copy constructor for all
-   * parts except for {@link #type()}, {@link #referenceName()} and {@link #location()}.
-   * Is only applicable to reference instances.
-   *
-   * @param name  qualified projection name
-   * @param value projection instance to copy state from
-   * @see #referenceName()
-   */
-  @Override
-  void resolve(ProjectionReferenceName name, @NotNull VP value);
 }

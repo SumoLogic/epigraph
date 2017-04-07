@@ -74,7 +74,7 @@ public class ReqInputMapModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqInputMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqInputMapModelProjection value) {
     super.resolve(name, value);
     this.keys = value.keys();
     this.valuesProjection = value.itemsProjection();

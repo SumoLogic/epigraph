@@ -144,7 +144,7 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqOutputMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

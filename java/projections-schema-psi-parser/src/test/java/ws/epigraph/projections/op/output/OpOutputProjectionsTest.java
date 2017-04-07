@@ -166,9 +166,132 @@ public class OpOutputProjectionsTest {
     }
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Test
   public void testParseModelRecursive() throws PsiProcessingException {
-    testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+    final OpOutputVarProjection vp =
+        testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+
+    // check that it's actually correct
+
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("bestFriend")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    assertEquals(2, rmp.fieldProjections().size());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testNormalizeRecursive() throws PsiProcessingException {
+    final OpOutputVarProjection vp =
+        testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
+        .normalizedForType(User.type, false);
+
+    // check that it's actually correct
+
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("bestFriend")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    assertEquals(2, rmp.fieldProjections().size());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testParseSelfVarRecursive() throws PsiProcessingException {
+    final OpOutputVarProjection vp =
+        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
+
+    // check that it's actually correct
+
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    assertEquals(2, rmp.fieldProjections().size());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testNormalizeSelfVarRecursive() throws PsiProcessingException {
+    final OpOutputVarProjection vp =
+        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
+        .normalizedForType(User.type, false);
+
+    // check that it's actually correct
+
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    assertEquals(2, rmp.fieldProjections().size());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testNormalizeSelfVarModelRecursive() throws PsiProcessingException {
+    final OpOutputVarProjection vp =
+        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
+
+
+    // rmp = :record
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    // rmp = $rmp/worstEnemy:record
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+    assertEquals(2, rmp.fieldProjections().size());
+
+    rmp = rmp.normalizedForType(UserRecord.type, false);
+    assertEquals(2, rmp.fieldProjections().size());
+
+    // rmp = $rmp/worstEnemy:record
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("worstEnemy")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    assertEquals(2, rmp.fieldProjections().size());
   }
 
   @Test

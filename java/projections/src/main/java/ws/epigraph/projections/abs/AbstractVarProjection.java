@@ -179,6 +179,7 @@ public abstract class AbstractVarProjection<
     // keep in sync with AbstractModelProjection.normalizedForType
     assertResolved();
     assert tagProjections != null;
+    assert (type().kind() == targetType.kind());
 
     if (targetType.equals(type()))
       return self();
@@ -287,7 +288,31 @@ public abstract class AbstractVarProjection<
       }
 
       if (!tagProjections.isEmpty()) {
-        final @Nullable TP mergedTag = tagProjections.get(0).mergeTags(tag, tagProjections, keepPhantomTails);
+        final TP tp0 = tagProjections.get(0);
+
+        @Nullable TP mergedTag = null;
+
+        if (effectiveType.kind() != TypeKind.UNION) {
+          if (tagProjections.size() == 1) {
+            if (!tp0.projection().isResolved()) // recursive self-var
+              mergedTag = tp0;
+          } else {
+            // todo: handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`
+            // have to dereference and postpone merging?
+            final Optional<TP> recTp = tagProjections.stream().filter(tp -> !tp.projection().isResolved()).findFirst();
+            if (recTp.isPresent())
+              throw new IllegalArgumentException(
+                  String.format(
+                      "Can't merge recursive and non-recursive projections [%s]",
+                      recTp.get().projection().referenceName()
+                  )
+              );
+          }
+        }
+
+        if (mergedTag == null)
+          mergedTag = tp0.mergeTags(tag, tagProjections, keepPhantomTails);
+
         if (mergedTag != null)
           mergedTags.put(tag.name(), mergedTag);
       }
@@ -381,12 +406,12 @@ public abstract class AbstractVarProjection<
   public ProjectionReferenceName referenceName() { return name; }
 
   @Override
-  public void setReferenceName(final @NotNull ProjectionReferenceName referenceName) {
+  public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
     this.name = referenceName;
   }
 
   @Override
-  public void resolve(ProjectionReferenceName name, @NotNull VP value) {
+  public void resolve(@Nullable ProjectionReferenceName name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (this.name != null)

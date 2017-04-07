@@ -805,7 +805,10 @@ public final class ReqOutputProjectionsPsiParser {
         @Nullable
         UrlReqOutputTrunkRecordModelProjection trunkRecordProjectionPsi = psi.getReqOutputTrunkRecordModelProjection();
 
-        if (trunkRecordProjectionPsi == null) break;
+        if (trunkRecordProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.RECORD, context);
+          break;
+        }
         else {
           return (StepsAndProjection<? extends MP>) parseTrunkRecordModelProjection(
               (OpOutputRecordModelProjection) op,
@@ -831,8 +834,10 @@ public final class ReqOutputProjectionsPsiParser {
         @Nullable
         UrlReqOutputTrunkMapModelProjection trunkMapProjectionPsi = psi.getReqOutputTrunkMapModelProjection();
 
-        if (trunkMapProjectionPsi == null) break;
-        else {
+        if (trunkMapProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.MAP, context);
+          break;
+        } else {
           return (StepsAndProjection<? extends MP>) parseTrunkMapModelProjection(
               (OpOutputMapModelProjection) op,
               required,
@@ -872,6 +877,26 @@ public final class ReqOutputProjectionsPsiParser {
 
   }
 
+  private static void checkModelPsi(
+      @NotNull UrlReqOutputTrunkModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull ReqOutputPsiProcessingContext context) {
+
+    TypeKind actualKind = null;
+
+    if (psi.getReqOutputTrunkRecordModelProjection() != null) actualKind = TypeKind.RECORD;
+    else if (psi.getReqOutputTrunkMapModelProjection() != null) actualKind = TypeKind.MAP;
+
+    if (actualKind != null && actualKind != expectedKind)
+      context.addError(
+          String.format(
+              "Expected '%s', got '%s' model kind",
+              expectedKind,
+              actualKind
+          ), psi
+      );
+  }
+
   @SuppressWarnings("unchecked")
   private static <MP extends ReqOutputModelProjection<?, ?, ?>> @NotNull MP parseComaModelProjection(
       @NotNull Class<MP> modelClass,
@@ -895,8 +920,10 @@ public final class ReqOutputProjectionsPsiParser {
         @Nullable UrlReqOutputComaRecordModelProjection recordModelProjectionPsi =
             psi.getReqOutputComaRecordModelProjection();
 
-        if (recordModelProjectionPsi == null)
+        if (recordModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, required, opRecord, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
@@ -923,8 +950,10 @@ public final class ReqOutputProjectionsPsiParser {
         final OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
         @Nullable UrlReqOutputComaMapModelProjection mapModelProjectionPsi = psi.getReqOutputComaMapModelProjection();
 
-        if (mapModelProjectionPsi == null)
+        if (mapModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, required, opMap, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
@@ -952,8 +981,10 @@ public final class ReqOutputProjectionsPsiParser {
         @Nullable UrlReqOutputComaListModelProjection listModelProjectionPsi =
             psi.getReqOutputComaListModelProjection();
 
-        if (listModelProjectionPsi == null)
+        if (listModelProjectionPsi == null) {
+          checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, required, opList, params, annotations, psi, context);
+        }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
@@ -1002,6 +1033,27 @@ public final class ReqOutputProjectionsPsiParser {
       default:
         throw new PsiProcessingException("Unknown type kind: " + model.kind(), psi, context);
     }
+  }
+
+  private static void checkModelPsi(
+      @NotNull UrlReqOutputComaModelProjection psi,
+      @NotNull TypeKind expectedKind,
+      @NotNull ReqOutputPsiProcessingContext context) {
+
+    TypeKind actualKind = null;
+
+    if (psi.getReqOutputComaRecordModelProjection() != null) actualKind = TypeKind.RECORD;
+    else if (psi.getReqOutputComaMapModelProjection() != null) actualKind = TypeKind.MAP;
+    else if (psi.getReqOutputComaListModelProjection() != null) actualKind = TypeKind.LIST;
+
+    if (actualKind != null && actualKind != expectedKind)
+      context.addError(
+          String.format(
+              "Expected '%s', got '%s' model kind",
+              expectedKind,
+              actualKind
+          ), psi
+      );
   }
 
   @Contract("_, _, null, _, _ -> null")

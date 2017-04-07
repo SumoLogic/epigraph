@@ -89,7 +89,7 @@ public abstract class AbstractReqModelProjection<
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull SMP value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     params = value.params();
   }

@@ -67,7 +67,7 @@ public class OpDeleteListModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull OpDeleteListModelProjection value) {
+  public void resolve(final @NotNull ProjectionReferenceName name, final @NotNull OpDeleteListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }

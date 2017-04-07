@@ -53,8 +53,8 @@ public abstract class GenQn<T, S extends GenQn<T, S>> {
     } else this.segments = segments;
   }
 
+  @SuppressWarnings("unchecked")
   private @NotNull T[] newArray(int size) {
-    //noinspection unchecked
     return (T[]) Array.newInstance(elementClass, size);
   }
 

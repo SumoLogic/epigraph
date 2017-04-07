@@ -72,7 +72,7 @@ public class OpDeleteRecordModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull OpDeleteRecordModelProjection value) {
+  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpDeleteRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

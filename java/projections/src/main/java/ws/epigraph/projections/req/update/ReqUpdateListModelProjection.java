@@ -67,7 +67,7 @@ public class ReqUpdateListModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqUpdateListModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
   }

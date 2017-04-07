@@ -75,7 +75,7 @@ public class ReqDeleteMapModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqDeleteMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqDeleteMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
     valuesProjection = value.itemsProjection();

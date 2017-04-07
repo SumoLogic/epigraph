@@ -77,7 +77,7 @@ public class ReqInputRecordModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull ReqInputRecordModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

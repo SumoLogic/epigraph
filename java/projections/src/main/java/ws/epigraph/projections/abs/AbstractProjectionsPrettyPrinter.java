@@ -77,7 +77,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
         shouldPrint = false;
       } else {
         visitedVarRefs.add(shortName);
-        l.print("$").print(shortName.toString()).print(" = ");
+        if (p.type().kind() == TypeKind.UNION) // otherwise label will be printed by model
+          l.print("$").print(shortName.toString()).print(" = ");
       }
     }
 

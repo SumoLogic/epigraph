@@ -116,7 +116,7 @@ public class OpOutputListModelProjection
   }
 
   @Override
-  public void resolve(final ProjectionReferenceName name, final @NotNull OpOutputListModelProjection value) {
+  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpOutputListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }
