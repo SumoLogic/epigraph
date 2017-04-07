@@ -179,8 +179,7 @@ public abstract class AbstractModelProjection<
   /**
    * Called after {@code normalizeForType} is performed. Can perform any extra steps and return a modified version.
    */
-  @NotNull
-  protected SMP postNormalizedForType(
+  protected @NotNull SMP postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       boolean keepPhantomTails,
       @NotNull SMP normalizationResult) {
@@ -315,7 +314,7 @@ public abstract class AbstractModelProjection<
   public @Nullable ProjectionReferenceName referenceName() { return name; }
 
   @Override
-  public void setReferenceName(final @NotNull ProjectionReferenceName referenceName) {
+  public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
     if (name != null) throw new
         IllegalArgumentException(
         String.format("Can't override reference name (%s => %s)", name, referenceName)

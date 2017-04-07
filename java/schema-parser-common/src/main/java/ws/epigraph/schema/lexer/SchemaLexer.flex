@@ -32,7 +32,7 @@ BLOCK_COMMENT="/*" !([^]* "*/" [^]*) ("*/")?
 LINE_COMMENT="/""/"[^\r\n]*
 
 STRING=\" ( [^\"\\] | \\ ( [\"\\/bfnrt] | u[0-9]{4} ) )* \"
-NUMBER=([:digit:])+(\.([:digit:])+)?
+NUMBER=[-+]?[:digit:]*\.?[:digit:]+([eE][-+]?[:digit:]+)?
 
 ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
 

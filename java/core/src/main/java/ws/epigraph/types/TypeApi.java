@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.names.TypeName;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +32,7 @@ public interface TypeApi {
   @NotNull
   TypeName name();
 
-  @NotNull Collection<@NotNull ? extends TypeApi> supertypes();
+  @NotNull List<@NotNull ? extends TypeApi> supertypes();
 
   /**
    * @see Class#isAssignableFrom(Class)

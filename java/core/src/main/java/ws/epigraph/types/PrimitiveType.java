@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,8 @@ public abstract class PrimitiveType<Native> extends DatumType implements Primiti
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends PrimitiveType<Native>> supertypes() {
-    return (Collection<? extends PrimitiveType<Native>>) super.supertypes();
+  public @NotNull List<@NotNull ? extends PrimitiveType<Native>> supertypes() {
+    return (List<? extends PrimitiveType<Native>>) super.supertypes();
   }
 
   public abstract @NotNull PrimitiveDatum.Builder<Native> createBuilder(@NotNull Native val);

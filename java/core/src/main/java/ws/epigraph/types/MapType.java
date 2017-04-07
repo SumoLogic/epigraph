@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import ws.epigraph.data.Val;
 import ws.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public abstract class MapType extends DatumType implements MapTypeApi {
@@ -63,8 +62,8 @@ public abstract class MapType extends DatumType implements MapTypeApi {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends MapType> supertypes() {
-    return (Collection<? extends MapType>) super.supertypes();
+  public @NotNull List<@NotNull ? extends MapType> supertypes() {
+    return (List<? extends MapType>) super.supertypes();
   }
 
   @Override

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.names.QualifiedTypeName;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -51,8 +50,8 @@ public abstract class UnionType extends Type implements UnionTypeApi {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends UnionType> supertypes() {
-    return (Collection<? extends UnionType>) super.supertypes();
+  public @NotNull List<@NotNull ? extends UnionType> supertypes() {
+    return (List<? extends UnionType>) super.supertypes();
   }
 
   public @NotNull DataType dataType(@Nullable Tag defaultTag) {

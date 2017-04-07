@@ -18,9 +18,8 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.names.QualifiedTypeName;
-import ws.epigraph.names.TypeName;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -33,5 +32,5 @@ public interface PrimitiveTypeApi extends DatumTypeApi {
   @NotNull QualifiedTypeName name();
 
   @Override
-  @NotNull Collection<@NotNull ? extends PrimitiveTypeApi> supertypes();
+  @NotNull List<@NotNull ? extends PrimitiveTypeApi> supertypes();
 }

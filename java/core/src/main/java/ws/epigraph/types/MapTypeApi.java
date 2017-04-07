@@ -18,7 +18,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,5 +32,5 @@ public interface MapTypeApi extends DatumTypeApi {
 //  default @NotNull TypeKind kind() { return TypeKind.MAP;}
 
   @Override
-  @NotNull Collection<@NotNull ? extends MapTypeApi> supertypes();
+  @NotNull List<@NotNull ? extends MapTypeApi> supertypes();
 }

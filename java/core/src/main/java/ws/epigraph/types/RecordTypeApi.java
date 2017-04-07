@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.names.QualifiedTypeName;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,5 +40,5 @@ public interface RecordTypeApi extends DatumTypeApi {
 //  default @NotNull TypeKind kind() { return TypeKind.RECORD; }
 
   @Override
-  @NotNull Collection<@NotNull ? extends RecordTypeApi> supertypes();
+  @NotNull List<@NotNull ? extends RecordTypeApi> supertypes();
 }

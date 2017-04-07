@@ -32,7 +32,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -122,32 +123,20 @@ public class ReqOutputRecordModelProjection
   }
 
   @Override
-  public ReqOutputRecordModelProjection normalizedForType(
+  protected @NotNull ReqOutputRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails) {
+      final boolean keepPhantomTails,
+      final @NotNull ReqOutputRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
-    ReqOutputRecordModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
+    
     final Map<String, ReqOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
-
-    final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries =
-        normalizedFields
-            .entrySet()
-            .stream()
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    entry -> new ReqOutputFieldProjectionEntry(
-                        targetRecordType.fieldsMap().get(entry.getKey()),
-                        entry.getValue(),
-                        TextLocation.UNKNOWN
-                    ),
-                    (u, v) -> {
-                      throw new IllegalStateException(String.format("Duplicate key %s", u));
-                    },
-                    LinkedHashMap::new
-                )
-            );
+    
+    final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        ReqOutputFieldProjectionEntry::new
+    );
 
     return new ReqOutputRecordModelProjection(
         n.type(),

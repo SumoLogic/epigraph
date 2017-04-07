@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import ws.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -46,8 +45,8 @@ public abstract class DoubleType extends PrimitiveType<Double> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull ? extends DoubleType> supertypes() {
-    return (Collection<? extends DoubleType>) super.supertypes();
+  public @NotNull List<@NotNull ? extends DoubleType> supertypes() {
+    return (List<? extends DoubleType>) super.supertypes();
   }
 
   @Override

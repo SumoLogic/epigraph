@@ -17,6 +17,7 @@
 package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TypeApi;
 
@@ -27,7 +28,7 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
   /** @return qualified projection reference name or {@code null} if there is no name */
   ProjectionReferenceName referenceName();
 
-  void setReferenceName(@NotNull ProjectionReferenceName referenceName);
+  void setReferenceName(@Nullable ProjectionReferenceName referenceName);
 
   /**
    * Resolves this projection reference from another instance.

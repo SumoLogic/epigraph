@@ -29,10 +29,7 @@ import ws.epigraph.services.resources.epigraph.operations.types.path.EpigraphFie
 import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.Type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -48,7 +45,7 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       final @NotNull ReadOperationDeclaration declaration,
       @NotNull Map<String, ? extends Type> types) {
     super(declaration);
-    this.types = types;
+    this.types = new TreeMap<>(types); // make it sorted
   }
 
   @Override

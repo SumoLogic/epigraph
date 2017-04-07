@@ -125,11 +125,11 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  public ReqOutputMapModelProjection normalizedForType(
+  protected @NotNull ReqOutputMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails) {
+      final boolean keepPhantomTails,
+      final @NotNull ReqOutputMapModelProjection n) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    @NotNull ReqOutputMapModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
     return new ReqOutputMapModelProjection(
         n.type(),
         n.required(),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package ws.epigraph.server.http.undertow;
 
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.impl.DebugUtil;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
@@ -30,6 +31,7 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.operations.Operation;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -292,6 +294,10 @@ public final class Util {
     if (contentTypeHeader == null) return false;
     for (String header : contentTypeHeader) if (header.toLowerCase().contains(CONTENT_TYPE_HTML)) return true;
     return false;
+  }
+
+  static @NotNull String dumpUrl(@NotNull UrlUrl url) {
+    return DebugUtil.psiToString(url, true, false);
   }
 
 }

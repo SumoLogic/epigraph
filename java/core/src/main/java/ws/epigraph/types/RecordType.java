@@ -57,7 +57,7 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull Collection<@NotNull RecordType> supertypes() { return (Collection<RecordType>) super.supertypes(); }
+  public @NotNull List<@NotNull RecordType> supertypes() { return (List<RecordType>) super.supertypes(); }
 
   @Override
   public abstract @NotNull List<@NotNull ? extends Field> immediateFields(); // TODO could be protected but used by pretty-printer

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.names.QualifiedTypeName;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -33,7 +33,7 @@ public interface UnionTypeApi extends TypeApi {
   @NotNull QualifiedTypeName name();
 
   @Override
-  @NotNull Collection<@NotNull ? extends UnionTypeApi> supertypes();
+  @NotNull List<@NotNull ? extends UnionTypeApi> supertypes();
 
   @NotNull DataTypeApi dataType(@Nullable TagApi defaultTag);
 }

@@ -102,11 +102,11 @@ public class ReqOutputListModelProjection
   }
 
   @Override
-  public ReqOutputListModelProjection normalizedForType(
+  protected @NotNull ReqOutputListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails) {
+      final boolean keepPhantomTails,
+      final @NotNull ReqOutputListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
-    ReqOutputListModelProjection n = super.normalizedForType(targetType, keepPhantomTails);
     return new ReqOutputListModelProjection(
         n.type(),
         n.required(),

@@ -18,7 +18,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -27,7 +27,7 @@ public interface ListTypeApi extends DatumTypeApi {
   @NotNull DataTypeApi elementType();
 
   @Override
-  @NotNull Collection<@NotNull ? extends ListTypeApi> supertypes();
+  @NotNull List<@NotNull ? extends ListTypeApi> supertypes();
 //
 //  @Override
 //  default @NotNull TypeKind kind() { return TypeKind.LIST; }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,25 +53,25 @@ public abstract class Type implements TypeApi {
   public @NotNull TypeName name() { return name; }
 
   /**
-   * @return immediate (i.e. not transitive) supertypes of this type, in the order of increasing priority
+   * @return immediate (i.e. not transitive) supertypes of this type
    */
   public @NotNull List<@NotNull ? extends Type> immediateSupertypes() { return immediateSupertypes; }
 
-  private @Nullable Collection<? extends Type> supertypes = null;
+  private @Nullable List<? extends Type> supertypes = null;
 
   /**
    * @return linearized supertypes of this type, in order of decreasing priority
    */
   @Override
-  public @NotNull Collection<@NotNull ? extends Type> supertypes() {
+  public @NotNull List<@NotNull ? extends Type> supertypes() {
     if (supertypes == null) { // TODO move initialization to constructor?
       LinkedList<Type> acc = new LinkedList<>();
       for (Type is : immediateSupertypes) {
         assert !acc.contains(is);
         acc.addFirst(is);
-        is.supertypes().stream().filter(iss -> !acc.contains(iss)).forEachOrdered(acc::addFirst);
+        is.supertypes().stream().filter(iss -> !acc.contains(iss)).forEachOrdered(acc::addLast);
       }
-      supertypes = Unmodifiable.collection(new LinkedHashSet<>(acc));
+      supertypes = Unmodifiable.list(acc);
       assert supertypes.size() == acc.size(); // assert there was no duplicates in the acc
     }
     return supertypes;
