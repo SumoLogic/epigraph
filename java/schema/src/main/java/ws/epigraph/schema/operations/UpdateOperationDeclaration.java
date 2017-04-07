@@ -29,6 +29,8 @@ import ws.epigraph.types.TypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateOperationDeclaration extends OperationDeclaration {
+  public static final @NotNull String DEFAULT_NAME = "_update";
+
   public UpdateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
@@ -43,7 +45,7 @@ public class UpdateOperationDeclaration extends OperationDeclaration {
   }
 
   @Override
-  protected @NotNull String defaultName() { return "_update"; }
+  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   @Override
   public @NotNull OpInputFieldProjection inputProjection() {

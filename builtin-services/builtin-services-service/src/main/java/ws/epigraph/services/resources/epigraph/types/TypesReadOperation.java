@@ -21,11 +21,11 @@ import epigraph.schema.NameString_Type_Map;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.services.resources.epigraph.operations.read_types.AbstractReadTypesOperation;
-import ws.epigraph.services.resources.epigraph.operations.read_types.output.OutputEpigraphFieldProjection;
-import ws.epigraph.services.resources.epigraph.operations.read_types.output.OutputNameString_Type_MapKeyProjection;
-import ws.epigraph.services.resources.epigraph.operations.read_types.output.OutputNameString_Type_MapProjection;
-import ws.epigraph.services.resources.epigraph.operations.read_types.path.EpigraphFieldPath;
+import ws.epigraph.services.resources.epigraph.operations.types.AbstractReadTypesOperation;
+import ws.epigraph.services.resources.epigraph.operations.types.output.OutputEpigraphFieldProjection;
+import ws.epigraph.services.resources.epigraph.operations.types.output.OutputNameString_Type_MapKeyProjection;
+import ws.epigraph.services.resources.epigraph.operations.types.output.OutputNameString_Type_MapProjection;
+import ws.epigraph.services.resources.epigraph.operations.types.path.EpigraphFieldPath;
 import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.Type;
 

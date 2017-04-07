@@ -33,6 +33,7 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationDeclaration extends OperationDeclaration {
+  public static final @NotNull String DEFAULT_NAME = "_delete";
   private final @NotNull OpDeleteFieldProjection deleteProjection;
 
   public DeleteOperationDeclaration(
@@ -51,7 +52,7 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
   }
 
   @Override
-  protected @NotNull String defaultName() { return "_delete"; }
+  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   public @NotNull OpDeleteFieldProjection deleteProjection() { return deleteProjection; }
 

@@ -105,8 +105,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
               ProjectionReferenceName.fromQn(
                   namespaces.operationOutputProjectionsNamespace(
                       resourceName,
-                      operation.kind(),
-                      operation.name()
+                      operation.nameOrDefaultName()
                   )
               )
           );
@@ -116,8 +115,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
               ProjectionReferenceName.fromQn(
                   namespaces.operationInputProjectionsNamespace(
                       resourceName,
-                      operation.kind(),
-                      operation.name()
+                      operation.nameOrDefaultName()
                   )
               )
           );
@@ -127,8 +125,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
               ProjectionReferenceName.fromQn(
                   namespaces.operationDeleteProjectionsNamespace(
                       resourceName,
-                      operation.kind(),
-                      operation.name()
+                      operation.nameOrDefaultName()
                   )
               )
           );

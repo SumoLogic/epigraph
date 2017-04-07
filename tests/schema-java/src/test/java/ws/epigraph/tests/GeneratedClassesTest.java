@@ -30,7 +30,6 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.schema.Namespaces;
-import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
@@ -86,7 +85,7 @@ public class GeneratedClassesTest {
         UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
 
     assertEquals(
-        "[ ]( $recTest = :`record` ( id, bestFriend $recTest ) )",
+        "[ ]( $recTest = :`record` ( bestFriend $recTest, id ) )",
         printOpDeleteVarProjection(
             Qn.fromDotSeparated("ws.epigraph.tests"),
             UsersResourceDeclaration.INSTANCE.fieldName(),
@@ -110,7 +109,6 @@ public class GeneratedClassesTest {
             ProjectionReferenceName.fromQn(
                 new Namespaces(namespace).operationDeleteProjectionsNamespace(
                     resourceName,
-                    OperationKind.DELETE,
                     operationName
                 )
             )

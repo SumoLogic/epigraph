@@ -17,9 +17,7 @@
 package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.schema.operations.OperationKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -67,47 +65,35 @@ public class Namespaces {
     return resourceNamespace(resourceName).append("operations");
   }
 
-  public @NotNull Qn operationNamespace(
-      @NotNull String resourceName,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
-
-    String ns = operationKind.toString().toLowerCase();
-    if (operationName != null)
-      ns = ns + "_" + operationName.toLowerCase();
-
-    return operationsNamespace(resourceName).append(ns);
+  public @NotNull Qn operationNamespace(@NotNull String resourceName, @NotNull String operationNameOrDefaultName) {
+    return operationsNamespace(resourceName).append(operationNameOrDefaultName.toLowerCase());
   }
 
   public @NotNull Qn operationProjectionsNamespace(
       @NotNull String resourceName,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
+      @NotNull String operationNameOrDefaultName) {
 
-    return operationNamespace(resourceName, operationKind, operationName).append("projections");
+    return operationNamespace(resourceName, operationNameOrDefaultName).append("projections");
   }
 
   public @NotNull Qn operationOutputProjectionsNamespace(
       @NotNull String resourceName,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
+      @NotNull String operationNameOrDefaultName) {
 
-    return operationProjectionsNamespace(resourceName, operationKind, operationName).append("output");
+    return operationProjectionsNamespace(resourceName, operationNameOrDefaultName).append("output");
   }
 
   public @NotNull Qn operationInputProjectionsNamespace(
       @NotNull String resourceName,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
+      @NotNull String operationNameOrResourceName) {
 
-    return operationProjectionsNamespace(resourceName, operationKind, operationName).append("input");
+    return operationProjectionsNamespace(resourceName, operationNameOrResourceName).append("input");
   }
 
   public @NotNull Qn operationDeleteProjectionsNamespace(
       @NotNull String resourceName,
-      @NotNull OperationKind operationKind,
-      @Nullable String operationName) {
+      @NotNull String operationNameOrResourceName) {
 
-    return operationProjectionsNamespace(resourceName, operationKind, operationName).append("delete");
+    return operationProjectionsNamespace(resourceName, operationNameOrResourceName).append("delete");
   }
 }

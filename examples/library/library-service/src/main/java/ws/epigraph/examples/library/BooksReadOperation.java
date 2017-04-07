@@ -18,15 +18,15 @@ package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.examples.library.resources.books.operations.read.AbstractReadOperation;
-import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBookId_BookRecord_MapKeyProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBookId_BookRecord_MapProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.OutputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.OutputBookRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.OutputAuthorProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.author.record.OutputAuthorRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.OutputTextProjection;
-import ws.epigraph.examples.library.resources.books.operations.read.output.elements.text.plain.OutputPlainTextProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.AbstractReadOperation;
+import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBookId_BookRecord_MapKeyProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBookId_BookRecord_MapProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.elements.OutputBookRecordProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.elements.author.OutputAuthorProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.elements.author.record.OutputAuthorRecordProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.elements.text.OutputTextProjection;
+import ws.epigraph.examples.library.resources.books.operations._read.output.elements.text.plain.OutputPlainTextProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 
 import java.util.concurrent.CompletableFuture;
