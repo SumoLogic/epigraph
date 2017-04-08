@@ -19,6 +19,7 @@ package ws.epigraph.services.resources.epigraph.types;
 import epigraph.schema.Field_List;
 import epigraph.schema.RecordType;
 import epigraph.schema.RecordType_List;
+import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services.resources.epigraph.projections.output.fieldprojection.OutputField_Projection;
 import ws.epigraph.services.resources.epigraph.projections.output.typenameprojection._normalized.qualifiedtypename.OutputQualifiedTypeNameProjection;
@@ -36,9 +37,16 @@ public final class RecordTypeBuilder {
 
   public static @NotNull RecordType buildRecordType(
       @NotNull RecordTypeApi type,
-      @NotNull OutputRecordTypeProjection projection) {
+      @NotNull OutputRecordTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
+
+    final TypeBuilder.Context.Key key = new TypeBuilder.Context.Key(type, projection._raw());
+    final Type_ v = context.visited.get(key);
+    if (v != null)
+      return (RecordType) v;
 
     RecordType.Builder builder = RecordType.create();
+    context.visited.put(key, builder);
 
     // name
     final OutputQualifiedTypeNameProjection nameProjection = projection.name();
@@ -53,7 +61,7 @@ public final class RecordTypeBuilder {
       RecordType_List.Builder supertypesBuilder = RecordType_List.create();
 
       for (final RecordTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildRecordType(supertype, supertypeProjection));
+        supertypesBuilder.add(buildRecordType(supertype, supertypeProjection, context));
 
       builder.setSupertypes(supertypesBuilder);
     }
@@ -65,7 +73,7 @@ public final class RecordTypeBuilder {
 
       Field_List.Builder fieldsBuilder = Field_List.create();
       for (final FieldApi field : type.immediateFields())
-        fieldsBuilder.add( FieldBuilder.buildField( field, fieldProjection ));
+        fieldsBuilder.add(FieldBuilder.buildField(field, fieldProjection, context));
 
       builder.setDeclaredFields(fieldsBuilder);
     }

@@ -29,17 +29,18 @@ public final class DatumTypeBuilder {
 
   public static @NotNull DatumType buildDatumType(
       @NotNull DatumTypeApi type,
-      @NotNull OutputDatumTypeProjection projection) {
+      @NotNull OutputDatumTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
 
     // todo set meta-type
 
     switch (type.kind()) {
       case RECORD:
-        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_recordType());
+        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_recordType(), context);
       case MAP:
-        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_mapType());
+        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_mapType(), context);
       case LIST:
-        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_listType());
+        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_listType(), context);
       case PRIMITIVE:
         return PrimitiveTypeBuilder.buildPrimitiveType(
             (PrimitiveTypeApi) type,

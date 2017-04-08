@@ -77,7 +77,7 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       if (type == null)
         typeMapBuilder.putError(key, new ErrorValue(404, "Can't find type '" + typeName + "'"));
       else
-        typeMapBuilder.put(key, buildType(type, typeProjection));
+        typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));
     }
 
     return CompletableFuture.completedFuture(builder);

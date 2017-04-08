@@ -34,7 +34,11 @@ import ws.epigraph.types.UnionTypeApi;
 public final class VarTypeBuilder {
   private VarTypeBuilder() {}
 
-  public static @NotNull VarType buildVarType(@NotNull UnionTypeApi type, @NotNull OutputVarTypeProjection projection) {
+  public static @NotNull VarType buildVarType(
+      @NotNull UnionTypeApi type,
+      @NotNull OutputVarTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
+
     VarType.Builder builder = VarType.create();
 
     // name
@@ -53,7 +57,7 @@ public final class VarTypeBuilder {
       VarType_List.Builder supertypesBuilder = VarType_List.create();
 
       for (final UnionTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildVarType(supertype, supertypeProjection));
+        supertypesBuilder.add(buildVarType(supertype, supertypeProjection, context));
 
       builder.setSupertypes(supertypesBuilder);
     }
@@ -65,7 +69,7 @@ public final class VarTypeBuilder {
 
       Tag_List.Builder tagsBuilder = Tag_List.create();
       for (final TagApi tag : type.tags())
-        tagsBuilder.add(TagBuilder.buildTag(tag, tagProjection));
+        tagsBuilder.add(TagBuilder.buildTag(tag, tagProjection, context));
 
       builder.setTags(tagsBuilder);
     }

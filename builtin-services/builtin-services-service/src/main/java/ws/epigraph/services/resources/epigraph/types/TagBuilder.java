@@ -30,7 +30,11 @@ import ws.epigraph.types.TagApi;
 public final class TagBuilder {
   private TagBuilder() {}
 
-  public static @NotNull Tag_ buildTag(@NotNull TagApi tag, @NotNull OutputTag_Projection projection) {
+  public static @NotNull Tag_ buildTag(
+      @NotNull TagApi tag,
+      @NotNull OutputTag_Projection projection,
+      @NotNull TypeBuilder.Context context) {
+
     final Tag_.Builder builder = Tag_.create();
 
     // name
@@ -44,7 +48,8 @@ public final class TagBuilder {
       builder.setType(
           DatumTypeBuilder.buildDatumType(
               tag.type(),
-              typeProjection.normalizedFor_datumType()
+              typeProjection.normalizedFor_datumType(),
+              context
           )
       );
     }

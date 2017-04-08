@@ -32,7 +32,8 @@ public final class DataTypeBuilder {
 
   public static @NotNull DataType buildDataType(
       @NotNull DataTypeApi dataType,
-      @NotNull OutputDataTypeProjection projection) {
+      @NotNull OutputDataTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
 
     DataType.Builder builder = DataType.create();
 
@@ -42,12 +43,12 @@ public final class DataTypeBuilder {
     final OutputTag_Projection retroProjection = projection.retro();
     if (retroProjection != null) {
       final TagApi retroTag = dataType.defaultTag();
-      builder.setRetro(retroTag == null ? null : TagBuilder.buildTag(retroTag, retroProjection));
+      builder.setRetro(retroTag == null ? null : TagBuilder.buildTag(retroTag, retroProjection, context));
     }
 
     final OutputType_Projection typeProjection = projection.type();
     if (typeProjection != null)
-      builder.setType(TypeBuilder.buildType(dataType.type(), typeProjection));
+      builder.setType(TypeBuilder.buildType(dataType.type(), typeProjection, context));
 
     return builder;
   }

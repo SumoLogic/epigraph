@@ -30,7 +30,11 @@ import ws.epigraph.types.FieldApi;
 public final class FieldBuilder {
   private FieldBuilder() {}
 
-  public static @NotNull Field_ buildField(@NotNull FieldApi field, @NotNull OutputField_Projection projection) {
+  public static @NotNull Field_ buildField(
+      @NotNull FieldApi field,
+      @NotNull OutputField_Projection projection,
+      @NotNull TypeBuilder.Context context) {
+
     final Field_.Builder builder = Field_.create();
 
     // name
@@ -46,7 +50,7 @@ public final class FieldBuilder {
     // data type
     final OutputDataTypeProjection valueTypeProjection = projection.valueType();
     if (valueTypeProjection != null)
-      builder.setValueType(DataTypeBuilder.buildDataType(field.dataType(), valueTypeProjection));
+      builder.setValueType(DataTypeBuilder.buildDataType(field.dataType(), valueTypeProjection, context));
 
     return builder;
   }

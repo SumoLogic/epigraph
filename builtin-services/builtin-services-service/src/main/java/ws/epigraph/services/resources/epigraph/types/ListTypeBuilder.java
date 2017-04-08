@@ -34,7 +34,8 @@ public final class ListTypeBuilder {
 
   public static @NotNull ListType buildListType(
       @NotNull ListTypeApi type,
-      @NotNull OutputListTypeProjection projection) {
+      @NotNull OutputListTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
 
     ListType.Builder builder = ListType.create();
 
@@ -51,14 +52,14 @@ public final class ListTypeBuilder {
       ListType_List.Builder supertypesBuilder = ListType_List.create();
 
       for (final ListTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildListType(supertype, supertypeProjection));
+        supertypesBuilder.add(buildListType(supertype, supertypeProjection, context));
 
       builder.setSupertypes(supertypesBuilder);
     }
 
     final OutputDataTypeProjection dataTypeProjection = projection.valueType();
     if (dataTypeProjection != null)
-      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection));
+      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
 
     return builder;
   }

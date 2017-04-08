@@ -26,6 +26,7 @@
 - [ ] return `setters_` in codegen
 - [ ] there must be some inheritance on generated req. projections (fields, not tails)
   - [ ] update reflection api
+- [ ] generated req projections should have equals/hashcode
 
 - Federator prerequisites
   - [ ] `toBuilder` on data

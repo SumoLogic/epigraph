@@ -35,7 +35,8 @@ public final class MapTypeBuilder {
 
   public static @NotNull MapType buildMapType(
       @NotNull MapTypeApi type,
-      @NotNull OutputMapTypeProjection projection) {
+      @NotNull OutputMapTypeProjection projection,
+      @NotNull TypeBuilder.Context context) {
 
     MapType.Builder builder = MapType.create();
 
@@ -52,7 +53,7 @@ public final class MapTypeBuilder {
       MapType_List.Builder supertypesBuilder = MapType_List.create();
 
       for (final MapTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildMapType(supertype, supertypeProjection));
+        supertypesBuilder.add(buildMapType(supertype, supertypeProjection, context));
 
       builder.setSupertypes(supertypesBuilder);
     }
@@ -60,12 +61,12 @@ public final class MapTypeBuilder {
     // keys
     final OutputDatumTypeProjection keyProjection = projection.keyType();
     if (keyProjection != null)
-      builder.setKeyType(DatumTypeBuilder.buildDatumType(type.keyType(), keyProjection));
+      builder.setKeyType(DatumTypeBuilder.buildDatumType(type.keyType(), keyProjection, context));
 
     // items
     final OutputDataTypeProjection dataTypeProjection = projection.valueType();
     if (dataTypeProjection != null)
-      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection));
+      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
 
     return builder;
   }

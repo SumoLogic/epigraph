@@ -19,7 +19,13 @@ package ws.epigraph.services.resources.epigraph.types;
 import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
-import ws.epigraph.types.*;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.UnionTypeApi;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -27,12 +33,46 @@ import ws.epigraph.types.*;
 public final class TypeBuilder {
   private TypeBuilder() {}
 
-  public static @NotNull Type_ buildType(@NotNull TypeApi type, @NotNull OutputType_Projection projection) {
+  public static @NotNull Type_ buildType(
+      @NotNull TypeApi type,
+      @NotNull OutputType_Projection projection,
+      @NotNull Context context) {
+
     // todo: `abstract` and `doc` fields support
 
     if (type.kind() == ws.epigraph.types.TypeKind.UNION)
-      return VarTypeBuilder.buildVarType((UnionTypeApi) type, projection.normalizedFor_varType());
+      return VarTypeBuilder.buildVarType((UnionTypeApi) type, projection.normalizedFor_varType(), context);
     else
-      return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_datumType());
+      return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_datumType(), context);
+  }
+
+  public static class Context {
+    public final Map<Key, Type_> visited = new HashMap<>();
+
+    static class Key {
+      final @NotNull TypeApi type;
+      final @NotNull Object projection;
+
+      Key(
+          final @NotNull TypeApi type,
+          final @NotNull Object projection) {
+        this.type = type;
+        this.projection = projection;
+      }
+
+      @Override
+      public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Key key = (Key) o;
+        return Objects.equals(type, key.type) &&
+               Objects.equals(projection, key.projection);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(type, projection);
+      }
+    }
   }
 }
