@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@ package ws.epigraph.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
-import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DataTypeApi;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -38,6 +39,14 @@ public class ReqDeleteFieldProjection extends AbstractReqFieldProjection<
       @NotNull ReqDeleteVarProjection projection,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
+  }
+
+  @Override
+  protected ReqDeleteFieldProjection merge(
+      final @NotNull DataTypeApi type,
+      final @NotNull List<ReqDeleteFieldProjection> fieldProjections,
+      final @NotNull ReqDeleteVarProjection mergedVarProjection) {
+    return new ReqDeleteFieldProjection(mergedVarProjection, TextLocation.UNKNOWN);
   }
 
   @Override

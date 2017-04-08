@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -44,6 +46,16 @@ public class OpVarPath extends AbstractVarProjection<OpVarPath, OpTagPath, OpMod
         null,
         location
     );
+  }
+
+  @Override
+  protected OpVarPath merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<OpVarPath> varProjections,
+      final @NotNull Map<String, OpTagPath> mergedTags,
+      final boolean mergedParenthesized,
+      final @Nullable List<OpVarPath> mergedTails) {
+    throw new RuntimeException("path polymorphic tails not supported");
   }
 
   @Override

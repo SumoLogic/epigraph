@@ -382,17 +382,7 @@ public final class ReqInputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    @Nullable OpInputVarProjection opTail = mergeOpTails(op, tailType);
-    if (opTail == null)
-      throw new PsiProcessingException(
-          String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
-              tailType.name(),
-              String.join(", ", ProjectionsParsingUtil.supportedVarTailTypes(op))
-          ),
-          tailTypeRefPsi,
-          context
-      );
+    @NotNull OpInputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
@@ -401,24 +391,6 @@ public final class ReqInputProjectionsPsiParser {
         typesResolver,
         context
     );
-  }
-
-  private static @Nullable OpInputVarProjection mergeOpTails(
-      @NotNull OpInputVarProjection op,
-      @NotNull TypeApi tailType) {
-    Iterable<OpInputVarProjection> opTails = op.polymorphicTails();
-    if (opTails == null) return null;
-    // TODO a deep merge of op projections wrt to tailType is needed here, probably moved into a separate class
-    // we simply look for the first fully matching tail for now
-    // algo should be: DFS on tails, look for exact match on tailType
-    // if found: merge all op tails up the stack into one mega-op-var-projection: squash all tags/fields/params together. Should be OK since they all are supertypes of tailType
-    // else null
-
-    for (OpInputVarProjection opTail : opTails) {
-      if (opTail.type().equals(tailType)) return opTail;
-    }
-
-    return null;
   }
 
   public static @NotNull ReqInputModelProjection<?, ?, ?> parseModelProjection(
@@ -663,17 +635,8 @@ public final class ReqInputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    final OpInputModelProjection<?, ?, ?, ?> opTail = op.tailByType(tailType);
-    if (opTail == null)
-      throw new PsiProcessingException(
-          String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
-              tailType.name(),
-              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op))
-          ),
-          modelProjectionPsi,
-          context
-      );
+    final @NotNull OpInputModelProjection<?, ?, ?, ?> opTail =
+        ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseModelProjection(
         modelClass,

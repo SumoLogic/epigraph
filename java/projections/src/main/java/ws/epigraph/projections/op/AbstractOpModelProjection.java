@@ -89,17 +89,14 @@ public abstract class AbstractOpModelProjection<
   }
 
   /* static */
-  protected SMP merge(
+  protected abstract SMP merge(
       @NotNull M model,
       @NotNull List<SMP> modelProjections,
       @NotNull OpParams mergedParams,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
-
-    throw new RuntimeException("not implemented"); // todo make abstract
-  }
+      boolean keepPhantomTails);
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {

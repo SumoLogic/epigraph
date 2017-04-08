@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,12 @@
 package ws.epigraph.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,6 +35,19 @@ public class ReqDeleteTagProjectionEntry
       @NotNull ReqDeleteModelProjection<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
+  }
+
+  @Override
+  protected @Nullable ReqDeleteTagProjectionEntry mergeTags(
+      final @NotNull TagApi tag,
+      final @NotNull List<ReqDeleteTagProjectionEntry> tagsEntries,
+      final @NotNull ReqDeleteModelProjection<?, ?, ?> mergedModel) {
+
+    return new ReqDeleteTagProjectionEntry(
+        tag,
+        mergedModel,
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

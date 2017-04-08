@@ -46,4 +46,21 @@ public class OpDeletePrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  protected OpDeletePrimitiveModelProjection merge(
+      final @NotNull PrimitiveTypeApi model,
+      final @NotNull List<OpDeletePrimitiveModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpDeletePrimitiveModelProjection> mergedTails, final boolean keepPhantomTails) {
+
+    return new OpDeletePrimitiveModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 }

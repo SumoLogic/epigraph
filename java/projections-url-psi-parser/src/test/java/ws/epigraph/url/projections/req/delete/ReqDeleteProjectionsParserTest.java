@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;

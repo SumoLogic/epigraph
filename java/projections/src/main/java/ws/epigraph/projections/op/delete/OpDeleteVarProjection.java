@@ -24,8 +24,8 @@ import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,7 +42,7 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
   public OpDeleteVarProjection(
       @NotNull TypeApi type,
       boolean canDelete,
-      @NotNull LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections,
+      @NotNull Map<String, OpDeleteTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<OpDeleteVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
@@ -60,9 +60,21 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
   }
 
   @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpDeleteVarProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteVarProjection value) {
     super.resolve(name, value);
     this.canDelete = value.canDelete();
+  }
+
+  @Override
+  protected OpDeleteVarProjection merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<OpDeleteVarProjection> varProjections,
+      final @NotNull Map<String, OpDeleteTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
+      final List<OpDeleteVarProjection> mergedTails) {
+
+    boolean canDelete = varProjections.stream().anyMatch(OpDeleteVarProjection::canDelete);
+    return new OpDeleteVarProjection(effectiveType, canDelete, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
   }
 
   @Override

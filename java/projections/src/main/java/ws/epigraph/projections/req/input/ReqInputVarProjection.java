@@ -47,6 +47,22 @@ public class ReqInputVarProjection extends AbstractVarProjection<
   public ReqInputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
   }
+  
+  @Override
+  protected ReqInputVarProjection merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<ReqInputVarProjection> varProjections,
+      final @NotNull Map<String, ReqInputTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
+      final List<ReqInputVarProjection> mergedTails) {
+
+    return new ReqInputVarProjection(
+        effectiveType,
+        mergedTags,
+        mergedParenthesized, mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   protected @NotNull VarNormalizationContext<ReqInputVarProjection> newNormalizationContext() {

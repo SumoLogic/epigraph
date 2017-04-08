@@ -125,6 +125,9 @@ public abstract class AbstractModelProjection<
               this.type()
           );
 
+          if (effectiveType.equals(this.type()))
+            return self();
+
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
             ref = context.newReference((M) effectiveType);

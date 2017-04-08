@@ -78,6 +78,7 @@
 # Operations
 
 # Service
+- [ ] Add (limited?) support for passing operation name via query parameter
 
 # Build
 - [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)

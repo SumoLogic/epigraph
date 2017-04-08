@@ -24,11 +24,16 @@ import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -70,9 +75,70 @@ public class OpDeleteRecordModelProjection
     assert isResolved();
     return fieldProjections;
   }
+  
+  @Override
+  protected OpDeleteRecordModelProjection merge(
+      final @NotNull RecordTypeApi model,
+      final @NotNull List<OpDeleteRecordModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpDeleteRecordModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+
+    Map<FieldApi, OpDeleteFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections, keepPhantomTails);
+
+    Map<String, OpDeleteFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, OpDeleteFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new OpDeleteFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
+    }
+
+    return new OpDeleteRecordModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedFieldEntries,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpDeleteRecordModelProjection value) {
+  public @NotNull OpDeleteRecordModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpDeleteRecordModelProjection n) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+
+    final Map<String, OpDeleteFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
+
+    final Map<String, OpDeleteFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        OpDeleteFieldProjectionEntry::new
+    );
+
+    return new OpDeleteRecordModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

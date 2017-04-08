@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -43,6 +45,16 @@ public class ReqVarPath extends AbstractVarProjection<ReqVarPath, ReqTagPath, Re
         null,
         location
     );
+  }
+
+  @Override
+  protected ReqVarPath merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<ReqVarPath> varProjections,
+      final @NotNull Map<String, ReqTagPath> mergedTags,
+      final boolean mergedParenthesized,
+      final @Nullable List<ReqVarPath> mergedTails) {
+    throw new RuntimeException("path polymorphic tails not supported");
   }
 
   @Override

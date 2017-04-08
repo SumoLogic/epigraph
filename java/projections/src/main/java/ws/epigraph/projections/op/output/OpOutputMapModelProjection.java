@@ -78,13 +78,6 @@ public class OpOutputMapModelProjection
     return itemsProjection;
   }
 
-  @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpOutputMapModelProjection value) {
-    super.resolve(name, value);
-    this.keyProjection = value.keyProjection();
-    this.itemsProjection = value.itemsProjection();
-  }
-
   /* static */
   @Override
   protected OpOutputMapModelProjection merge(
@@ -96,7 +89,7 @@ public class OpOutputMapModelProjection
       final @Nullable List<OpOutputMapModelProjection> mergedTails,
       final boolean keepPhantomTails) {
 
-    // todo unify this code with OpInputMapModelProjection
+    // todo unify this code with OpInputMapModelProjection, OpDeleteMapModelProjection
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
     OpKeyPresence mergedKeysPresence = null;
@@ -165,6 +158,13 @@ public class OpOutputMapModelProjection
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );
+  }
+
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpOutputMapModelProjection value) {
+    super.resolve(name, value);
+    this.keyProjection = value.keyProjection();
+    this.itemsProjection = value.itemsProjection();
   }
 
   @Override

@@ -75,13 +75,10 @@ public abstract class AbstractTagProjectionEntry<
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
 
-  protected @Nullable TP mergeTags(
-      final @NotNull TagApi tag,
-      final @NotNull List<TP> tagsEntries,
-      @NotNull MP mergedModel) {
-
-    throw new RuntimeException("Unsupported operation: "+getClass().getName()); // todo make abstract
-  }
+  protected abstract @Nullable TP mergeTags(
+      @NotNull TagApi tag,
+      @NotNull List<TP> tagsEntries,
+      @NotNull MP mergedModel);
 
   @Override
   public @NotNull TextLocation location() { return location; }

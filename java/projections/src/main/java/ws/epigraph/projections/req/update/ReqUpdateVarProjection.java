@@ -49,6 +49,22 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
   }
 
   @Override
+  protected ReqUpdateVarProjection merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<ReqUpdateVarProjection> varProjections,
+      final @NotNull Map<String, ReqUpdateTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
+      final List<ReqUpdateVarProjection> mergedTails) {
+
+    return new ReqUpdateVarProjection(
+        effectiveType,
+        mergedTags,
+        mergedParenthesized, mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
   protected @NotNull VarNormalizationContext<ReqUpdateVarProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(
         t -> new ReqUpdateVarProjection(t , location())

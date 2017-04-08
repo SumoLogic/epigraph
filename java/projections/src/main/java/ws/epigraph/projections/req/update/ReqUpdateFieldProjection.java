@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package ws.epigraph.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
-import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DataTypeApi;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,6 +46,16 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
   }
 
   public boolean update() { return update; }
+
+  @Override
+  protected ReqUpdateFieldProjection merge(
+      final @NotNull DataTypeApi type,
+      final @NotNull List<ReqUpdateFieldProjection> fieldProjections,
+      final @NotNull ReqUpdateVarProjection mergedVarProjection) {
+
+    boolean update = fieldProjections.stream().anyMatch(ReqUpdateFieldProjection::update);
+    return new ReqUpdateFieldProjection(mergedVarProjection, update, TextLocation.UNKNOWN);
+  }
 
   @Override
   public @NotNull ReqUpdateFieldProjection setVarProjection(final @NotNull ReqUpdateVarProjection varProjection) {

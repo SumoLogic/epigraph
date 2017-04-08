@@ -23,10 +23,12 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -65,9 +67,54 @@ public class OpDeleteListModelProjection
     assert itemsProjection != null;
     return itemsProjection;
   }
+  
+  /* static */
+  @Override
+  protected OpDeleteListModelProjection merge(
+      final @NotNull ListTypeApi model,
+      final @NotNull List<OpDeleteListModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpDeleteListModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+
+    List<OpDeleteVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(OpDeleteListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull OpDeleteVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
+
+    return new OpDeleteListModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
-  public void resolve(final @NotNull ProjectionReferenceName name, final @NotNull OpDeleteListModelProjection value) {
+  public @NotNull OpDeleteListModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpDeleteListModelProjection n) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    return new OpDeleteListModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteListModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
   }

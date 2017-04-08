@@ -19,7 +19,6 @@ package ws.epigraph.projections;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -241,6 +240,30 @@ public final class ProjectionsParsingUtil {
     return null;
   }
 
+  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getTail(
+      @NotNull VP vp,
+      @NotNull UnionTypeApi targetType,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext ctx) {
+
+    if (targetType.equals(vp.type())) return vp;
+
+    VP res = vp.normalizedForType(targetType, true);
+    if (res == targetType) {
+      ctx.addError(
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              targetType.name(),
+              String.join(", ", supportedVarTailTypes(vp))
+          ),
+          location
+      );
+    }
+    
+    return res;
+  }
+
+
   public static @NotNull List<String> supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
     if (vp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
@@ -255,6 +278,30 @@ public final class ProjectionsParsingUtil {
     final List<GenVarProjection<?, ?, ?>> tails = (List<GenVarProjection<?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getTail(
+      @NotNull MP mp,
+      @NotNull DatumTypeApi targetType,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext ctx) {
+
+    if (targetType.equals(mp.type())) return mp;
+
+    MP res = (MP) mp.normalizedForType(targetType, true);
+    if (res == targetType) {
+      ctx.addError(
+          String.format(
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              targetType.name(),
+              String.join(", ", supportedModelTailTypes(mp))
+          ),
+          location
+      );
+    }
+
+    return res;
   }
 
   public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp) {

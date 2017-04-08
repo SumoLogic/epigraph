@@ -264,6 +264,12 @@ public class ReqOutputProjectionsParserTest {
         ":record ( firstName, id )"
     );
 
+    testTailsNormalization(
+        ":record(id)~~ws.epigraph.tests.SubUser :record(firstName)",
+        SubUser.type,
+        ":record ( firstName, id )"
+    );
+
     // parameters merging
     testTailsNormalization(
         ":record(id,firstName;param='foo')~~ws.epigraph.tests.User :record(firstName;param='bar')",
@@ -325,6 +331,17 @@ public class ReqOutputProjectionsParserTest {
         ),
         ":record( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
         UserRecord.type,
+        ":record ( worstEnemy ( firstName, id ) )"
+    );
+
+    testModelTailsNormalization(
+        parseOpOutputVarProjection(
+            new DataType(Person.type, null),
+            ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(lastName)~ws.epigraph.tests.SubUserRecord(firstName))",
+            resolver
+        ),
+        ":record( worstEnemy(id)~ws.epigraph.tests.SubUserRecord(firstName))",
+        SubUserRecord.type,
         ":record ( worstEnemy ( firstName, id ) )"
     );
 

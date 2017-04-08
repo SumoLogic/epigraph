@@ -17,12 +17,15 @@
 package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,6 +43,18 @@ public abstract class OpModelPath<
       @NotNull TextLocation location
   ) {
     super(model, null, params, annotations, null, location);
+  }
+
+  @Override
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails,
+      final boolean keepPhantomTails) {
+    throw new RuntimeException("path polymorphic tails not supported");
   }
 
   @Override

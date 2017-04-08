@@ -22,9 +22,12 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,9 +80,89 @@ public class OpDeleteMapModelProjection
     assert keyProjection != null;
     return keyProjection;
   }
+  
+  /* static */
+  @Override
+  protected OpDeleteMapModelProjection merge(
+      final @NotNull MapTypeApi model,
+      final @NotNull List<OpDeleteMapModelProjection> modelProjections,
+      final @NotNull OpParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpDeleteMapModelProjection> mergedTails,
+      final boolean keepPhantomTails) {
+
+    // todo unify this code with OpInputMapModelProjection, OpOutputMapModelProjection
+    List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
+    List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
+    OpKeyPresence mergedKeysPresence = null;
+    List<OpDeleteVarProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
+
+    OpDeleteMapModelProjection prevProjection = null;
+    for (final OpDeleteMapModelProjection projection : modelProjections) {
+
+      final @NotNull OpDeleteKeyProjection keyProjection = projection.keyProjection();
+      keysParams.add(keyProjection.params());
+      keysAnnotations.add(keyProjection.annotations());
+      final OpKeyPresence presence = keyProjection.presence();
+
+      if (mergedKeysPresence == null) mergedKeysPresence = presence;
+      else {
+        @Nullable OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        if (newKeysPresence == null)
+          throw new IllegalArgumentException(
+              String.format(
+                  "Can't merge key projection defined at %s and key projection defined at %s: incompatible keys presence modes",
+                  prevProjection.location(),
+                  projection.location()
+              )
+          );
+        mergedKeysPresence = newKeysPresence;
+      }
+
+      itemsProjectionsToMerge.add(projection.itemsProjection());
+
+      prevProjection = projection;
+    }
+
+    assert mergedKeysPresence != null; // modelProjections should have at least one element
+    assert !itemsProjectionsToMerge.isEmpty();
+
+    return new OpDeleteMapModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        new OpDeleteKeyProjection(
+            mergedKeysPresence,
+            OpParams.merge(keysParams),
+            Annotations.merge(keysAnnotations),
+            TextLocation.UNKNOWN
+        ),
+        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge, keepPhantomTails),
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpDeleteMapModelProjection value) {
+  public @NotNull OpDeleteMapModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final boolean keepPhantomTails,
+      final @NotNull OpDeleteMapModelProjection n) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    return new OpDeleteMapModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.keyProjection(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type(), keepPhantomTails),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteMapModelProjection value) {
     super.resolve(name, value);
     this.itemsProjection = value.itemsProjection();
     this.keyProjection = value.keyProjection();

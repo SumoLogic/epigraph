@@ -679,7 +679,7 @@ public final class ReqOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    @NotNull OpOutputVarProjection opTail = op.normalizedForType(tailType, true);
+    @NotNull OpOutputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseComaVarProjection(
         tailType.dataType(dataType.defaultTag()),
@@ -1127,17 +1127,8 @@ public final class ReqOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    final OpOutputModelProjection<?, ?, ?> opTail = op.tailByType(tailType);
-    if (opTail == null)
-      throw new PsiProcessingException(
-          String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
-              tailType.name(),
-              String.join(", ", ProjectionsParsingUtil.supportedModelTailTypes(op))
-          ),
-          tailTypeRefPsi,
-          context
-      );
+    final OpOutputModelProjection<?, ?, ?> opTail =
+        ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseComaModelProjection(
         modelClass,

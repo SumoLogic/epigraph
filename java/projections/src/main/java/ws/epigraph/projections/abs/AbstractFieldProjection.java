@@ -87,14 +87,11 @@ public abstract class AbstractFieldProjection<
     );
   }
 
-  protected FP merge(
+  protected abstract FP merge(
       @NotNull DataTypeApi type,
       @NotNull List<FP> fieldProjections,
 //      @NotNull Annotations mergedAnnotations,
-      @NotNull VP mergedVarProjection) {
-
-    throw new RuntimeException("not implemented: "+getClass().getName()); // todo make abstract
-  }
+      @NotNull VP mergedVarProjection);
 
   @Override
   public @NotNull TextLocation location() { return location; }

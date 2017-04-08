@@ -199,6 +199,9 @@ public abstract class AbstractVarProjection<
               type()
           );
 
+          if (effectiveType.equals(type()))
+            return self();
+
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
             ref = context.newReference(effectiveType);
@@ -390,14 +393,12 @@ public abstract class AbstractVarProjection<
   }
 
   /* static */
-  protected VP merge(
-      final @NotNull TypeApi effectiveType,
-      final @NotNull List<VP> varProjections,
-      final @NotNull Map<String, TP> mergedTags,
-      final boolean mergedParenthesized,
-      final @Nullable List<VP> mergedTails) {
-    throw new RuntimeException("not implemented"); // todo make abstract
-  }
+  protected abstract VP merge(
+      @NotNull TypeApi effectiveType,
+      @NotNull List<VP> varProjections,
+      @NotNull Map<String, TP> mergedTags,
+      boolean mergedParenthesized,
+      @Nullable List<VP> mergedTails);
 
   @SuppressWarnings("unchecked")
   private @NotNull VP self() { return (VP) this; }

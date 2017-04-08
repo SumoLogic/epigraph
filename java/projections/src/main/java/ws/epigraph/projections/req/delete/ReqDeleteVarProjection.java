@@ -47,6 +47,22 @@ public class ReqDeleteVarProjection extends AbstractVarProjection<
   public ReqDeleteVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
   }
+  
+  @Override
+  protected ReqDeleteVarProjection merge(
+      final @NotNull TypeApi effectiveType,
+      final @NotNull List<ReqDeleteVarProjection> varProjections,
+      final @NotNull Map<String, ReqDeleteTagProjectionEntry> mergedTags,
+      final boolean mergedParenthesized,
+      final List<ReqDeleteVarProjection> mergedTails) {
+
+    return new ReqDeleteVarProjection(
+        effectiveType,
+        mergedTags,
+        mergedParenthesized, mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 
   @Override
   protected @NotNull VarNormalizationContext<ReqDeleteVarProjection> newNormalizationContext() {
