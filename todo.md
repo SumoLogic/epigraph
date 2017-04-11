@@ -73,7 +73,9 @@
 - [ ] enable model projection references for req projections
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
-- [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags
+- [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
+- [ ] allow merging multiple recursive projections (seems to be a hard task)
+- [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
 
 # Operations
 

@@ -78,6 +78,7 @@ public final class RecordTypeBuilder {
       builder.setDeclaredFields(fieldsBuilder);
     }
 
+    context.visited.remove(key);
     return builder;
   }
 }

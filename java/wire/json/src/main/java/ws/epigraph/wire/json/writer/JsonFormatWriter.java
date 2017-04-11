@@ -130,10 +130,10 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
     if (renderPoly) out.write('}');
 
     if (doRecursionCheck) {
+      dataStackDepth--;
       visitedDataEntries.removeIf(e -> e.depth == dataStackDepth);
       if (visitedDataEntries.isEmpty())
         visitedData.remove(data);
-      dataStackDepth--;
     }
 
   }
