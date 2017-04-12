@@ -48,7 +48,7 @@ public final class TagBuilder {
       builder.setType(
           DatumTypeBuilder.buildDatumType(
               tag.type(),
-              typeProjection.normalizedFor_datumType(),
+              typeProjection.normalizedFor_DatumType(),
               context
           )
       );

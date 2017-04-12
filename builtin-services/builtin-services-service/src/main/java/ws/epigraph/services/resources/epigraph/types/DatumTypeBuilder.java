@@ -36,15 +36,15 @@ public final class DatumTypeBuilder {
 
     switch (type.kind()) {
       case RECORD:
-        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_recordType(), context);
+        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_RecordType(), context);
       case MAP:
-        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_mapType(), context);
+        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_MapType(), context);
       case LIST:
-        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_listType(), context);
+        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_ListType(), context);
       case PRIMITIVE:
         return PrimitiveTypeBuilder.buildPrimitiveType(
             (PrimitiveTypeApi) type,
-            projection.normalizedFor_primitiveType()
+            projection.normalizedFor_PrimitiveType()
         );
       default:
         throw new IllegalArgumentException("Unsupported kind: " + type.kind());

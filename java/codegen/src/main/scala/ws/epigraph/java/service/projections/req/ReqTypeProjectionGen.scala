@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.CType
-import ws.epigraph.java.JavaGenNames.{jn, ln, lqn}
+import ws.epigraph.java.JavaGenNames._
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.lang.Qn
@@ -65,9 +65,9 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
       .append(typeNameToPackageName(tailType))
 
   def typeNameToPackageName(_type: TypeApi): String =
-    jn(lqn(JavaGenUtils.toCType(_type), cType)).replace('.', '_').toLowerCase
+    jn(lqn(JavaGenUtils.toCType(_type), cType).replace('.', '_')).toLowerCase
 
-  def typeNameToMethodName(_type: CType): String = JavaGenUtils.lo(jn(lqn(_type, cType)).replace('.', '_'))
+  def typeNameToMethodName(_type: CType): String = jn(lqn(_type, cType).replace('.', '_'))
 }
 
 object ReqTypeProjectionGen {

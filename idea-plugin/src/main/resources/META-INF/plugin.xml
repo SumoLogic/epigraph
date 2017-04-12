@@ -126,8 +126,9 @@
     <!-- refactoring -->
     <lang.refactoringSupport language="epigraph_schema"
                              implementationClass="ws.epigraph.ideaplugin.schema.features.SchemaRefactoringSupportProvider"/>
-    <renamePsiElementProcessor
-        implementation="ws.epigraph.ideaplugin.schema.features.rename.RenameSchemaFieldProcessor"/>
+    <!-- incomplete -->
+    <!--<renamePsiElementProcessor-->
+        <!--implementation="ws.epigraph.ideaplugin.schema.features.rename.RenameSchemaFieldProcessor"/>-->
 
     <!-- imports optimizer -->
     <autoImportOptionsProvider

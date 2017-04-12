@@ -40,17 +40,17 @@ public final class TypeNameBuilder {
 
     if (typeName instanceof ws.epigraph.names.QualifiedTypeName) {
       ws.epigraph.names.QualifiedTypeName qualifiedTypeName = (ws.epigraph.names.QualifiedTypeName) typeName;
-      return buildQualifiedTypeName(qualifiedTypeName, projection.normalizedFor_qualifiedTypeName());
+      return buildQualifiedTypeName(qualifiedTypeName, projection.normalizedFor_QualifiedTypeName());
     }
 
     if (typeName instanceof ws.epigraph.names.AnonMapTypeName) {
       ws.epigraph.names.AnonMapTypeName anonMapTypeName = (ws.epigraph.names.AnonMapTypeName) typeName;
-      return buildAnonMapTypeName(anonMapTypeName, projection.normalizedFor_anonMapTypeName());
+      return buildAnonMapTypeName(anonMapTypeName, projection.normalizedFor_AnonMapTypeName());
     }
 
     if (typeName instanceof ws.epigraph.names.AnonListTypeName) {
       ws.epigraph.names.AnonListTypeName anonListTypeName = (ws.epigraph.names.AnonListTypeName) typeName;
-      return buildAnonListTypeName(anonListTypeName, projection.normalizedFor_anonListTypeName());
+      return buildAnonListTypeName(anonListTypeName, projection.normalizedFor_AnonListTypeName());
     }
 
     throw new IllegalArgumentException("Unsupported type name: " + typeName.getClass().getName());
