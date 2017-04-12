@@ -53,13 +53,16 @@ ${t.effectiveFields.map { f => sn"""\
   }.mkString
 }\
 ${t.effectiveFields.map { f =>
-    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
+    val d = retro(f) // append '$' to getters/setters if retro tag is present
+    val getterOverride = if (f.host == t && f.superfields.isEmpty) "" else sn"""\
+  @Override
+"""
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
 
   /** Returns `${f.name}` field data. */
-  //@Override TODO where applicable
+$getterOverride\
   @Nullable ${lqdrn(f.typeRef, t)} get${up(f.name)}$d();
 """
       case _: CDatumType => "" // no data accessors for datum fields
@@ -69,30 +72,30 @@ ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed 
 ${  f.effectiveDefaultTagName match { // default tag accessors (implied or explicit, if any)
       case None => ""
       case Some(dtn) => 
-        
+
         def genPrimitiveGetter(nativeType: String): String =
         sn"""\
   /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
-  //@Override TODO where applicable
+$getterOverride\
   @Nullable $nativeType get${up(f.name)}();
 """
         def genNonPrimitiveGetter: String =
         sn"""\
   /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
-  //@Override TODO where applicable
+$getterOverride\
   @Nullable ${lqn(tt(f.typeRef, dtn), t)} get${up(f.name)}();
 """
         val getter = JavaGenUtils.builtInPrimitives
           .get(f.typeRef.resolved.name.name)
           .map(genPrimitiveGetter)
           .getOrElse(genNonPrimitiveGetter)
-        
+
         sn"""\
 
 $getter\
 
   /** Returns `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
-  //@Override TODO where applicable
+$getterOverride\
   @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}_();
 """
     }
@@ -183,7 +186,7 @@ ${t.declaredFields.map { f => sn"""
    */
   interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.RecordDatum.Imm.Static {
 ${t.effectiveFields.map { f =>
-    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
+    val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -247,7 +250,7 @@ ${t.meta match {
 
       private Impl(@NotNull ws.epigraph.data.RecordDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
 ${t.effectiveFields.map { f =>
-    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
+    val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -370,14 +373,70 @@ ${t.meta match {
 
   }
 
+${t.effectiveFields.map { f => // for each effective field
+    val d = retro(f) // append '$' to getters/setters if retro tag is present
+    val setterOverride = if (invariantSuperfields(f).isEmpty) "" else sn"""\
+    @Override
+"""
+    sn"""\
+
+  interface Set${up(f.name)} ${superSetters(f)}{
+${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
+      case vartype: CVarTypeDef => sn"""\
+
+    /** Sets `${f.name}` field data. */
+$setterOverride\
+    @NotNull Set${up(f.name)} set${up(f.name)}$d(@Nullable ${lqrn(f.typeRef, t)} ${fcn(f)});
+
+"""
+      case _: CDatumType => "" // no data accessors for datum fields
+      case unexpected => throw new UnsupportedOperationException(unexpected.name.name)
+    }
+}\
+${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if any)
+      case None => ""
+      case Some(dtn) =>
+
+        def genPrimitiveSetter(nativeType: String): String =
+        sn"""\
+    /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
+$setterOverride\
+    @NotNull Set${up(f.name)} set${up(f.name)}(@Nullable $nativeType ${fcn(f)});
+"""
+        def genNonPrimitiveSetter: String = sn"""\
+    /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
+$setterOverride\
+    @NotNull Set${up(f.name)} set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${fcn(f)});
+"""
+        val setter = JavaGenUtils.builtInPrimitives
+          .get(f.typeRef.resolved.name.name)
+          .map(genPrimitiveSetter)
+          .getOrElse(genNonPrimitiveSetter)
+
+        sn"""\
+
+$setter\
+
+    /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
+$setterOverride\
+    @NotNull Set${up(f.name)} set${up(f.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error);
+
+"""
+    }
+}\
+  }
+"""
+  }.mkString
+}\
+
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends ws.epigraph.data.RecordDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
+  final class Builder extends ws.epigraph.data.RecordDatum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln$setters {
 
     private Builder(@NotNull ws.epigraph.data.RecordDatum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
 ${t.effectiveFields.map { f => // for each effective field
-    val d = if (f.effectiveDefaultTagName.isDefined) "$" else "" // append '$' to getters/setters if retro tag is present
+    val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
       case vartype: CVarTypeDef => sn"""\
@@ -502,5 +561,23 @@ $builderValueAndDataBuilder\
 
 }
 """/*@formatter:on*/
+
+    def superSetters(f: CField): String = {
+        val superfields = invariantSuperfields(f)
+        if (superfields.isEmpty) "" else {
+            "extends " + superfields.map(
+                sf => sn"${lqn(sf.host, f.host)}.Set${up(sf.name)}"
+            ).mkString(", ") + " "
+        }
+    }
+
+    def invariantSuperfields(f: CField): Seq[CField] = if (f.host == t) f.superfields.filter(
+        sf => sf.valueDataType == f.valueDataType
+    ) else Seq(f)
+
+    // append '$' to field getters/setters if their value type has retro tag
+    def retro(f: CField): String = if (f.effectiveDefaultTagName.isDefined) "$" else ""
+
+    def setters: String = t.effectiveFields.map(f => s"Set${up(f.name)}").mkString(",\n      ", ", ", "")
 
 }
