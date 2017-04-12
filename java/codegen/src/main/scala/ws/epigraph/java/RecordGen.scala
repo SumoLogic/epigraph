@@ -478,6 +478,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
         def genPrimitiveSetter(nativeType: String): String =
         sn"""\
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
+    //@Override TODO where applicable
     public @NotNull $ln.Builder set${up(f.name)}(@Nullable $nativeType ${fcn(f)}) {
       if (${fcn(f)} == null)
         _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_(${lqn(tt(f.typeRef, dtn), t)}.type.createValue(null)));
@@ -489,6 +490,7 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
         def genNonPrimitiveSetter: String =
         sn"""\
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}datum. */
+    //@Override TODO where applicable
     public @NotNull $ln.Builder set${up(f.name)}(@Nullable ${lqn(tt(f.typeRef, dtn), t)} ${fcn(f)}) {
       _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}(${fcn(f)}));
       return this;
@@ -511,6 +513,7 @@ $getter\
 $setter\
 
     /** Sets `${f.name}` field to specified ${vt(f.typeRef, s"default `$dtn` tag ", "")}error. */
+    //@Override TODO where applicable
     public @NotNull $ln.Builder set${up(f.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {
       _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_Error(error));
       return this;
