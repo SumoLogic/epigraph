@@ -3236,7 +3236,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' | 'default' | ';' | ( qid '=') | 'meta' )
+  // ! ( '}' | ',' | 'default' | ';' | (qid '=') | 'meta' )
   static boolean opInputModelPropertyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelPropertyRecover")) return false;
     boolean r;
@@ -3246,7 +3246,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ',' | 'default' | ';' | ( qid '=') | 'meta'
+  // '}' | ',' | 'default' | ';' | (qid '=') | 'meta'
   private static boolean opInputModelPropertyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelPropertyRecover_0")) return false;
     boolean r;
@@ -3433,7 +3433,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ':' '+'? tagName)? opInputModelProjection
+  // ( ( ':' '+'? tagName ) | '+' )? opInputModelProjection
   public static boolean opInputSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputSingleTagProjection")) return false;
     boolean r;
@@ -3444,28 +3444,39 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ( ':' '+'? tagName)?
+  // ( ( ':' '+'? tagName ) | '+' )?
   private static boolean opInputSingleTagProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputSingleTagProjection_0")) return false;
     opInputSingleTagProjection_0_0(b, l + 1);
     return true;
   }
 
-  // ':' '+'? tagName
+  // ( ':' '+'? tagName ) | '+'
   private static boolean opInputSingleTagProjection_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputSingleTagProjection_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
+    r = opInputSingleTagProjection_0_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, S_PLUS);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ':' '+'? tagName
+  private static boolean opInputSingleTagProjection_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputSingleTagProjection_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, S_COLON);
-    r = r && opInputSingleTagProjection_0_0_1(b, l + 1);
+    r = r && opInputSingleTagProjection_0_0_0_1(b, l + 1);
     r = r && tagName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // '+'?
-  private static boolean opInputSingleTagProjection_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputSingleTagProjection_0_0_1")) return false;
+  private static boolean opInputSingleTagProjection_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opInputSingleTagProjection_0_0_0_1")) return false;
     consumeToken(b, S_PLUS);
     return true;
   }

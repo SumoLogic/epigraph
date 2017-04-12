@@ -22,8 +22,6 @@ import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -114,25 +112,20 @@ public class UndertowHandler implements HttpHandler {
       if (operationName != null) {
         final CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
         if (customOperation != null) {
-          UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, exchange);
-          handleCustomRequest(resource, urlPsi, customOperation, exchange);
+          handleCustomRequest(resource, decodedUri, customOperation, exchange);
           return;
         }
       }
 
-      if (requestMethod == HttpMethod.GET) {
-        UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, exchange);
-        handleReadRequest(resource, operationName, urlPsi, exchange);
-      } else if (requestMethod == HttpMethod.POST) {
-        UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, exchange);
-        handleCreateRequest(resource, operationName, urlPsi, exchange);
-      } else if (requestMethod == HttpMethod.PUT) {
-        UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, exchange);
-        handleUpdateRequest(resource, operationName, urlPsi, exchange);
-      } else if (requestMethod == HttpMethod.DELETE) {
-        UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, exchange);
-        handleDeleteRequest(resource, operationName, urlPsi, exchange);
-      } else {
+      if (requestMethod == HttpMethod.GET)
+        handleReadRequest(resource, operationName, decodedUri, exchange);
+      else if (requestMethod == HttpMethod.POST)
+        handleCreateRequest(resource, operationName, decodedUri, exchange);
+      else if (requestMethod == HttpMethod.PUT)
+        handleUpdateRequest(resource, operationName, decodedUri, exchange);
+      else if (requestMethod == HttpMethod.DELETE)
+        handleDeleteRequest(resource, operationName, decodedUri, exchange);
+      else {
         badRequest("Unsupported HTTP method '" + requestMethod + "'\n", CONTENT_TYPE_TEXT, exchange);
         //noinspection ThrowCaughtLocally
         throw RequestFailedException.INSTANCE;
@@ -148,23 +141,10 @@ public class UndertowHandler implements HttpHandler {
     } catch (Exception e) {
       LOG.error("Internal exception", e);
       exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
-      sender.send(e.getMessage());
+      sender.send(e.toString());
     } finally {
       sender.close();
     }
-  }
-
-  @Contract(pure = true)
-  private @NotNull HttpMethod getMethod(final @NotNull HttpServerExchange exchange) throws RequestFailedException {
-    final HttpString methodString = exchange.getRequestMethod();
-    if (methodString.equals(Methods.GET)) return HttpMethod.GET;
-    if (methodString.equals(Methods.PUT)) return HttpMethod.PUT;
-    if (methodString.equals(Methods.POST)) return HttpMethod.POST;
-    if (methodString.equals(Methods.DELETE)) return HttpMethod.DELETE;
-
-    badRequest("Unsupported HTTP method '" + methodString + "'\n", CONTENT_TYPE_TEXT, exchange);
-    //noinspection ThrowCaughtLocally
-    throw RequestFailedException.INSTANCE;
   }
 
   private @NotNull String getResourceName(
@@ -333,9 +313,14 @@ public class UndertowHandler implements HttpHandler {
   private void handleReadRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlReadUrl urlPsi,
+      @NotNull String decodedUri,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
 
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedReadOperation(operationName) == null)
+      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.READ, operationName);
+
+    @NotNull UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, exchange);
     try {
       // find operation
       OperationSearchSuccess<ReadOperation<?>, ReadRequestUrl> operationSearchResult = findReadOperation(
@@ -449,9 +434,14 @@ public class UndertowHandler implements HttpHandler {
   private void handleCreateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlCreateUrl urlPsi,
+      @NotNull String decodedUri,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
 
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedCreateOperation(operationName) == null)
+      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.CREATE, operationName);
+
+    @NotNull UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, exchange);
     try {
       // find operation
       OperationSearchSuccess<CreateOperation<?>, CreateRequestUrl> operationSearchResult = findCreateOperation(
@@ -550,8 +540,14 @@ public class UndertowHandler implements HttpHandler {
   private void handleUpdateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlUpdateUrl urlPsi,
+      @NotNull String decodedUri,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException, IOException {
+
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedUpdateOperation(operationName) == null)
+      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.UPDATE, operationName);
+
+    @NotNull UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, exchange);
 
     try {
       // find operation
@@ -648,8 +644,14 @@ public class UndertowHandler implements HttpHandler {
   private void handleDeleteRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlDeleteUrl urlPsi,
+      @NotNull String decodedUri,
       @NotNull HttpServerExchange exchange) throws OperationNotFoundException, RequestFailedException {
+
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedDeleteOperation(operationName) == null)
+      throw new OperationNotFoundException(resource.declaration().fieldName(), OperationKind.DELETE, operationName);
+
+    @NotNull UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, exchange);
 
     try {
       // find operation
@@ -714,9 +716,11 @@ public class UndertowHandler implements HttpHandler {
 
   private void handleCustomRequest(
       @NotNull Resource resource,
-      @NotNull UrlCustomUrl urlPsi,
+      @NotNull String decodedUri,
       @NotNull CustomOperation<?> operation,
       @NotNull HttpServerExchange exchange) throws RequestFailedException, IOException {
+
+    UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, exchange);
 
     CustomRequestUrl customRequestUrl = null;
     PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();

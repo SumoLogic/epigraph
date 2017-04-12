@@ -543,7 +543,7 @@ opInputUnnamedVarProjection ::= ( opInputMultiTagProjection | opInputSingleTagPr
 private opInputBracedVarProjection ::= '(' opInputVarProjection ')'
 
 opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' {pin=2}
-opInputSingleTagProjection ::= ( ':' '+'? tagName)? opInputModelProjection
+opInputSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? opInputModelProjection
 opInputMultiTagProjectionItem ::= '+'? tagName opInputModelProjection
 
 opInputVarPolymorphicTail ::= '~' '~' ( opInputVarSingleTail | opInputVarMultiTail ) {pin=2}

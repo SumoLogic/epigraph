@@ -17,30 +17,36 @@
 package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.examples.library.resources.books.operations._read.AbstractReadOperation;
 import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBookId_BookRecord_MapKeyProjection;
 import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBookId_BookRecord_MapProjection;
 import ws.epigraph.examples.library.resources.books.operations._read.output.OutputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations._read.output.elements.OutputBookRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations._read.output.elements.author.OutputAuthorProjection;
-import ws.epigraph.examples.library.resources.books.operations._read.output.elements.author.record.OutputAuthorRecordProjection;
-import ws.epigraph.examples.library.resources.books.operations._read.output.elements.text.OutputTextProjection;
-import ws.epigraph.examples.library.resources.books.operations._read.output.elements.text.plain.OutputPlainTextProjection;
+import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 
 import java.util.concurrent.CompletableFuture;
 
-public class BooksReadOperation extends AbstractReadOperation{
+/**
+ * Default read operation implementation
+ */
+public class BooksReadOperation extends AbstractReadOperation {
 
-  BooksReadOperation(@NotNull final ReadOperationDeclaration declaration) {
+  BooksReadOperation(final @NotNull ReadOperationDeclaration declaration) {
     super(declaration);
   }
 
+  /**
+   * Builds books collection based on specified output projection
+   *
+   * @param booksDataBuilder     books map data builder to be populated
+   * @param booksFieldProjection books field output projection
+   *
+   * @return {@code Future} of the books map data
+   */
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      @NotNull final BookId_BookRecord_Map.Builder.Data booksDataBuilder,
-      @NotNull final OutputBooksFieldProjection booksFieldProjection) {
+      final @NotNull BookId_BookRecord_Map.Builder.Data booksDataBuilder,
+      final @NotNull OutputBooksFieldProjection booksFieldProjection) {
 
     final BookId_BookRecord_Map.Builder booksMap = BookId_BookRecord_Map.create();
     final OutputBookId_BookRecord_MapProjection booksMapProjection = booksFieldProjection.dataProjection();
@@ -48,107 +54,11 @@ public class BooksReadOperation extends AbstractReadOperation{
 
     for (final OutputBookId_BookRecord_MapKeyProjection keyProjection : booksMapProjection.keys()) {
       final BookId.Imm bookId = keyProjection.value();
-      booksMap.put_(bookId, getBook(bookId.getVal(), bookRecordProjection));
+      booksMap.put_(bookId, BookBuilder.buildBook(bookId, bookRecordProjection));
     }
 
     booksDataBuilder.set(booksMap);
     return CompletableFuture.completedFuture(booksDataBuilder);
   }
 
-  private BookRecord.Value getBook(long bookId, final OutputBookRecordProjection bookRecordProjection) {
-    final BooksBackend.BookData bookData = BooksBackend.get(bookId);
-
-    if (bookData == null) {
-      return BookRecord.type.createValue(
-          new ErrorValue(404, "No book with id " + bookId)
-      );
-    } else {
-      final BookRecord.Builder book = BookRecord.create();
-      book.setTitle(bookData.title);
-
-      // only get author if requested
-      final OutputAuthorProjection authorProjection = bookRecordProjection.author();
-      if (authorProjection != null)
-        book.setAuthor(getAuthor(bookData.authorId, authorProjection));
-
-      // only get text if requested
-      final OutputTextProjection textProjection = bookRecordProjection.text();
-      if (textProjection != null)
-        book.setText(getText(bookData, textProjection));
-
-      return book.asValue();
-    }
-  }
-
-  private Author getAuthor(long authorId, OutputAuthorProjection authorProjection) {
-    Author.Builder author = Author.create();
-    author.setId(AuthorId.create(authorId));
-
-    final OutputAuthorRecordProjection authorRecordProjection = authorProjection.record();
-    if (authorRecordProjection !=null)
-      author.setRecord_(getAuthorRecord(authorId, authorRecordProjection));
-
-    return author;
-  }
-
-  private AuthorRecord.Value getAuthorRecord(long authorId, OutputAuthorRecordProjection authorRecordProjection) {
-    final AuthorsBackend.AuthorData authorData = AuthorsBackend.get(authorId);
-
-    if (authorData == null) {
-      return AuthorRecord.type.createValue(
-          new ErrorValue(404, "No author with id " + authorId)
-      );
-    } else {
-      AuthorRecord.Builder author = AuthorRecord.create();
-
-      if (authorData.firstName != null)
-        author.setFirstName(authorData.firstName);
-
-      if (authorData.middleName != null)
-        author.setMiddleName(authorData.middleName);
-
-      if (authorData.lastName != null)
-        author.setLastName(authorData.lastName);
-
-      return author.asValue();
-    }
-  }
-
-  private Text getText(BooksBackend.BookData bookData, OutputTextProjection textProjection) {
-    Text.Builder text = Text.create();
-
-    final OutputPlainTextProjection plainTextProjection = textProjection.plain();
-    if (plainTextProjection != null) {
-      String bookText = bookData.text;
-      long textLength = bookText.length();
-
-      // handle parameters
-      Long offset = plainTextProjection.getOffsetParameter();
-      if (offset == null) offset = 0L;
-      if (offset < 0 || offset >= bookText.length())
-        offset = textLength - 1;
-
-      Long count = plainTextProjection.getCountParameter();
-      if (count == null || count < 0 || offset + count > textLength - 1)
-        count = textLength - offset - 1;
-
-      int beginIndex = Math.toIntExact(offset);
-      int endIndex = Math.toIntExact(beginIndex + count);
-
-      final PlainText.Builder plainText = PlainText.create(bookText.substring(beginIndex, endIndex));
-
-      // provide meta if requested
-      if (plainTextProjection.meta() != null) {
-        plainText.setMeta(
-            PlainTextRange.create()
-            .setOffset(offset)
-            .setCount(count)
-        );
-      }
-
-      text.setPlain(plainText);
-    }
-
-    return text;
-  }
 }

@@ -20,14 +20,12 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
-import io.undertow.util.StatusCodes;
-import io.undertow.util.URLUtils;
+import io.undertow.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.operations.Operation;
@@ -262,27 +260,27 @@ public final class Util {
 
   static void appendHtmlErrorHeader(@NotNull StringBuilder sb) {
     sb.append("<!DOCTYPE html><head><style>")
-      .append("body {")
-      .append("  font-family: monospace;")
-      .append("}")
-      .append("")
-      .append(".err {")
-      .append("  border-bottom:2px dotted red;")
-      .append("  display: inline-block;")
-      .append("  position: relative;")
-      .append("}")
-      .append("")
-      .append(".err:after {")
-      .append("  content: '';")
-      .append("  width: 100%;")
-      .append("  height: 5px;")
-      .append("  border-bottom:2px dotted red;")
-      .append("  position: absolute;")
-      .append("  bottom: -3px;")
-      .append("  left: -2px;")
-      .append("  display: inline-block;")
-      .append("}")
-      .append("</style></head><body>");
+        .append("body {")
+        .append("  font-family: monospace;")
+        .append("}")
+        .append("")
+        .append(".err {")
+        .append("  border-bottom:2px dotted red;")
+        .append("  display: inline-block;")
+        .append("  position: relative;")
+        .append("}")
+        .append("")
+        .append(".err:after {")
+        .append("  content: '';")
+        .append("  width: 100%;")
+        .append("  height: 5px;")
+        .append("  border-bottom:2px dotted red;")
+        .append("  position: absolute;")
+        .append("  bottom: -3px;")
+        .append("  left: -2px;")
+        .append("  display: inline-block;")
+        .append("}")
+        .append("</style></head><body>");
   }
 
   static void appendHtmlErrorFooter(@NotNull StringBuilder sb) {
@@ -300,4 +298,34 @@ public final class Util {
     return DebugUtil.psiToString(url, true, false);
   }
 
+  static @NotNull HttpMethod getMethod(@NotNull HttpServerExchange exchange) throws RequestFailedException {
+    final HttpString method = exchange.getRequestMethod();
+    if (method.equals(Methods.GET)) return HttpMethod.GET;
+    if (method.equals(Methods.POST)) return HttpMethod.POST;
+    if (method.equals(Methods.PUT)) return HttpMethod.PUT;
+    if (method.equals(Methods.DELETE)) return HttpMethod.DELETE;
+    badRequest("Unsupported HTTP method '" + method + "'", CONTENT_TYPE_TEXT, exchange);
+    throw RequestFailedException.INSTANCE;
+  }
+
+//  public static void verifyMethod(
+//      final @NotNull HttpMethod method,
+//      final @NotNull HttpMethod declaredMethod,
+//      final String operationName,
+//      final @NotNull HttpServerExchange exchange) throws RequestFailedException {
+//
+//    if (method != declaredMethod) {
+//      badRequest(
+//          String.format(
+//              "Wrong HTTP method type for '%s' operation, expected '%s' but was called using '%s'",
+//              operationName,
+//              method.toString(),
+//              declaredMethod.toString()
+//          ),
+//          CONTENT_TYPE_TEXT,
+//          exchange
+//      );
+//      throw RequestFailedException.INSTANCE;
+//    }
+//  }
 }

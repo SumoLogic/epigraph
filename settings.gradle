@@ -26,6 +26,8 @@ rootProject.name = epigraphName
 
 // map from module (sub-project) path to full module name (maven artifact id)
 Map<String, String> modules = [
+    'examples/library/library-schema'     : 'examples-library-schema',
+    'examples/library/library-service'    : 'examples-library-service',
     'examples/sumo-schema'                : 'examples-sumo-schema',
     'examples/sumo-schema-java'           : 'examples-sumo-schema-java',
     'examples/users/schema'               : 'examples-users-schema',

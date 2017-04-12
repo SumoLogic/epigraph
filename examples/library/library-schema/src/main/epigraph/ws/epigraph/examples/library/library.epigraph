@@ -46,18 +46,39 @@ record PlainTextRange {
 // service
 
 resource books: map[BookId, BookRecord] {
-  read {                               // default read operation
-    outputProjection [ required ] (    // map keys are required
-      title,
-      author :(
-        id,
-        `record` (firstName, middleName, lastName)
-      ),
-      text :plain {
-        ;offset: Long,                 // input parameter
-        ;count: Long,                  // input parameter
-        meta: (offset, count)          // supported meta-data projection
-      }
+  // named output projection, to be reused by multiple operations
+  outputProjection bookProjection: BookRecord = (
+    title,
+    author :(
+      id,
+      `record` (firstName, middleName, lastName)
+    ),
+    text :plain {
+      ;offset: Long,                 // input parameter
+      ;count: Long,                  // input parameter
+      meta: (offset, count)          // supported meta-data projection
+    }
+  )
+
+  // default read operatoin
+  read {
+    outputProjection [ required ] (  // map keys are required
+      $bookProjection                // book record projection defined above
+    )
+  }
+
+  // custom search operation
+  custom searchByAuthor {
+    method POST                      // can't be a GET since we need a body
+
+    // operation input type and projection
+    inputType AuthorRecord
+    inputProjection (firstName, middleName, lastName)
+
+    // operation output type stays the same, map[BookId, BookRecord],
+    // but projection is different, map keys not allowed this time)
+    outputProjection [ forbidden ] (
+      $bookProjection
     )
   }
 }

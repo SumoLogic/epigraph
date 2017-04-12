@@ -19,6 +19,9 @@
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
 - [ ] Feature: add support for resource overlays? adding operations to other resources (e.g. with paths)
+- [ ] generated builders should have some form of inheritance
+- [ ] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
+- [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
 
 # Type system
 - [ ] Enums
@@ -89,7 +92,9 @@
   -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
   -[x] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
 - Maven
-- [ ] include `examples` in main build (including gradle)
+- [ ] include `examples` in main build
+  - [ ] maven
+  - [x] gradle
 
 - Cleanup
   - [ ] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?

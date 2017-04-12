@@ -16,30 +16,69 @@
 
 package ws.epigraph.examples.library;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
-public class BooksBackend {
+/**
+ * Simple books backend implementation
+ */
+public final class BooksBackend {
   private static final AtomicLong nextId = new AtomicLong();
-  private static final Map<Long, BookData> books = new HashMap<>();
+  private static final Map<BookId, BookData> books = new HashMap<>();
 
-  private static long addBook(String title, long authorId, String text) {
-    long id = nextId.incrementAndGet();
-    books.put(id, new BookData(title, authorId, text));
+  private BooksBackend() {}
+
+  /**
+   * Creates new book
+   *
+   * @param title    book title
+   * @param authorId book author ID
+   * @param text     book text
+   *
+   * @return created book ID
+   */
+  private static @NotNull BookId addBook(@NotNull String title, @NotNull AuthorId authorId, @NotNull String text) {
+    BookId id = BookId.create(nextId.incrementAndGet());
+    books.put(id, new BookData(id, title, authorId, text));
     return id;
   }
 
-  public static BookData get(long id) {
-    return books.get(id);
+  /**
+   * Gets book by ID
+   *
+   * @param id book ID
+   *
+   * @return book data or {@code null} if not found
+   */
+  public static @Nullable BookData get(@NotNull BookId id) { return books.get(id); }
+
+  /**
+   * Finds books by author
+   *
+   * @param authorId author ID
+   *
+   * @return collection of books by this author
+   */
+  public static Collection<BookData> findByAuthor(AuthorId authorId) {
+    return books.values().stream()
+        .filter(e -> e.authorId.equals(authorId))
+        .collect(Collectors.toList());
   }
 
   public static class BookData {
-    public final String title;
-    public final long authorId;
-    public final String text;
+    public final @NotNull BookId id;
+    public final @NotNull String title;
+    public final @NotNull AuthorId authorId;
+    public final @NotNull String text;
 
-    public BookData(final String title, final long authorId, final String text) {
+    public BookData(@NotNull BookId id, @NotNull String title, @NotNull AuthorId authorId, @NotNull String text) {
+      this.id = id;
       this.title = title;
       this.authorId = authorId;
       this.text = text;

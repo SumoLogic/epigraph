@@ -274,7 +274,8 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
         /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable $nativeType get${up(f.name)}() {
-          return get${up(f.name)}_().getDatum().getVal();
+          ${lqn(tt(f.typeRef, dtn), t)} datum = get${up(f.name)}_().getDatum();
+          return datum == null ? null : datum.getVal();
         }
 """
         def genNonPrimitiveGetter: String =
@@ -463,7 +464,8 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable $nativeType get${up(f.name)}() {
-      return get${up(f.name)}_().getDatum().getVal();
+      ${lqn(tt(f.typeRef, dtn), t)} datum = get${up(f.name)}_().getDatum();
+      return datum == null ? null : datum.getVal();
     }
 """
         def genNonPrimitiveGetter: String =

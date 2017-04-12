@@ -16,34 +16,75 @@
 
 package ws.epigraph.examples.library;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
-public class AuthorsBackend {
+public final class AuthorsBackend {
   private static final AtomicLong nextId = new AtomicLong();
-  private static final Map<Long, AuthorData> authors = new HashMap<>();
+  private static final Map<AuthorId, AuthorData> authors = new HashMap<>();
 
-  public static long ALLAN_POE = addAuthor("Allan", null, "Poe");
-  public static long CONAN_DOYLE = addAuthor("Arthur", "Conan", "Doyle");
-  public static long MARK_TWAIN = addAuthor("Mark", null, "Twain");
+  public static final AuthorId ALLAN_POE = addAuthor("Allan", null, "Poe");
+  public static final AuthorId CONAN_DOYLE = addAuthor("Arthur", "Conan", "Doyle");
+  public static final AuthorId MARK_TWAIN = addAuthor("Mark", null, "Twain");
 
-  private static long addAuthor(String firstName, String middleName, String lastName) {
-    long id = nextId.incrementAndGet();
+  private AuthorsBackend() {}
+
+  private static @NotNull AuthorId addAuthor(
+      @Nullable String firstName,
+      @Nullable String middleName,
+      @Nullable String lastName) {
+
+    AuthorId id = AuthorId.create(nextId.incrementAndGet());
     authors.put(id, new AuthorData(firstName, middleName, lastName));
     return id;
   }
 
-  public static AuthorData get(long id) {
+  public static @Nullable AuthorData get(@NotNull AuthorId id) {
     return authors.get(id);
   }
 
-  public static class AuthorData {
-    public final String firstName;
-    public final String middleName;
-    public final String lastName;
+  /**
+   * Gets all known author IDs
+   *
+   * @return collection of known author IDs
+   */
+  public static @NotNull Collection<@NotNull AuthorId> allAuthors() {
+    return authors.keySet();
+  }
 
-    public AuthorData(final String firstName, final String middleName, final String lastName) {
+  /**
+   * Finds authors by name
+   *
+   * @param firstName  author first name or {@code null} for any
+   * @param middleName author middle name or {@code null} for any
+   * @param lastName   author last name or {@code null} for any
+   *
+   * @return collection of matching author's IDs
+   */
+  public static @NotNull Collection<@NotNull AuthorId> findAuthors(
+      Optional<String> firstName,
+      Optional<String> middleName,
+      Optional<String> lastName) {
+
+    return authors.entrySet().stream()
+        .filter(e ->
+            (firstName != null && Objects.equals(firstName.orElse(null), e.getValue().firstName)) ||
+            (middleName != null && Objects.equals(middleName.orElse(null), e.getValue().middleName)) ||
+            (lastName != null && Objects.equals(lastName.orElse(null), e.getValue().lastName)))
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toList());
+  }
+
+  public static class AuthorData {
+    public final @Nullable String firstName;
+    public final @Nullable String middleName;
+    public final @Nullable String lastName;
+
+    public AuthorData(@Nullable String firstName, @Nullable String middleName, @Nullable String lastName) {
       this.firstName = firstName;
       this.middleName = middleName;
       this.lastName = lastName;
