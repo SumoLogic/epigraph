@@ -394,7 +394,7 @@ public class ReqOutputJsonFormatReaderTest {
 
     final Data data = jsonReader.readData(reqProjection);
 
-    if (!new DataComparator().equals(expectedData, data)) {
+    if (!DataComparator.equals(expectedData, data)) {
       StringWriter writer = new StringWriter();
       JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
       jsonWriter.writeData(data);

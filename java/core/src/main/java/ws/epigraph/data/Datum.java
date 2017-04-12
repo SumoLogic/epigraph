@@ -27,9 +27,6 @@ public interface Datum {
 
   @NotNull DatumType type();
 
-  // do we need this?
-  static @Nullable Datum.Imm toImmutable(@Nullable Datum datum) { return datum == null ? null : datum.toImmutable(); }
-
   @NotNull Datum.Raw _raw();
 
   @NotNull Datum.Imm toImmutable();
@@ -119,23 +116,6 @@ public interface Datum {
 
 
   }
-
-
-//  interface Mut extends Datum, Mutable {
-//
-//
-//    interface Raw extends Datum.Mut, Datum.Raw {}
-//
-//
-//    interface Static<MyImmDatum extends Datum.Imm.Static> extends Datum.Mut, Datum.Static {
-//
-//      @Override
-//      @NotNull MyImmDatum toImmutable();
-//
-//    }
-//
-//
-//  }
 
 
 }
