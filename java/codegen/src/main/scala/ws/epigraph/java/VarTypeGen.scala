@@ -68,7 +68,7 @@ ${t.effectiveTags.map { tag => sn"""\
     private Type() {
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${t.linearizedParents.map(lqn(_, t, _ + ".Type.instance()")).mkString(", ")}),
+          java.util.Arrays.asList(${parents(".Type.instance()")}),
           $ln.Builder::new
       );
     }

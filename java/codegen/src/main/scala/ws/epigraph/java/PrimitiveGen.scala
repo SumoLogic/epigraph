@@ -74,7 +74,7 @@ ${t.meta match {
     private Type() {
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${t.linearizedParents.map(javaQName(_, t) + ".Type.instance()").mkString(", ")}),
+          java.util.Arrays.asList(${parents(".Type.instance()")}),
           ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           $ln.Builder::new,
           $ln.Imm.Value.Impl::new,
