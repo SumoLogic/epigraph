@@ -1,0 +1,74 @@
+namespace ws.epigraph.tests.codegenstress
+
+import ws.epigraph.tests.codegenstress.primitives
+
+/* FIXME plugin highlights comment closing * / as part of the comment (unlike java/scala) --> */
+
+record NoFields // record with no fields
+
+// type name collides with generated .Imm interface
+record Imm {
+  imm: Imm
+  shared: Imm
+}
+
+// type name collides with generated .Type class
+record Type {
+  type: Type
+  shared: Type
+}
+
+// type name collides with generated .Data interface
+record Data {
+  data: Data
+  shared: Data
+}
+
+// type name collides with generated .Value interface
+record Value {
+  value: Value
+  shared: Value
+}
+
+// type name collides with generated .Builder class
+record Builder {
+  builder: Builder
+  shared: Builder
+}
+
+// inherited same-namespace type names collide with generated nested classes/interfaces
+record ImmTypeDataValueBuilder extends Imm, Type, Data, Value, Builder {
+  override shared: ImmTypeDataValueBuilder
+}
+
+// type name collides with generated field setter interface
+record SetBar {
+  // bar: SetBar // FIXME generated interface collides with main one
+  setBar: SetBar
+}
+
+record Bar extends SetBar {
+  // bar: Bar // FIXME generated interface collides with same-namespace parent type name
+  baz: Baz retro imm
+  imm: Imm
+  builder: Builder
+}
+
+vartype Baz {
+  imm: Bar
+  builder: Bar
+  setBar: Bar
+}
+
+record ImmRec {
+  foo: Imm
+}
+
+record BuilderRec {
+  foo: Builder
+}
+
+record ImmBuilderRec {
+  foo: ImmTypeDataValueBuilder
+  fooPrim: primitives.ImmTypeDataValueBuilder
+}

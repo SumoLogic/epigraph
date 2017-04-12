@@ -372,7 +372,6 @@ ${t.meta match {
     }
 
   }
-
 ${t.effectiveFields.map { f => // for each effective field
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     val setterOverride = if (invariantSuperfields(f).isEmpty) "" else sn"""\
@@ -578,6 +577,8 @@ $builderValueAndDataBuilder\
     // append '$' to field getters/setters if their value type has retro tag
     def retro(f: CField): String = if (f.effectiveDefaultTagName.isDefined) "$" else ""
 
-    def setters: String = t.effectiveFields.map(f => s"Set${up(f.name)}").mkString(",\n      ", ", ", "")
+    def setters: String = if (t.effectiveFields.isEmpty) "" else t.effectiveFields.map(
+        f => s"Set${up(f.name)}"
+    ).mkString(",\n      ", ", ", "")
 
 }
