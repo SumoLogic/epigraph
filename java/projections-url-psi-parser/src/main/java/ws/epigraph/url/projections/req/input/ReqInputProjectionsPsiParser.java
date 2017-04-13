@@ -449,6 +449,8 @@ public final class ReqInputProjectionsPsiParser {
             psi.getReqInputRecordModelProjection();
 
         if (recordModelProjectionPsi == null) {
+          if (op.required())
+            context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
         }
@@ -478,6 +480,8 @@ public final class ReqInputProjectionsPsiParser {
         @Nullable UrlReqInputMapModelProjection mapModelProjectionPsi = psi.getReqInputMapModelProjection();
 
         if (mapModelProjectionPsi == null) {
+          if (op.required())
+            context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
         }
@@ -508,6 +512,8 @@ public final class ReqInputProjectionsPsiParser {
             psi.getReqInputListModelProjection();
 
         if (listModelProjectionPsi == null) {
+          if (op.required())
+            context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
         }
