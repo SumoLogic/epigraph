@@ -66,15 +66,17 @@ public final class AuthorsBackend {
    * @return collection of matching author's IDs
    */
   public static @NotNull Collection<@NotNull AuthorId> findAuthors(
-      Optional<String> firstName,
-      Optional<String> middleName,
-      Optional<String> lastName) {
+      @Nullable Optional<String> firstName,
+      @Nullable Optional<String> middleName,
+      @Nullable Optional<String> lastName) {
 
     return authors.entrySet().stream()
         .filter(e ->
             (firstName != null && Objects.equals(firstName.orElse(null), e.getValue().firstName)) ||
             (middleName != null && Objects.equals(middleName.orElse(null), e.getValue().middleName)) ||
-            (lastName != null && Objects.equals(lastName.orElse(null), e.getValue().lastName)))
+            (lastName != null && Objects.equals(lastName.orElse(null), e.getValue().lastName)) ||
+            (firstName == null && middleName == null && lastName == null)
+        )
         .map(Map.Entry::getKey)
         .collect(Collectors.toList());
   }

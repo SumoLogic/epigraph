@@ -406,4 +406,4 @@ enumDatum ::= '#' qid {extends=datum pin=1}
 
 nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
 
-private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?' )
+private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' | '?' )

@@ -67,17 +67,12 @@ resource books: map[BookId, BookRecord] {
     )
   }
 
-  // custom search operation
-  custom searchByAuthor {
-    method POST                      // can't be a GET since we need a body
-
-    // operation input type and projection
-    inputType AuthorRecord
-    inputProjection (firstName, middleName, lastName)
-
-    // operation output type stays the same, map[BookId, BookRecord],
-    // but projection is different, map keys not allowed this time)
-    outputProjection [ forbidden ] (
+  // search operation
+  read searchByAuthor {
+    outputProjection {
+      // parameter declaration
+      ;+author: AuthorRecord (firstName, middleName, lastName)
+    } [ forbidden ] (                // map keys are forbidden
       $bookProjection
     )
   }

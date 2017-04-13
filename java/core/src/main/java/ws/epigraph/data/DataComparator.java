@@ -59,19 +59,26 @@ public final class DataComparator {
 
     v.add(d2);
 
-    if (!d1.type().equals(d2.type())) return false;
+    try {
+      if (!d1.type().equals(d2.type())) return false;
 
-    final Map<@NotNull String, @NotNull ? extends Val> tv1 = d1._raw().tagValues();
-    final Map<@NotNull String, @NotNull ? extends Val> tv2 = d2._raw().tagValues();
+      final Map<@NotNull String, @NotNull ? extends Val> tv1 = d1._raw().tagValues();
+      final Map<@NotNull String, @NotNull ? extends Val> tv2 = d2._raw().tagValues();
 
-    if (tv1.size() != tv2.size()) return false;
-    if (!tv1.keySet().equals(tv2.keySet())) return false;
+      if (tv1.size() != tv2.size()) return false;
+      if (!tv1.keySet().equals(tv2.keySet())) return false;
 
-    for (final Map.Entry<String, ? extends Val> entry : tv1.entrySet()) {
-      if (!equal(entry.getValue(), tv2.get(entry.getKey()))) return false;
+      for (final Map.Entry<String, ? extends Val> entry : tv1.entrySet()) {
+        if (!equal(entry.getValue(), tv2.get(entry.getKey()))) return false;
+      }
+
+      return true;
+    } finally {
+      v.remove(d2);
+
+      if (v.isEmpty())
+        visited.remove(d1);
     }
-
-    return true;
   }
 
   private boolean equal(@Nullable Val v1, @Nullable Val v2) {

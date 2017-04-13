@@ -10,10 +10,16 @@
   - [ ] service quick-start guide
     - [x] simple read
     - [ ] search operation
+    - [ ] create operation
+    - [ ] update operation
+    - [ ] delete operation
   - Operations
     - [ ] Overview
     - [ ] IDL
     - [ ] Routing
+    
+- [ ] update introspection service using builder setters
+- [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 
 # See also
 - See [General todo] (todo.md)

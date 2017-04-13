@@ -22,6 +22,7 @@
 - [ ] generated builders should have some form of inheritance
 - [ ] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
+- [ ] operations codegen: parameter accessors should be non-null for requried parameters
 
 # Type system
 - [ ] Enums

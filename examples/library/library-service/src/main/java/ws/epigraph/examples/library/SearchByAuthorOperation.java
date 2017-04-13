@@ -18,12 +18,11 @@ package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.AbstractCustomSearchByAuthorOperation;
-import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.input.InputBooksFieldProjection;
+import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.AbstractReadSearchByAuthorOperation;
 import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBookId_BookRecord_MapProjection;
 import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBooksFieldProjection;
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
-import ws.epigraph.schema.operations.CustomOperationDeclaration;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -32,26 +31,23 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Search by author custom operation implementation
  */
-public class SearchByAuthorOperation extends AbstractCustomSearchByAuthorOperation {
-  protected SearchByAuthorOperation(final @NotNull CustomOperationDeclaration declaration) {
+public class SearchByAuthorOperation extends AbstractReadSearchByAuthorOperation {
+
+  protected SearchByAuthorOperation(final @NotNull ReadOperationDeclaration declaration) {
     super(declaration);
   }
 
   /**
    * Runs the operation
    *
-   * @param booksDataBuilder books map data builder to be populated
-   * @param inputData        input data, may be {@code null} if not specified
-   * @param inputProjection  request input projection, may be {@code null} if not specified
-   * @param outputProjection request output projection
+   * @param booksDataBuilder result builder to be populated, initially empty
+   * @param outputProjection request projection
    *
    * @return {@code Future} of the books map data
    */
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
       final @NotNull BookId_BookRecord_Map.Builder.@NotNull Data booksDataBuilder,
-      final @Nullable AuthorRecord inputData,
-      final @Nullable InputBooksFieldProjection inputProjection,
       final @NotNull OutputBooksFieldProjection outputProjection) {
 
 
@@ -59,7 +55,8 @@ public class SearchByAuthorOperation extends AbstractCustomSearchByAuthorOperati
     final OutputBookId_BookRecord_MapProjection booksMapProjection = outputProjection.dataProjection();
     final OutputBookRecordProjection bookRecordProjection = booksMapProjection.itemsProjection();
 
-    for (AuthorId author : findAuthors(inputData)) {
+
+    for (AuthorId author : findAuthors(booksMapProjection.getAuthorParameter())) {
       for (BooksBackend.BookData book : BooksBackend.findByAuthor(author)) {
         booksMap.put_(book.id, BookBuilder.buildBook(book.id, bookRecordProjection));
       }
@@ -67,7 +64,6 @@ public class SearchByAuthorOperation extends AbstractCustomSearchByAuthorOperati
 
     booksDataBuilder.set(booksMap);
     return CompletableFuture.completedFuture(booksDataBuilder);
-
   }
 
   /**

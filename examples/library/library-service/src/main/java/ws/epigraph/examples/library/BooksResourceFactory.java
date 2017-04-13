@@ -18,10 +18,8 @@ package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.examples.library.resources.books.AbstractBooksResourceFactory;
-import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.ServiceInitializationException;
-import ws.epigraph.service.operations.CustomOperation;
 import ws.epigraph.service.operations.ReadOperation;
 
 /**
@@ -36,8 +34,8 @@ public class BooksResourceFactory extends AbstractBooksResourceFactory {
   }
 
   @Override
-  protected @NotNull CustomOperation<BookId_BookRecord_Map.Data> constructSearchByAuthorCustomOperation(
-      final @NotNull CustomOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+  protected @NotNull ReadOperation<BookId_BookRecord_Map.Data> constructSearchByAuthorReadOperation(
+      final @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
     return new SearchByAuthorOperation(operationDeclaration);
   }
 }

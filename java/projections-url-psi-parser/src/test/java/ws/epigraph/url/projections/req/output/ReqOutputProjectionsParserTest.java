@@ -22,7 +22,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.PsiProcessingException;
@@ -35,8 +37,7 @@ import ws.epigraph.types.Type;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
 import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
@@ -70,6 +71,7 @@ public class ReqOutputProjectionsParserTest {
           "  `record` (",
           "    id {",
           "      ;param1 : epigraph.String = \"hello world\",",
+          "      ;param2 : ws.epigraph.tests.UserRecord",
           "    },",
           "    firstName{;param:epigraph.String},",
           "    bestFriend :( id, `record` (",
@@ -84,7 +86,7 @@ public class ReqOutputProjectionsParserTest {
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
-          "    friendRecordMap [] (id, firstName)",
+          "    friendRecordMap [ forbidden ] (id, firstName)",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
           ") ~~(",
           "      ws.epigraph.tests.User :`record` (profile)",
@@ -116,7 +118,7 @@ public class ReqOutputProjectionsParserTest {
     );
     testParse(
         ":record / friendRecordMap [ ] ( id )",
-        ":record / friendRecordMap [ ]( ( id ) )",
+        ":record / friendRecordMap [ * ]( ( id ) )", // convert to * since map keys are forbidden
         3
     );
   }
@@ -136,6 +138,28 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseParam() {
     testParse(":( id, record ( id ;param1 = 'foo' ) )", 0);
+  }
+
+  @Test
+  public void testParseEmptyRecordParam() {
+    testParse(":( id, record ( id ;param2 = { } ) )", 0);
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testParseEmptyRecordFieldParam() {
+    ReqOutputVarProjection vp = testParse(":( id, record ( id ;param2 = { firstName: null } ) )", 0);
+
+    ReqOutputRecordModelProjection recordProjection =
+        (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
+    ReqOutputModelProjection<?, ?, ?> idProjection =
+        recordProjection.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
+
+    ReqParam param = idProjection.params().get("param2");
+    UserRecord paramValue = (UserRecord) param.value();
+
+    assertNotNull(paramValue.getFirstName_());
+    assertNull(paramValue.getFirstName());
   }
 
   @Test
@@ -418,9 +442,7 @@ public class ReqOutputProjectionsParserTest {
     assertEquals(expected, actual);
   }
 
-  private void testParse(String expr, int steps) {
-    testParse(expr, expr, steps);
-  }
+  private ReqOutputVarProjection testParse(String expr, int steps) { return testParse(expr, expr, steps); }
 
   private void testParse(DataType dataType, OpOutputVarProjection opProjection, String expr, int steps) {
     testParse(dataType, opProjection, expr, expr, steps);

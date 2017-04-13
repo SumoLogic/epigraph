@@ -937,32 +937,41 @@ public final class ReqInputProjectionsPsiParser {
       final @NotNull Collection<UrlReqInputKeyProjection> keyProjectionsPsi =
           keysProjectionPsi.getReqInputKeyProjectionList();
 
-      keyProjections = new ArrayList<>(keyProjectionsPsi.size());
+      final int keysSize = keyProjectionsPsi.size();
 
-      for (final UrlReqInputKeyProjection keyProjectionPsi : keyProjectionsPsi) {
-        try {
-          final @NotNull UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
-          final @Nullable Datum keyValue =
-              getDatum(keyValuePsi, op.type().keyType(), resolver, "Error processing map key:", context);
 
-          if (keyValue == null)
-            context.addError("Null keys are not allowed", keyValuePsi);
-          else {
-            keyProjections.add(
-                new ReqInputKeyProjection(
-                    keyValue,
-                    parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, context),
-                    parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
-                    EpigraphPsiUtil.getLocation(keyProjectionPsi)
-                )
-            );
-          }
-        } catch (PsiProcessingException e) { context.addException(e); }
+      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN) {
+        if (keysSize > 0) context.addError("Map keys are forbidden", keysProjectionPsi);
+        keyProjections = null;
+      } else {
+        keyProjections = new ArrayList<>(keysSize);
+
+        for (final UrlReqInputKeyProjection keyProjectionPsi : keyProjectionsPsi) {
+          try {
+            final @NotNull UrlDatum keyValuePsi = keyProjectionPsi.getDatum();
+            final @Nullable Datum keyValue =
+                getDatum(keyValuePsi, op.type().keyType(), resolver, "Error processing map key:", context);
+
+            if (keyValue == null)
+              context.addError("Null keys are not allowed", keyValuePsi);
+            else {
+              keyProjections.add(
+                  new ReqInputKeyProjection(
+                      keyValue,
+                      parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, context),
+                      parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
+                      EpigraphPsiUtil.getLocation(keyProjectionPsi)
+                  )
+              );
+            }
+          } catch (PsiProcessingException e) { context.addException(e); }
+        }
       }
     } else {
-      keyProjections = null;
       if (opKeyProjection.presence() == OpKeyPresence.REQUIRED)
-        throw new PsiProcessingException("Map keys are required", keysProjectionPsi.getStar(), context);
+        context.addError("Map keys are required", keysProjectionPsi.getStar());
+
+      keyProjections = null;
     }
 
     final @Nullable UrlReqInputVarProjection elementsVarProjectionPsi = psi.getReqInputVarProjection();

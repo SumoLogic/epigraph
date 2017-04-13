@@ -724,7 +724,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?' )
+  // ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' | '?' )
   static boolean dataValueRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover")) return false;
     boolean r;
@@ -734,7 +734,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '#' | qid | primitiveDatum | ')' | '>' | ']' | ',' | '?'
+  // '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | ',' | '?'
   private static boolean dataValueRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dataValueRecover_0")) return false;
     boolean r;
@@ -742,6 +742,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_HASH);
     if (!r) r = qid(b, l + 1);
     if (!r) r = primitiveDatum(b, l + 1);
+    if (!r) r = consumeToken(b, U_CURLY_RIGHT);
     if (!r) r = consumeToken(b, U_PAREN_RIGHT);
     if (!r) r = consumeToken(b, U_ANGLE_RIGHT);
     if (!r) r = consumeToken(b, U_BRACKET_RIGHT);

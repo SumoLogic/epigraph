@@ -808,8 +808,7 @@ public final class ReqOutputProjectionsPsiParser {
         if (trunkRecordProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);
           break;
-        }
-        else {
+        } else {
           return (StepsAndProjection<? extends MP>) parseTrunkRecordModelProjection(
               (OpOutputRecordModelProjection) op,
               required,
@@ -1650,36 +1649,43 @@ public final class ReqOutputProjectionsPsiParser {
     final List<ReqOutputKeyProjection> keyProjections;
 
     if (keysProjectionPsi.getStar() == null) {
-      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN)
-        throw new PsiProcessingException("Map keys are forbidden", keysProjectionPsi, context);
+      final Collection<UrlReqOutputComaKeyProjection> keyProjectionsPsi =
+          keysProjectionPsi.getReqOutputComaKeyProjectionList();
 
-      final int keysSize = keysProjectionPsi.getReqOutputComaKeyProjectionList().size();
-      keyProjections = new ArrayList<>(keysSize);
-      for (UrlReqOutputComaKeyProjection keyProjectionPsi : keysProjectionPsi.getReqOutputComaKeyProjectionList()) {
+      final int keysSize = keyProjectionsPsi.size();
 
-        try {
-          @NotNull UrlDatum valuePsi = keyProjectionPsi.getDatum();
-          @Nullable Datum keyValue =
-              getDatum(valuePsi, op.type().keyType(), resolver, "Error processing map key: ", context);
+      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN) {
+        if (keysSize > 0) context.addError("Map keys are forbidden", keysProjectionPsi);
+        keyProjections = null;
+      } else {
+        keyProjections = new ArrayList<>(keysSize);
+        for (UrlReqOutputComaKeyProjection keyProjectionPsi : keyProjectionsPsi) {
 
-          if (keyValue == null) context.addError("Null keys are not allowed", valuePsi);
-          else {
-            keyProjections.add(
-                new ReqOutputKeyProjection(
-                    keyValue,
-                    parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, context),
-                    parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
-                    EpigraphPsiUtil.getLocation(keyProjectionPsi)
-                )
-            );
-          }
+          try {
+            @NotNull UrlDatum valuePsi = keyProjectionPsi.getDatum();
+            @Nullable Datum keyValue =
+                getDatum(valuePsi, op.type().keyType(), resolver, "Error processing map key: ", context);
 
-        } catch (PsiProcessingException e) { context.addException(e); }
+            if (keyValue == null) context.addError("Null keys are not allowed", valuePsi);
+            else {
+              keyProjections.add(
+                  new ReqOutputKeyProjection(
+                      keyValue,
+                      parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, context),
+                      parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
+                      EpigraphPsiUtil.getLocation(keyProjectionPsi)
+                  )
+              );
+            }
+
+          } catch (PsiProcessingException e) { context.addException(e); }
+        }
       }
     } else {
-      keyProjections = null;
       if (opKeyProjection.presence() == OpKeyPresence.REQUIRED)
-        throw new PsiProcessingException("Map keys are required", keysProjectionPsi.getStar(), context);
+        context.addError("Map keys are required", keysProjectionPsi.getStar());
+
+      keyProjections = null;
     }
 
     @Nullable UrlReqOutputComaVarProjection valueProjectionPsi = psi.getReqOutputComaVarProjection();
