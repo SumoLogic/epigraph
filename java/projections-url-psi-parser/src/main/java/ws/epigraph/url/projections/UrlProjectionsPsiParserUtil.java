@@ -260,12 +260,12 @@ public final class UrlProjectionsPsiParserUtil {
       @NotNull List<UrlReqParam> reqParamsPsi,
       @Nullable OpParams opParams,
       @NotNull TypesResolver resolver,
+      @NotNull PsiElement paramsLocation,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (reqParamsPsi.isEmpty()) return ReqParams.EMPTY;
-
     if (opParams == null) {
-      context.addError("Parameters are not supported here", reqParamsPsi.iterator().next());
+      if (!reqParamsPsi.isEmpty())
+        context.addError("Parameters are not supported here", reqParamsPsi.iterator().next());
       return ReqParams.EMPTY;
     }
 
@@ -273,6 +273,16 @@ public final class UrlProjectionsPsiParserUtil {
 
     for (UrlReqParam reqParamPsi : reqParamsPsi)
       paramMap = parseReqParam(paramMap, reqParamPsi, opParams, resolver, context);
+
+    // check that all required params are present
+    for (final Map.Entry<String, OpParam> entry : opParams.asMap().entrySet()) {
+      String paramName = entry.getKey();
+      if ((paramMap == null || !paramMap.containsKey(paramName)) && entry.getValue().projection().required())
+        context.addError(
+            String.format("Required parameter '%s' is missing", paramName),
+            paramsLocation
+        );
+    }
 
     return ReqParams.fromMap(paramMap);
   }

@@ -19,6 +19,10 @@
     - [ ] Routing
     
 - [ ] update introspection service using builder setters
+- [ ] add request/response validation
+  - [ ] Requried stuff must be present. 
+  - [ ] Codegen should build @NotNull things. 
+  - [ ] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 
 # See also

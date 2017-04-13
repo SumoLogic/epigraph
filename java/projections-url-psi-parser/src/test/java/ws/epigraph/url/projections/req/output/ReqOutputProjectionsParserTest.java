@@ -404,6 +404,25 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
+  @Test
+  public void testParseMissingRequiredParam() throws PsiProcessingException {
+    final DataType dataType = new DataType(PersonMap.type, null);
+
+    String opProjectionStr = "{ ;+param: epigraph.String } [ ]( :id )";
+    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+
+    try {
+      testParse(
+          dataType,
+          opProjection,
+          "[ 2 ]( :id )",
+          1
+      );
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Required parameter 'param' is missing"));
+    }
+  }
+
   // todo negative test cases too
 
   private void testTailsNormalization(String str, Type type, String expected) {

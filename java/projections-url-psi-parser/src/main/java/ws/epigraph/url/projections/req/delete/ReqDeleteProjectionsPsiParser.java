@@ -48,7 +48,7 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 public final class ReqDeleteProjectionsPsiParser {
 
   private ReqDeleteProjectionsPsiParser() {}
-  
+
   public static @NotNull ReqDeleteVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpDeleteVarProjection op,
@@ -202,7 +202,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
         final ReqDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
-            parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, context),
+            parseReqParams(
+                singleTagProjectionPsi.getReqParamList(),
+                opModelProjection.params(),
+                subResolver,
+                singleTagProjectionPsi,
+                context
+            ),
             parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
             modelProjectionPsi,
             subResolver,
@@ -282,7 +288,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
         final ReqDeleteModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opTagProjection,
-            parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, context),
+            parseReqParams(
+                tagProjectionPsi.getReqParamList(),
+                opTagProjection.params(),
+                subResolver,
+                tagProjectionPsi,
+                context
+            ),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList(), context),
             modelProjection, subResolver, context
         );
@@ -582,6 +594,7 @@ public final class ReqDeleteProjectionsPsiParser {
                     op,
                     tailItemPsi.getTypeRef(),
                     tailItemPsi.getReqDeleteModelProjection(),
+                    tailItemPsi,
                     tailItemPsi.getReqParamList(),
                     tailItemPsi.getReqAnnotationList(),
                     typesResolver,
@@ -599,6 +612,7 @@ public final class ReqDeleteProjectionsPsiParser {
                 op,
                 singleTailPsi.getTypeRef(),
                 singleTailPsi.getReqDeleteModelProjection(),
+                singleTailPsi,
                 singleTailPsi.getReqParamList(),
                 singleTailPsi.getReqAnnotationList(),
                 typesResolver,
@@ -616,6 +630,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqDeleteModelProjection modelProjectionPsi,
+      @NotNull PsiElement paramsLocationPsi,
       @NotNull List<UrlReqParam> modelParamsList,
       @NotNull List<UrlReqAnnotation> modelAnnotationsList,
       @NotNull TypesResolver typesResolver,
@@ -630,7 +645,7 @@ public final class ReqDeleteProjectionsPsiParser {
     return parseModelProjection(
         modelClass,
         opTail,
-        parseReqParams(modelParamsList, op.params(), typesResolver, context),
+        parseReqParams(modelParamsList, op.params(), typesResolver, paramsLocationPsi, context),
         parseAnnotations(modelAnnotationsList, context),
         modelProjectionPsi,
         typesResolver,
@@ -919,7 +934,13 @@ public final class ReqDeleteProjectionsPsiParser {
             keyProjections.add(
                 new ReqDeleteKeyProjection(
                     keyValue,
-                    parseReqParams(keyProjectionPsi.getReqParamList(), op.keyProjection().params(), resolver, context),
+                    parseReqParams(
+                        keyProjectionPsi.getReqParamList(),
+                        op.keyProjection().params(),
+                        resolver,
+                        keyProjectionPsi,
+                        context
+                    ),
                     parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
                     EpigraphPsiUtil.getLocation(keyProjectionPsi)
                 )

@@ -212,7 +212,13 @@ public final class ReqOutputProjectionsPsiParser {
       StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
           required || singleTagProjectionPsi.getPlus() != null,
-          parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, context),
+          parseReqParams(
+              singleTagProjectionPsi.getReqParamList(),
+              opModelProjection.params(),
+              subResolver,
+              singleTagProjectionPsi,
+              context
+          ),
           parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
           parseModelMetaProjection(
               opModelProjection,
@@ -483,7 +489,13 @@ public final class ReqOutputProjectionsPsiParser {
             ReqOutputModelProjection.class,
             opModelProjection,
             required || singleTagProjectionPsi.getPlus() != null,
-            parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, context),
+            parseReqParams(
+                singleTagProjectionPsi.getReqParamList(),
+                opModelProjection.params(),
+                subResolver,
+                singleTagProjectionPsi,
+                context
+            ),
             parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
             parseModelMetaProjection(
                 opModelProjection,
@@ -563,7 +575,13 @@ public final class ReqOutputProjectionsPsiParser {
             ReqOutputModelProjection.class,
             opTagProjection,
             required || tagProjectionPsi.getPlus() != null,
-            parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, context),
+            parseReqParams(
+                tagProjectionPsi.getReqParamList(),
+                opTagProjection.params(),
+                subResolver,
+                tagProjectionPsi,
+                context
+            ),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList(), context),
             parseModelMetaProjection(opTagProjection, tagProjectionPsi.getReqOutputModelMeta(), subResolver, context),
             modelProjection, subResolver, context
@@ -1081,6 +1099,7 @@ public final class ReqOutputProjectionsPsiParser {
                     tailItemPsi.getPlus() != null,
                     tailItemPsi.getTypeRef(),
                     tailItemPsi.getReqOutputComaModelProjection(),
+                    tailItemPsi,
                     tailItemPsi.getReqParamList(),
                     tailItemPsi.getReqAnnotationList(),
                     tailItemPsi.getReqOutputModelMeta(),
@@ -1098,6 +1117,7 @@ public final class ReqOutputProjectionsPsiParser {
                 singleTailPsi.getPlus() != null,
                 singleTailPsi.getTypeRef(),
                 singleTailPsi.getReqOutputComaModelProjection(),
+                singleTailPsi,
                 singleTailPsi.getReqParamList(),
                 singleTailPsi.getReqAnnotationList(),
                 singleTailPsi.getReqOutputModelMeta(),
@@ -1117,6 +1137,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqOutputComaModelProjection modelProjectionPsi,
+      @NotNull PsiElement paramsLocationPsi,
       @NotNull List<UrlReqParam> modelParamsList,
       @NotNull List<UrlReqAnnotation> modelAnnotationsList,
       @Nullable UrlReqOutputModelMeta modelMetaPsi,
@@ -1133,7 +1154,7 @@ public final class ReqOutputProjectionsPsiParser {
         modelClass,
         opTail,
         required,
-        parseReqParams(modelParamsList, op.params(), typesResolver, context),
+        parseReqParams(modelParamsList, op.params(), typesResolver, paramsLocationPsi, context),
         parseAnnotations(modelAnnotationsList, context),
         parseModelMetaProjection(
             op,
@@ -1594,7 +1615,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     ReqOutputKeyProjection keyProjection = new ReqOutputKeyProjection(
         keyValue,
-        parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver, context),
+        parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver, psi, context),
         parseAnnotations(psi.getReqAnnotationList(), context),
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -1671,7 +1692,13 @@ public final class ReqOutputProjectionsPsiParser {
               keyProjections.add(
                   new ReqOutputKeyProjection(
                       keyValue,
-                      parseReqParams(keyProjectionPsi.getReqParamList(), opKeyProjection.params(), resolver, context),
+                      parseReqParams(
+                          keyProjectionPsi.getReqParamList(),
+                          opKeyProjection.params(),
+                          resolver,
+                          keyProjectionPsi,
+                          context
+                      ),
                       parseAnnotations(keyProjectionPsi.getReqAnnotationList(), context),
                       EpigraphPsiUtil.getLocation(keyProjectionPsi)
                   )

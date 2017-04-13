@@ -179,7 +179,13 @@ public final class ReadReqPathPsiParser {
     final @Nullable ReadReqPathParsingResult<? extends ReqModelPath<?, ?, ?>> parsedModelResult = parseModelPath(
         opModelPath,
         opTag.type(),
-        parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelPath.params(), typesResolver, context),
+        parseReqParams(
+            singleTagProjectionPsi.getReqParamList(),
+            opModelPath.params(),
+            typesResolver,
+            singleTagProjectionPsi,
+            context
+        ),
         parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
         modelPsi,
         typesResolver,
@@ -308,7 +314,7 @@ public final class ReadReqPathPsiParser {
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
     }
   }
-  
+
   private static void checkModelPsi(
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypeKind expectedKind,
@@ -532,7 +538,8 @@ public final class ReadReqPathPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqPathPsiProcessingContext context) throws PsiProcessingException {
 
-    final @NotNull ReqParams reqParams = parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, context);
+    final @NotNull ReqParams reqParams =
+        parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, mapPathPsi, context);
     final @NotNull Annotations annotations = parseAnnotations(mapPathPsi.getReqAnnotationList(), context);
 
     final @Nullable Datum keyValue =

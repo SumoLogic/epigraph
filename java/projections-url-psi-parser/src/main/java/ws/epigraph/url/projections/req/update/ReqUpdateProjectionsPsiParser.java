@@ -48,7 +48,7 @@ import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
 public final class ReqUpdateProjectionsPsiParser {
 
   private ReqUpdateProjectionsPsiParser() {}
-  
+
   public static @NotNull ReqUpdateVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpInputVarProjection op,
@@ -202,7 +202,13 @@ public final class ReqUpdateProjectionsPsiParser {
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
             singleTagProjectionPsi.getPlus() != null,
-            parseReqParams(singleTagProjectionPsi.getReqParamList(), opModelProjection.params(), subResolver, context),
+            parseReqParams(
+                singleTagProjectionPsi.getReqParamList(),
+                opModelProjection.params(),
+                subResolver,
+                singleTagProjectionPsi,
+                context
+            ),
             parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
             modelProjectionPsi,
             subResolver,
@@ -292,7 +298,13 @@ public final class ReqUpdateProjectionsPsiParser {
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
-            parseReqParams(tagProjectionPsi.getReqParamList(), opTagProjection.params(), subResolver, context),
+            parseReqParams(
+                tagProjectionPsi.getReqParamList(),
+                opTagProjection.params(),
+                subResolver,
+                tagProjectionPsi,
+                context
+            ),
             parseAnnotations(tagProjectionPsi.getReqAnnotationList(), context),
             modelProjection, subResolver, context
         );
@@ -595,6 +607,7 @@ public final class ReqUpdateProjectionsPsiParser {
                     tailItemPsi.getPlus() != null,
                     tailItemPsi.getTypeRef(),
                     tailItemPsi.getReqUpdateModelProjection(),
+                    tailItemPsi,
                     tailItemPsi.getReqParamList(),
                     tailItemPsi.getReqAnnotationList(),
                     typesResolver,
@@ -611,6 +624,7 @@ public final class ReqUpdateProjectionsPsiParser {
                 singleTailPsi.getPlus() != null,
                 singleTailPsi.getTypeRef(),
                 singleTailPsi.getReqUpdateModelProjection(),
+                singleTailPsi,
                 singleTailPsi.getReqParamList(),
                 singleTailPsi.getReqAnnotationList(),
                 typesResolver,
@@ -629,6 +643,7 @@ public final class ReqUpdateProjectionsPsiParser {
       boolean update,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqUpdateModelProjection modelProjectionPsi,
+      @NotNull PsiElement paramsLocationPsi,
       @NotNull List<UrlReqParam> modelParamsList,
       @NotNull List<UrlReqAnnotation> modelAnnotationsList,
       @NotNull TypesResolver typesResolver,
@@ -644,7 +659,7 @@ public final class ReqUpdateProjectionsPsiParser {
         modelClass,
         opTail,
         update,
-        parseReqParams(modelParamsList, op.params(), typesResolver, context),
+        parseReqParams(modelParamsList, op.params(), typesResolver, paramsLocationPsi, context),
         parseAnnotations(modelAnnotationsList, context),
         modelProjectionPsi,
         typesResolver,
@@ -954,7 +969,7 @@ public final class ReqUpdateProjectionsPsiParser {
           keys.add(
               new ReqUpdateKeyProjection(
                   keyValue,
-                  parseReqParams(keyPsi.getReqParamList(), op.keyProjection().params(), resolver, context),
+                  parseReqParams(keyPsi.getReqParamList(), op.keyProjection().params(), resolver, keyPsi, context),
                   parseAnnotations(keyPsi.getReqAnnotationList(), context),
                   EpigraphPsiUtil.getLocation(keyPsi)
               )
