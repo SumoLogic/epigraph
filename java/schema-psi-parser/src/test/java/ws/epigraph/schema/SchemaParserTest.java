@@ -159,7 +159,7 @@ public class SchemaParserTest {
             "    outputProjection $defaultOutput",
             "  }",
             "  delete {",
-            "    deleteProjection [ forbidden ]( +:`record` ( firstName ) ),",
+            "    deleteProjection [ forbidden ]( +:`record` ( firstName + ) ),",
             "    outputType epigraph.Boolean",
             "  }",
             "  custom customOp {",

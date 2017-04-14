@@ -173,7 +173,6 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 
-
     final TypeApi type = dataType.type();
     final LinkedHashMap<String, ReqDeleteTagProjectionEntry> tagProjections;
 
@@ -187,6 +186,11 @@ public final class ReqDeleteProjectionsPsiParser {
     } else {
       // try to improve error reporting: singleTagProjectionPsi may be empty
       PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
+
+      // todo better location: containing field/key/element, once it's available from the context
+      if (!op.canDelete() && singleTagProjectionPsi.getText().isEmpty())
+        context.addError(String.format("'%s' entity can't be deleted", dataType.name().toString()), tagLocation);
+
       tagProjections = new LinkedHashMap<>();
 
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();

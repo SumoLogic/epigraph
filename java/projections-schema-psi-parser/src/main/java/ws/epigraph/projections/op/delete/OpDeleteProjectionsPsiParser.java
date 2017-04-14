@@ -178,6 +178,10 @@ public final class OpDeleteProjectionsPsiParser {
         );
       }
     } else {
+      // leaf nodes can always be deleted
+      if (isLeaf(singleTagProjectionPsi.getOpDeleteModelProjection()))
+        canDelete = true;
+
       TagApi tag = findTag(
           type,
           singleTagProjectionPsi.getTagName(),
@@ -185,7 +189,7 @@ public final class OpDeleteProjectionsPsiParser {
           singleTagProjectionPsi,
           context
       );
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
+      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) { // todo use isLeaf instead?
         if (tag == null) // will throw proper error
           tag = getTag(
               type,
@@ -251,6 +255,30 @@ public final class OpDeleteProjectionsPsiParser {
     } catch (IllegalArgumentException e) {
       throw new PsiProcessingException(e, psi, context.errors());
     }
+  }
+
+  private static boolean isLeaf(SchemaOpDeleteModelProjection psi) {
+    if (psi.getOpDeleteNamedModelProjection() != null) return false;
+    final SchemaOpDeleteUnnamedOrRefModelProjection urp = psi.getOpDeleteUnnamedOrRefModelProjection();
+    if (urp == null) return false; // bad syntax
+    if (urp.getOpDeleteModelProjectionRef() != null) return false; // ?? assuming referenced model is non-empty
+    final SchemaOpDeleteUnnamedModelProjection mp = urp.getOpDeleteUnnamedModelProjection();
+    if (mp == null) return false; // bad syntax
+
+    final SchemaOpDeleteRecordModelProjection rmp = mp.getOpDeleteRecordModelProjection();
+    if (rmp != null)
+      return rmp.getOpDeleteFieldProjectionEntryList().isEmpty();
+
+    final SchemaOpDeleteMapModelProjection mmp = mp.getOpDeleteMapModelProjection();
+    if (mmp != null)
+      return mmp.getOpDeleteVarProjection() == null;
+
+    final SchemaOpDeleteListModelProjection lmp = mp.getOpDeleteListModelProjection();
+    //noinspection SimplifiableIfStatement
+    if (lmp != null)
+      return lmp.getOpDeleteVarProjection() == null;
+
+    return true;
   }
 
   private static @NotNull OpParams parseModelParams(
@@ -362,7 +390,7 @@ public final class OpDeleteProjectionsPsiParser {
         context
     );
   }
-  
+
   @SuppressWarnings("unchecked")
   private static @NotNull <MP extends OpDeleteModelProjection<?, ?, ?>>
   /*@NotNull*/ MP parseModelProjection(
@@ -430,7 +458,7 @@ public final class OpDeleteProjectionsPsiParser {
       return reference;
     }
   }
-  
+
   @SuppressWarnings("unchecked")
   private static @NotNull <MP extends OpDeleteModelProjection<?, ?, ?>>
   /*@NotNull*/ MP parseUnnamedOrRefModelProjection(

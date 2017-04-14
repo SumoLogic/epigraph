@@ -21,9 +21,13 @@
 - [ ] update introspection service using builder setters
 - [ ] add request/response validation
   - [ ] Requried stuff must be present. 
-  - [ ] Codegen should build @NotNull things. 
+    - [ ] Data validation (input/output)
+    - [ ] GData validation (params)
+  - [ ] Codegen should build @NotNull things (params). 
   - [ ] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
+- [ ] add enums
+- [ ] jetty-based server
 
 # See also
 - See [General todo] (todo.md)
