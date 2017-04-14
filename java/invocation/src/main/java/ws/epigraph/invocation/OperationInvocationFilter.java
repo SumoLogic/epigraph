@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.service.operations;
+package ws.epigraph.invocation;
 
-import ws.epigraph.data.Data;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.service.operations.OperationRequest;
+import ws.epigraph.service.operations.OperationResponse;
+
+import java.util.function.Function;
 
 /**
+ * Transforms operation invocation instance into a new one, possibly adding pre- or post-invocation steps
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationResponse {
-  private final @Nullable Data data;
-
-  protected OperationResponse(@Nullable Data data) {this.data = data;}
-
-  public @Nullable Data getData() { return data; }
-}
+public interface OperationInvocationFilter<Req extends OperationRequest, Rsp extends OperationResponse>
+    extends Function<OperationInvocation<Req, Rsp>, OperationInvocation<Req, Rsp>> {}

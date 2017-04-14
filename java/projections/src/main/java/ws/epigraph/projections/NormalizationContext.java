@@ -25,6 +25,7 @@ import ws.epigraph.types.TypeApi;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Projection normalization context, keeps track of visited projections and
@@ -60,14 +61,14 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
       G>
   G withContext(
       @NotNull ThreadLocal<C> threadLocal,
-      @NotNull Function0<C> contextFactory,
+      @NotNull Supplier<C> contextFactory,
       @NotNull Function<C, G> function) {
 
     C ctx = threadLocal.get();
     boolean created = ctx == null;
 
     if (created) {
-      ctx = contextFactory.apply();
+      ctx = contextFactory.get();
       threadLocal.set(ctx);
     }
 
@@ -77,9 +78,5 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
       if (created)
         threadLocal.remove();
     }
-  }
-
-  public interface Function0<R> { // todo move to some common utils?
-    R apply();
   }
 }

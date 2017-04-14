@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package ws.epigraph.service.operations;
+package ws.epigraph.invocation;
 
-import ws.epigraph.data.Data;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import ws.epigraph.service.operations.OperationRequest;
+import ws.epigraph.service.operations.OperationResponse;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
+ * Operation invocation
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationResponse {
-  private final @Nullable Data data;
-
-  protected OperationResponse(@Nullable Data data) {this.data = data;}
-
-  public @Nullable Data getData() { return data; }
+public interface OperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse> {
+  /**
+   * Invokes an operation returning a future of invocation result
+   *
+   * @param request request
+   *
+   * @return future of invocation result
+   */
+  @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(@NotNull Req request);
 }

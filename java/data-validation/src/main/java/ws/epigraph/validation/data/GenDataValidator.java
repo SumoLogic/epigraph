@@ -45,7 +45,7 @@ public abstract class GenDataValidator<
   protected final @NotNull DataValidationContext context = new DataValidationContext();
   protected final @NotNull Map<Data, Set<VP>> visited = new IdentityHashMap<>();
 
-  public @NotNull List<DataValidationError> errors() { return context.errors(); }
+  public @NotNull List<? extends DataValidationError> errors() { return context.errors(); }
 
   public void validateData(@NotNull Data data, @NotNull VP projection) {
     Set<VP> checkedProjections = visited.get(data);

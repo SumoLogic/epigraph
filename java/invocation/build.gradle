@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.service.operations;
+apply plugin: 'java'
 
-import ws.epigraph.data.Data;
-import org.jetbrains.annotations.Nullable;
+dependencies {
+  compile project(':epigraph-java-core')
+  compile project(':epigraph-java-data-validation')
+  compile project(':epigraph-java-projections')
+  compile project(':epigraph-java-service')
 
-/**
- * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
- */
-public abstract class OperationResponse {
-  private final @Nullable Data data;
-
-  protected OperationResponse(@Nullable Data data) {this.data = data;}
-
-  public @Nullable Data getData() { return data; }
+  compile 'org.slf4j:slf4j-api'
 }

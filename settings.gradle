@@ -50,6 +50,7 @@ Map<String, String> modules = [
     'java/gradle-plugin'                  : 'epigraph-java-gradle-plugin',
     'java/http-server-common'             : 'epigraph-java-http-server-common',
     'java/http-server-undertow'           : 'epigraph-java-http-server-undertow',
+    'java/invocation'                     : 'epigraph-java-invocation',
     'java/lang-common'                    : 'epigraph-java-lang-common',
     'java/maven-plugin'                   : 'epigraph-java-maven-plugin',
     'java/projections'                    : 'epigraph-java-projections',

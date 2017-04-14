@@ -38,6 +38,7 @@
     <module>gdata</module>
     <module>http-server-common</module>
     <module>http-server-undertow</module>
+    <module>invocation</module>
     <module>lang-common</module>
     <module>maven-plugin</module>
     <module>projections-psi-parser-util</module>

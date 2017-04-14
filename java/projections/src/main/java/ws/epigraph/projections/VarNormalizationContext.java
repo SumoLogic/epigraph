@@ -21,6 +21,7 @@ import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.TypeApi;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -41,7 +42,7 @@ public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>
   @SuppressWarnings("unchecked")
   public static <VP extends GenVarProjection<VP, ?, ?>, G>
   G withContext(
-      @NotNull Function0<VarNormalizationContext<VP>> contextFactory,
+      @NotNull Supplier<VarNormalizationContext<VP>> contextFactory,
       @NotNull Function<VarNormalizationContext<VP>, G> function) {
     return withContext(
         (ThreadLocal<VarNormalizationContext<VP>>) (Object) tl,

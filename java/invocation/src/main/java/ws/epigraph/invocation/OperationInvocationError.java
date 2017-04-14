@@ -14,18 +14,35 @@
  * limitations under the License.
  */
 
-package ws.epigraph.service.operations;
+package ws.epigraph.invocation;
 
-import ws.epigraph.data.Data;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationResponse {
-  private final @Nullable Data data;
+public class OperationInvocationError {
+  public final @NotNull String message;
+  public final @NotNull Status status;
 
-  protected OperationResponse(@Nullable Data data) {this.data = data;}
+  public OperationInvocationError(
+      final @NotNull String message,
+      final @NotNull Status status) {
+    this.message = message;
+    this.status = status;
+  }
 
-  public @Nullable Data getData() { return data; }
+  public enum Status {
+    BAD_REQUEST(400),
+    UNAUTHORIZED(401),
+    TIMEOUT(408),
+    TOO_MANY_REQUESTS(429),
+
+    INTERNAL_SERVER_ERROR(500),
+    INTERNAL_OPERATION_ERROR(520);
+
+    final int httpCode;
+
+    Status(final int code) {httpCode = code;}
+  }
 }

@@ -19,9 +19,9 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -42,7 +42,7 @@ public final class ModelNormalizationContext<M extends DatumTypeApi, MP extends 
   @SuppressWarnings("unchecked")
   public static <M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?/*M*/>, G>
   G withContext(
-      @NotNull Function0<ModelNormalizationContext<M, MP>> contextFactory,
+      @NotNull Supplier<ModelNormalizationContext<M, MP>> contextFactory,
       @NotNull Function<ModelNormalizationContext<M, MP>, G> function) {
     return withContext(
         (ThreadLocal<ModelNormalizationContext<M, MP>>) (Object) tl,
