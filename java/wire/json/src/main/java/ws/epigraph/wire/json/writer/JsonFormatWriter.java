@@ -46,6 +46,11 @@ public class JsonFormatWriter implements FormatWriter<IOException> {
 
   public JsonFormatWriter(@NotNull Writer out) { this.out = out; }
 
+  @Override
+  public @NotNull String httpContentType() {
+    return "application/json";
+  }
+
   public void reset() {
     visitedData.clear();
     visitedDataNoProjection.clear();

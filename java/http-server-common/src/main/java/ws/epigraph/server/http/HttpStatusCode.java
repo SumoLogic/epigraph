@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
-
-import org.jetbrains.annotations.NotNull;
+package ws.epigraph.server.http;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocationError {
-  @NotNull String message();
+public interface HttpStatusCode {
+  // see also OperationInvocationError.Status for error status codes
 
-  @NotNull Status status();
-
-  enum Status {
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    TIMEOUT(408),
-    TOO_MANY_REQUESTS(429),
-
-    INTERNAL_SERVER_ERROR(500),
-    INTERNAL_OPERATION_ERROR(520);
-
-    final int httpCode;
-
-    Status(final int code) {httpCode = code;}
-  }
+  int OK = 200;
+  int CREATED = 201;
 }

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.service;
+package ws.epigraph.server.http;
 
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.output.*;
+import ws.epigraph.service.AmbiguousPathException;
 
 import java.util.List;
 import java.util.Map;

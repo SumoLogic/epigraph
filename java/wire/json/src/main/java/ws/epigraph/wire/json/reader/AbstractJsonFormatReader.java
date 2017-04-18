@@ -82,7 +82,7 @@ abstract class AbstractJsonFormatReader<
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>
     //,PMP extends GenPrimitiveModelProjection<PMP, ?>
     >
-    implements FormatReader<VP, MP, IOException> {
+    implements FormatReader<VP, MP> {
 
   private final @NotNull JsonParser in;
   private final @NotNull LinkedList<VisitedDataEntry> dataByLevel = new LinkedList<>();
@@ -97,7 +97,7 @@ abstract class AbstractJsonFormatReader<
   protected abstract GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, ?, FPE, FP> projectionsComparator();
 
   @Override
-  public @Nullable Data readData(@NotNull VP projection) throws IOException {
+  public @Nullable Data readData(@NotNull VP projection) throws IOException, JsonFormatException {
     Data data = readData((Type) projection.type(), Collections.singletonList(projection));
     stepOver(null, "EOF");
     return data;
@@ -107,7 +107,7 @@ abstract class AbstractJsonFormatReader<
   private @Nullable Data readData(
       @NotNull Type typeBound,
       @NotNull List<VP> projections // non-empty, polymorphic tails respected
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     if (nextToken() == null) return null;
     return finishReadingData(typeBound, projections);
@@ -116,7 +116,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Data finishReadingData(
       @NotNull Type typeBound,
       @NotNull List<VP> projections // non-empty, polymorphic tails respected
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
     assert !projections.isEmpty();
     boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
 
@@ -201,7 +201,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull Type effectiveType,
       @NotNull Data.Builder data,
       @NotNull List<VP> projections // non-empty, polymorphic tails ignored
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     assert !projections.isEmpty();
 
@@ -241,7 +241,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Val readValue(
       @NotNull DatumType typeBound,
       @NotNull List<MP> projections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
     nextNonEof();
     return finishReadingValue(typeBound, projections);
   }
@@ -250,7 +250,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Val finishReadingValue(
       @NotNull DatumType typeBound,
       @NotNull List<MP> projections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
     assert !projections.isEmpty();
     boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
 
@@ -278,7 +278,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Val finishReadingMonoValue(
       @NotNull DatumType type,
       @NotNull Collection<MP> tagModelProjections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     JsonToken token = currentToken();
     assert !tagModelProjections.isEmpty();
@@ -304,9 +304,9 @@ abstract class AbstractJsonFormatReader<
   private Datum finishReadingDatum(
       final @NotNull DatumType type,
       @Nullable String fieldName,
-      final @NotNull Collection<MP> modelProjections) throws IOException {
+      final @NotNull Collection<MP> modelProjections) throws IOException, JsonFormatException {
 
-    List<MP> flattened = flatten(new ArrayList<MP>(), modelProjections, type);
+    List<MP> flattened = flatten(new ArrayList<>(), modelProjections, type);
 
     Collection<MP> metaProjections = flattened.stream()
         .map(this::getMetaProjection)
@@ -357,9 +357,9 @@ abstract class AbstractJsonFormatReader<
     return datum;
   }
 
-  private @Nullable Datum.Builder readDatumNoMeta(
+  private @NotNull Datum.Builder readDatumNoMeta(
       @NotNull Collection<MP> modelProjections,
-      @NotNull DatumType type) throws IOException {
+      @NotNull DatumType type) throws IOException, JsonFormatException {
 
     @NotNull JsonToken token = nextNonEof();
     @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
@@ -370,7 +370,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Datum.Builder finishReadingDatumNoMeta(
       final @Nullable String firstFieldName,
       final @NotNull Collection<MP> tagModelProjections,
-      final DatumType type) throws IOException {
+      final DatumType type) throws IOException, JsonFormatException {
 
     final @NotNull Datum.Builder datum;
     switch (type.kind()) {
@@ -416,7 +416,8 @@ abstract class AbstractJsonFormatReader<
     return datum;
   }
 
-  private @NotNull ErrorValue finishReadingError() throws IOException { // `: 404, "message": "blah" }`
+  private @NotNull ErrorValue finishReadingError()
+      throws IOException, JsonFormatException { // `: 404, "message": "blah" }`
     stepOver(JsonToken.VALUE_NUMBER_INT, "integer value");
     int errorCode;
     try { errorCode = currentValueAsInt(); } catch (JsonParseException ignored) {
@@ -435,7 +436,7 @@ abstract class AbstractJsonFormatReader<
       @Nullable String fieldName,
       @NotNull RecordType type,
       @NotNull Collection<RMP> projections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     RecordDatum.Builder datum = type.createBuilder();
     if (fieldName == null) { // empty record?
@@ -475,7 +476,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull MapDatum.Builder finishReadingMap(
       @NotNull MapType type,
       @NotNull Collection<MMP> projections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     JsonToken token = currentToken();
     ensure(token, JsonToken.START_ARRAY);
@@ -515,9 +516,9 @@ abstract class AbstractJsonFormatReader<
   private @NotNull ListDatum.Builder finishReadingList(
       @NotNull ListType type,
       @NotNull Collection<LMP> projections // non-empty
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
-    @NotNull final Type elementType = type.elementType().type();
+    final @NotNull Type elementType = type.elementType().type();
 
     JsonToken token = currentToken();
     ensure(token, JsonToken.START_ARRAY);
@@ -537,7 +538,8 @@ abstract class AbstractJsonFormatReader<
   }
 
   @SuppressWarnings("unchecked")
-  private @NotNull PrimitiveDatum.Builder<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type) throws IOException {
+  private @NotNull PrimitiveDatum.Builder<?> finishReadingPrimitive(@NotNull PrimitiveType<?> type)
+      throws IOException, JsonFormatException {
 
     JsonToken token = currentToken();
     final Object nativeValue;
@@ -565,7 +567,7 @@ abstract class AbstractJsonFormatReader<
 
   private @NotNull Type readType(
       @NotNull Collection<VP> projections // polymorphic tails respected
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
     String typeName = currentText();
@@ -592,7 +594,7 @@ abstract class AbstractJsonFormatReader<
 
   private @NotNull DatumType readModelType(
       @NotNull Collection<MP> projections // polymorphic tails respected
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
     String typeName = currentText();
@@ -620,7 +622,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Data readData(@NotNull DataType dataType) throws IOException {
+  public @Nullable Data readData(@NotNull DataType dataType) throws IOException, JsonFormatException {
     JsonToken token = nextNonEof();
 
     if (token == JsonToken.VALUE_NULL) return null;
@@ -653,7 +655,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   // VALUE ::= ERROR or DATUM or null
-  private @NotNull Val finishReadingValue(@NotNull Tag tag) throws IOException {
+  private @NotNull Val finishReadingValue(@NotNull Tag tag) throws IOException, JsonFormatException {
 
     DatumType type = tag.type;
     @NotNull JsonToken token = nextNonEof();
@@ -671,20 +673,20 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Datum readDatum(@NotNull MP projection) throws IOException {
+  public @Nullable Datum readDatum(@NotNull MP projection) throws IOException, JsonFormatException {
     String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum((DatumType) projection.type(), firstFieldName, Collections.singleton(projection));
   }
 
   @Override
-  public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException {
+  public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException, JsonFormatException {
     @NotNull JsonToken token = nextNonEof();
     @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum(token, firstFieldName, type);
   }
 
   @Override
-  public @NotNull Val readValue(@NotNull DatumType type) throws IOException {
+  public @NotNull Val readValue(@NotNull DatumType type) throws IOException, JsonFormatException {
     final @NotNull JsonToken token = nextNonEof();
     // null?
     if (token == JsonToken.VALUE_NULL) return type.createValue(null);
@@ -703,7 +705,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Datum finishReadingDatum(
       final JsonToken token,
       final String firstFieldName,
-      final @NotNull DatumType type) throws IOException {
+      final @NotNull DatumType type) throws IOException, JsonFormatException {
 
     final @NotNull Datum datum;
     switch (type.kind()) {
@@ -752,7 +754,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull JsonToken token,
       @Nullable String fieldName,
       @NotNull RecordType type
-  ) throws IOException {
+  ) throws IOException, JsonFormatException {
 
     ensure(token, JsonToken.START_OBJECT);
     RecordDatum.Builder datum = type.createBuilder();
@@ -779,7 +781,8 @@ abstract class AbstractJsonFormatReader<
 
   // `]` or ` MAP_ENTRY , MAP ENTRY ... ]`
   // MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
-  private @NotNull MapDatum finishReadingMap(@NotNull JsonToken token, @NotNull MapType type) throws IOException {
+  private @NotNull MapDatum finishReadingMap(@NotNull JsonToken token, @NotNull MapType type)
+      throws IOException, JsonFormatException {
 
     ensure(token, JsonToken.START_ARRAY);
 
@@ -809,7 +812,8 @@ abstract class AbstractJsonFormatReader<
     return datum;
   }
 
-  private @NotNull ListDatum finishReadingList(@NotNull JsonToken token, @NotNull ListType type) throws IOException {
+  private @NotNull ListDatum finishReadingList(@NotNull JsonToken token, @NotNull ListType type)
+      throws IOException, JsonFormatException {
 
     ensure(token, JsonToken.START_ARRAY);
 
@@ -827,7 +831,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @NotNull ErrorValue readError() throws IOException {
+  public @NotNull ErrorValue readError() throws IOException, JsonFormatException {
     stepOver(JsonToken.START_OBJECT);
     return finishReadingError();
   }
@@ -840,7 +844,8 @@ abstract class AbstractJsonFormatReader<
     return token;
   }
 
-  private void ensure(@Nullable JsonToken actual, @NotNull JsonToken... expected) throws IOException {
+  private void ensure(@Nullable JsonToken actual, @NotNull JsonToken... expected)
+      throws IOException, JsonFormatException {
     Callable<String> expectedStringCallable =
         () -> Arrays.stream(expected).map(token -> "'" + token.toString() + "'").collect(Collectors.joining(", "));
     ensure(actual, null, expectedStringCallable, expected);
@@ -851,7 +856,7 @@ abstract class AbstractJsonFormatReader<
       @Nullable String expectedText,
       @Nullable Callable<String> expectedTextCallable,
       @NotNull JsonToken... expected)
-      throws IOException, IllegalArgumentException {
+      throws IOException, IllegalArgumentException, JsonFormatException {
 
     for (JsonToken e : expected)
       if (e == actual)
@@ -868,30 +873,33 @@ abstract class AbstractJsonFormatReader<
     throw expected(expectedText);
   }
 
-  private void ensureCurr(@Nullable JsonToken expected, @NotNull String expectedText) throws IOException {
-    ensure(currentToken(), expectedText, null, expected);
+  private void ensureCurr(@Nullable JsonToken expected, @NotNull String expectedText)
+      throws IOException, JsonFormatException {
+    ensure(currentToken(), expectedText, null, expected == null ? new JsonToken[0] : new JsonToken[]{expected});
   }
 
 
-  private void stepOver(@NotNull JsonToken expected) throws IOException { // FIXME use `stepOver(JsonToken, String)`
+  private void stepOver(@NotNull JsonToken expected)
+      throws IOException, JsonFormatException { // FIXME use `stepOver(JsonToken, String)`
     stepOver(expected, "'" + expected.toString() + "'");
   }
 
-  private void stepOver(@Nullable JsonToken expected, @NotNull String expectedText) throws IOException {
+  private void stepOver(@Nullable JsonToken expected, @NotNull String expectedText)
+      throws IOException, JsonFormatException {
     ensure(nextToken(), expectedText, null, expected);
   }
 
-  private void stepOver(@NotNull String fieldName) throws IOException {
+  private void stepOver(@NotNull String fieldName) throws IOException, JsonFormatException {
     if (!fieldName.equals(nextFieldName())) throw expected('"' + fieldName + "\" field");
   }
 
-  private IllegalArgumentException expected(@NotNull String expected) throws IOException {
+  private JsonFormatException expected(@NotNull String expected) throws IOException {
     return error("Expected " + expected + " but got " + str(currentText()));
   }
 
 
-  protected IllegalArgumentException error(@NotNull String message) {
-    return new IllegalArgumentException(message + " at " + currentLocation());
+  protected JsonFormatException error(@NotNull String message) {
+    return new JsonFormatException(message + " at " + currentLocation());
   }
 
   @Contract(pure = true)
@@ -969,7 +977,7 @@ abstract class AbstractJsonFormatReader<
   private Deque<JsonState> replay = null;
   private boolean replaying = false;
 
-  private void startParserStateRecording() throws IOException {
+  private void startParserStateRecording() {
     resetParserStateRecording();
     replay = new ArrayDeque<>();
 //    replay.push(currentParserState());

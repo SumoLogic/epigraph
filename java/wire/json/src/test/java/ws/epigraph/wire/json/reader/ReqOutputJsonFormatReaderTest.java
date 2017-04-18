@@ -208,7 +208,7 @@ public class ReqOutputJsonFormatReaderTest {
   }
 
   @Test
-  public void testReadTailNoMatch() throws IOException {
+  public void testReadTailNoMatch() throws IOException, JsonFormatException {
     testReadFail(
         ":record(id)~~ws.epigraph.tests.User :record(profile)",
         "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}",
@@ -274,7 +274,7 @@ public class ReqOutputJsonFormatReaderTest {
   }
 
   @Test
-  public void testReadMeta() throws IOException {
+  public void testReadMeta() throws IOException, JsonFormatException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
     final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
@@ -392,7 +392,13 @@ public class ReqOutputJsonFormatReaderTest {
     JsonParser parser = new JsonFactory().createParser(json);
     ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
 
-    final Data data = jsonReader.readData(reqProjection);
+    final Data data;
+    try {
+      data = jsonReader.readData(reqProjection);
+    } catch (JsonFormatException e) {
+      fail(e.toString());
+      throw new RuntimeException(e);
+    }
 
     if (!DataComparator.equals(expectedData, data)) {
       StringWriter writer = new StringWriter();
@@ -423,7 +429,7 @@ public class ReqOutputJsonFormatReaderTest {
     try {
       jsonReader.readData(reqProjection);
       fail();
-    } catch (IllegalArgumentException e) {
+    } catch (JsonFormatException e) {
       if (errorMessageSubstring != null)
         assertTrue(e.getMessage().contains(errorMessageSubstring));
     }

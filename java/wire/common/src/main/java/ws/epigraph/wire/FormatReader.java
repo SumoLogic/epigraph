@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,21 +29,22 @@ import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 
+import java.io.IOException;
+
 public interface FormatReader<
     VP extends GenVarProjection<VP, ?, ?>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
-    Exc extends Exception> {
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>> {
 
-  @Nullable Data readData(@NotNull VP projection) throws Exc;
+  @Nullable Data readData(@NotNull VP projection) throws IOException, FormatException;
 
-  @Nullable Datum readDatum(@NotNull MP projection) throws Exc;
+  @Nullable Datum readDatum(@NotNull MP projection) throws IOException, FormatException;
 
-  @Nullable Data readData(@NotNull DataType type) throws Exc;
+  @Nullable Data readData(@NotNull DataType type) throws IOException, FormatException;
 
-  @Nullable Datum readDatum(@NotNull DatumType type) throws Exc;
+  @Nullable Datum readDatum(@NotNull DatumType type) throws IOException, FormatException;
 
-  @NotNull Val readValue(@NotNull DatumType type) throws Exc;
+  @NotNull Val readValue(@NotNull DatumType type) throws IOException, FormatException;
 
-  @NotNull ErrorValue readError() throws Exc;
+  @NotNull ErrorValue readError() throws IOException, FormatException;
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface FormatWriter<Exc extends Exception> {
+
+  @NotNull String httpContentType();
 
   void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws Exc;
 

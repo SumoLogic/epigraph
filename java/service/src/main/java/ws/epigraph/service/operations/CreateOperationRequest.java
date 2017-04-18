@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateOperationRequest extends OperationRequest {
-  private final @NotNull Data data;
+  private final @Nullable Data data;
   private final @Nullable ReqInputFieldProjection inputProjection;
 
   public CreateOperationRequest(
       final @Nullable ReqFieldPath path,
-      final @NotNull Data data,
+      final @Nullable Data data,
       final @Nullable ReqInputFieldProjection inputProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {
     super(path, outputProjection);
@@ -40,7 +40,7 @@ public class CreateOperationRequest extends OperationRequest {
     this.inputProjection = inputProjection;
   }
 
-  public @NotNull Data data() { return data; }
+  public @Nullable Data data() { return data; }
 
   public @Nullable ReqInputFieldProjection inputProjection() { return inputProjection; }
 }

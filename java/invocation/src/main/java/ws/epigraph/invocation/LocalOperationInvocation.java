@@ -49,7 +49,7 @@ public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends 
 
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
-              new OperationInvocationError(
+              new OperationInvocationErrorImpl(
                   e.toString(),
                   OperationInvocationError.Status.INTERNAL_SERVER_ERROR
               )

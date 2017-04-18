@@ -17,10 +17,7 @@
 package ws.epigraph.invocation.filters;
 
 import ws.epigraph.data.Data;
-import ws.epigraph.invocation.OperationInvocation;
-import ws.epigraph.invocation.OperationInvocationError;
-import ws.epigraph.invocation.OperationInvocationFilter;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.*;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.validation.data.DataValidationError;
@@ -55,7 +52,7 @@ public class ResponseValidationFilter<Req extends ReadOperationRequest>
               return validationErrors.isEmpty()
                      ? OperationInvocationResult.success(response)
                      : OperationInvocationResult.failure(
-                         new OperationInvocationError(
+                         new OperationInvocationErrorImpl(
                              validationErrors.stream()
                                  .map(DataValidationError::toString)
                                  .collect(Collectors.joining("\n")),

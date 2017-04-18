@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation.filters;
+package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.validation.data.DataValidationError;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FilterUtil {
-  private FilterUtil() {}
-
-  public static @NotNull OperationInvocationError validationError(
-      @NotNull Collection<? extends DataValidationError> validationErrors) {
-    return new OperationInvocationErrorImpl(
-        validationErrors.stream()
-            .map(DataValidationError::toString)
-            .collect(Collectors.joining("\n")),
-        OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
-    );
+public class MalformedInputInvocationError extends OperationInvocationErrorImpl {
+  public MalformedInputInvocationError(final @NotNull String message) {
+    super(message, Status.BAD_REQUEST);
   }
 }

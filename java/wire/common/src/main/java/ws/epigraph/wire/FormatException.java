@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
-
-import org.jetbrains.annotations.NotNull;
+package ws.epigraph.wire;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocationError {
-  @NotNull String message();
-
-  @NotNull Status status();
-
-  enum Status {
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    TIMEOUT(408),
-    TOO_MANY_REQUESTS(429),
-
-    INTERNAL_SERVER_ERROR(500),
-    INTERNAL_OPERATION_ERROR(520);
-
-    final int httpCode;
-
-    Status(final int code) {httpCode = code;}
+public class FormatException extends Exception {
+  public FormatException(final String message) {
+    super(message);
   }
 }

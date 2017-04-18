@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+package ws.epigraph.server.http;
 
-import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import ws.epigraph.refs.TypesResolver;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocationError {
-  @NotNull String message();
+abstract class InvocationContext {
+  abstract Logger logger();
 
-  @NotNull Status status();
+  boolean isDebugMode() { return false; }
 
-  enum Status {
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    TIMEOUT(408),
-    TOO_MANY_REQUESTS(429),
-
-    INTERNAL_SERVER_ERROR(500),
-    INTERNAL_OPERATION_ERROR(520);
-
-    final int httpCode;
-
-    Status(final int code) {httpCode = code;}
-  }
+  abstract TypesResolver typesResolver();
 }

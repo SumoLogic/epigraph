@@ -18,7 +18,6 @@ package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.service.operations.OperationResponse;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -29,7 +28,7 @@ import java.util.function.Function;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class OperationInvocationResult<R extends OperationResponse> {
+public final class OperationInvocationResult<R> {
   private final @Nullable R result;
   private final @Nullable OperationInvocationError error;
 
@@ -40,12 +39,12 @@ public final class OperationInvocationResult<R extends OperationResponse> {
     this.error = error;
   }
 
-  public static <R extends OperationResponse>
+  public static <R>
   OperationInvocationResult<R> success(@NotNull R result) {
     return new OperationInvocationResult<>(result, null);
   }
 
-  public static <R extends OperationResponse>
+  public static <R>
   OperationInvocationResult<R> failure(@NotNull OperationInvocationError error) {
     return new OperationInvocationResult<>(null, error);
   }
@@ -64,8 +63,18 @@ public final class OperationInvocationResult<R extends OperationResponse> {
 
   public <T> @NotNull T apply(
       @NotNull Function<R, T> successFunction,
-      @NotNull Function<OperationInvocationError, T> errorFunction
-  ) {
+      @NotNull Function<OperationInvocationError, T> errorFunction) {
     return isSuccess() ? successFunction.apply(result) : errorFunction.apply(error);
+  }
+
+  public void consume(
+      @NotNull Consumer<R> successConsumer,
+      @NotNull Consumer<OperationInvocationError> errorConsumer) {
+    if (isSuccess()) successConsumer.accept(result);
+    else errorConsumer.accept(error);
+  }
+
+  public <T> @NotNull OperationInvocationResult<T> mapSuccess(@NotNull Function<R, T> f) {
+    return error == null ? success(f.apply(result)) : failure(error);
   }
 }

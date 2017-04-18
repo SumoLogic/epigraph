@@ -20,6 +20,7 @@ import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.validation.data.DataValidationError;
@@ -32,12 +33,12 @@ import java.util.Collection;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReadResponseValidationFilter<Req extends ReadOperationRequest>
-    implements OperationInvocationFilter<Req, ReadOperationResponse<?>> {
+public class ReadResponseValidationFilter<Req extends OperationRequest, D extends Data>
+    implements OperationInvocationFilter<Req, ReadOperationResponse<D>> {
 
   @Override
-  public OperationInvocation<Req, ReadOperationResponse<?>>
-  apply(final OperationInvocation<Req, ReadOperationResponse<?>> invocation) {
+  public OperationInvocation<Req, ReadOperationResponse<D>>
+  apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
 
     return request -> invocation.invoke(request).thenApply(result ->
         result.apply(

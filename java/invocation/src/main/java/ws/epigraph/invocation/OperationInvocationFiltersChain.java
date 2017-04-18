@@ -30,17 +30,19 @@ import java.util.stream.StreamSupport;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationInvocationChain<Req extends OperationRequest, Rsp extends OperationResponse, O extends Operation<?, Req, Rsp>> {
-  private final @NotNull OperationInvocation<Req, Rsp> seed;
+public abstract class OperationInvocationFiltersChain<Req extends OperationRequest, Rsp extends OperationResponse, O extends Operation<?, Req, Rsp>> {
+  private final @NotNull Function<O, OperationInvocation<Req, Rsp>> seedFactory;
   private final @NotNull Map<O, OperationInvocation<Req, Rsp>> invocationsCache = new IdentityHashMap<>();
 
-  protected OperationInvocationChain(final @NotNull OperationInvocation<Req, Rsp> seed) {this.seed = seed;}
+  protected OperationInvocationFiltersChain(final @NotNull Function<O, OperationInvocation<Req, Rsp>> seedFactory) {
+    this.seedFactory = seedFactory;
+  }
 
   protected abstract @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories();
 
   public @NotNull OperationInvocation<Req, Rsp> invocation(@NotNull O operation) {
     return invocationsCache.computeIfAbsent(operation, o -> buildChain(
-        seed,
+        seedFactory.apply(o),
         StreamSupport.stream(filterFactories().spliterator(), false).map(f -> f.apply(o)).collect(Collectors.toList())
     ));
   }

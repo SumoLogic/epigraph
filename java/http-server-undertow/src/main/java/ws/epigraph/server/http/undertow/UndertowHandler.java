@@ -45,6 +45,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.schema.operations.OperationKind;
+import ws.epigraph.server.http.DataPathRemover;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.server.http.routing.*;
 import ws.epigraph.service.*;
@@ -367,9 +368,6 @@ public class UndertowHandler implements HttpHandler {
       try {
         @Nullable Data data = readOperationResponse.getData();
         writeDataResponse(statusCode, pathSteps, reqProjection, data, exchange);
-      } catch (Exception e) {
-        LOG.error("Error processing request", e);
-        serverError(e.getMessage(), CONTENT_TYPE_TEXT, exchange);
       } finally {
         sender.close();
       }

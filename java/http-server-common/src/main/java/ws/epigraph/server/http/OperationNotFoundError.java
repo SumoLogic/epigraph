@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation.filters;
+package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.validation.data.DataValidationError;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
+import ws.epigraph.schema.operations.OperationKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FilterUtil {
-  private FilterUtil() {}
+public class OperationNotFoundError extends OperationInvocationErrorImpl {
+  public OperationNotFoundError(
+      @NotNull String resourceName,
+      @NotNull OperationKind operationKind,
+      @Nullable String operationName ) {
 
-  public static @NotNull OperationInvocationError validationError(
-      @NotNull Collection<? extends DataValidationError> validationErrors) {
-    return new OperationInvocationErrorImpl(
-        validationErrors.stream()
-            .map(DataValidationError::toString)
-            .collect(Collectors.joining("\n")),
-        OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
+    super(
+        String.format(
+            "%s operation '%s' in resource '%s' not found",
+            operationKind, operationName == null ? "<default>" : operationName, resourceName
+        ),
+        Status.BAD_REQUEST
     );
   }
 }
