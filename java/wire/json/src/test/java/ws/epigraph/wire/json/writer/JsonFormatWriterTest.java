@@ -26,8 +26,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.lines;
@@ -375,12 +375,13 @@ public class JsonFormatWriterTest {
       @NotNull Data data,
       @NotNull String expectedJson)
       throws IOException {
-    final StringWriter writer = new StringWriter();
-    final JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    final JsonFormatWriter jsonWriter = new JsonFormatWriter(baos);
 
     jsonWriter.writeData(reqProjection, data);
+    jsonWriter.close();
 
-    assertEquals(expectedJson, writer.toString());
+    assertEquals(expectedJson, baos.toString());
   }
 
 }

@@ -16,7 +16,7 @@
 
 /* Created by yegor on 10/27/16. */
 
-package ws.epigraph.server.http;
+package ws.epigraph.tests;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;

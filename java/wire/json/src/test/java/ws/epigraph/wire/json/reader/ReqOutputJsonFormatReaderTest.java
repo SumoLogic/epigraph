@@ -31,8 +31,8 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -401,15 +401,17 @@ public class ReqOutputJsonFormatReaderTest {
     }
 
     if (!DataComparator.equals(expectedData, data)) {
-      StringWriter writer = new StringWriter();
-      JsonFormatWriter jsonWriter = new JsonFormatWriter(writer);
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      JsonFormatWriter jsonWriter = new JsonFormatWriter(baos);
       jsonWriter.writeData(data);
-      String dataStr = writer.toString();
+      jsonWriter.close();
+      String dataStr = baos.toString();
 
-      writer = new StringWriter();
-      jsonWriter = new JsonFormatWriter(writer);
+      baos = new ByteArrayOutputStream();
+      jsonWriter = new JsonFormatWriter(baos);
       jsonWriter.writeData(expectedData);
-      String expectedDataStr = writer.toString();
+      jsonWriter.close();
+      String expectedDataStr = baos.toString();
 
       fail("\nexpected:\n" + expectedDataStr + "\nactual:\n" + dataStr);
     }

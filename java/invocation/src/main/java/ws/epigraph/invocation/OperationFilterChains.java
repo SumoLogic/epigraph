@@ -30,7 +30,7 @@ import java.util.Collections;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class OperationInvocations<D extends Data> {
+public final class OperationFilterChains<D extends Data> {
   private final @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>>
       readOperationOperationInvocationFiltersChain;
   private final @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>>
@@ -42,7 +42,7 @@ public final class OperationInvocations<D extends Data> {
   private final @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperation<D>>
       customOperationOperationInvocationFiltersChain;
 
-  public OperationInvocations(
+  public OperationFilterChains(
       final @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>> readOperationOperationInvocationFiltersChain,
       final @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>> createOperationOperationInvocationFiltersChain,
       final @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperation<D>> updateOperationOperationInvocationFiltersChain,
@@ -80,12 +80,14 @@ public final class OperationInvocations<D extends Data> {
     return customOperationOperationInvocationFiltersChain.invocation(operation);
   }
 
-  public static @NotNull <D extends Data> OperationInvocations<D> defaultLocalInvocations() {
-    return new OperationInvocations<>(
+  public static @NotNull <D extends Data> OperationFilterChains<D> defaultFilterChains() {
+    return new OperationFilterChains<>(
+        //read
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Collections.singletonList(operation -> new ReadResponseValidationFilter<>())
         ),
+        //create
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Arrays.asList(
@@ -93,6 +95,7 @@ public final class OperationInvocations<D extends Data> {
                 operation -> new ReadResponseValidationFilter<>()
             )
         ),
+        //update
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Arrays.asList(
@@ -100,10 +103,12 @@ public final class OperationInvocations<D extends Data> {
                 operation -> new ReadResponseValidationFilter<>()
             )
         ),
+        //delete
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Collections.singletonList(operation -> new ReadResponseValidationFilter<>())
         ),
+        //custom
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Arrays.asList(

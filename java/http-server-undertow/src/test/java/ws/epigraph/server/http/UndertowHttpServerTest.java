@@ -33,6 +33,9 @@ import ws.epigraph.server.http.undertow.UndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.Person;
+import ws.epigraph.tests.UserResourceFactory;
+import ws.epigraph.tests.UsersResourceFactory;
+import ws.epigraph.tests.UsersStorage;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -44,7 +47,7 @@ import static junit.framework.TestCase.assertTrue;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class HttpServerTest {
+public class UndertowHttpServerTest {
   private static final int PORT = 8888;
   private static final String HOST = "localhost";
   private static final int TIMEOUT = 100; // ms

@@ -16,7 +16,7 @@
 
 /* Created by yegor on 10/27/16. */
 
-package ws.epigraph.server.http;
+package ws.epigraph.tests;
 
 import epigraph.Error;
 import epigraph.PersonId_Error_Map;
@@ -26,7 +26,6 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
-import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
 import ws.epigraph.tests.resources.users.operations._create.AbstractCreateOperation;
 import ws.epigraph.tests.resources.users.operations._create.input.InputUsersFieldProjection;

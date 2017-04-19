@@ -36,10 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_HTML;
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_TEXT;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
 
 /**
+ * @deprecated
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class Util {

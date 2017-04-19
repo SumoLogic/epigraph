@@ -33,6 +33,8 @@ public interface FormatWriter {
 
   @NotNull String httpContentType();
 
+  @NotNull String characterEncoding();
+
   void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException;
 
   void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws IOException;

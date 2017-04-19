@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.tests;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.tests.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

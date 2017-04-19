@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xnio.streams.WriterOutputStream;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.StepsAndProjection;
@@ -70,8 +71,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_JSON;
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_TEXT;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_JSON;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
 import static ws.epigraph.server.http.undertow.Util.*;
 
 /**
@@ -850,7 +851,7 @@ public class UndertowHandler_Old implements HttpHandler {
 
   private @NotNull String dataToString(@Nullable Data data) {
     StringWriter sw = new StringWriter();
-    JsonFormatWriter fw = new JsonFormatWriter(sw);
+    JsonFormatWriter fw = new JsonFormatWriter(new WriterOutputStream(sw));
     try {
       fw.writeData(data);
     } catch (IOException e) {

@@ -67,14 +67,14 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
   private static final Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
 
   protected final @NotNull Service service;
-  protected final @NotNull OperationInvocations<Data> operationInvocations;
+  protected final @NotNull OperationFilterChains<Data> operationFilterChains;
 
   @SuppressWarnings("unchecked")
   protected AbstractHttpServer(
       final @NotNull Service service,
-      final @NotNull OperationInvocations<? extends Data> invocations) {
+      final @NotNull OperationFilterChains<? extends Data> invocations) {
     this.service = service;
-    operationInvocations = (OperationInvocations<Data>) invocations;
+    operationFilterChains = (OperationFilterChains<Data>) invocations;
   }
 
   protected abstract long responseTimeout(@NotNull C context);
@@ -237,7 +237,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           ReadOperation<Data> operation = operationSearchResult.operation();
 
           OperationInvocation<ReadOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationInvocations.readOperationInvocation(operation);
+              operationFilterChains.readOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new ReadOperationRequest(
@@ -418,7 +418,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
             );
 
           OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationInvocations.createOperationInvocation(operation);
+              operationFilterChains.createOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new CreateOperationRequest(
@@ -563,7 +563,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
             );
 
           OperationInvocation<UpdateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationInvocations.updateOperationInvocation(operation);
+              operationFilterChains.updateOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new UpdateOperationRequest(
@@ -685,7 +685,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           @NotNull DeleteOperation<Data> operation = operationSearchResult.operation();
 
           OperationInvocation<DeleteOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationInvocations.deleteOperationInvocation(operation);
+              operationFilterChains.deleteOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new DeleteOperationRequest(
@@ -853,7 +853,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
     }
 
     OperationInvocation<CustomOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-        operationInvocations.customOperationInvocation(operation);
+        operationFilterChains.customOperationInvocation(operation);
 
     return operationInvocation.invoke(
         new CustomOperationRequest(

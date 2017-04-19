@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.invocation.OperationInvocations;
+import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.AbstractHttpServer;
@@ -48,8 +48,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_HTML;
-import static ws.epigraph.server.http.undertow.Constants.CONTENT_TYPE_TEXT;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
+import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -59,11 +59,12 @@ public class UndertowHandler
 
   private static final Logger LOG = LoggerFactory.getLogger(UndertowHandler.class); // assuming a thread-safe backend
 
+  private final @NotNull JsonFactory jsonFactory = new JsonFactory();
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
 
   public UndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, final long responseTimeout) {
-    super(service, OperationInvocations.defaultLocalInvocations()); // make configurable?
+    super(service, OperationFilterChains.defaultFilterChains()); // make configurable?
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
   }
@@ -99,17 +100,17 @@ public class UndertowHandler
 
   @Override
   protected OpInputFormatReader opInputReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new OpInputJsonFormatReader(new JsonFactory().createParser(context.exchange.getInputStream()));
+    return new OpInputJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
   }
 
   @Override
   protected ReqInputFormatReader reqInputReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new ReqInputJsonFormatReader(new JsonFactory().createParser(context.exchange.getInputStream()));
+    return new ReqInputJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
   }
 
   @Override
   protected ReqUpdateFormatReader reqUpdateReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new ReqUpdateJsonFormatReader(new JsonFactory().createParser(context.exchange.getInputStream()));
+    return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
   }
 
   @Override
@@ -127,7 +128,8 @@ public class UndertowHandler
       exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, writer.httpContentType());
 
       formatWriter.write(writer);
-    } catch ( IOException e) {
+      writer.close();
+    } catch (IOException e) {
       LOG.error("Error writing response", e);
     }
   }

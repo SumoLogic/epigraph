@@ -48,16 +48,17 @@ public class JsonFormatWriter implements FormatWriter {
     this.out = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
   }
 
-  public JsonFormatWriter(@NotNull Writer writer) {
-    this.out = writer;
-  }
-
   @Override
   public void close() throws IOException { out.close(); }
 
   @Override
   public @NotNull String httpContentType() {
     return "application/json; charset=utf-8";
+  }
+
+  @Override
+  public @NotNull String characterEncoding() {
+    return StandardCharsets.UTF_8.name();
   }
 
   public void reset() {

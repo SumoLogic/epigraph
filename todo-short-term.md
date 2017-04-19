@@ -1,5 +1,6 @@
 - Federator prerequisites
   - [ ] `toBuilder` on data
+  - [x] local service invocation layer
   - [ ] remote service invocation layer
   - [ ] introduce transformers +codegen?
   - [ ] add `api` section to schema, listing a set of exposed resources and if they're federated
@@ -9,7 +10,7 @@
 - Docs
   - [ ] service quick-start guide
     - [x] simple read
-    - [ ] search operation
+    - [x] search operation
     - [ ] create operation
     - [ ] update operation
     - [ ] delete operation
@@ -21,13 +22,13 @@
 - [ ] update introspection service using builder setters
 - [ ] add request/response validation
   - [ ] Requried stuff must be present. 
-    - [ ] Data validation (input/output)
+    - [x] Data validation (input/output)
     - [ ] GData validation (params)
   - [ ] Codegen should build @NotNull things (params). 
   - [ ] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 - [ ] add enums
-- [ ] jetty-based server
+- [ ] servlet-based server
 - [ ] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
 
 # See also
