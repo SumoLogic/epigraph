@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import org.slf4j.helpers.SubstituteLogger;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationError;
@@ -72,7 +71,7 @@ public abstract class EpigraphServlet extends HttpServlet {
   @Override
   public void init(final ServletConfig config) throws ServletException {
     super.init(config);
-    logger = new SubstituteLogger(getServletName(), new LinkedBlockingQueue<>(), true);
+    logger = new ServletLogger(getServletName(), new LinkedBlockingQueue<>(), true, getServletContext());
     typesResolver = initTypesResolver(config);
     server = new Server(
         initService(config),

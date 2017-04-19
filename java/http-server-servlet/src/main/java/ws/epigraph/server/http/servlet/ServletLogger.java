@@ -17,7 +17,6 @@
 package ws.epigraph.server.http.servlet;
 
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.slf4j.event.SubstituteLoggingEvent;
 import org.slf4j.helpers.SubstituteLogger;
 
