@@ -364,7 +364,11 @@ public abstract class AbstractModelProjection<
 
   protected void assertResolved() {
     if (!isResolved())
-      throw new IllegalStateException("Projection is not resolved: " + name);
+      throw new IllegalStateException(String.format(
+          "Model projection for '%s' is not resolved: %s",
+          model.name().toString(),
+          name
+      ));
   }
 
   @Override

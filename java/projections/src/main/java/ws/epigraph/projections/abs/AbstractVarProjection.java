@@ -457,7 +457,11 @@ public abstract class AbstractVarProjection<
 
   protected void assertResolved() {
     if (!isResolved())
-      throw new IllegalStateException("Projection is not resolved: " + name);
+      throw new IllegalStateException(String.format(
+          "Var projection for '%s' is not resolved: %s",
+          type().name().toString(),
+          name
+      ));
 
     assert tagProjections != null;
   }
