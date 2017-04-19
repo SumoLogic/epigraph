@@ -27,22 +27,25 @@ import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface FormatWriter<Exc extends Exception> {
+import java.io.IOException;
+
+public interface FormatWriter {
 
   @NotNull String httpContentType();
 
-  void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws Exc;
+  void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException;
 
-  void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws Exc;
+  void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws IOException;
 
   // FIXME take explicit type for all projectionless writes below (or add another set of methods that does):
 
-  void writeData(@Nullable Data data) throws Exc;
+  void writeData(@Nullable Data data) throws IOException;
 
-  void writeValue(@NotNull Val value) throws Exc;
+  void writeValue(@NotNull Val value) throws IOException;
 
-  void writeDatum(@Nullable Datum datum) throws Exc;
+  void writeDatum(@Nullable Datum datum) throws IOException;
 
-  void writeError(@NotNull ErrorValue error) throws Exc;
+  void writeError(@NotNull ErrorValue error) throws IOException;
 
+  default void close() throws IOException {}
 }

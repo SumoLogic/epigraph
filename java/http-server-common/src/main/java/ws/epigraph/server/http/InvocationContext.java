@@ -22,10 +22,10 @@ import ws.epigraph.refs.TypesResolver;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract class InvocationContext {
-  abstract Logger logger();
+public abstract class InvocationContext {
+  public abstract Logger logger();
 
-  boolean isDebugMode() { return false; }
+  public boolean isDebugMode() { return false; }
 
-  abstract TypesResolver typesResolver();
+  public abstract TypesResolver typesResolver();
 }

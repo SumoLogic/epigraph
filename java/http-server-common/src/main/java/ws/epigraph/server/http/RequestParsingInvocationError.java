@@ -58,7 +58,7 @@ public class RequestParsingInvocationError extends PsiProcessingInvocationError
     return String.format(
         "Failed to parse %s operation '%s' request in resource '%s'\n%s",
         operationKind, operationName == null ? "<default>" : operationName, resourceName,
-        psiParsingErrorsReport(request, errors, false)
+        psiParsingErrorsReport(new StringBuilder(), request, errors, false)
     );
   }
 
@@ -67,7 +67,7 @@ public class RequestParsingInvocationError extends PsiProcessingInvocationError
     return String.format(
         "Failed to parse %s operation '%s' request in resource '%s'\n%s",
         operationKind, operationName == null ? "<default>" : operationName, resourceName,
-        psiParsingErrorsReport(request, errors, true)
+        psiParsingErrorsReport(new StringBuilder(), request, errors, true)
     );
   }
 

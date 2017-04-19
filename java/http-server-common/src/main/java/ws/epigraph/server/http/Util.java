@@ -20,6 +20,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.service.Service;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
 import java.time.Duration;
@@ -42,6 +43,10 @@ public final class Util {
 
   static @NotNull List<PsiProcessingError> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
     return errors.stream().map(e -> new PsiProcessingError(e.getErrorDescription(), e)).collect(Collectors.toList());
+  }
+
+  static @NotNull String listSupportedResources(@NotNull Service service) {
+    return service.resources().keySet().stream().map(n -> "/" + n).collect(Collectors.joining(", "));
   }
 
   // async timeouts support. Use `onTimeout` instead once on JDK9

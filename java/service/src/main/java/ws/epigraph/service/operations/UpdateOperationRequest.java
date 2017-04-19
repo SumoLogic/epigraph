@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class UpdateOperationRequest extends OperationRequest {
   private final @NotNull Data data;
-  private final @NotNull ReqUpdateFieldProjection updateProjection;
+  private final @Nullable ReqUpdateFieldProjection updateProjection;
 
   public UpdateOperationRequest(
       final @Nullable ReqFieldPath path,
       final @NotNull Data data,
-      final @NotNull ReqUpdateFieldProjection updateProjection,
+      final @Nullable ReqUpdateFieldProjection updateProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {
 
     super(path, outputProjection);
@@ -41,7 +41,7 @@ public class UpdateOperationRequest extends OperationRequest {
     this.updateProjection = updateProjection;
   }
 
-  public @NotNull ReqUpdateFieldProjection updateProjection() { return updateProjection; }
+  public @Nullable ReqUpdateFieldProjection updateProjection() { return updateProjection; }
 
   public @NotNull Data data() { return data; }
 }

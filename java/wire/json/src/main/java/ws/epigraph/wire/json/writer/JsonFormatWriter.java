@@ -29,26 +29,35 @@ import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.json.JsonFormat;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
-public class JsonFormatWriter implements FormatWriter<IOException> {
+public class JsonFormatWriter implements FormatWriter {
 
   private final @NotNull Writer out;
   private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
   private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
   private int dataStackDepth = 0;
 
-  public JsonFormatWriter(@NotNull Writer out) { this.out = out; }
+  public JsonFormatWriter(@NotNull OutputStream out) {
+    this.out = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+  }
+
+  public JsonFormatWriter(@NotNull Writer writer) {
+    this.out = writer;
+  }
+
+  @Override
+  public void close() throws IOException { out.close(); }
 
   @Override
   public @NotNull String httpContentType() {
-    return "application/json";
+    return "application/json; charset=utf-8";
   }
 
   public void reset() {

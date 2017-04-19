@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,12 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ResourceNotFoundException extends Exception {
-  @NotNull
-  private final String resourceName;
+  private final @NotNull String resourceName;
 
   public ResourceNotFoundException(@NotNull String resourceName) {
     super("Resource '" + resourceName + "' not found");
     this.resourceName = resourceName;
   }
 
-  @NotNull
-  public String resourceName() { return resourceName; }
+  public @NotNull String resourceName() { return resourceName; }
 }

@@ -19,6 +19,7 @@ package ws.epigraph.server.http;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.schema.operations.OperationKind;
 
 /**
@@ -28,12 +29,24 @@ public class OperationNotFoundError extends OperationInvocationErrorImpl {
   public OperationNotFoundError(
       @NotNull String resourceName,
       @NotNull OperationKind operationKind,
-      @Nullable String operationName ) {
+      @Nullable String operationName) {
+
+    this(resourceName, operationKind, null, operationName);
+  }
+
+  public OperationNotFoundError(
+      @NotNull String resourceName,
+      @NotNull OperationKind operationKind,
+      @Nullable HttpMethod method,
+      @Nullable String operationName) {
 
     super(
         String.format(
-            "%s operation '%s' in resource '%s' not found",
-            operationKind, operationName == null ? "<default>" : operationName, resourceName
+            "%s operation '%s'%s in resource '%s' not found",
+            operationKind,
+            operationName == null ? "<default>" : operationName,
+            method == null ? "" : " for HTTP method '" + method + "'",
+            resourceName
         ),
         Status.BAD_REQUEST
     );

@@ -18,6 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationError;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
@@ -92,13 +93,21 @@ public class OperationSearchFailureInvocationError extends PsiProcessingInvocati
         final List<PsiProcessingError> errors = e.getValue();
 
         final OperationDeclaration operationDeclaration = operation.declaration();
+        final String operationName = operationDeclaration.name();
+
+        if (operationName == null) sb.append("default ");
+
         sb.append(operationDeclaration.kind()).append(" ");
-        String name = operationDeclaration.name() == null ? "" : " '" + operationDeclaration.name() + "'";
-        sb.append("operation").append(name).append(" declared at ").append(operationDeclaration.location());
+        String name = operationName == null ? "" : " '" + operationName + "'";
+        sb.append("operation").append(name);
+
+        if (operationDeclaration.location() != TextLocation.UNKNOWN)
+          sb.append(" declared at ").append(operationDeclaration.location());
+
         sb.append(" was not picked because of the following errors:");
 
-        nl(sb, 1, isHtml);
-        psiParsingErrorsReport(requestText, errors, isHtml);
+        nl(sb, 2, isHtml);
+        psiParsingErrorsReport(sb, requestText, errors, isHtml);
       }
 
     }
@@ -106,9 +115,4 @@ public class OperationSearchFailureInvocationError extends PsiProcessingInvocati
     return sb.toString();
   }
 
-  private static void nl(StringBuilder sb, int n, boolean isHtml) {
-    for (int i = 0; i < n; i++) {
-      sb.append(isHtml ? "<br/>" : "\n");
-    }
-  }
 }

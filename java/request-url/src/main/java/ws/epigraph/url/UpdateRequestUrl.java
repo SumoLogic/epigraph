@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,22 +31,20 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateRequestUrl extends RequestUrl {
-  @Nullable
-  private final ReqUpdateFieldProjection updateProjection;
+  private final @Nullable ReqUpdateFieldProjection updateProjection;
 
   public UpdateRequestUrl(
-      @NotNull final String fieldName,
-      @Nullable final ReqFieldPath path,
-      @Nullable ReqUpdateFieldProjection updateProjection,
-      @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputProjection,
-      @NotNull final Map<String, GDatum> parameters) {
+      final @NotNull String fieldName,
+      final @Nullable ReqFieldPath path,
+      final @Nullable ReqUpdateFieldProjection updateProjection,
+      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
 
     this.updateProjection = updateProjection;
   }
 
-  @Nullable
-  public ReqUpdateFieldProjection updateProjection() { return updateProjection; }
+  public @Nullable ReqUpdateFieldProjection updateProjection() { return updateProjection; }
 
   @Override
   public boolean equals(final Object o) {

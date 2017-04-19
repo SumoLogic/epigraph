@@ -14,31 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+package ws.epigraph.wire;
 
-import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.req.update.ReqUpdateModelProjection;
+import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocationError {
-  @NotNull String message();
-
-  @NotNull Status status();
-
-  enum Status {
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    TIMEOUT(408),
-    TOO_MANY_REQUESTS(429),
-
-    INTERNAL_SERVER_ERROR(500),
-    INTERNAL_OPERATION_ERROR(520);
-
-    final int httpCode;
-
-    Status(final int code) {httpCode = code;}
-
-    public int httpCode() { return httpCode; }
-  }
-}
+public interface ReqUpdateFormatReader
+    extends FormatReader<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> {}

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.update.*;
+import ws.epigraph.wire.ReqUpdateFormatReader;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,7 +42,7 @@ public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
     ReqUpdateFieldProjection,
     ReqUpdateMapModelProjection,
     ReqUpdateListModelProjection
-    > {
+    > implements ReqUpdateFormatReader {
 
   public ReqUpdateJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 

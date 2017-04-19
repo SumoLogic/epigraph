@@ -17,6 +17,7 @@
 package ws.epigraph.validation.data;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.FieldApi;
@@ -47,7 +48,9 @@ public abstract class GenDataValidator<
 
   public @NotNull List<? extends DataValidationError> errors() { return context.errors(); }
 
-  public void validateData(@NotNull Data data, @NotNull VP projection) {
+  public void validateData(@Nullable Data data, @NotNull VP projection) {
+    if (data == null) return;
+
     Set<VP> checkedProjections = visited.get(data);
     if (checkedProjections == null) {
       checkedProjections = Collections.newSetFromMap(new IdentityHashMap<VP, Boolean>());

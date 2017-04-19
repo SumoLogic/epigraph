@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.op.input.*;
+import ws.epigraph.wire.OpInputFormatReader;
 
 import java.util.Collection;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     OpInputFieldProjection,
     OpInputMapModelProjection,
     OpInputListModelProjection
-    > {
+    > implements OpInputFormatReader {
 
   @Override
   protected GenProjectionsComparator<OpInputVarProjection, OpInputTagProjectionEntry, OpInputModelProjection<?, ?, ?, ?>, OpInputRecordModelProjection, OpInputMapModelProjection, OpInputListModelProjection, ?, OpInputFieldProjectionEntry, OpInputFieldProjection> projectionsComparator() {

@@ -130,7 +130,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       // keys check
       final List<OutputPersonMapKeyProjection> keys = mapProjection.keys();
       if (keys != null) {
-        System.out.println("uested keys: " +
+        System.out.println("Requested keys: " +
                            keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
         );
       }

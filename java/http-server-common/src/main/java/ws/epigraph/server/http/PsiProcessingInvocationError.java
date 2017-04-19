@@ -27,17 +27,17 @@ import java.util.List;
  */
 public abstract class PsiProcessingInvocationError {
   protected static @NotNull String psiParsingErrorsReport(
+      @NotNull StringBuilder sb,
       @NotNull String text,
       @NotNull List<PsiProcessingError> errors,
       boolean isHtml) {
 
-    StringBuilder sb = new StringBuilder();
     if (isHtml) appendHtmlErrorHeader(sb);
 
     boolean first = true;
     for (final PsiProcessingError error : errors) {
       if (first) first = false;
-      else sep(sb, isHtml);
+      else nl(sb, 2, isHtml);
 
       addPsiProcessingError(text, error, isHtml, sb);
     }
@@ -132,6 +132,12 @@ public abstract class PsiProcessingInvocationError {
       sb.append("<br/><hr width=\"90%\"/><br/>");
     else
       sb.append("\n---------------------------------------\n\n");
+  }
+
+  protected static void nl(StringBuilder sb, int n, boolean isHtml) {
+    for (int i = 0; i < n; i++) {
+      sb.append(isHtml ? "<br/>" : "\n");
+    }
   }
 
   private static void appendHtmlErrorHeader(@NotNull StringBuilder sb) {

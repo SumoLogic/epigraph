@@ -27,12 +27,12 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateOperationRequest extends OperationRequest {
-  private final @Nullable Data data;
+  private final @NotNull Data data;
   private final @Nullable ReqInputFieldProjection inputProjection;
 
   public CreateOperationRequest(
       final @Nullable ReqFieldPath path,
-      final @Nullable Data data,
+      final @NotNull Data data,
       final @Nullable ReqInputFieldProjection inputProjection,
       final @NotNull ReqOutputFieldProjection outputProjection) {
     super(path, outputProjection);
@@ -40,7 +40,7 @@ public class CreateOperationRequest extends OperationRequest {
     this.inputProjection = inputProjection;
   }
 
-  public @Nullable Data data() { return data; }
+  public @NotNull Data data() { return data; }
 
   public @Nullable ReqInputFieldProjection inputProjection() { return inputProjection; }
 }

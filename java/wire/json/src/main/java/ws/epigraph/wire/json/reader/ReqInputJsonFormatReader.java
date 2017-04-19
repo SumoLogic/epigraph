@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.input.*;
+import ws.epigraph.wire.ReqInputFormatReader;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,7 +42,7 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
     ReqInputFieldProjection,
     ReqInputMapModelProjection,
     ReqInputListModelProjection
-    > {
+    > implements ReqInputFormatReader {
 
   public ReqInputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 

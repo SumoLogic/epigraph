@@ -23,31 +23,33 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputModelProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
+import ws.epigraph.projections.req.update.ReqUpdateModelProjection;
+import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.server.http.routing.*;
-import ws.epigraph.service.AmbiguousPathException;
-import ws.epigraph.service.OutputProjectionPathRemover;
-import ws.epigraph.service.Resource;
+import ws.epigraph.service.*;
 import ws.epigraph.service.operations.*;
-import ws.epigraph.url.CreateRequestUrl;
-import ws.epigraph.url.ReadRequestUrl;
-import ws.epigraph.url.RequestUrl;
+import ws.epigraph.url.*;
+import ws.epigraph.url.parser.CustomRequestUrlPsiParser;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlCreateUrl;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
-import ws.epigraph.url.parser.psi.UrlUrl;
-import ws.epigraph.wire.FormatException;
-import ws.epigraph.wire.FormatReader;
+import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.wire.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -55,40 +57,113 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpServer<C extends InvocationContext> {
+  private static final Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
 
-  protected abstract @NotNull OperationInvocations<Data> operationInvocations();
+  protected final @NotNull Service service;
+  protected final @NotNull OperationInvocations<Data> operationInvocations;
+
+  @SuppressWarnings("unchecked")
+  protected AbstractHttpServer(
+      final @NotNull Service service,
+      final @NotNull OperationInvocations<? extends Data> invocations) {
+    this.service = service;
+    operationInvocations = (OperationInvocations<Data>) invocations;
+  }
 
   protected abstract long responseTimeout(@NotNull C context);
 
-  // can't do this: need to set status code and write everything in one go (in case of Undertow)
-//  protected abstract @NotNull FormatReader<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> reqOutputWriter(@NotNull C context);
+  protected abstract OpInputFormatReader opInputReader(@NotNull C context) throws IOException;
 
-  protected abstract @NotNull FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> opInputReader(@NotNull C context);
+  protected abstract ReqInputFormatReader reqInputReader(@NotNull C context) throws IOException;
 
-  protected abstract @NotNull FormatReader<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> reqInputReader(@NotNull C context);
+  protected abstract ReqUpdateFormatReader reqUpdateReader(@NotNull C context) throws IOException;
 
-  protected abstract void writeDataResponse(
+  protected abstract void writeFormatResponse(
       int statusCode,
-      @NotNull ReqOutputVarProjection projection,
-      @Nullable Data data,
-      @NotNull C context);
-
-  protected abstract void writeDatumResponse(
-      int statusCode,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
-      @Nullable Datum datum,
-      @NotNull C context);
-
-  protected abstract void writeErrorResponse(@NotNull ErrorValue error, @NotNull C context);
-
-  protected abstract void writeEmptyResponse(@NotNull C context);
+      @NotNull C context,
+      @NotNull FormatResponseWriter formatWriter);
 
   protected abstract void writeInvocationErrorResponse(@NotNull OperationInvocationError error, @NotNull C context);
+
+  protected void close(@NotNull C context) throws IOException { }
+
+  // -----------------------------------
+
+
+  protected void handleRequest(
+      @NotNull String decodedUri,
+      @NotNull HttpMethod requestMethod,
+      @Nullable String operationName,
+      @NotNull C context) {
+
+
+    // extract resource name from URI
+    Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
+    if (!matcher.matches()) {
+      writeGenericErrorAndClose(
+          String.format(
+              "Bad URL format. Supported resources: {%s}",
+              Util.listSupportedResources(service)
+          ), OperationInvocationError.Status.BAD_REQUEST, context
+      );
+      return;
+    }
+    String resourceName = matcher.group(1);
+
+    // find resource by name
+    final Resource resource;
+    try {
+      resource = ResourceRouter.findResource(resourceName, service);
+    } catch (ResourceNotFoundException ignored) {
+      writeGenericErrorAndClose(
+          String.format(
+              "Resource '%s' not found. Supported resources: {%s}",
+              resourceName,
+              Util.listSupportedResources(service)
+          ), OperationInvocationError.Status.BAD_REQUEST, context
+      );
+      return;
+    }
+
+    if (operationName != null) {
+      CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
+      if (customOperation != null) {
+        handleCustomRequest(
+            resource,
+            operationName,
+            requestMethod,
+            decodedUri,
+            context
+        );
+        return;
+      }
+    }
+
+    if (requestMethod == HttpMethod.GET)
+      handleReadRequest(resource, operationName, decodedUri, context);
+    else if (requestMethod == HttpMethod.POST)
+      handleCreateRequest(resource, operationName, decodedUri, context);
+    else if (requestMethod == HttpMethod.PUT)
+      handleUpdateRequest(resource, operationName, decodedUri, context);
+    else if (requestMethod == HttpMethod.DELETE)
+      handleDeleteRequest(resource, operationName, decodedUri, context);
+    else {
+      writeGenericErrorAndClose(
+          String.format(
+              "Unsupported HTTP method '%s'",
+              requestMethod
+          ), OperationInvocationError.Status.BAD_REQUEST, context
+      );
+    }
+
+  }
 
   // ----------------------------------- READ
 
@@ -115,6 +190,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeReadRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
@@ -160,8 +236,8 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
           ReadOperation<Data> operation = operationSearchResult.operation();
 
-          OperationInvocation<ReadOperationRequest, ReadOperationResponse<Data>>
-              operationInvocation = operationInvocations().readOperationInvocation(operation);
+          OperationInvocation<ReadOperationRequest, ReadOperationResponse<Data>> operationInvocation =
+              operationInvocations.readOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new ReadOperationRequest(
@@ -233,18 +309,18 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
                   try {
                     writeData(statusCode, readResult.pathSteps, readResult.projection, readResult.data, context);
                   } catch (RuntimeException e) {
-                    writeInvocationErrorResponse(
+                    writeInvocationErrorAndCloseContext(
                         new GenericServerInvocationError(e.toString()),
                         context
                     );
                   }
                 },
 
-                error -> writeInvocationErrorResponse(error, context)
+                error -> writeInvocationErrorAndCloseContext(error, context)
             );
 
     final Function<Throwable, Void> failureConsumer = throwable -> {
-      writeInvocationErrorResponse(
+      writeInvocationErrorAndCloseContext(
           new GenericServerInvocationError(throwable.getMessage()), context
       );
       return null;
@@ -280,7 +356,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull C context) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
-    if (operationName != null && resource.namedReadOperation(operationName) == null)
+    if (operationName != null && resource.namedCreateOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationNotFoundError(
@@ -336,8 +412,13 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
             );
           }
 
-          OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>>
-              operationInvocation = operationInvocations().createOperationInvocation(operation);
+          if (body == null)
+            return CompletableFuture.completedFuture(
+                OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for create operation"))
+            );
+
+          OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
+              operationInvocations.createOperationInvocation(operation);
 
           return operationInvocation.invoke(
               new CreateOperationRequest(
@@ -398,7 +479,467 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
     );
   }
 
+  // ----------------------------------- UPDATE
+
+  protected void handleUpdateRequest(
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+    handleReadResponse(
+        HttpStatusCode.OK,
+        invokeUpdateRequest(resource, operationName, decodedUri, context),
+        context
+    );
+  }
+
+  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeUpdateRequest(
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedUpdateOperation(operationName) == null)
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new OperationNotFoundError(
+                  resource.declaration().fieldName(),
+                  OperationKind.UPDATE,
+                  operationName
+              )
+          )
+      );
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+    UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, errorsAccumulator, context);
+
+    if (errorsAccumulator.hasErrors())
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new RequestParsingInvocationError(
+                  resource.declaration().fieldName(),
+                  OperationKind.UPDATE,
+                  operationName,
+                  decodedUri,
+                  Util.psiErrorsToPsiProcessingErrors(errorsAccumulator.errors())
+              )
+          )
+      );
+
+    return withUpdateOperation(
+        decodedUri,
+        resource,
+        operationName,
+        urlPsi,
+        operationSearchResult -> {
+          @NotNull UpdateRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @Nullable ReqUpdateFieldProjection updateProjection = requestUrl.updateProjection();
+          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+
+          @NotNull UpdateOperation<Data> operation = operationSearchResult.operation();
+
+          final Data body;
+          try {
+            if (updateProjection == null) {
+              FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> reader = opInputReader(context);
+              body = reader.readData(operation.declaration().inputProjection().varProjection());
+            } else {
+              @NotNull FormatReader<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> reader =
+                  reqUpdateReader(context);
+              body = reader.readData(updateProjection.varProjection());
+            }
+          } catch (FormatException | IOException e) {
+            return CompletableFuture.completedFuture(
+                OperationInvocationResult.failure(
+                    new MalformedInputInvocationError("Error reading request body: " + e.getMessage())
+                )
+            );
+          }
+
+          if (body == null)
+            return CompletableFuture.completedFuture(
+                OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for update operation"))
+            );
+
+          OperationInvocation<UpdateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
+              operationInvocations.updateOperationInvocation(operation);
+
+          return operationInvocation.invoke(
+              new UpdateOperationRequest(
+                  requestUrl.path(),
+                  body,
+                  updateProjection,
+                  outputProjection.projection()
+              )
+          ).thenApply(result -> result.mapSuccess(success ->
+              new ReadResult(
+                  success.getData(),
+                  outputProjection.pathSteps(),
+                  outputProjection.projection().varProjection()
+              )
+          ));
+        },
+        context
+    );
+  }
+
+  private @NotNull UrlUpdateUrl parseUpdateUrlPsi(
+      @NotNull String urlString,
+      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
+      @NotNull C context) {
+
+    UrlUpdateUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.UPDATE_URL.rootElementType(),
+        UrlUpdateUrl.class,
+        UrlSubParserDefinitions.UPDATE_URL,
+        errorsAccumulator
+    );
+
+    if (context.isDebugMode())
+      context.logger().info(Util.dumpUrl(urlPsi));
+
+    return urlPsi;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <R> CompletionStage<OperationInvocationResult<R>> withUpdateOperation(
+      @NotNull String requestText,
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull UrlUpdateUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, UpdateRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull C context) {
+
+    return this.withOperation(
+        requestText,
+        resource,
+        operationName,
+        urlPsi,
+        UpdateOperationRouter.INSTANCE,
+        OperationKind.UPDATE,
+        continuation,
+        context
+    );
+  }
+
+  // ----------------------------------- DELETE
+
+  protected void handleDeleteRequest(
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+    handleReadResponse(
+        HttpStatusCode.OK,
+        invokeDeleteRequest(resource, operationName, decodedUri, context),
+        context
+    );
+  }
+
+  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeDeleteRequest(
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+
+    // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
+    if (operationName != null && resource.namedDeleteOperation(operationName) == null)
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new OperationNotFoundError(
+                  resource.declaration().fieldName(),
+                  OperationKind.DELETE,
+                  operationName
+              )
+          )
+      );
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+    UrlDeleteUrl urlPsi = parseDeleteUrlPsi(decodedUri, errorsAccumulator, context);
+
+    if (errorsAccumulator.hasErrors())
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new RequestParsingInvocationError(
+                  resource.declaration().fieldName(),
+                  OperationKind.DELETE,
+                  operationName,
+                  decodedUri,
+                  Util.psiErrorsToPsiProcessingErrors(errorsAccumulator.errors())
+              )
+          )
+      );
+
+    return withDeleteOperation(
+        decodedUri,
+        resource,
+        operationName,
+        urlPsi,
+        operationSearchResult -> {
+          @NotNull DeleteRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
+          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+
+          @NotNull DeleteOperation<Data> operation = operationSearchResult.operation();
+
+          OperationInvocation<DeleteOperationRequest, ReadOperationResponse<Data>> operationInvocation =
+              operationInvocations.deleteOperationInvocation(operation);
+
+          return operationInvocation.invoke(
+              new DeleteOperationRequest(
+                  requestUrl.path(),
+                  deleteProjection,
+                  outputProjection.projection()
+              )
+          ).thenApply(result -> result.mapSuccess(success ->
+              new ReadResult(
+                  success.getData(),
+                  outputProjection.pathSteps(),
+                  outputProjection.projection().varProjection()
+              )
+          ));
+        },
+        context
+    );
+  }
+
+  private @NotNull UrlDeleteUrl parseDeleteUrlPsi(
+      @NotNull String urlString,
+      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
+      @NotNull C context) {
+
+    UrlDeleteUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.DELETE_URL.rootElementType(),
+        UrlDeleteUrl.class,
+        UrlSubParserDefinitions.DELETE_URL,
+        errorsAccumulator
+    );
+
+    if (context.isDebugMode())
+      context.logger().info(Util.dumpUrl(urlPsi));
+
+    return urlPsi;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <R> CompletionStage<OperationInvocationResult<R>> withDeleteOperation(
+      @NotNull String requestText,
+      @NotNull Resource resource,
+      @Nullable String operationName,
+      @NotNull UrlDeleteUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<DeleteOperation<Data>, DeleteRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull C context) {
+
+    return this.withOperation(
+        requestText,
+        resource,
+        operationName,
+        urlPsi,
+        DeleteOperationRouter.INSTANCE,
+        OperationKind.DELETE,
+        continuation,
+        context
+    );
+  }
+
+  // ----------------------------------- CUSTOM
+
+  protected void handleCustomRequest(
+      @NotNull Resource resource,
+      @NotNull String operationName,
+      @NotNull HttpMethod method,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+    handleReadResponse(
+        HttpStatusCode.OK,
+        invokeCustomRequest(resource, operationName, method, decodedUri, context),
+        context
+    );
+  }
+
+  @SuppressWarnings("unchecked")
+  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeCustomRequest(
+      @NotNull Resource resource,
+      @NotNull String operationName,
+      @NotNull HttpMethod method,
+      @NotNull String decodedUri,
+      @NotNull C context) {
+
+    final CustomOperation<Data> operation = (CustomOperation<Data>) resource.customOperation(method, operationName);
+    if (operation == null)
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new OperationNotFoundError(
+                  resource.declaration().fieldName(),
+                  OperationKind.CUSTOM,
+                  method,
+                  operationName
+              )
+          )
+      );
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+    UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, errorsAccumulator, context);
+
+    if (errorsAccumulator.hasErrors())
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new RequestParsingInvocationError(
+                  resource.declaration().fieldName(),
+                  OperationKind.CUSTOM,
+                  operationName,
+                  decodedUri,
+                  Util.psiErrorsToPsiProcessingErrors(errorsAccumulator.errors())
+              )
+          )
+      );
+
+    CustomRequestUrl requestUrl = null;
+    PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
+    try {
+      requestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
+          resource.declaration().fieldType(),
+          operation.declaration(),
+          urlPsi,
+          context.typesResolver(),
+          psiProcessingContext
+      );
+    } catch (PsiProcessingException e) {
+      psiProcessingContext.setErrors(e.errors());
+    }
+
+    if (!psiProcessingContext.errors().isEmpty()) {
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new RequestParsingInvocationError(
+                  resource.declaration().fieldName(),
+                  OperationKind.CUSTOM,
+                  operationName,
+                  decodedUri,
+                  psiProcessingContext.errors()
+              )
+          )
+      );
+    }
+
+    assert requestUrl != null;
+
+    @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+    StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+
+    Data body;
+    try {
+      if (inputProjection == null) {
+        final OpInputFieldProjection opInputProjection = operation.declaration().inputProjection();
+        if (opInputProjection == null)
+          body = null;
+        else {
+          FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> reader = opInputReader(context);
+          body = reader.readData(opInputProjection.varProjection());
+        }
+      } else {
+        FormatReader<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> reader = reqInputReader(context);
+        body = reader.readData(inputProjection.varProjection());
+      }
+    } catch (FormatException | IOException e) {
+      return CompletableFuture.completedFuture(
+          OperationInvocationResult.failure(
+              new MalformedInputInvocationError("Error reading request body: " + e.getMessage())
+          )
+      );
+    }
+
+    OperationInvocation<CustomOperationRequest, ReadOperationResponse<Data>> operationInvocation =
+        operationInvocations.customOperationInvocation(operation);
+
+    return operationInvocation.invoke(
+        new CustomOperationRequest(
+            requestUrl.path(),
+            body,
+            inputProjection,
+            outputProjection.projection()
+        )
+    ).thenApply(result -> result.mapSuccess(success ->
+        new ReadResult(
+            success.getData(),
+            outputProjection.pathSteps(),
+            outputProjection.projection().varProjection()
+        )
+    ));
+  }
+
+  private @NotNull UrlCustomUrl parseCustomUrlPsi(
+      @NotNull String urlString,
+      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
+      @NotNull C context) {
+
+    UrlCustomUrl urlPsi = EpigraphPsiUtil.parseText(
+        urlString,
+        UrlSubParserDefinitions.CUSTOM_URL.rootElementType(),
+        UrlCustomUrl.class,
+        UrlSubParserDefinitions.CUSTOM_URL,
+        errorsAccumulator
+    );
+
+    if (context.isDebugMode())
+      context.logger().info(Util.dumpUrl(urlPsi));
+
+    return urlPsi;
+  }
+
   // ---------------------------------
+
+
+  protected interface FormatResponseWriter {
+    void write(@NotNull FormatWriter writer) throws IOException;
+  }
+
+
+  protected void writeDataResponse(
+      int statusCode,
+      @NotNull ReqOutputVarProjection projection,
+      @Nullable Data data,
+      @NotNull C context) {
+
+    writeFormatResponse(statusCode, context, writer -> {
+      writer.writeData(projection, data);
+      writer.close();
+    });
+    closeContext(context);
+  }
+
+  protected void writeDatumResponse(
+      int statusCode,
+      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
+      @Nullable Datum datum,
+      @NotNull C context) {
+
+    writeFormatResponse(statusCode, context, writer -> {
+      writer.writeDatum(projection, datum);
+      writer.close();
+    });
+    closeContext(context);
+  }
+
+  protected void writeErrorResponse(@NotNull ErrorValue error, @NotNull C context) {
+    writeFormatResponse(error.statusCode(), context, writer -> {
+      writer.writeError(error);
+      writer.close();
+    });
+    closeContext(context);
+  }
+
+  protected void writeEmptyResponse(int statusCode, @NotNull C context) {
+
+    writeFormatResponse(statusCode, context, writer -> {
+      writer.writeData(null);
+      writer.close();
+    });
+    closeContext(context);
+  }
 
   private void writeData(
       int statusCode,
@@ -409,7 +950,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
     try {
       if (data == null) {
-        writeEmptyResponse(context);
+        writeEmptyResponse(statusCode, context);
       } else {
         DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
@@ -425,7 +966,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           } else if (modelProjection != null) {
             writeDatumResponse(statusCode, modelProjection, noPathData.datum, context);
           } else {
-            writeEmptyResponse(context);
+            writeEmptyResponse(statusCode, context);
           }
         } else {
           writeErrorResponse(noPathData.error, context);
@@ -433,7 +974,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       }
 
     } catch (AmbiguousPathException ignored) {
-      writeInvocationErrorResponse(
+      writeInvocationErrorAndCloseContext(
           new GenericServerInvocationError(
 //              String.format(
 //                  "Can't remove %d path steps from data: \n%s\n",
@@ -449,7 +990,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       );
     } catch (RuntimeException e) {
       context.logger().error("Error writing response", e);
-      writeInvocationErrorResponse(
+      writeInvocationErrorAndCloseContext(
           new GenericServerInvocationError(
               "Error writing response: " + e.getMessage()
           ),
@@ -522,6 +1063,31 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           )
       );
     }
+  }
+
+  private void closeContext(@NotNull C context) {
+    try {
+      close(context);
+    } catch (IOException e) {
+      context.logger().error("Error closing connections", e);
+    }
+  }
+
+  private void writeGenericErrorAndClose(
+      @NotNull String message,
+      @NotNull OperationInvocationError.Status status,
+      @NotNull C context) {
+
+    writeInvocationErrorAndCloseContext(
+        new OperationInvocationErrorImpl(
+            message, status
+        ), context
+    );
+  }
+
+  private void writeInvocationErrorAndCloseContext(@NotNull OperationInvocationError error, @NotNull C context) {
+    writeInvocationErrorResponse(error, context);
+    closeContext(context);
   }
 
 }
