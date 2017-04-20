@@ -19,6 +19,8 @@ package ws.epigraph.validation.data;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.RecordDatum;
+import ws.epigraph.data.Val;
+import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
 
 /**
@@ -41,8 +43,19 @@ public class ReqOutputDataValidator extends GenDataValidator<
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
-      if (!data._raw().tagValues().containsKey(tagName))
+      final Val val = data._raw().tagValues().get(tagName);
+      if (val == null)
         context.addError(String.format("Required tag '%s' is missing", tagName));
+      else {
+        final ErrorValue error = val.getError();
+        if (error != null)
+          context.addError(String.format(
+              "Required tag '%s' is a [%s] error: %s",
+              tagName,
+              error.statusCode(),
+              error.message()
+          ));
+      }
     });
   }
 

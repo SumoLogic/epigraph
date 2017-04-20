@@ -40,10 +40,9 @@ public final class DataPathRemover {
       @NotNull Data data,
       int steps) throws AmbiguousPathException {
 
-    if (steps == 0) return new PathRemovalResult(data);
+    projection = projection.normalizedForType(data.type(), false);
 
-    if (projection.polymorphicTails() != null)
-      throw new AmbiguousPathException();
+    if (steps == 0) return new PathRemovalResult(projection, data);
 
     switch (projection.tagProjections().size()) {
       case 0:
@@ -71,7 +70,7 @@ public final class DataPathRemover {
       @NotNull Val val,
       int steps) throws AmbiguousPathException {
 
-    if (val.getError() != null) return new PathRemovalResult(val.getError()); // error on any segment = fail?
+    if (val.getError() != null) return new PathRemovalResult(mp, val.getError()); // error on any segment = fail?
     final @Nullable Datum datum = val.getDatum();
     return (datum == null) ? PathRemovalResult.NULL : removePath(mp, datum, steps);
   }
@@ -81,7 +80,9 @@ public final class DataPathRemover {
       @NotNull Datum datum,
       int steps) throws AmbiguousPathException {
 
-    if (steps == 0) return new PathRemovalResult(datum);
+    mp = mp.normalizedForType(datum.type(), false);
+
+    if (steps == 0) return new PathRemovalResult(mp, datum);
 
     switch (mp.type().kind()) {
       case UNION:
@@ -99,6 +100,7 @@ public final class DataPathRemover {
             Data fieldData = ((RecordDatum) datum)._raw().fieldsData().get(entry.field().name());
             if (fieldData == null)
               return new PathRemovalResult(
+                  mp,
                   new ErrorValue(
                       404, String.format("field '%s' not found", entry.field().name())
                   )
@@ -141,6 +143,7 @@ public final class DataPathRemover {
                 } catch (IOException ignored) {}
 
                 return new PathRemovalResult(
+                    mp,
                     new ErrorValue(
                         404, keyString + "not found"
                     )
@@ -160,6 +163,7 @@ public final class DataPathRemover {
         switch (listElements.size()) {
           case 0:
             return new PathRemovalResult(
+                mp,
                 new ErrorValue(404, "List item not found")
             );
           case 1:
@@ -177,23 +181,56 @@ public final class DataPathRemover {
     }
   }
 
-  public static class PathRemovalResult { // TODO use inheritance instead of null members
-    public static final PathRemovalResult NULL = new PathRemovalResult(null, null, null);
+  public static class PathRemovalResult {
+    public static final PathRemovalResult NULL = new PathRemovalResult(null, null, null, null, null);
 
+    public final @Nullable ReqOutputVarProjection dataProjection;
     public final @Nullable Data data;
+    public final @Nullable ReqOutputModelProjection<?, ?, ?> datumProjection;
     public final @Nullable Datum datum;
     public final @Nullable ErrorValue error;
 
-    public PathRemovalResult(@Nullable Data data, @Nullable Datum datum, @Nullable ErrorValue error) {
+    public PathRemovalResult(
+        @Nullable ReqOutputVarProjection projection,
+        @Nullable Data data,
+        @Nullable ReqOutputModelProjection<?, ?, ?> datumProjection,
+        @Nullable Datum datum,
+        @Nullable ErrorValue error) {
+      dataProjection = projection;
       this.data = data;
+      this.datumProjection = datumProjection;
       this.datum = datum;
       this.error = error;
     }
 
-    public PathRemovalResult(@Nullable Data data) { this(data, null, null); }
+    public PathRemovalResult(@NotNull ReqOutputVarProjection dataProjection, @Nullable Data data) {
+      this(
+          dataProjection,
+          data,
+          null,
+          null,
+          null
+      );
+    }
 
-    public PathRemovalResult(@Nullable Datum datum) { this(null, datum, null); }
+    public PathRemovalResult(@NotNull ReqOutputModelProjection<?, ?, ?> datumProjection, @Nullable Datum datum) {
+      this(
+          null,
+          null,
+          datumProjection,
+          datum,
+          null
+      );
+    }
 
-    public PathRemovalResult(@Nullable ErrorValue error) { this(null, null, error); }
+    public PathRemovalResult(@NotNull ReqOutputModelProjection<?, ?, ?> mp, @Nullable ErrorValue error) {
+      this(
+          null,
+          null,
+          mp,
+          null,
+          error
+      );
+    }
   }
 }

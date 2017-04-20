@@ -28,7 +28,7 @@
   - [ ] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 - [ ] add enums
-- [ ] servlet-based server
+- [x] servlet-based server
 - [ ] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
 
 # See also

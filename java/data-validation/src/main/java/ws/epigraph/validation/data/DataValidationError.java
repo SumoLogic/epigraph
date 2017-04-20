@@ -35,7 +35,9 @@ public class DataValidationError {
       final @NotNull Collection<DataValidationContext.StackItem> location,
       final @NotNull String message) {
 
-    this.location = Collections.unmodifiableList(new ArrayList<>(location));
+    final ArrayList<DataValidationContext.StackItem> locationTmp = new ArrayList<>(location);
+    Collections.reverse(locationTmp);
+    this.location = Collections.unmodifiableList(locationTmp);
     this.message = message;
   }
 
@@ -47,7 +49,7 @@ public class DataValidationError {
   public @NotNull String toString() {
     return location().isEmpty() ?
            message() :
-           message() + " at " +
-           location().stream().map(DataValidationContext.StackItem::toString).collect(Collectors.joining());
+           location().stream().map(DataValidationContext.StackItem::toString).collect(Collectors.joining()) + " : " +
+           message();
   }
 }

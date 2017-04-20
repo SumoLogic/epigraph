@@ -951,24 +951,21 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       if (data == null) {
         writeEmptyResponse(statusCode, context);
       } else {
-        DataPathRemover.PathRemovalResult noPathData = DataPathRemover.removePath(reqProjection, data, pathSteps);
+        DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
-        if (noPathData.error == null) {
-          final OutputProjectionPathRemover.PathRemovalResult noPathProjection =
-              OutputProjectionPathRemover.removePath(reqProjection, pathSteps);
-
-          final @Nullable ReqOutputVarProjection varProjection = noPathProjection.varProjection();
-          final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection = noPathProjection.modelProjection();
+        if (noPathResult.error == null) {
+          final @Nullable ReqOutputVarProjection varProjection = noPathResult.dataProjection;
+          final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
 
           if (varProjection != null) {
-            writeDataResponse(statusCode, varProjection, noPathData.data, context);
+            writeDataResponse(statusCode, varProjection, noPathResult.data, context);
           } else if (modelProjection != null) {
-            writeDatumResponse(statusCode, modelProjection, noPathData.datum, context);
+            writeDatumResponse(statusCode, modelProjection, noPathResult.datum, context);
           } else {
             writeEmptyResponse(statusCode, context);
           }
         } else {
-          writeErrorResponse(noPathData.error, context);
+          writeErrorResponse(noPathResult.error, context);
         }
       }
 

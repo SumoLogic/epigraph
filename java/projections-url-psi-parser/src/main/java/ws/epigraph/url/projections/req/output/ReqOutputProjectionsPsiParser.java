@@ -267,6 +267,8 @@ public final class ReqOutputProjectionsPsiParser {
 
   private static @NotNull PsiElement
   getSingleTagLocation(final @NotNull UrlReqOutputTrunkSingleTagProjection singleTagProjectionPsi) {
+    final UrlTagName tagName = singleTagProjectionPsi.getTagName();
+    if (tagName != null) return tagName;
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().isEmpty()) {
       final @Nullable UrlReqOutputComaFieldProjection fieldProjectionPsi =
@@ -473,7 +475,8 @@ public final class ReqOutputProjectionsPsiParser {
     } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
-      TagApi tag = findTagOrSelfTag(type, singleTagProjectionPsi.getTagName(), op, singleTagProjectionPsi, context);
+      PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
+      TagApi tag = findTagOrSelfTag(type, singleTagProjectionPsi.getTagName(), op, tagLocation, context);
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
         if (tag == null) tag =
             getTagOrSelfTag(type, null, op, singleTagProjectionPsi, context); // will throw proper error
@@ -536,6 +539,20 @@ public final class ReqOutputProjectionsPsiParser {
     } catch (Exception e) {
       throw new PsiProcessingException(e, psi, context);
     }
+  }
+
+  private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqOutputComaSingleTagProjection singleTagProjectionPsi) {
+    final UrlTagName tagName = singleTagProjectionPsi.getTagName();
+    if (tagName != null) return tagName;
+    PsiElement tagLocation = singleTagProjectionPsi;
+    if (tagLocation.getText().isEmpty()) {
+      final @Nullable UrlReqOutputComaFieldProjection fieldProjectionPsi =
+          PsiTreeUtil.getParentOfType(tagLocation, UrlReqOutputComaFieldProjection.class);
+      if (fieldProjectionPsi != null) {
+        tagLocation = fieldProjectionPsi.getQid();
+      }
+    }
+    return tagLocation;
   }
 
   private static @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> parseComaMultiTagProjection(

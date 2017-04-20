@@ -247,6 +247,8 @@ public final class ReqDeleteProjectionsPsiParser {
   }
 
   private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqDeleteSingleTagProjection singleTagProjectionPsi) {
+    final UrlTagName tagName = singleTagProjectionPsi.getTagName();
+    if (tagName != null) return tagName;
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().isEmpty()) {
       final @Nullable UrlReqDeleteFieldProjectionEntry fieldProjectionPsi =

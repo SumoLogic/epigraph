@@ -17,17 +17,19 @@
 package ws.epigraph.server.http.undertow;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.*;
+import io.undertow.util.HeaderValues;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.AbstractHttpServer;
@@ -46,7 +48,8 @@ import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
@@ -88,7 +91,16 @@ public class UndertowHandler
           ), context
       );
     } else {
-      handleRequest(getDecodedRequestString(exchange), method, getOperationName(exchange), context);
+      try {
+        handleRequest(getDecodedRequestString(exchange), method, getOperationName(exchange), context);
+      } catch (URISyntaxException e) {
+        writeInvocationErrorResponse(
+            new OperationInvocationErrorImpl(
+                String.format("Invalid URI syntax '%s'", e.getMessage()),
+                OperationInvocationError.Status.BAD_REQUEST
+            ), context
+        );
+      }
     }
   }
 
@@ -198,7 +210,8 @@ public class UndertowHandler
 
   }
 
-  private static @NotNull String getDecodedRequestString(@NotNull HttpServerExchange exchange) {
+  private static @NotNull String getDecodedRequestString(@NotNull HttpServerExchange exchange)
+      throws URISyntaxException {
     // any way to disable request parsing in Undertow? we don't really need it..
 
     final String uri = exchange.getRequestURI(); // this doesn't include query params?!
@@ -207,14 +220,14 @@ public class UndertowHandler
     final String encodedReq;
 
     if (queryString == null || queryString.isEmpty()) encodedReq = uri;
-    else encodedReq = uri + "%3f" + queryString; // question mark gets removed
+    else encodedReq = uri + "?" + queryString; // question mark gets removed
 
-    return URLUtils.decode(
-        encodedReq,
-        exchange.getConnection().getUndertowOptions().get(UndertowOptions.URL_CHARSET, StandardCharsets.UTF_8.name()),
-        false,
-        new StringBuilder()
-    );
+    final URI _uri = new URI(encodedReq);
+
+    final String decodedPath = _uri.getPath();
+    final String decodedQuery = _uri.getQuery();
+
+    return decodedQuery == null ? decodedPath : decodedPath + "?" + decodedQuery;
   }
 
 }

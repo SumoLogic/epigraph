@@ -58,7 +58,7 @@ public class ReqOutputDataValidatorTest {
         ":`record`(firstName)",
         ":record(+firstName)",
         "<`record`:{}>",
-        "Required field 'firstName' is missing at :record"
+        ":record : Required field 'firstName' is missing"
     );
   }
 

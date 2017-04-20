@@ -55,6 +55,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 
 /**
+ * Generic Servlet-based Epigraph endpoint implementation. Requires servlet API 3.0 or higher
+ * and a container with correct URI parser (i.e. RFC 3986, not 1808 compliant like Jetty 9)
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class EpigraphServlet extends HttpServlet {
@@ -80,7 +83,7 @@ public abstract class EpigraphServlet extends HttpServlet {
     typesResolver = initTypesResolver(config);
 
     try {
-      server = new Server( initService(config), initOperationFilterChains(config) );
+      server = new Server(initService(config), initOperationFilterChains(config));
 
       String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_SERVLET_PARAMETER);
       responseTimeout = responseTimeoutParameter == null
@@ -114,18 +117,9 @@ public abstract class EpigraphServlet extends HttpServlet {
 
   protected void handleRequest(HttpMethod method, HttpServletRequest req) {
     try {
-      // could use `getPathInfo` here which gives decoded URI without path, but we still have to
-      // decode query params, so it's better to use the same decoder for both
+      String fullUri = req.getPathInfo();
 
-      final String uri = req.getRequestURI();
-      final String path = req.getContextPath();
       final String queryString = req.getQueryString();
-
-      // remove path
-      final String uriNoPath = path == null || path.isEmpty() ? uri : uri.substring(path.length());
-
-      // add query string and decode
-      String fullUri = URLDecoder.decode(uriNoPath, URI_CHARSET);
       if (queryString != null)
         fullUri = fullUri + "?" + URLDecoder.decode(queryString, URI_CHARSET);
 

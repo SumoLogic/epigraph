@@ -255,9 +255,12 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
+  @SuppressWarnings("ConstantConditions")
   @Test
   public void testRequiredField() {
-    testParse(":record ( +id )", 1);
+    ReqOutputVarProjection vp = testParse(":record ( +id )", 1);
+    ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
+    assertTrue(rmp.fieldProjection("id").fieldProjection().required());
   }
 
   @Test

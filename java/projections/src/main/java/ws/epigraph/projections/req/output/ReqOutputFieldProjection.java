@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ package ws.epigraph.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

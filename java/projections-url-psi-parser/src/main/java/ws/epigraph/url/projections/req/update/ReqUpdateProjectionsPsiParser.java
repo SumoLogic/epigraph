@@ -252,6 +252,8 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqUpdateSingleTagProjection singleTagProjectionPsi) {
+    final UrlTagName tagName = singleTagProjectionPsi.getTagName();
+    if (tagName != null) return tagName;
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().isEmpty()) {
       final @Nullable UrlReqUpdateFieldProjectionEntry fieldProjectionPsi =

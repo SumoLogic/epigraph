@@ -23,8 +23,6 @@ import com.mashape.unirest.request.BaseRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.Person;
@@ -32,6 +30,9 @@ import ws.epigraph.tests.UserResourceFactory;
 import ws.epigraph.tests.UsersResourceFactory;
 import ws.epigraph.tests.UsersStorage;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,10 +47,6 @@ public abstract class AbstractHttpServerTest {
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
-
-  private static final String URL_PREFIX = "http://" + HOST + ":" + PORT + "/";
-
-  private static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
 
   protected static @NotNull Service buildUsersService() throws ServiceInitializationException {
     return new Service(
@@ -84,7 +81,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testPolymorphicGet() throws UnirestException {
     get(
-        "users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~~User:record(profile)))",
+        "/users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~~User:record(profile)))",
         200,
         "[{'K':4,'V':" +
         "{'id':4,'firstName':'First4','lastName':'Last4','bestFriend':" +
@@ -98,22 +95,40 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testGetWithMeta() throws UnirestException {
     get(
-        "users;start=5;count=10[1](:id)@(start,count)", // todo params should belong to model, not field
+        "/users;start=5;count=10[1](:id)@(start,count)",
         200,
         "{\"meta\":{\"start\":5,\"count\":10},\"data\":[{\"K\":1,\"V\":1}]}"
     );
   }
 
   @Test
+  public void testPathPolyGet() throws UnirestException {
+    get(
+        "/user:record(firstName)~~User:record(profile)",
+        200,
+        "{'firstName':'Alfred','profile':{'ERROR':404,'message':'Not Found'}}"
+    );
+  }
+
+  @Test
+  public void testPathPolyGetRequired() throws UnirestException {
+    get(
+        "/user:record(firstName)~~User:record(+profile)",
+        520,
+        ":record/profile : Required tag ''self'' is a [404] error: Not Found"
+    );
+  }
+
+  @Test
   public void testCreateReadUpdateDelete() throws UnirestException {
-    Integer id = Integer.parseInt(post(null, "users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
+    Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;
 
-    get("users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
-    put("users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
-    get("users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
+    get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
+    put("/users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
+    get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
     delete(
-        "users<[" + id + "," + nextId + "]>[*](code,message)",
+        "/users<[" + id + "," + nextId + "]>[*](code,message)",
         200,
         "[{\"K\":" + nextId + ",\"V\":{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}}]"
     );
@@ -121,20 +136,20 @@ public abstract class AbstractHttpServerTest {
 
   @Test
   public void testCustom() throws UnirestException {
-    Integer id = Integer.parseInt(post(null, "users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
+    Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;
 
     post(
         "capitalize",
-        "users/" + nextId,
+        "/users/" + nextId,
         "{'firstName':'Alfred'}",
         200,
         "\\{'ERROR':404,'message':'Person with id " + nextId + " not found'\\}"
     );
 
-    post("capitalize", "users/" + id + "<(firstName)>(firstName,lastName)", null, 200, "\\{'firstName':'ALFRED'\\}");
+    post("capitalize", "/users/" + id + "<(firstName)>(firstName,lastName)", null, 200, "\\{'firstName':'ALFRED'\\}");
     delete(
-        "users<[" + id + "]>[*](code,message)",
+        "/users<[" + id + "]>[*](code,message)",
         200,
         "[]"
     );
@@ -142,8 +157,8 @@ public abstract class AbstractHttpServerTest {
     p.toImmutable();
   }
 
-  private void get(String request, int expectedStatus, String expectedBody) throws UnirestException {
-    final HttpResponse<String> response = Unirest.get(URL_PREFIX + request).asString();
+  private void get(String requestUri, int expectedStatus, String expectedBody) throws UnirestException {
+    final HttpResponse<String> response = Unirest.get(url(requestUri)).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
 
@@ -156,13 +171,13 @@ public abstract class AbstractHttpServerTest {
 
   private Matcher post(
       String operationName,
-      String requestUrl,
+      String requestUri,
       String requestBody,
       int expectedStatus,
       String expectedBodyRegex)
       throws UnirestException {
 
-    HttpRequestWithBody requestWithBody = Unirest.post(URL_PREFIX + requestUrl);
+    HttpRequestWithBody requestWithBody = Unirest.post(url(requestUri));
     if (operationName != null)
       requestWithBody = requestWithBody.header(RequestHeaders.OPERATION_NAME, operationName);
 
@@ -179,22 +194,36 @@ public abstract class AbstractHttpServerTest {
     return matcher;
   }
 
-  private void put(String requestUrl, String requestBody, int expectedStatus, String expectedBody)
+  private void put(String requestUri, String requestBody, int expectedStatus, String expectedBody)
       throws UnirestException {
 
     final HttpResponse<String> response =
-        Unirest.put(URL_PREFIX + requestUrl).body(requestBody.replaceAll("'", "\"")).asString();
+        Unirest.put(url(requestUri)).body(requestBody.replaceAll("'", "\"")).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody.replace("'", "\""), actualBody);
   }
 
-  private void delete(String requestUrl, int expectedStatus, String expectedBody)
+  private void delete(String requestUri, int expectedStatus, String expectedBody)
       throws UnirestException {
 
-    final HttpResponse<String> response = Unirest.delete(URL_PREFIX + requestUrl).asString();
+    final HttpResponse<String> response = Unirest.delete(url(requestUri)).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
     assertEquals(expectedBody/*.replace("'", "\"")*/, actualBody);
+  }
+
+  private String url(String requestUri) {
+    try {
+      URI uri = new URI("http", null, HOST, PORT, requestUri, null, null);
+      String uriString = uri.toURL().toString();
+
+      // unirest bug https://github.com/Mashape/unirest-java/issues/158 (converts plus to %20 in path)
+      uriString = uriString.replace("+", "%2b");
+
+      return uriString;
+    } catch (URISyntaxException | MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

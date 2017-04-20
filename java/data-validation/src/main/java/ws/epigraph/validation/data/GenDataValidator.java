@@ -51,6 +51,8 @@ public abstract class GenDataValidator<
   public void validateData(@Nullable Data data, @NotNull VP projection) {
     if (data == null) return;
 
+    projection = projection.normalizedForType(data.type(), false);
+
     Set<VP> checkedProjections = visited.get(data);
     if (checkedProjections == null) {
       checkedProjections = Collections.newSetFromMap(new IdentityHashMap<VP, Boolean>());
@@ -79,6 +81,8 @@ public abstract class GenDataValidator<
 
   @SuppressWarnings("unchecked")
   public void validateDatum(@NotNull Datum datum, @NotNull MP projection) {
+    projection = (MP) projection.normalizedForType(datum.type(), false);
+
     validateDatumOnly(datum, projection);
 
     switch (projection.type().kind()) {
