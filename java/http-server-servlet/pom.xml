@@ -88,7 +88,7 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-core</artifactId>
+      <artifactId>epigraph-java-http-server-common</artifactId>
       <version>${project.parent.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
@@ -104,6 +104,19 @@
     <dependency>
       <groupId>com.mashape.unirest</groupId>
       <artifactId>unirest-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>

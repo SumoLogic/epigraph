@@ -92,7 +92,6 @@ public class UndertowHandler
     }
   }
 
-
   @Override
   protected long responseTimeout(final @NotNull UndertowInvocationContext context) {
     return responseTimeout;

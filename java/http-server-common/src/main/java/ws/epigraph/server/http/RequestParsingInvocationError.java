@@ -55,19 +55,23 @@ public class RequestParsingInvocationError extends PsiProcessingInvocationError
 
   @Override
   public @NotNull String message() {
-    return String.format(
-        "Failed to parse %s operation '%s' request in resource '%s'\n%s",
-        operationKind, operationName == null ? "<default>" : operationName, resourceName,
-        psiParsingErrorsReport(new StringBuilder(), request, errors, false)
-    );
+    return message("\n\n", psiParsingErrorsReport(new StringBuilder(), request, errors, false));
   }
 
   @Override
   public @NotNull String htmlMessage() {
+    return message("<br/><br/>", psiParsingErrorsReport(new StringBuilder(), request, errors, true));
+  }
+
+  private @NotNull String message(String newLine, String errorsReport) {
     return String.format(
-        "Failed to parse %s operation '%s' request in resource '%s'\n%s",
-        operationKind, operationName == null ? "<default>" : operationName, resourceName,
-        psiParsingErrorsReport(new StringBuilder(), request, errors, true)
+        "Failed to parse %s%s operation %srequest in resource '%s'%s%s",
+        operationName == null ? "default " : "",
+        operationKind.toString().toLowerCase(),
+        operationName == null ? "" : "'"+operationName+"' ",
+        resourceName,
+        newLine,
+        errorsReport
     );
   }
 

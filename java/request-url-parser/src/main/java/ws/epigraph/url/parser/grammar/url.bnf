@@ -126,6 +126,7 @@ customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutput
   extends = "url"
 }
 
+// todo do we actually need them?
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
   pin = 1

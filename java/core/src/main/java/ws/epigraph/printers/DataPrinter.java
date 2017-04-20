@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -59,6 +60,10 @@ public class DataPrinter<Exc extends Exception> {
     );
   }
 
+  public static @NotNull DataPrinter<IOException> toString(int width, boolean withTypes, StringWriter writer) {
+    return new DataPrinter<>(new Layouter<>(new WriterBackend(writer, width), 2), withTypes);
+  }
+
   public void print(@Nullable Data data) throws Exc {
     if (data == null) { lo.print("null"); } else {
       switch (data.type().kind()) {
@@ -86,7 +91,8 @@ public class DataPrinter<Exc extends Exception> {
           lo.brk(1, -lo.getDefaultIndentation()).print(">").end();
           break;
         default:
-          print(data._raw().getValue(((DatumType) data.type()).self)); // expecting datum data to always have self-tag...
+          print(data._raw()
+              .getValue(((DatumType) data.type()).self)); // expecting datum data to always have self-tag...
       }
     }
   }

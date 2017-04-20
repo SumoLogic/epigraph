@@ -67,6 +67,16 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
+  public void testSimplePrimitiveGet() throws UnirestException {
+    get("/users/1:id", 200, "1");
+  }
+
+  @Test
+  public void testSimpleNotFound() throws UnirestException {
+    get("/users/123:id", 404, "{'ERROR':404,'message':'key ''123'' not found'}");
+  }
+
+  @Test
   public void testSimpleGet() throws UnirestException {
     get("/users/1:record(id,firstName)", 200, "{'id':1,'firstName':'First1'}");
   }
@@ -136,7 +146,12 @@ public abstract class AbstractHttpServerTest {
     final HttpResponse<String> response = Unirest.get(URL_PREFIX + request).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
-    assertEquals(expectedBody.replace("'", "\""), actualBody);
+
+    String eb = expectedBody.replace("''", "@@@");
+    eb = eb.replace("'", "\"");
+    eb = eb.replace("@@@", "'");
+
+    assertEquals(eb, actualBody);
   }
 
   private Matcher post(

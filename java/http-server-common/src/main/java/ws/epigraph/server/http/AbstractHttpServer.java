@@ -103,7 +103,6 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @Nullable String operationName,
       @NotNull C context) {
 
-
     // extract resource name from URI
     Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
     if (!matcher.matches()) {

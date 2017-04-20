@@ -16,13 +16,16 @@
 
 package ws.epigraph.server.http;
 
-import ws.epigraph.data.*;
-import ws.epigraph.errors.ErrorValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.*;
+import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.service.AmbiguousPathException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +97,12 @@ public final class DataPathRemover {
           case 1:
             ReqOutputFieldProjectionEntry entry = fieldProjections.values().iterator().next();
             Data fieldData = ((RecordDatum) datum)._raw().fieldsData().get(entry.field().name());
-            if (fieldData == null) return PathRemovalResult.NULL;
+            if (fieldData == null)
+              return new PathRemovalResult(
+                  new ErrorValue(
+                      404, String.format("field '%s' not found", entry.field().name())
+                  )
+              );
             return removePath(entry.fieldProjection().varProjection(), fieldData, steps - 1);
           default:
             throw new AmbiguousPathException();
@@ -120,8 +128,25 @@ public final class DataPathRemover {
               return PathRemovalResult.NULL;
             case 1:
               final ReqOutputKeyProjection kp = keys.iterator().next();
-              final Data value = mapElements.get(kp.value().toImmutable());
-              if (value == null) return PathRemovalResult.NULL;
+              final Datum.Imm key = kp.value().toImmutable();
+              final Data value = mapElements.get(key);
+
+              if (value == null) {
+                String keyString = "";
+                try {
+                  StringWriter sw = new StringWriter();
+                  DataPrinter<IOException> printer = DataPrinter.toString(80, false, sw);
+                  printer.print(key);
+                  keyString = "key '" + sw.toString() + "' ";
+                } catch (IOException ignored) {}
+
+                return new PathRemovalResult(
+                    new ErrorValue(
+                        404, keyString + "not found"
+                    )
+                );
+              }
+
               return removePath(mmp.itemsProjection(), value, steps - 1);
             default:
               throw new AmbiguousPathException();
@@ -134,7 +159,9 @@ public final class DataPathRemover {
 
         switch (listElements.size()) {
           case 0:
-            return PathRemovalResult.NULL;
+            return new PathRemovalResult(
+                new ErrorValue(404, "List item not found")
+            );
           case 1:
             return removePath(lmp.itemsProjection(), listElements.get(0), steps - 1);
           default:

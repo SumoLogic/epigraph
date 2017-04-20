@@ -23,6 +23,7 @@ import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.TagApi;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -80,10 +81,11 @@ public class DataValidationContext {
     public @NotNull String toString() {
       String keyPrintout;
 
-      final DataPrinter<IOException> printer = DataPrinter.out(120, false);
       try {
+        StringWriter sw = new StringWriter();
+        DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
         printer.print(key);
-        keyPrintout = printer.toString();
+        keyPrintout = sw.toString();
       } catch (IOException e) {
         keyPrintout = e.toString();
       }

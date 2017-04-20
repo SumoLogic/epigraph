@@ -31,6 +31,7 @@ import ws.epigraph.server.http.HtmlCapableOperationInvocationError;
 import ws.epigraph.server.http.InvocationContext;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.service.Service;
+import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.OpInputFormatReader;
 import ws.epigraph.wire.ReqInputFormatReader;
@@ -40,12 +41,14 @@ import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -55,11 +58,13 @@ import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class EpigraphServlet extends HttpServlet {
+  private static final String URI_CHARSET = StandardCharsets.UTF_8.name();
+
   // no header constants for servlet API?
   public static final String ACCEPT_HEADER = "Accept";
   public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
-  public static final String RESPONSE_TIMEOUT_PARAMETER = "response_timeout";
+  public static final String RESPONSE_TIMEOUT_SERVLET_PARAMETER = "response_timeout";
   public static final long DEFAULT_RESPONSE_TIMEOUT = 1000;
 
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
@@ -73,48 +78,70 @@ public abstract class EpigraphServlet extends HttpServlet {
     super.init(config);
     logger = new ServletLogger(getServletName(), new LinkedBlockingQueue<>(), true, getServletContext());
     typesResolver = initTypesResolver(config);
-    server = new Server(
-        initService(config),
-        initOperationFilterChains(config)
-    );
 
-    String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_PARAMETER);
-    responseTimeout = responseTimeoutParameter == null
-                      ? DEFAULT_RESPONSE_TIMEOUT
-                      : Long.parseLong(responseTimeoutParameter);
+    try {
+      server = new Server( initService(config), initOperationFilterChains(config) );
+
+      String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_SERVLET_PARAMETER);
+      responseTimeout = responseTimeoutParameter == null
+                        ? DEFAULT_RESPONSE_TIMEOUT
+                        : Long.parseLong(responseTimeoutParameter);
+
+    } catch (ServiceInitializationException e) {
+      throw new ServletException(e);
+    }
   }
-
 
   protected @NotNull TypesResolver initTypesResolver(ServletConfig config) { return IndexBasedTypesResolver.INSTANCE; }
 
-  protected abstract @NotNull Service initService(ServletConfig config);
+  protected abstract @NotNull Service initService(ServletConfig config) throws ServiceInitializationException;
 
   protected @NotNull OperationFilterChains<? extends Data> initOperationFilterChains(ServletConfig config) {
     return OperationFilterChains.defaultFilterChains();
   }
 
   @Override
-  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
-    handleRequest(HttpMethod.GET, req, resp);
-  }
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.GET, req); }
 
   @Override
-  protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) {
-    handleRequest(HttpMethod.POST, req, resp);
-  }
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.POST, req); }
 
   @Override
-  protected void doPut(final HttpServletRequest req, final HttpServletResponse resp) {
-    handleRequest(HttpMethod.PUT, req, resp);
-  }
+  protected void doPut(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.PUT, req); }
 
   @Override
-  protected void doDelete(final HttpServletRequest req, final HttpServletResponse resp) {
-    handleRequest(HttpMethod.DELETE, req, resp);
-  }
+  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.DELETE, req); }
 
-  protected void handleRequest(HttpMethod method, HttpServletRequest req, HttpServletResponse resp) {
-    server.handleRequest(req.getRequestURI(), method, getOperationName(req), new ServletInvocationContext(req, resp));
+  protected void handleRequest(HttpMethod method, HttpServletRequest req) {
+    try {
+      // could use `getPathInfo` here which gives decoded URI without path, but we still have to
+      // decode query params, so it's better to use the same decoder for both
+
+      final String uri = req.getRequestURI();
+      final String path = req.getContextPath();
+      final String queryString = req.getQueryString();
+
+      // remove path
+      final String uriNoPath = path == null || path.isEmpty() ? uri : uri.substring(path.length());
+
+      // add query string and decode
+      String fullUri = URLDecoder.decode(uriNoPath, URI_CHARSET);
+      if (queryString != null)
+        fullUri = fullUri + "?" + URLDecoder.decode(queryString, URI_CHARSET);
+
+      final AsyncContext asyncContext = req.startAsync();
+      asyncContext.setTimeout(responseTimeout);
+
+      server.handleRequest(
+          fullUri,
+          method,
+          getOperationName(req),
+          new ServletInvocationContext(asyncContext)
+      );
+    } catch (UnsupportedEncodingException e) {
+      // can never happen
+      throw new RuntimeException(e);
+    }
   }
 
   private @Nullable String getOperationName(@NotNull HttpServletRequest req) {
@@ -122,22 +149,19 @@ public abstract class EpigraphServlet extends HttpServlet {
   }
 
   private class ServletInvocationContext extends InvocationContext {
-    final @NotNull HttpServletRequest servletRequest;
-    final @NotNull HttpServletResponse servletResponse;
+    final @NotNull AsyncContext asyncContext;
 
-    ServletInvocationContext(
-        final @NotNull HttpServletRequest request,
-        final @NotNull HttpServletResponse response) {
-      servletRequest = request;
-      servletResponse = response;
-    }
+    ServletInvocationContext(final @NotNull AsyncContext context) { asyncContext = context; }
+
+    @NotNull ServletRequest request() { return asyncContext.getRequest(); }
+
+    @NotNull ServletResponse response() { return asyncContext.getResponse(); }
 
     @Override
     public Logger logger() { return logger; }
 
     @Override
     public TypesResolver typesResolver() { return typesResolver; }
-
   }
 
   private class Server extends AbstractHttpServer<ServletInvocationContext> {
@@ -161,18 +185,18 @@ public abstract class EpigraphServlet extends HttpServlet {
 
     @Override
     protected OpInputFormatReader opInputReader(final @NotNull ServletInvocationContext context) throws IOException {
-      return new OpInputJsonFormatReader(jsonFactory.createParser(context.servletRequest.getInputStream()));
+      return new OpInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
     protected ReqInputFormatReader reqInputReader(final @NotNull ServletInvocationContext context) throws IOException {
-      return new ReqInputJsonFormatReader(jsonFactory.createParser(context.servletRequest.getInputStream()));
+      return new ReqInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
     protected ReqUpdateFormatReader reqUpdateReader(final @NotNull ServletInvocationContext context)
         throws IOException {
-      return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.servletRequest.getInputStream()));
+      return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
@@ -182,7 +206,7 @@ public abstract class EpigraphServlet extends HttpServlet {
         final @NotNull FormatResponseWriter formatWriter) {
 
       try {
-        HttpServletResponse servletResponse = context.servletResponse;
+        HttpServletResponse servletResponse = (HttpServletResponse) context.response();
         servletResponse.setStatus(statusCode);
 
         FormatWriter writer = new JsonFormatWriter(servletResponse.getOutputStream()); // todo make configurable
@@ -201,11 +225,12 @@ public abstract class EpigraphServlet extends HttpServlet {
         final @NotNull OperationInvocationError error,
         final @NotNull ServletInvocationContext context) {
 
-      HttpServletResponse servletResponse = context.servletResponse;
+      HttpServletRequest servletRequest = (HttpServletRequest) context.request();
+      HttpServletResponse servletResponse = (HttpServletResponse) context.response();
       servletResponse.setStatus(error.status().httpCode());
 
       try {
-        if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(context.servletRequest)) {
+        if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(servletRequest)) {
           servletResponse.setHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_HTML);
           servletResponse.getWriter().write(((HtmlCapableOperationInvocationError) error).htmlMessage());
         } else {
@@ -219,7 +244,8 @@ public abstract class EpigraphServlet extends HttpServlet {
 
     @Override
     protected void close(final @NotNull ServletInvocationContext context) throws IOException {
-      context.servletResponse.flushBuffer();
+      context.response().flushBuffer();
+      context.asyncContext.complete();
     }
   }
 
