@@ -19,28 +19,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-http-server-undertow</artifactId>
+  <artifactId>epigraph-java-http-server-common</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
-    <artifactId>epigraph-java</artifactId>
+    <artifactId>epigraph-http-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-core</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-schema</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-http-server-common</artifactId>
+      <artifactId>epigraph-java-invocation</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
@@ -60,18 +50,18 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-schema</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-service</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-wire-json</artifactId>
+      <artifactId>epigraph-java-wire-common</artifactId>
       <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-core</artifactId>
     </dependency>
 
     <dependency>
@@ -79,18 +69,19 @@
       <artifactId>annotations</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
     <!-- test dependencies -->
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-http-server-common</artifactId>
+      <artifactId>epigraph-java-schema-psi-parser</artifactId>
       <version>${project.parent.version}</version>
-      <classifier>tests</classifier>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-test-util</artifactId>
+      <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -115,7 +106,7 @@
 
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
+      <artifactId>slf4j-nop</artifactId>
       <scope>test</scope>
     </dependency>
 

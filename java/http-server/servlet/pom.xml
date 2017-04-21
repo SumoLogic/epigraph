@@ -19,11 +19,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-http-server-jetty-handler</artifactId>
+  <artifactId>epigraph-java-http-server-servlet</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
-    <artifactId>epigraph-java</artifactId>
+    <artifactId>epigraph-http-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -70,8 +70,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
 
     <dependency>
@@ -107,6 +107,17 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

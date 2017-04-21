@@ -36,10 +36,7 @@
     <module>data-validation</module>
     <module>gdata-schema-psi-parser</module>
     <module>gdata</module>
-    <module>http-server-common</module>
-    <module>http-server-jetty-handler</module>
-    <module>http-server-servlet</module>
-    <module>http-server-undertow</module>
+    <module>http-server</module>
     <module>invocation</module>
     <module>lang-common</module>
     <module>maven-plugin</module>

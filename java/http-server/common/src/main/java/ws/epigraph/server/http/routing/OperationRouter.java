@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,22 @@
 
 package ws.epigraph.server.http.routing;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.Operation;
-import ws.epigraph.url.RequestUrl;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class OperationSearchSuccess<O extends Operation<?, ?, ?>, R extends RequestUrl>
-    implements OperationSearchResult<O> {
-  private final @NotNull O operation;
-  private final @NotNull R requestUrl;
-
-  public OperationSearchSuccess(
-      final @NotNull O operation,
-      final @NotNull R url) {
-
-    this.operation = operation;
-    requestUrl = url;
-  }
-
-  @Contract(pure = true)
-  public @NotNull O operation() { return operation; }
-
-  public @NotNull R requestUrl() { return requestUrl; }
+public interface OperationRouter<U extends UrlUrl, O extends Operation<?, ?, ?>> {
+  @NotNull
+  OperationSearchResult<O> findOperation(
+      @Nullable String operationName,
+      @NotNull U urlPsi,
+      @NotNull Resource resource,
+      @NotNull TypesResolver resolver) throws PsiProcessingException;
 }

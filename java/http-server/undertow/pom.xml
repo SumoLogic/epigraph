@@ -19,11 +19,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-http-server-servlet</artifactId>
+  <artifactId>epigraph-java-http-server-undertow</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
-    <artifactId>epigraph-java</artifactId>
+    <artifactId>epigraph-http-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
@@ -70,8 +70,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-core</artifactId>
     </dependency>
 
     <dependency>
@@ -104,18 +104,6 @@
     <dependency>
       <groupId>com.mashape.unirest</groupId>
       <artifactId>unirest-java</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
       <scope>test</scope>
     </dependency>
 
