@@ -33,11 +33,14 @@ public final class FilterUtil {
   public static @NotNull OperationInvocationError validationError(
       @NotNull Collection<? extends DataValidationError> validationErrors) {
     return new OperationInvocationErrorImpl(
+
         validationErrors.stream()
             .map(DataValidationError::toString)
             .collect(Collectors.joining("\n")),
-        OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
+
+        validationErrors.stream().anyMatch(DataValidationError::isImplementationError)
+        ? OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
+        : OperationInvocationError.Status.PRECONDITION_FAILED
     );
-    // todo use 421 if all missing stuff is ErrorValues
   }
 }

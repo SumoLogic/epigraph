@@ -63,7 +63,8 @@ public abstract class UnionType extends Type implements UnionTypeApi {
 
   public @Nullable Tag checkTagIsKnown(@Nullable Tag tag) {
     // TODO check it is our/compatible tag (not just same name)?
-    if (tag != null && !tagsMap().containsKey(tag.name)) throw new IllegalArgumentException("TODO " + tag.name);
+    if (tag != null && !tagsMap().containsKey(tag.name))
+      throw new IllegalArgumentException("TODO " + tag.name);
     return tag;
   }
 

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface DatumTypeApi extends TypeApi {
-  String MONO_TAG_NAME = "self"; // TODO better name (for the constant and the tag)
+  String MONO_TAG_NAME = "$self"; // TODO better name (for the constant and the tag)
 
   @NotNull TagApi self();
 

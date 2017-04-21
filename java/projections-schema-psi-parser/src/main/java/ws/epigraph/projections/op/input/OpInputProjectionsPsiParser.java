@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static ws.epigraph.projections.ProjectionsParsingUtil.checkTailType;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getDatumType;
 import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
@@ -389,6 +390,7 @@ public final class OpInputProjectionsPsiParser {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    checkTailType(tailType, dataType, tailTypeRefPsi, context);
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
         psiTailProjection,

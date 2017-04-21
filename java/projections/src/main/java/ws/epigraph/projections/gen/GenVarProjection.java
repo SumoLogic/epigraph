@@ -92,7 +92,7 @@ public interface GenVarProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  VP normalizedForType(@NotNull TypeApi type, boolean keepPhantomTails);
+  @NotNull VP normalizedForType(@NotNull TypeApi type, boolean keepPhantomTails);
 
   /**
    * Merges var projections together.
@@ -107,7 +107,7 @@ public interface GenVarProjection<
    * @return merged var projection
    */
   /* static */
-  VP merge(@NotNull List<VP> varProjections, boolean keepPhantomTails);
+  @NotNull VP merge(@NotNull List<VP> varProjections, boolean keepPhantomTails);
 
 //  @Nullable
 //  default VP tailByType(@NotNull TypeApi tailType) {

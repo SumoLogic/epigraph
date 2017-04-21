@@ -19,6 +19,7 @@ package ws.epigraph.validation.data;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
 import ws.epigraph.printers.DataPrinter;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.TagApi;
 
@@ -47,6 +48,14 @@ public class DataValidationContext {
 
   public void addError(@NotNull String message) { errors.add(new DataValidationError(stack, message)); }
 
+  public void addOperationImplementationError(@NotNull String message) {
+    errors.add(new DataValidationError(
+        stack,
+        message,
+        true
+    ));
+  }
+
   public @NotNull List<@NotNull DataValidationError> errors() { return errors; }
 
   interface StackItem {
@@ -60,7 +69,7 @@ public class DataValidationContext {
     TagStackItem(final @NotNull TagApi tag) {this.tag = tag;}
 
     @Override
-    public @NotNull String toString() { return ":" + tag.name(); }
+    public @NotNull String toString() { return tag.name().equals(DatumType.MONO_TAG_NAME) ? "" : ":" + tag.name(); }
   }
 
   public static class FieldStackItem implements StackItem {

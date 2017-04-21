@@ -248,21 +248,29 @@ public final class ProjectionsParsingUtil {
 
     if (targetType.equals(vp.type())) return vp;
 
-    VP res = vp.normalizedForType(targetType, true);
-    if (res == targetType) {
+    if (!hasTail(vp, targetType)) {
       ctx.addError(
           String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: {%s}",
               targetType.name(),
               String.join(", ", supportedVarTailTypes(vp))
           ),
           location
       );
     }
-    
-    return res;
+
+    return vp.normalizedForType(targetType, true);
   }
 
+  @SuppressWarnings("unchecked")
+  public static <VP extends GenVarProjection<VP, ?, ?>> boolean hasTail(
+      @NotNull VP vp,
+      @NotNull UnionTypeApi tailType) {
+
+    if (vp.tailByType(tailType) != null) return true;
+    final List<?> tails = vp.polymorphicTails();
+    return tails != null && tails.stream().anyMatch(t -> hasTail((VP) t, tailType));
+  }
 
   public static @NotNull List<String> supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
     if (vp.polymorphicTails() == null) return Collections.emptyList();
@@ -279,7 +287,7 @@ public final class ProjectionsParsingUtil {
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }
-  
+
   @SuppressWarnings("unchecked")
   public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getTail(
       @NotNull MP mp,
@@ -289,11 +297,10 @@ public final class ProjectionsParsingUtil {
 
     if (targetType.equals(mp.type())) return mp;
 
-    MP res = (MP) mp.normalizedForType(targetType, true);
-    if (res == targetType) {
+    if (!hasTail(mp, targetType)) {
       ctx.addError(
           String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: %s",
+              "Polymorphic tail for type '%s' is not supported. Supported tail types: {%s}",
               targetType.name(),
               String.join(", ", supportedModelTailTypes(mp))
           ),
@@ -301,7 +308,17 @@ public final class ProjectionsParsingUtil {
       );
     }
 
-    return res;
+    return (MP) mp.normalizedForType(targetType, true);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasTail(
+      @NotNull MP mp,
+      @NotNull DatumTypeApi tailType) {
+
+    if (mp.tailByType(tailType) != null) return true;
+    final List<?> tails = mp.polymorphicTails();
+    return tails != null && tails.stream().anyMatch(t -> hasTail((MP) t, tailType));
   }
 
   public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp) {
@@ -318,5 +335,22 @@ public final class ProjectionsParsingUtil {
     final List<GenModelProjection<?, ?, ?, ?>> tails = (List<GenModelProjection<?, ?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
+  }
+
+  public static void checkTailType(
+      @NotNull UnionTypeApi tailType,
+      @NotNull DataTypeApi dataType,
+      @NotNull PsiElement tailTypeRefPsi,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    if (!dataType.type().isAssignableFrom(tailType))
+      throw new PsiProcessingException(
+          String.format(
+              "Tail type '%s' is not compatible with type '%s'",
+              tailType.name(), dataType.type().name()
+          ),
+          tailTypeRefPsi,
+          context
+      );
   }
 }

@@ -30,20 +30,32 @@ import java.util.stream.Collectors;
 public class DataValidationError {
   private final @NotNull List<DataValidationContext.@NotNull StackItem> location;
   private final @NotNull String message;
+  private final boolean isImplementationError;
 
   DataValidationError(
       final @NotNull Collection<DataValidationContext.StackItem> location,
       final @NotNull String message) {
 
+    this(location, message, false);
+  }
+
+  DataValidationError(
+      final @NotNull Collection<DataValidationContext.StackItem> location,
+      final @NotNull String message,
+      final boolean isImplementationError) {
+
     final ArrayList<DataValidationContext.StackItem> locationTmp = new ArrayList<>(location);
     Collections.reverse(locationTmp);
     this.location = Collections.unmodifiableList(locationTmp);
     this.message = message;
+    this.isImplementationError = isImplementationError;
   }
 
   public @NotNull String message() { return message; }
 
   public @NotNull List<DataValidationContext.StackItem> location() { return location; }
+
+  public boolean isImplementationError() { return isImplementationError; }
 
   @Override
   public @NotNull String toString() {

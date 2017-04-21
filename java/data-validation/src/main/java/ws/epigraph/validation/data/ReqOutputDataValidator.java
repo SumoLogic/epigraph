@@ -22,6 +22,7 @@ import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
+import ws.epigraph.types.TypeKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -43,15 +44,16 @@ public class ReqOutputDataValidator extends GenDataValidator<
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
+      final String obj = data.type().kind() == TypeKind.UNION ? "tag '" + tagName + "'" : "value";
       final Val val = data._raw().tagValues().get(tagName);
       if (val == null)
-        context.addError(String.format("Required tag '%s' is missing", tagName));
+        context.addOperationImplementationError(String.format("Required %s is missing", obj));
       else {
         final ErrorValue error = val.getError();
         if (error != null)
           context.addError(String.format(
-              "Required tag '%s' is a [%s] error: %s",
-              tagName,
+              "Required %s is a [%s] error: %s",
+              obj,
               error.statusCode(),
               error.message()
           ));
@@ -67,7 +69,7 @@ public class ReqOutputDataValidator extends GenDataValidator<
       final String fieldName = fp.field().name();
 
       if (!datum._raw().fieldsData().containsKey(fieldName))
-        context.addError(String.format("Required field '%s' is missing", fieldName));
+        context.addOperationImplementationError(String.format("Required field '%s' is missing", fieldName));
     });
   }
 

@@ -114,8 +114,17 @@ public abstract class AbstractHttpServerTest {
   public void testPathPolyGetRequired() throws UnirestException {
     get(
         "/user:record(firstName)~~User:record(+profile)",
-        520, // todo wrong, shoult not be a 5xx
-        ":record/profile : Required tag ''self'' is a [404] error: Not Found"
+        412,
+        ":record/profile : Required value is a [404] error: Not Found"
+    );
+  }
+
+  @Test
+  public void testPolyRequiredButAbsent() throws UnirestException {
+    get(
+        "/user:record(friends*(:record(firstName)~~User:record(+profile)))",
+        520,
+        ":record/friends[2]:record : Required field ''profile'' is missing"
     );
   }
 

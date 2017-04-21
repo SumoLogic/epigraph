@@ -130,7 +130,7 @@ resource user: Person {
           :(
             id,
             `record`( id, firstName, lastName )
-          )
+          ) ~~User:`record`(profile)
         )
       )
     )~~User:(

@@ -173,9 +173,9 @@ public abstract class AbstractVarProjection<
 
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
 
-  @SuppressWarnings("unchecked")
   @Override
-  public VP normalizedForType(@NotNull TypeApi targetType, final boolean keepPhantomTails) {
+  @SuppressWarnings("unchecked")
+  public @NotNull VP normalizedForType(@NotNull TypeApi targetType, final boolean keepPhantomTails) {
     // keep in sync with AbstractModelProjection.normalizedForType
     assertResolved();
     assert tagProjections != null;
@@ -331,7 +331,7 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public VP merge(final @NotNull List<VP> varProjections, final boolean keepPhantomTails) {
+  public @NotNull VP merge(final @NotNull List<VP> varProjections, final boolean keepPhantomTails) {
     return merge(type(), false, mergeTails(varProjections, keepPhantomTails), varProjections, keepPhantomTails);
   }
 

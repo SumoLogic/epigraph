@@ -85,6 +85,13 @@ public class UserResourceFactory extends AbstractUserResourceFactory {
                           .setLastName("Adams")
                       )
                   )
+                  .add(User.create()
+                      .setId(UserId.create(3))
+                      .setRecord(UserRecord.create()
+                          .setId(PersonId.create(3))
+                          .setFirstName("Chuck")
+                      )
+                  )
               )
           );
 

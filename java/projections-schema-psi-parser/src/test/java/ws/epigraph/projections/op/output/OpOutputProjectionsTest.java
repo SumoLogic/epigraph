@@ -191,7 +191,7 @@ public class OpOutputProjectionsTest {
   public void testNormalizeRecursive() throws PsiProcessingException {
     final OpOutputVarProjection vp =
         testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
-        .normalizedForType(User.type, false);
+            .normalizedForType(User.type, false);
 
     // check that it's actually correct
 
@@ -239,7 +239,7 @@ public class OpOutputProjectionsTest {
   public void testNormalizeSelfVarRecursive() throws PsiProcessingException {
     final OpOutputVarProjection vp =
         testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
-        .normalizedForType(User.type, false);
+            .normalizedForType(User.type, false);
 
     // check that it's actually correct
 

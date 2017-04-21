@@ -26,7 +26,6 @@ import ws.epigraph.types.TagApi;
 import ws.epigraph.types.Type;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -51,19 +50,19 @@ public abstract class GenDataValidator<
   public void validateData(@Nullable Data data, @NotNull VP projection) {
     if (data == null) return;
 
-    projection = projection.normalizedForType(data.type(), false);
+    VP normalizedProjection = projection.normalizedForType(data.type(), false);
 
     Set<VP> checkedProjections = visited.get(data);
     if (checkedProjections == null) {
       checkedProjections = Collections.newSetFromMap(new IdentityHashMap<VP, Boolean>());
-    } else if (checkedProjections.contains(projection))
+    } else if (checkedProjections.contains(normalizedProjection))
       return;
 
-    checkedProjections.add(projection);
+    checkedProjections.add(normalizedProjection);
 
-    validateDataOnly(data, projection);
+    validateDataOnly(data, normalizedProjection);
 
-    for (final TP tagProjection : projection.tagProjections().values()) {
+    for (final TP tagProjection : normalizedProjection.tagProjections().values()) {
       final TagApi tag = tagProjection.tag();
       context.withStackItem(new DataValidationContext.TagStackItem(tag), () -> {
         final Datum datum = data._raw().getDatum((Type.Tag) tag);
@@ -72,7 +71,7 @@ public abstract class GenDataValidator<
       });
     }
 
-    checkedProjections.remove(projection);
+    checkedProjections.remove(normalizedProjection);
     if (checkedProjections.isEmpty())
       visited.remove(data);
   }
@@ -81,25 +80,26 @@ public abstract class GenDataValidator<
 
   @SuppressWarnings("unchecked")
   public void validateDatum(@NotNull Datum datum, @NotNull MP projection) {
-    projection = (MP) projection.normalizedForType(datum.type(), false);
+    MP normalizedProjection = (MP) projection.normalizedForType(datum.type(), false);
 
-    validateDatumOnly(datum, projection);
+    validateDatumOnly(datum, normalizedProjection);
 
-    switch (projection.type().kind()) {
+    switch (normalizedProjection.type().kind()) {
       case RECORD:
-        validateRecordDatum((RecordDatum) datum, (RMP) projection);
+        validateRecordDatum((RecordDatum) datum, (RMP) normalizedProjection);
         break;
       case MAP:
-        validateMapDatum((MapDatum) datum, (MMP) projection);
+        validateMapDatum((MapDatum) datum, (MMP) normalizedProjection);
         break;
       case LIST:
-        validateListDatum((ListDatum) datum, (LMP) projection);
+        validateListDatum((ListDatum) datum, (LMP) normalizedProjection);
         break;
       case PRIMITIVE:
-        validatePrimitiveDatum((PrimitiveDatum<?>) datum, (PMP) projection);
+        validatePrimitiveDatum((PrimitiveDatum<?>) datum, (PMP) normalizedProjection);
         break;
       default:
-        throw new RuntimeException("Unsupported model kind: " + projection.type().kind().getClass().getName());
+        throw new RuntimeException(
+            "Unsupported model kind: " + normalizedProjection.type().kind().getClass().getName());
     }
   }
 

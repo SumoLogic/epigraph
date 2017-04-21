@@ -100,9 +100,9 @@ public abstract class AbstractModelProjection<
 
   protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
 
-  @SuppressWarnings("unchecked")
   @Override
-  public SMP normalizedForType(final @NotNull DatumTypeApi targetType, boolean keepPhantomTails) {
+  @SuppressWarnings("unchecked")
+  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType, boolean keepPhantomTails) {
     // keep in sync with AbstractVarProjection.normalizedForType
     assertResolved();
     assert (type().kind() == targetType.kind());
@@ -191,10 +191,8 @@ public abstract class AbstractModelProjection<
     return normalizationResult;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  /* static */
-  public SMP merge(
+  @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final boolean keepPhantomTails) {
