@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.server.http.undertow.UndertowHandler;
+import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.types.Type;
@@ -56,7 +56,7 @@ public class EpigraphResourceTest {
     server = Undertow.builder()
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
-        .setHandler(new UndertowHandler(buildEpigraphService(resolver.index()), resolver, TIMEOUT))
+        .setHandler(new EpigraphUndertowHandler(buildEpigraphService(resolver.index()), resolver, TIMEOUT))
         .build();
 
     server.start();

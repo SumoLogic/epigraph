@@ -53,20 +53,21 @@ import java.net.URISyntaxException;
 
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
+import static ws.epigraph.server.http.Util.decodeUri;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UndertowHandler
-    extends AbstractHttpServer<UndertowHandler.UndertowInvocationContext> implements HttpHandler {
+public class EpigraphUndertowHandler
+    extends AbstractHttpServer<EpigraphUndertowHandler.UndertowInvocationContext> implements HttpHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(UndertowHandler.class); // assuming a thread-safe backend
+  private static final Logger LOG = LoggerFactory.getLogger(EpigraphUndertowHandler.class); // assuming a thread-safe backend
 
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
 
-  public UndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, final long responseTimeout) {
+  public EpigraphUndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, final long responseTimeout) {
     super(service, OperationFilterChains.defaultFilterChains()); // make configurable?
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
@@ -164,7 +165,7 @@ public class UndertowHandler
   }
 
   @Override
-  protected void close(final @NotNull UndertowHandler.@NotNull UndertowInvocationContext context) throws IOException {
+  protected void close(final @NotNull EpigraphUndertowHandler.@NotNull UndertowInvocationContext context) throws IOException {
     context.exchange.endExchange();
   }
 
@@ -222,12 +223,7 @@ public class UndertowHandler
     if (queryString == null || queryString.isEmpty()) encodedReq = uri;
     else encodedReq = uri + "?" + queryString; // question mark gets removed
 
-    final URI _uri = new URI(encodedReq);
-
-    final String decodedPath = _uri.getPath();
-    final String decodedQuery = _uri.getQuery();
-
-    return decodedQuery == null ? decodedPath : decodedPath + "?" + decodedQuery;
+    return decodeUri(encodedReq);
   }
 
 }

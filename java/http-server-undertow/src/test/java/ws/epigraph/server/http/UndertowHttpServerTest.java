@@ -22,7 +22,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.server.http.undertow.UndertowHandler;
+import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.ServiceInitializationException;
 
 /**
@@ -43,7 +43,7 @@ public class UndertowHttpServerTest extends AbstractHttpServerTest {
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
 //        .setHandler(new UndertowHandler_Old(buildUsersService(), resolver, TIMEOUT))
-        .setHandler(new UndertowHandler(buildUsersService(), resolver, TIMEOUT))
+        .setHandler(new EpigraphUndertowHandler(buildUsersService(), resolver, TIMEOUT))
         .build();
 
     server.start();

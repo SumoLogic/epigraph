@@ -38,5 +38,6 @@ public final class FilterUtil {
             .collect(Collectors.joining("\n")),
         OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
     );
+    // todo use 421 if all missing stuff is ErrorValues
   }
 }

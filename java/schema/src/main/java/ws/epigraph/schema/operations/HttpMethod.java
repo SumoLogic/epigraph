@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,24 @@
 
 package ws.epigraph.schema.operations;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public enum HttpMethod {
-  GET, POST, PUT, DELETE
+  GET, POST, PUT, DELETE;
+
+  public static @Nullable HttpMethod fromString(@NotNull String name) {
+    if ("get".equalsIgnoreCase(name))
+      return GET;
+    if ("post".equalsIgnoreCase(name))
+      return POST;
+    if ("put".equalsIgnoreCase(name))
+      return PUT;
+    if ("delete".equalsIgnoreCase(name))
+      return DELETE;
+    return null;
+  }
 }

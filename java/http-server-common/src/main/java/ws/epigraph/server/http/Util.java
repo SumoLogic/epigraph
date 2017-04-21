@@ -23,6 +23,8 @@ import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.service.Service;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.*;
@@ -47,6 +49,15 @@ public final class Util {
 
   static @NotNull String listSupportedResources(@NotNull Service service) {
     return service.resources().keySet().stream().map(n -> "/" + n).collect(Collectors.joining(", "));
+  }
+
+  public static @NotNull String decodeUri(@NotNull String uri) throws URISyntaxException {
+    final URI _uri = new URI(uri);
+
+    final String decodedPath = _uri.getPath();
+    final String decodedQuery = _uri.getQuery();
+
+    return decodedQuery == null ? decodedPath : decodedPath + "?" + decodedQuery;
   }
 
   // async timeouts support. Use `onTimeout` instead once on JDK9

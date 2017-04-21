@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http.servlet;
+package ws.epigraph.server.http.jetty;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationError;
-import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
 import ws.epigraph.service.Service;
-import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.OpInputFormatReader;
 import ws.epigraph.wire.ReqInputFormatReader;
@@ -38,122 +39,103 @@ import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 
 /**
- * Generic Servlet-based Epigraph endpoint implementation.
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class EpigraphServlet extends HttpServlet {
+public class EpigraphJettyHandler extends AbstractHandler {
+  public static final Logger LOG = LoggerFactory.getLogger(EpigraphJettyHandler.class);
+
   // no header constants for servlet API?
   public static final String ACCEPT_HEADER = "Accept";
   public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
-  public static final String RESPONSE_TIMEOUT_SERVLET_PARAMETER = "response_timeout";
-  public static final long DEFAULT_RESPONSE_TIMEOUT = 1000;
-
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
-  private TypesResolver typesResolver;
-  private Logger logger;
-  private Server server;
-  private long responseTimeout;
 
-  @Override
-  public void init(final ServletConfig config) throws ServletException {
-    super.init(config);
-    logger = new ServletLogger(getServletName(), new LinkedBlockingQueue<>(), true, getServletContext());
-    typesResolver = initTypesResolver(config);
+  private final @NotNull TypesResolver typesResolver;
+  private final int responseTimeout;
+  private final @NotNull Server server;
 
-    try {
-      server = new Server(initService(config), initOperationFilterChains(config));
+  public EpigraphJettyHandler(
+      final @NotNull Service service,
+      final @NotNull OperationFilterChains<? extends Data> filterChains,
+      final @NotNull TypesResolver typesResolver,
+      final int responseTimeout) {
 
-      String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_SERVLET_PARAMETER);
-      responseTimeout = responseTimeoutParameter == null
-                        ? DEFAULT_RESPONSE_TIMEOUT
-                        : Long.parseLong(responseTimeoutParameter);
+    this.typesResolver = typesResolver;
+    this.responseTimeout = responseTimeout;
 
-    } catch (ServiceInitializationException e) {
-      throw new ServletException(e);
-    }
-  }
-
-  protected @NotNull TypesResolver initTypesResolver(ServletConfig config) { return IndexBasedTypesResolver.INSTANCE; }
-
-  protected abstract @NotNull Service initService(ServletConfig config) throws ServiceInitializationException;
-
-  protected @NotNull OperationFilterChains<? extends Data> initOperationFilterChains(ServletConfig config) {
-    return OperationFilterChains.defaultFilterChains();
+    server = new Server(service, filterChains);
   }
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.GET, req, resp); }
+  public void handle(
+      final String target,
+      final Request baseRequest,
+      final HttpServletRequest request,
+      final HttpServletResponse response)
+      throws IOException, ServletException {
 
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.POST, req, resp); }
+    final HttpMethod method = HttpMethod.fromString(request.getMethod());
 
-  @Override
-  protected void doPut(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.PUT, req, resp); }
-
-  @Override
-  protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-    handleRequest(HttpMethod.DELETE, req, resp);
-  }
-
-  protected void handleRequest(HttpMethod method, HttpServletRequest req, HttpServletResponse resp) {
-    try {
-      final String requestUri = req.getRequestURI();
-      final String decodedUri = Util.decodeUri(requestUri);
-
-      final AsyncContext asyncContext = req.startAsync();
-      asyncContext.setTimeout(responseTimeout);
-
-      server.handleRequest(
-          decodedUri,
-          method,
-          getOperationName(req),
-          new ServletInvocationContext(asyncContext)
-      );
-    } catch (URISyntaxException e) {
-      resp.setStatus(400);
+    if (method == null) {
+      response.setStatus(400);
+      response.getWriter().write("Invalid HTTP method '" + request.getMethod() + "'");
+    } else {
+      String originalUri = baseRequest.getRequestURI();
       try {
-        resp.getWriter().write("Invalid URI syntax '" + e.getMessage() + "'");
-      } catch (IOException ioe) {
-        log("Error getting output writer", ioe);
+        final String decodedUri = Util.decodeUri(originalUri);
+        final AsyncContext asyncContext = request.startAsync();
+        if (responseTimeout > 0)
+          asyncContext.setTimeout(responseTimeout);
+
+        server.handleRequest(
+            decodedUri,
+            method,
+            getOperationName(baseRequest),
+            new JettyHandlerInvocationContext(asyncContext)
+        );
+
+      } catch (URISyntaxException e) {
+        response.setStatus(400);
+        response.getWriter().write("Invalid URI syntax '" + e.getMessage() + "'");
       }
     }
+
   }
 
   private @Nullable String getOperationName(@NotNull HttpServletRequest req) {
     return req.getHeader(RequestHeaders.OPERATION_NAME);
   }
 
-  private class ServletInvocationContext extends InvocationContext {
+  private final class JettyHandlerInvocationContext extends InvocationContext {
     final @NotNull AsyncContext asyncContext;
 
-    ServletInvocationContext(final @NotNull AsyncContext context) { asyncContext = context; }
-
-    @NotNull ServletRequest request() { return asyncContext.getRequest(); }
-
-    @NotNull ServletResponse response() { return asyncContext.getResponse(); }
+    JettyHandlerInvocationContext(final @NotNull AsyncContext context) {
+      asyncContext = context;
+    }
 
     @Override
-    public Logger logger() { return logger; }
+    public Logger logger() { return LOG; }
 
     @Override
     public TypesResolver typesResolver() { return typesResolver; }
+
+    @NotNull HttpServletRequest request() { return (HttpServletRequest) asyncContext.getRequest(); }
+
+    @NotNull HttpServletResponse response() { return (HttpServletResponse) asyncContext.getResponse(); }
   }
 
-  private class Server extends AbstractHttpServer<ServletInvocationContext> {
+  private class Server extends AbstractHttpServer<JettyHandlerInvocationContext> {
     protected Server(
         final @NotNull Service service,
         final @NotNull OperationFilterChains<? extends Data> invocations) {
@@ -165,37 +147,36 @@ public abstract class EpigraphServlet extends HttpServlet {
         final @NotNull String decodedUri,
         final @NotNull HttpMethod requestMethod,
         final @Nullable String operationName,
-        final @NotNull EpigraphServlet.ServletInvocationContext context) {
+        final @NotNull JettyHandlerInvocationContext context) {
       super.handleRequest(decodedUri, requestMethod, operationName, context);
     }
 
     @Override
-    protected long responseTimeout(final @NotNull ServletInvocationContext context) { return responseTimeout; }
+    protected long responseTimeout(final @NotNull JettyHandlerInvocationContext context) { return responseTimeout; }
 
     @Override
-    protected OpInputFormatReader opInputReader(final @NotNull ServletInvocationContext context) throws IOException {
+    protected OpInputFormatReader opInputReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
       return new OpInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
-    protected ReqInputFormatReader reqInputReader(final @NotNull ServletInvocationContext context) throws IOException {
+    protected ReqInputFormatReader reqInputReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
       return new ReqInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
-    protected ReqUpdateFormatReader reqUpdateReader(final @NotNull ServletInvocationContext context)
-        throws IOException {
+    protected ReqUpdateFormatReader reqUpdateReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
       return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
     }
 
     @Override
     protected void writeFormatResponse(
         final int statusCode,
-        final @NotNull ServletInvocationContext context,
+        final @NotNull JettyHandlerInvocationContext context,
         final @NotNull FormatResponseWriter formatWriter) {
 
       try {
-        HttpServletResponse servletResponse = (HttpServletResponse) context.response();
+        HttpServletResponse servletResponse = context.response();
         servletResponse.setStatus(statusCode);
 
         FormatWriter writer = new JsonFormatWriter(servletResponse.getOutputStream()); // todo make configurable
@@ -212,10 +193,10 @@ public abstract class EpigraphServlet extends HttpServlet {
     @Override
     protected void writeInvocationErrorResponse(
         final @NotNull OperationInvocationError error,
-        final @NotNull ServletInvocationContext context) {
+        final @NotNull JettyHandlerInvocationContext context) {
 
-      HttpServletRequest servletRequest = (HttpServletRequest) context.request();
-      HttpServletResponse servletResponse = (HttpServletResponse) context.response();
+      HttpServletRequest servletRequest = context.request();
+      HttpServletResponse servletResponse = context.response();
       servletResponse.setStatus(error.status().httpCode());
 
       try {
@@ -232,7 +213,7 @@ public abstract class EpigraphServlet extends HttpServlet {
     }
 
     @Override
-    protected void close(final @NotNull ServletInvocationContext context) throws IOException {
+    protected void close(final @NotNull JettyHandlerInvocationContext context) throws IOException {
       context.response().flushBuffer();
       context.asyncContext.complete();
     }

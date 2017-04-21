@@ -114,7 +114,7 @@ public abstract class AbstractHttpServerTest {
   public void testPathPolyGetRequired() throws UnirestException {
     get(
         "/user:record(firstName)~~User:record(+profile)",
-        520,
+        520, // todo wrong, shoult not be a 5xx
         ":record/profile : Required tag ''self'' is a [404] error: Not Found"
     );
   }
@@ -213,9 +213,11 @@ public abstract class AbstractHttpServerTest {
     assertEquals(expectedBody/*.replace("'", "\"")*/, actualBody);
   }
 
-  private String url(String requestUri) {
+  private String url(String requestUri) { return url(requestUri, null); }
+
+  private String url(String requestUri, String query) {
     try {
-      URI uri = new URI("http", null, HOST, PORT, requestUri, null, null);
+      URI uri = new URI("http", null, HOST, PORT, requestUri, query, null);
       String uriString = uri.toURL().toString();
 
       // unirest bug https://github.com/Mashape/unirest-java/issues/158 (converts plus to %20 in path)

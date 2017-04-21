@@ -14,31 +14,21 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http.servlet;
+package ws.epigraph.server.http.jetty;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import ws.epigraph.invocation.OperationFilterChains;
+import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.server.http.AbstractHttpServerTest;
-import ws.epigraph.service.Service;
-import ws.epigraph.service.ServiceInitializationException;
-
-import javax.servlet.ServletConfig;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings("ProhibitedExceptionDeclared")
-public class ServletHttpServerTest extends AbstractHttpServerTest {
+public class JettyHttpServerTest extends AbstractHttpServerTest {
   private static Server jettyServer;
-
-  @Override
-  public void testGetWithMeta() throws UnirestException {
-    // disabled due to buggy URI parser in Jetty
-  }
 
   public static void main(String[] args) throws Exception {
     start();
@@ -48,10 +38,13 @@ public class ServletHttpServerTest extends AbstractHttpServerTest {
   @BeforeClass
   public static void start() throws Exception {
     jettyServer = new Server(PORT);
-    ServletHandler handler = new ServletHandler();
+    EpigraphJettyHandler handler = new EpigraphJettyHandler(
+        buildUsersService(),
+        OperationFilterChains.defaultFilterChains(),
+        IndexBasedTypesResolver.INSTANCE,
+        -1
+    );
     jettyServer.setHandler(handler);
-
-    handler.addServletWithMapping(TestServlet.class, "/*");
 
     jettyServer.start();
   }
@@ -59,12 +52,5 @@ public class ServletHttpServerTest extends AbstractHttpServerTest {
   @AfterClass
   public static void stop() throws Exception {
     jettyServer.stop();
-  }
-
-  public static class TestServlet extends EpigraphServlet {
-    @Override
-    protected @NotNull Service initService(final ServletConfig config) throws ServiceInitializationException {
-      return buildUsersService();
-    }
   }
 }
