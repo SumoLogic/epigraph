@@ -899,7 +899,15 @@ abstract class AbstractJsonFormatReader<
 
 
   protected JsonFormatException error(@NotNull String message) {
-    return new JsonFormatException(message + " at " + currentLocation());
+    final JsonLocation location = currentLocation();
+    return new JsonFormatException(
+        String.format(
+            "%s at line %s column %s",
+            message,
+            location.getLineNr(),
+            location.getColumnNr()
+        )
+    );
   }
 
   @Contract(pure = true)

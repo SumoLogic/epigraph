@@ -143,12 +143,45 @@ public abstract class AbstractHttpServerTest {
     int nextId = id + 1;
 
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
-    put("/users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]");
+    put("/users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]", false);
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
     delete(
         "/users<[" + id + "," + nextId + "]>[*](code,message)",
         200,
         "[{\"K\":" + nextId + ",\"V\":{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}}]"
+    );
+  }
+
+  @Test
+  public void testCreateWithRequired() throws UnirestException {
+    post(
+        null,
+        "/users",
+        "[{'lastName':'Foo'}]",
+        400,
+        "Error reading request body: Required field ''firstName'' is missing at line 1 column 20"
+    );
+  }
+
+  @Test
+  public void testUpdateWithRequiredNoReqProjection() throws UnirestException {
+    put(
+        "/users",
+        "[{'K':1,'V':{'record':{'lastName':'Bruce2'}}}]",
+        400,
+        "Error reading request body: Required field ''firstName'' is missing at line 1 column 44",
+        false
+    );
+  }
+
+  @Test
+  public void testUpdateWithRequiredReqProjection() throws UnirestException {
+    put(
+        "/users<[1]:record(lastName)",
+        "[{'K':1,'V':{'record':{'lastName':'Bruce2'}}}]",
+        400,
+        ".*",
+        true
     );
   }
 
@@ -180,10 +213,7 @@ public abstract class AbstractHttpServerTest {
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
 
-    String eb = expectedBody.replace("''", "@@@");
-    eb = eb.replace("'", "\"");
-    eb = eb.replace("@@@", "'");
-
+    String eb = unescape(expectedBody);
     assertEquals(eb, actualBody);
   }
 
@@ -200,26 +230,32 @@ public abstract class AbstractHttpServerTest {
       requestWithBody = requestWithBody.header(RequestHeaders.OPERATION_NAME, operationName);
 
     final BaseRequest request =
-        requestBody == null ? requestWithBody : requestWithBody.body(requestBody.replaceAll("'", "\""));
+        requestBody == null ? requestWithBody : requestWithBody.body(unescape(requestBody));
 
     final HttpResponse<String> response = request.asString();
 
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
-    Pattern p = Pattern.compile(expectedBodyRegex.replace("'", "\""));
+    Pattern p = Pattern.compile(unescape(expectedBodyRegex));
     final Matcher matcher = p.matcher(actualBody);
-    assertTrue(matcher.matches());
+    assertTrue(actualBody, matcher.matches());
     return matcher;
   }
 
-  private void put(String requestUri, String requestBody, int expectedStatus, String expectedBody)
+  private void put(String requestUri, String requestBody, int expectedStatus, String expectedBody, boolean isBodyRegex)
       throws UnirestException {
 
-    final HttpResponse<String> response =
-        Unirest.put(url(requestUri)).body(requestBody.replaceAll("'", "\"")).asString();
+    final HttpResponse<String> response = Unirest.put(url(requestUri)).body(unescape(requestBody)).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
-    assertEquals(expectedBody.replace("'", "\""), actualBody);
+    final String expected = unescape(expectedBody);
+    if (isBodyRegex) {
+      Pattern p = Pattern.compile(expected, Pattern.DOTALL);
+      final Matcher matcher = p.matcher(actualBody);
+      assertTrue(actualBody, matcher.matches());
+    } else {
+      assertEquals(expected, actualBody);
+    }
   }
 
   private void delete(String requestUri, int expectedStatus, String expectedBody)
@@ -246,4 +282,12 @@ public abstract class AbstractHttpServerTest {
       throw new RuntimeException(e);
     }
   }
+
+  private String unescape(final String expectedBody) {
+    String eb = expectedBody.replace("''", "@@@");
+    eb = eb.replace("'", "\"");
+    eb = eb.replace("@@@", "'");
+    return eb;
+  }
+
 }

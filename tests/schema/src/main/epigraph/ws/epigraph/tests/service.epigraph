@@ -42,14 +42,14 @@ resource users: PersonMap {
   create {
     inputType list[PersonRecord]
     inputProjection *(
-      firstName,
+      +firstName,
       lastName,
       bestFriend:(
-        id,
+        +id,
         `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
       )~~User:(
         `record`(
-          worstEnemy( id, firstName, lastName, profile )
+          worstEnemy( +id, firstName, lastName, profile )
           profile
         )
       )
@@ -69,7 +69,7 @@ resource users: PersonMap {
     inputProjection [ required ](
       :(
         `record`(
-          firstName,
+          +firstName,
           lastName,
         )
       )

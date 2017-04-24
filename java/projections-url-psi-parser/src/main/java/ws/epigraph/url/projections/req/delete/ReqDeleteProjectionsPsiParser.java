@@ -247,6 +247,7 @@ public final class ReqDeleteProjectionsPsiParser {
   }
 
   private static boolean isEmpty(@NotNull UrlReqDeleteSingleTagProjection singleTagProjectionPsi) {
+    if (singleTagProjectionPsi.getTagName() != null) return false;
     final UrlReqDeleteModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqDeleteModelProjection();
     return modelProjectionPsi.getReqDeleteListModelProjection() == null &&
            modelProjectionPsi.getReqDeleteMapModelProjection() == null &&
