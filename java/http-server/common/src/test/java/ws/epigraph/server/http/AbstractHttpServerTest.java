@@ -129,6 +129,15 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
+  public void testRequiredInsideOptional() throws UnirestException {
+    get(
+        "/users/10:record(+firstName,worstEnemy(+firstName))",
+        200,
+        "{'firstName':'First10'}"
+    );
+  }
+
+  @Test
   public void testCreateReadUpdateDelete() throws UnirestException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;

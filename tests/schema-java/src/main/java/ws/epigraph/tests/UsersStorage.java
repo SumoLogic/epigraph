@@ -68,41 +68,45 @@ public class UsersStorage {
     else
       bestFriend = User.create().setId(UserId.create(id + 1)).setRecord(bestFriendRecord);
 
+    final UserRecord.Builder userRecord = UserRecord.create()
+        .setId(pid)
+        .setFirstName("First" + id)
+        .setLastName("Last" + id)
+        .setProfile_Error(new ErrorValue(404, "Not Found", null))
+        .setBestFriend(bestFriend)
+        .setFriends(Person_List.create()
+            .add(User.create()
+                .setId(UserId.create(id + 1))
+                .setRecord(UserRecord.create()
+                    .setId(PersonId.create(id + 1))
+                    .setFirstName("First" + (id + 1))
+                    .setLastName("Last" + (id + 1))
+                    .setProfile(Url.create("http://google.com/" + (id + 1)))
+                )
+            )
+            .add(Person.create()
+                .setId(PersonId.create(id + 3))
+                .setRecord(PersonRecord.create()
+                    .setId(PersonId.create(id + 3))
+                    .setFirstName("First" + (id + 3))
+                    .setLastName("Last" + (id + 3))
+                )
+            )
+        );
+
+    if (id != 10)
+      userRecord.setWorstEnemy(
+          UserRecord.create()
+              .setId(PersonId.create(id + 2))
+              .setFirstName("First" + (id + 2))
+              .setLastName("Last" + (id + 2))
+              .setProfile(Url.create("http://bing.com/" + (id + 2)))
+      );
+
     return User
         .create()
         .setId(UserId.create(pid.getVal()))
-        .setRecord(UserRecord
-            .create()
-            .setId(pid)
-            .setFirstName("First" + id)
-            .setLastName("Last" + id)
-            .setProfile_Error(new ErrorValue(404, "Not Found", null))
-            .setBestFriend(bestFriend)
-            .setWorstEnemy(UserRecord.create()
-                .setId(PersonId.create(id + 2))
-                .setFirstName("First" + (id + 2))
-                .setLastName("Last" + (id + 2))
-                .setProfile(Url.create("http://bing.com/" + (id + 2)))
-            )
-            .setFriends(Person_List.create()
-                .add(User.create()
-                    .setId(UserId.create(id + 1))
-                    .setRecord(UserRecord.create()
-                        .setId(PersonId.create(id + 1))
-                        .setFirstName("First" + (id + 1))
-                        .setLastName("Last" + (id + 1))
-                        .setProfile(Url.create("http://google.com/" + (id + 1)))
-                    )
-                )
-                .add(Person.create()
-                    .setId(PersonId.create(id + 3))
-                    .setRecord(PersonRecord.create()
-                        .setId(PersonId.create(id + 3))
-                        .setFirstName("First" + (id + 3))
-                        .setLastName("Last" + (id + 3))
-                    )
-                )
-            )
+        .setRecord(userRecord
         );
   }
 
