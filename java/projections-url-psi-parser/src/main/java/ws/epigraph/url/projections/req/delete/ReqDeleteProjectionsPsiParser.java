@@ -188,7 +188,7 @@ public final class ReqDeleteProjectionsPsiParser {
       PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
 
       // todo better location: containing field/key/element, once it's available from the context
-      if (!op.canDelete() && singleTagProjectionPsi.getText().isEmpty())
+      if (!op.canDelete() && isEmpty(singleTagProjectionPsi))
         context.addError(String.format("'%s' entity can't be deleted", dataType.name().toString()), tagLocation);
 
       tagProjections = new LinkedHashMap<>();
@@ -244,6 +244,14 @@ public final class ReqDeleteProjectionsPsiParser {
     } catch (RuntimeException e) {
       throw new PsiProcessingException(e, psi, context);
     }
+  }
+
+  private static boolean isEmpty(@NotNull UrlReqDeleteSingleTagProjection singleTagProjectionPsi) {
+    final UrlReqDeleteModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqDeleteModelProjection();
+    return modelProjectionPsi.getReqDeleteListModelProjection() == null &&
+           modelProjectionPsi.getReqDeleteMapModelProjection() == null &&
+           modelProjectionPsi.getReqDeleteModelPolymorphicTail() == null &&
+           modelProjectionPsi.getReqDeleteRecordModelProjection() == null;
   }
 
   private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqDeleteSingleTagProjection singleTagProjectionPsi) {

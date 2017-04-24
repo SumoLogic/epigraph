@@ -23,7 +23,6 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.types.TypeKind;
 
 import java.util.List;
 import java.util.Map;

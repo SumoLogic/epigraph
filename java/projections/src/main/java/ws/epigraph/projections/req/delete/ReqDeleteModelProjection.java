@@ -41,8 +41,7 @@ public abstract class ReqDeleteModelProjection<
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable List<SMP> tails,
-      @NotNull TextLocation location
-  ) {
+      @NotNull TextLocation location) {
     super(model, params, null, annotations, tails, location);
   }
 
