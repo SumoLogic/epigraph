@@ -29,6 +29,8 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
@@ -55,7 +57,7 @@ public abstract class AbstractModelProjection<
 
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
-  private final Map<TypeName, SMP> normalizedCache = new HashMap<>();
+  private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -113,9 +115,12 @@ public abstract class AbstractModelProjection<
     return ModelNormalizationContext.withContext(
         this::newNormalizationContext,
         context -> {
-          SMP ref = normalizedCache.get(targetType.name());
-          if (ref != null)
-            return ref;
+          NormalizedCacheItem cacheItem = normalizedCache.get(targetType.name());
+          // this projection is already being normalized. If we're in the same thread then it's OK to
+          // return same (uninitialized) instance, it will get resolved higher in the stack
+          // If this is another thread then we have to await for normalization to finish
+          if (cacheItem != null)
+            return cacheItem.allocatedByCurrentThread() ? cacheItem.mp : cacheItem.awaitForResolved();
 
           final List<SMP> linearizedTails = linearizeModelTails(targetType, polymorphicTails());
 
@@ -128,10 +133,11 @@ public abstract class AbstractModelProjection<
           if (effectiveType.equals(this.type()))
             return self();
 
+          SMP ref;
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
             ref = context.newReference((M) effectiveType);
-            normalizedCache.put(targetType.name(), ref);
+            normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
             ref = context.visited().get(name);
 
@@ -181,6 +187,30 @@ public abstract class AbstractModelProjection<
 
   }
 
+  private final class NormalizedCacheItem {
+    final long creatorThreadId;
+    final @NotNull SMP mp;
+
+    NormalizedCacheItem(final @NotNull SMP mp) {
+      creatorThreadId = Thread.currentThread().getId();
+      this.mp = mp;
+    }
+
+    boolean allocatedByCurrentThread() { return Thread.currentThread().getId() == creatorThreadId; }
+
+    @NotNull SMP awaitForResolved() {
+      assert !allocatedByCurrentThread();
+      final CountDownLatch latch = new CountDownLatch(1);
+      mp.runOnResolved(latch::countDown);
+      try {
+        latch.await();
+      } catch (InterruptedException ignored) {
+        Thread.currentThread().interrupt();
+      }
+      return mp;
+    }
+  }
+
   /**
    * Called after {@code normalizeForType} is performed. Can perform any extra steps and return a modified version.
    */
@@ -227,6 +257,7 @@ public abstract class AbstractModelProjection<
       final MP metaProjection = metaProjectionsList.get(0);
       DatumTypeApi metaModel = effectiveType.metaType();
       assert metaModel != null; // since we have a projection for it
+      //noinspection ConstantConditions
       mergedMetaProjection = (MP) ((GenModelProjection<MP, MP, MP, M>) metaProjection)
           .merge((M) metaModel, metaProjectionsList, keepPhantomTails)
           .normalizedForType(metaModel, keepPhantomTails);
@@ -332,6 +363,8 @@ public abstract class AbstractModelProjection<
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())
       throw new IllegalStateException("Attempt to resolve already resolved reference: " + this.name);
+    if (!value.isResolved())
+      throw new IllegalArgumentException("Can't resolve model projection using non-resolved instance");
     if (!type().isAssignableFrom(value.type()))
       throw new IllegalStateException(String.format(
           "Value type '%s' is incompatible with reference type '%s'",

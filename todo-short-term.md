@@ -32,7 +32,7 @@
 - [x] servlet-based server
 - [ ] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
 - [x] move http servers under common `http-server` folder
-- [ ] race condition in schema refs parsing?
+- [x] race condition in schema refs parsing?
 
 # See also
 - See [General todo] (todo.md)

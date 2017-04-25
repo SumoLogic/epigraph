@@ -29,6 +29,8 @@ import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.TypeKind;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
@@ -53,7 +55,7 @@ public abstract class AbstractVarProjection<
 
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
-  private final Map<TypeName, VP> normalizedCache = new HashMap<>();
+  private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
 
   protected AbstractVarProjection(
       @NotNull TypeApi type,
@@ -187,9 +189,12 @@ public abstract class AbstractVarProjection<
     return VarNormalizationContext.withContext(
         this::newNormalizationContext,
         context -> {
-          VP ref = normalizedCache.get(targetType.name());
-          if (ref != null)
-            return ref;
+          NormalizedCacheItem cacheItem = normalizedCache.get(targetType.name());
+          // this projection is already being normalized. If we're in the same thread then it's OK to
+          // return same (uninitialized) instance, it will get resolved higher in the stack
+          // If this is another thread then we have to await for normalization to finish
+          if (cacheItem != null)
+            return cacheItem.allocatedByCurrentThread() ? cacheItem.vp : cacheItem.awaitForResolved();
 
           final List<VP> linearizedTails = linearizeVarTails(targetType, polymorphicTails());
 
@@ -202,10 +207,11 @@ public abstract class AbstractVarProjection<
           if (effectiveType.equals(type()))
             return self();
 
+          VP ref;
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
             ref = context.newReference(effectiveType);
-            normalizedCache.put(targetType.name(), ref);
+            normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
             ref = context.visited().get(name);
 
@@ -250,6 +256,30 @@ public abstract class AbstractVarProjection<
           return ref;
         }
     );
+  }
+
+  private final class NormalizedCacheItem {
+    final long creatorThreadId;
+    final @NotNull VP vp;
+
+    NormalizedCacheItem(final @NotNull VP vp) {
+      creatorThreadId = Thread.currentThread().getId();
+      this.vp = vp;
+    }
+
+    boolean allocatedByCurrentThread() { return Thread.currentThread().getId() == creatorThreadId; }
+
+    @NotNull VP awaitForResolved() {
+      assert !allocatedByCurrentThread();
+      final CountDownLatch latch = new CountDownLatch(1);
+      vp.runOnResolved(latch::countDown);
+      try {
+        latch.await();
+      } catch (InterruptedException ignored) {
+        Thread.currentThread().interrupt();
+      }
+      return vp;
+    }
   }
 
   private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
@@ -415,8 +445,10 @@ public abstract class AbstractVarProjection<
   public void resolve(@Nullable ProjectionReferenceName name, @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
-    if (this.name != null)
+    if (isResolved())
       throw new IllegalStateException("Attempt to resolve already resolved reference: " + this.name);
+    if (!value.isResolved())
+      throw new IllegalArgumentException("Can't resolve var projection using non-resolved instance");
     if (!type().isAssignableFrom(value.type()))
       throw new IllegalStateException(String.format(
           "Value type '%s' is incompatible with reference type '%s'",
