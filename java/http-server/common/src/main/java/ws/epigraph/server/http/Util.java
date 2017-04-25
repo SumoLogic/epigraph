@@ -26,9 +26,13 @@ import ws.epigraph.url.parser.psi.UrlUrl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -37,6 +41,18 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class Util {
+  private static final Map<String, String> escapes = new HashMap<>();
+  private static final Pattern urlEscapePattern = Pattern.compile("([\\[\\]{}<>])");
+
+  static {
+    escapes.put("[", "%5B");
+    escapes.put("]", "%5D");
+    escapes.put("{", "%7B");
+    escapes.put("}", "%7D");
+    escapes.put("<", "%3C");
+    escapes.put(">", "%3E");
+  }
+
   private Util() {}
 
   static @NotNull String dumpUrl(@NotNull UrlUrl url) {
@@ -55,14 +71,15 @@ public final class Util {
     // encode []{}<> to allow nice curl URIs
     // todo make this conditional (eg user-agent) ?
 
-    uri = uri.replace("[", "%5B");
-    uri = uri.replace("]", "%5D");
-    uri = uri.replace("{", "%7B");
-    uri = uri.replace("}", "%7D");
-    uri = uri.replace("<", "%3C");
-    uri = uri.replace(">", "%3E");
 
-    final URI _uri = new URI(uri);
+    Matcher m = urlEscapePattern.matcher(uri);
+    StringBuffer sb = new StringBuffer();
+    while (m.find()) {
+      m.appendReplacement(sb, escapes.get(m.group(1)));
+    }
+    m.appendTail(sb);
+
+    final URI _uri = new URI(sb.toString());
 
     final String decodedPath = _uri.getPath();
     final String decodedQuery = _uri.getQuery();
