@@ -20,12 +20,12 @@
     - [ ] Routing
     
 - [ ] update introspection service using builder setters
-- [ ] add request/response validation
+- [x] add request/response validation
   - [x] Requried stuff must be present. 
     - [x] Data validation (input/output)
     - [x] GData validation (params)
-  - [ ] Codegen should build @NotNull things (params). 
-  - [ ] Update library example and wiki
+  - [x] Codegen should build @NotNull things (params). 
+  - [x] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 - [ ] add enums
 - [x] servlet-based server

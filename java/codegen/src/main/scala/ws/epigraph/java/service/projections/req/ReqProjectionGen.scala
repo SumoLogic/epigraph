@@ -79,13 +79,17 @@ object ReqProjectionGen {
       // Scala doesn't get it
       val valueType = JavaGenNames.lqn2(datumType, namespace)
 
+      val notnull = p.projection().required() || p.projection().defaultValue() != null
+      val nullAnnotation = if (notnull) "@NotNull" else "@Nullable"
+      val nullHandlingCode = if (notnull) "assert param != null;" else "if (param == null) return null;"
+
       def genPrimitiveParam(nativeType: String): String = /*@formatter:off*/sn"""\
   /**
    * @return {@code ${p.name()}} parameter value
    */
-  public @Nullable $nativeType get${JavaGenUtils.up(p.name())}Parameter() {
+  public $nullAnnotation $nativeType get${JavaGenUtils.up(p.name())}Parameter() {
     ReqParam param = $reqParamsExpr.get("${p.name()}");
-    if (param == null) return null;
+    $nullHandlingCode
     $valueType nativeValue = ($valueType) param.value();
     return nativeValue == null ? null : nativeValue.getVal();
   }
@@ -95,9 +99,10 @@ object ReqProjectionGen {
   /**
    * @return {@code ${p.name()}} parameter value
    */
-  public @Nullable $valueType get${JavaGenUtils.up(p.name())}Parameter() {
+  public $nullAnnotation $valueType get${JavaGenUtils.up(p.name())}Parameter() {
     ReqParam param = $reqParamsExpr.get("${p.name()}");
-    return param == null ? null : ($valueType) param.value();
+    $nullHandlingCode
+    return ($valueType) param.value();
   }
 """/*@formatter:on*/
 
@@ -114,6 +119,7 @@ object ReqProjectionGen {
       CodeChunk(
         paramCode, Set(
           "org.jetbrains.annotations.Nullable",
+          "org.jetbrains.annotations.NotNull",
           "ws.epigraph.projections.req.ReqParam"
         )
       )

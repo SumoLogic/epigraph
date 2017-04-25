@@ -17,7 +17,6 @@
 package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.AbstractReadSearchByAuthorOperation;
 import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBookId_BookRecord_MapProjection;
 import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBooksFieldProjection;
@@ -73,13 +72,11 @@ public class SearchByAuthorOperation extends AbstractReadSearchByAuthorOperation
    *
    * @return collection of matching author IDs
    */
-  private @NotNull Collection<AuthorId> findAuthors(@Nullable AuthorRecord authorData) {
-    return authorData == null ?
-           AuthorsBackend.allAuthors() :
-           AuthorsBackend.findAuthors(
-               authorData.getFirstName_() == null ? null : Optional.ofNullable(authorData.getFirstName()),
-               authorData.getMiddleName_() == null ? null : Optional.ofNullable(authorData.getMiddleName()),
-               authorData.getLastName_() == null ? null : Optional.ofNullable(authorData.getLastName())
-           );
+  private @NotNull Collection<AuthorId> findAuthors(@NotNull AuthorRecord authorData) {
+    return AuthorsBackend.findAuthors(
+        authorData.getFirstName_() == null ? null : Optional.ofNullable(authorData.getFirstName()),
+        authorData.getMiddleName_() == null ? null : Optional.ofNullable(authorData.getMiddleName()),
+        authorData.getLastName_() == null ? null : Optional.ofNullable(authorData.getLastName())
+    );
   }
 }

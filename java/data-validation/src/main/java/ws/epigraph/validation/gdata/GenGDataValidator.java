@@ -113,23 +113,24 @@ public abstract class GenGDataValidator<
 
     validateDatumOnly(datum, normalizedProjection);
 
-    switch (normalizedProjection.type().kind()) {
-      case RECORD:
-        validateRecordDatum((GRecordDatum) datum, (RMP) normalizedProjection);
-        break;
-      case MAP:
-        validateMapDatum((GMapDatum) datum, (MMP) normalizedProjection);
-        break;
-      case LIST:
-        validateListDatum((GListDatum) datum, (LMP) normalizedProjection);
-        break;
-      case PRIMITIVE:
-        validatePrimitiveDatum((GPrimitiveDatum) datum, (PMP) normalizedProjection);
-        break;
-      default:
-        throw new RuntimeException(
-            "Unsupported model kind: " + normalizedProjection.type().kind().getClass().getName());
-    }
+    if (!(datum instanceof GNullDatum))
+      switch (normalizedProjection.type().kind()) {
+        case RECORD:
+          validateRecordDatum((GRecordDatum) datum, (RMP) normalizedProjection);
+          break;
+        case MAP:
+          validateMapDatum((GMapDatum) datum, (MMP) normalizedProjection);
+          break;
+        case LIST:
+          validateListDatum((GListDatum) datum, (LMP) normalizedProjection);
+          break;
+        case PRIMITIVE:
+          validatePrimitiveDatum((GPrimitiveDatum) datum, (PMP) normalizedProjection);
+          break;
+        default:
+          throw new RuntimeException(
+              "Unsupported model kind: " + normalizedProjection.type().kind().getClass().getName());
+      }
   }
 
   protected void validateDatumOnly(@NotNull GDatum datum, @NotNull MP projection) {}
