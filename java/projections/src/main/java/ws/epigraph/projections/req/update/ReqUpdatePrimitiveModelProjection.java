@@ -48,4 +48,23 @@ public class ReqUpdatePrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  protected ReqUpdatePrimitiveModelProjection merge(
+      final @NotNull PrimitiveTypeApi model,
+      final boolean mergedUpdate,
+      final @NotNull List<ReqUpdatePrimitiveModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqUpdateModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqUpdatePrimitiveModelProjection> mergedTails) {
+
+    return new ReqUpdatePrimitiveModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
 }

@@ -24,11 +24,16 @@ import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -74,6 +79,65 @@ public class ReqDeleteRecordModelProjection
   @Override
   public @Nullable ReqDeleteFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections().get(fieldName);
+  }
+
+  @Override
+  protected ReqDeleteRecordModelProjection merge(
+      final @NotNull RecordTypeApi model,
+      final @NotNull List<ReqDeleteRecordModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqDeleteRecordModelProjection> mergedTails) {
+
+    Map<FieldApi, ReqDeleteFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
+
+    Map<String, ReqDeleteFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, ReqDeleteFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new ReqDeleteFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
+    }
+
+    return new ReqDeleteRecordModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedFieldEntries,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqDeleteRecordModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqDeleteRecordModelProjection n) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+
+    final Map<String, ReqDeleteFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
+
+    final Map<String, ReqDeleteFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        ReqDeleteFieldProjectionEntry::new
+    );
+
+    return new ReqDeleteRecordModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

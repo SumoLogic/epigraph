@@ -91,11 +91,10 @@ public class OpInputRecordModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpInputModelProjection<?, ?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpInputRecordModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<OpInputRecordModelProjection> mergedTails) {
     
     Map<FieldApi, OpInputFieldProjection> mergedFieldProjections =
-        RecordModelProjectionHelper.mergeFieldProjections(modelProjections, keepPhantomTails);
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
     Map<String, OpInputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
     for (final Map.Entry<FieldApi, OpInputFieldProjection> entry : mergedFieldProjections.entrySet()) {
@@ -125,12 +124,11 @@ public class OpInputRecordModelProjection
   @Override
   public @NotNull OpInputRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull OpInputRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 
     final Map<String, OpInputFieldProjection> normalizedFields =
-        RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 
     final Map<String, OpInputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,
@@ -152,7 +150,7 @@ public class OpInputRecordModelProjection
   }
 
   @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull OpInputRecordModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpInputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

@@ -34,7 +34,7 @@ public interface GenTagProjectionEntry<
 
   @NotNull MP projection();
 
-  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries, boolean keepPhantomTails);
+  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 
   @NotNull TP setModelProjection(@NotNull MP modelProjection);
 

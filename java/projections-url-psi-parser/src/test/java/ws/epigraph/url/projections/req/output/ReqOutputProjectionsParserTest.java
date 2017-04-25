@@ -482,7 +482,7 @@ public class ReqOutputProjectionsParserTest {
         parseReqOutputVarProjection(dataType, personOpProjection, str, resolver);
 
     ReqOutputVarProjection varProjection = stepsAndProjection.projection();
-    final @NotNull ReqOutputVarProjection normalized = varProjection.normalizedForType(type, true);
+    final @NotNull ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
 
     String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
     assertEquals(expected, actual);
@@ -495,7 +495,7 @@ public class ReqOutputProjectionsParserTest {
     final ReqOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
-    final ReqOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type, true);
+    final ReqOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
     final ReqOutputVarProjection normalizedVar = new ReqOutputVarProjection(
         varProjection.type(),
         ProjectionUtils.singletonLinkedHashMap(

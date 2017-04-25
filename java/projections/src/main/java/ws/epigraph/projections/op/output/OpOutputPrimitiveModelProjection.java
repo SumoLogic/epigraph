@@ -54,7 +54,7 @@ public class OpOutputPrimitiveModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputPrimitiveModelProjection> mergedTails, final boolean keepPhantomTails) {
+      final @Nullable List<OpOutputPrimitiveModelProjection> mergedTails) {
 
     return new OpOutputPrimitiveModelProjection(
         model,

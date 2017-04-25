@@ -85,6 +85,35 @@ public abstract class ReqUpdateModelProjection<
   }
 
   @Override
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails) {
+
+    return merge(
+        model,
+        modelProjections.stream().anyMatch(ReqUpdateModelProjection::update),
+        modelProjections,
+        mergedParams,
+        mergedAnnotations,
+        mergedMetaProjection,
+        mergedTails
+    );
+  }
+
+  protected abstract SMP merge(
+      @NotNull M model,
+      boolean mergedUpdate,
+      @NotNull List<SMP> modelProjections,
+      @NotNull ReqParams mergedParams,
+      @NotNull Annotations mergedAnnotations,
+      @Nullable MP mergedMetaProjection,
+      @Nullable List<SMP> mergedTails);
+
+  @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     update = value.update();

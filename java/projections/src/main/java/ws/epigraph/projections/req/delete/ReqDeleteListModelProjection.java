@@ -23,10 +23,12 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -69,6 +71,48 @@ public class ReqDeleteListModelProjection
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqDeleteListModelProjection value) {
     super.resolve(name, value);
     itemsProjection = value.itemsProjection();
+  }
+
+  @Override
+  protected ReqDeleteListModelProjection merge(
+      final @NotNull ListTypeApi model,
+      final @NotNull List<ReqDeleteListModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqDeleteListModelProjection> mergedTails) {
+    
+    List<ReqDeleteVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqDeleteListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqDeleteVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqDeleteListModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+  
+  @Override
+  protected @NotNull ReqDeleteListModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqDeleteListModelProjection n) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    return new ReqDeleteListModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

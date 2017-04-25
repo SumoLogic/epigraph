@@ -17,12 +17,15 @@
 package ws.epigraph.projections.req.path;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -44,5 +47,16 @@ public abstract class ReqModelPath<
   @Override
   protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
     throw new RuntimeException("Path references not supported");
+  }
+
+  @Override
+  protected SMP merge(
+      final @NotNull M model,
+      final @NotNull List<SMP> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails) {
+    throw new RuntimeException("Path normalization not supported");
   }
 }

@@ -65,8 +65,7 @@ public abstract class AbstractOpModelProjection<
       final @NotNull List<SMP> modelProjections,
       final @NotNull Annotations mergedAnnotations,
       final MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<SMP> mergedTails) {
 
     if (modelProjections.isEmpty()) return null;
 
@@ -83,8 +82,7 @@ public abstract class AbstractOpModelProjection<
         OpParams.merge(paramsList),
         mergedAnnotations,
         mergedMetaProjection,
-        mergedTails,
-        keepPhantomTails
+        mergedTails
     );
   }
 
@@ -95,8 +93,7 @@ public abstract class AbstractOpModelProjection<
       @NotNull OpParams mergedParams,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails,
-      boolean keepPhantomTails);
+      @Nullable List<SMP> mergedTails);
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {

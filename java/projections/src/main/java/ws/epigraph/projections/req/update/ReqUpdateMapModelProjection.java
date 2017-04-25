@@ -22,12 +22,15 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -82,6 +85,64 @@ public class ReqUpdateMapModelProjection
   public @NotNull List<ReqUpdateKeyProjection> keys() {
     assert isResolved();
     return keys;
+  }
+
+  @Override
+  protected ReqUpdateMapModelProjection merge(
+      final @NotNull MapTypeApi model,
+      final boolean mergedUpdate,
+      final @NotNull List<ReqUpdateMapModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqUpdateModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqUpdateMapModelProjection> mergedTails) {
+
+    final List<ReqUpdateKeyProjection> mergedKeys;
+
+    //noinspection ConstantConditions
+    mergedKeys = ReqKeyProjection.merge(
+        modelProjections.stream().flatMap(projection -> projection.keys().stream()),
+        (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
+            new ReqUpdateKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
+    );
+
+    List<ReqUpdateVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqUpdateMapModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqUpdateVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqUpdateMapModelProjection(
+        model,
+        mergedUpdate,
+        mergedParams,
+        mergedAnnotations,
+        modelProjections.stream().anyMatch(ReqUpdateMapModelProjection::updateKeys),
+        mergedKeys,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqUpdateMapModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqUpdateMapModelProjection n) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    return new ReqUpdateMapModelProjection(
+        n.type(),
+        n.update(),
+        n.params(),
+        n.annotations(),
+        n.updateKeys(),
+        n.keys(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

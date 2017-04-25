@@ -45,4 +45,22 @@ public class ReqDeletePrimitiveModelProjection
   public ReqDeletePrimitiveModelProjection( final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  @Override
+  protected ReqDeletePrimitiveModelProjection merge(
+      final @NotNull PrimitiveTypeApi model,
+      final @NotNull List<ReqDeletePrimitiveModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqDeletePrimitiveModelProjection> mergedTails) {
+
+    return new ReqDeletePrimitiveModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 }

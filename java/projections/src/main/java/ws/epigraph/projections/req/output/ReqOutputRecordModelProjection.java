@@ -91,12 +91,10 @@ public class ReqOutputRecordModelProjection
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputRecordModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
-
+      final @Nullable List<ReqOutputRecordModelProjection> mergedTails) {
 
     Map<FieldApi, ReqOutputFieldProjection> mergedFieldProjections =
-        RecordModelProjectionHelper.mergeFieldProjections(modelProjections, keepPhantomTails);
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
     Map<String, ReqOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
     for (final Map.Entry<FieldApi, ReqOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
@@ -125,12 +123,11 @@ public class ReqOutputRecordModelProjection
   @Override
   protected @NotNull ReqOutputRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull ReqOutputRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
     
     final Map<String, ReqOutputFieldProjection> normalizedFields =
-        RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
     
     final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,

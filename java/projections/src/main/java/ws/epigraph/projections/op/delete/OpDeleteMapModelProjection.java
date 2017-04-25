@@ -89,8 +89,7 @@ public class OpDeleteMapModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpDeleteMapModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<OpDeleteMapModelProjection> mergedTails) {
 
     // todo unify this code with OpInputMapModelProjection, OpOutputMapModelProjection
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
@@ -138,7 +137,7 @@ public class OpDeleteMapModelProjection
             Annotations.merge(keysAnnotations),
             TextLocation.UNKNOWN
         ),
-        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge, keepPhantomTails),
+        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),
         mergedTails,
         TextLocation.UNKNOWN
     );
@@ -147,7 +146,6 @@ public class OpDeleteMapModelProjection
   @Override
   public @NotNull OpDeleteMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull OpDeleteMapModelProjection n) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new OpDeleteMapModelProjection(
@@ -155,7 +153,7 @@ public class OpDeleteMapModelProjection
         n.params(),
         n.annotations(),
         n.keyProjection(),
-        n.itemsProjection().normalizedForType(targetMapType.valueType().type(), keepPhantomTails),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );

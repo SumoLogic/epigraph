@@ -23,10 +23,12 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -63,6 +65,49 @@ public class ReqInputListModelProjection
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
+  }
+
+  /* static */
+  @Override
+  protected ReqInputListModelProjection merge(
+      final @NotNull ListTypeApi model,
+      final @NotNull List<ReqInputListModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqInputListModelProjection> mergedTails) {
+
+    List<ReqInputVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqInputListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqInputVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqInputListModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqInputListModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqInputListModelProjection n) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    return new ReqInputListModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

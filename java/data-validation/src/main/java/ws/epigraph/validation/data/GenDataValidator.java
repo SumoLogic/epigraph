@@ -50,7 +50,7 @@ public abstract class GenDataValidator<
   public void validateData(@Nullable Data data, @NotNull VP projection) {
     if (data == null) return;
 
-    VP normalizedProjection = projection.normalizedForType(data.type(), false);
+    VP normalizedProjection = projection.normalizedForType(data.type());
 
     Set<VP> checkedProjections = visited.get(data);
     if (checkedProjections == null) {
@@ -80,7 +80,7 @@ public abstract class GenDataValidator<
 
   @SuppressWarnings("unchecked")
   public void validateDatum(@NotNull Datum datum, @NotNull MP projection) {
-    MP normalizedProjection = (MP) projection.normalizedForType(datum.type(), false);
+    MP normalizedProjection = (MP) projection.normalizedForType(datum.type());
 
     validateDatumOnly(datum, normalizedProjection);
 

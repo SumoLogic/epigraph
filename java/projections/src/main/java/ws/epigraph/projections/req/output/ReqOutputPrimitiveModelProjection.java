@@ -59,7 +59,7 @@ public class ReqOutputPrimitiveModelProjection
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputPrimitiveModelProjection> mergedTails, final boolean keepPhantomTails) {
+      final @Nullable List<ReqOutputPrimitiveModelProjection> mergedTails) {
 
     return new ReqOutputPrimitiveModelProjection(
         model,

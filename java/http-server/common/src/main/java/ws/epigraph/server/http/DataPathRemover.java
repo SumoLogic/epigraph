@@ -40,7 +40,7 @@ public final class DataPathRemover {
       @NotNull Data data,
       int steps) throws AmbiguousPathException {
 
-    projection = projection.normalizedForType(data.type(), false);
+    projection = projection.normalizedForType(data.type());
 
     if (steps == 0) return new PathRemovalResult(projection, data);
 
@@ -80,7 +80,7 @@ public final class DataPathRemover {
       @NotNull Datum datum,
       int steps) throws AmbiguousPathException {
 
-    mp = mp.normalizedForType(datum.type(), false);
+    mp = mp.normalizedForType(datum.type());
 
     if (steps == 0) return new PathRemovalResult(mp, datum);
 

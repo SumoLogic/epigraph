@@ -62,8 +62,7 @@ public abstract class AbstractFieldProjection<
   @Override
   public FP merge(
       final @NotNull DataTypeApi type,
-      final @NotNull List<FP> fieldProjections,
-      final boolean keepPhantomTails) {
+      final @NotNull List<FP> fieldProjections) {
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
@@ -72,12 +71,12 @@ public abstract class AbstractFieldProjection<
     final List<@NotNull VP> varProjections =
         fieldProjections
             .stream()
-            .map(fp -> fp.varProjection().normalizedForType(type.type(), keepPhantomTails))
+            .map(fp -> fp.varProjection().normalizedForType(type.type()))
             .collect(Collectors.toList());
 
     assert varProjections.size() >= 1;
 
-    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections, keepPhantomTails);
+    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections);
 
     return merge(
         type,
@@ -102,7 +101,7 @@ public abstract class AbstractFieldProjection<
     if (o == null || getClass() != o.getClass()) return false;
     AbstractFieldProjection<?, ?, ?, ?> that = (AbstractFieldProjection<?, ?, ?, ?>) o;
     return /* Objects.equals(annotations, that.annotations) && */
-           Objects.equals(projection, that.projection);
+        Objects.equals(projection, that.projection);
   }
 
   @Override

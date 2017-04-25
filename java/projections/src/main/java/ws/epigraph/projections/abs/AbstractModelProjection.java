@@ -104,7 +104,7 @@ public abstract class AbstractModelProjection<
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType, boolean keepPhantomTails) {
+  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType) {
     // keep in sync with AbstractVarProjection.normalizedForType
     assertResolved();
     assert (type().kind() == targetType.kind());
@@ -156,7 +156,7 @@ public abstract class AbstractModelProjection<
           final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
           effectiveProjections.add(self()); //we're the least specific projection
 
-          final List<SMP> mergedTails = mergeTails(effectiveProjections, keepPhantomTails);
+          final List<SMP> mergedTails = mergeTails(effectiveProjections);
 
           final List<SMP> filteredMergedTails;
           if (mergedTails == null)
@@ -165,8 +165,7 @@ public abstract class AbstractModelProjection<
             filteredMergedTails = mergedTails
                 .stream()
                 // remove 'uninteresting' tails which already describe `effectiveType`
-                .filter(t -> (!t.type().isAssignableFrom(effectiveType)) &&
-                             (keepPhantomTails || effectiveType.isAssignableFrom(t.type())))
+                .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
 //            .map(t -> t.normalizedForType(targetType))
                 .collect(Collectors.toList());
           }
@@ -176,9 +175,9 @@ public abstract class AbstractModelProjection<
               .filter(p -> p.type().isAssignableFrom(effectiveType))
               .collect(Collectors.toList());
 
-          SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge, keepPhantomTails);
+          SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
           assert res != null; // since effectiveProjections is non-empty, at least self is there
-          res = postNormalizedForType(targetType, keepPhantomTails, res);
+          res = postNormalizedForType(targetType, res);
 
           ((GenProjectionReference<SMP>) ref).resolve(normalizedRefName, res);
           return ref;
@@ -216,7 +215,6 @@ public abstract class AbstractModelProjection<
    */
   protected @NotNull SMP postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      boolean keepPhantomTails,
       @NotNull SMP normalizationResult) {
     return normalizationResult;
   }
@@ -224,11 +222,10 @@ public abstract class AbstractModelProjection<
   @Override
   @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
       final @NotNull M model,
-      final @NotNull List<SMP> modelProjections,
-      final boolean keepPhantomTails) {
+      final @NotNull List<SMP> modelProjections) {
 
-    final List<SMP> mergedTails = mergeTails(modelProjections, keepPhantomTails);
-    return merge(model, mergedTails, modelProjections, keepPhantomTails);
+    final List<SMP> mergedTails = mergeTails(modelProjections);
+    return merge(model, mergedTails, modelProjections);
   }
 
   @SuppressWarnings("unchecked")
@@ -236,8 +233,7 @@ public abstract class AbstractModelProjection<
   private @Nullable SMP merge(
       final @NotNull M effectiveType,
       final @Nullable List<SMP> mergedTails,
-      final @NotNull List<SMP> modelProjections,
-      final boolean keepPhantomTails) {
+      final @NotNull List<SMP> modelProjections) {
 
     if (modelProjections.isEmpty()) return null;
 
@@ -259,8 +255,8 @@ public abstract class AbstractModelProjection<
       assert metaModel != null; // since we have a projection for it
       //noinspection ConstantConditions
       mergedMetaProjection = (MP) ((GenModelProjection<MP, MP, MP, M>) metaProjection)
-          .merge((M) metaModel, metaProjectionsList, keepPhantomTails)
-          .normalizedForType(metaModel, keepPhantomTails);
+          .merge((M) metaModel, metaProjectionsList)
+          .normalizedForType(metaModel);
     }
 
     SMP res = merge(
@@ -268,8 +264,7 @@ public abstract class AbstractModelProjection<
         modelProjections,
         Annotations.merge(annotationsList),
         mergedMetaProjection,
-        mergedTails,
-        keepPhantomTails
+        mergedTails
     );
     final ProjectionReferenceName mergedRefName = findUniqueName(modelProjections);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
@@ -277,7 +272,7 @@ public abstract class AbstractModelProjection<
   }
 
   @SuppressWarnings("unchecked")
-  private @Nullable List<SMP> mergeTails(final @NotNull List<SMP> sources, boolean keepPhantomTails) {
+  private @Nullable List<SMP> mergeTails(final @NotNull List<SMP> sources) {
     Map<DatumTypeApi, List<SMP>> tailsByType = null;
 
     for (final SMP projection : sources) {
@@ -299,9 +294,8 @@ public abstract class AbstractModelProjection<
       mergedTails.add(
           merge(
               (M) entry.getKey(),
-              mergeTails(entry.getValue(), keepPhantomTails),
-              entry.getValue(),
-              keepPhantomTails
+              mergeTails(entry.getValue()),
+              entry.getValue()
           )
       );
     }
@@ -314,8 +308,7 @@ public abstract class AbstractModelProjection<
       @NotNull List<SMP> modelProjections,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
+      @Nullable List<SMP> mergedTails) {
 
     throw new RuntimeException("unimplemented"); // todo
   }

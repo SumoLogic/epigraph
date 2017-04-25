@@ -46,4 +46,21 @@ public class ReqInputPrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  protected ReqInputPrimitiveModelProjection merge(
+      final @NotNull PrimitiveTypeApi model,
+      final @NotNull List<ReqInputPrimitiveModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqInputPrimitiveModelProjection> mergedTails) {
+
+    return new ReqInputPrimitiveModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
 }

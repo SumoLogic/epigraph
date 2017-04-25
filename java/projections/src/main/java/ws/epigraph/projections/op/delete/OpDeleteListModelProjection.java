@@ -76,8 +76,7 @@ public class OpDeleteListModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpDeleteListModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<OpDeleteListModelProjection> mergedTails) {
 
     List<OpDeleteVarProjection> itemProjections =
         modelProjections.stream()
@@ -85,7 +84,7 @@ public class OpDeleteListModelProjection
             .collect(Collectors.toList());
 
     final @NotNull OpDeleteVarProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
+        itemProjections.get(0).merge(itemProjections);
 
     return new OpDeleteListModelProjection(
         model,
@@ -100,14 +99,13 @@ public class OpDeleteListModelProjection
   @Override
   public @NotNull OpDeleteListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull OpDeleteListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new OpDeleteListModelProjection(
         n.type(),
         n.params(),
         n.annotations(),
-        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );

@@ -30,6 +30,7 @@ import java.util.List;
  * @param <MP>  model projection type, e.g. {@code OpOutputModelProjection}
  * @param <SMP> specific projection type, e.g. {@code OpOutputRecordModelProjection}
  * @param <TMP> tail model projection type, almost always same as {@code SMP}. Possible exception in the future: any/abstract type
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenModelProjection<
@@ -57,12 +58,11 @@ public interface GenModelProjection<
    * Builds normalized view of this model projection for a given type
    *
    * @param type target type
-   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
-   *                         may be applicable to some of it's subtypes.
+   *
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type, boolean keepPhantomTails);
+  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type);
 
   /**
    * Merges a list of models together
@@ -73,12 +73,11 @@ public interface GenModelProjection<
    *
    * @param model            resulting model's type
    * @param modelProjections models to merge
-   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
-   *                         may be applicable to some of it's subtypes.
+   *
    * @return merged models or {@code null} if {@code modelProjections} is empty
    */
   /* static */
-  @Nullable SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections, boolean keepPhantomTails);
+  @Nullable SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
 
 //  @SuppressWarnings("unchecked")
 //  default @NotNull SMP mergeWith(@NotNull SMP other) {

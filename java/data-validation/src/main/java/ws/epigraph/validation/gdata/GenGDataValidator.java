@@ -65,7 +65,7 @@ public abstract class GenGDataValidator<
         context.addError("Can't resolve var type '" + typeRef.toString() + "'", data.location());
         return;
       }
-      normalizedProjection = projection.normalizedForType(type, false);
+      normalizedProjection = projection.normalizedForType(type);
     }
 
     Set<VP> checkedProjections = visited.get(data);
@@ -108,7 +108,7 @@ public abstract class GenGDataValidator<
         context.addError("Can't resolve model type '" + typeRef.toString() + "'", datum.location());
         return;
       }
-      normalizedProjection = (MP) projection.normalizedForType(type, false);
+      normalizedProjection = (MP) projection.normalizedForType(type);
     }
 
     validateDatumOnly(datum, normalizedProjection);

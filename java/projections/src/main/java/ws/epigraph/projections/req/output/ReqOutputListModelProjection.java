@@ -78,8 +78,7 @@ public class ReqOutputListModelProjection
       final @NotNull ReqParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputListModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<ReqOutputListModelProjection> mergedTails) {
 
     List<ReqOutputVarProjection> itemProjections =
         modelProjections.stream()
@@ -87,7 +86,7 @@ public class ReqOutputListModelProjection
             .collect(Collectors.toList());
 
     final @NotNull ReqOutputVarProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
+        itemProjections.get(0).merge(itemProjections);
 
     return new ReqOutputListModelProjection(
         model,
@@ -104,7 +103,6 @@ public class ReqOutputListModelProjection
   @Override
   protected @NotNull ReqOutputListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull ReqOutputListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new ReqOutputListModelProjection(
@@ -113,7 +111,7 @@ public class ReqOutputListModelProjection
         n.params(),
         n.annotations(),
         n.metaProjection(),
-        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );

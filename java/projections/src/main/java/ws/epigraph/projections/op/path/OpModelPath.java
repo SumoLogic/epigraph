@@ -52,8 +52,7 @@ public abstract class OpModelPath<
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<SMP> mergedTails) {
     throw new RuntimeException("path polymorphic tails not supported");
   }
 

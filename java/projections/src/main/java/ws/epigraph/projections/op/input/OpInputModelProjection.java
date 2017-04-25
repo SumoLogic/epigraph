@@ -75,8 +75,7 @@ public abstract class OpInputModelProjection<
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<SMP> mergedTails) {
 
     boolean mergedRequired = modelProjections.stream().anyMatch(mp -> mp.required());
     D mergedDefault = modelProjections.stream()
@@ -93,8 +92,7 @@ public abstract class OpInputModelProjection<
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
-        mergedTails,
-        keepPhantomTails
+        mergedTails
     );
   }
 
@@ -106,13 +104,12 @@ public abstract class OpInputModelProjection<
       @NotNull OpParams mergedParams,
       @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails,
-      boolean keepPhantomTails
+      @Nullable List<SMP> mergedTails
   );
 
   @SuppressWarnings("unchecked")
   @Override
-  public void resolve(@NotNull final ProjectionReferenceName name, final @NotNull SMP value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     this.required = value.required();
     this.defaultValue = (D) value.defaultValue();

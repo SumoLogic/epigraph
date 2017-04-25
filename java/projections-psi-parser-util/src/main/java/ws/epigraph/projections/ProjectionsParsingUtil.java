@@ -259,7 +259,7 @@ public final class ProjectionsParsingUtil {
       );
     }
 
-    return vp.normalizedForType(targetType, true);
+    return vp.normalizedForType(targetType);
   }
 
   @SuppressWarnings("unchecked")
@@ -308,7 +308,7 @@ public final class ProjectionsParsingUtil {
       );
     }
 
-    return (MP) mp.normalizedForType(targetType, true);
+    return (MP) mp.normalizedForType(targetType);
   }
 
   @SuppressWarnings("unchecked")

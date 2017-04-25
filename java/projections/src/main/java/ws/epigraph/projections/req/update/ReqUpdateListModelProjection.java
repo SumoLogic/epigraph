@@ -23,10 +23,12 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -66,6 +68,50 @@ public class ReqUpdateListModelProjection
     return itemsProjection;
   }
 
+  @Override
+  protected ReqUpdateListModelProjection merge(
+      final @NotNull ListTypeApi model,
+      final boolean mergedUpdate,
+      final @NotNull List<ReqUpdateListModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqUpdateModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqUpdateListModelProjection> mergedTails) {
+
+    List<ReqUpdateVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqUpdateListModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqUpdateVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqUpdateListModelProjection(
+        model,
+        mergedUpdate,
+        mergedParams,
+        mergedAnnotations,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqUpdateListModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqUpdateListModelProjection n) {
+    final ListTypeApi targetListType = (ListTypeApi) targetType;
+    return new ReqUpdateListModelProjection(
+        n.type(),
+        n.update(),
+        n.params(),
+        n.annotations(),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
+  }
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateListModelProjection value) {
     super.resolve(name, value);

@@ -22,11 +22,14 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -72,6 +75,63 @@ public class ReqDeleteMapModelProjection
   public @Nullable List<ReqDeleteKeyProjection> keys() {
     assert isResolved();
     return keys;
+  }
+
+  @Override
+  protected ReqDeleteMapModelProjection merge(
+      final @NotNull MapTypeApi model,
+      final @NotNull List<ReqDeleteMapModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqDeleteMapModelProjection> mergedTails) {
+
+    final List<ReqDeleteKeyProjection> mergedKeys;
+
+    if (modelProjections.stream().map(ReqDeleteMapModelProjection::keys).anyMatch(Objects::isNull)) {
+      mergedKeys = null;
+    } else {
+      //noinspection ConstantConditions
+      mergedKeys = ReqKeyProjection.merge(
+          modelProjections.stream().flatMap(projection -> projection.keys().stream()),
+          (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
+              new ReqDeleteKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
+      );
+    }
+
+    List<ReqDeleteVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqDeleteMapModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqDeleteVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqDeleteMapModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedKeys,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqDeleteMapModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqDeleteMapModelProjection n) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    return new ReqDeleteMapModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.keys(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

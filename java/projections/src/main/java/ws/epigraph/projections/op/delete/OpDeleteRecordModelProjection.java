@@ -83,11 +83,10 @@ public class OpDeleteRecordModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpDeleteRecordModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<OpDeleteRecordModelProjection> mergedTails) {
 
     Map<FieldApi, OpDeleteFieldProjection> mergedFieldProjections =
-        RecordModelProjectionHelper.mergeFieldProjections(modelProjections, keepPhantomTails);
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
     Map<String, OpDeleteFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
     for (final Map.Entry<FieldApi, OpDeleteFieldProjection> entry : mergedFieldProjections.entrySet()) {
@@ -114,12 +113,11 @@ public class OpDeleteRecordModelProjection
   @Override
   public @NotNull OpDeleteRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull OpDeleteRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 
     final Map<String, OpDeleteFieldProjection> normalizedFields =
-        RecordModelProjectionHelper.normalizeFields(targetRecordType, n, keepPhantomTails);
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 
     final Map<String, OpDeleteFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,

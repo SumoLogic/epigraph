@@ -22,11 +22,14 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -78,6 +81,64 @@ public class ReqInputMapModelProjection
     super.resolve(name, value);
     this.keys = value.keys();
     this.valuesProjection = value.itemsProjection();
+  }
+
+  @Override
+  protected ReqInputMapModelProjection merge(
+      final @NotNull MapTypeApi model,
+      final @NotNull List<ReqInputMapModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqInputMapModelProjection> mergedTails) {
+
+
+    final List<ReqInputKeyProjection> mergedKeys;
+
+    if (modelProjections.stream().map(ReqInputMapModelProjection::keys).anyMatch(Objects::isNull)) {
+      mergedKeys = null;
+    } else {
+      //noinspection ConstantConditions
+      mergedKeys = ReqKeyProjection.merge(
+          modelProjections.stream().flatMap(projection -> projection.keys().stream()),
+          (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
+              new ReqInputKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
+      );
+    }
+
+    List<ReqInputVarProjection> itemProjections =
+        modelProjections.stream()
+            .map(ReqInputMapModelProjection::itemsProjection)
+            .collect(Collectors.toList());
+
+    final @NotNull ReqInputVarProjection mergedItemsVarType =
+        itemProjections.get(0).merge(itemProjections);
+
+    return new ReqInputMapModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedKeys,
+        mergedItemsVarType,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqInputMapModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqInputMapModelProjection n) {
+    final MapTypeApi targetMapType = (MapTypeApi) targetType;
+    return new ReqInputMapModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        n.keys(),
+        n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

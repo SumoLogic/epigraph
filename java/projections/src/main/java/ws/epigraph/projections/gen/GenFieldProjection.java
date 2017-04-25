@@ -45,13 +45,12 @@ public interface GenFieldProjection<
    * iterate over all the items being merged.
    *
    * @param type             resulting field type
-   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
-   *                         may be applicable to some of it's subtypes.
    * @param fieldProjections field projections to merge, guaranteed to contain at least one element
+   *
    * @return merged field projections
    */
   /* static */
-  FP merge(@NotNull DataTypeApi type, @NotNull List<FP> fieldProjections, boolean keepPhantomTails);
+  FP merge(@NotNull DataTypeApi type, @NotNull List<FP> fieldProjections);
 
   @NotNull TextLocation location();
 }

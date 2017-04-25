@@ -24,11 +24,16 @@ import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -74,6 +79,65 @@ public class ReqInputRecordModelProjection
   @Override
   public @Nullable ReqInputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections().get(fieldName);
+  }
+  
+  @Override
+  protected ReqInputRecordModelProjection merge(
+      final @NotNull RecordTypeApi model,
+      final @NotNull List<ReqInputRecordModelProjection> modelProjections,
+      final @NotNull ReqParams mergedParams,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqInputRecordModelProjection> mergedTails) {
+
+    Map<FieldApi, ReqInputFieldProjection> mergedFieldProjections =
+        RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
+
+    Map<String, ReqInputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, ReqInputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+      mergedFieldEntries.put(
+          entry.getKey().name(),
+          new ReqInputFieldProjectionEntry(
+              entry.getKey(),
+              entry.getValue(),
+              TextLocation.UNKNOWN
+          )
+      );
+    }
+
+    return new ReqInputRecordModelProjection(
+        model,
+        mergedParams,
+        mergedAnnotations,
+        mergedFieldEntries,
+        mergedTails,
+        TextLocation.UNKNOWN
+    );
+  }
+
+  @Override
+  protected @NotNull ReqInputRecordModelProjection postNormalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @NotNull ReqInputRecordModelProjection n) {
+    RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
+
+    final Map<String, ReqInputFieldProjection> normalizedFields =
+        RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
+
+    final Map<String, ReqInputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+        targetRecordType,
+        normalizedFields,
+        ReqInputFieldProjectionEntry::new
+    );
+
+    return new ReqInputRecordModelProjection(
+        n.type(),
+        n.params(),
+        n.annotations(),
+        normalizedFieldEntries,
+        n.polymorphicTails(),
+        TextLocation.UNKNOWN
+    );
   }
 
   @Override

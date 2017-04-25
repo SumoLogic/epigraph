@@ -115,7 +115,7 @@ public class OpOutputProjectionsTest {
             "    friends *( :id )",
             "  ),",
             "  id",
-            ") ~~ws.epigraph.tests.User2 :`record` ( worstEnemy ( id ) )"
+            ")"
         )
     );
   }
@@ -190,7 +190,7 @@ public class OpOutputProjectionsTest {
   public void testNormalizeRecursive() throws PsiProcessingException {
     final OpOutputVarProjection vp =
         testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
-            .normalizedForType(User.type, false);
+            .normalizedForType(User.type);
 
     // check that it's actually correct
 
@@ -238,7 +238,7 @@ public class OpOutputProjectionsTest {
   public void testNormalizeSelfVarRecursive() throws PsiProcessingException {
     final OpOutputVarProjection vp =
         testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
-            .normalizedForType(User.type, false);
+            .normalizedForType(User.type);
 
     // check that it's actually correct
 
@@ -280,7 +280,7 @@ public class OpOutputProjectionsTest {
         .projection();
     assertEquals(2, rmp.fieldProjections().size());
 
-    rmp = rmp.normalizedForType(UserRecord.type, false);
+    rmp = rmp.normalizedForType(UserRecord.type);
     assertEquals(2, rmp.fieldProjections().size());
 
     // rmp = $rmp/worstEnemy:record
@@ -306,7 +306,7 @@ public class OpOutputProjectionsTest {
     );
     //noinspection ConstantConditions
     final OpOutputModelProjection<?, ?, ?> mp = vp.singleTagProjection().projection();
-    final OpOutputModelProjection<?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type, false);
+    final OpOutputModelProjection<?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type);
 
     String p = printOpOutputModelProjection(normalized);
     assertEquals("( diamond, firstName, id )", p); // but not `lastName`!
@@ -570,25 +570,25 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`(id)~~ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName)",
         User2.type,
-        ":`record` ( id ) ~~ws.epigraph.tests.User :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( id )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User.type,
-        ":`record` ( firstName, id )\n  ~~( ws.epigraph.tests.SubUser :`record` ( lastName ), ws.epigraph.tests.User2 :`record` ( bestFriend :id ) )"
+        ":`record` ( firstName, id ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         SubUser.type,
-        ":`record` ( lastName, firstName, id ) ~~ws.epigraph.tests.User2 :`record` ( bestFriend :id )"
+        ":`record` ( lastName, firstName, id )"
     );
 
     testTailsNormalization(
         ":`record`(id)~~(ws.epigraph.tests.User :`record`(firstName) ~~ws.epigraph.tests.SubUser :`record`(lastName), ws.epigraph.tests.User2 :`record`(bestFriend:id))",
         User2.type,
-        ":`record` ( bestFriend :id, id ) ~~ws.epigraph.tests.User\n  :`record` ( firstName ) ~~ws.epigraph.tests.SubUser :`record` ( lastName )"
+        ":`record` ( bestFriend :id, id )"
     );
 
     testTailsNormalization(
@@ -600,14 +600,7 @@ public class OpOutputProjectionsTest {
     testTailsNormalization(
         ":`record`( worstEnemy(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName)))",
         User.type,
-        ":`record` ( worstEnemy ( firstName, id ) ~ws.epigraph.tests.UserRecord2 ( lastName ) )"
-    );
-
-    testTailsNormalization(
-        ":`record`( worstEnemy(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName)))",
-        User.type,
-        ":`record` ( worstEnemy ( firstName, id ) )",
-        false
+        ":`record` ( worstEnemy ( firstName, id ) )"
     );
   }
 
@@ -651,7 +644,7 @@ public class OpOutputProjectionsTest {
     testModelTailsNormalization(
         ":`record`(id, lastName)~ws.epigraph.tests.UserRecord(firstName)~ws.epigraph.tests.UserRecord2(worstEnemy)",
         UserRecord.type,
-        ":`record` ( firstName, id, lastName ) ~ws.epigraph.tests.UserRecord2 ( worstEnemy )"
+        ":`record` ( firstName, id, lastName )"
     );
 
     testModelTailsNormalization(
@@ -682,12 +675,8 @@ public class OpOutputProjectionsTest {
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {
-    testTailsNormalization(str, type, expected, true);
-  }
-
-  private void testTailsNormalization(String str, Type type, String expected, boolean keepPhantomTails) {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
-    final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type, keepPhantomTails);
+    final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);
     String actual = printOpOutputVarProjection(normalized);
     assertEquals(expected, actual);
   }
@@ -699,7 +688,7 @@ public class OpOutputProjectionsTest {
     final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
-    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type, true);
+    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
     final OpOutputVarProjection normalizedVar = new OpOutputVarProjection(
         varProjection.type(),
         ProjectionUtils.singletonLinkedHashMap(

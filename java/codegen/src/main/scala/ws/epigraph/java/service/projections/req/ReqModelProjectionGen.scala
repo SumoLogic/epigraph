@@ -94,7 +94,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
-        t -> tailGenerator(op.normalizedForType(t.`type`(), false).asInstanceOf[OpProjectionType], normalized = true)
+        t -> tailGenerator(op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
       }.toMap
     ).getOrElse(Map())
 
@@ -127,7 +127,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
    */
   public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
-    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance(), false));
+    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
   }
 """/*@formatter:on*/ ,
       Set()

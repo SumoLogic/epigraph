@@ -76,8 +76,7 @@ public class OpOutputListModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputListModelProjection> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<OpOutputListModelProjection> mergedTails) {
 
     List<OpOutputVarProjection> itemProjections =
         modelProjections.stream()
@@ -85,7 +84,7 @@ public class OpOutputListModelProjection
             .collect(Collectors.toList());
 
     final @NotNull OpOutputVarProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections, keepPhantomTails);
+        itemProjections.get(0).merge(itemProjections);
 
     return new OpOutputListModelProjection(
         model,
@@ -101,7 +100,6 @@ public class OpOutputListModelProjection
   @Override
   public @NotNull OpOutputListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final boolean keepPhantomTails,
       final @NotNull OpOutputListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new OpOutputListModelProjection(
@@ -109,7 +107,7 @@ public class OpOutputListModelProjection
         n.params(),
         n.annotations(),
         n.metaProjection(),
-        n.itemsProjection().normalizedForType(targetListType.elementType().type(), keepPhantomTails),
+        n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
     );

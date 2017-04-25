@@ -63,8 +63,7 @@ public abstract class AbstractReqModelProjection<
       final @NotNull List<SMP> modelProjections,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
+      final @Nullable List<SMP> mergedTails) {
 
     return merge(
         model,
@@ -72,21 +71,17 @@ public abstract class AbstractReqModelProjection<
         ReqParams.merge(modelProjections.stream().map(AbstractReqModelProjection::params)),
         mergedAnnotations,
         mergedMetaProjection,
-        mergedTails,
-        keepPhantomTails
+        mergedTails
     );
   }
 
-  protected SMP merge(
-      final @NotNull M model,
-      final @NotNull List<SMP> modelProjections,
-      final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
-      final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails,
-      final boolean keepPhantomTails) {
-    throw new RuntimeException("not implemented"); // todo make abstract
-  }
+  protected abstract SMP merge(
+      @NotNull M model,
+      @NotNull List<SMP> modelProjections,
+      @NotNull ReqParams mergedParams,
+      @NotNull Annotations mergedAnnotations,
+      @Nullable MP mergedMetaProjection,
+      @Nullable List<SMP> mergedTails);
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {

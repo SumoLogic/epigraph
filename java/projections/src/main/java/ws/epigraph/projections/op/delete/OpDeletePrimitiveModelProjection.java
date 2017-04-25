@@ -53,7 +53,7 @@ public class OpDeletePrimitiveModelProjection
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpDeletePrimitiveModelProjection> mergedTails, final boolean keepPhantomTails) {
+      final @Nullable List<OpDeletePrimitiveModelProjection> mergedTails) {
 
     return new OpDeletePrimitiveModelProjection(
         model,

@@ -191,7 +191,7 @@ public abstract class ReferenceContext<
           // resolve model ref from var projection
           if (value instanceof GenVarProjection<?, ?, ?>) {
             VP varValue = (VP) value;
-            VP _normalized = varValue.normalizedForType(ref.type(), true);
+            VP _normalized = varValue.normalizedForType(ref.type());
 
             if (ref instanceof GenModelProjection<?, ?, ?, ?>) {
               if (_normalized.type().kind() == TypeKind.UNION)
@@ -208,7 +208,7 @@ public abstract class ReferenceContext<
 
           } else if (value instanceof GenModelProjection<?, ?, ?, ?>) {
             MP modelValue = (MP) value;
-            normalized = (R) modelValue.normalizedForType((DatumTypeApi) ref.type(), true);
+            normalized = (R) modelValue.normalizedForType((DatumTypeApi) ref.type());
           } else
             throw new RuntimeException(String.format("Unreachable: '%s'", name));
 

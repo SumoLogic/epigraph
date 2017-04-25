@@ -118,7 +118,7 @@ public final class RecordModelProjectionHelper {
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
 
-  Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections, final boolean keepPhantomTails) {
+  Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections) {
 
     Set<FieldApi> collectedFields = new LinkedHashSet<>();
     for (final RMP projection : recordProjections)
@@ -141,7 +141,7 @@ public final class RecordModelProjectionHelper {
 
       assert !fieldProjectionsToMerge.isEmpty();
       final @NotNull FP mergedFieldProjections =
-          fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge, keepPhantomTails);
+          fieldProjectionsToMerge.get(0).merge(field.dataType(), fieldProjectionsToMerge);
 
       mergedFields.put(
           field,
@@ -161,8 +161,7 @@ public final class RecordModelProjectionHelper {
 
   @NotNull Map<String, FP> normalizeFields(
       @NotNull RecordTypeApi effectiveType,
-      @NotNull RMP projection,
-      boolean keepPhantomTails) {
+      @NotNull RMP projection) {
 
     if (projection.type().isAssignableFrom(effectiveType)) {
       Map<String, FP> result = new LinkedHashMap<>(projection.fieldProjections().size());
@@ -171,7 +170,7 @@ public final class RecordModelProjectionHelper {
         final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
         FP fp = entry.getValue().fieldProjection();
         final VP normalizedVp =
-            fp.varProjection().normalizedForType(effectiveField.dataType().type(), keepPhantomTails);
+            fp.varProjection().normalizedForType(effectiveField.dataType().type());
         result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
       }
 

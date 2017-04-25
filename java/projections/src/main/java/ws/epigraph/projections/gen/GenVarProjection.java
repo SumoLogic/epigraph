@@ -86,13 +86,12 @@ public interface GenVarProjection<
   /**
    * Builds normalized view of this var projection for a given type
    *
-   * @param type             target type
-   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
-   *                         may be applicable to some of it's subtypes.
+   * @param type target type
+   *
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull VP normalizedForType(@NotNull TypeApi type, boolean keepPhantomTails);
+  @NotNull VP normalizedForType(@NotNull TypeApi type);
 
   /**
    * Merges var projections together.
@@ -102,12 +101,11 @@ public interface GenVarProjection<
    * iterate over all the items being merged.
    *
    * @param varProjections   var projections to merge, guaranteed to contain at least one element
-   * @param keepPhantomTails if phantom tails should be kept. Phantom tails don't directly apply to `type` but
-   *                         may be applicable to some of it's subtypes.
+   *
    * @return merged var projection
    */
   /* static */
-  @NotNull VP merge(@NotNull List<VP> varProjections, boolean keepPhantomTails);
+  @NotNull VP merge(@NotNull List<VP> varProjections);
 
 //  @Nullable
 //  default VP tailByType(@NotNull TypeApi tailType) {

@@ -63,14 +63,14 @@ public abstract class AbstractTagProjectionEntry<
 
   @SuppressWarnings("unchecked")
   @Override
-  public TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries, final boolean keepPhantomTails) {
+  public TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
     final List<@NotNull MP> models =
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
     final @NotNull MP mp = models.get(0);
-    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models, keepPhantomTails);
+    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
