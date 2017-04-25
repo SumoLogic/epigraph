@@ -52,6 +52,16 @@ public final class Util {
   }
 
   public static @NotNull String decodeUri(@NotNull String uri) throws URISyntaxException {
+    // encode []{}<> to allow nice curl URIs
+    // todo make this conditional (eg user-agent) ?
+
+    uri = uri.replace("[", "%5B");
+    uri = uri.replace("]", "%5D");
+    uri = uri.replace("{", "%7B");
+    uri = uri.replace("}", "%7D");
+    uri = uri.replace("<", "%3C");
+    uri = uri.replace(">", "%3E");
+
     final URI _uri = new URI(uri);
 
     final String decodedPath = _uri.getPath();

@@ -19,6 +19,7 @@
     - [ ] IDL
     - [ ] Routing
     
+- [x] url decoding: try to allow [] and {} in requests; else update all curl examples in wiki
 - [ ] update introspection service using builder setters
 - [x] add request/response validation
   - [x] Requried stuff must be present. 
