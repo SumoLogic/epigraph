@@ -436,8 +436,8 @@ customOperationBodyPart ::= operationMethod |
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault? /* opParamBody? */ { pin = 1 }
-private opParamDefault ::= '=' datum { pin=1 }
+opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection /*opParamDefault?*/ /* opParamBody? */ { pin = 1 }
+//private opParamDefault ::= '=' datum { pin=1 }    // default is part of opInputModelProjection now
 //private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 //private opParamBodyPart ::= opParam | annotation
 

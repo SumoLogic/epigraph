@@ -51,6 +51,7 @@ public class ReqOutputProjectionsParserTest {
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
+      PersonRecord.type,
       User.type,
       UserId.type,
       UserRecord.type,
@@ -70,10 +71,15 @@ public class ReqOutputProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String = \"hello world\",",
+          "      ;param1 : epigraph.String,",
           "      ;param2 : ws.epigraph.tests.UserRecord",
           "    },",
           "    firstName{;param:epigraph.String},",
+          "    middleName{",
+          "      ;+param1:epigraph.String,",
+          "      ;+param2:epigraph.String { default: \"p2\" },",
+          "      ;param3:ws.epigraph.tests.PersonRecord (+firstName, bestFriend:`record`(+lastName))",
+          "    },",
           "    bestFriend :( id, `record` (",
           "      id,",
           "      bestFriend :`record` (",
@@ -97,6 +103,53 @@ public class ReqOutputProjectionsParserTest {
   );
 
 //  private OpOutputFieldProjection personFieldProjection =
+
+  @Test
+  public void testRequiredParam() {
+    try {
+      testParse(":record / middleName", 3);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Required parameter 'param1' is missing"));
+      assertFalse(e.getMessage().contains("Required parameter 'param2' is missing"));
+    }
+
+    testParse(
+        ":record / middleName ;param1 = 'p1'",
+        ":record / middleName ;param1 = 'p1';param2 = 'p2'",
+        3
+    );
+
+    testParse(":record / middleName ;param1 = 'p1';param3 = { firstName: 'Alfred' };param2 = 'p2'", 3);
+
+    try {
+      testParse(":record / middleName ;param1 = 'p1';param3 = { lastName: 'Hitchcock' };param2 = 'p2'", 3);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Required field 'firstName' is missing"));
+    }
+
+    testParse(
+        lines(
+            ":record /",
+            "  middleName",
+            "    ;param1 = 'p1';param3 = { firstName: 'Hitchcock', bestFriend: < record: { lastName: 'Lee' } > };param2 = 'p2'"
+        ), 3
+    );
+
+    try {
+      testParse(
+          lines(
+              ":record /",
+              "  middleName",
+              "    ;param1 = 'p1';param3 = { firstName: 'Hitchcock', bestFriend: < record: { firstName: 'Bruce' } > };param2 = 'p2'"
+          ), 3
+      );
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage().contains("Required field 'lastName' is missing"));
+    }
+  }
 
   @Test
   public void testParsePath() {
@@ -133,11 +186,6 @@ public class ReqOutputProjectionsParserTest {
     testParse(":record / friends *( :id )", 3);
     testParse(":record / friends * :id", ":record / friends *( :id )", 3);
     testParse(":record / friendRecords * (id)", ":record / friendRecords *( ( id ) )", 3);
-  }
-
-  @Test
-  public void testParseParam() {
-    testParse(":( id, record ( id ;param1 = 'foo' ) )", 0);
   }
 
   @Test
@@ -242,6 +290,7 @@ public class ReqOutputProjectionsParserTest {
             ":record (",
             "  id,",
             "  firstName,",
+            "  middleName,",
             "  bestFriend :(),",
             "  bestFriend2 :(),",
             "  bestFriend3 :(),",

@@ -24,9 +24,6 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpParam extends PsiElement {
 
   @Nullable
-  SchemaDatum getDatum();
-
-  @Nullable
   SchemaOpInputModelProjection getOpInputModelProjection();
 
   @Nullable
@@ -37,9 +34,6 @@ public interface SchemaOpParam extends PsiElement {
 
   @Nullable
   PsiElement getColon();
-
-  @Nullable
-  PsiElement getEq();
 
   @Nullable
   PsiElement getPlus();

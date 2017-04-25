@@ -53,6 +53,7 @@
     <module>schema</module>
     <module>service</module>
     <module>standalone-psi-util</module>
+    <module>tests</module>
     <module>test-util</module>
     <module>util</module>
     <module>wire</module>

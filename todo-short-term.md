@@ -21,9 +21,9 @@
     
 - [ ] update introspection service using builder setters
 - [ ] add request/response validation
-  - [ ] Requried stuff must be present. 
+  - [x] Requried stuff must be present. 
     - [x] Data validation (input/output)
-    - [ ] GData validation (params)
+    - [x] GData validation (params)
   - [ ] Codegen should build @NotNull things (params). 
   - [ ] Update library example and wiki
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
@@ -31,6 +31,7 @@
 - [x] servlet-based server
 - [ ] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
 - [x] move http servers under common `http-server` folder
+- [ ] race condition in schema refs parsing?
 
 # See also
 - See [General todo] (todo.md)

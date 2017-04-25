@@ -63,7 +63,7 @@ public class JsonFormatWriterTest {
       "  id,",
       "  `record` (",
       "    id {",
-      "      ;param1 : epigraph.String = \"hello world\",",
+      "      ;param1 : epigraph.String,",
       "    },",
       "    bestFriend :`record` (",
       "      id,",

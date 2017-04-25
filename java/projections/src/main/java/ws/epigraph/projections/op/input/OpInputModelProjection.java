@@ -56,6 +56,7 @@ public abstract class OpInputModelProjection<
     super(model, metaProjection, params, annotations, tails, location);
     this.required = required;
     this.defaultValue = defaultValue;
+    // check that defaultValue is covered by the projection? (all required parts are present)
   }
 
   protected OpInputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {

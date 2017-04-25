@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class GDataPrettyPrinter<E extends Exception> {
-  @NotNull
-  private final Layouter<E> l;
+  private final @NotNull Layouter<E> l;
 
   public GDataPrettyPrinter(@NotNull Layouter<E> l) {this.l = l;}
 

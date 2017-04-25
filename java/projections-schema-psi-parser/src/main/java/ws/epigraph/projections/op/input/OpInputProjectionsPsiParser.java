@@ -35,6 +35,7 @@ import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
+import ws.epigraph.validation.gdata.OpInputGDataValidator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -42,9 +43,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static ws.epigraph.projections.ProjectionsParsingUtil.checkTailType;
-import static ws.epigraph.projections.ProjectionsParsingUtil.getDatumType;
-import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
+import static ws.epigraph.projections.ProjectionsParsingUtil.*;
+import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
+import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.getTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
 
 /**
@@ -502,7 +503,7 @@ public final class OpInputProjectionsPsiParser {
 //    );
 //  }
 //
-  
+
 // ----------------
 
   @SuppressWarnings("unchecked")
@@ -623,7 +624,7 @@ public final class OpInputProjectionsPsiParser {
 
     }
   }
-  
+
   @SuppressWarnings("unchecked")
   public static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
   /*@NotNull*/ MP parseUnnamedModelProjection(
@@ -642,7 +643,7 @@ public final class OpInputProjectionsPsiParser {
     final OpInputModelProjection<?, ?, ?, ?> metaProjection =
         parseModelMetaProjection(type, modelProperties, typesResolver, context);
 
-    return parseUnnamedModelProjection(
+    MP mp = parseUnnamedModelProjection(
         modelClass,
         type,
         required,
@@ -654,11 +655,26 @@ public final class OpInputProjectionsPsiParser {
         typesResolver,
         context
     );
+
+    if (defaultValue != null) {
+      // todo warn if default value is present and required = true
+
+      final OpInputGDataValidator validator = new OpInputGDataValidator(typesResolver);
+      validator.validateDatum(defaultValue, mp);
+      validator.errors().forEach(validationError ->
+          context.addError(
+              validationError.toStringNoTextLocation(),
+              validationError.textLocation()
+          )
+      );
+    }
+
+    return mp;
   }
-  
+
 
   @SuppressWarnings("unchecked")
-  public static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
+  private static @NotNull <MP extends OpInputModelProjection<?, ?, ?, ?>>
   /*@NotNull*/ MP parseUnnamedModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,

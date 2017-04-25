@@ -4616,7 +4616,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ';' '+'? qid ':' typeRef opInputModelProjection opParamDefault?
+  // ';' '+'? qid ':' typeRef opInputModelProjection
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, S_SEMICOLON)) return false;
@@ -4628,8 +4628,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, qid(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
-    r = p && report_error_(b, opInputModelProjection(b, l + 1)) && r;
-    r = p && opParam_6(b, l + 1) && r;
+    r = p && opInputModelProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -4639,27 +4638,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "opParam_1")) return false;
     consumeToken(b, S_PLUS);
     return true;
-  }
-
-  // opParamDefault?
-  private static boolean opParam_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParam_6")) return false;
-    opParamDefault(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '=' datum
-  static boolean opParamDefault(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opParamDefault")) return false;
-    if (!nextTokenIs(b, S_EQ)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_EQ);
-    p = r; // pin = 1
-    r = r && datum(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
   }
 
   /* ********************************************************** */

@@ -21,10 +21,12 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
+import ws.epigraph.data.Val;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.Qn;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.Annotation;
@@ -46,11 +48,11 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.validation.data.OpInputDataValidator;
+import ws.epigraph.validation.gdata.GDataValidationError;
+import ws.epigraph.validation.gdata.OpInputGDataValidator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 
@@ -181,10 +183,46 @@ public final class UrlProjectionsPsiParserUtil {
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull GDatum gDatum = UrlGDataPsiParser.parseDatum(datumPsi, context);
-    @Nullable Datum value;
+
+    final @Nullable Datum value;
 
     try {
       value = GDataToData.transform((DatumType) model, gDatum, resolver).getDatum();
+    } catch (GDataToData.ProcessingException e) {
+      // try to find element by offset
+      int offset = e.location().startOffset() - datumPsi.getTextRange().getStartOffset();
+      PsiElement element = datumPsi.findElementAt(offset);
+      if (element == null) element = datumPsi;
+
+      context.addError(errorMessagePrefix + e.getMessage(), element);
+      return null;
+    }
+    return value;
+  }
+
+  public static @Nullable Datum getDatum(
+      @NotNull UrlDatum datumPsi,
+      @NotNull OpInputModelProjection<?, ?, ?, ?> projection,
+      @NotNull TypesResolver resolver,
+      @NotNull String errorMessagePrefix,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    @NotNull GDatum gDatum = UrlGDataPsiParser.parseDatum(datumPsi, context);
+
+    OpInputGDataValidator validator = new OpInputGDataValidator(resolver);
+    validator.validateDatum(gDatum, projection);
+
+    for (final GDataValidationError validationError : validator.errors()) {
+      context.addError(
+          validationError.toStringNoTextLocation(),
+          validationError.textLocation()
+      );
+    }
+
+    final @Nullable Datum value;
+
+    try {
+      value = GDataToData.transform((DatumType) projection.type(), gDatum, resolver).getDatum();
     } catch (GDataToData.ProcessingException e) {
       // try to find element by offset
       int offset = e.location().startOffset() - datumPsi.getTextRange().getStartOffset();
@@ -274,14 +312,40 @@ public final class UrlProjectionsPsiParserUtil {
     for (UrlReqParam reqParamPsi : reqParamsPsi)
       paramMap = parseReqParam(paramMap, reqParamPsi, opParams, resolver, context);
 
-    // check that all required params are present
+    // check that all required params are present and fill in those with defaults
     for (final Map.Entry<String, OpParam> entry : opParams.asMap().entrySet()) {
       String paramName = entry.getKey();
-      if ((paramMap == null || !paramMap.containsKey(paramName)) && entry.getValue().projection().required())
-        context.addError(
-            String.format("Required parameter '%s' is missing", paramName),
-            paramsLocation
-        );
+      if ((paramMap == null || !paramMap.containsKey(paramName))) {
+        final OpInputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
+
+        GDatum defaultValue = opModelProjection.defaultValue();
+        if (defaultValue == null) {
+          defaultValue = opModelProjection.defaultValue();
+
+          if (defaultValue == null && opModelProjection.required()) {
+            context.addError(
+                String.format("Required parameter '%s' is missing", paramName),
+                paramsLocation
+            );
+          }
+        } else {
+          if (paramMap == null) paramMap = new LinkedHashMap<>();
+
+          try {
+            @NotNull Val val = GDataToData.transform((DatumType) opModelProjection.type(), defaultValue, resolver);
+            final Datum datum = val.getDatum();
+            if (datum == null)
+              context.addError(
+                  "Malformed default value in op projection for parameter '" + paramName + "'",
+                  paramsLocation
+              );
+            else
+              paramMap.put(paramName, new ReqParam(paramName, datum, TextLocation.UNKNOWN));
+          } catch (GDataToData.ProcessingException e) {
+            throw new PsiProcessingException(e, paramsLocation, context);
+          }
+        }
+      }
     }
 
     return ReqParams.fromMap(paramMap);
@@ -295,7 +359,7 @@ public final class UrlProjectionsPsiParserUtil {
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (reqParamPsi != null) {
-      if (reqParamsMap == null) reqParamsMap = new HashMap<>();
+      if (reqParamsMap == null) reqParamsMap = new LinkedHashMap<>();
 
       String name = reqParamPsi.getQid().getCanonicalName();
       OpParam opParam = opParams.asMap().get(name);
@@ -317,18 +381,20 @@ public final class UrlProjectionsPsiParserUtil {
       final DatumTypeApi model = projection.type();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
-      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), model, subResolver, errorMsgPrefix, context);
+      @Nullable Datum value = getDatum(reqParamPsi.getDatum(), projection, subResolver, errorMsgPrefix, context);
       if (value == null) {
         final GDatum gDatum = projection.defaultValue();
         if (gDatum != null)
           try {
-            value = (Datum) GDataToData.transform((DatumType) projection.type(), gDatum, resolver);
+            Val val = GDataToData.transform((DatumType) projection.type(), gDatum, resolver);
+            value = val.getDatum();
           } catch (GDataToData.ProcessingException e) {
             throw new PsiProcessingException(e, reqParamPsi, context);
           }
       }
 
-      // todo validate value against input projection
+      if (value == null && opParam.projection().required())
+        context.addError("Required parameter '" + opParam.name() + "' value is missing", reqParamPsi.getQid());
 
       reqParamsMap.put(name, new ReqParam(name, value, EpigraphPsiUtil.getLocation(reqParamPsi)));
     }

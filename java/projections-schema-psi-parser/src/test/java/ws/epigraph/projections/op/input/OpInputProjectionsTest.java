@@ -28,7 +28,9 @@ import ws.epigraph.schema.parser.psi.SchemaOpInputVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static ws.epigraph.test.TestUtil.*;
 
 /**
@@ -74,13 +76,25 @@ public class OpInputProjectionsTest {
   }
 
   @Test
+  public void testParseDefaultRequired() throws PsiProcessingException {
+    testParsingVarProjection(":`record` { default: { firstName: \"John\" } } ( id, firstName )");
+
+    try {
+      testParsingVarProjection(":`record` { default: { firstName: \"John\" } } ( +id, firstName )");
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError error) {
+      assertTrue(error.getMessage().contains("Required field 'id' is missing"));
+    }
+  }
+
+  @Test
   public void testParseMultipleTags() throws PsiProcessingException {
     testParsingVarProjection(":( +id, `record` )");
   }
 
   @Test
   public void testParseRecursive() throws PsiProcessingException {
-    testParsingVarProjection( "$self = :( id, `record` ( id, bestFriend $self ) )" );
+    testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
   }
 
   @Test
@@ -212,10 +226,12 @@ public class OpInputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(context -> {
-      OpInputReferenceContext varReferenceContext = new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(context, varReferenceContext);
+      OpInputReferenceContext varReferenceContext =
+          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      OpInputPsiProcessingContext inputPsiProcessingContext =
+          new OpInputPsiProcessingContext(context, varReferenceContext);
 
-      OpInputVarProjection vp =  OpInputProjectionsPsiParser.parseVarProjection(
+      OpInputVarProjection vp = OpInputProjectionsPsiParser.parseVarProjection(
           varDataType,
           psiVarProjection,
           resolver,

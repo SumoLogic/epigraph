@@ -13,6 +13,7 @@ record PersonRecord {
   id: PersonId { avroField = "personId", dbColumn = "ID", dbType = "BIGINT" }
   firstName: String
   lastName: String
+  middleName: String
   bestFriend: Person
   bestFriend2: Person
   bestFriend3: Person

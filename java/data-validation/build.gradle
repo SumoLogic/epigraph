@@ -22,13 +22,15 @@ dependencies {
 
   compile 'org.jetbrains:annotations'
 
-  testCompile project(':epigraph-java-gdata-schema-psi-parser')
-  testCompile project(':epigraph-java-projections-schema-psi-parser')
-  testCompile project(':epigraph-java-projections-url-psi-parser')
-  testCompile project(':epigraph-java-request-url-parser')
-  testCompile project(':epigraph-java-test-util')
-  testCompile project(':tests-schema-java')
-  testCompile 'junit:junit'
-  testCompile 'org.slf4j:slf4j-nop'
-  testCompile 'com.io7m.jpplib:io7m-jpplib-core'
+  // tests are in java/tests
+  
+//  testCompile project(':epigraph-java-gdata-schema-psi-parser')
+//  testCompile project(':epigraph-java-projections-schema-psi-parser')
+//  testCompile project(':epigraph-java-projections-url-psi-parser')
+//  testCompile project(':epigraph-java-request-url-parser')
+//  testCompile project(':epigraph-java-test-util')
+//  testCompile project(':tests-schema-java')
+//  testCompile 'junit:junit'
+//  testCompile 'org.slf4j:slf4j-nop'
+//  testCompile 'com.io7m.jpplib:io7m-jpplib-core'
 }

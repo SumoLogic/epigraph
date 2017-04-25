@@ -44,12 +44,6 @@ public class SchemaOpParamImpl extends ASTWrapperPsiElement implements SchemaOpP
 
   @Override
   @Nullable
-  public SchemaDatum getDatum() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDatum.class);
-  }
-
-  @Override
-  @Nullable
   public SchemaOpInputModelProjection getOpInputModelProjection() {
     return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class);
   }
@@ -70,12 +64,6 @@ public class SchemaOpParamImpl extends ASTWrapperPsiElement implements SchemaOpP
   @Nullable
   public PsiElement getColon() {
     return findChildByType(S_COLON);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getEq() {
-    return findChildByType(S_EQ);
   }
 
   @Override
