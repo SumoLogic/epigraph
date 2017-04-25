@@ -102,7 +102,6 @@ public class OpOutputProjectionsTest {
         expected
     );
 
-    // todo fix record formatting, map braces alignment too
     testTailsNormalization(
         projectionStr,
         SubUser.type,
@@ -292,6 +291,25 @@ public class OpOutputProjectionsTest {
         .projection();
 
     assertEquals(2, rmp.fieldProjections().size());
+  }
+
+  @Test
+  public void testNormalizeDiamond() throws PsiProcessingException {
+    final OpOutputVarProjection vp = testParsingVarProjection(
+        lines(
+            ":`record` ( id )",
+            "  ~(",
+            "    ws.epigraph.tests.UserRecord ( firstName ) ~ws.epigraph.tests.UserRecord3 ( diamond ),",
+            "    ws.epigraph.tests.UserRecord2 ( lastName ) ~ws.epigraph.tests.UserRecord3 ( diamond )",
+            "  )"
+        )
+    );
+    //noinspection ConstantConditions
+    final OpOutputModelProjection<?, ?, ?> mp = vp.singleTagProjection().projection();
+    final OpOutputModelProjection<?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type, false);
+
+    String p = printOpOutputModelProjection(normalized);
+    assertEquals("( diamond, firstName, id )", p); // but not `lastName`!
   }
 
   @Test

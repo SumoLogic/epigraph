@@ -31,6 +31,7 @@ import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
@@ -371,6 +372,15 @@ public final class TestUtil {
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
     printer.printVar(projection, 0);
+    layouter.close();
+    return sb.getString();
+  }
+
+  public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?> projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
+    printer.printModel(projection, 0);
     layouter.close();
     return sb.getString();
   }
