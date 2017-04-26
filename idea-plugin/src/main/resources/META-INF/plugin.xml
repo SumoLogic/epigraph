@@ -72,9 +72,9 @@
     <lang.formatter language="epigraph_schema"
                     implementationClass="ws.epigraph.ideaplugin.schema.formatting.SchemaFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider
-        implementation="ws.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaLanguageCodeStyleSettingsProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.formatting.codestyle.SchemaLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider
-        implementation="ws.epigraph.ideaplugin.schema.formatting.codeStyle.SchemaCodeStyleSettingsProvider"/>
+        implementation="ws.epigraph.ideaplugin.schema.formatting.codestyle.SchemaCodeStyleSettingsProvider"/>
 
     <lang.findUsagesProvider language="epigraph_schema"
                              implementationClass="ws.epigraph.ideaplugin.schema.features.usages.SchemaFindUsagesProvider"/>

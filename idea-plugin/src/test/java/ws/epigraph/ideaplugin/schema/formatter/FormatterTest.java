@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.ideaplugin.schema.formatter;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 /**
@@ -36,11 +37,15 @@ public class FormatterTest extends LightCodeInsightFixtureTestCase {
 
     new WriteCommandAction.Simple<Void>(getProject()) {
       @Override
-      protected void run() throws Throwable {
+      protected void run() throws com.intellij.util.IncorrectOperationException {
         CodeStyleManager.getInstance(getProject()).reformat(myFixture.getFile());
       }
     }.execute();
 
-    myFixture.checkResultByFile("FormatterTest-out.epigraph");
+    try {
+      myFixture.checkResultByFile("FormatterTest-out.epigraph");
+    } catch (FileComparisonFailure fce) {
+      fail(fce.getMessage());
+    }
   }
 }

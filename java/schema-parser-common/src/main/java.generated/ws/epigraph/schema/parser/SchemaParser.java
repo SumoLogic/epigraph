@@ -1106,7 +1106,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (enumMemberBodyPar ','?)* '}'
+  // '{' (enumMemberBodyPart ','?)* '}'
   static boolean enumMemberBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -1120,7 +1120,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (enumMemberBodyPar ','?)*
+  // (enumMemberBodyPart ','?)*
   private static boolean enumMemberBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody_1")) return false;
     int c = current_position_(b);
@@ -1132,12 +1132,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // enumMemberBodyPar ','?
+  // enumMemberBodyPart ','?
   private static boolean enumMemberBody_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberBody_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = enumMemberBodyPar(b, l + 1);
+    r = enumMemberBodyPart(b, l + 1);
     r = r && enumMemberBody_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1152,27 +1152,34 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // annotation
-  static boolean enumMemberBodyPar(PsiBuilder b, int l) {
-    return annotation(b, l + 1);
+  static boolean enumMemberBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, partRecover_parser_);
+    return r;
   }
 
   /* ********************************************************** */
-  // qid enumMemberBody?
+  // qid ':' dataValue enumMemberBody?
   public static boolean enumMemberDecl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumMemberDecl")) return false;
     if (!nextTokenIs(b, S_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_ENUM_MEMBER_DECL, null);
     r = qid(b, l + 1);
-    p = r; // pin = 1
-    r = r && enumMemberDecl_1(b, l + 1);
+    r = r && consumeToken(b, S_COLON);
+    p = r; // pin = 2
+    r = r && report_error_(b, dataValue(b, l + 1));
+    r = p && enumMemberDecl_3(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // enumMemberBody?
-  private static boolean enumMemberDecl_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumMemberDecl_1")) return false;
+  private static boolean enumMemberDecl_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumMemberDecl_3")) return false;
     enumMemberBody(b, l + 1);
     return true;
   }
@@ -1268,24 +1275,26 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'enum' typeName metaDecl? enumTypeBody
+  // 'enum' '[' valueTypeRef ']' typeName metaDecl? enumTypeBody
   public static boolean enumTypeDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumTypeDef")) return false;
     if (!nextTokenIs(b, S_ENUM)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_ENUM_TYPE_DEF, null);
-    r = consumeToken(b, S_ENUM);
+    r = consumeTokens(b, 1, S_ENUM, S_BRACKET_LEFT);
     p = r; // pin = 1
-    r = r && report_error_(b, typeName(b, l + 1));
-    r = p && report_error_(b, enumTypeDef_2(b, l + 1)) && r;
+    r = r && report_error_(b, valueTypeRef(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, S_BRACKET_RIGHT)) && r;
+    r = p && report_error_(b, typeName(b, l + 1)) && r;
+    r = p && report_error_(b, enumTypeDef_5(b, l + 1)) && r;
     r = p && enumTypeBody(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // metaDecl?
-  private static boolean enumTypeDef_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "enumTypeDef_2")) return false;
+  private static boolean enumTypeDef_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "enumTypeDef_5")) return false;
     metaDecl(b, l + 1);
     return true;
   }

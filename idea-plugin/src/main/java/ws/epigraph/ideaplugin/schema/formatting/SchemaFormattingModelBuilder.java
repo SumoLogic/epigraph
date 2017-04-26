@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import ws.epigraph.schema.parser.SchemaLanguage;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import org.jetbrains.annotations.NotNull;
@@ -53,11 +54,16 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     spacingBuilder.between(S_ANON_LIST, S_QID).spaces(1);
 
     for (IElementType type : SchemaParserDefinition.KEYWORDS.getTypes()) {
-      if (type != S_LIST && type != S_MAP)
+      if (type != S_LIST && type != S_MAP && type != S_ENUM)
         spacingBuilder.after(type).spaces(1);
     }
 
     // TODO this should be configurable
+
+    spacingBuilder.between(S_BRACKET_RIGHT, S_QID).spaces(1); // enum[Foo] bar
+    // one space between enum members
+    TokenSet enumMember = TokenSet.create(S_ENUM_MEMBER_DECL, S_ANNOTATION);
+    spacingBuilder.between(enumMember, enumMember).spaces(1);
 
     spacingBuilder.between(S_QID, S_CURLY_LEFT).spaces(1);
 

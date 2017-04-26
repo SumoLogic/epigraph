@@ -13,7 +13,7 @@ list[list[Bar]] bars
 
 abstract record E
 
-enum E {
-  A B
-  C
+enum[String] E {
+  A = "foo" B: "bar"
+  C: "baz"
 }

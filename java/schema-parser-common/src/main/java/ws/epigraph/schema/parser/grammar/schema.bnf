@@ -284,7 +284,7 @@ private mapTypeBodyPart ::= annotation
 /// enum
 
 // abstract?
-enumTypeDef ::= 'enum' typeName metaDecl? enumTypeBody { // extends?
+enumTypeDef ::= 'enum' '[' valueTypeRef ']' typeName metaDecl? enumTypeBody {
   extends="ws.epigraph.schema.parser.psi.impl.SchemaEnumTypeDefImplBase"
   stubClass="ws.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStub"
   elementTypeClass="ws.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStubElementType"
@@ -295,14 +295,14 @@ enumTypeBody ::= '{' (enumTypeBodyPart ','?)* '}' {
 //  recoverWhile = defRecover
 }
 private enumTypeBodyPart ::= annotation | enumMemberDecl { recoverWhile = enumPartRecover }
-enumMemberDecl ::= qid enumMemberBody? {
+enumMemberDecl ::= qid ':' dataValue enumMemberBody? {
   implements=["ws.epigraph.schema.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="ws.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
   methods=[getName setName getNameIdentifier]
-  pin=1
+  pin=2
 }
-private enumMemberBody ::='{' (enumMemberBodyPar ','?)* '}'
-private enumMemberBodyPar ::= annotation
+private enumMemberBody ::='{' (enumMemberBodyPart ','?)* '}'
+private enumMemberBodyPart ::= annotation
 
 private enumPartRecover ::= ! (',' | qid | '}')
 
