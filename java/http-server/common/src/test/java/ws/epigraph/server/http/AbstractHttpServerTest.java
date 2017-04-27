@@ -16,11 +16,12 @@
 
 package ws.epigraph.server.http;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mashape.unirest.request.BaseRequest;
-import com.mashape.unirest.request.HttpRequestWithBody;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.service.Service;
@@ -30,6 +31,7 @@ import ws.epigraph.tests.UserResourceFactory;
 import ws.epigraph.tests.UsersResourceFactory;
 import ws.epigraph.tests.UsersStorage;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -61,27 +63,27 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testEmptyRequest() throws UnirestException {
+  public void testEmptyRequest() throws IOException {
     get("", 400, "Bad URL format. Supported resources: {/user, /users}");
   }
 
   @Test
-  public void testSimplePrimitiveGet() throws UnirestException {
+  public void testSimplePrimitiveGet() throws IOException {
     get("/users/1:id", 200, "1");
   }
 
   @Test
-  public void testSimpleNotFound() throws UnirestException {
+  public void testSimpleNotFound() throws IOException {
     get("/users/123:id", 404, "{'ERROR':404,'message':'key ''123'' not found'}");
   }
 
   @Test
-  public void testSimpleGet() throws UnirestException {
+  public void testSimpleGet() throws IOException {
     get("/users/1:record(id,firstName)", 200, "{'id':1,'firstName':'First1'}");
   }
 
   @Test
-  public void testPolymorphicGet() throws UnirestException {
+  public void testPolymorphicGet() throws IOException {
     get(
         "/users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~~User:record(profile)))",
         200,
@@ -95,7 +97,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testGetWithMeta() throws UnirestException {
+  public void testGetWithMeta() throws IOException {
     get(
         "/users;start=5;count=10[1](:id)@(start,count)",
         200,
@@ -104,7 +106,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testPathPolyGet() throws UnirestException {
+  public void testPathPolyGet() throws IOException {
     get(
         "/user:record(firstName)~~User:record(profile)",
         200,
@@ -113,7 +115,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testPathPolyGetRequired() throws UnirestException {
+  public void testPathPolyGetRequired() throws IOException {
     get(
         "/user:record(firstName)~~User:record(+profile)",
         412,
@@ -122,7 +124,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testPolyRequiredButAbsent() throws UnirestException {
+  public void testPolyRequiredButAbsent() throws IOException {
     get(
         "/user:record(friends*(:record(firstName)~~User:record(+profile)))",
         520,
@@ -131,7 +133,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testRequiredInsideOptional() throws UnirestException {
+  public void testRequiredInsideOptional() throws IOException {
     get(
         "/users/10:record(+firstName,worstEnemy(+firstName))",
         200,
@@ -140,7 +142,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testCreateReadUpdateDelete() throws UnirestException {
+  public void testCreateReadUpdateDelete() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;
 
@@ -155,7 +157,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testCreateWithRequired() throws UnirestException {
+  public void testCreateWithRequired() throws IOException {
     post(
         null,
         "/users",
@@ -166,7 +168,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testUpdateWithRequiredNoReqProjection() throws UnirestException {
+  public void testUpdateWithRequiredNoReqProjection() throws IOException {
     put(
         "/users",
         "[{'K':1,'V':{'record':{'lastName':'Bruce2'}}}]",
@@ -177,7 +179,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testUpdateWithRequiredReqProjection() throws UnirestException {
+  public void testUpdateWithRequiredReqProjection() throws IOException {
     put(
         "/users<[1]:record(lastName)",
         "[{'K':1,'V':{'record':{'lastName':'Bruce2'}}}]",
@@ -188,7 +190,7 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
-  public void testCustom() throws UnirestException {
+  public void testCustom() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;
 
@@ -210,10 +212,18 @@ public abstract class AbstractHttpServerTest {
     p.toImmutable();
   }
 
-  protected void get(String requestUri, int expectedStatus, String expectedBody) throws UnirestException {
-    final HttpResponse<String> response = Unirest.get(url(requestUri)).asString();
-    final String actualBody = response.getBody().trim();
-    assertEquals(actualBody, expectedStatus, response.getStatus());
+  protected void get(String requestUri, int expectedStatus, String expectedBody) throws IOException {
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpGet httpGet = new HttpGet(url(requestUri));
+    final CloseableHttpResponse response = httpClient.execute(httpGet);
+
+    int status = response.getStatusLine().getStatusCode();
+    final HttpEntity entity = response.getEntity();
+    String actualBody = EntityUtils.toString(entity).trim();
+    response.close();
+    httpClient.close();
+
+    assertEquals(actualBody, expectedStatus, status);
 
     String eb = unescape(expectedBody);
     assertEquals(eb, actualBody);
@@ -224,20 +234,23 @@ public abstract class AbstractHttpServerTest {
       String requestUri,
       String requestBody,
       int expectedStatus,
-      String expectedBodyRegex)
-      throws UnirestException {
+      String expectedBodyRegex) throws IOException {
 
-    HttpRequestWithBody requestWithBody = Unirest.post(url(requestUri));
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpPost httpPost = new HttpPost(url(requestUri));
     if (operationName != null)
-      requestWithBody = requestWithBody.header(RequestHeaders.OPERATION_NAME, operationName);
+      httpPost.addHeader(RequestHeaders.OPERATION_NAME, operationName);
+    if (requestBody != null)
+      httpPost.setEntity(new StringEntity(unescape(requestBody)));
+    CloseableHttpResponse response = httpClient.execute(httpPost);
 
-    final BaseRequest request =
-        requestBody == null ? requestWithBody : requestWithBody.body(unescape(requestBody));
+    int status = response.getStatusLine().getStatusCode();
+    final HttpEntity entity = response.getEntity();
+    String actualBody = EntityUtils.toString(entity).trim();
+    response.close();
+    httpClient.close();
 
-    final HttpResponse<String> response = request.asString();
-
-    final String actualBody = response.getBody().trim();
-    assertEquals(actualBody, expectedStatus, response.getStatus());
+    assertEquals(actualBody, expectedStatus, status);
     Pattern p = Pattern.compile(unescape(expectedBodyRegex));
     final Matcher matcher = p.matcher(actualBody);
     assertTrue(actualBody, matcher.matches());
@@ -245,11 +258,24 @@ public abstract class AbstractHttpServerTest {
   }
 
   private void put(String requestUri, String requestBody, int expectedStatus, String expectedBody, boolean isBodyRegex)
-      throws UnirestException {
+      throws IOException {
 
-    final HttpResponse<String> response = Unirest.put(url(requestUri)).body(unescape(requestBody)).asString();
-    final String actualBody = response.getBody().trim();
-    assertEquals(actualBody, expectedStatus, response.getStatus());
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpPut httpPut = new HttpPut(url(requestUri));
+//    if (operationName != null)
+//      httpPost.addHeader(RequestHeaders.OPERATION_NAME, operationName);
+    if (requestBody != null)
+      httpPut.setEntity(new StringEntity(unescape(requestBody)));
+    CloseableHttpResponse response = httpClient.execute(httpPut);
+
+    int status = response.getStatusLine().getStatusCode();
+    final HttpEntity entity = response.getEntity();
+    String actualBody = EntityUtils.toString(entity).trim();
+    response.close();
+    httpClient.close();
+
+    assertEquals(actualBody, expectedStatus, status);
+
     final String expected = unescape(expectedBody);
     if (isBodyRegex) {
       Pattern p = Pattern.compile(expected, Pattern.DOTALL);
@@ -260,12 +286,21 @@ public abstract class AbstractHttpServerTest {
     }
   }
 
-  private void delete(String requestUri, int expectedStatus, String expectedBody)
-      throws UnirestException {
+  private void delete(String requestUri, int expectedStatus, String expectedBody) throws IOException {
 
-    final HttpResponse<String> response = Unirest.delete(url(requestUri)).asString();
-    final String actualBody = response.getBody().trim();
-    assertEquals(actualBody, expectedStatus, response.getStatus());
+    CloseableHttpClient httpClient = HttpClients.createDefault();
+    HttpDelete httpDelete = new HttpDelete(url(requestUri));
+//    if (operationName != null)
+//      httpPost.addHeader(RequestHeaders.OPERATION_NAME, operationName);
+    CloseableHttpResponse response = httpClient.execute(httpDelete);
+
+    int status = response.getStatusLine().getStatusCode();
+    final HttpEntity entity = response.getEntity();
+    String actualBody = EntityUtils.toString(entity).trim();
+    response.close();
+    httpClient.close();
+
+    assertEquals(actualBody, expectedStatus, status);
     assertEquals(expectedBody/*.replace("'", "\"")*/, actualBody);
   }
 
@@ -274,13 +309,7 @@ public abstract class AbstractHttpServerTest {
   private String url(String requestUri, String query) {
     try {
       URI uri = new URI("http", null, HOST, port(), requestUri, query, null);
-      String uriString = uri.toURL().toString();
-
-      // todo replace unirest by something better
-      // unirest bug https://github.com/Mashape/unirest-java/issues/158 (converts plus to %20 in path)
-      uriString = uriString.replace("+", "%2b");
-
-      return uriString;
+      return uri.toURL().toString();
     } catch (URISyntaxException | MalformedURLException e) {
       throw new RuntimeException(e);
     }

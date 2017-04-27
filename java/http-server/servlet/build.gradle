@@ -32,7 +32,7 @@ dependencies {
 
   testCompile project(':epigraph-java-http-server-common').sourceSets.test.output
   testCompile project(':tests-schema-java')
-  testCompile 'com.mashape.unirest:unirest-java'
+  testCompile 'org.apache.httpcomponents:httpclient'
   testCompile 'junit:junit'
   testCompile 'org.eclipse.jetty:jetty-rewrite'
   testCompile 'org.eclipse.jetty:jetty-server'

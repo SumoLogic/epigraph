@@ -30,7 +30,7 @@ dependencies {
   testCompile project(':epigraph-java-schema-psi-parser')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
-  testCompile 'com.mashape.unirest:unirest-java'
+  testCompile 'org.apache.httpcomponents:httpclient'
   testCompile 'junit:junit'
   testCompile 'org.slf4j:slf4j-nop'
 }
