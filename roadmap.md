@@ -55,8 +55,8 @@
 ### 2. Schema language
   * [x] Human-authorable
   * [x] Computer-readable
-  * [ ] Extensible with custom attributes:
-    + [ ] Attribute data language
+  * [x] Extensible with custom attributes:
+    + [x] Attribute data language
     + [ ] Data validation (for known attribute types)
     + [ ] Data well-formedness (for attributes of unknown types)
   * Data type modifiers:
@@ -68,7 +68,7 @@
       + [ ] compiler checks
   * Var type member modifiers:
     + [ ] `abstract`? (subtypes must provide their own (refined) declaration of the member)
-    + [ ] `override` (var type member must be already known in the supertype(s))
+    + [x] `override` (var type member must be already known in the supertype(s))
   * [ ] Naming conventions for:
     * [x] Namespaces
     * [x] Types
@@ -79,7 +79,7 @@
     * [x] Type members (tags)
 
 ### 3. Schema authoring plugin(s)
-  * [ ] File extension (.epigraph - EpigraphSChema? .epigraph?)
+  * [x] File extension (.epigraph - EpigraphSChema? .epigraph?)
   * [x] IntelliJ IDEA Plugin
     * [x] Schema syntax highlighting and validation
     * [x] Embedded data language highlighting and validation
@@ -100,7 +100,7 @@
       * [ ] Staticly-typed projections
     * [ ] JavaScript
     * [ ] Scala?
-  * [ ] Gradle plugin
+  * [x] Gradle plugin
   * [ ] IDEA plugin
 
 ### 6. Java bindings
@@ -118,7 +118,6 @@
 ### 8.
 
 ### 9. IDL (Merged with Schema)
-  * [x] ~~File extension (.sdl - Service Description Language? .scl - Service Contract Language?)~~
   * [x] Resources
   * [x] Operations
     * [x] Read
@@ -134,8 +133,8 @@
 
 ### 11. HTTP Service
   * [x] Undertow
-  * [ ] Servlet
-    * [ ] Async Servlet
+  * [x] Async Servlet
+  * [x] Jetty handler
 
 ### 12. Wire/serialization formats
   * [x] JSON

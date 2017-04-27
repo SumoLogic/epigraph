@@ -24,6 +24,9 @@
       Epigraph framework support
     ]]></description>
 
+  <!-- makes it comptible with all platform products -->
+  <!-- but throws exceptions if CompilerManager is not available (we're using icons from it) -->
+  <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="plugin-uml.xml">com.intellij.diagram</depends>
 
   <change-notes><![CDATA[

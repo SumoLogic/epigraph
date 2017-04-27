@@ -5,25 +5,26 @@
 # Framework
 - JSON marshaller
   -[x] metadata support
-  -[ ] recursive data support
+  -[x] recursive data support
 - JSON unmarshaller
   -[x] metadata support
-  -[ ] recursive data support
-- [ ] Format for parameter values in URL. Currently: GData with single quotes.
+  -[x] recursive data support
+- [x] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
 - [x] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
 - [ ] Recursive GData support? GData snippets in schema?
-- [ ] data trimmer
+- [ ] data trimmer (currently unused since marshallers trim data anyways)
   - [ ] generify
   - [ ] should support recursive data
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
 - [ ] Feature: add support for resource overlays? adding operations to other resources (e.g. with paths)
 - [ ] generated builders should have some form of inheritance
-- [ ] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
+- [x] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
-- [ ] operations codegen: parameter accessors should be non-null for requried parameters
+- [x] operations codegen: parameter accessors should be non-null for requried parameters
 - [ ] `OperationFilterChains`: add filters that ensure req<->op validity
+- [ ] Feature: Wrap `Data` in Futures to support async operations
 
 # Type system
 - [ ] Enums
@@ -49,7 +50,7 @@
   - [ ] Change codegen to use scala versions
   - [ ] Remove ctypes -> types API bridge
   - [ ] Remove types API?
-  - [ ] Revert gradle/maven build changes added to avoid circular dependencies
+  - [ ] Revert gradle/maven build changes added to avoid circular dependencies (see `compiler` build files)
 
 # Maven plugin
 - [ ] use slf4j for logging
@@ -63,11 +64,11 @@
   - [ ] update parser
   - [ ] input parser
   - [ ] delete parser
-- [ ] Perform full tails normalization in parsers
+- [ ] ~~Perform full tails normalization in parsers~~
 - [x] Unify req projections pretty printers, there's lots of code duplication
 - [x] Unify op projections pretty printers, there's lots of code duplication
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
-- [ ] generated req projections: cache normalized projections?
+- [ ] ~~generated req projections: cache normalized projections?~~ (cached in `AbstractVarProjection`)
 - [x] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing
 - [ ] ~~remove type information from projections?~~
   - [ ] ~~record projections should contain a String->FP, not String->FPE map~~
@@ -75,7 +76,7 @@
 - [x] correct `equals` support, see todo on `AbstractVarProjection.equals`
 - [x] enable real named model projections. Currently they can't be used for tags, meta or model tails
 - [x] allow attaching tails to references? e.g. `$foo ~Bar(..)`
-- [ ] enable model projection references for req projections
+- [x] enable model projection references for req projections
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)

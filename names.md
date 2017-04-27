@@ -17,6 +17,14 @@ CType ( acts as Union too )
 ```
 `CDataType` = `CTypeRef` + `defaultTagNameDecl`
 
+```
+CDataValue
+├──CData
+└──CDatum
+```
+
+`CRecordDatum` fields: `String` -> `CDataValue`
+
 ## Data
 
 `Data` ( tag -> `Val`)  
@@ -33,16 +41,16 @@ field value: `Data`
 
 ```
 Type
-├──VarType
+├──DataType
 └──DatumType
 ```
-`EntryType` = `Type` + `retroTag`
+~~`EntryType` = `Type` + `retroTag`~~
 
 ## Data
 
-`VarData` ( tag -> `Value` )  
-`Value` ( `Datum` / `ErrorValue` )  
+`Data` ( tag -> `Holder` )  
+`Holder` ( `Datum` / `ErrorValue` )  
 `Datum`
 
-field type: `EntryType`  
-field value: `VarData`
+field type: `Type`?  
+field value: `Data`
