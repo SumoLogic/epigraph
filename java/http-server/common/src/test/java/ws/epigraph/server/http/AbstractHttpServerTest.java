@@ -48,6 +48,8 @@ public abstract class AbstractHttpServerTest {
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
 
+  protected int port() { return PORT; }
+
   protected static @NotNull Service buildUsersService() throws ServiceInitializationException {
     return new Service(
         "users",
@@ -208,7 +210,7 @@ public abstract class AbstractHttpServerTest {
     p.toImmutable();
   }
 
-  private void get(String requestUri, int expectedStatus, String expectedBody) throws UnirestException {
+  protected void get(String requestUri, int expectedStatus, String expectedBody) throws UnirestException {
     final HttpResponse<String> response = Unirest.get(url(requestUri)).asString();
     final String actualBody = response.getBody().trim();
     assertEquals(actualBody, expectedStatus, response.getStatus());
@@ -271,9 +273,10 @@ public abstract class AbstractHttpServerTest {
 
   private String url(String requestUri, String query) {
     try {
-      URI uri = new URI("http", null, HOST, PORT, requestUri, query, null);
+      URI uri = new URI("http", null, HOST, port(), requestUri, query, null);
       String uriString = uri.toURL().toString();
 
+      // todo replace unirest by something better
       // unirest bug https://github.com/Mashape/unirest-java/issues/158 (converts plus to %20 in path)
       uriString = uriString.replace("+", "%2b");
 

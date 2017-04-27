@@ -111,8 +111,7 @@ public abstract class EpigraphServlet extends HttpServlet {
 
   protected void handleRequest(HttpMethod method, HttpServletRequest req, HttpServletResponse resp) {
     try {
-      final String requestUri = req.getRequestURI();
-      final String decodedUri = Util.decodeUri(requestUri);
+      final String decodedUri = Util.decodeUri(req.getRequestURI(), req.getContextPath(), req.getServletPath());
 
       final AsyncContext asyncContext = req.startAsync();
       asyncContext.setTimeout(responseTimeout);

@@ -34,6 +34,7 @@ dependencies {
   testCompile project(':tests-schema-java')
   testCompile 'com.mashape.unirest:unirest-java'
   testCompile 'junit:junit'
+  testCompile 'org.eclipse.jetty:jetty-rewrite'
   testCompile 'org.eclipse.jetty:jetty-server'
   testCompile 'org.eclipse.jetty:jetty-servlet'
   testCompile 'org.slf4j:slf4j-simple'

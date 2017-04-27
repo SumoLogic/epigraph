@@ -91,9 +91,10 @@ public class EpigraphJettyHandler extends AbstractHandler {
       response.setStatus(400);
       response.getWriter().write("Invalid HTTP method '" + request.getMethod() + "'");
     } else {
-      String originalUri = baseRequest.getRequestURI();
       try {
-        final String decodedUri = Util.decodeUri(originalUri);
+        final String decodedUri =
+            Util.decodeUri(baseRequest.getRequestURI(), request.getContextPath(), request.getServletPath());
+
         final AsyncContext asyncContext = request.startAsync();
         if (responseTimeout > 0)
           asyncContext.setTimeout(responseTimeout);

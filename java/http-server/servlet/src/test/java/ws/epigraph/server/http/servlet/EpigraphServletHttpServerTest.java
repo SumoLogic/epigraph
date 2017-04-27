@@ -16,12 +16,15 @@
 
 package ws.epigraph.server.http.servlet;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import ws.epigraph.server.http.AbstractHttpServerTest;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -35,30 +38,62 @@ import javax.servlet.ServletConfig;
 public class EpigraphServletHttpServerTest extends AbstractHttpServerTest {
   private static Server jettyServer;
 
-//  @Override
-//  public void testGetWithMeta() throws UnirestException {
-    // disabled due to buggy URI parser in Jetty
-//  }
+  private int port = PORT;
 
   public static void main(String[] args) throws Exception {
     start();
+//    jettyServer = startWithRewrite(PORT);
     jettyServer.join();
   }
+
+  @Override
+  protected int port() { return port; }
 
   @BeforeClass
   public static void start() throws Exception {
     jettyServer = new Server(PORT);
-    ServletHandler handler = new ServletHandler();
-    jettyServer.setHandler(handler);
 
+    ServletHandler handler = new ServletHandler();
     handler.addServletWithMapping(TestServlet.class, "/*");
 
+    jettyServer.setHandler(handler);
     jettyServer.start();
+  }
+
+  // example of setting up URI rewrite filter before Epigraph servlet
+  public static Server startWithRewrite(int port) throws Exception {
+    Server server = new Server(port);
+
+    ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    contextHandler.setContextPath("/api");
+    contextHandler.addServlet(TestServlet.class, "/epigraph/*");
+
+    RewriteHandler rewriteHandler = new RewriteHandler();
+    rewriteHandler.addRule(new RewriteRegexRule("(.*?)/getUser/(.*)", "$1/epigraph/users/$2:record(firstName,lastName)"));
+    rewriteHandler.setHandler(contextHandler);
+
+    server.setHandler(rewriteHandler);
+    server.start();
+    return server;
   }
 
   @AfterClass
   public static void stop() throws Exception {
     jettyServer.stop();
+  }
+
+  @Test
+  public void testWithRewrite() throws Exception {
+    port = PORT+1;
+    Server server = startWithRewrite(port);
+
+    try {
+      get("/api/epigraph/users[2]:record(firstName,lastName)",200,"[{\"K\":2,\"V\":{\"firstName\":\"First2\",\"lastName\":\"Last2\"}}]");
+      get("/api/getUser/2",200,"{\"firstName\":\"First2\",\"lastName\":\"Last2\"}");
+    } finally {
+      server.stop();
+    }
+
   }
 
   public static class TestServlet extends EpigraphServlet {

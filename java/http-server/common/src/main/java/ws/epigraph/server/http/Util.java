@@ -19,6 +19,7 @@ package ws.epigraph.server.http;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.service.Service;
 import ws.epigraph.url.parser.psi.UrlUrl;
@@ -85,6 +86,22 @@ public final class Util {
     final String decodedQuery = _uri.getQuery();
 
     return decodedQuery == null ? decodedPath : decodedPath + "?" + decodedQuery;
+  }
+
+  public static @NotNull String decodeUri(
+      @NotNull String originalRequestUri,
+      @Nullable String contextPath,
+      @Nullable String servletPath) throws URISyntaxException {
+
+    String pathPrefix = "";
+    if (contextPath != null) pathPrefix = contextPath;
+    if (servletPath != null) pathPrefix += servletPath;
+
+    final String encodedUri = pathPrefix.isEmpty() //|| !originalRequestUri.startsWith(pathPrefix)
+                              ? originalRequestUri
+                              : originalRequestUri.substring(pathPrefix.length());
+
+    return decodeUri(encodedUri);
   }
 
   // async timeouts support. Use `onTimeout` instead once on JDK9
