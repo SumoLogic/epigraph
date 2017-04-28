@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.data;
+package ws.epigraph.gdata.validation;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.data.Data;
-import ws.epigraph.data.RecordDatum;
-import ws.epigraph.data.Val;
+import ws.epigraph.gdata.GData;
+import ws.epigraph.gdata.GRecordDatum;
 import ws.epigraph.projections.op.input.*;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.TypeKind;
+import ws.epigraph.refs.TypesResolver;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputDataValidator extends GenDataValidator<
+public class OpInputGDataValidator extends GenGDataValidator<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
     OpInputModelProjection<?, ?, ?, ?>,
@@ -39,35 +37,29 @@ public class OpInputDataValidator extends GenDataValidator<
     OpInputFieldProjection
     > {
 
+  public OpInputGDataValidator(final @NotNull TypesResolver resolver) {
+    super(resolver);
+  }
+
   @Override
-  protected void validateDataOnly(final @NotNull Data data, final @NotNull OpInputVarProjection projection) {
+  protected void validateDataOnly(final @NotNull GData data, final @NotNull OpInputVarProjection projection) {
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
-      final Val val = data._raw().tagValues().get(tagName);
-      if (val == null || val.getDatum() == null)
-        context.addError(String.format("Required tag '%s' is missing", tagName));
+      if (!data.tags().containsKey(tagName))
+        context.addError(String.format("Required tag '%s' is missing", tagName), data.location());
     });
   }
 
   @Override
   protected void validateRecordDatumOnly(
-      final @NotNull RecordDatum datum,
+      final @NotNull GRecordDatum datum,
       final @NotNull OpInputRecordModelProjection projection) {
-
     projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
-      final Data fieldData = datum._raw().fieldsData().get(fieldName);
-      boolean failed = fieldData == null;
-
-      if (!failed && fieldData.type().kind() != TypeKind.UNION) {
-        final Val val = fieldData._raw().tagValues().get(DatumType.MONO_TAG_NAME);
-        failed = val == null || val.getDatum() == null;
-      }
-
-      if (failed)
-        context.addError(String.format("Required field '%s' is missing", fieldName));
+      if (!datum.fields().containsKey(fieldName))
+        context.addError(String.format("Required field '%s' is missing", fieldName), datum.location());
     });
   }
 

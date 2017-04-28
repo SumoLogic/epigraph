@@ -25,8 +25,8 @@ import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
-import ws.epigraph.validation.data.DataValidationError;
-import ws.epigraph.validation.data.OpInputDataValidator;
+import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.data.validation.OpInputDataValidator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

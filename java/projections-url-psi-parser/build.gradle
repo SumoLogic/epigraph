@@ -18,7 +18,7 @@ apply plugin: 'java'
 
 dependencies {
   compile project(':epigraph-java-core')
-  compile project(':epigraph-java-data-validation')
+  compile project(':epigraph-java-data-processing')
   compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-projections')

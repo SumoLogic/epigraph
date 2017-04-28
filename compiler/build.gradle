@@ -37,7 +37,7 @@ dependencies {
 
   // dependencies for the copied code
   compile project(':epigraph-java-projections-psi-parser-util')
-  compile project(':epigraph-java-data-validation')
+  compile project(':epigraph-java-data-processing')
   compile project(':epigraph-java-schema-psi-parser-common')
 
   compile 'org.scala-lang:scala-library'

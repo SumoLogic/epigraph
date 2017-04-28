@@ -23,8 +23,8 @@ import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.operations.OperationResponse;
 import ws.epigraph.service.operations.UpdateOperationRequest;
-import ws.epigraph.validation.data.DataValidationError;
-import ws.epigraph.validation.data.OpInputDataValidator;
+import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.data.validation.OpInputDataValidator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

@@ -22,8 +22,8 @@ import ws.epigraph.invocation.OperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.validation.data.DataValidationError;
-import ws.epigraph.validation.data.ReqOutputDataValidator;
+import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.data.validation.ReqOutputDataValidator;
 
 import java.util.Collection;
 

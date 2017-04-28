@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.data;
+package ws.epigraph.data.validation;
 
 import org.jetbrains.annotations.NotNull;
 

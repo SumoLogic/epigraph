@@ -33,7 +33,7 @@
     <module>codegen-test</module>
     <module>codegen</module>
     <module>core</module>
-    <module>data-validation</module>
+    <module>data-processing</module>
     <module>gdata-schema-psi-parser</module>
     <module>gdata</module>
     <module>http-server</module>

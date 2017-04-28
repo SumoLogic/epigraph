@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-data-validation</artifactId>
+      <artifactId>epigraph-java-data-processing</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

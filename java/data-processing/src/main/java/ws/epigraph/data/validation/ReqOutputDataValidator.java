@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.data;
+package ws.epigraph.data.validation;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
@@ -22,7 +22,6 @@ import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
-import ws.epigraph.types.DatumType;
 import ws.epigraph.types.TypeKind;
 
 /**

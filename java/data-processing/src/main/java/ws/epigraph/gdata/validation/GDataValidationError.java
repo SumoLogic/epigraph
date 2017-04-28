@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.gdata;
+package ws.epigraph.gdata.validation;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;

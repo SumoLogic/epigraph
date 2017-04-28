@@ -19,7 +19,7 @@ package ws.epigraph.invocation.filters;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.validation.data.DataValidationError;
+import ws.epigraph.data.validation.DataValidationError;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

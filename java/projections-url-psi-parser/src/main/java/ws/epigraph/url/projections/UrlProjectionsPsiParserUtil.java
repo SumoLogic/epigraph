@@ -48,9 +48,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.*;
-import ws.epigraph.validation.data.OpInputDataValidator;
-import ws.epigraph.validation.gdata.GDataValidationError;
-import ws.epigraph.validation.gdata.OpInputGDataValidator;
+import ws.epigraph.gdata.validation.GDataValidationError;
+import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.util.*;
 

@@ -44,7 +44,7 @@ Map<String, String> modules = [
     'compiler'                            : 'epigraph-compiler',
     'java/codegen'                        : 'epigraph-java-codegen',
     'java/core'                           : 'epigraph-java-core',
-    'java/data-validation'                : 'epigraph-java-data-validation',
+    'java/data-processing'                : 'epigraph-java-data-processing',
     'java/gdata'                          : 'epigraph-java-gdata',
     'java/gdata-schema-psi-parser'        : 'epigraph-java-gdata-schema-psi-parser',
     'java/gradle-plugin'                  : 'epigraph-java-gradle-plugin',

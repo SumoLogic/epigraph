@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.gdata;
+package ws.epigraph.data.validation;
 
-import de.uka.ilkd.pp.Layouter;
-import de.uka.ilkd.pp.NoExceptions;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.gdata.GDataPrettyPrinter;
-import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.TextLocation;
+import ws.epigraph.data.Datum;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.types.DatumType;
+import ws.epigraph.types.FieldApi;
+import ws.epigraph.types.TagApi;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -32,9 +33,9 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GDataValidationContext {
+public class DataValidationContext {
   private final Deque<StackItem> stack = new ArrayDeque<>();
-  private final List<GDataValidationError> errors = new ArrayList<>();
+  private final List<DataValidationError> errors = new ArrayList<>();
 
   public void withStackItem(@NotNull StackItem item, @NotNull Runnable runnable) {
     stack.push(item);
@@ -45,15 +46,17 @@ public class GDataValidationContext {
     }
   }
 
-  public void addError(@NotNull String message, @NotNull TextLocation location) {
-    errors.add(new GDataValidationError(
+  public void addError(@NotNull String message) { errors.add(new DataValidationError(stack, message)); }
+
+  public void addOperationImplementationError(@NotNull String message) {
+    errors.add(new DataValidationError(
         stack,
-        location,
-        message
+        message,
+        true
     ));
   }
 
-  public @NotNull List<@NotNull GDataValidationError> errors() { return errors; }
+  public @NotNull List<@NotNull DataValidationError> errors() { return errors; }
 
   interface StackItem {
     @Override
@@ -61,36 +64,40 @@ public class GDataValidationContext {
   }
 
   public static class TagStackItem implements StackItem {
-    public final @NotNull String tag;
+    public final @NotNull TagApi tag;
 
-    TagStackItem(final @NotNull String tag) {this.tag = tag;}
+    TagStackItem(final @NotNull TagApi tag) {this.tag = tag;}
 
     @Override
-    public @NotNull String toString() { return tag.equals(DatumType.MONO_TAG_NAME) ? "" : ":" + tag; }
+    public @NotNull String toString() { return tag.name().equals(DatumType.MONO_TAG_NAME) ? "" : ":" + tag.name(); }
   }
 
   public static class FieldStackItem implements StackItem {
-    public final @NotNull String field;
+    public final @NotNull FieldApi field;
 
-    public FieldStackItem(final @NotNull String field) {this.field = field;}
+    public FieldStackItem(final @NotNull FieldApi field) {this.field = field;}
 
     @Override
-    public @NotNull String toString() { return "/" + field; }
+    public @NotNull String toString() { return "/" + field.name(); }
   }
 
   public static class MapKeyStackItem implements StackItem {
-    public final @NotNull GDatum key;
+    public final @NotNull Datum.@NotNull Imm key;
 
-    public MapKeyStackItem(final @NotNull GDatum key) {this.key = key;}
+    public MapKeyStackItem(final @NotNull Datum.@NotNull Imm key) {this.key = key;}
 
     @Override
     public @NotNull String toString() {
       String keyPrintout;
 
-      StringBuilder sb = new StringBuilder();
-      GDataPrettyPrinter<NoExceptions> printer = new GDataPrettyPrinter<>(Layouter.getStringLayouter(sb));
-      printer.print(key);
-      keyPrintout = sb.toString();
+      try {
+        StringWriter sw = new StringWriter();
+        DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
+        printer.print(key);
+        keyPrintout = sw.toString();
+      } catch (IOException e) {
+        keyPrintout = e.toString();
+      }
 
       return "[" + keyPrintout + "]";
     }

@@ -35,7 +35,7 @@ import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
-import ws.epigraph.validation.gdata.OpInputGDataValidator;
+import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
