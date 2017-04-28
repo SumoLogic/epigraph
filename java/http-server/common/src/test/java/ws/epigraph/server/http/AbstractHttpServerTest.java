@@ -163,7 +163,7 @@ public abstract class AbstractHttpServerTest {
         "/users",
         "[{'lastName':'Foo'}]",
         400,
-        "Error reading request body: Required field ''firstName'' is missing at line 1 column 20"
+        "Error reading create request body: Required field ''firstName'' is missing at line 1 column 20"
     );
   }
 
@@ -173,7 +173,7 @@ public abstract class AbstractHttpServerTest {
         "/users",
         "[{'K':1,'V':{'record':{'lastName':'Bruce2'}}}]",
         400,
-        "Error reading request body: Required field ''firstName'' is missing at line 1 column 44",
+        "Error reading update request body: Required field ''firstName'' is missing at line 1 column 44",
         false
     );
   }

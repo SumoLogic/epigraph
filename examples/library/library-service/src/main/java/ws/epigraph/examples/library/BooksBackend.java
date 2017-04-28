@@ -43,7 +43,7 @@ public final class BooksBackend {
    *
    * @return created book ID
    */
-  private static @NotNull BookId addBook(@NotNull String title, @NotNull AuthorId authorId, @NotNull String text) {
+  public static @NotNull BookId addBook(@NotNull String title, @NotNull AuthorId authorId, @NotNull String text) {
     BookId id = BookId.create(nextId.incrementAndGet());
     books.put(id, new BookData(id, title, authorId, text));
     return id;

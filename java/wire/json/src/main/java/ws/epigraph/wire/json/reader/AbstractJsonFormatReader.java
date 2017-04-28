@@ -227,8 +227,11 @@ abstract class AbstractJsonFormatReader<
 
     for (final VP projection : projections) {
       for (final TP tagProjectionEntry : projection.tagProjections().values()) {
-        if (tagRequired(tagProjectionEntry) && data._raw().getValue((Type.Tag) tagProjectionEntry.tag()) == null)
-          throw error("Missing data for required tag '" + tagProjectionEntry.tag().name() + "'");
+        if (tagRequired(tagProjectionEntry)) {
+          final Val value = data._raw().getValue((Tag) tagProjectionEntry.tag());
+          if (value == null || value.getDatum() == null)
+            throw error("Missing data for required tag '" + tagProjectionEntry.tag().name() + "'");
+        }
       }
     }
 
@@ -463,8 +466,16 @@ abstract class AbstractJsonFormatReader<
 
     for (RMP projection : projections)
       for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet())
-        if (fieldRequired(entry.getValue()) && datum._raw().getData((Field) entry.getValue().field()) == null)
-          throw error("Required field '" + entry.getKey() + "' is missing");
+        if (fieldRequired(entry.getValue())) {
+          final Data data = datum._raw().getData((Field) entry.getValue().field());
+          if (data == null)
+            throw error("Required field '" + entry.getKey() + "' is missing");
+          else if (data.type().kind() != TypeKind.UNION) {
+            final Val val = data._raw().tagValues().get(DatumType.MONO_TAG_NAME);
+            if (val == null || val.getDatum() == null)
+              throw error("Required field '" + entry.getKey() + "' is missing");
+          }
+        }
 
     return datum;
   }

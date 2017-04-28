@@ -222,8 +222,6 @@ public class EpigraphUndertowHandler
     if (queryString == null || queryString.isEmpty()) encodedReq = uri;
     else encodedReq = uri + "?" + queryString; // question mark gets removed
 
-    System.out.println("encodedReq = " + encodedReq);
-
     return decodeUri(encodedReq);
   }
 

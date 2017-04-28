@@ -150,7 +150,7 @@ public final class BookBuilder {
 
       Long count = plainTextProjection.getCountParameter();
       if (count == null || count < 0 || offset + count > textLength - 1)
-        count = textLength - offset - 1;
+        count = textLength - offset;
 
       int beginIndex = Math.toIntExact(offset);
       int endIndex = Math.toIntExact(beginIndex + count);

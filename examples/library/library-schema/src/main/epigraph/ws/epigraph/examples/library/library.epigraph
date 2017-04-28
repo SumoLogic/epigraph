@@ -71,9 +71,20 @@ resource books: map[BookId, BookRecord] {
   read searchByAuthor {
     outputProjection {
       // parameter declaration
-      ;+author: AuthorRecord (firstName, middleName, lastName)
+      ;+author: AuthorRecord (firstName, middleName, lastName) // all fields are optional
     } [ forbidden ] (                // map keys are forbidden
       $bookProjection
     )
+  }
+
+  create {
+    inputType list[BookRecord]
+    inputProjection *(
+      +title,                        // title required
+      +author:+id,                   // author id required
+      +text:+plain                   // text required
+    )
+
+    outputType list[BookId]
   }
 }

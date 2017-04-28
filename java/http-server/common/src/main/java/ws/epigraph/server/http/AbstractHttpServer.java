@@ -406,7 +406,11 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           } catch (FormatException | IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
-                    new MalformedInputInvocationError("Error reading request body: " + e.getMessage())
+                    new MalformedInputInvocationError(String.format(
+                        "Error reading %screate request body: %s",
+                        operationName == null ? "" : "'" + operationName + "'",
+                        e.getMessage()
+                    ))
                 )
             );
           }
@@ -551,7 +555,11 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           } catch (FormatException | IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
-                    new MalformedInputInvocationError("Error reading request body: " + e.getMessage())
+                    new MalformedInputInvocationError(String.format(
+                        "Error reading %supdate request body: %s",
+                        operationName == null ? "" : "'" + operationName + "'",
+                        e.getMessage()
+                    ))
                 )
             );
           }
@@ -846,7 +854,11 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
     } catch (FormatException | IOException e) {
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
-              new MalformedInputInvocationError("Error reading request body: " + e.getMessage())
+              new MalformedInputInvocationError(String.format(
+                  "Error reading '%s' custom request body: %s",
+                  operationName,
+                  e.getMessage()
+              ))
           )
       );
     }
