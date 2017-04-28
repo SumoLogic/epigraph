@@ -22,6 +22,7 @@ import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
+import ws.epigraph.types.DatumType;
 import ws.epigraph.types.TypeKind;
 
 /**
@@ -41,6 +42,7 @@ public class ReqOutputDataValidator extends GenDataValidator<
 
   @Override
   protected void validateDataOnly(final @NotNull Data data, final @NotNull ReqOutputVarProjection projection) {
+
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
@@ -48,15 +50,15 @@ public class ReqOutputDataValidator extends GenDataValidator<
       final Val val = data._raw().tagValues().get(tagName);
       if (val == null)
         context.addOperationImplementationError(String.format("Required %s is missing", obj));
-      else {
+      else if (val.getDatum() == null) {
         final ErrorValue error = val.getError();
-        if (error != null)
-          context.addError(String.format(
-              "Required %s is a [%s] error: %s",
-              obj,
-              error.statusCode(),
-              error.message()
-          ));
+        if (error == null) context.addError(String.format("Required %s is missing", obj));
+        else context.addError(String.format(
+            "Required %s is a [%s] error: %s",
+            obj,
+            error.statusCode(),
+            error.message()
+        ));
       }
     });
   }
@@ -65,11 +67,32 @@ public class ReqOutputDataValidator extends GenDataValidator<
   protected void validateRecordDatumOnly(
       final @NotNull RecordDatum datum,
       final @NotNull ReqOutputRecordModelProjection projection) {
+
     projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
-      if (!datum._raw().fieldsData().containsKey(fieldName))
+      final Data fieldData = datum._raw().fieldsData().get(fieldName);
+
+      if (fieldData == null)
         context.addOperationImplementationError(String.format("Required field '%s' is missing", fieldName));
+
+      // will be reported by (self) tag validation
+//      else if (fieldData.type().kind() != TypeKind.UNION) {
+//        final Val val = fieldData._raw().tagValues().get(DatumType.MONO_TAG_NAME);
+//
+//        if (val == null)
+//          context.addOperationImplementationError(String.format("Required field '%s' is missing", fieldName));
+//        else if (val.getDatum() == null) {
+//          final ErrorValue error = val.getError();
+//          if (error == null) context.addError(String.format("Required field '%s' is missing", fieldName));
+//          else context.addError(String.format(
+//              "Required field '%s' is a [%s] error: %s",
+//              fieldName,
+//              error.statusCode(),
+//              error.message()
+//          ));
+//        }
+//      }
     });
   }
 

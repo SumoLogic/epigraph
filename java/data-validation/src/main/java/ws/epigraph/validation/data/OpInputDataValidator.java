@@ -19,7 +19,10 @@ package ws.epigraph.validation.data;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.RecordDatum;
+import ws.epigraph.data.Val;
 import ws.epigraph.projections.op.input.*;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.TypeKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -41,7 +44,8 @@ public class OpInputDataValidator extends GenDataValidator<
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
-      if (!data._raw().tagValues().containsKey(tagName))
+      final Val val = data._raw().tagValues().get(tagName);
+      if (val == null || val.getDatum() == null)
         context.addError(String.format("Required tag '%s' is missing", tagName));
     });
   }
@@ -50,10 +54,19 @@ public class OpInputDataValidator extends GenDataValidator<
   protected void validateRecordDatumOnly(
       final @NotNull RecordDatum datum,
       final @NotNull OpInputRecordModelProjection projection) {
+
     projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
-      if (!datum._raw().fieldsData().containsKey(fieldName))
+      final Data fieldData = datum._raw().fieldsData().get(fieldName);
+      boolean failed = fieldData == null;
+
+      if (!failed && fieldData.type().kind() != TypeKind.UNION) {
+        final Val val = fieldData._raw().tagValues().get(DatumType.MONO_TAG_NAME);
+        failed = val == null || val.getDatum() == null;
+      }
+
+      if (failed)
         context.addError(String.format("Required field '%s' is missing", fieldName));
     });
   }
