@@ -904,6 +904,8 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
   // ---------------------------------
 
+  // todo extract this part into a pluggable Protocol/Marshaller ?
+  // it should be able to add extra wrappers with statistics/diagnostics etc + manage error codes
 
   protected interface FormatResponseWriter {
     void write(@NotNull FormatWriter writer) throws IOException;

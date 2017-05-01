@@ -11,7 +11,7 @@
   - [ ] service quick-start guide
     - [x] simple read
     - [x] search operation
-    - [ ] create operation
+    - [x] create operation
     - [ ] update operation
     - [ ] delete operation
   - Operations
