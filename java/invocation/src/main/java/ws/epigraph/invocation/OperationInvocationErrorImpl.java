@@ -17,24 +17,25 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OperationInvocationErrorImpl implements OperationInvocationError {
   private final @NotNull String message;
-  private final @NotNull Status status;
+  private final @NotNull HttpStatusCode statusCode;
 
   public OperationInvocationErrorImpl(
       final @NotNull String message,
-      final @NotNull Status status) {
+      final @NotNull HttpStatusCode statusCode) {
     this.message = message;
-    this.status = status;
+    this.statusCode = statusCode;
   }
 
   @Override
   public @NotNull String message() { return message; }
 
   @Override
-  public @NotNull OperationInvocationError.Status status() { return status; }
+  public @NotNull HttpStatusCode statusCode() { return statusCode; }
 }

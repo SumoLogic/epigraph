@@ -119,7 +119,8 @@ public abstract class AbstractHttpServerTest {
     get(
         "/user:record(firstName)~~User:record(+profile)",
         412,
-        ":record/profile : Required value is a [404] error: Not Found"
+        // this is /user:record value
+        "{\"ERROR\":412,\"message\":\":record/profile : Required data is a [404] error: Not Found\"}"
     );
   }
 

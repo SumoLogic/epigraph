@@ -49,6 +49,7 @@ import ws.epigraph.url.*;
 import ws.epigraph.url.parser.CustomRequestUrlPsiParser;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.*;
 
 import java.io.IOException;
@@ -110,7 +111,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           String.format(
               "Bad URL format. Supported resources: {%s}",
               Util.listSupportedResources(service)
-          ), OperationInvocationError.Status.BAD_REQUEST, context
+          ), HttpStatusCode.BAD_REQUEST, context
       );
       return;
     }
@@ -126,7 +127,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
               "Resource '%s' not found. Supported resources: {%s}",
               resourceName,
               Util.listSupportedResources(service)
-          ), OperationInvocationError.Status.BAD_REQUEST, context
+          ), HttpStatusCode.BAD_REQUEST, context
       );
       return;
     }
@@ -158,7 +159,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
           String.format(
               "Unsupported HTTP method '%s'",
               requestMethod
-          ), OperationInvocationError.Status.BAD_REQUEST, context
+          ), HttpStatusCode.BAD_REQUEST, context
       );
     }
 
@@ -171,7 +172,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @Nullable String operationName,
       @NotNull String decodedUri,
       @NotNull C context) {
-    handleReadResponse(HttpStatusCode.OK, invokeReadRequest(resource, operationName, decodedUri, context), context);
+    handleReadResponse(HttpStatusCode.OK.code(), invokeReadRequest(resource, operationName, decodedUri, context), context);
   }
 
   private static final class ReadResult {
@@ -342,7 +343,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.CREATED,
+        HttpStatusCode.CREATED.code(),
         invokeCreateRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -490,7 +491,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK,
+        HttpStatusCode.OK.code(),
         invokeUpdateRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -639,7 +640,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK,
+        HttpStatusCode.OK.code(),
         invokeDeleteRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -761,7 +762,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK,
+        HttpStatusCode.OK.code(),
         invokeCustomRequest(resource, operationName, method, decodedUri, context),
         context
     );
@@ -936,7 +937,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
   }
 
   protected void writeErrorResponse(@NotNull ErrorValue error, @NotNull C context) {
-    writeFormatResponse(error.statusCode(), context, writer -> {
+    writeFormatResponse(/*HttpStatusCode.OK.code(), */error.statusCode(), context, writer -> {
       writer.writeError(error);
       writer.close();
     });
@@ -1083,7 +1084,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
   private void writeGenericErrorAndClose(
       @NotNull String message,
-      @NotNull OperationInvocationError.Status status,
+      @NotNull HttpStatusCode status,
       @NotNull C context) {
 
     writeInvocationErrorAndCloseContext(

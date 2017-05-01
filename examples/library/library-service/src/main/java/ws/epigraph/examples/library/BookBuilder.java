@@ -23,6 +23,7 @@ import ws.epigraph.examples.library.resources.books.projections.output.bookproje
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.author.record.OutputAuthorRecordProjection;
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.text.OutputTextProjection;
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.text.plain.OutputPlainTextProjection;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * Builds {@code Book} instances
@@ -47,7 +48,7 @@ public final class BookBuilder {
 
     if (bookData == null) {
       return BookRecord.type.createValue(
-          new ErrorValue(404, "No book with id " + bookId)
+          new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "No book with id " + bookId)
       );
     } else {
       final BookRecord.Builder book = BookRecord.create();
@@ -105,7 +106,7 @@ public final class BookBuilder {
 
     if (authorData == null) {
       return AuthorRecord.type.createValue(
-          new ErrorValue(404, "No author with id " + authorId)
+          new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "No author with id " + authorId)
       );
     } else {
       AuthorRecord.Builder author = AuthorRecord.create();

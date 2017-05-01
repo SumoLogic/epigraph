@@ -23,6 +23,7 @@ import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.Operation;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -51,7 +52,7 @@ public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends 
           OperationInvocationResult.failure(
               new OperationInvocationErrorImpl(
                   e.toString(),
-                  OperationInvocationError.Status.INTERNAL_SERVER_ERROR
+                  HttpStatusCode.INTERNAL_SERVER_ERROR
               )
           )
       );

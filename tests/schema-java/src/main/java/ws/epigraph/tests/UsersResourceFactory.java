@@ -45,6 +45,7 @@ import ws.epigraph.tests.resources.users.operations._update.AbstractUpdateOperat
 import ws.epigraph.tests.resources.users.operations._update.update.UpdateUsersFieldProjection;
 import ws.epigraph.tests.resources.users.operations._update.update.elements.UpdatePersonProjection;
 import ws.epigraph.tests.resources.users.operations._update.update.elements.record.UpdatePersonRecordProjection;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.List;
 import java.util.Map;
@@ -282,7 +283,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
           resultMapBuilder.put(
               key.value(),
               Error.create()
-                  .setCode(404)
+                  .setCode(HttpStatusCode.NOT_FOUND.code())
                   .setMessage("Item with id " + key.value().getVal() + " doesn't exist")
           );
 
@@ -313,7 +314,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       PersonId.Imm key = path.dataProjection().key().value();
       final Person.Builder person = (Person.Builder) storage.users().datas().get(key);
       if (person == null) {
-        builder.set_Error(new ErrorValue(404, "Person with id " + key.getVal() + " not found"));
+        builder.set_Error(new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Person with id " + key.getVal() + " not found"));
       } else {
         PersonRecord.Builder personRecord = (PersonRecord.Builder) person.getRecord();
         if (personRecord != null) {

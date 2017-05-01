@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.schema.operations.OperationKind;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -48,7 +49,7 @@ public class OperationNotFoundError extends OperationInvocationErrorImpl {
             method == null ? "" : " for HTTP method '" + method + "'",
             resourceName
         ),
-        Status.BAD_REQUEST
+        HttpStatusCode.BAD_REQUEST
     );
   }
 }

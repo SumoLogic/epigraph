@@ -215,7 +215,7 @@ public abstract class EpigraphServlet extends HttpServlet {
 
       HttpServletRequest servletRequest = (HttpServletRequest) context.request();
       HttpServletResponse servletResponse = (HttpServletResponse) context.response();
-      servletResponse.setStatus(error.status().httpCode());
+      servletResponse.setStatus(error.statusCode().code());
 
       try {
         if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(servletRequest)) {

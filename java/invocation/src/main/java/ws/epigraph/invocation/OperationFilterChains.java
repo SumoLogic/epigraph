@@ -18,10 +18,7 @@ package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
-import ws.epigraph.invocation.filters.CreateRequestValidationFilter;
-import ws.epigraph.invocation.filters.CustomRequestValidationFilter;
-import ws.epigraph.invocation.filters.ReadResponseValidationFilter;
-import ws.epigraph.invocation.filters.UpdateRequestValidationFilter;
+import ws.epigraph.invocation.filters.*;
 import ws.epigraph.service.operations.*;
 
 import java.util.Arrays;
@@ -86,14 +83,14 @@ public final class OperationFilterChains<D extends Data> {
         //read
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
-            Collections.singletonList(operation -> new ReadResponseValidationFilter<>())
+            Collections.singletonList(operation -> new ReadResponsePruningFilter<>())
         ),
         //create
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Arrays.asList(
                 operation -> new CreateRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponseValidationFilter<>()
+                operation -> new ReadResponsePruningFilter<>()
             )
         ),
         //update
@@ -101,20 +98,20 @@ public final class OperationFilterChains<D extends Data> {
             LocalOperationInvocation::new,
             Arrays.asList(
                 operation -> new UpdateRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponseValidationFilter<>()
+                operation -> new ReadResponsePruningFilter<>()
             )
         ),
         //delete
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
-            Collections.singletonList(operation -> new ReadResponseValidationFilter<>())
+            Collections.singletonList(operation -> new ReadResponsePruningFilter<>())
         ),
         //custom
         new DefaultOperationInvocationFiltersChain<>(
             LocalOperationInvocation::new,
             Arrays.asList(
                 operation -> new CustomRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponseValidationFilter<>()
+                operation -> new ReadResponsePruningFilter<>()
             )
         )
     );

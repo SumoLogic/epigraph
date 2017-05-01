@@ -37,6 +37,7 @@ import ws.epigraph.server.http.HtmlCapableOperationInvocationError;
 import ws.epigraph.server.http.InvocationContext;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.service.Service;
+import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.OpInputFormatReader;
 import ws.epigraph.wire.ReqInputFormatReader;
@@ -87,7 +88,7 @@ public class EpigraphUndertowHandler
       writeInvocationErrorResponse(
           new OperationInvocationErrorImpl(
               String.format("Unsupported HTTP method '%s'", exchange.getRequestMethod()),
-              OperationInvocationError.Status.BAD_REQUEST
+              HttpStatusCode.BAD_REQUEST
           ), context
       );
     } else {
@@ -97,7 +98,7 @@ public class EpigraphUndertowHandler
         writeInvocationErrorResponse(
             new OperationInvocationErrorImpl(
                 String.format("Invalid URI syntax '%s'", e.getMessage()),
-                OperationInvocationError.Status.BAD_REQUEST
+                HttpStatusCode.BAD_REQUEST
             ), context
         );
       }
@@ -151,7 +152,7 @@ public class EpigraphUndertowHandler
       final @NotNull UndertowInvocationContext context) {
 
     final HttpServerExchange exchange = context.exchange;
-    exchange.setStatusCode(error.status().httpCode());
+    exchange.setStatusCode(error.statusCode().code());
 
     if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(exchange)) {
       exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE_HTML);

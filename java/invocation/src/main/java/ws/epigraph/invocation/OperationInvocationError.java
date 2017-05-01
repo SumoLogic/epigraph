@@ -17,6 +17,7 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -24,22 +25,5 @@ import org.jetbrains.annotations.NotNull;
 public interface OperationInvocationError {
   @NotNull String message();
 
-  @NotNull Status status();
-
-  enum Status {
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    TIMEOUT(408),
-    PRECONDITION_FAILED(412),
-    TOO_MANY_REQUESTS(429),
-
-    INTERNAL_SERVER_ERROR(500),
-    INTERNAL_OPERATION_ERROR(520);
-
-    final int httpCode;
-
-    Status(final int code) {httpCode = code;}
-
-    public int httpCode() { return httpCode; }
-  }
+  @NotNull HttpStatusCode statusCode();
 }

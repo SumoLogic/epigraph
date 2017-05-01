@@ -17,12 +17,13 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GenericServerInvocationError extends OperationInvocationErrorImpl {
   public GenericServerInvocationError(final @NotNull String message) {
-    super(message, Status.INTERNAL_SERVER_ERROR);
+    super(message, HttpStatusCode.INTERNAL_SERVER_ERROR);
   }
 }

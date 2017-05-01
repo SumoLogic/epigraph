@@ -17,12 +17,12 @@
 package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
 import ws.epigraph.service.operations.Operation;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class OperationSearchFailureInvocationError extends PsiProcessingInvocati
   }
 
   @Override
-  public @NotNull OperationInvocationError.Status status() { return Status.BAD_REQUEST; }
+  public @NotNull HttpStatusCode statusCode() { return HttpStatusCode.BAD_REQUEST; }
 
   @Override
   public @NotNull String message() {

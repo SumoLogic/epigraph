@@ -18,12 +18,13 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.util.HttpStatusCode;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class MalformedInputInvocationError extends OperationInvocationErrorImpl {
   public MalformedInputInvocationError(final @NotNull String message) {
-    super(message, Status.BAD_REQUEST);
+    super(message, HttpStatusCode.BAD_REQUEST);
   }
 }

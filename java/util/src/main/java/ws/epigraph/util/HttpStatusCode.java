@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.util;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface HttpStatusCode {
-  // see also OperationInvocationError.Status for error status codes
+public enum HttpStatusCode {
+  OK(200),
+  CREATED(201),
 
-  int OK = 200;
-  int CREATED = 201;
+  BAD_REQUEST(400),
+  UNAUTHORIZED(401),
+  NOT_FOUND(404),
+  TIMEOUT(408),
+  PRECONDITION_FAILED(412),
+  TOO_MANY_REQUESTS(429),
+
+  INTERNAL_SERVER_ERROR(500),
+  INTERNAL_OPERATION_ERROR(520);
+
+  final int code;
+
+  HttpStatusCode(final int code) {this.code = code;}
+
+  public int code() { return code; }
 }

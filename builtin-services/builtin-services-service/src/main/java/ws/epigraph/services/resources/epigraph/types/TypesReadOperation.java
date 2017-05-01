@@ -28,6 +28,7 @@ import ws.epigraph.services.resources.epigraph.operations.types.output.OutputNam
 import ws.epigraph.services.resources.epigraph.operations.types.path.EpigraphFieldPath;
 import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.Type;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -75,7 +76,10 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       final Type type = types.get(typeName);
 
       if (type == null)
-        typeMapBuilder.putError(key, new ErrorValue(404, "Can't find type '" + typeName + "'"));
+        typeMapBuilder.putError(
+            key,
+            new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Can't find type '" + typeName + "'")
+        );
       else
         typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));
     }

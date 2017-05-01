@@ -198,7 +198,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
 
       HttpServletRequest servletRequest = context.request();
       HttpServletResponse servletResponse = context.response();
-      servletResponse.setStatus(error.status().httpCode());
+      servletResponse.setStatus(error.statusCode().code());
 
       try {
         if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(servletRequest)) {

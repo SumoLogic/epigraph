@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
 import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -39,8 +40,8 @@ public final class FilterUtil {
             .collect(Collectors.joining("\n")),
 
         validationErrors.stream().anyMatch(DataValidationError::isImplementationError)
-        ? OperationInvocationError.Status.INTERNAL_OPERATION_ERROR
-        : OperationInvocationError.Status.PRECONDITION_FAILED
+        ? HttpStatusCode.INTERNAL_OPERATION_ERROR
+        : HttpStatusCode.PRECONDITION_FAILED
     );
   }
 }

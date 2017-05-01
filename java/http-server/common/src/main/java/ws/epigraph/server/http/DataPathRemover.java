@@ -23,6 +23,7 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.service.AmbiguousPathException;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -102,7 +103,7 @@ public final class DataPathRemover {
               return new PathRemovalResult(
                   mp,
                   new ErrorValue(
-                      404, String.format("field '%s' not found", entry.field().name())
+                      HttpStatusCode.NOT_FOUND.code(), String.format("field '%s' not found", entry.field().name())
                   )
               );
             return removePath(entry.fieldProjection().varProjection(), fieldData, steps - 1);
@@ -145,7 +146,7 @@ public final class DataPathRemover {
                 return new PathRemovalResult(
                     mp,
                     new ErrorValue(
-                        404, keyString + "not found"
+                        HttpStatusCode.NOT_FOUND.code(), keyString + "not found"
                     )
                 );
               }
@@ -164,7 +165,7 @@ public final class DataPathRemover {
           case 0:
             return new PathRemovalResult(
                 mp,
-                new ErrorValue(404, "List item not found")
+                new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "List item not found")
             );
           case 1:
             return removePath(lmp.itemsProjection(), listElements.get(0), steps - 1);

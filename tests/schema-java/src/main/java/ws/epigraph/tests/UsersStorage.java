@@ -18,6 +18,7 @@ package ws.epigraph.tests;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -72,7 +73,7 @@ public class UsersStorage {
         .setId(pid)
         .setFirstName("First" + id)
         .setLastName("Last" + id)
-        .setProfile_Error(new ErrorValue(404, "Not Found", null))
+        .setProfile_Error(new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Not Found", null))
         .setBestFriend(bestFriend)
         .setFriends(Person_List.create()
             .add(User.create()

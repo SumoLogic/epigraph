@@ -33,7 +33,7 @@
 - [x] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
 - [x] move http servers under common `http-server` folder
 - [x] race condition in schema refs parsing?
-- [ ] better required data validation: if required value is missing then remove enclosing entity, recurse
+- [x] better required data validation: if required value is missing then remove enclosing entity, recurse
 
 # See also
 - See [General todo] (todo.md)
