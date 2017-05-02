@@ -99,7 +99,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseMap() {
-    testParse(":record ( friendsMap +[ '1';param = 'foo', '2'!ann = true ]( :id ) )");
+    testParse(":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )");
   }
 
   @Test

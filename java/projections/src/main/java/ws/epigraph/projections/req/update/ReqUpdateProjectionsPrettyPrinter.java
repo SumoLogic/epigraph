@@ -19,7 +19,6 @@ package ws.epigraph.projections.req.update;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
@@ -80,7 +79,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
-    return projection.update() && projection.type().kind() != TypeKind.PRIMITIVE;
+    return projection.replace() && projection.type().kind() != TypeKind.PRIMITIVE;
   }
 
   @Override
@@ -111,12 +110,12 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected String fieldNamePrefix(final @NotNull ReqUpdateFieldProjection fieldProjection) {
-    return fieldProjection.update() ? "+" : "";
+    return fieldProjection.replace() ? "+" : "";
   }
 
   private void printModelOnly(ReqUpdateMapModelProjection mp) throws E {
-    if (mp.updateKeys()) l.print("+");
-    printMapModelProjection(mp.keys(), mp.itemsProjection());
+//    if (mp.updateKeys()) l.print("+");
+    printMapModelProjection(mp.keys(), mp.updateKeys() ? "+" : "", mp.itemsProjection());
   }
 
   private void printModelOnly(ReqUpdateListModelProjection mp, int pathSteps) throws E {

@@ -31,7 +31,7 @@ record ReqUpdateTagProjectionEntry {
 
 abstract record ReqUpdateModelProjection {
   model: DatumType
-  `update`: Boolean // update or patch?
+  `replace`: Boolean // replace (update) or patch?
   params: map[String, ReqParam]
   annotations: map[String, Annotation]
 //  `meta`: ReqUpdateModelProjection
@@ -47,7 +47,7 @@ record ReqUpdateFieldProjectionEntry {
 }
 
 record ReqUpdateFieldProjection {
-  `update`: Boolean // update or patch entity?
+  `replace`: Boolean // replace (update) or patch entity?
   field: Field
   // params: map[String, ReqParam]
   // annotations: map[String, Annotation]
@@ -66,7 +66,7 @@ record ReqUpdateMapModelProjection extends ReqUpdateModelProjection {
 }
 
 record ReqUpdateKeysProjection {
-  `update`: Boolean // update or patch entities? applies to all keys
+  `replace`: Boolean // replace (update) or patch entities? applies to all keys
   keys: list[ReqUpdateKeyProjection]
 }
 

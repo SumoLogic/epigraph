@@ -33,19 +33,19 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
     ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateFieldProjection
     > {
-  private final boolean update;
+  private final boolean replace;
 
   public ReqUpdateFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
       @NotNull ReqUpdateVarProjection projection,
-      boolean update,
+      boolean replace,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
-    this.update = update;
+    this.replace = replace;
   }
 
-  public boolean update() { return update; }
+  public boolean replace() { return replace; }
 
   @Override
   protected ReqUpdateFieldProjection merge(
@@ -53,13 +53,13 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
       final @NotNull List<ReqUpdateFieldProjection> fieldProjections,
       final @NotNull ReqUpdateVarProjection mergedVarProjection) {
 
-    boolean update = fieldProjections.stream().anyMatch(ReqUpdateFieldProjection::update);
+    boolean update = fieldProjections.stream().anyMatch(ReqUpdateFieldProjection::replace);
     return new ReqUpdateFieldProjection(mergedVarProjection, update, TextLocation.UNKNOWN);
   }
 
   @Override
   public @NotNull ReqUpdateFieldProjection setVarProjection(final @NotNull ReqUpdateVarProjection varProjection) {
-    return new ReqUpdateFieldProjection(varProjection, update, TextLocation.UNKNOWN);
+    return new ReqUpdateFieldProjection(varProjection, replace, TextLocation.UNKNOWN);
   }
 
   @Override
@@ -68,11 +68,11 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final ReqUpdateFieldProjection that = (ReqUpdateFieldProjection) o;
-    return update == that.update;
+    return replace == that.replace;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), update);
+    return Objects.hash(super.hashCode(), replace);
   }
 }

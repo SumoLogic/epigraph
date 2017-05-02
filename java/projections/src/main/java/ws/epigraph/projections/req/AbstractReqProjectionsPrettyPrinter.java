@@ -191,6 +191,15 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   protected void printMapModelProjection(@Nullable List<? extends ReqKeyProjection> keys, @NotNull VP itemsProjection)
       throws E {
+    printMapModelProjection(keys, "", itemsProjection);
+  }
+
+  protected void printMapModelProjection(
+      @Nullable List<? extends ReqKeyProjection> keys,
+      @NotNull String itemsProjectionPrefix,
+      @NotNull VP itemsProjection)
+      throws E {
+
     l.beginIInd();
     l.print("[");
 
@@ -209,7 +218,9 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       if (!first) l.brk();
     }
 
-    l.print("](");
+    l.print("]");
+    l.print(itemsProjectionPrefix);
+    l.print("(");
 
     if (!isPrintoutEmpty(itemsProjection)) {
       l.brk();

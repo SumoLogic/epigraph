@@ -73,7 +73,7 @@ $packageStatement
 ${ReqProjectionGen.generateImports(imports)}
 
 /**
- * Request output projection for {@code $mapTypeShortName} keys
+ * Request projection for {@code $mapTypeShortName} keys
  */
 public class $shortClassName {
   private final @NotNull ${reqKeyProjectionFqn.last()} raw;

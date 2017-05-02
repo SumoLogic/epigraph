@@ -51,7 +51,7 @@ public class ReqUpdateMapModelProjection
 
   public ReqUpdateMapModelProjection(
       @NotNull MapTypeApi model,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       boolean updateKeys,
@@ -59,7 +59,7 @@ public class ReqUpdateMapModelProjection
       @NotNull ReqUpdateVarProjection valuesProjection,
       @Nullable List<ReqUpdateMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, tails, location);
+    super(model, replace, params, annotations, tails, location);
     this.updateKeys = updateKeys;
     this.keys = keys;
     this.valuesProjection = valuesProjection;
@@ -134,7 +134,7 @@ public class ReqUpdateMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new ReqUpdateMapModelProjection(
         n.type(),
-        n.update(),
+        n.replace(),
         n.params(),
         n.annotations(),
         n.updateKeys(),

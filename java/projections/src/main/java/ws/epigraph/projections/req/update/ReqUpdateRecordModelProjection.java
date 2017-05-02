@@ -54,13 +54,13 @@ public class ReqUpdateRecordModelProjection
 
   public ReqUpdateRecordModelProjection(
       @NotNull RecordTypeApi model,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull Map<String, ReqUpdateFieldProjectionEntry> fieldProjections,
       @Nullable List<ReqUpdateRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, tails, location);
+    super(model, replace, params, annotations, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
@@ -123,6 +123,7 @@ public class ReqUpdateRecordModelProjection
   protected @NotNull ReqUpdateRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       final @NotNull ReqUpdateRecordModelProjection n) {
+
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 
     final Map<String, ReqUpdateFieldProjection> normalizedFields =
@@ -136,7 +137,7 @@ public class ReqUpdateRecordModelProjection
 
     return new ReqUpdateRecordModelProjection(
         n.type(),
-        n.update(),
+        n.replace(),
         n.params(),
         n.annotations(),
         normalizedFieldEntries,

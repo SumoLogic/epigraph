@@ -82,6 +82,7 @@
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
 - [ ] allow merging multiple recursive projections (seems to be a hard task)
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
+- [ ] req update projections should support paths (trunk), with trimmed input data
 
 # Operations
 

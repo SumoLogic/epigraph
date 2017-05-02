@@ -47,13 +47,13 @@ public class ReqUpdateListModelProjection
 
   public ReqUpdateListModelProjection(
       @NotNull ListTypeApi model,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull ReqUpdateVarProjection itemsProjection,
       @Nullable List<ReqUpdateListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, update, params, annotations, tails, location);
+    super(model, replace, params, annotations, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -104,7 +104,7 @@ public class ReqUpdateListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new ReqUpdateListModelProjection(
         n.type(),
-        n.update(),
+        n.replace(),
         n.params(),
         n.annotations(),
         n.itemsProjection().normalizedForType(targetListType.elementType().type()),

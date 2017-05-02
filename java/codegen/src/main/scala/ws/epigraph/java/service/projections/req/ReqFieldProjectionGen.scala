@@ -52,7 +52,7 @@ $packageStatement
 ${ReqProjectionGen.generateImports(imports)}
 
 /**
- * Request output projection for {@code $fieldName} field
+ * Request projection for {@code $fieldName} field
  */
 public class $shortClassName {
   private final @NotNull ${reqFieldProjectionFqn.last()} raw;

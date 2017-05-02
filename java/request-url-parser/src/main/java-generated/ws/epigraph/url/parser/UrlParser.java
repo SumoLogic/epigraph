@@ -3626,54 +3626,46 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? '[' ( reqUpdateKeyProjection ','? )* ']'
+  // '[' ( reqUpdateKeyProjection ','? )* ']'
   public static boolean reqUpdateKeysProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateKeysProjection")) return false;
-    if (!nextTokenIs(b, "<req update keys projection>", U_PLUS, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEYS_PROJECTION, "<req update keys projection>");
-    r = reqUpdateKeysProjection_0(b, l + 1);
-    r = r && consumeToken(b, U_BRACKET_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, reqUpdateKeysProjection_2(b, l + 1));
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEYS_PROJECTION, null);
+    r = consumeToken(b, U_BRACKET_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqUpdateKeysProjection_1(b, l + 1));
     r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // '+'?
-  private static boolean reqUpdateKeysProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
   // ( reqUpdateKeyProjection ','? )*
-  private static boolean reqUpdateKeysProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2")) return false;
+  private static boolean reqUpdateKeysProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!reqUpdateKeysProjection_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateKeysProjection_2", c)) break;
+      if (!reqUpdateKeysProjection_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqUpdateKeysProjection_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // reqUpdateKeyProjection ','?
-  private static boolean reqUpdateKeysProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2_0")) return false;
+  private static boolean reqUpdateKeysProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqUpdateKeyProjection(b, l + 1);
-    r = r && reqUpdateKeysProjection_2_0_1(b, l + 1);
+    r = r && reqUpdateKeysProjection_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // ','?
-  private static boolean reqUpdateKeysProjection_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_2_0_1")) return false;
+  private static boolean reqUpdateKeysProjection_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1_0_1")) return false;
     consumeToken(b, U_COMMA);
     return true;
   }
@@ -3711,28 +3703,36 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqUpdateKeysProjection ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  // reqUpdateKeysProjection '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   public static boolean reqUpdateMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection")) return false;
-    if (!nextTokenIs(b, "<req update map model projection>", U_PLUS, U_BRACKET_LEFT)) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MAP_MODEL_PROJECTION, "<req update map model projection>");
+    Marker m = enter_section_(b);
     r = reqUpdateKeysProjection(b, l + 1);
     r = r && reqUpdateMapModelProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    r = r && reqUpdateMapModelProjection_2(b, l + 1);
+    exit_section_(b, m, U_REQ_UPDATE_MAP_MODEL_PROJECTION, r);
     return r;
   }
 
-  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  // '+'?
   private static boolean reqUpdateMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_1")) return false;
-    reqUpdateMapModelProjection_1_0(b, l + 1);
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  private static boolean reqUpdateMapModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_2")) return false;
+    reqUpdateMapModelProjection_2_0(b, l + 1);
     return true;
   }
 
   // reqUpdateBracedVarProjection | reqUpdateVarProjection
-  private static boolean reqUpdateMapModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_1_0")) return false;
+  private static boolean reqUpdateMapModelProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqUpdateBracedVarProjection(b, l + 1);

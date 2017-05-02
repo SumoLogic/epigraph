@@ -38,18 +38,18 @@ public abstract class ReqUpdateModelProjection<
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
-  protected /*final*/ boolean update;
+  protected /*final*/ boolean replace;
 
   protected ReqUpdateModelProjection(
       @NotNull M model,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
     super(model, params, null, annotations, tails, location);
-    this.update = update;
+    this.replace = replace;
   }
 
   protected ReqUpdateModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
@@ -57,11 +57,11 @@ public abstract class ReqUpdateModelProjection<
   }
 
   /**
-   * @return {@code true} if this model must be updated (replaced), {@code false} if it must be patched
+   * @return {@code true} if this model must be replaced (updated), {@code false} if it must be patched
    */
-  public boolean update() {
+  public boolean replace() {
     assert isResolved();
-    return update;
+    return replace;
   }
 
 
@@ -95,7 +95,7 @@ public abstract class ReqUpdateModelProjection<
 
     return merge(
         model,
-        modelProjections.stream().anyMatch(ReqUpdateModelProjection::update),
+        modelProjections.stream().anyMatch(ReqUpdateModelProjection::replace),
         modelProjections,
         mergedParams,
         mergedAnnotations,
@@ -116,7 +116,7 @@ public abstract class ReqUpdateModelProjection<
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
-    update = value.update();
+    replace = value.replace();
   }
 
   @Override
@@ -125,11 +125,11 @@ public abstract class ReqUpdateModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final ReqUpdateModelProjection<?, ?, ?> that = (ReqUpdateModelProjection<?, ?, ?>) o;
-    return update == that.update;
+    return replace == that.replace;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), update);
+    return Objects.hash(super.hashCode(), replace);
   }
 }

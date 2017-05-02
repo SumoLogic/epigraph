@@ -58,6 +58,7 @@ public final class RecordModelProjectionHelper {
    *
    * @param rmp {@code this} class
    * @param o   object to compare to
+   *
    * @return {@code true} iff equals
    */
   public static boolean equals(GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> rmp, Object o) {
@@ -179,14 +180,26 @@ public final class RecordModelProjectionHelper {
       return Collections.emptyMap();
   }
 
+  /**
+   * Reconstructs field projections taken from one record projection to fit another record projection
+   *
+   * @param recordType new projection record type
+   * @param fields     old field projections
+   * @param factory    factory that old field projection to new field projection entry
+   * @param <FP>       field projection type
+   * @param <FPE>      field projection entry type
+   *
+   * @return map with new field projection entries
+   */
   @SuppressWarnings("unchecked")
   public static <
-      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
-      FP extends GenFieldProjection<?, ?, ?, FP>>
+      FP extends GenFieldProjection<?, ?, ?, FP>,
+      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>
+      >
   @NotNull Map<String, FPE> reattachFields(
       @NotNull RecordTypeApi recordType,
       @NotNull Map<String, FP> fields,
-      @NotNull FieldProjectionEntryFactory<FPE, FP> factory) {
+      @NotNull FieldProjectionEntryFactory<FP, FPE> factory) {
 
     return fields.entrySet()
         .stream()
@@ -207,8 +220,9 @@ public final class RecordModelProjectionHelper {
   }
 
   public interface FieldProjectionEntryFactory<
-      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>,
-      FP extends GenFieldProjection<?, ?, ?, FP>> {
+      FP extends GenFieldProjection<?, ?, ?, FP>,
+      FPE extends GenFieldProjectionEntry<?, ?, ?, FP>
+      > {
 
     @NotNull FPE newFieldProjectionEntry(
         @NotNull FieldApi fieldType,

@@ -215,9 +215,7 @@ public abstract class AbstractModelProjection<
    */
   protected @NotNull SMP postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      @NotNull SMP normalizationResult) {
-    return normalizationResult;
-  }
+      @NotNull SMP normalizationResult) { return normalizationResult; }
 
   @Override
   @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(

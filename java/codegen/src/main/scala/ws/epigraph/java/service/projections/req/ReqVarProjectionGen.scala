@@ -141,7 +141,7 @@ package $namespace;
 ${ReqProjectionGen.generateImports(imports)}
 
 /**
- * Request output projection for {@code ${ln(cType)}} type
+ * Request projection for {@code ${ln(cType)}} type
  */
 public class $shortClassName {
   private final @NotNull ${reqVarProjectionFqn.last()} raw;

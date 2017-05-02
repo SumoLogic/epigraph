@@ -53,8 +53,11 @@ class ReqUpdateFieldProjectionGen(
   override protected def generate: String = generate(
     fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateFieldProjection"),
     CodeChunk(/*@formatter:off*/sn"""\
-  public boolean update() {
-    return raw.update();
+  /**
+   * @return {@code true} if object must be replaced (updated), and {@code false} if it must be patched
+   */
+  public boolean replace() {
+    return raw.replace();
   }
 """/*@formatter:on*/)
   )

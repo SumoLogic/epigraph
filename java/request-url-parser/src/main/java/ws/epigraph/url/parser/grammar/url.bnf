@@ -289,8 +289,8 @@ reqUpdateFieldProjection ::= /* reqParamsAndAnnotations */ reqUpdateVarProjectio
 
 reqUpdateListModelProjection ::= '*' ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )? { pin=1 }
 
-reqUpdateMapModelProjection ::= reqUpdateKeysProjection ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-reqUpdateKeysProjection ::= '+'? '[' ( reqUpdateKeyProjection ','? )* ']' {pin=2}
+reqUpdateMapModelProjection ::= reqUpdateKeysProjection '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+reqUpdateKeysProjection ::= '[' ( reqUpdateKeyProjection ','? )* ']' {pin=1}  // plus for `update keys`
 reqUpdateKeyProjection ::= datum reqParamsAndAnnotations
 
 // req delete --------------------------------------------------------
