@@ -20,9 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.examples.library.resources.books.AbstractBooksResourceFactory;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.CreateOperation;
 import ws.epigraph.service.operations.ReadOperation;
+import ws.epigraph.service.operations.UpdateOperation;
 
 /**
  * Books resource factory, responsible for constructing all declared operations implementations
@@ -31,19 +33,25 @@ public class BooksResourceFactory extends AbstractBooksResourceFactory {
 
   @Override
   protected @NotNull ReadOperation<BookId_BookRecord_Map.Data> constructReadOperation(
-      final @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+      @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
     return new BooksReadOperation(operationDeclaration);
   }
 
   @Override
   protected @NotNull ReadOperation<BookId_BookRecord_Map.Data> constructSearchByAuthorReadOperation(
-      final @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+      @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
     return new SearchByAuthorOperation(operationDeclaration);
   }
 
   @Override
   protected @NotNull CreateOperation<BookId_List.Data> constructCreateOperation(
-      final @NotNull CreateOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+      @NotNull CreateOperationDeclaration operationDeclaration) throws ServiceInitializationException {
     return new BooksCreateOperation(operationDeclaration);
+  }
+
+  @Override
+  protected @NotNull UpdateOperation<BookId_BookRecord_Map.Data> constructUpdateOperation(
+      @NotNull UpdateOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+    return new BooksUpdateOperation(operationDeclaration);
   }
 }

@@ -59,6 +59,23 @@ public final class BooksBackend {
   public static @Nullable BookData get(@NotNull BookId id) { return books.get(id); }
 
   /**
+   * Replaces a book
+   *
+   * @param id   book ID
+   * @param book new book record
+   */
+  public static void set(@NotNull BookId id, @NotNull BookData book) { books.put(id, book); }
+
+  /**
+   * Removes a book
+   *
+   * @param id book ID
+   *
+   * @return {@code true} iff a book was deleted
+   */
+  public static boolean delete(@NotNull BookId id) { return books.remove(id) != null; }
+
+  /**
    * Finds books by author
    *
    * @param authorId author ID

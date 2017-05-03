@@ -87,4 +87,14 @@ resource books: map[BookId, BookRecord] {
 
     outputType list[BookId]
   }
+
+  update {
+    inputProjection [ required ] (
+      title,
+      author:id,
+      text:plain
+    )
+
+    outputProjection [ forbidden ] ( $bookProjection )
+  }
 }
