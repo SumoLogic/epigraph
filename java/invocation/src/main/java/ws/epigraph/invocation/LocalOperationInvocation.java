@@ -28,6 +28,8 @@ import ws.epigraph.util.HttpStatusCode;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * Performs in-process operation invocation wrapping any runtime exceptions in invocation errors
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse>
@@ -43,10 +45,10 @@ public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends 
   public @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(final @NotNull Req request) {
     try {
       return operation.process(request).thenApply(OperationInvocationResult::success);
-    } catch (Exception e) {
+    } catch (RuntimeException e) {
       final OperationDeclaration declaration = operation.declaration();
       String name = declaration.name() == null ? "" : " '" + declaration.name() + "'";
-      LOG.debug("Error invoking " + declaration.kind() + " operation" + name, e);
+      LOG.debug(String.format("Error invoking %s operation%s", declaration.kind(), name), e);
 
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(

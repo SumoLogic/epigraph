@@ -40,7 +40,7 @@ public class JettyHttpServerTest extends AbstractHttpServerTest {
     jettyServer = new Server(PORT);
     EpigraphJettyHandler handler = new EpigraphJettyHandler(
         buildUsersService(),
-        OperationFilterChains.defaultFilterChains(),
+        OperationFilterChains.defaultLocalFilterChains(),
         IndexBasedTypesResolver.INSTANCE,
         -1
     );

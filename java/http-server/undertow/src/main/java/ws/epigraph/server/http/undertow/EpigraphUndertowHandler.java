@@ -68,7 +68,7 @@ public class EpigraphUndertowHandler
   private final long responseTimeout;
 
   public EpigraphUndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, final long responseTimeout) {
-    super(service, OperationFilterChains.defaultFilterChains()); // make configurable?
+    super(service, OperationFilterChains.defaultLocalFilterChains()); // make configurable?
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
   }

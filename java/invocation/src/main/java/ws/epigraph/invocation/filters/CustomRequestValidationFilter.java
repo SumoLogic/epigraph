@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * Checks that all parts marked as `required` by operation input projection are actually present
+ * in request data
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CustomRequestValidationFilter<Rsp extends OperationResponse>
