@@ -34,35 +34,35 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class BooksUpdateOperation extends AbstractUpdateOperation {
-  protected BooksUpdateOperation(final @NotNull UpdateOperationDeclaration declaration) {
+  protected BooksUpdateOperation(@NotNull UpdateOperationDeclaration declaration) {
     super(declaration);
   }
 
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      final @NotNull BookId_BookRecord_Map.Builder.Data responseBuilder,
-      final @NotNull BookId_BookRecord_Map updateData,
-      final @Nullable UpdateBooksFieldProjection updateProjection,
-      final @NotNull OutputBooksFieldProjection outputProjection) {
+      @NotNull BookId_BookRecord_Map.Builder.Data responseBuilder,
+      @NotNull BookId_BookRecord_Map updateData,
+      @Nullable UpdateBooksFieldProjection updateProjection,
+      @NotNull OutputBooksFieldProjection outputProjection) {
 
     OutputBookRecordProjection bookOutputProjection = outputProjection.dataProjection().itemsProjection();
 
     BookId_BookRecord_Map.Builder booksMapBuilder = BookId_BookRecord_Map.create();
     responseBuilder.set(booksMapBuilder);
 
-    for (final Map.Entry<BookId.Imm, ? extends BookRecord.Value> entry : updateData.values().entrySet()) {
+    for (Map.Entry<BookId.Imm, ? extends BookRecord.Value> entry : updateData.values().entrySet()) {
       BookId.Imm bookId = entry.getKey();
       BookRecord bookUpdate = entry.getValue().getDatum();
 
       assert bookUpdate != null; // ensured by framework
 
       BooksBackend.BookData bookData = BooksBackend.get(bookId);
-      if (bookData == null)
+      if (bookData == null) {
         booksMapBuilder.putError(
             bookId,
             new ErrorValue(HttpStatusCode.NOT_FOUND, "Book " + bookId.getVal() + " not found")
         );
-      else {
+      } else {
         // values from the update request
         Optional<String> title = Optional.ofNullable(bookUpdate.getTitle());
         Optional<AuthorId> author = Optional.ofNullable(bookUpdate.getAuthor()).map(Author::getId);
@@ -74,12 +74,12 @@ public class BooksUpdateOperation extends AbstractUpdateOperation {
         String newText = text.orElse(bookData.text);
 
         // check author ID
-        if (AuthorsBackend.get(newAuthorId) == null)
+        if (AuthorsBackend.get(newAuthorId) == null) {
           booksMapBuilder.putError(
               bookId,
               new ErrorValue(HttpStatusCode.BAD_REQUEST, "Author " + newAuthorId.getVal() + " not found")
           );
-        else {
+        } else {
           BooksBackend.set(
               bookId,
               new BooksBackend.BookData(bookId, newTitle, newAuthorId, newText)

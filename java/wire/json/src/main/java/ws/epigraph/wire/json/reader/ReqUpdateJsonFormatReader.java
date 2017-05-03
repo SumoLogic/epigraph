@@ -51,11 +51,11 @@ public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
     return new GenProjectionsComparator<>();
   }
 
-  @Override
-  protected boolean tagRequired(@NotNull ReqUpdateTagProjectionEntry tagProjection) { return true; }
-
-  @Override
-  protected boolean fieldRequired(@NotNull ReqUpdateFieldProjectionEntry fieldEntry) { return true; }
+//  @Override
+//  protected boolean tagRequired(@NotNull ReqUpdateTagProjectionEntry tagProjection) { return true; }
+//
+//  @Override
+//  protected boolean fieldRequired(@NotNull ReqUpdateFieldProjectionEntry fieldEntry) { return true; }
 
   @Override
   protected @Nullable Set<Datum> getExpectedKeys(

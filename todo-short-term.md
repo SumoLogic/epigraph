@@ -12,7 +12,7 @@
     - [x] simple read
     - [x] search operation
     - [x] create operation
-    - [ ] update operation
+    - [x] update operation
     - [ ] delete operation
   - Operations
     - [ ] Overview
