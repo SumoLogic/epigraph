@@ -79,32 +79,38 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseIdTag() {
-    testParse(":id"); //plus added since id is a datum type
+    testParse(":id", ":+id");
   }
 
   @Test
   public void testParseRecordTag() {
-    testParse(":record");
+    testParse(":record", ":+record");
   }
 
   @Test
   public void testParseMultiTag() {
-    testParse(":(id,record)", ":( id, record )");
+    testParse(":(id,record)", ":( +id, +record )");
   }
 
   @Test
   public void testParseRecord() {
-    testParse(":record ( id ;param1 = 'foo' )");
+    testParse(":record ( +id ;param1 = 'foo' )");
   }
 
   @Test
   public void testParseMap() {
-    testParse(":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )");
+    testParse(
+        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )",
+        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :+id ) )"
+    );
   }
 
   @Test
   public void testParseList() {
-    testParse(":record ( friends *( :id ) )");
+    testParse(
+        ":record ( friends *( :id ) )",
+        ":record ( friends *( :+id ) )"
+    );
   }
 
   @Test
@@ -121,12 +127,18 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseRecursive() {
-    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )");
+    testParse(
+        ":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )",
+        ":( +id, record ( +id, bestFriend2 $bf2 = :record ( +id, bestFriend2 $bf2 ) ) )"
+    );
   }
 
   @Test
   public void testParseRecursiveDifferentOpRecursion() {
-    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )");
+    testParse(
+        ":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )",
+        ":( +id, record ( +id, bestFriend3 $bf3 = :record ( +id, bestFriend3 $bf3 ) ) )"
+    );
   }
 
   @Test
@@ -136,19 +148,25 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testUpdateModel() {
-    testParse(":+record ( id )");
+    testParse(
+        ":+record ( id )",
+        ":+record ( +id )"
+    );
   }
 
   @Test
   public void testUpdateDefaultModel() {
-    testParse(":record ( worstEnemy :+( id ) )");
+    testParse(
+        ":record ( worstEnemy :+( id ) )",
+        ":record ( worstEnemy :+( +id ) )"
+    );
   }
 
   @Test
   public void testParseTail() {
     testParse(
         ":id ~~User :record ( profile )",
-        ":id ~~ws.epigraph.tests.User :record ( profile )"
+        ":+id ~~ws.epigraph.tests.User :record ( +profile )"
     );
   }
 
@@ -156,7 +174,7 @@ public class ReqUpdateProjectionsParserTest {
   public void testParseModelTail() {
     testParse(
         ":record (id) ~+UserRecord (profile)",
-        ":record ( id ) ~+ws.epigraph.tests.UserRecord ( profile )"
+        ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( +profile )"
     );
   }
 
@@ -174,7 +192,10 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testRequiredPresent() {
-    testParse(":record ( bestFriend :( id, record ( id ) ) )");
+    testParse(
+        ":record ( bestFriend :( id, record ( id ) ) )",
+        ":record ( bestFriend :( +id, record ( +id ) ) )"
+    );
   }
 
   private void testParse(String expr) {

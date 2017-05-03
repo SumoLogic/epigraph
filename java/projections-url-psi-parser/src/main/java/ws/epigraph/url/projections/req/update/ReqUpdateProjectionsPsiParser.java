@@ -201,7 +201,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
-            singleTagProjectionPsi.getPlus() != null,
+            singleTagProjectionPsi.getPlus() != null || isLeaf(singleTagProjectionPsi),
             parseReqParams(
                 singleTagProjectionPsi.getReqParamList(),
                 opModelProjection.params(),
@@ -249,6 +249,15 @@ public final class ReqUpdateProjectionsPsiParser {
     } catch (RuntimeException e) {
       throw new PsiProcessingException(e, psi, context);
     }
+  }
+
+  private static boolean isLeaf(@NotNull UrlReqUpdateSingleTagProjection singleTagProjectionPsi) {
+//    if (singleTagProjectionPsi.getTagName() != null) return false;
+    final UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
+    return modelProjectionPsi.getReqUpdateListModelProjection() == null &&
+           modelProjectionPsi.getReqUpdateMapModelProjection() == null &&
+           modelProjectionPsi.getReqUpdateModelPolymorphicTail() == null &&
+           modelProjectionPsi.getReqUpdateRecordModelProjection() == null;
   }
 
   private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqUpdateSingleTagProjection singleTagProjectionPsi) {
@@ -299,7 +308,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opTagProjection,
-            tagProjectionPsi.getPlus() != null,
+            tagProjectionPsi.getPlus() != null || isLeaf(tagProjectionPsi),
             parseReqParams(
                 tagProjectionPsi.getReqParamList(),
                 opTagProjection.params(),
@@ -323,6 +332,14 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     return tagProjections;
+  }
+
+  private static boolean isLeaf(@NotNull UrlReqUpdateMultiTagProjectionItem multiagProjectionItemPsi) {
+    final UrlReqUpdateModelProjection modelProjectionPsi = multiagProjectionItemPsi.getReqUpdateModelProjection();
+    return modelProjectionPsi.getReqUpdateListModelProjection() == null &&
+           modelProjectionPsi.getReqUpdateMapModelProjection() == null &&
+           modelProjectionPsi.getReqUpdateModelPolymorphicTail() == null &&
+           modelProjectionPsi.getReqUpdateRecordModelProjection() == null;
   }
 
   private static @NotNull ReqUpdateVarProjection getDefaultVarProjection(
@@ -874,7 +891,8 @@ public final class ReqUpdateProjectionsPsiParser {
           final ReqUpdateFieldProjection fieldProjection =
               parseFieldProjection(
                   fieldType,
-                  entryPsi.getPlus() != null,
+                  // write full-blown isEmpty for var?
+                  entryPsi.getPlus() != null || fieldProjectionPsi.getReqUpdateVarProjection().getText().isEmpty(),
                   opFieldProjection,
                   fieldProjectionPsi,
                   resolver,

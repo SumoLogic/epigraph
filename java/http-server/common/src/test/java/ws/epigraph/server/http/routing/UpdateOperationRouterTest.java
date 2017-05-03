@@ -147,7 +147,7 @@ public class UpdateOperationRouterTest {
         "/users<[](:record(id))>[1](:record(firstName))",
         "pathless.1",
         null,
-        "[]( :record ( id ) )",
+        "[]( :record ( +id ) )",
         1,
         "[ \"1\" ]( :record ( firstName ) )"
     );
@@ -171,7 +171,7 @@ public class UpdateOperationRouterTest {
         "/users<[](:record(id))>[1](:record(id,lastName))",
         "pathless.2",
         null,
-        "[]( :record ( id ) )",
+        "[]( :record ( +id ) )",
         1,
         "[ \"1\" ]( :record ( id, lastName ) )"
     );
@@ -188,7 +188,7 @@ public class UpdateOperationRouterTest {
         "/users<[](:record(id))>/1:record(id,lastName)",
         "pathless.2",
         null,
-        "[]( :record ( id ) )",
+        "[]( :record ( +id ) )",
         3,
         "/ \"1\" :record ( id, lastName )"
     );
@@ -201,7 +201,7 @@ public class UpdateOperationRouterTest {
 
   @Test
   public void testPath1WithUpdate() throws PsiProcessingException {
-    testRouting("/users/1<(id)>:record(id)", "path.1", "/ \"1\"", "( id )", 1, ":record ( id )");
+    testRouting("/users/1<(id)>:record(id)", "path.1", "/ \"1\"", "( +id )", 1, ":record ( id )");
   }
 
   @Test
@@ -222,7 +222,7 @@ public class UpdateOperationRouterTest {
         "/users/1:record/bestFriend<(id,firstName)>:record(id)",
         "path.2",
         "/ \"1\" :record / bestFriend",
-        "( id, firstName )",
+        "( +id, +firstName )",
         1,
         ":record ( id )"
     );
@@ -234,7 +234,7 @@ public class UpdateOperationRouterTest {
         "/users/1:record/bestFriend<(id)>:record(id)",
         "path.3", // should not select path.2 because required field is missing from update projection
         "/ \"1\" :record / bestFriend",
-        "( id )",
+        "( +id )",
         1,
         ":record ( id )"
     );

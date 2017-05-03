@@ -39,6 +39,8 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     ReqUpdateFieldProjection,
     E> {
 
+  private boolean inReplace = false;
+
   public ReqUpdateProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
       final @NotNull ProjectionsPrettyPrinterContext<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> context) {
@@ -54,7 +56,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     if (p.type().kind() != TypeKind.UNION) {
       ReqUpdateTagProjectionEntry tp = p.tagProjections().values().iterator().next();
       ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
-      if (isUpdateModelProjection(projection))
+      if (isReplaceModelProjection(projection))
         l.print(":"); // print ':' before '+' for tag-less sef var projections
     }
     super.printVarOnly(p, pathSteps);
@@ -68,28 +70,36 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
       throws E {
 
     final ReqUpdateModelProjection<?, ?, ?> projection = entry.projection();
-    if (isUpdateModelProjection(projection)) l.print("+");
+    if (isReplaceModelProjection(projection)) l.print("+");
 
     super.printTag(tagName, entry, pathSteps);
   }
 
   @Override
   protected String modelTailTypeNamePrefix(final @NotNull ReqUpdateModelProjection<?, ?, ?> projection) {
-    return isUpdateModelProjection(projection) ? "+" : super.modelTailTypeNamePrefix(projection);
+    return isReplaceModelProjection(projection) ? "+" : super.modelTailTypeNamePrefix(projection);
   }
 
-  private boolean isUpdateModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
-    return projection.replace() && projection.type().kind() != TypeKind.PRIMITIVE;
+  private boolean isReplaceModelProjection(final ReqUpdateModelProjection<?, ?, ?> projection) {
+    return !inReplace && projection.replace() /* && projection.type().kind() != TypeKind.PRIMITIVE */;
   }
 
   @Override
   public void printModelOnly(@NotNull ReqUpdateModelProjection<?, ?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof ReqUpdateRecordModelProjection)
-      printModelOnly((ReqUpdateRecordModelProjection) mp);
-    else if (mp instanceof ReqUpdateMapModelProjection)
-      printModelOnly((ReqUpdateMapModelProjection) mp);
-    else if (mp instanceof ReqUpdateListModelProjection)
-      printModelOnly((ReqUpdateListModelProjection) mp, pathSteps);
+    boolean setReplace = !inReplace && mp.replace(); // todo same for vars (fields)
+    if (setReplace) inReplace = true;
+
+    try {
+      if (mp instanceof ReqUpdateRecordModelProjection)
+        printModelOnly((ReqUpdateRecordModelProjection) mp);
+      else if (mp instanceof ReqUpdateMapModelProjection)
+        printModelOnly((ReqUpdateMapModelProjection) mp);
+      else if (mp instanceof ReqUpdateListModelProjection)
+        printModelOnly((ReqUpdateListModelProjection) mp, pathSteps);
+    } finally {
+      if (setReplace)
+        inReplace = false;
+    }
   }
 
   private void printModelOnly(@NotNull ReqUpdateRecordModelProjection mp) throws E {
@@ -102,7 +112,16 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
       else l.print(",");
       l.brk();
 
-      print(entry.getKey(), entry.getValue().fieldProjection(), 0);
+      final ReqUpdateFieldProjection fieldProjection = entry.getValue().fieldProjection();
+
+      boolean setReplace = !inReplace && fieldProjection.replace();
+      if (setReplace) inReplace = true;
+      try {
+        print(entry.getKey(), fieldProjection, 0);
+      } finally {
+        if (setReplace)
+          inReplace = false;
+      }
 
     }
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
