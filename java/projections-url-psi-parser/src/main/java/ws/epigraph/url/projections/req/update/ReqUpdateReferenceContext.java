@@ -76,6 +76,7 @@ public class ReqUpdateReferenceContext
     final DatumTypeApi modelType = mRef.type();
     return new ReqUpdateVarProjection(
         modelType,
+        mRef.replace(),
         ProjectionUtils.singletonLinkedHashMap(
             modelType.self().name(),
             new ReqUpdateTagProjectionEntry(

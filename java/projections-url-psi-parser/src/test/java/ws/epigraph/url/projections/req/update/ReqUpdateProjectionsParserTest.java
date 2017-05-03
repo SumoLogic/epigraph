@@ -223,6 +223,7 @@ public class ReqUpdateProjectionsParserTest {
 
         ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
             dataType,
+            false,
             personOpProjection,
             psi,
             resolver,

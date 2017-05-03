@@ -18,8 +18,7 @@ package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
@@ -70,12 +69,6 @@ class ReqUpdateMapModelProjectionGen(
     }
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateMapModelProjection"),
-    update + CodeChunk(/*@formatter:off*/sn"""\
-  public boolean updateKeys() {
-    return raw.updateKeys();
-  }
-"""/*@formatter:on*/
-    )
+    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateMapModelProjection")
   )
 }

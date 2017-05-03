@@ -51,9 +51,9 @@ abstract class ReqUpdateModelProjectionGen(
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 
-  protected lazy val update: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  protected lazy val replace: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
-   * @return {@code true} if object must be replaced (updated), and {@code false} if it must be patched
+   * @return {@code true} if model must be replaced (updated), and {@code false} if it must be patched
    */
   public boolean replace() {
     return raw.replace();

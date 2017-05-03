@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 
 import java.util.List;
@@ -35,18 +36,28 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
     ReqUpdateModelProjection<?, ?, ?>
     > {
 
+  private boolean replace;
+
   public ReqUpdateVarProjection(
       @NotNull TypeApi type,
+      boolean replace,
       @NotNull Map<String, ReqUpdateTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<ReqUpdateVarProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
+    this.replace = replace;
   }
 
-  public ReqUpdateVarProjection( final @NotNull TypeApi type, final @NotNull TextLocation location) {
+  public ReqUpdateVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
+    replace = false;
   }
+
+  /**
+   * @return {@code true} if this entity must be replaced (updated), {@code false} if it must be patched
+   */
+  public boolean replace() { return replace; }
 
   @Override
   protected ReqUpdateVarProjection merge(
@@ -58,6 +69,7 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
 
     return new ReqUpdateVarProjection(
         effectiveType,
+        varProjections.stream().anyMatch(vp -> vp.replace),
         mergedTags,
         mergedParenthesized, mergedTails,
         TextLocation.UNKNOWN
@@ -65,10 +77,14 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
   }
 
   @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateVarProjection value) {
+    super.resolve(name, value);
+    this.replace = value.replace;
+  }
+
+  @Override
   protected @NotNull VarNormalizationContext<ReqUpdateVarProjection> newNormalizationContext() {
-    return new VarNormalizationContext<>(
-        t -> new ReqUpdateVarProjection(t , location())
-    );
+    return new VarNormalizationContext<>(t -> new ReqUpdateVarProjection(t, location()));
   }
 
 }

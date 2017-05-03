@@ -67,7 +67,8 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   protected def generate(
     reqVarProjectionFqn: Qn,
-    reqTagProjectionEntryFqn: Qn
+    reqTagProjectionEntryFqn: Qn,
+    extra: CodeChunk = CodeChunk.empty
   ): String = {
 
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
@@ -132,7 +133,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString
-    ) ++ tags.imports ++ tails.imports ++ normalizedTails.imports
+    ) ++ tags.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -147,7 +148,7 @@ public class $shortClassName {
   private final @NotNull ${reqVarProjectionFqn.last()} raw;
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }\
-\s${(tags + tails + normalizedTails).code}\
+\s${(tags + tails + normalizedTails + extra).code}\
 
   public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/

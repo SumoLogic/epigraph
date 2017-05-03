@@ -51,6 +51,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   public static @NotNull ReqUpdateVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
+      boolean replace,
       @NotNull OpInputVarProjection op,
       @NotNull UrlReqUpdateVarProjection psi,
       @NotNull TypesResolver resolver,
@@ -70,6 +71,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
       return parseUnnamedOrRefVarProjection(
           dataType,
+          replace,
           op,
           unnamedOrRefVarProjection,
           resolver,
@@ -94,6 +96,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
       final ReqUpdateVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
+          replace,
           op,
           unnamedOrRefVarProjection,
           resolver,
@@ -110,6 +113,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
         parseUnnamedOrRefVarProjection(
             dataType,
+            replace,
             unverifiedOp,
             unnamedOrRefVarProjection,
             resolver,
@@ -124,6 +128,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   public static @NotNull ReqUpdateVarProjection parseUnnamedOrRefVarProjection(
       final @NotNull DataTypeApi dataType,
+      final boolean replace,
       final @NotNull OpInputVarProjection op,
       final @NotNull UrlReqUpdateUnnamedOrRefVarProjection psi,
       final @NotNull TypesResolver resolver,
@@ -138,6 +143,7 @@ public final class ReqUpdateProjectionsPsiParser {
       else {
         return parseUnnamedVarProjection(
             dataType,
+            replace,
             op,
             unnamedVarProjection,
             resolver,
@@ -168,6 +174,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   public static @NotNull ReqUpdateVarProjection parseUnnamedVarProjection(
       @NotNull DataTypeApi dataType,
+      boolean replace,
       @NotNull OpInputVarProjection op,
       @NotNull UrlReqUpdateUnnamedVarProjection psi,
       @NotNull TypesResolver resolver,
@@ -193,15 +200,17 @@ public final class ReqUpdateProjectionsPsiParser {
       TagApi tag = findTagOrSelfTag(type, tagNamePsi, op, tagLocation, context);
       if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
         if (tag == null) tag = getTagOrSelfTag(type, null, op, tagLocation, context); // will throw proper error
-        @NotNull OpInputTagProjectionEntry opTagProjection =
-            getTagProjection(tag.name(), op, tagLocation, context);
 
+        @NotNull OpInputTagProjectionEntry opTagProjection = getTagProjection(tag.name(), op, tagLocation, context);
         @NotNull OpInputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
         @NotNull UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
 
+        final boolean replaceModel = singleTagProjectionPsi.getPlus() != null || isLeaf(singleTagProjectionPsi)
+                                     || (replace && type.kind() != TypeKind.UNION);
+
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
-            singleTagProjectionPsi.getPlus() != null || isLeaf(singleTagProjectionPsi),
+            replaceModel,
             parseReqParams(
                 singleTagProjectionPsi.getReqParamList(),
                 opModelProjection.params(),
@@ -236,11 +245,12 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     final List<ReqUpdateVarProjection> tails =
-        parseTails(dataType, op, psi.getReqUpdateVarPolymorphicTail(), subResolver, context);
+        parseTails(dataType, replace, op, psi.getReqUpdateVarPolymorphicTail(), subResolver, context);
 
     try {
       return new ReqUpdateVarProjection(
           type,
+          replace,
           tagProjections,
           singleTagProjectionPsi == null || tagProjections.size() != 1,
           tails,
@@ -347,6 +357,7 @@ public final class ReqUpdateProjectionsPsiParser {
       final @NotNull PsiElement psi) {
     return new ReqUpdateVarProjection(
         type,
+        true,
         Collections.emptyMap(),
         true,
         null,
@@ -356,6 +367,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   private static @Nullable List<ReqUpdateVarProjection> parseTails(
       @NotNull DataTypeApi dataType,
+      boolean replace,
       @NotNull OpInputVarProjection op,
       @Nullable UrlReqUpdateVarPolymorphicTail tailPsi,
       @NotNull TypesResolver resolver,
@@ -383,7 +395,7 @@ public final class ReqUpdateProjectionsPsiParser {
             @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
             @NotNull UrlReqUpdateVarProjection psiTailProjection = tailItem.getReqUpdateVarProjection();
             @NotNull ReqUpdateVarProjection tailProjection =
-                buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, context);
+                buildTailProjection(dataType, replace, op, tailTypeRef, psiTailProjection, subResolver, context);
             tails.add(tailProjection);
 
             prevTailType = tailProjection.type();
@@ -393,7 +405,7 @@ public final class ReqUpdateProjectionsPsiParser {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqUpdateVarProjection psiTailProjection = singleTail.getReqUpdateVarProjection();
         @NotNull ReqUpdateVarProjection tailProjection =
-            buildTailProjection(dataType, op, tailTypeRef, psiTailProjection, subResolver, context);
+            buildTailProjection(dataType, replace, op, tailTypeRef, psiTailProjection, subResolver, context);
         tails.add(tailProjection);
       }
 
@@ -404,6 +416,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   private static @NotNull ReqUpdateVarProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
+      boolean replace,
       @NotNull OpInputVarProjection op,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqUpdateVarProjection tailProjectionPsi,
@@ -418,6 +431,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
+        replace,
         opTail,
         tailProjectionPsi,
         typesResolver,
@@ -427,7 +441,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   public static @NotNull ReqUpdateModelProjection<?, ?, ?> parseModelProjection(
       @NotNull OpInputModelProjection<?, ?, ?, ?> op,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqUpdateModelProjection psi,
@@ -437,7 +451,7 @@ public final class ReqUpdateProjectionsPsiParser {
     return parseModelProjection(
         ReqUpdateModelProjection.class,
         op,
-        update,
+        replace,
         params,
         annotations,
         psi,
@@ -451,7 +465,7 @@ public final class ReqUpdateProjectionsPsiParser {
   public static <MP extends ReqUpdateModelProjection<?, ?, ?>> @NotNull MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull OpInputModelProjection<?, ?, ?, ?> op,
-      boolean update,
+      boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
       @NotNull UrlReqUpdateModelProjection psi,
@@ -471,14 +485,14 @@ public final class ReqUpdateProjectionsPsiParser {
 
         if (recordModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);
-          return (MP) createDefaultModelProjection(model, update, opRecord, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, replace, opRecord, params, annotations, psi, context);
         }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         return (MP) parseRecordModelProjection(
             opRecord,
-            update,
+            replace,
             params,
             annotations,
             parseModelTails(
@@ -500,14 +514,14 @@ public final class ReqUpdateProjectionsPsiParser {
 
         if (mapModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.MAP, context);
-          return (MP) createDefaultModelProjection(model, update, opMap, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, replace, opMap, params, annotations, psi, context);
         }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         return (MP) parseMapModelProjection(
             opMap,
-            update,
+            replace,
             params,
             annotations,
             parseModelTails(
@@ -530,14 +544,14 @@ public final class ReqUpdateProjectionsPsiParser {
 
         if (listModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.LIST, context);
-          return (MP) createDefaultModelProjection(model, update, opList, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, replace, opList, params, annotations, psi, context);
         }
 
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         return (MP) parseListModelProjection(
             opList,
-            update,
+            replace,
             params,
             annotations,
             parseModelTails(
@@ -733,7 +747,6 @@ public final class ReqUpdateProjectionsPsiParser {
             update,
             params,
             annotations,
-            false,
             Collections.emptyList(),
             valueVarProjection,
             null,
@@ -843,6 +856,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
     return new ReqUpdateVarProjection(
         type,
+        true,
         tagProjections,
         op.parenthesized() || tagProjections.size() != 1,
         null,
@@ -931,7 +945,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   public static @NotNull ReqUpdateFieldProjection parseFieldProjection(
       final DataTypeApi fieldType,
-      boolean update,
+      boolean replace,
       final @NotNull OpInputFieldProjection op,
       final @NotNull UrlReqUpdateFieldProjection psi,
       final @NotNull TypesResolver resolver, final @NotNull ReqUpdatePsiProcessingContext context)
@@ -945,6 +959,7 @@ public final class ReqUpdateProjectionsPsiParser {
     @NotNull ReqUpdateVarProjection varProjection =
         parseVarProjection(
             fieldType,
+            replace,
             op.varProjection(),
             psiVarProjection,
             resolver,
@@ -957,7 +972,6 @@ public final class ReqUpdateProjectionsPsiParser {
 //        fieldParams,
 //        fieldAnnotations,
         varProjection,
-        update,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1008,6 +1022,7 @@ public final class ReqUpdateProjectionsPsiParser {
     } else {
       elementsVarProjection = parseVarProjection(
           model.valueType(),
+          psi.getPlus() != null,
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,
@@ -1020,8 +1035,6 @@ public final class ReqUpdateProjectionsPsiParser {
         update,
         params,
         annotations,
-        psi.getPlus() != null,
-//        psi.getReqUpdateKeysProjection().getPlus() != null,
         keys,
         elementsVarProjection,
         tails,
@@ -1048,6 +1061,7 @@ public final class ReqUpdateProjectionsPsiParser {
     } else {
       elementsVarProjection = parseVarProjection(
           op.type().elementType(),
+          psi.getPlus() != null,
           op.itemsProjection(),
           elementsVarProjectionPsi,
           resolver,

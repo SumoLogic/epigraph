@@ -22,7 +22,6 @@ import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -33,19 +32,14 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
     ReqUpdateModelProjection<?, ?, ?>,
     ReqUpdateFieldProjection
     > {
-  private final boolean replace;
 
   public ReqUpdateFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
       @NotNull ReqUpdateVarProjection projection,
-      boolean replace,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
-    this.replace = replace;
   }
-
-  public boolean replace() { return replace; }
 
   @Override
   protected ReqUpdateFieldProjection merge(
@@ -53,26 +47,11 @@ public class ReqUpdateFieldProjection extends AbstractReqFieldProjection<
       final @NotNull List<ReqUpdateFieldProjection> fieldProjections,
       final @NotNull ReqUpdateVarProjection mergedVarProjection) {
 
-    boolean update = fieldProjections.stream().anyMatch(ReqUpdateFieldProjection::replace);
-    return new ReqUpdateFieldProjection(mergedVarProjection, update, TextLocation.UNKNOWN);
+    return new ReqUpdateFieldProjection(mergedVarProjection, TextLocation.UNKNOWN);
   }
 
   @Override
   public @NotNull ReqUpdateFieldProjection setVarProjection(final @NotNull ReqUpdateVarProjection varProjection) {
-    return new ReqUpdateFieldProjection(varProjection, replace, TextLocation.UNKNOWN);
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final ReqUpdateFieldProjection that = (ReqUpdateFieldProjection) o;
-    return replace == that.replace;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), replace);
+    return new ReqUpdateFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 }

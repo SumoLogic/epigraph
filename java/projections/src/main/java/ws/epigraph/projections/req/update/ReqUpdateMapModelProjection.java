@@ -45,7 +45,6 @@ public class ReqUpdateMapModelProjection
     MapTypeApi
     > {
 
-  private /*final*/ boolean updateKeys;
   private /*final*/ @NotNull List<ReqUpdateKeyProjection> keys;
   private /*final @NotNull*/ @Nullable ReqUpdateVarProjection valuesProjection;
 
@@ -54,13 +53,11 @@ public class ReqUpdateMapModelProjection
       boolean replace,
       @NotNull ReqParams params,
       @NotNull Annotations annotations,
-      boolean updateKeys,
       @NotNull List<ReqUpdateKeyProjection> keys,
       @NotNull ReqUpdateVarProjection valuesProjection,
       @Nullable List<ReqUpdateMapModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, replace, params, annotations, tails, location);
-    this.updateKeys = updateKeys;
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }
@@ -75,11 +72,6 @@ public class ReqUpdateMapModelProjection
     assert isResolved();
     assert valuesProjection != null;
     return valuesProjection;
-  }
-
-  public boolean updateKeys() {
-    assert isResolved();
-    return updateKeys;
   }
 
   public @NotNull List<ReqUpdateKeyProjection> keys() {
@@ -119,7 +111,6 @@ public class ReqUpdateMapModelProjection
         mergedUpdate,
         mergedParams,
         mergedAnnotations,
-        modelProjections.stream().anyMatch(ReqUpdateMapModelProjection::updateKeys),
         mergedKeys,
         mergedItemsVarType,
         mergedTails,
@@ -137,7 +128,6 @@ public class ReqUpdateMapModelProjection
         n.replace(),
         n.params(),
         n.annotations(),
-        n.updateKeys(),
         n.keys(),
         n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
         n.polymorphicTails(),
@@ -148,7 +138,6 @@ public class ReqUpdateMapModelProjection
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateMapModelProjection value) {
     super.resolve(name, value);
-    updateKeys = value.updateKeys();
     keys = value.keys();
     valuesProjection = value.itemsProjection();
   }
@@ -159,11 +148,10 @@ public class ReqUpdateMapModelProjection
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final ReqUpdateMapModelProjection that = (ReqUpdateMapModelProjection) o;
-    return updateKeys == that.updateKeys &&
-           Objects.equals(keys, that.keys) &&
+    return Objects.equals(keys, that.keys) &&
            Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), updateKeys, keys, valuesProjection); }
+  public int hashCode() { return Objects.hash(super.hashCode(), keys, valuesProjection); }
 }

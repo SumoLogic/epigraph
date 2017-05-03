@@ -3671,7 +3671,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  // '*' '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
   public static boolean reqUpdateListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateListModelProjection")) return false;
     if (!nextTokenIs(b, U_STAR)) return false;
@@ -3679,21 +3679,29 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_LIST_MODEL_PROJECTION, null);
     r = consumeToken(b, U_STAR);
     p = r; // pin = 1
-    r = r && reqUpdateListModelProjection_1(b, l + 1);
+    r = r && report_error_(b, reqUpdateListModelProjection_1(b, l + 1));
+    r = p && reqUpdateListModelProjection_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  // '+'?
   private static boolean reqUpdateListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqUpdateListModelProjection_1")) return false;
-    reqUpdateListModelProjection_1_0(b, l + 1);
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
+  private static boolean reqUpdateListModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_2")) return false;
+    reqUpdateListModelProjection_2_0(b, l + 1);
     return true;
   }
 
   // reqUpdateBracedVarProjection | reqUpdateVarProjection
-  private static boolean reqUpdateListModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_1_0")) return false;
+  private static boolean reqUpdateListModelProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqUpdateBracedVarProjection(b, l + 1);

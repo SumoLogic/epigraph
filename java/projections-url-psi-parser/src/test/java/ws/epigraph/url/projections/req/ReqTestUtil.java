@@ -232,6 +232,7 @@ public final class ReqTestUtil {
 
       ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
           type,
+          false,
           op,
           psi,
           resolver,

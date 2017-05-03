@@ -114,7 +114,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
       final ReqUpdateFieldProjection fieldProjection = entry.getValue().fieldProjection();
 
-      boolean setReplace = !inReplace && fieldProjection.replace();
+      boolean setReplace = !inReplace && fieldProjection.varProjection().replace();
       if (setReplace) inReplace = true;
       try {
         print(entry.getKey(), fieldProjection, 0);
@@ -129,12 +129,12 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected String fieldNamePrefix(final @NotNull ReqUpdateFieldProjection fieldProjection) {
-    return fieldProjection.replace() ? "+" : "";
+    return fieldProjection.varProjection().replace() ? "+" : "";
   }
 
   private void printModelOnly(ReqUpdateMapModelProjection mp) throws E {
 //    if (mp.updateKeys()) l.print("+");
-    printMapModelProjection(mp.keys(), mp.updateKeys() ? "+" : "", mp.itemsProjection());
+    printMapModelProjection(mp.keys(), mp.itemsProjection().replace() ? "+" : "", mp.itemsProjection());
   }
 
   private void printModelOnly(ReqUpdateListModelProjection mp, int pathSteps) throws E {
@@ -142,7 +142,10 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*");
+    if (mp.itemsProjection().replace())
+      l.print("+");
+    l.print("(").brk();
     printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }

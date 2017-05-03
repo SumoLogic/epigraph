@@ -287,7 +287,7 @@ reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjectionEntry ','?)* ')'
 reqUpdateFieldProjectionEntry ::= '+'? qid reqUpdateFieldProjection
 reqUpdateFieldProjection ::= /* reqParamsAndAnnotations */ reqUpdateVarProjection
 
-reqUpdateListModelProjection ::= '*' ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )? { pin=1 }
+reqUpdateListModelProjection ::= '*' '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )? { pin=1 }
 
 reqUpdateMapModelProjection ::= reqUpdateKeysProjection '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
 reqUpdateKeysProjection ::= '[' ( reqUpdateKeyProjection ','? )* ']' {pin=1}  // plus for `update keys`
