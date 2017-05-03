@@ -103,7 +103,7 @@ public final class DataPathRemover {
               return new PathRemovalResult(
                   mp,
                   new ErrorValue(
-                      HttpStatusCode.NOT_FOUND.code(), String.format("field '%s' not found", entry.field().name())
+                      HttpStatusCode.NOT_FOUND, String.format("field '%s' not found", entry.field().name())
                   )
               );
             return removePath(entry.fieldProjection().varProjection(), fieldData, steps - 1);
@@ -146,7 +146,7 @@ public final class DataPathRemover {
                 return new PathRemovalResult(
                     mp,
                     new ErrorValue(
-                        HttpStatusCode.NOT_FOUND.code(), keyString + "not found"
+                        HttpStatusCode.NOT_FOUND, keyString + "not found"
                     )
                 );
               }
@@ -165,7 +165,7 @@ public final class DataPathRemover {
           case 0:
             return new PathRemovalResult(
                 mp,
-                new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "List item not found")
+                new ErrorValue(HttpStatusCode.NOT_FOUND, "List item not found")
             );
           case 1:
             return removePath(lmp.itemsProjection(), listElements.get(0), steps - 1);

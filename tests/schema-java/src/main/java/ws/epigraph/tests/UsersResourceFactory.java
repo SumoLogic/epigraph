@@ -283,7 +283,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
           resultMapBuilder.put(
               key.value(),
               Error.create()
-                  .setCode(HttpStatusCode.NOT_FOUND.code())
+                  .setCode(HttpStatusCode.NOT_FOUND)
                   .setMessage("Item with id " + key.value().getVal() + " doesn't exist")
           );
 
@@ -314,7 +314,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       PersonId.Imm key = path.dataProjection().key().value();
       final Person.Builder person = (Person.Builder) storage.users().datas().get(key);
       if (person == null) {
-        builder.set_Error(new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Person with id " + key.getVal() + " not found"));
+        builder.set_Error(new ErrorValue(HttpStatusCode.NOT_FOUND, "Person with id " + key.getVal() + " not found"));
       } else {
         PersonRecord.Builder personRecord = (PersonRecord.Builder) person.getRecord();
         if (personRecord != null) {

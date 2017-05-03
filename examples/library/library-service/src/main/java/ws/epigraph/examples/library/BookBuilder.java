@@ -48,7 +48,7 @@ public final class BookBuilder {
 
     if (bookData == null) {
       return BookRecord.type.createValue(
-          new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "No book with id " + bookId)
+          new ErrorValue(HttpStatusCode.NOT_FOUND, "No book with id " + bookId)
       );
     } else {
       final BookRecord.Builder book = BookRecord.create();
@@ -106,7 +106,7 @@ public final class BookBuilder {
 
     if (authorData == null) {
       return AuthorRecord.type.createValue(
-          new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "No author with id " + authorId)
+          new ErrorValue(HttpStatusCode.NOT_FOUND, "No author with id " + authorId)
       );
     } else {
       AuthorRecord.Builder author = AuthorRecord.create();

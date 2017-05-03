@@ -175,7 +175,7 @@ public class ReqOutputRequiredDataPruner {
           if (required)
             return new UseError(
                 removeData.reason,
-                new ErrorValue(HttpStatusCode.PRECONDITION_FAILED.code(), removeData.reason.toString())
+                new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
             );
 //            return new UseNull(removeData.reason);
           else
@@ -234,7 +234,7 @@ public class ReqOutputRequiredDataPruner {
 //          return new UseNull(removeData.reason);
           return new UseError(
               removeData.reason,
-              new ErrorValue(HttpStatusCode.PRECONDITION_FAILED.code(), removeData.reason.toString())
+              new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
           );
         else
           replacements.put(key, null);
@@ -335,7 +335,7 @@ public class ReqOutputRequiredDataPruner {
             final Reason reason = error(String.format("Required %s %s is null", name, id));
             return new UseError(
                 reason,
-                new ErrorValue(HttpStatusCode.PRECONDITION_FAILED.code(), reason.toString())
+                new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, reason.toString())
             );
           }
 //            return new UseNull(error(String.format("Required %s %s is null", name, id)));

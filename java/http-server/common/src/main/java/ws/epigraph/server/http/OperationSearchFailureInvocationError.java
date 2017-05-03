@@ -47,7 +47,7 @@ public class OperationSearchFailureInvocationError extends PsiProcessingInvocati
   }
 
   @Override
-  public @NotNull HttpStatusCode statusCode() { return HttpStatusCode.BAD_REQUEST; }
+  public int statusCode() { return HttpStatusCode.BAD_REQUEST; }
 
   @Override
   public @NotNull String message() {

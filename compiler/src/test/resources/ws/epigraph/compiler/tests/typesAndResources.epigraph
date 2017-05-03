@@ -11,6 +11,6 @@ resource MyResource : list[MyString] {
 
   update myUpdate {
     inputType map[MyString,MyLong]
-    inputProjection *
+    inputProjection []
   }
 }

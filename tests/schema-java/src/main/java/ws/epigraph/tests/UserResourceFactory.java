@@ -25,7 +25,6 @@ import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.user.AbstractUserResourceFactory;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -52,7 +51,7 @@ public class UserResourceFactory extends AbstractUserResourceFactory {
               .setId(PersonId.create(1))
               .setFirstName("Alfred")
               .setLastName("Hitchcock")
-              .setProfile_Error(new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Not Found", null))
+              .setProfile_Error(new ErrorValue(HttpStatusCode.NOT_FOUND, "Not Found", null))
               .setBestFriend(User.create()
                   .setId(UserId.create(2))
                   .setRecord(UserRecord.create()

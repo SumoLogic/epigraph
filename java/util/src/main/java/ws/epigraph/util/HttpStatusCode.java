@@ -19,23 +19,18 @@ package ws.epigraph.util;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public enum HttpStatusCode {
-  OK(200),
-  CREATED(201),
+public interface HttpStatusCode {
+  int OK = 200;
+  int CREATED = 201;
 
-  BAD_REQUEST(400),
-  UNAUTHORIZED(401),
-  NOT_FOUND(404),
-  TIMEOUT(408),
-  PRECONDITION_FAILED(412),
-  TOO_MANY_REQUESTS(429),
+  int BAD_REQUEST = 400;
+  int UNAUTHORIZED = 401;
+  int NOT_FOUND = 404;
+  int TIMEOUT = 408;
+  int PRECONDITION_FAILED = 412;
+  int TOO_MANY_REQUESTS = 429;
 
-  INTERNAL_SERVER_ERROR(500),
-  INTERNAL_OPERATION_ERROR(520);
+  int INTERNAL_SERVER_ERROR = 500;
+  int INTERNAL_OPERATION_ERROR = 520;
 
-  final int code;
-
-  HttpStatusCode(final int code) {this.code = code;}
-
-  public int code() { return code; }
 }

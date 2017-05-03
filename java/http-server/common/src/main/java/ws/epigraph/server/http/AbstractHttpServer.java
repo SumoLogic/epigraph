@@ -172,7 +172,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @Nullable String operationName,
       @NotNull String decodedUri,
       @NotNull C context) {
-    handleReadResponse(HttpStatusCode.OK.code(), invokeReadRequest(resource, operationName, decodedUri, context), context);
+    handleReadResponse(HttpStatusCode.OK, invokeReadRequest(resource, operationName, decodedUri, context), context);
   }
 
   private static final class ReadResult {
@@ -343,7 +343,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.CREATED.code(),
+        HttpStatusCode.CREATED,
         invokeCreateRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -491,7 +491,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK.code(),
+        HttpStatusCode.OK,
         invokeUpdateRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -640,7 +640,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK.code(),
+        HttpStatusCode.OK,
         invokeDeleteRequest(resource, operationName, decodedUri, context),
         context
     );
@@ -762,7 +762,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
       @NotNull String decodedUri,
       @NotNull C context) {
     handleReadResponse(
-        HttpStatusCode.OK.code(),
+        HttpStatusCode.OK,
         invokeCustomRequest(resource, operationName, method, decodedUri, context),
         context
     );
@@ -939,7 +939,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
   }
 
   protected void writeErrorResponse(@NotNull ErrorValue error, @NotNull C context) {
-    writeFormatResponse(/*HttpStatusCode.OK.code(), */error.statusCode(), context, writer -> {
+    writeFormatResponse(/*HttpStatusCode.OK, */error.statusCode(), context, writer -> {
       writer.writeError(error);
       writer.close();
     });
@@ -1086,7 +1086,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
   private void writeGenericErrorAndClose(
       @NotNull String message,
-      @NotNull HttpStatusCode status,
+      int status,
       @NotNull C context) {
 
     writeInvocationErrorAndCloseContext(

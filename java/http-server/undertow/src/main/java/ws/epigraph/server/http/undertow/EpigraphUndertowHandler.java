@@ -152,7 +152,7 @@ public class EpigraphUndertowHandler
       final @NotNull UndertowInvocationContext context) {
 
     final HttpServerExchange exchange = context.exchange;
-    exchange.setStatusCode(error.statusCode().code());
+    exchange.setStatusCode(error.statusCode());
 
     if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(exchange)) {
       exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE_HTML);

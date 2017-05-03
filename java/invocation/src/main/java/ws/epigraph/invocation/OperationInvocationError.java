@@ -25,5 +25,5 @@ import ws.epigraph.util.HttpStatusCode;
 public interface OperationInvocationError {
   @NotNull String message();
 
-  @NotNull HttpStatusCode statusCode();
+  int statusCode();
 }

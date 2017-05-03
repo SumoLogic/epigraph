@@ -73,7 +73,7 @@ public class UsersStorage {
         .setId(pid)
         .setFirstName("First" + id)
         .setLastName("Last" + id)
-        .setProfile_Error(new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Not Found", null))
+        .setProfile_Error(new ErrorValue(HttpStatusCode.NOT_FOUND, "Not Found", null))
         .setBestFriend(bestFriend)
         .setFriends(Person_List.create()
             .add(User.create()

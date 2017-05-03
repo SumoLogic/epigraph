@@ -78,7 +78,7 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       if (type == null)
         typeMapBuilder.putError(
             key,
-            new ErrorValue(HttpStatusCode.NOT_FOUND.code(), "Can't find type '" + typeName + "'")
+            new ErrorValue(HttpStatusCode.NOT_FOUND, "Can't find type '" + typeName + "'")
         );
       else
         typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));

@@ -51,7 +51,7 @@ public class RequestParsingInvocationError extends PsiProcessingInvocationError
   }
 
   @Override
-  public @NotNull HttpStatusCode statusCode() { return HttpStatusCode.BAD_REQUEST; }
+  public int statusCode() { return HttpStatusCode.BAD_REQUEST; }
 
   @Override
   public @NotNull String message() {
