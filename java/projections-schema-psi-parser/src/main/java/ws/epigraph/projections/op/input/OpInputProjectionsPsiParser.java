@@ -38,10 +38,7 @@ import ws.epigraph.types.TypeKind;
 import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
@@ -690,6 +687,7 @@ public final class OpInputProjectionsPsiParser {
     switch (type.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(OpInputRecordModelProjection.class);
+        ensureModelKind(psi, TypeKind.RECORD, context);
 
         @Nullable SchemaOpInputRecordModelProjection recordModelProjectionPsi =
             psi.getOpInputRecordModelProjection();
@@ -706,9 +704,7 @@ public final class OpInputProjectionsPsiParser {
               context
           );
 
-        ensureModelKind(psi, TypeKind.RECORD, context);
-        GRecordDatum defaultRecordData =
-            coerceDefault(defaultValue, GRecordDatum.class, psi, context);
+        GRecordDatum defaultRecordData = coerceDefault(defaultValue, GRecordDatum.class, psi, context);
 
         return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
@@ -730,9 +726,9 @@ public final class OpInputProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(OpInputMapModelProjection.class);
+        ensureModelKind(psi, TypeKind.MAP, context);
 
-        @Nullable SchemaOpInputMapModelProjection mapModelProjectionPsi =
-            psi.getOpInputMapModelProjection();
+        @Nullable SchemaOpInputMapModelProjection mapModelProjectionPsi = psi.getOpInputMapModelProjection();
 
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(
@@ -746,7 +742,6 @@ public final class OpInputProjectionsPsiParser {
               context
           );
 
-        ensureModelKind(psi, TypeKind.MAP, context);
         GMapDatum defaultMapData = coerceDefault(defaultValue, GMapDatum.class, psi, context);
 
         return (MP) parseMapModelProjection(
@@ -769,6 +764,7 @@ public final class OpInputProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(OpInputListModelProjection.class);
+        ensureModelKind(psi, TypeKind.LIST, context);
 
         @Nullable SchemaOpInputListModelProjection listModelProjectionPsi =
             psi.getOpInputListModelProjection();
@@ -785,7 +781,6 @@ public final class OpInputProjectionsPsiParser {
               context
           );
 
-        ensureModelKind(psi, TypeKind.LIST, context);
         GListDatum defaultListData = coerceDefault(defaultValue, GListDatum.class, psi, context);
 
         return (MP) parseListModelProjection(
@@ -908,7 +903,7 @@ public final class OpInputProjectionsPsiParser {
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
-    if (expectedKind != actualKind)
+    if (actualKind != null && expectedKind != actualKind)
       throw new PsiProcessingException(MessageFormat.format(
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,

@@ -445,6 +445,7 @@ public final class ReqInputProjectionsPsiParser {
     switch (model.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(ReqInputRecordModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         final OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
 
@@ -457,8 +458,6 @@ public final class ReqInputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         return (MP) parseRecordModelProjection(
             opRecord,
@@ -478,6 +477,7 @@ public final class ReqInputProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(ReqInputMapModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
         @Nullable UrlReqInputMapModelProjection mapModelProjectionPsi = psi.getReqInputMapModelProjection();
@@ -488,8 +488,6 @@ public final class ReqInputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         return (MP) parseMapModelProjection(
             opMap,
@@ -509,6 +507,7 @@ public final class ReqInputProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(ReqInputListModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         final OpInputListModelProjection opList = (OpInputListModelProjection) op;
         @Nullable UrlReqInputListModelProjection listModelProjectionPsi =
@@ -520,8 +519,6 @@ public final class ReqInputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         return (MP) parseListModelProjection(
             opList,

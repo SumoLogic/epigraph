@@ -431,7 +431,7 @@ public final class UrlProjectionsPsiParserUtil {
       @Nullable TypeKind actualKind, @NotNull TypeKind expectedKind, @NotNull PsiElement locationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (expectedKind != actualKind)
+    if (actualKind != null && expectedKind != actualKind)
       throw new PsiProcessingException(
           String.format("Unexpected projection kind '%s', expected '%s'", actualKind, expectedKind),
           locationPsi,

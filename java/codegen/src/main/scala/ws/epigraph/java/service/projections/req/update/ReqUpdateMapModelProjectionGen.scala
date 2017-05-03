@@ -69,6 +69,7 @@ class ReqUpdateMapModelProjectionGen(
     }
 
   override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateMapModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateMapModelProjection"),
+    replace
   )
 }

@@ -547,13 +547,13 @@ public final class OpOutputProjectionsPsiParser {
     switch (type.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(OpOutputRecordModelProjection.class);
+        ensureModelKind(psi, TypeKind.RECORD, context);
 
         @Nullable SchemaOpOutputRecordModelProjection recordModelProjectionPsi =
             psi.getOpOutputRecordModelProjection();
         if (recordModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        ensureModelKind(psi, TypeKind.RECORD, context);
         return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
@@ -572,13 +572,12 @@ public final class OpOutputProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(OpOutputMapModelProjection.class);
+        ensureModelKind(psi, TypeKind.MAP, context);
 
         @Nullable SchemaOpOutputMapModelProjection mapModelProjectionPsi =
             psi.getOpOutputMapModelProjection();
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
-
-        ensureModelKind(psi, TypeKind.MAP, context);
 
         return (MP) parseMapModelProjection(
             (MapTypeApi) type,
@@ -598,14 +597,13 @@ public final class OpOutputProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(OpOutputListModelProjection.class);
+        ensureModelKind(psi, TypeKind.LIST, context);
 
         @Nullable SchemaOpOutputListModelProjection listModelProjectionPsi =
             psi.getOpOutputListModelProjection();
 
         if (listModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
-
-        ensureModelKind(psi, TypeKind.LIST, context);
 
         return (MP) parseListModelProjection(
             (ListTypeApi) type,
@@ -719,7 +717,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable TypeKind actualKind = findProjectionKind(psi);
-    if (expectedKind != actualKind)
+    if (actualKind != null && expectedKind != actualKind)
       throw new PsiProcessingException(MessageFormat.format(
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,

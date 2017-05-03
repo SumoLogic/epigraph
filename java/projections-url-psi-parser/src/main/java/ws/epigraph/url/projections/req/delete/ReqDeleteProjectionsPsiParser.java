@@ -451,6 +451,8 @@ public final class ReqDeleteProjectionsPsiParser {
     switch (model.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(ReqDeleteRecordModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
+
         final OpDeleteRecordModelProjection opRecord = (OpDeleteRecordModelProjection) op;
 
         @Nullable UrlReqDeleteRecordModelProjection recordModelProjectionPsi =
@@ -460,8 +462,6 @@ public final class ReqDeleteProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         return (MP) parseRecordModelProjection(
             opRecord,
@@ -481,6 +481,8 @@ public final class ReqDeleteProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(ReqDeleteMapModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
+
         final OpDeleteMapModelProjection opMap = (OpDeleteMapModelProjection) op;
         @Nullable UrlReqDeleteMapModelProjection mapModelProjectionPsi = psi.getReqDeleteMapModelProjection();
 
@@ -488,8 +490,6 @@ public final class ReqDeleteProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         return (MP) parseMapModelProjection(
             opMap,
@@ -509,6 +509,8 @@ public final class ReqDeleteProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(ReqDeleteListModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
+
         final OpDeleteListModelProjection opList = (OpDeleteListModelProjection) op;
         @Nullable UrlReqDeleteListModelProjection listModelProjectionPsi =
             psi.getReqDeleteListModelProjection();
@@ -517,8 +519,6 @@ public final class ReqDeleteProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         return (MP) parseListModelProjection(
             opList,

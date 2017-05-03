@@ -478,6 +478,8 @@ public final class ReqUpdateProjectionsPsiParser {
     switch (model.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(ReqUpdateRecordModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
+
         final OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
 
         @Nullable UrlReqUpdateRecordModelProjection recordModelProjectionPsi =
@@ -487,8 +489,6 @@ public final class ReqUpdateProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, replace, opRecord, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         return (MP) parseRecordModelProjection(
             opRecord,
@@ -509,6 +509,8 @@ public final class ReqUpdateProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(ReqUpdateMapModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
+
         final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
         @Nullable UrlReqUpdateMapModelProjection mapModelProjectionPsi = psi.getReqUpdateMapModelProjection();
 
@@ -516,8 +518,6 @@ public final class ReqUpdateProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, replace, opMap, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         return (MP) parseMapModelProjection(
             opMap,
@@ -538,6 +538,8 @@ public final class ReqUpdateProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(ReqUpdateListModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
+
         final OpInputListModelProjection opList = (OpInputListModelProjection) op;
         @Nullable UrlReqUpdateListModelProjection listModelProjectionPsi =
             psi.getReqUpdateListModelProjection();
@@ -546,8 +548,6 @@ public final class ReqUpdateProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, replace, opList, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         return (MP) parseListModelProjection(
             opList,

@@ -950,6 +950,8 @@ public final class ReqOutputProjectionsPsiParser {
     switch (model.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
+
         final OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
 
         @Nullable UrlReqOutputComaRecordModelProjection recordModelProjectionPsi =
@@ -959,8 +961,6 @@ public final class ReqOutputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.RECORD, context);
           return (MP) createDefaultModelProjection(model, required, opRecord, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         return (MP) parseComaRecordModelProjection(
             opRecord,
@@ -982,6 +982,8 @@ public final class ReqOutputProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(ReqOutputMapModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
+
         final OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
         @Nullable UrlReqOutputComaMapModelProjection mapModelProjectionPsi = psi.getReqOutputComaMapModelProjection();
 
@@ -989,8 +991,6 @@ public final class ReqOutputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.MAP, context);
           return (MP) createDefaultModelProjection(model, required, opMap, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         return (MP) parseComaMapModelProjection(
             opMap,
@@ -1012,6 +1012,8 @@ public final class ReqOutputProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(ReqOutputListModelProjection.class);
+        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
+
         final OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         @Nullable UrlReqOutputComaListModelProjection listModelProjectionPsi =
             psi.getReqOutputComaListModelProjection();
@@ -1020,8 +1022,6 @@ public final class ReqOutputProjectionsPsiParser {
           checkModelPsi(psi, TypeKind.LIST, context);
           return (MP) createDefaultModelProjection(model, required, opList, params, annotations, psi, context);
         }
-
-        ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         return (MP) parseListModelProjection(
             opList,

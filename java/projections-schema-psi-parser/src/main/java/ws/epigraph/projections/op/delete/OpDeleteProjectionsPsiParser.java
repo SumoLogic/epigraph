@@ -531,12 +531,12 @@ public final class OpDeleteProjectionsPsiParser {
     switch (type.kind()) {
       case RECORD:
         assert modelClass.isAssignableFrom(OpDeleteRecordModelProjection.class);
+        ensureModelKind(psi, TypeKind.RECORD, context);
 
         @Nullable SchemaOpDeleteRecordModelProjection recordModelProjectionPsi = psi.getOpDeleteRecordModelProjection();
         if (recordModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        ensureModelKind(psi, TypeKind.RECORD, context);
         return (MP) parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
@@ -554,12 +554,11 @@ public final class OpDeleteProjectionsPsiParser {
 
       case MAP:
         assert modelClass.isAssignableFrom(OpDeleteMapModelProjection.class);
+        ensureModelKind(psi, TypeKind.MAP, context);
 
         @Nullable SchemaOpDeleteMapModelProjection mapModelProjectionPsi = psi.getOpDeleteMapModelProjection();
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
-
-        ensureModelKind(psi, TypeKind.MAP, context);
 
         return (MP) parseMapModelProjection(
             (MapTypeApi) type,
@@ -578,11 +577,11 @@ public final class OpDeleteProjectionsPsiParser {
 
       case LIST:
         assert modelClass.isAssignableFrom(OpDeleteListModelProjection.class);
+        ensureModelKind(psi, TypeKind.LIST, context);
 
         @Nullable SchemaOpDeleteListModelProjection listModelProjectionPsi = psi.getOpDeleteListModelProjection();
         if (listModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
-        ensureModelKind(psi, TypeKind.LIST, context);
 
         return (MP) parseListModelProjection(
             (ListTypeApi) type,
@@ -695,7 +694,7 @@ public final class OpDeleteProjectionsPsiParser {
 
     // todo move to common
     @Nullable TypeKind actualKind = findProjectionKind(psi);
-    if (expectedKind != actualKind)
+    if (actualKind != null && expectedKind != actualKind)
       throw new PsiProcessingException(MessageFormat.format(
           "Unexpected projection kind ''{0}'', expected ''{1}''",
           actualKind,
