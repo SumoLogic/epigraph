@@ -30,6 +30,7 @@ class OpRecordModelPathGen(p: OpRecordModelPath) extends ServiceObjectGen[OpReco
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
+    ctx.addImport(classOf[OpFieldPathEntry].getName)
 
     val fieldPathEntry = p.fieldPathEntry
 

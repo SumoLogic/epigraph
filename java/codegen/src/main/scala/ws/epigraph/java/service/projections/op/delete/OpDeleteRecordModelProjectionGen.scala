@@ -33,6 +33,7 @@ class OpDeleteRecordModelProjectionGen(p: OpDeleteRecordModelProjection)
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
+    ctx.addImport(classOf[OpDeleteFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteRecordModelProjection(

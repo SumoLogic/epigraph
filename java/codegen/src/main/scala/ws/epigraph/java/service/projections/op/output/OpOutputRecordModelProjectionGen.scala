@@ -33,6 +33,7 @@ class OpOutputRecordModelProjectionGen(p: OpOutputRecordModelProjection)
 
   override protected def generateObject(ctx: ServiceGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
+    ctx.addImport(classOf[OpOutputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpOutputRecordModelProjection(
