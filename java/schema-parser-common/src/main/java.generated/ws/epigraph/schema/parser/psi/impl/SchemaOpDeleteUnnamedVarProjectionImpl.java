@@ -60,10 +60,4 @@ public class SchemaOpDeleteUnnamedVarProjectionImpl extends ASTWrapperPsiElement
     return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteVarPolymorphicTail.class);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
-  }
-
 }

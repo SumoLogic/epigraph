@@ -32,7 +32,4 @@ public interface SchemaOpDeleteUnnamedVarProjection extends PsiElement {
   @Nullable
   SchemaOpDeleteVarPolymorphicTail getOpDeleteVarPolymorphicTail();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

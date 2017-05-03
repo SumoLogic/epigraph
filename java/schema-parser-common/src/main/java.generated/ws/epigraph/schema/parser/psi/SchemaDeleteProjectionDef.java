@@ -41,4 +41,7 @@ public interface SchemaDeleteProjectionDef extends PsiElement {
   @Nullable
   PsiElement getEq();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

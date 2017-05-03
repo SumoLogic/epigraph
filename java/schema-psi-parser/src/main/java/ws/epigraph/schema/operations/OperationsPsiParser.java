@@ -362,6 +362,7 @@ public final class OperationsPsiParser {
 
     final OpDeleteFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.parseFieldProjection(
         resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.varProjection()),
+        deleteProjectionPsi.getPlus() != null,
         deleteFieldProjectionPsi,
         resolver,
         psiProcessingContext

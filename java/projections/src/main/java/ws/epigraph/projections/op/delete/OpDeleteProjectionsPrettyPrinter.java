@@ -42,16 +42,17 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
 
   public OpDeleteProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?,?,?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> context) {
     super(layouter, context);
   }
+
   public OpDeleteProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
     this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
   }
 
   @Override
-  protected void printVarDecoration(@NotNull OpDeleteVarProjection p) throws E {
-    if (p.canDelete()) l.print("+");
+  protected String fieldNamePrefix(final @NotNull OpDeleteFieldProjectionEntry fieldEntry) {
+    return fieldEntry.fieldProjection().varProjection().canDelete() ? "+" : "";
   }
 
   @Override
@@ -65,13 +66,22 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   private void printModelOnly(OpDeleteMapModelProjection mp) throws E {
-    @NotNull OpDeleteKeyProjection keyProjection = mp.keyProjection();
-    printMapModelProjection(keyProjection.presence().getPrettyPrinterString(), keyProjection, mp.itemsProjection());
+    OpDeleteKeyProjection keyProjection = mp.keyProjection();
+    OpDeleteVarProjection itemsProjection = mp.itemsProjection();
+
+    printMapModelProjection(
+        keyProjection.presence().getPrettyPrinterString(),
+        keyProjection,
+        itemsProjection.canDelete() ? "+" : "",
+        itemsProjection
+    );
   }
 
   private void printModelOnly(OpDeleteListModelProjection mp) throws E {
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*");
+    if (mp.itemsProjection().canDelete()) l.print("+");
+    l.print("(").brk();
     printVar(mp.itemsProjection(), 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
@@ -99,10 +109,10 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
 
-  @Override
-  protected boolean isPrintoutEmpty(@NotNull OpDeleteVarProjection opDeleteVarProjection) {
-    return !opDeleteVarProjection.canDelete() && super.isPrintoutEmpty(opDeleteVarProjection);
-  }
+//  @Override
+//  protected boolean isPrintoutEmpty(@NotNull OpDeleteVarProjection opDeleteVarProjection) {
+//    return !opDeleteVarProjection.canDelete() && super.isPrintoutEmpty(opDeleteVarProjection);
+//  }
 
   @Override
   public boolean isPrintoutNoParamsEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {

@@ -382,6 +382,7 @@ public final class ReqTestUtil {
 
       OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
           opDeletePsiProcessingContext

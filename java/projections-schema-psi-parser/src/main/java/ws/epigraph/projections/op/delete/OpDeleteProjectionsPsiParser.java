@@ -52,6 +52,7 @@ public final class OpDeleteProjectionsPsiParser {
 
   public static OpDeleteVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
+      boolean canDelete,
       @NotNull SchemaOpDeleteVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -70,6 +71,7 @@ public final class OpDeleteProjectionsPsiParser {
 
       return parseUnnamedOrRefVarProjection(
           dataType,
+          canDelete,
           unnamedOrRefVarProjection,
           typesResolver,
           context
@@ -93,6 +95,7 @@ public final class OpDeleteProjectionsPsiParser {
 
       final OpDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
+          canDelete,
           unnamedOrRefVarProjection,
           typesResolver,
           context
@@ -107,6 +110,7 @@ public final class OpDeleteProjectionsPsiParser {
 
   public static OpDeleteVarProjection parseUnnamedOrRefVarProjection(
       @NotNull DataTypeApi dataType,
+      boolean canDelete,
       @NotNull SchemaOpDeleteUnnamedOrRefVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context)
@@ -120,6 +124,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
       else return parseUnnamedVarProjection(
           dataType,
+          canDelete,
           unnamedVarProjection,
           typesResolver,
           context
@@ -143,6 +148,7 @@ public final class OpDeleteProjectionsPsiParser {
 
   public static OpDeleteVarProjection parseUnnamedVarProjection(
       @NotNull DataTypeApi dataType,
+      boolean canDelete,
       @NotNull SchemaOpDeleteUnnamedVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -150,7 +156,6 @@ public final class OpDeleteProjectionsPsiParser {
     final TypeApi type = dataType.type();
     final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
-    boolean canDelete = psi.getPlus() != null;
     @Nullable SchemaOpDeleteSingleTagProjection singleTagProjectionPsi = psi.getOpDeleteSingleTagProjection();
 
     if (singleTagProjectionPsi == null) {
@@ -231,14 +236,14 @@ public final class OpDeleteProjectionsPsiParser {
           @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
           @NotNull SchemaOpDeleteVarProjection psiTailProjection = tailItem.getOpDeleteVarProjection();
           @NotNull OpDeleteVarProjection tailProjection =
-              buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, context);
+              buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
           tails.add(tailProjection);
         }
       } else {
         @NotNull SchemaTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull SchemaOpDeleteVarProjection psiTailProjection = singleTail.getOpDeleteVarProjection();
         @NotNull OpDeleteVarProjection tailProjection =
-            buildTailProjection(dataType, tailTypeRef, psiTailProjection, typesResolver, context);
+            buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
         tails.add(tailProjection);
       }
 
@@ -307,6 +312,7 @@ public final class OpDeleteProjectionsPsiParser {
 
   private static @NotNull OpDeleteVarProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
+      boolean canDelete,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteVarProjection psiTailProjection,
       @NotNull TypesResolver typesResolver,
@@ -317,6 +323,7 @@ public final class OpDeleteProjectionsPsiParser {
     checkTailType(tailType, dataType, tailTypeRefPsi, context);
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
+        canDelete,
         psiTailProjection,
         typesResolver,
         context
@@ -842,6 +849,7 @@ public final class OpDeleteProjectionsPsiParser {
                 field,
                 parseFieldProjection(
                     field.dataType(),
+                    fieldProjectionEntryPsi.getPlus() != null,
                     fieldProjectionPsi,
                     typesResolver,
                     context
@@ -864,6 +872,7 @@ public final class OpDeleteProjectionsPsiParser {
 
   public static @NotNull OpDeleteFieldProjection parseFieldProjection(
       @NotNull DataTypeApi fieldType,
+      boolean canDelete,
       @NotNull SchemaOpDeleteFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -883,7 +892,7 @@ public final class OpDeleteProjectionsPsiParser {
     return new OpDeleteFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),
 //        Annotations.fromMap(fieldAnnotationsMap),
-        parseVarProjection(fieldType, psi.getOpDeleteVarProjection(), resolver, context),
+        parseVarProjection(fieldType, canDelete, psi.getOpDeleteVarProjection(), resolver, context),
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -909,7 +918,7 @@ public final class OpDeleteProjectionsPsiParser {
             psi,
             context
         )
-        : parseVarProjection(type.valueType(), valueProjectionPsi, resolver, context);
+        : parseVarProjection(type.valueType(), psi.getPlus() != null, valueProjectionPsi, resolver, context);
 
     return new OpDeleteMapModelProjection(
         type,
@@ -971,7 +980,8 @@ public final class OpDeleteProjectionsPsiParser {
     if (opDeleteVarProjectionPsi == null)
       itemsProjection = createDefaultVarProjection(type, true, psi, context);
     else
-      itemsProjection = parseVarProjection(type.elementType(), opDeleteVarProjectionPsi, resolver, context);
+      itemsProjection =
+          parseVarProjection(type.elementType(), psi.getPlus() != null, opDeleteVarProjectionPsi, resolver, context);
 
 
     return new OpDeleteListModelProjection(

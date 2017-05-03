@@ -285,7 +285,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpDeleteUnnamedOrRefVarProjection(),
+        projectionDefPsi,
         resolver,
         context.deleteReferenceContext(),
         projectionName -> new OpDeleteReferenceContext(
@@ -453,14 +453,14 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
       OpDeleteVarProjection,
       OpDeleteModelProjection<?, ?, ?>,
       OpDeleteReferenceContext,
-      SchemaOpDeleteUnnamedOrRefVarProjection> {
+      SchemaDeleteProjectionDef> {
 
     static final DeleteUnnamedVarReferenceParser INSTANCE = new DeleteUnnamedVarReferenceParser();
 
     @Override
     public OpDeleteVarProjection parse(
         final @NotNull DataTypeApi type,
-        final @NotNull SchemaOpDeleteUnnamedOrRefVarProjection psi,
+        final @NotNull SchemaDeleteProjectionDef psi,
         final @NotNull TypesResolver resolver,
         final @NotNull OpDeleteReferenceContext referenceContext,
         final @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -475,9 +475,13 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
           referenceContext
       );
 
+      final SchemaOpDeleteUnnamedOrRefVarProjection varProjection = psi.getOpDeleteUnnamedOrRefVarProjection();
+      assert varProjection != null;
+
       return OpDeleteProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
-          psi,
+          psi.getPlus() != null,
+          varProjection,
           resolver,
           deletePsiProcessingContext
       );

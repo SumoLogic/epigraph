@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -208,7 +209,13 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      opDeletePrinter.printFieldProjection("deleteProjection", deleteOperation.deleteProjection());
+      final OpDeleteFieldProjection deleteFieldProjection = deleteOperation.deleteProjection();
+
+      opDeletePrinter.printFieldProjection(
+          "deleteProjection",
+          deleteFieldProjection.varProjection().canDelete() ? "+" : "",
+          deleteFieldProjection
+      );
     }
 
     return first;

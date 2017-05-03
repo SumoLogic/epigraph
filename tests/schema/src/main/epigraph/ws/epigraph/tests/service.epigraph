@@ -80,7 +80,7 @@ resource users: PersonMap {
   }
 
   delete {
-    deleteProjection [ required ] ( + )
+    deleteProjection [ required ] +
 
     outputType map[PersonId, epigraph.Error]
     outputProjection [] (code, message)

@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
@@ -48,12 +47,12 @@ public class OpDeleteProjectionsTest {
         "    id {",
         "      ; +param1 : epigraph.String { doc = \"some doc\", default : \"hello world\" },",
         "    },",
-        "    bestFriend +:`record` (",
+        "    +bestFriend :`record` (",
         "      id,",
         "      bestFriend: id",
         // todo get default tag from Person.type, once available
         "    ),",
-        "    friends *( +:id )",
+        "    friends *+( :id )",
         "  )",
         ")"
     );
@@ -63,9 +62,9 @@ public class OpDeleteProjectionsTest {
         ":(",
         "  id,",
         "  `record` (",
-        "    id +{ ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
-        "    bestFriend +:`record` ( id +, bestFriend +:id ),",
-        "    friends *( +:id )",
+        "    +id { ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
+        "    +bestFriend :`record` ( +id, +bestFriend :id ),",
+        "    friends *+( :id )",
         "  )",
         ")"
     );
@@ -83,25 +82,25 @@ public class OpDeleteProjectionsTest {
         new DataType(Person.type, Person.id),
         ""
         ,
-        "+:id"
+        ":id"
     );
   }
 
-  @Test
-  public void testParseEmptyPlus() throws PsiProcessingException {
-    testParsingVarProjection(
-        new DataType(Person.type, Person.id),
-        "+"
-        ,
-        "+:id"
-    );
-  }
+//  @Test
+//  public void testParseEmptyPlus() throws PsiProcessingException {
+//    testParsingVarProjection(
+//        new DataType(Person.type, Person.id),
+//        "+"
+//        ,
+//        "+:id"
+//    );
+//  }
 
   @Test
   public void testParseParam() throws PsiProcessingException {
     testParsingVarProjection(
         lines(
-            "+:id {",
+            ":id {",
             "  ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
             "    { deprecated = true default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
             "}"
@@ -112,7 +111,7 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseParam2() throws PsiProcessingException {
     testParsingVarProjection(
-        "+:id { ;+param: ws.epigraph.tests.UserRecord { default: { id: 1 } } }"
+        ":id { ;+param: ws.epigraph.tests.UserRecord { default: { id: 1 } } }"
     );
   }
 
@@ -124,20 +123,28 @@ public class OpDeleteProjectionsTest {
   }
 
   @Test
+  public void testParseSimpleField() throws PsiProcessingException {
+    testParsingVarProjection(
+        ":( `record` ( id ) )",
+        ":( `record` ( +id ) )"
+    );
+  }
+
+  @Test
   public void testParseRecursive() throws PsiProcessingException {
-    testParsingVarProjection("$self = :( id, `record` ( id +, bestFriend $self ) )");
+    testParsingVarProjection("$self = :( id, `record` ( +id, bestFriend $self ) )");
   }
 
   @Test
   public void testParseModelRecursive() throws PsiProcessingException {
-    testParsingVarProjection(":`record` $rr = ( id +, bestFriend :`record` $rr )");
+    testParsingVarProjection(":`record` $rr = ( +id, bestFriend :`record` $rr )");
   }
 
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
         "~~ws.epigraph.tests.User :id",
-        "+:id ~~ws.epigraph.tests.User +:id"
+        ":id ~~ws.epigraph.tests.User :id"
     );
   }
 
@@ -145,46 +152,46 @@ public class OpDeleteProjectionsTest {
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
         "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
-        "+:id ~~( ws.epigraph.tests.User +:id, ws.epigraph.tests.User2 +:id )"
+        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
 
   @Test
   public void testParseModelTail() throws PsiProcessingException {
     testParsingVarProjection(
-        ":`record` ( worstEnemy ( id + ) ~ws.epigraph.tests.UserRecord ( profile + ) )"
+        ":`record` ( worstEnemy ( +id ) ~ws.epigraph.tests.UserRecord ( +profile ) )"
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection("+:id { deprecated = true }");
+    testParsingVarProjection(":id { deprecated = true }");
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id +, firstName + )");
+    testParsingVarProjection(":`record` ( +id, +firstName )");
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id +, bestFriend +:`record` ( id + ) )");
+    testParsingVarProjection(":`record` ( +id, +bestFriend :`record` ( +id ) )");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id +, bestFriend :`record` { deprecated = true } ( id + ) )");
+    testParsingVarProjection(":`record` ( +id, bestFriend :`record` { deprecated = true } ( +id ) )");
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friends *( +:id ) )");
+    testParsingVarProjection(":`record` ( friends *+( :id ) )");
   }
 
   @Test
   public void testParseMap() throws PsiProcessingException {
     testParsingVarProjection(
-        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( +:id ) )");
+        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]+( :id ) )");
   }
 
   private void testParsingVarProjection(String str) {
@@ -254,6 +261,7 @@ public class OpDeleteProjectionsTest {
 
       OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
           deletePsiProcessingContext

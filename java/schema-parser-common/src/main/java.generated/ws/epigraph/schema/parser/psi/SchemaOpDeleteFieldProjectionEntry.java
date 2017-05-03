@@ -29,4 +29,7 @@ public interface SchemaOpDeleteFieldProjectionEntry extends PsiElement {
   @NotNull
   SchemaQid getQid();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

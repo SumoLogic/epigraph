@@ -203,6 +203,15 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       @NotNull OpKeyProjection keyProjection,
       VP itemsProjection) throws E {
 
+    printMapModelProjection(keysProjectionPrefix, keyProjection, "", itemsProjection);
+  }
+
+  protected void printMapModelProjection(
+      @Nullable String keysProjectionPrefix,
+      @NotNull OpKeyProjection keyProjection,
+      @NotNull String itemsProjectionPrefix,
+      VP itemsProjection) throws E {
+
     l.beginIInd();
     { // keys
       l.beginCInd();
@@ -232,12 +241,17 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       if (!first) l.brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
+    l.print(itemsProjectionPrefix);
     l.print("(").brk();
     printVar(itemsProjection, 0);
     l.brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   public void printFieldProjection(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
+    printFieldProjection(prefix, "", fieldProjection);
+  }
+
+  public void printFieldProjection(@NotNull String prefix, @NotNull String prefix2, @NotNull FP fieldProjection) throws E {
     if (isPrintoutEmpty(fieldProjection)) {
       l.print(prefix);
     } else {
@@ -249,6 +263,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 //      if (isBlock) l.print(" ");
 //      else l.brk();
       l.print(" ");
+      l.print(prefix2);
 
       print(fieldProjection);
       if (!isBlock) l.end();

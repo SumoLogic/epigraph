@@ -1074,7 +1074,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'deleteProjection' qid ':' typeRef '=' opDeleteUnnamedOrRefVarProjection
+  // 'deleteProjection' qid ':' typeRef '=' '+'? opDeleteUnnamedOrRefVarProjection
   public static boolean deleteProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteProjectionDef")) return false;
     if (!nextTokenIs(b, S_DELETE_PROJECTION)) return false;
@@ -1086,9 +1086,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
+    r = p && report_error_(b, deleteProjectionDef_5(b, l + 1)) && r;
     r = p && opDeleteUnnamedOrRefVarProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean deleteProjectionDef_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteProjectionDef_5")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1971,16 +1979,24 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // qid opDeleteFieldProjection
+  // '+'? qid opDeleteFieldProjection
   public static boolean opDeleteFieldProjectionEntry(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteFieldProjectionEntry")) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_FIELD_PROJECTION_ENTRY, "<op delete field projection entry>");
-    r = qid(b, l + 1);
-    p = r; // pin = 1
+    r = opDeleteFieldProjectionEntry_0(b, l + 1);
+    r = r && qid(b, l + 1);
+    p = r; // pin = 2
     r = r && opDeleteFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, p, recordModelProjectionRecover_parser_);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean opDeleteFieldProjectionEntry_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteFieldProjectionEntry_0")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2129,7 +2145,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '*' ( opDeleteBracedVarProjection | opDeleteVarProjection )
+  // '*' '+'? ( opDeleteBracedVarProjection | opDeleteVarProjection )
   public static boolean opDeleteListModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteListModelProjection")) return false;
     if (!nextTokenIs(b, S_STAR)) return false;
@@ -2137,14 +2153,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_LIST_MODEL_PROJECTION, null);
     r = consumeToken(b, S_STAR);
     p = r; // pin = 1
-    r = r && opDeleteListModelProjection_1(b, l + 1);
+    r = r && report_error_(b, opDeleteListModelProjection_1(b, l + 1));
+    r = p && opDeleteListModelProjection_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // opDeleteBracedVarProjection | opDeleteVarProjection
+  // '+'?
   private static boolean opDeleteListModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteListModelProjection_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
+  }
+
+  // opDeleteBracedVarProjection | opDeleteVarProjection
+  private static boolean opDeleteListModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteListModelProjection_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opDeleteBracedVarProjection(b, l + 1);
@@ -2154,7 +2178,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opDeleteKeyProjection ( opDeleteBracedVarProjection | opDeleteVarProjection )
+  // opDeleteKeyProjection '+'? ( opDeleteBracedVarProjection | opDeleteVarProjection )
   public static boolean opDeleteMapModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteMapModelProjection")) return false;
     if (!nextTokenIs(b, S_BRACKET_LEFT)) return false;
@@ -2162,14 +2186,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MAP_MODEL_PROJECTION, null);
     r = opDeleteKeyProjection(b, l + 1);
     p = r; // pin = 1
-    r = r && opDeleteMapModelProjection_1(b, l + 1);
+    r = r && report_error_(b, opDeleteMapModelProjection_1(b, l + 1));
+    r = p && opDeleteMapModelProjection_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
-  // opDeleteBracedVarProjection | opDeleteVarProjection
+  // '+'?
   private static boolean opDeleteMapModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteMapModelProjection_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
+  }
+
+  // opDeleteBracedVarProjection | opDeleteVarProjection
+  private static boolean opDeleteMapModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteMapModelProjection_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opDeleteBracedVarProjection(b, l + 1);
@@ -2621,28 +2653,20 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
+  // ( opDeleteMultiTagProjection | opDeleteSingleTagProjection ) opDeleteVarPolymorphicTail?
   public static boolean opDeleteUnnamedVarProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteUnnamedVarProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_UNNAMED_VAR_PROJECTION, "<op delete unnamed var projection>");
     r = opDeleteUnnamedVarProjection_0(b, l + 1);
     r = r && opDeleteUnnamedVarProjection_1(b, l + 1);
-    r = r && opDeleteUnnamedVarProjection_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // '+'?
+  // opDeleteMultiTagProjection | opDeleteSingleTagProjection
   private static boolean opDeleteUnnamedVarProjection_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteUnnamedVarProjection_0")) return false;
-    consumeToken(b, S_PLUS);
-    return true;
-  }
-
-  // opDeleteMultiTagProjection | opDeleteSingleTagProjection
-  private static boolean opDeleteUnnamedVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteUnnamedVarProjection_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opDeleteMultiTagProjection(b, l + 1);
@@ -2652,8 +2676,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   // opDeleteVarPolymorphicTail?
-  private static boolean opDeleteUnnamedVarProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opDeleteUnnamedVarProjection_2")) return false;
+  private static boolean opDeleteUnnamedVarProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opDeleteUnnamedVarProjection_1")) return false;
     opDeleteVarPolymorphicTail(b, l + 1);
     return true;
   }
@@ -4889,7 +4913,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'deleteProjection' opDeleteFieldProjection
+  // 'deleteProjection' '+'? opDeleteFieldProjection
   public static boolean operationDeleteProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationDeleteProjection")) return false;
     if (!nextTokenIs(b, S_DELETE_PROJECTION)) return false;
@@ -4897,9 +4921,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_OPERATION_DELETE_PROJECTION, null);
     r = consumeToken(b, S_DELETE_PROJECTION);
     p = r; // pin = 1
-    r = r && opDeleteFieldProjection(b, l + 1);
+    r = r && report_error_(b, operationDeleteProjection_1(b, l + 1));
+    r = p && opDeleteFieldProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean operationDeleteProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "operationDeleteProjection_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */

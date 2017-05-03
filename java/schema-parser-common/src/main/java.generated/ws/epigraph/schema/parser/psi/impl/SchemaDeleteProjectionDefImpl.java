@@ -78,4 +78,10 @@ public class SchemaDeleteProjectionDefImpl extends ASTWrapperPsiElement implemen
     return findChildByType(S_EQ);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
+  }
+
 }
