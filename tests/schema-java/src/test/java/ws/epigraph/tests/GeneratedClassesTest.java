@@ -31,6 +31,10 @@ import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.schema.Namespaces;
 import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
+import ws.epigraph.tests.resources.users.operations._update.update.UpdatePersonMapProjection;
+import ws.epigraph.tests.resources.users.operations._update.update.UpdateUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations._update.update.elements.UpdatePersonProjection;
+import ws.epigraph.tests.resources.users.operations._update.update.elements.record.UpdatePersonRecordProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 
@@ -95,12 +99,27 @@ public class GeneratedClassesTest {
     );
   }
 
+  @Test
+  public void testGeneratedReqUpdateProjection() {
+    UpdateUsersFieldProjection updateUsersFieldProjection = null;
+    try {
+      // this should simply compile
+      UpdatePersonMapProjection updatePersonMapProjection = updateUsersFieldProjection.dataProjection();
+      UpdatePersonProjection updatePersonProjection = updatePersonMapProjection.itemsProjection();
+      updatePersonProjection.replace();
+      UpdatePersonRecordProjection updatePersonRecordProjection = updatePersonProjection.record();
+      updatePersonRecordProjection.firstName();
+      updatePersonRecordProjection.lastName();
+      updatePersonRecordProjection.replace();
+    } catch (NullPointerException ignored) { }
+  }
+
   public static @NotNull String printOpDeleteVarProjection(
       Qn namespace,
       String resourceName,
       String operationName,
-      OpDeleteVarProjection projection
-  ) {
+      OpDeleteVarProjection projection) {
+
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(
