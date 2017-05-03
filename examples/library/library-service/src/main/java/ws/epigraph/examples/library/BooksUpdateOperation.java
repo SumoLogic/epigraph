@@ -24,6 +24,7 @@ import ws.epigraph.examples.library.resources.books.operations._update.output.Ou
 import ws.epigraph.examples.library.resources.books.operations._update.update.UpdateBooksFieldProjection;
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.Map;
 import java.util.Optional;
@@ -57,7 +58,10 @@ public class BooksUpdateOperation extends AbstractUpdateOperation {
 
       BooksBackend.BookData bookData = BooksBackend.get(bookId);
       if (bookData == null)
-        booksMapBuilder.putError(bookId, new ErrorValue(404, "Book " + bookId.getVal() + " not found"));
+        booksMapBuilder.putError(
+            bookId,
+            new ErrorValue(HttpStatusCode.NOT_FOUND, "Book " + bookId.getVal() + " not found")
+        );
       else {
         // values from the update request
         Optional<String> title = Optional.ofNullable(bookUpdate.getTitle());
@@ -71,7 +75,10 @@ public class BooksUpdateOperation extends AbstractUpdateOperation {
 
         // check author ID
         if (AuthorsBackend.get(newAuthorId) == null)
-          booksMapBuilder.putError(bookId, new ErrorValue(400, "Author " + newAuthorId.getVal() + " not found"));
+          booksMapBuilder.putError(
+              bookId,
+              new ErrorValue(HttpStatusCode.BAD_REQUEST, "Author " + newAuthorId.getVal() + " not found")
+          );
         else {
           BooksBackend.set(
               bookId,

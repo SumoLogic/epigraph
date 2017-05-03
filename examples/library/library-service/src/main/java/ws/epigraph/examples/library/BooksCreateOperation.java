@@ -23,6 +23,7 @@ import ws.epigraph.examples.library.resources.books.operations._create.AbstractC
 import ws.epigraph.examples.library.resources.books.operations._create.input.InputBooksFieldProjection;
 import ws.epigraph.examples.library.resources.books.operations._create.output.OutputBooksFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -62,7 +63,10 @@ public class BooksCreateOperation extends AbstractCreateOperation {
 
       AuthorsBackend.AuthorData authorData = AuthorsBackend.get(authorId);
       if (authorData == null)
-        bookIdList.addError(new ErrorValue(400, "Author with id " + authorId.getVal() + " not found"));
+        bookIdList.addError(new ErrorValue(
+            HttpStatusCode.BAD_REQUEST,
+            "Author with id " + authorId.getVal() + " not found"
+        ));
       else {
         BookId bookId = BooksBackend.addBook(title, authorId, plainText.getVal());
         bookIdList.add(bookId);

@@ -48,7 +48,7 @@ public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends 
     } catch (RuntimeException e) {
       final OperationDeclaration declaration = operation.declaration();
       String name = declaration.name() == null ? "" : " '" + declaration.name() + "'";
-      LOG.debug(String.format("Error invoking %s operation%s", declaration.kind(), name), e);
+      LOG.error(String.format("Error invoking %s operation%s", declaration.kind(), name), e);
 
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(

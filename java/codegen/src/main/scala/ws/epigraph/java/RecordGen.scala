@@ -274,7 +274,8 @@ ${  f.effectiveDefaultTagName match { // default tag accessors (implied or expli
         /** Returns immutable `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
         @Override
         public @Nullable $nativeType get${up(f.name)}() {
-          ${lqn(tt(f.typeRef, dtn), t)} datum = get${up(f.name)}_().getDatum();
+          ${lqn(tt(f.typeRef, dtn), t)}.Value value = get${up(f.name)}_();
+          ${lqn(tt(f.typeRef, dtn), t)} datum = value == null ? null : value.getDatum();
           return datum == null ? null : datum.getVal();
         }
 """
@@ -464,7 +465,8 @@ ${  f.effectiveDefaultTagName match { // default tag (implied or explicit, if an
     /** Returns `${f.name}` field datum${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
     @Override
     public @Nullable $nativeType get${up(f.name)}() {
-      ${lqn(tt(f.typeRef, dtn), t)} datum = get${up(f.name)}_().getDatum();
+      ${lqn(tt(f.typeRef, dtn), t)}.Value value = get${up(f.name)}_();
+      ${lqn(tt(f.typeRef, dtn), t)} datum = value == null ? null : value.getDatum();
       return datum == null ? null : datum.getVal();
     }
 """
