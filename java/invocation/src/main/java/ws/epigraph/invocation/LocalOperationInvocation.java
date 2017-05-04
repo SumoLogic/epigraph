@@ -32,8 +32,9 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse>
-    implements OperationInvocation<Req, Rsp> {
+public class LocalOperationInvocation<
+    Req extends OperationRequest,
+    Rsp extends OperationResponse> implements OperationInvocation<Req, Rsp> {
 
   private static final Logger LOG = LoggerFactory.getLogger(LocalOperationInvocation.class);
 
@@ -42,12 +43,16 @@ public class LocalOperationInvocation<Req extends OperationRequest, Rsp extends 
   public LocalOperationInvocation(final @NotNull Operation<?, Req, Rsp> operation) {this.operation = operation;}
 
   @Override
-  public @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(final @NotNull Req request) {
+  public @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      @NotNull OperationInvocationContext context,
+      @NotNull Req request) {
+
     try {
       return operation.process(request).thenApply(OperationInvocationResult::success);
     } catch (RuntimeException e) {
       final OperationDeclaration declaration = operation.declaration();
       String name = declaration.name() == null ? "" : " '" + declaration.name() + "'";
+
       LOG.error(String.format("Error invoking %s operation%s", declaration.kind(), name), e);
 
       return CompletableFuture.completedFuture(

@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
+package ws.epigraph.invocation;
 
-dependencies {
-  compile 'org.jetbrains:annotations'
-  compile 'net.jcip:jcip-annotations'
+import org.jetbrains.annotations.NotNull;
+import ws.epigraph.util.EBean;
+
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+public interface OperationInvocationContext {
+
+  /**
+   * @return {@code true} iff debug output should be enabled for the current invocation
+   */
+  boolean isDebug();
+
+  /**
+   * @return general purpose mutable storage
+   */
+  @NotNull EBean storage();
+
 }

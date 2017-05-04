@@ -34,7 +34,7 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.AbstractHttpServer;
 import ws.epigraph.server.http.HtmlCapableOperationInvocationError;
-import ws.epigraph.server.http.InvocationContext;
+import ws.epigraph.server.http.HttpInvocationContext;
 import ws.epigraph.server.http.RequestHeaders;
 import ws.epigraph.service.Service;
 import ws.epigraph.util.HttpStatusCode;
@@ -190,7 +190,7 @@ public class EpigraphUndertowHandler
     return false;
   }
 
-  class UndertowInvocationContext extends InvocationContext {
+  class UndertowInvocationContext implements HttpInvocationContext {
     final @NotNull HttpServerExchange exchange;
 
     UndertowInvocationContext(@NotNull HttpServerExchange exchange) {
@@ -204,7 +204,7 @@ public class EpigraphUndertowHandler
     public TypesResolver typesResolver() { return typesResolver; }
 
     @Override
-    public boolean isDebugMode() {
+    public boolean isDebug() {
       final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.DEBUG_MODE);
       return headerValues != null && "true".equals(headerValues.getFirst());
     }

@@ -31,9 +31,13 @@ public interface OperationInvocation<Req extends OperationRequest, Rsp extends O
   /**
    * Invokes an operation returning a future of invocation result
    *
+   * @param context operation invocation context
    * @param request request
    *
    * @return future of invocation result
    */
-  @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(@NotNull Req request);
+  @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      @NotNull OperationInvocationContext context,
+      @NotNull Req request
+  );
 }

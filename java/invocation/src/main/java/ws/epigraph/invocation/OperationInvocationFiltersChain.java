@@ -30,12 +30,16 @@ import java.util.stream.StreamSupport;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationInvocationFiltersChain<Req extends OperationRequest, Rsp extends OperationResponse, O extends Operation<?, Req, Rsp>> {
+public abstract class OperationInvocationFiltersChain<
+    Req extends OperationRequest,
+    Rsp extends OperationResponse,
+    O extends Operation<?, Req, Rsp>> {
+
   private final @NotNull Function<O, OperationInvocation<Req, Rsp>> seedFactory;
   private final @NotNull Map<O, OperationInvocation<Req, Rsp>> invocationsCache = new IdentityHashMap<>();
 
-  protected OperationInvocationFiltersChain(final @NotNull Function<O, OperationInvocation<Req, Rsp>> seedFactory) {
-    this.seedFactory = seedFactory;
+  protected OperationInvocationFiltersChain(@NotNull Function<O, OperationInvocation<Req, Rsp>> invocationFactory) {
+    this.seedFactory = invocationFactory;
   }
 
   protected abstract @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories();

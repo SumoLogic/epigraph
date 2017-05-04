@@ -37,12 +37,12 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
   public OperationInvocation<Req, ReadOperationResponse<D>>
   apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
 
-    return request -> invocation.invoke(request).thenApply(result ->
-        result.apply(
-            response -> {
-              Data data = response.getData();
+    return (context, request) -> invocation.invoke(context, request).thenApply(operationInvocationResult ->
+        operationInvocationResult.apply(
+            readOperationResponse -> {
+              Data data = readOperationResponse.getData();
               if (data == null)
-                return OperationInvocationResult.success(response);
+                return OperationInvocationResult.success(readOperationResponse);
 
               ReqOutputRequiredDataPruner pruner = new ReqOutputRequiredDataPruner();
               final ReqOutputRequiredDataPruner.DataPruningResult pruningResult =
@@ -67,7 +67,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
                 );
               } // else keep
 
-              return OperationInvocationResult.success(response);
+              return OperationInvocationResult.success(readOperationResponse);
 
             },
 

@@ -39,7 +39,7 @@ public class ReadResponseValidationFilter<Req extends OperationRequest, D extend
   public OperationInvocation<Req, ReadOperationResponse<D>>
   apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
 
-    return request -> invocation.invoke(request).thenApply(result ->
+    return (context, request) -> invocation.invoke(context, request).thenApply(result ->
         result.apply(
             response -> {
               Data data = response.getData();

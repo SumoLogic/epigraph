@@ -40,16 +40,17 @@ public final class OperationFilterChains<D extends Data> {
       customOperationOperationInvocationFiltersChain;
 
   public OperationFilterChains(
-      final @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>> readOperationOperationInvocationFiltersChain,
-      final @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>> createOperationOperationInvocationFiltersChain,
-      final @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperation<D>> updateOperationOperationInvocationFiltersChain,
-      final @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperation<D>> deleteOperationOperationInvocationFiltersChain,
-      final @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperation<D>> customOperationOperationInvocationFiltersChain) {
-    this.readOperationOperationInvocationFiltersChain = readOperationOperationInvocationFiltersChain;
-    this.createOperationOperationInvocationFiltersChain = createOperationOperationInvocationFiltersChain;
-    this.updateOperationOperationInvocationFiltersChain = updateOperationOperationInvocationFiltersChain;
-    this.deleteOperationOperationInvocationFiltersChain = deleteOperationOperationInvocationFiltersChain;
-    this.customOperationOperationInvocationFiltersChain = customOperationOperationInvocationFiltersChain;
+      @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>> readChain,
+      @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>> createChain,
+      @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperation<D>> updateChain,
+      @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperation<D>> deleteChain,
+      @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperation<D>> customChain) {
+
+    readOperationOperationInvocationFiltersChain = readChain;
+    createOperationOperationInvocationFiltersChain = createChain;
+    updateOperationOperationInvocationFiltersChain = updateChain;
+    deleteOperationOperationInvocationFiltersChain = deleteChain;
+    customOperationOperationInvocationFiltersChain = customChain;
   }
 
   public @NotNull OperationInvocation<ReadOperationRequest, ReadOperationResponse<D>>

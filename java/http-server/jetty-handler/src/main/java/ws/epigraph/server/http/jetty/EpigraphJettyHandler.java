@@ -118,7 +118,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
     return req.getHeader(RequestHeaders.OPERATION_NAME);
   }
 
-  private final class JettyHandlerInvocationContext extends InvocationContext {
+  private final class JettyHandlerInvocationContext implements HttpInvocationContext {
     final @NotNull AsyncContext asyncContext;
 
     JettyHandlerInvocationContext(final @NotNull AsyncContext context) {

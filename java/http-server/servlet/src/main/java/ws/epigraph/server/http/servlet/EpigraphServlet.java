@@ -91,9 +91,8 @@ public abstract class EpigraphServlet extends HttpServlet {
 
   protected abstract @NotNull Service initService(ServletConfig config) throws ServiceInitializationException;
 
-  protected @NotNull OperationFilterChains<? extends Data> initOperationFilterChains(ServletConfig config) {
-    return OperationFilterChains.defaultLocalFilterChains();
-  }
+  protected @NotNull OperationFilterChains<? extends Data>
+  initOperationFilterChains(ServletConfig config) { return OperationFilterChains.defaultLocalFilterChains(); }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.GET, req, resp); }
@@ -136,7 +135,7 @@ public abstract class EpigraphServlet extends HttpServlet {
     return req.getHeader(RequestHeaders.OPERATION_NAME);
   }
 
-  private class ServletInvocationContext extends InvocationContext {
+  private class ServletInvocationContext implements HttpInvocationContext {
     final @NotNull AsyncContext asyncContext;
 
     ServletInvocationContext(final @NotNull AsyncContext context) { asyncContext = context; }

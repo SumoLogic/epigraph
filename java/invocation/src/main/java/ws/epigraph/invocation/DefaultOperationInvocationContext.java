@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.invocation;
 
-import org.slf4j.Logger;
-import ws.epigraph.refs.TypesResolver;
+import org.jetbrains.annotations.NotNull;
+import ws.epigraph.util.EBean;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class InvocationContext {
-  public abstract Logger logger();
+public class DefaultOperationInvocationContext implements OperationInvocationContext {
+  private final boolean debug;
+  private final @NotNull EBean storage;
 
-  public boolean isDebugMode() { return false; }
+  public DefaultOperationInvocationContext(final boolean debug, final @NotNull EBean storage) {
+    this.debug = debug;
+    this.storage = storage;
+  }
 
-  public abstract TypesResolver typesResolver();
+  @Override
+  public boolean isDebug() {
+    return debug;
+  }
+
+  @Override
+  public @NotNull EBean storage() {
+    return storage;
+  }
 }

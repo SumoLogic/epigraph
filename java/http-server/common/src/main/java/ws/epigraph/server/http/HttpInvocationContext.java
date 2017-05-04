@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
+package ws.epigraph.server.http;
 
-dependencies {
-  compile 'org.jetbrains:annotations'
-  compile 'net.jcip:jcip-annotations'
+import org.slf4j.Logger;
+import ws.epigraph.refs.TypesResolver;
+
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+public interface HttpInvocationContext {
+  Logger logger();
+
+  default boolean isDebug() { return false; }
+
+  TypesResolver typesResolver();
 }

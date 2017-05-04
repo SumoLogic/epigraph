@@ -49,6 +49,7 @@ import ws.epigraph.url.*;
 import ws.epigraph.url.parser.CustomRequestUrlPsiParser;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.util.EBean;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.*;
 
@@ -64,7 +65,7 @@ import java.util.regex.Pattern;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractHttpServer<C extends InvocationContext> {
+public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private static final Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
 
   protected final @NotNull Service service;
@@ -97,6 +98,9 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
 
   // -----------------------------------
 
+  protected @NotNull OperationInvocationContext newOperationInvocationContext(@NotNull C context) {
+    return new DefaultOperationInvocationContext(context.isDebug(), new EBean());
+  }
 
   protected void handleRequest(
       @NotNull String decodedUri,
@@ -240,6 +244,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
               operationFilterChains.readOperationInvocation(operation);
 
           return operationInvocation.invoke(
+              newOperationInvocationContext(context),
               new ReadOperationRequest(
                   requestUrl.path(),
                   outputProjection.projection()
@@ -269,7 +274,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         errorsAccumulator
     );
 
-    if (context.isDebugMode())
+    if (context.isDebug())
       context.logger().info(Util.dumpUrl(urlPsi));
 
     return urlPsi;
@@ -425,6 +430,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
               operationFilterChains.createOperationInvocation(operation);
 
           return operationInvocation.invoke(
+              newOperationInvocationContext(context),
               new CreateOperationRequest(
                   requestUrl.path(),
                   body,
@@ -456,7 +462,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         errorsAccumulator
     );
 
-    if (context.isDebugMode())
+    if (context.isDebug())
       context.logger().info(Util.dumpUrl(urlPsi));
 
     return urlPsi;
@@ -574,6 +580,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
               operationFilterChains.updateOperationInvocation(operation);
 
           return operationInvocation.invoke(
+              newOperationInvocationContext(context),
               new UpdateOperationRequest(
                   requestUrl.path(),
                   body,
@@ -605,7 +612,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         errorsAccumulator
     );
 
-    if (context.isDebugMode())
+    if (context.isDebug())
       context.logger().info(Util.dumpUrl(urlPsi));
 
     return urlPsi;
@@ -696,6 +703,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
               operationFilterChains.deleteOperationInvocation(operation);
 
           return operationInvocation.invoke(
+              newOperationInvocationContext(context),
               new DeleteOperationRequest(
                   requestUrl.path(),
                   deleteProjection,
@@ -726,7 +734,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         errorsAccumulator
     );
 
-    if (context.isDebugMode())
+    if (context.isDebug())
       context.logger().info(Util.dumpUrl(urlPsi));
 
     return urlPsi;
@@ -868,6 +876,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         operationFilterChains.customOperationInvocation(operation);
 
     return operationInvocation.invoke(
+        newOperationInvocationContext(context),
         new CustomOperationRequest(
             requestUrl.path(),
             body,
@@ -896,7 +905,7 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
         errorsAccumulator
     );
 
-    if (context.isDebugMode())
+    if (context.isDebug())
       context.logger().info(Util.dumpUrl(urlPsi));
 
     return urlPsi;
@@ -910,7 +919,6 @@ public abstract class AbstractHttpServer<C extends InvocationContext> {
   protected interface FormatResponseWriter {
     void write(@NotNull FormatWriter writer) throws IOException;
   }
-
 
   protected void writeDataResponse(
       int statusCode,

@@ -26,14 +26,19 @@ import java.util.function.Function;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class DefaultOperationInvocationFiltersChain<Req extends OperationRequest, Rsp extends OperationResponse, O extends Operation<?, Req, Rsp>>
+public class DefaultOperationInvocationFiltersChain<
+    Req extends OperationRequest,
+    Rsp extends OperationResponse,
+    O extends Operation<?, Req, Rsp>>
+
     extends OperationInvocationFiltersChain<Req, Rsp, O> {
+
   private final @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories;
 
   public DefaultOperationInvocationFiltersChain(
-      final @NotNull Function<O, OperationInvocation<Req, Rsp>> seed,
+      final @NotNull Function<O, OperationInvocation<Req, Rsp>> invocationFactory,
       final @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> factories) {
-    super(seed);
+    super(invocationFactory);
     filterFactories = factories;
   }
 
