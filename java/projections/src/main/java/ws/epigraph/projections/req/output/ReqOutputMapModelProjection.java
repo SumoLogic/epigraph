@@ -78,6 +78,10 @@ public class ReqOutputMapModelProjection
     return keys;
   }
 
+  public boolean keysRequired() {
+    return false; // todo
+  }
+
   @Override
   protected ReqOutputMapModelProjection merge(
       final @NotNull MapTypeApi model,

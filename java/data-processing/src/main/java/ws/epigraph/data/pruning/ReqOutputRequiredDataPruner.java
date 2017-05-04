@@ -213,7 +213,7 @@ public class ReqOutputRequiredDataPruner {
       @NotNull ReqOutputMapModelProjection projection) {
 
     final ReqOutputVarProjection itemsProjection = projection.itemsProjection();
-    final boolean keysRequired = projection.keys() != null;
+    final boolean keysRequired = projection.keysRequired();
     final Map<Datum.Imm, Data> replacements = new HashMap<>();
 
     for (final Map.Entry<Datum.Imm, ? extends Data> entry : datum._raw().elements().entrySet()) {
@@ -226,7 +226,6 @@ public class ReqOutputRequiredDataPruner {
               new DataTraversalContext.MapKeyStackItem(key),
               () -> pruneData(data0, itemsProjection)
           );
-      pruneData(data, itemsProjection);
 
       if (prunedData instanceof RemoveData) {
         RemoveData removeData = (RemoveData) prunedData;
@@ -339,8 +338,10 @@ public class ReqOutputRequiredDataPruner {
             );
           }
 //            return new UseNull(error(String.format("Required %s %s is null", name, id)));
-        } else
-          return new UseError(error(String.format("Required %s %s is an error: %s", name, id, error)), error);
+        } else {
+          Reason reason = error(String.format("Required %s %s is an error: '%s'", name, id, error.message()));
+          return new UseError(reason, new ErrorValue(error.statusCode(), reason.toString()));
+        }
       }
     }
 
@@ -423,9 +424,10 @@ public class ReqOutputRequiredDataPruner {
 
     @Override
     public @NotNull String toString() {
-      return location.isEmpty() ?
+      String location = this.location.stream().map(DataTraversalContext.StackItem::toString).collect(Collectors.joining());
+      return location.trim().isEmpty() ?
              message :
-             location.stream().map(DataTraversalContext.StackItem::toString).collect(Collectors.joining()) + " : " +
+             location + " : " +
              message;
     }
   }

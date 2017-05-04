@@ -59,9 +59,10 @@ public class DataValidationError {
 
   @Override
   public @NotNull String toString() {
-    return location().isEmpty() ?
+    String location = location().stream().map(DataValidationContext.StackItem::toString).collect(Collectors.joining());
+    return location.trim().isEmpty() ?
            message() :
-           location().stream().map(DataValidationContext.StackItem::toString).collect(Collectors.joining()) + " : " +
+           location + " : " +
            message();
   }
 }

@@ -52,10 +52,10 @@ public class GDataValidationError {
   public @NotNull TextLocation textLocation() { return textLocation; }
 
   public @NotNull String toStringNoTextLocation() {
-    return location().isEmpty() ?
+    String location = location().stream().map(GDataValidationContext.StackItem::toString).collect(Collectors.joining());
+    return location.trim().isEmpty() ?
            message() :
-           location().stream().map(GDataValidationContext.StackItem::toString).collect(Collectors.joining()) +
-           " : " + message();
+           location + " : " + message();
   }
 
   @Override
