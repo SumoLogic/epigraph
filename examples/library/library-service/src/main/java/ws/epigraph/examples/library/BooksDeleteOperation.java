@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class BooksDeleteOperation extends AbstractDeleteOperation {
-  protected BooksDeleteOperation(@NotNull DeleteOperationDeclaration declaration) {
+  BooksDeleteOperation(@NotNull DeleteOperationDeclaration declaration) {
     super(declaration);
   }
 
@@ -45,7 +45,7 @@ public class BooksDeleteOperation extends AbstractDeleteOperation {
     responseBuilder.set(booksMapBuilder);
 
     for (DeleteBookId_BookRecord_MapKeyProjection keyProjection : deleteProjection.dataProjection().keys()) {
-      BookId.Imm bookId = keyProjection.value();
+      BookId bookId = keyProjection.value();
 
       if (!BooksBackend.delete(bookId)) {
         booksMapBuilder.putError(

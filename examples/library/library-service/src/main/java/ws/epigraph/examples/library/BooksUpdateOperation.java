@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class BooksUpdateOperation extends AbstractUpdateOperation {
-  protected BooksUpdateOperation(@NotNull UpdateOperationDeclaration declaration) {
+  BooksUpdateOperation(@NotNull UpdateOperationDeclaration declaration) {
     super(declaration);
   }
 

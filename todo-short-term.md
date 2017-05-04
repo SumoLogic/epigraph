@@ -8,12 +8,12 @@
     - [ ] validate at startup that stuff is actually?
 
 - Docs
-  - [ ] service quick-start guide
+  - [x] service quick-start guide
     - [x] simple read
     - [x] search operation
     - [x] create operation
     - [x] update operation
-    - [ ] delete operation
+    - [x] delete operation
   - Operations
     - [ ] Overview
     - [ ] IDL
