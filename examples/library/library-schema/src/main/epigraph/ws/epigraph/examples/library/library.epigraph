@@ -97,4 +97,9 @@ resource books: map[BookId, BookRecord] {
 
     outputProjection [ forbidden ] ( $bookProjection )
   }
+
+  delete {
+    deleteProjection [ required ] ()
+    outputProjection [ forbidden ] ()
+  }
 }

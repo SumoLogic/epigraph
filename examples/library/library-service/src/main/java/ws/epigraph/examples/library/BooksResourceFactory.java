@@ -19,10 +19,12 @@ package ws.epigraph.examples.library;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.examples.library.resources.books.AbstractBooksResourceFactory;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.CreateOperation;
+import ws.epigraph.service.operations.DeleteOperation;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.UpdateOperation;
 
@@ -54,4 +56,11 @@ public class BooksResourceFactory extends AbstractBooksResourceFactory {
       @NotNull UpdateOperationDeclaration operationDeclaration) throws ServiceInitializationException {
     return new BooksUpdateOperation(operationDeclaration);
   }
+
+  @Override
+  protected @NotNull DeleteOperation<BookId_BookRecord_Map.Data> constructDeleteOperation(
+      @NotNull DeleteOperationDeclaration operationDeclaration) throws ServiceInitializationException {
+    return new BooksDeleteOperation(operationDeclaration);
+  }
+
 }
