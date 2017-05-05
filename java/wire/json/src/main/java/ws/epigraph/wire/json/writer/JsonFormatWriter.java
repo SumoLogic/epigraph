@@ -18,6 +18,8 @@
 
 package ws.epigraph.wire.json.writer;
 
+import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
@@ -30,6 +32,7 @@ import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
+@NotThreadSafe
 public class JsonFormatWriter implements FormatWriter {
 
   private final @NotNull Writer out;
@@ -45,21 +49,15 @@ public class JsonFormatWriter implements FormatWriter {
   private int dataStackDepth = 0;
 
   public JsonFormatWriter(@NotNull OutputStream out) {
-    this.out = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+    this(out, StandardCharsets.UTF_8);
+  }
+
+  public JsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
+    this.out = new BufferedWriter(new OutputStreamWriter(out, charset));
   }
 
   @Override
   public void close() throws IOException { out.close(); }
-
-  @Override
-  public @NotNull String httpContentType() {
-    return "application/json; charset=utf-8";
-  }
-
-  @Override
-  public @NotNull String characterEncoding() {
-    return StandardCharsets.UTF_8.name();
-  }
 
   public void reset() {
     visitedData.clear();
@@ -616,5 +614,28 @@ public class JsonFormatWriter implements FormatWriter {
           varEquals(projections, this.projections);
     }
   }
+
+  @ThreadSafe
+  public static final class JsonFormatWriterFactory implements FormatWriter.Factory {
+    private final @NotNull Charset charset;
+
+    public JsonFormatWriterFactory() {this(StandardCharsets.UTF_8);}
+
+    public JsonFormatWriterFactory(final @NotNull Charset charset) {this.charset = charset;}
+
+    @Override
+    public @NotNull String httpContentType() {
+      return "application/json; charset=" + characterEncoding().toLowerCase();
+    }
+
+    @Override
+    public @NotNull String characterEncoding() { return charset.name(); }
+
+    @Override
+    public @NotNull FormatWriter newFormatWriter(final @NotNull OutputStream out) {
+      return new JsonFormatWriter(out, charset);
+    }
+  }
+
 
 }

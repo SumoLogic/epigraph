@@ -951,7 +951,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       writer.writeError(error);
       writer.close();
     });
-    closeContext(context);
+    closeContext(context); // todo: this must stay
   }
 
   protected void writeEmptyResponse(int statusCode, @NotNull C context) {

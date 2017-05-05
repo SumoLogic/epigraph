@@ -18,6 +18,8 @@
 
 package ws.epigraph.wire;
 
+import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
@@ -28,13 +30,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
+@NotThreadSafe
 public interface FormatWriter {
-
-  @NotNull String httpContentType();
-
-  @NotNull String characterEncoding();
-
   void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException;
 
   void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws IOException;
@@ -50,4 +49,13 @@ public interface FormatWriter {
   void writeError(@NotNull ErrorValue error) throws IOException;
 
   default void close() throws IOException {}
+
+  @ThreadSafe
+  interface Factory {
+    @NotNull String httpContentType();
+
+    @NotNull String characterEncoding();
+
+    @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out);
+  }
 }

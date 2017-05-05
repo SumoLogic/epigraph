@@ -62,6 +62,8 @@ public abstract class EpigraphServlet extends HttpServlet {
   public static final String RESPONSE_TIMEOUT_SERVLET_PARAMETER = "response_timeout";
   public static final long DEFAULT_RESPONSE_TIMEOUT = 1000;
 
+  private final @NotNull JsonFormatWriter.JsonFormatWriterFactory jsonWriterFactory =
+      new JsonFormatWriter.JsonFormatWriterFactory(); // todo make configurable
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
   private TypesResolver typesResolver;
   private Logger logger;
@@ -196,9 +198,9 @@ public abstract class EpigraphServlet extends HttpServlet {
         HttpServletResponse servletResponse = (HttpServletResponse) context.response();
         servletResponse.setStatus(statusCode);
 
-        FormatWriter writer = new JsonFormatWriter(servletResponse.getOutputStream()); // todo make configurable
-        servletResponse.setContentType(writer.httpContentType());
-        servletResponse.setCharacterEncoding(writer.characterEncoding());
+        FormatWriter writer = jsonWriterFactory.newFormatWriter(servletResponse.getOutputStream());
+        servletResponse.setContentType(jsonWriterFactory.httpContentType());
+        servletResponse.setCharacterEncoding(jsonWriterFactory.characterEncoding());
 
         formatWriter.write(writer);
         writer.close();

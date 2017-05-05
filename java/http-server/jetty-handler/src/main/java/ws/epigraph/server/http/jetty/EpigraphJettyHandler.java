@@ -59,6 +59,8 @@ public class EpigraphJettyHandler extends AbstractHandler {
   public static final String ACCEPT_HEADER = "Accept";
   public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
+  private final @NotNull JsonFormatWriter.JsonFormatWriterFactory jsonWriterFactory =
+      new JsonFormatWriter.JsonFormatWriterFactory(); // todo make configurable
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
 
   private final @NotNull TypesResolver typesResolver;
@@ -180,9 +182,9 @@ public class EpigraphJettyHandler extends AbstractHandler {
         HttpServletResponse servletResponse = context.response();
         servletResponse.setStatus(statusCode);
 
-        FormatWriter writer = new JsonFormatWriter(servletResponse.getOutputStream()); // todo make configurable
-        servletResponse.setContentType(writer.httpContentType());
-        servletResponse.setCharacterEncoding(writer.characterEncoding());
+        FormatWriter writer = jsonWriterFactory.newFormatWriter(servletResponse.getOutputStream());
+        servletResponse.setContentType(jsonWriterFactory.httpContentType());
+        servletResponse.setCharacterEncoding(jsonWriterFactory.characterEncoding());
 
         formatWriter.write(writer);
         writer.close();

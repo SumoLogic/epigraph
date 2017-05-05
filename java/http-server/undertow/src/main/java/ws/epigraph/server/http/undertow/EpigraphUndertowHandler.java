@@ -61,13 +61,19 @@ import static ws.epigraph.server.http.Util.decodeUri;
 public class EpigraphUndertowHandler
     extends AbstractHttpServer<EpigraphUndertowHandler.UndertowInvocationContext> implements HttpHandler {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EpigraphUndertowHandler.class); // assuming a thread-safe backend
+  private static final Logger LOG = LoggerFactory.getLogger(EpigraphUndertowHandler.class);
+      // assuming a thread-safe backend
 
+  private final @NotNull JsonFormatWriter.JsonFormatWriterFactory jsonWriterFactory =
+      new JsonFormatWriter.JsonFormatWriterFactory(); // todo make configurable
   private final @NotNull JsonFactory jsonFactory = new JsonFactory();
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
 
-  public EpigraphUndertowHandler(@NotNull Service service, @NotNull TypesResolver typesResolver, final long responseTimeout) {
+  public EpigraphUndertowHandler(
+      @NotNull Service service,
+      @NotNull TypesResolver typesResolver,
+      final long responseTimeout) {
     super(service, OperationFilterChains.defaultLocalFilterChains()); // make configurable?
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
@@ -133,11 +139,11 @@ public class EpigraphUndertowHandler
 
     try {
       OutputStream outputStream = context.exchange.getOutputStream();
-      FormatWriter writer = new JsonFormatWriter(outputStream); // todo make configurable
+      FormatWriter writer = jsonWriterFactory.newFormatWriter(outputStream);
 
       HttpServerExchange exchange = context.exchange;
       exchange.setStatusCode(statusCode);
-      exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, writer.httpContentType());
+      exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, jsonWriterFactory.httpContentType());
 
       formatWriter.write(writer);
       writer.close();
@@ -165,7 +171,8 @@ public class EpigraphUndertowHandler
   }
 
   @Override
-  protected void close(final @NotNull EpigraphUndertowHandler.@NotNull UndertowInvocationContext context) throws IOException {
+  protected void close(final @NotNull EpigraphUndertowHandler.@NotNull UndertowInvocationContext context)
+      throws IOException {
     context.exchange.endExchange();
   }
 

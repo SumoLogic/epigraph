@@ -30,6 +30,7 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public interface FormatReader<
     VP extends GenVarProjection<VP, ?, ?>,
@@ -46,5 +47,9 @@ public interface FormatReader<
   @NotNull Val readValue(@NotNull DatumType type) throws IOException, FormatException;
 
   @NotNull ErrorValue readError() throws IOException, FormatException;
+
+  interface Factory<FR extends FormatReader<?, ?>> {
+    @NotNull FR newFormatReader(@NotNull InputStream is);
+  }
 
 }
