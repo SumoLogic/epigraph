@@ -22,8 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.input.*;
+import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.ReqInputFormatReader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -69,6 +72,13 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
       for (ReqInputKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
     }
     return expectedKeys;
+  }
+
+  public static class Factory implements FormatReader.Factory<ReqInputJsonFormatReader> {
+    @Override
+    public @NotNull ReqInputJsonFormatReader newFormatReader(final @NotNull InputStream is) throws IOException {
+      return new ReqInputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(is));
+    }
   }
 
 }

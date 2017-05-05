@@ -16,6 +16,7 @@
 
 package ws.epigraph.server.http;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import ws.epigraph.refs.TypesResolver;
 
@@ -23,9 +24,9 @@ import ws.epigraph.refs.TypesResolver;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface HttpInvocationContext {
-  Logger logger();
+  @NotNull Logger logger();
 
   default boolean isDebug() { return false; }
 
-  TypesResolver typesResolver();
+  @NotNull TypesResolver typesResolver();
 }

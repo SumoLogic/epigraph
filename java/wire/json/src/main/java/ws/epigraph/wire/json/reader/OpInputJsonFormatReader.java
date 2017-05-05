@@ -22,8 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.op.input.*;
+import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.OpInputFormatReader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
@@ -68,5 +71,12 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
   @Override
   protected @Nullable OpInputModelProjection<?, ?, ?, ?> getMetaProjection(final @NotNull OpInputModelProjection<?, ?, ?, ?> projection) {
     return projection.metaProjection();
+  }
+
+  public static class Factory implements FormatReader.Factory<OpInputJsonFormatReader> {
+    @Override
+    public @NotNull OpInputJsonFormatReader newFormatReader(final @NotNull InputStream is) throws IOException {
+      return new OpInputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(is));
+    }
   }
 }

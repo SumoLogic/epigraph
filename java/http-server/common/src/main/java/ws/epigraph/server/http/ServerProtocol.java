@@ -28,7 +28,7 @@ import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
-import ws.epigraph.schema.operations.OperationDeclaration;
+import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.wire.FormatException;
 
 import java.io.IOException;
@@ -51,33 +51,42 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException;
 
   void writeDataResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ReqOutputVarProjection projection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeDatumResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ReqOutputModelProjection<?, ?, ?> projection,
       @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeErrorResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ErrorValue error,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeEmptyResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeInvocationErrorResponse(
-      @NotNull OperationDeclaration operationDeclaration,
       @NotNull OperationInvocationError error,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
+
+  // we don't know about formats here
+//  interface Factory<C extends HttpInvocationContext, P extends ServerProtocol<C>> {
+//    @NotNull P newServerProtocol(
+//        @NotNull Function<C, HttpExchange> httpExchangeFactory,
+//        @NotNull FormatReader.Factory<OpInputFormatReader> opInputFormatReaderFactory,
+//        @NotNull FormatReader.Factory<ReqInputFormatReader> reqInputFormatReaderFactory,
+//        @NotNull FormatReader.Factory<ReqUpdateFormatReader> reqUpdateFormatReaderFactory,
+//        @NotNull FormatWriter.Factory formatWriterFactory);
+//  }
 }

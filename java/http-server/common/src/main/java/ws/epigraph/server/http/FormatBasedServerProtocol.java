@@ -16,6 +16,7 @@
 
 package ws.epigraph.server.http;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
@@ -28,7 +29,6 @@ import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
-import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.*;
@@ -51,18 +51,18 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   public static final String CONTENT_TYPE_HEADER = "Content-Type";
 
   private final @NotNull Function<C, HttpExchange> httpExchangeFactory;
-  private final @NotNull FormatReader.Factory<OpInputFormatReader> opInputFormatReaderFactory;
-  private final @NotNull FormatReader.Factory<ReqInputFormatReader> reqInputFormatReaderFactory;
-  private final @NotNull FormatReader.Factory<ReqUpdateFormatReader> reqUpdateFormatReaderFactory;
+  private final @NotNull Function<C, FormatReader.Factory<? extends OpInputFormatReader>> opInputFormatReaderFactory;
+  private final @NotNull Function<C, FormatReader.Factory<? extends ReqInputFormatReader>> reqInputFormatReaderFactory;
+  private final @NotNull Function<C, FormatReader.Factory<? extends ReqUpdateFormatReader>> reqUpdateFormatReaderFactory;
 
-  private final @NotNull FormatWriter.Factory formatWriterFactory;
+  private final @NotNull Function<C, FormatWriter.Factory> formatWriterFactory;
 
   public FormatBasedServerProtocol(
       @NotNull Function<C, HttpExchange> httpExchangeFactory,
-      @NotNull FormatReader.Factory<OpInputFormatReader> opInputFormatReaderFactory,
-      @NotNull FormatReader.Factory<ReqInputFormatReader> reqInputFormatReaderFactory,
-      @NotNull FormatReader.Factory<ReqUpdateFormatReader> reqUpdateFormatReaderFactory,
-      @NotNull FormatWriter.Factory formatWriterFactory) {
+      @NotNull Function<C, FormatReader.Factory<? extends OpInputFormatReader>> opInputFormatReaderFactory,
+      @NotNull Function<C, FormatReader.Factory<? extends ReqInputFormatReader>> reqInputFormatReaderFactory,
+      @NotNull Function<C, FormatReader.Factory<? extends ReqUpdateFormatReader>> reqUpdateFormatReaderFactory,
+      @NotNull Function<C, FormatWriter.Factory> formatWriterFactory) {
     this.httpExchangeFactory = httpExchangeFactory;
     this.opInputFormatReaderFactory = opInputFormatReaderFactory;
     this.reqInputFormatReaderFactory = reqInputFormatReaderFactory;
@@ -78,13 +78,15 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException {
 
     HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
-    if (reqInputProjection == null) {
-      OpInputFormatReader formatReader = opInputFormatReaderFactory.newFormatReader(httpExchange.getInputStream());
-      return formatReader.readData(opInputProjection);
-    } else {
-      ReqInputFormatReader formatReader = reqInputFormatReaderFactory.newFormatReader(httpExchange.getInputStream());
-      return formatReader.readData(reqInputProjection);
-    }
+    return reqInputProjection == null
+           ? opInputFormatReaderFactory
+               .apply(httpInvocationContext)
+               .newFormatReader(httpExchange.getInputStream())
+               .readData(opInputProjection)
+           : reqInputFormatReaderFactory
+               .apply(httpInvocationContext)
+               .newFormatReader(httpExchange.getInputStream())
+               .readData(reqInputProjection);
   }
 
   @Override
@@ -95,26 +97,27 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException {
 
     HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
-    if (reqUpdateProjection == null) {
-      OpInputFormatReader formatReader = opInputFormatReaderFactory.newFormatReader(httpExchange.getInputStream());
-      return formatReader.readData(opInputProjection);
-    } else {
-      @NotNull ReqUpdateFormatReader formatReader = reqUpdateFormatReaderFactory.newFormatReader(httpExchange.getInputStream());
-      return formatReader.readData(reqUpdateProjection);
-    }
+    return reqUpdateProjection == null
+           ? opInputFormatReaderFactory
+               .apply(httpInvocationContext)
+               .newFormatReader(httpExchange.getInputStream())
+               .readData(opInputProjection)
+           : reqUpdateFormatReaderFactory
+               .apply(httpInvocationContext)
+               .newFormatReader(httpExchange.getInputStream())
+               .readData(reqUpdateProjection);
   }
-
 
   @Override
   public void writeDataResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ReqOutputVarProjection projection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeFormatResponse(
-        getSuccessStatusCode(operationDeclaration),
+        getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
         writer -> writer.writeData(projection, data)
@@ -124,14 +127,14 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public void writeDatumResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ReqOutputModelProjection<?, ?, ?> projection,
       @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeFormatResponse(
-        getSuccessStatusCode(operationDeclaration),
+        getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
         writer -> writer.writeDatum(projection, datum)
@@ -141,7 +144,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public void writeErrorResponse(
-      @NotNull OperationDeclaration operationDeclaration,
+      @NotNull OperationKind operationKind,
       @NotNull ErrorValue error,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -157,12 +160,12 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public void writeEmptyResponse(
-      final @NotNull OperationDeclaration operationDeclaration,
+      final @NotNull OperationKind operationKind,
       final @NotNull C httpInvocationContext,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeFormatResponse(
-        getSuccessStatusCode(operationDeclaration),
+        getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
         writer -> writer.writeData(null)
@@ -170,13 +173,13 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   }
 
-  private int getSuccessStatusCode(final @NotNull OperationDeclaration operationDeclaration) {
-    return operationDeclaration.kind() == OperationKind.CREATE ? HttpStatusCode.CREATED : HttpStatusCode.OK;
+  @Contract(pure = true)
+  private int getSuccessStatusCode(final @NotNull OperationKind operationKind) {
+    return operationKind == OperationKind.CREATE ? HttpStatusCode.CREATED : HttpStatusCode.OK;
   }
 
   @Override
   public void writeInvocationErrorResponse(
-      final @NotNull OperationDeclaration operationDeclaration,
       final @NotNull OperationInvocationError error,
       final @NotNull C httpInvocationContext,
       final @NotNull OperationInvocationContext operationInvocationContext) {
@@ -185,8 +188,8 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
     httpExchange.setStatusCode(error.statusCode());
 
-    OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
     try {
+      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
       if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(httpExchange)) {
         httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, CONTENT_TYPE_HTML));
         sw.write(((HtmlCapableOperationInvocationError) error).htmlMessage());
@@ -210,12 +213,16 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
     httpExchange.setStatusCode(statusCode);
 
     Map<String, String> headers =
-        Collections.singletonMap(CONTENT_TYPE_HEADER, formatWriterFactory.characterEncoding());
+        Collections.singletonMap(
+            CONTENT_TYPE_HEADER,
+            formatWriterFactory.apply(httpInvocationContext).characterEncoding()
+        );
 
     httpExchange.setHeaders(headers);
 
     try {
-      FormatWriter formatWriter = formatWriterFactory.newFormatWriter(httpExchange.getOutputStream());
+      FormatWriter formatWriter =
+          formatWriterFactory.apply(httpInvocationContext).newFormatWriter(httpExchange.getOutputStream());
       formatResponseWriter.write(formatWriter);
       formatWriter.close();
       httpExchange.close();
@@ -232,4 +239,26 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
     String accept = exchange.getHeader(ACCEPT__HEADER);
     return accept != null && accept.contains(CONTENT_TYPE_HTML);
   }
+
+  public static class Factory<C extends HttpInvocationContext>
+      /*implements ServerProtocol.Factory<C, FormatBasedServerProtocol<C>>*/ {
+
+    // @Override
+    public @NotNull FormatBasedServerProtocol<C> newServerProtocol(
+        final @NotNull Function<C, HttpExchange> httpExchangeFactory,
+        final @NotNull Function<C, FormatReader.Factory<? extends OpInputFormatReader>> opInputFormatReaderFactory,
+        final @NotNull Function<C, FormatReader.Factory<? extends ReqInputFormatReader>> reqInputFormatReaderFactory,
+        final @NotNull Function<C, FormatReader.Factory<? extends ReqUpdateFormatReader>> reqUpdateFormatReaderFactory,
+        final @NotNull Function<C, FormatWriter.Factory> formatWriterFactory) {
+
+      return new FormatBasedServerProtocol<>(
+          httpExchangeFactory,
+          opInputFormatReaderFactory,
+          reqInputFormatReaderFactory,
+          reqUpdateFormatReaderFactory,
+          formatWriterFactory
+      );
+    }
+  }
+
 }

@@ -16,11 +16,9 @@
 
 package ws.epigraph.server.http.undertow;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.jetbrains.annotations.NotNull;
@@ -28,31 +26,24 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.invocation.OperationFilterChains;
-import ws.epigraph.invocation.OperationInvocationError;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
-import ws.epigraph.server.http.AbstractHttpServer;
-import ws.epigraph.server.http.HtmlCapableOperationInvocationError;
-import ws.epigraph.server.http.HttpInvocationContext;
-import ws.epigraph.server.http.RequestHeaders;
+import ws.epigraph.server.http.*;
 import ws.epigraph.service.Service;
 import ws.epigraph.util.HttpStatusCode;
-import ws.epigraph.wire.FormatWriter;
-import ws.epigraph.wire.OpInputFormatReader;
-import ws.epigraph.wire.ReqInputFormatReader;
-import ws.epigraph.wire.ReqUpdateFormatReader;
 import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.util.Map;
 
-import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
-import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
 import static ws.epigraph.server.http.Util.decodeUri;
 
 /**
@@ -62,19 +53,27 @@ public class EpigraphUndertowHandler
     extends AbstractHttpServer<EpigraphUndertowHandler.UndertowInvocationContext> implements HttpHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(EpigraphUndertowHandler.class);
-      // assuming a thread-safe backend
 
-  private final @NotNull JsonFormatWriter.JsonFormatWriterFactory jsonWriterFactory =
-      new JsonFormatWriter.JsonFormatWriterFactory(); // todo make configurable
-  private final @NotNull JsonFactory jsonFactory = new JsonFactory();
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
 
   public EpigraphUndertowHandler(
       @NotNull Service service,
       @NotNull TypesResolver typesResolver,
+      @NotNull FormatBasedServerProtocol.Factory<EpigraphUndertowHandler.UndertowInvocationContext> serverProtocolFactory,
       final long responseTimeout) {
-    super(service, OperationFilterChains.defaultLocalFilterChains()); // make configurable?
+    super(
+        service,
+        serverProtocolFactory.newServerProtocol(
+            c -> new Exchange(c.exchange),
+            // todo change format based on request (c). Pass format name -> format readers/writers map to ctor?
+            c -> new OpInputJsonFormatReader.Factory(),
+            c -> new ReqInputJsonFormatReader.Factory(),
+            c -> new ReqUpdateJsonFormatReader.Factory(),
+            c -> new JsonFormatWriter.JsonFormatWriterFactory()
+        ),
+        OperationFilterChains.defaultLocalFilterChains() // make configurable?
+    );
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
   }
@@ -87,88 +86,34 @@ public class EpigraphUndertowHandler
       return;
     }
     exchange.startBlocking();
+
     final UndertowInvocationContext context = new UndertowInvocationContext(exchange);
+    final OperationInvocationContext operationContext = newOperationInvocationContext(context);
 
     final HttpMethod method = getMethod(exchange);
     if (method == null) {
-      writeInvocationErrorResponse(
+      writeInvocationErrorAndCloseContext(
           new OperationInvocationErrorImpl(
               String.format("Unsupported HTTP method '%s'", exchange.getRequestMethod()),
               HttpStatusCode.BAD_REQUEST
-          ), context
+          ), context, operationContext
       );
     } else {
       try {
-        handleRequest(getDecodedRequestString(exchange), method, getOperationName(exchange), context);
+        handleRequest(getDecodedRequestString(exchange), method, getOperationName(exchange), context, operationContext);
       } catch (URISyntaxException e) {
-        writeInvocationErrorResponse(
+        writeInvocationErrorAndCloseContext(
             new OperationInvocationErrorImpl(
                 String.format("Invalid URI syntax '%s'", e.getMessage()),
                 HttpStatusCode.BAD_REQUEST
-            ), context
+            ), context, operationContext
         );
       }
     }
   }
 
   @Override
-  protected long responseTimeout(final @NotNull UndertowInvocationContext context) {
-    return responseTimeout;
-  }
-
-  @Override
-  protected OpInputFormatReader opInputReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new OpInputJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
-  }
-
-  @Override
-  protected ReqInputFormatReader reqInputReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new ReqInputJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
-  }
-
-  @Override
-  protected ReqUpdateFormatReader reqUpdateReader(final @NotNull UndertowInvocationContext context) throws IOException {
-    return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.exchange.getInputStream()));
-  }
-
-  @Override
-  protected void writeFormatResponse(
-      int statusCode,
-      @NotNull UndertowInvocationContext context,
-      @NotNull FormatResponseWriter formatWriter) {
-
-    try {
-      OutputStream outputStream = context.exchange.getOutputStream();
-      FormatWriter writer = jsonWriterFactory.newFormatWriter(outputStream);
-
-      HttpServerExchange exchange = context.exchange;
-      exchange.setStatusCode(statusCode);
-      exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, jsonWriterFactory.httpContentType());
-
-      formatWriter.write(writer);
-      writer.close();
-    } catch (IOException e) {
-      LOG.error("Error writing response", e);
-    }
-  }
-
-  @Override
-  protected void writeInvocationErrorResponse(
-      final @NotNull OperationInvocationError error,
-      final @NotNull UndertowInvocationContext context) {
-
-    final HttpServerExchange exchange = context.exchange;
-    exchange.setStatusCode(error.statusCode());
-
-    if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(exchange)) {
-      exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE_HTML);
-      exchange.getResponseSender().send(((HtmlCapableOperationInvocationError) error).htmlMessage());
-    } else {
-      exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE_TEXT);
-      exchange.getResponseSender().send(error.message() + "\n");
-    }
-
-  }
+  protected long responseTimeout(final @NotNull UndertowInvocationContext context) { return responseTimeout; }
 
   @Override
   protected void close(final @NotNull EpigraphUndertowHandler.@NotNull UndertowInvocationContext context)
@@ -190,13 +135,6 @@ public class EpigraphUndertowHandler
     return headerValues == null ? null : headerValues.getFirst(); // warn if more than one?
   }
 
-  private static boolean htmlAccepted(@NotNull HttpServerExchange exchange) {
-    final HeaderValues contentTypeHeader = exchange.getRequestHeaders().get(Headers.ACCEPT);
-    if (contentTypeHeader == null) return false;
-    for (String header : contentTypeHeader) if (header.toLowerCase().contains(CONTENT_TYPE_HTML)) return true;
-    return false;
-  }
-
   class UndertowInvocationContext implements HttpInvocationContext {
     final @NotNull HttpServerExchange exchange;
 
@@ -205,17 +143,16 @@ public class EpigraphUndertowHandler
     }
 
     @Override
-    public Logger logger() { return LOG; }
+    public @NotNull Logger logger() { return LOG; }
 
     @Override
-    public TypesResolver typesResolver() { return typesResolver; }
+    public @NotNull TypesResolver typesResolver() { return typesResolver; }
 
     @Override
     public boolean isDebug() {
       final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.DEBUG_MODE);
       return headerValues != null && "true".equals(headerValues.getFirst());
     }
-
   }
 
   private static @NotNull String getDecodedRequestString(@NotNull HttpServerExchange exchange)
@@ -231,6 +168,36 @@ public class EpigraphUndertowHandler
     else encodedReq = uri + "?" + queryString; // question mark gets removed
 
     return decodeUri(encodedReq);
+  }
+
+  private static final class Exchange implements HttpExchange {
+    private final @NotNull HttpServerExchange delegate;
+
+    Exchange(final @NotNull HttpServerExchange delegate) {this.delegate = delegate;}
+
+    @Override
+    public @Nullable String getHeader(final @NotNull String headerName) {
+      return delegate.getResponseHeaders().getFirst(headerName);
+    }
+
+    @Override
+    public @NotNull InputStream getInputStream() { return delegate.getInputStream(); }
+
+    @Override
+    public void setStatusCode(final int statusCode) { delegate.setStatusCode(statusCode); }
+
+    @Override
+    public void setHeaders(final Map<String, String> headers) {
+      for (final Map.Entry<String, String> entry : headers.entrySet()) {
+        delegate.getResponseHeaders().add(HttpString.tryFromString(entry.getKey()), entry.getValue());
+      }
+    }
+
+    @Override
+    public @NotNull OutputStream getOutputStream() { return delegate.getOutputStream(); }
+
+    @Override
+    public void close() { delegate.endExchange(); }
   }
 
 }

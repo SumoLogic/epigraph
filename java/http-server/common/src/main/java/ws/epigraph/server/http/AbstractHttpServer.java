@@ -19,23 +19,15 @@ package ws.epigraph.server.http;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.data.Datum;
-import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputModelProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
-import ws.epigraph.projections.req.update.ReqUpdateModelProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -69,30 +61,20 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private static final Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
 
   protected final @NotNull Service service;
-  protected final @NotNull OperationFilterChains<Data> operationFilterChains;
+  private final @NotNull ServerProtocol<C> serverProtocol;
+  private final @NotNull OperationFilterChains<Data> operationFilterChains;
 
   @SuppressWarnings("unchecked")
   protected AbstractHttpServer(
       final @NotNull Service service,
+      final @NotNull ServerProtocol<C> serverProtocol,
       final @NotNull OperationFilterChains<? extends Data> invocations) {
     this.service = service;
+    this.serverProtocol = serverProtocol;
     operationFilterChains = (OperationFilterChains<Data>) invocations;
   }
 
   protected abstract long responseTimeout(@NotNull C context);
-
-  protected abstract OpInputFormatReader opInputReader(@NotNull C context) throws IOException;
-
-  protected abstract ReqInputFormatReader reqInputReader(@NotNull C context) throws IOException;
-
-  protected abstract ReqUpdateFormatReader reqUpdateReader(@NotNull C context) throws IOException;
-
-  protected abstract void writeFormatResponse(
-      int statusCode,
-      @NotNull C context,
-      @NotNull FormatResponseWriter formatWriter);
-
-  protected abstract void writeInvocationErrorResponse(@NotNull OperationInvocationError error, @NotNull C context);
 
   protected void close(@NotNull C context) throws IOException { }
 
@@ -106,7 +88,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String decodedUri,
       @NotNull HttpMethod requestMethod,
       @Nullable String operationName,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
+
 
     // extract resource name from URI
     Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
@@ -115,10 +99,14 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           String.format(
               "Bad URL format. Supported resources: {%s}",
               Util.listSupportedResources(service)
-          ), HttpStatusCode.BAD_REQUEST, context
+          ),
+          HttpStatusCode.BAD_REQUEST,
+          context,
+          operationInvocationContext
       );
       return;
     }
+
     String resourceName = matcher.group(1);
 
     // find resource by name
@@ -131,7 +119,10 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               "Resource '%s' not found. Supported resources: {%s}",
               resourceName,
               Util.listSupportedResources(service)
-          ), HttpStatusCode.BAD_REQUEST, context
+          ),
+          HttpStatusCode.BAD_REQUEST,
+          context,
+          operationInvocationContext
       );
       return;
     }
@@ -144,26 +135,27 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
             operationName,
             requestMethod,
             decodedUri,
-            context
+            context,
+            operationInvocationContext
         );
         return;
       }
     }
 
     if (requestMethod == HttpMethod.GET)
-      handleReadRequest(resource, operationName, decodedUri, context);
+      handleReadRequest(resource, operationName, decodedUri, context, operationInvocationContext);
     else if (requestMethod == HttpMethod.POST)
-      handleCreateRequest(resource, operationName, decodedUri, context);
+      handleCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
     else if (requestMethod == HttpMethod.PUT)
-      handleUpdateRequest(resource, operationName, decodedUri, context);
+      handleUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
     else if (requestMethod == HttpMethod.DELETE)
-      handleDeleteRequest(resource, operationName, decodedUri, context);
+      handleDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext);
     else {
       writeGenericErrorAndClose(
-          String.format(
-              "Unsupported HTTP method '%s'",
-              requestMethod
-          ), HttpStatusCode.BAD_REQUEST, context
+          String.format("Unsupported HTTP method '%s'", requestMethod),
+          HttpStatusCode.BAD_REQUEST,
+          context,
+          operationInvocationContext
       );
     }
 
@@ -171,12 +163,19 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ----------------------------------- READ
 
-  protected void handleReadRequest(
+  private void handleReadRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
-    handleReadResponse(HttpStatusCode.OK, invokeReadRequest(resource, operationName, decodedUri, context), context);
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
+
+    handleReadResponse(
+        OperationKind.READ,
+        invokeReadRequest(resource, operationName, decodedUri, context, operationInvocationContext),
+        context,
+        operationInvocationContext
+    );
   }
 
   private static final class ReadResult {
@@ -199,7 +198,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
     if (operationName != null && resource.namedReadOperation(operationName) == null)
@@ -244,7 +244,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.readOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              newOperationInvocationContext(context),
+              operationInvocationContext,
               new ReadOperationRequest(
                   requestUrl.path(),
                   outputProjection.projection()
@@ -302,9 +302,10 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   private void handleReadResponse(
-      final int statusCode,
+      @NotNull OperationKind operationKind,
       @NotNull CompletionStage<OperationInvocationResult<ReadResult>> responseFuture,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     final Consumer<OperationInvocationResult<ReadResult>> resultConsumer =
         invocationResult ->
@@ -312,21 +313,31 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
                 readResult -> {
                   try {
-                    writeData(statusCode, readResult.pathSteps, readResult.projection, readResult.data, context);
+                    writeData(
+                        operationKind,
+                        readResult.pathSteps,
+                        readResult.projection,
+                        readResult.data,
+                        context,
+                        operationInvocationContext
+                    );
                   } catch (RuntimeException e) {
                     writeInvocationErrorAndCloseContext(
                         new GenericServerInvocationError(e.toString()),
-                        context
+                        context,
+                        operationInvocationContext
                     );
                   }
                 },
 
-                error -> writeInvocationErrorAndCloseContext(error, context)
+                error -> writeInvocationErrorAndCloseContext(error, context, operationInvocationContext)
             );
 
     final Function<Throwable, Void> failureConsumer = throwable -> {
       writeInvocationErrorAndCloseContext(
-          new GenericServerInvocationError(throwable.getMessage()), context
+          new GenericServerInvocationError(throwable.getMessage()),
+          context,
+          operationInvocationContext
       );
       return null;
     };
@@ -342,15 +353,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ----------------------------------- CREATE
 
-  protected void handleCreateRequest(
+  private void handleCreateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
     handleReadResponse(
-        HttpStatusCode.CREATED,
-        invokeCreateRequest(resource, operationName, decodedUri, context),
-        context
+        OperationKind.CREATE,
+        invokeCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext),
+        context,
+        operationInvocationContext
     );
   }
 
@@ -358,7 +371,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
     if (operationName != null && resource.namedCreateOperation(operationName) == null)
@@ -402,13 +416,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           final Data body;
           try {
-            if (inputProjection == null) {
-              FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> reader = opInputReader(context);
-              body = reader.readData(operation.declaration().inputProjection().varProjection());
-            } else {
-              FormatReader<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> reader = reqInputReader(context);
-              body = reader.readData(inputProjection.varProjection());
-            }
+            body = serverProtocol.readInput(
+                operation.declaration().inputProjection().varProjection(),
+                inputProjection == null ? null : inputProjection.varProjection(),
+                context,
+                operationInvocationContext
+            );
           } catch (FormatException | IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
@@ -430,7 +443,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.createOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              newOperationInvocationContext(context),
+              operationInvocationContext,
               new CreateOperationRequest(
                   requestUrl.path(),
                   body,
@@ -491,15 +504,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ----------------------------------- UPDATE
 
-  protected void handleUpdateRequest(
+  private void handleUpdateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
     handleReadResponse(
-        HttpStatusCode.OK,
-        invokeUpdateRequest(resource, operationName, decodedUri, context),
-        context
+        OperationKind.UPDATE,
+        invokeUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext),
+        context,
+        operationInvocationContext
     );
   }
 
@@ -507,7 +522,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
     if (operationName != null && resource.namedUpdateOperation(operationName) == null)
@@ -551,14 +567,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           final Data body;
           try {
-            if (updateProjection == null) {
-              FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> reader = opInputReader(context);
-              body = reader.readData(operation.declaration().inputProjection().varProjection());
-            } else {
-              @NotNull FormatReader<ReqUpdateVarProjection, ReqUpdateModelProjection<?, ?, ?>> reader =
-                  reqUpdateReader(context);
-              body = reader.readData(updateProjection.varProjection());
-            }
+            body = serverProtocol.readUpdateInput(
+                operation.declaration().inputProjection().varProjection(),
+                updateProjection == null ? null : updateProjection.varProjection(),
+                context,
+                operationInvocationContext
+            );
           } catch (FormatException | IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
@@ -580,7 +594,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.updateOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              newOperationInvocationContext(context),
+              operationInvocationContext,
               new UpdateOperationRequest(
                   requestUrl.path(),
                   body,
@@ -641,15 +655,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ----------------------------------- DELETE
 
-  protected void handleDeleteRequest(
+  private void handleDeleteRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
     handleReadResponse(
-        HttpStatusCode.OK,
-        invokeDeleteRequest(resource, operationName, decodedUri, context),
-        context
+        OperationKind.DELETE,
+        invokeDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext),
+        context,
+        operationInvocationContext
     );
   }
 
@@ -657,7 +673,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
     if (operationName != null && resource.namedDeleteOperation(operationName) == null)
@@ -703,7 +720,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.deleteOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              newOperationInvocationContext(context),
+              operationInvocationContext,
               new DeleteOperationRequest(
                   requestUrl.path(),
                   deleteProjection,
@@ -763,16 +780,18 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ----------------------------------- CUSTOM
 
-  protected void handleCustomRequest(
+  private void handleCustomRequest(
       @NotNull Resource resource,
       @NotNull String operationName,
       @NotNull HttpMethod method,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
     handleReadResponse(
-        HttpStatusCode.OK,
-        invokeCustomRequest(resource, operationName, method, decodedUri, context),
-        context
+        OperationKind.CUSTOM,
+        invokeCustomRequest(resource, operationName, method, decodedUri, context, operationInvocationContext),
+        context,
+        operationInvocationContext
     );
   }
 
@@ -782,7 +801,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String operationName,
       @NotNull HttpMethod method,
       @NotNull String decodedUri,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     final CustomOperation<Data> operation = (CustomOperation<Data>) resource.customOperation(method, operationName);
     if (operation == null)
@@ -846,20 +866,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
     StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
 
-    Data body;
+    final Data body;
     try {
-      if (inputProjection == null) {
-        final OpInputFieldProjection opInputProjection = operation.declaration().inputProjection();
-        if (opInputProjection == null)
-          body = null;
-        else {
-          FormatReader<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> reader = opInputReader(context);
-          body = reader.readData(opInputProjection.varProjection());
-        }
-      } else {
-        FormatReader<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> reader = reqInputReader(context);
-        body = reader.readData(inputProjection.varProjection());
-      }
+      final OpInputFieldProjection opInputProjection = operation.declaration().inputProjection();
+      body = opInputProjection == null
+             ? null
+             : serverProtocol.readInput(
+                 opInputProjection.varProjection(),
+                 inputProjection == null ? null : inputProjection.varProjection(),
+                 context,
+                 operationInvocationContext
+             );
     } catch (FormatException | IOException e) {
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
@@ -876,7 +893,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationFilterChains.customOperationInvocation(operation);
 
     return operationInvocation.invoke(
-        newOperationInvocationContext(context),
+        operationInvocationContext,
         new CustomOperationRequest(
             requestUrl.path(),
             body,
@@ -913,66 +930,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   // ---------------------------------
 
-  // todo extract this part into a pluggable Protocol/Marshaller ?
-  // it should be able to add extra wrappers with statistics/diagnostics etc + manage error codes
-
-  protected interface FormatResponseWriter {
-    void write(@NotNull FormatWriter writer) throws IOException;
-  }
-
-  protected void writeDataResponse(
-      int statusCode,
-      @NotNull ReqOutputVarProjection projection,
-      @Nullable Data data,
-      @NotNull C context) {
-
-    writeFormatResponse(statusCode, context, writer -> {
-      writer.writeData(projection, data);
-      writer.close();
-    });
-    closeContext(context);
-  }
-
-  protected void writeDatumResponse(
-      int statusCode,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
-      @Nullable Datum datum,
-      @NotNull C context) {
-
-    writeFormatResponse(statusCode, context, writer -> {
-      writer.writeDatum(projection, datum);
-      writer.close();
-    });
-    closeContext(context);
-  }
-
-  protected void writeErrorResponse(@NotNull ErrorValue error, @NotNull C context) {
-    writeFormatResponse(/*HttpStatusCode.OK, */error.statusCode(), context, writer -> {
-      writer.writeError(error);
-      writer.close();
-    });
-    closeContext(context); // todo: this must stay
-  }
-
-  protected void writeEmptyResponse(int statusCode, @NotNull C context) {
-
-    writeFormatResponse(statusCode, context, writer -> {
-      writer.writeData(null);
-      writer.close();
-    });
-    closeContext(context);
-  }
-
   private void writeData(
-      int statusCode,
+      final @NotNull OperationKind operationKind,
       final int pathSteps,
       @NotNull ReqOutputVarProjection reqProjection,
       @Nullable Data data,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     try {
       if (data == null) {
-        writeEmptyResponse(statusCode, context);
+        serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
       } else {
         DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
@@ -981,14 +949,31 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
 
           if (varProjection != null) {
-            writeDataResponse(statusCode, varProjection, noPathResult.data, context);
+            serverProtocol.writeDataResponse(
+                operationKind,
+                varProjection,
+                noPathResult.data,
+                context,
+                operationInvocationContext
+            );
           } else if (modelProjection != null) {
-            writeDatumResponse(statusCode, modelProjection, noPathResult.datum, context);
+            serverProtocol.writeDatumResponse(
+                operationKind,
+                modelProjection,
+                noPathResult.datum,
+                context,
+                operationInvocationContext
+            );
           } else {
-            writeEmptyResponse(statusCode, context);
+            serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
           }
         } else {
-          writeErrorResponse(noPathResult.error, context);
+          serverProtocol.writeErrorResponse(
+              operationKind,
+              noPathResult.error,
+              context,
+              operationInvocationContext
+          );
         }
       }
 
@@ -1005,7 +990,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                   pathSteps == 0 ? 0 : pathSteps - 1
               )
           ),
-          context
+          context,
+          operationInvocationContext
       );
     } catch (RuntimeException e) {
       context.logger().error("Error writing response", e);
@@ -1013,7 +999,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           new GenericServerInvocationError(
               "Error writing response: " + e.getMessage()
           ),
-          context
+          context,
+          operationInvocationContext
       );
     }
   }
@@ -1034,8 +1021,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull R router,
       @NotNull OperationKind operationKind,
       @NotNull Function<OperationSearchSuccess<O, U>, CompletableFuture<OperationInvocationResult<Rsp>>> continuation,
-      @NotNull C context
-  ) {
+      @NotNull C context) {
 
     try {
       OperationSearchResult<?> searchResult =
@@ -1095,18 +1081,24 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private void writeGenericErrorAndClose(
       @NotNull String message,
       int status,
-      @NotNull C context) {
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeInvocationErrorAndCloseContext(
-        new OperationInvocationErrorImpl(
-            message, status
-        ), context
+        new OperationInvocationErrorImpl(message, status),
+        context,
+        operationInvocationContext
     );
   }
 
-  private void writeInvocationErrorAndCloseContext(@NotNull OperationInvocationError error, @NotNull C context) {
-    writeInvocationErrorResponse(error, context);
+  protected void writeInvocationErrorAndCloseContext(
+      @NotNull OperationInvocationError error,
+      @NotNull C context,
+      @NotNull OperationInvocationContext operationInvocationContext) {
+
+    serverProtocol.writeInvocationErrorResponse(error, context, operationInvocationContext);
     closeContext(context);
+    // operationInvocationContext.close();
   }
 
 }

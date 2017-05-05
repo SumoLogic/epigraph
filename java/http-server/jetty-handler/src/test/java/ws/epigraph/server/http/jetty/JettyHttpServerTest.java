@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.server.http.AbstractHttpServerTest;
+import ws.epigraph.server.http.FormatBasedServerProtocol;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,6 +41,7 @@ public class JettyHttpServerTest extends AbstractHttpServerTest {
     jettyServer = new Server(PORT);
     EpigraphJettyHandler handler = new EpigraphJettyHandler(
         buildUsersService(),
+        new FormatBasedServerProtocol.Factory<>(),
         OperationFilterChains.defaultLocalFilterChains(),
         IndexBasedTypesResolver.INSTANCE,
         -1

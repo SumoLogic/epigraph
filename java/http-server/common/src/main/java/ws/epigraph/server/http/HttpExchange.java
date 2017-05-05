@@ -32,12 +32,12 @@ public interface HttpExchange {
 
   @Nullable String getHeader(@NotNull String headerName);
 
-  @NotNull InputStream getInputStream();
+  @NotNull InputStream getInputStream() throws IOException;
 
   void setStatusCode(int statusCode);
   void setHeaders(Map<String, String> headers);
 
-  @NotNull OutputStream getOutputStream();
+  @NotNull OutputStream getOutputStream() throws IOException;
 
   void close() throws IOException;
 }

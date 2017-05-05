@@ -16,10 +16,7 @@
 
 package ws.epigraph.wire.json.reader;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,6 +80,8 @@ abstract class AbstractJsonFormatReader<
     //,PMP extends GenPrimitiveModelProjection<PMP, ?>
     >
     implements FormatReader<VP, MP> {
+
+  protected static final @NotNull JsonFactory JSON_FACTORY = new JsonFactory();
 
   private final @NotNull JsonParser in;
   private final @NotNull LinkedList<VisitedDataEntry> dataByLevel = new LinkedList<>();

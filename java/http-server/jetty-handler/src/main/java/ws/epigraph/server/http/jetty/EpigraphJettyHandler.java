@@ -16,7 +16,6 @@
 
 package ws.epigraph.server.http.jetty;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationFilterChains;
-import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
+import ws.epigraph.server.http.servlet.ServletExchange;
 import ws.epigraph.service.Service;
-import ws.epigraph.wire.FormatWriter;
-import ws.epigraph.wire.OpInputFormatReader;
-import ws.epigraph.wire.ReqInputFormatReader;
-import ws.epigraph.wire.ReqUpdateFormatReader;
 import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
@@ -45,9 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Enumeration;
-
-import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -55,20 +47,13 @@ import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
 public class EpigraphJettyHandler extends AbstractHandler {
   public static final Logger LOG = LoggerFactory.getLogger(EpigraphJettyHandler.class);
 
-  // no header constants for servlet API?
-  public static final String ACCEPT_HEADER = "Accept";
-  public static final String CONTENT_TYPE_HEADER = "Content-Type";
-
-  private final @NotNull JsonFormatWriter.JsonFormatWriterFactory jsonWriterFactory =
-      new JsonFormatWriter.JsonFormatWriterFactory(); // todo make configurable
-  private final @NotNull JsonFactory jsonFactory = new JsonFactory();
-
   private final @NotNull TypesResolver typesResolver;
   private final int responseTimeout;
   private final @NotNull Server server;
 
   public EpigraphJettyHandler(
       final @NotNull Service service,
+      final @NotNull FormatBasedServerProtocol.Factory<JettyHandlerInvocationContext> serverProtocolFactory,
       final @NotNull OperationFilterChains<? extends Data> filterChains,
       final @NotNull TypesResolver typesResolver,
       final int responseTimeout) {
@@ -76,7 +61,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
 
-    server = new Server(service, filterChains);
+    server = new Server(service, serverProtocolFactory, filterChains);
   }
 
   @Override
@@ -128,106 +113,47 @@ public class EpigraphJettyHandler extends AbstractHandler {
     }
 
     @Override
-    public Logger logger() { return LOG; }
+    public @NotNull Logger logger() { return LOG; }
 
     @Override
-    public TypesResolver typesResolver() { return typesResolver; }
-
-    @NotNull HttpServletRequest request() { return (HttpServletRequest) asyncContext.getRequest(); }
-
-    @NotNull HttpServletResponse response() { return (HttpServletResponse) asyncContext.getResponse(); }
+    public @NotNull TypesResolver typesResolver() { return typesResolver; }
   }
 
   private class Server extends AbstractHttpServer<JettyHandlerInvocationContext> {
     protected Server(
-        final @NotNull Service service,
-        final @NotNull OperationFilterChains<? extends Data> invocations) {
-      super(service, invocations);
+        @NotNull Service service,
+        @NotNull FormatBasedServerProtocol.Factory<JettyHandlerInvocationContext> serverProtocolFactory,
+        @NotNull OperationFilterChains<? extends Data> invocations) {
+      super(
+          service,
+          serverProtocolFactory.newServerProtocol(
+              c -> new ServletExchange(c.asyncContext),
+              // todo change format based on request (c). Pass format name -> format readers/writers map to ctor?
+              c -> new OpInputJsonFormatReader.Factory(),
+              c -> new ReqInputJsonFormatReader.Factory(),
+              c -> new ReqUpdateJsonFormatReader.Factory(),
+              c -> new JsonFormatWriter.JsonFormatWriterFactory()
+          ),
+          invocations
+      );
     }
 
-    @Override
     public void handleRequest(
         final @NotNull String decodedUri,
         final @NotNull HttpMethod requestMethod,
         final @Nullable String operationName,
         final @NotNull JettyHandlerInvocationContext context) {
-      super.handleRequest(decodedUri, requestMethod, operationName, context);
+      super.handleRequest(decodedUri, requestMethod, operationName, context, newOperationInvocationContext(context));
     }
 
     @Override
     protected long responseTimeout(final @NotNull JettyHandlerInvocationContext context) { return responseTimeout; }
 
     @Override
-    protected OpInputFormatReader opInputReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
-      return new OpInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
-    }
-
-    @Override
-    protected ReqInputFormatReader reqInputReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
-      return new ReqInputJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
-    }
-
-    @Override
-    protected ReqUpdateFormatReader reqUpdateReader(@NotNull JettyHandlerInvocationContext context) throws IOException {
-      return new ReqUpdateJsonFormatReader(jsonFactory.createParser(context.request().getInputStream()));
-    }
-
-    @Override
-    protected void writeFormatResponse(
-        final int statusCode,
-        final @NotNull JettyHandlerInvocationContext context,
-        final @NotNull FormatResponseWriter formatWriter) {
-
-      try {
-        HttpServletResponse servletResponse = context.response();
-        servletResponse.setStatus(statusCode);
-
-        FormatWriter writer = jsonWriterFactory.newFormatWriter(servletResponse.getOutputStream());
-        servletResponse.setContentType(jsonWriterFactory.httpContentType());
-        servletResponse.setCharacterEncoding(jsonWriterFactory.characterEncoding());
-
-        formatWriter.write(writer);
-        writer.close();
-      } catch (IOException e) {
-        context.logger().error("Error writing response", e);
-      }
-    }
-
-    @Override
-    protected void writeInvocationErrorResponse(
-        final @NotNull OperationInvocationError error,
-        final @NotNull JettyHandlerInvocationContext context) {
-
-      HttpServletRequest servletRequest = context.request();
-      HttpServletResponse servletResponse = context.response();
-      servletResponse.setStatus(error.statusCode());
-
-      try {
-        if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(servletRequest)) {
-          servletResponse.setHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_HTML);
-          servletResponse.getWriter().write(((HtmlCapableOperationInvocationError) error).htmlMessage());
-        } else {
-          servletResponse.setHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE_HTML);
-          servletResponse.getWriter().write(error.message() + "\n");
-        }
-      } catch (IOException e) {
-        context.logger().error("Error writing response", e);
-      }
-    }
-
-    @Override
     protected void close(final @NotNull JettyHandlerInvocationContext context) throws IOException {
-      context.response().flushBuffer();
+      context.asyncContext.getResponse().flushBuffer();
       context.asyncContext.complete();
     }
   }
 
-  private static boolean htmlAccepted(@NotNull HttpServletRequest request) {
-    final Enumeration<String> enumeration = request.getHeaders(ACCEPT_HEADER);
-    while (enumeration.hasMoreElements()) {
-      String header = enumeration.nextElement();
-      if (header.toLowerCase().contains(CONTENT_TYPE_HTML)) return true;
-    }
-    return false;
-  }
 }
