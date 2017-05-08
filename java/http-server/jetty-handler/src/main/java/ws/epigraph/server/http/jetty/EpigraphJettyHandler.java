@@ -18,21 +18,19 @@ package ws.epigraph.server.http.jetty;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationFilterChains;
+import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
 import ws.epigraph.server.http.servlet.ServletExchange;
 import ws.epigraph.service.Service;
-import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
@@ -40,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -51,9 +50,29 @@ public class EpigraphJettyHandler extends AbstractHandler {
   private final int responseTimeout;
   private final @NotNull Server server;
 
+  public EpigraphJettyHandler(final @NotNull Service service, final int responseTimeout) {
+    this(service, IndexBasedTypesResolver.INSTANCE, responseTimeout);
+  }
+
+  public EpigraphJettyHandler(
+      final @NotNull Service service,
+      final @NotNull TypesResolver typesResolver,
+      final int responseTimeout) {
+
+    this(
+        service,
+        new FormatBasedServerProtocol.Factory<>(),
+        DefaultFormats.instance(formatNameExtractor()),
+        OperationFilterChains.defaultLocalFilterChains(),
+        typesResolver,
+        responseTimeout
+    );
+  }
+
   public EpigraphJettyHandler(
       final @NotNull Service service,
       final @NotNull FormatBasedServerProtocol.Factory<JettyHandlerInvocationContext> serverProtocolFactory,
+      final @NotNull FormatSelector<JettyHandlerInvocationContext> formatSelector,
       final @NotNull OperationFilterChains<? extends Data> filterChains,
       final @NotNull TypesResolver typesResolver,
       final int responseTimeout) {
@@ -61,7 +80,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
 
-    server = new Server(service, serverProtocolFactory, filterChains);
+    server = new Server(service, serverProtocolFactory, formatSelector, filterChains);
   }
 
   @Override
@@ -69,8 +88,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
       final String target,
       final Request baseRequest,
       final HttpServletRequest request,
-      final HttpServletResponse response)
-      throws IOException, ServletException {
+      final HttpServletResponse response) throws IOException, ServletException {
 
     final HttpMethod method = HttpMethod.fromString(request.getMethod());
 
@@ -101,6 +119,11 @@ public class EpigraphJettyHandler extends AbstractHandler {
 
   }
 
+  @Contract(pure = true)
+  public static @NotNull Function<JettyHandlerInvocationContext, String> formatNameExtractor() {
+    return c -> ((HttpServletRequest) c.asyncContext.getRequest()).getHeader(RequestHeaders.FORMAT);
+  }
+
   private @Nullable String getOperationName(@NotNull HttpServletRequest req) {
     return req.getHeader(RequestHeaders.OPERATION_NAME);
   }
@@ -123,17 +146,11 @@ public class EpigraphJettyHandler extends AbstractHandler {
     protected Server(
         @NotNull Service service,
         @NotNull FormatBasedServerProtocol.Factory<JettyHandlerInvocationContext> serverProtocolFactory,
+        @NotNull FormatSelector<JettyHandlerInvocationContext> formatSelector,
         @NotNull OperationFilterChains<? extends Data> invocations) {
       super(
           service,
-          serverProtocolFactory.newServerProtocol(
-              c -> new ServletExchange(c.asyncContext),
-              // todo change format based on request (c). Pass format name -> format readers/writers map to ctor?
-              c -> new OpInputJsonFormatReader.Factory(),
-              c -> new ReqInputJsonFormatReader.Factory(),
-              c -> new ReqUpdateJsonFormatReader.Factory(),
-              c -> new JsonFormatWriter.JsonFormatWriterFactory()
-          ),
+          serverProtocolFactory.newServerProtocol(c -> new ServletExchange(c.asyncContext), formatSelector),
           invocations
       );
     }

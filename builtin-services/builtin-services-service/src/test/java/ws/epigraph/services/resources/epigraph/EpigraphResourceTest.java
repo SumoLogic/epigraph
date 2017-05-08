@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.server.http.FormatBasedServerProtocol;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -60,7 +59,6 @@ public class EpigraphResourceTest {
         .setHandler(new EpigraphUndertowHandler(
             buildEpigraphService(resolver.index()),
             resolver,
-            new FormatBasedServerProtocol.Factory<>(),
             TIMEOUT))
         .build();
 

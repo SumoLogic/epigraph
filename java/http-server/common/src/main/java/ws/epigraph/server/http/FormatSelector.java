@@ -16,15 +16,22 @@
 
 package ws.epigraph.server.http;
 
+import org.jetbrains.annotations.NotNull;
+import ws.epigraph.wire.FormatException;
+
 /**
- * HTTP request parameters
+ * Selects format factories to be used based on given invocation context
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class RequestHeaders {
-  public static final String OPERATION_NAME = "Epigraph-Operation";
-  public static final String DEBUG_MODE = "Epigraph-Debug";
-  public static final String FORMAT = "Epigraph-Format";
-
-  private RequestHeaders() {}
+public interface FormatSelector<C extends HttpInvocationContext> {
+  /**
+   * Gets format factories based on passed context
+   *
+   * @param context invocation context
+   *
+   * @return format factories
+   * @throws FormatException in case if format can't be determined based on context
+   */
+  @NotNull FormatFactories getFactories(@NotNull C context) throws FormatException;
 }

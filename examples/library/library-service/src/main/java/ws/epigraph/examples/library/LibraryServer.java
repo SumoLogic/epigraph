@@ -20,7 +20,6 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import ws.epigraph.examples.library.resources.books.BooksResourceDeclaration;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.server.http.FormatBasedServerProtocol;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -45,14 +44,7 @@ public class LibraryServer {
     Undertow server = Undertow.builder()
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
-        .setHandler(
-            new EpigraphUndertowHandler(
-                buildLibraryService(),
-                IndexBasedTypesResolver.INSTANCE,
-                new FormatBasedServerProtocol.Factory<>(),
-                TIMEOUT
-            )
-        )
+        .setHandler(new EpigraphUndertowHandler(buildLibraryService(), TIMEOUT))
         .build();
 
     server.start();

@@ -45,7 +45,6 @@ public class UndertowHttpServerTest extends AbstractHttpServerTest {
         .setHandler(new EpigraphUndertowHandler(
             buildUsersService(),
             resolver,
-            new FormatBasedServerProtocol.Factory<>(),
             TIMEOUT))
         .build();
 

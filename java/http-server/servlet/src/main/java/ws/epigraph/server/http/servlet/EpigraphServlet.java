@@ -16,6 +16,7 @@
 
 package ws.epigraph.server.http.servlet;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -27,10 +28,6 @@ import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
-import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
@@ -41,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 
 /**
  * Generic Servlet-based Epigraph endpoint implementation.
@@ -62,10 +60,12 @@ public abstract class EpigraphServlet extends HttpServlet {
     logger = new ServletLogger(getServletName(), new LinkedBlockingQueue<>(), true, getServletContext());
     typesResolver = initTypesResolver(config);
 
-    // get it from config?
-    FormatBasedServerProtocol.Factory<ServletInvocationContext> serverProtocolFactory = new FormatBasedServerProtocol.Factory<>();
     try {
-      server = new Server(initService(config), serverProtocolFactory, initOperationFilterChains(config));
+      server = new Server(initService(config),
+          new FormatBasedServerProtocol.Factory<>(),
+          DefaultFormats.instance(formatNameExtractor()),
+          initOperationFilterChains(config)
+      );
 
       String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_SERVLET_PARAMETER);
       responseTimeout = responseTimeoutParameter == null
@@ -123,6 +123,11 @@ public abstract class EpigraphServlet extends HttpServlet {
     }
   }
 
+  @Contract(pure = true)
+  public static @NotNull Function<ServletInvocationContext, String> formatNameExtractor() {
+    return c -> ((HttpServletRequest) c.asyncContext.getRequest()).getHeader(RequestHeaders.FORMAT);
+  }
+
   private @Nullable String getOperationName(@NotNull HttpServletRequest req) {
     return req.getHeader(RequestHeaders.OPERATION_NAME);
   }
@@ -143,17 +148,11 @@ public abstract class EpigraphServlet extends HttpServlet {
     protected Server(
         @NotNull Service service,
         @NotNull FormatBasedServerProtocol.Factory<ServletInvocationContext> serverProtocolFactory,
+        @NotNull FormatSelector<ServletInvocationContext> formatSelector,
         @NotNull OperationFilterChains<? extends Data> filterChains) {
       super(
           service,
-          serverProtocolFactory.newServerProtocol(
-              c -> new ServletExchange(c.asyncContext),
-              // todo change format based on request (c). Pass format name -> format readers/writers map to ctor?
-              c -> new OpInputJsonFormatReader.Factory(),
-              c -> new ReqInputJsonFormatReader.Factory(),
-              c -> new ReqUpdateJsonFormatReader.Factory(),
-              c -> new JsonFormatWriter.JsonFormatWriterFactory()
-          ),
+          serverProtocolFactory.newServerProtocol(c -> new ServletExchange(c.asyncContext), formatSelector),
           filterChains
       );
     }

@@ -21,6 +21,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -28,21 +29,19 @@ import org.slf4j.LoggerFactory;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
 import ws.epigraph.service.Service;
 import ws.epigraph.util.HttpStatusCode;
-import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.function.Function;
 
 import static ws.epigraph.server.http.Util.decodeUri;
 
@@ -57,25 +56,42 @@ public class EpigraphUndertowHandler
   private final @NotNull TypesResolver typesResolver;
   private final long responseTimeout;
 
+  public EpigraphUndertowHandler(@NotNull Service service, final long responseTimeout) {
+    this(service, IndexBasedTypesResolver.INSTANCE, responseTimeout);
+  }
+
   public EpigraphUndertowHandler(
       @NotNull Service service,
       @NotNull TypesResolver typesResolver,
-      @NotNull FormatBasedServerProtocol.Factory<EpigraphUndertowHandler.UndertowInvocationContext> serverProtocolFactory,
+      final long responseTimeout) {
+
+    this(
+        service,
+        typesResolver,
+        new FormatBasedServerProtocol.Factory<>(),
+        DefaultFormats.instance(formatNameExtractor()),
+        responseTimeout
+    );
+  }
+
+  public EpigraphUndertowHandler(
+      @NotNull Service service,
+      @NotNull TypesResolver typesResolver,
+      @NotNull FormatBasedServerProtocol.Factory<UndertowInvocationContext> serverProtocolFactory,
+      @NotNull FormatSelector<UndertowInvocationContext> formatSelector,
       final long responseTimeout) {
     super(
         service,
-        serverProtocolFactory.newServerProtocol(
-            c -> new Exchange(c.exchange),
-            // todo change format based on request (c). Pass format name -> format readers/writers map to ctor?
-            c -> new OpInputJsonFormatReader.Factory(),
-            c -> new ReqInputJsonFormatReader.Factory(),
-            c -> new ReqUpdateJsonFormatReader.Factory(),
-            c -> new JsonFormatWriter.JsonFormatWriterFactory()
-        ),
+        serverProtocolFactory.newServerProtocol(c -> new Exchange(c.exchange), formatSelector),
         OperationFilterChains.defaultLocalFilterChains() // make configurable?
     );
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
+  }
+
+  @Contract(pure = true)
+  public static @NotNull Function<UndertowInvocationContext, String> formatNameExtractor() {
+    return c -> c.exchange.getRequestHeaders().getFirst(RequestHeaders.FORMAT);
   }
 
   @Override

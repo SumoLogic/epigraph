@@ -19,10 +19,7 @@ package ws.epigraph.server.http.jetty;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.invocation.OperationFilterChains;
-import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.server.http.AbstractHttpServerTest;
-import ws.epigraph.server.http.FormatBasedServerProtocol;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,13 +36,7 @@ public class JettyHttpServerTest extends AbstractHttpServerTest {
   @BeforeClass
   public static void start() throws Exception {
     jettyServer = new Server(PORT);
-    EpigraphJettyHandler handler = new EpigraphJettyHandler(
-        buildUsersService(),
-        new FormatBasedServerProtocol.Factory<>(),
-        OperationFilterChains.defaultLocalFilterChains(),
-        IndexBasedTypesResolver.INSTANCE,
-        -1
-    );
+    EpigraphJettyHandler handler = new EpigraphJettyHandler(buildUsersService(), -1);
     jettyServer.setHandler(handler);
 
     jettyServer.start();

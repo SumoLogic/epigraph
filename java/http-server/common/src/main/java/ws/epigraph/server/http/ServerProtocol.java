@@ -80,13 +80,4 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  // we don't know about formats here
-//  interface Factory<C extends HttpInvocationContext, P extends ServerProtocol<C>> {
-//    @NotNull P newServerProtocol(
-//        @NotNull Function<C, HttpExchange> httpExchangeFactory,
-//        @NotNull FormatReader.Factory<OpInputFormatReader> opInputFormatReaderFactory,
-//        @NotNull FormatReader.Factory<ReqInputFormatReader> reqInputFormatReaderFactory,
-//        @NotNull FormatReader.Factory<ReqUpdateFormatReader> reqUpdateFormatReaderFactory,
-//        @NotNull FormatWriter.Factory formatWriterFactory);
-//  }
 }
