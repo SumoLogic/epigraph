@@ -19,7 +19,6 @@ package ws.epigraph.projections.op.input;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -66,8 +65,9 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       if (first)
         first = false;
       else
-        l.brk();
-      l.beginIInd(0).print("default:").brk();
+        brk();
+      l.beginIInd(0).print("default:");
+      brk();
       gdataPrettyPrinter.print(defaultValue);
       l.end();
     }
@@ -76,9 +76,10 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
       if (first)
         first = false;
       else
-        l.brk();
+        brk();
 
-      l.beginIInd(0).print("meta:").brk();
+      l.beginIInd(0).print("meta:");
+      brk();
       if (metaProjection.required()) l.print("+");
       printModel(metaProjection, 0);
       l.end();
@@ -119,9 +120,10 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
 
   private void printModelOnly(OpInputListModelProjection mp) throws E {
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override

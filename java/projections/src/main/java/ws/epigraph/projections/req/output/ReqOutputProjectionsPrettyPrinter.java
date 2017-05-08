@@ -87,7 +87,8 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
 
     if (pathSteps > 0) {
       l.beginIInd();
-      l.print("/").brk();
+      l.print("/");
+      brk();
 
 //      if (mp.keysRequired()) l.print("+");
 
@@ -102,7 +103,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
             )
         );
 
-      l.brk();
+      brk();
       printVar(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
@@ -111,12 +112,12 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       l.print("[");
 
       if (keys == null) {
-        l.brk().print("*");
+        brk().print("*");
       } else {
         boolean first = true;
         for (ReqOutputKeyProjection key : keys) {
           if (first) {
-            l.brk();
+            brk();
             first = false;
           } else l.print(", ");
 
@@ -124,13 +125,13 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         }
       }
 
-      l.brk().print("](");
+      brk().print("](");
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
-        l.brk();
+        brk();
         printVar(mp.itemsProjection(), 0);
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }
 
@@ -139,9 +140,10 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override

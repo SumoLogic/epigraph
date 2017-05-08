@@ -59,11 +59,12 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   protected boolean printModelParams(@NotNull MP mp) throws E {
     if (!modelParamsEmpty(mp)) {
       l.beginCInd();
-      l.print("{").brk();
+      l.print("{");
+      brk();
 
       boolean empty = printModelParamsInBlock(mp);
 
-      if (!empty) l.brk(1, -l.getDefaultIndentation());
+      if (!empty) brk(1, -l.getDefaultIndentation());
       l.end();
       l.print("}");
 
@@ -90,9 +91,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       if (first)
         first = false;
       else
-        l.brk();
+        brk();
 
-      l.beginIInd(0).print("meta:").brk();
+      l.beginIInd(0).print("meta:");
+      brk();
       printModel(metaProjection, 0);
       l.end();
     }
@@ -111,7 +113,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       } else {
         if (needCommas)
           l.print(",");
-        l.brk();
+        brk();
       }
       l.beginCInd(0);
       printOpParam(param);
@@ -127,12 +129,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.beginIInd();
     l.print(";");
     if (projection.required()) l.print("+");
-    l.print(escape(p.name())).print(":").brk();
+    l.print(escape(p.name())).print(":");
+    brk();
     l.print(projection.type().name().toString());
 
     OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
     if (!ipp.modelParamsEmpty(projection) || !ipp.isPrintoutNoParamsEmpty(projection)) {
-      l.brk();
+      brk();
       ipp.printModel(projection, 0);
     }
 
@@ -140,7 +143,8 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 //
 //    GDatum defaultValue = projection.defaultValue();
 //    if (defaultValue != null) {
-//      l.brk().print("=").brk();
+//      brk().print("=");
+//      brk();
 //      gdataPrettyPrinter.print(defaultValue);
 //    }
 //
@@ -148,7 +152,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 //      l.beginCInd();
 //      l.print(" {");
 //      printAnnotations(annotations);
-//      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+//      brk(1, -l.getDefaultIndentation()).end().print("}");
     l.end();
   }
 
@@ -161,14 +165,14 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     for (Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
       if (first) first = false;
       else l.print(",");
-      l.brk();
+      brk();
 
       @NotNull String prefix = fieldNamePrefix(entry.getValue());
       @NotNull FP fieldProjection = entry.getValue().fieldProjection();
 
       printFieldProjection(prefix + escape(entry.getKey()), fieldProjection);
     }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
 
   }
 
@@ -188,10 +192,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 //      l.print("{");
 //      if (!fieldParams.isEmpty()) print(fieldParams);
 //      if (!fieldAnnotations.isEmpty()) print(fieldAnnotations);
-//      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+//      brk(1, -l.getDefaultIndentation()).end().print("}");
 //      if (!isPrintoutEmpty(fieldVarProjection)) {
 //        l.beginIInd();
-//        l.brk();
+//        brk();
 //        print(fieldVarProjection, 0);
 //        l.end();
 //      }
@@ -215,7 +219,8 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.beginIInd();
     { // keys
       l.beginCInd();
-      l.print("[").brk();
+      l.print("[");
+      brk();
       boolean commaNeeded = false;
       boolean first = true;
 
@@ -227,24 +232,25 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
       @NotNull OpParams keyParams = keyProjection.params();
       if (!keyParams.isEmpty()) {
-//        if (commaNeeded) l.brk();
+//        if (commaNeeded) brk();
         first = printOpParams(keyParams, true, first);
         commaNeeded = !keyParams.isEmpty();
       }
 
       @NotNull Annotations keyAnnotations = keyProjection.annotations();
       if (!keyAnnotations.isEmpty()) {
-//        if (commaNeeded) l.brk();
+//        if (commaNeeded) brk();
         first = printAnnotations(keyAnnotations, true, first);
       }
 
-      if (!first) l.brk(1, -l.getDefaultIndentation());
+      if (!first) brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
     l.print(itemsProjectionPrefix);
-    l.print("(").brk();
+    l.print("(");
+    brk();
     printVar(itemsProjection, 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   public void printFieldProjection(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
@@ -261,7 +267,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       l.print(prefix);
 
 //      if (isBlock) l.print(" ");
-//      else l.brk();
+//      else brk();
       l.print(" ");
       l.print(prefix2);
 

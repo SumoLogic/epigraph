@@ -81,9 +81,10 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
     l.beginIInd();
     l.print("*");
     if (mp.itemsProjection().canDelete()) l.print("+");
-    l.print("(").brk();
+    l.print("(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override
@@ -99,7 +100,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
         first = false;
       } else {
         if (needCommas) l.print(",");
-        l.brk();
+        brk();
       }
       printOpParam(param);
     }

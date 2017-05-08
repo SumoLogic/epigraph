@@ -110,7 +110,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     for (Map.Entry<String, ReqUpdateFieldProjectionEntry> entry : fieldProjections.entrySet()) {
       if (first) first = false;
       else l.print(",");
-      l.brk();
+      brk();
 
       final ReqUpdateFieldProjection fieldProjection = entry.getValue().fieldProjection();
 
@@ -124,7 +124,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
       }
 
     }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override
@@ -145,9 +145,10 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
     l.print("*");
     if (mp.itemsProjection().replace())
       l.print("+");
-    l.print("(").brk();
+    l.print("(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
 }

@@ -55,6 +55,21 @@ public abstract class AbstractProjectionsPrettyPrinter<
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
   }
 
+  protected @NotNull Layouter<E> brk() throws E {
+    l.brk();
+    return l;
+  }
+
+  protected @NotNull Layouter<E> brk(int width, int offset) throws E {
+    l.brk(width, offset);
+    return l;
+  }
+
+  protected @NotNull Layouter<E> nbsp() throws E {
+    l.print(" ");
+    return l;
+  }
+
   public void addVisitedRefs(@NotNull Collection<ProjectionReferenceName.RefNameSegment> names) {
     visitedVarRefs.addAll(names);
   }
@@ -77,8 +92,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
         shouldPrint = false;
       } else {
         visitedVarRefs.add(shortName);
-        if (p.type().kind() == TypeKind.UNION) // otherwise label will be printed by model
-          l.print("$").print(shortName.toString()).print(" = ");
+        if (p.type().kind() == TypeKind.UNION) { // otherwise label will be printed by model
+          l.print("$").print(shortName.toString()); //.print(" = ");
+          nbsp();
+          l.print("=");
+          nbsp();
+        }
       }
     }
 
@@ -119,10 +138,10 @@ public abstract class AbstractProjectionsPrettyPrinter<
       for (Map.Entry<String, TP> entry : tagProjections.entrySet()) {
         if (first) first = false;
         else l.print(",");
-        l.brk();
+        brk();
         printTag(entry.getKey(), entry.getValue(), 0);
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }
 
@@ -133,12 +152,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
       l.beginIInd();
-      l.brk();
+      brk();
       if (polymorphicTails.size() == 1) {
         l.print("~~");
         VP tail = polymorphicTails.iterator().next();
         l.print(tail.type().name().toString());
-        l.brk();
+        brk();
         printVar(tail, 0);
       } else {
         l.beginCInd();
@@ -147,13 +166,14 @@ public abstract class AbstractProjectionsPrettyPrinter<
         for (VP tail : polymorphicTails) {
           if (first) first = false;
           else l.print(",");
-          l.brk();
+          brk();
           l.beginIInd(0);
-          l.print(tail.type().name().toString()).brk();
+          l.print(tail.type().name().toString());
+          brk();
           printVar(tail, 0);
           l.end();
         }
-        l.brk(1, -l.getDefaultIndentation()).end().print(")");
+        brk(1, -l.getDefaultIndentation()).end().print(")");
       }
       l.end();
     }
@@ -169,8 +189,9 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(projection)) {
       if (tagName != null) // name was printed
-        l.print(" ");
-//        l.brk();
+        nbsp();
+//      l.print(" ");
+//      brk();
       printModel(projection, pathSteps);
     }
 
@@ -241,13 +262,13 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
       l.beginIInd();
-      l.brk();
+      brk();
       if (polymorphicTails.size() == 1) {
         l.print("~");
         MP tail = polymorphicTails.iterator().next();
         l.print(modelTailTypeNamePrefix(tail));
         l.print(tail.type().name().toString());
-        l.brk();
+        brk();
         printModel(tail, 0);
       } else {
         l.beginCInd();
@@ -256,14 +277,15 @@ public abstract class AbstractProjectionsPrettyPrinter<
         for (MP tail : polymorphicTails) {
           if (first) first = false;
           else l.print(",");
-          l.brk();
+          brk();
           l.beginIInd(0);
           l.print(modelTailTypeNamePrefix(tail));
-          l.print(tail.type().name().toString()).brk();
+          l.print(tail.type().name().toString());
+          brk();
           printModel(tail, 0);
           l.end();
         }
-        l.brk(1, -l.getDefaultIndentation()).end().print(")");
+        brk(1, -l.getDefaultIndentation()).end().print(")");
       }
       l.end();
     }
@@ -283,10 +305,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
         first = false;
       } else {
         if (needCommas) l.print(",");
-        l.brk();
+        brk();
       }
       l.beginCInd(0);
-      l.print(entry.getKey()).brk().print("=").brk();
+      l.print(entry.getKey());
+      brk().print("=");
+      brk();
       gdataPrettyPrinter.print(entry.getValue().value());
       l.end();
     }

@@ -86,7 +86,8 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
     if (fieldProjectionEntry != null) {
       l.beginIInd();
-      l.print("/").brk();
+      l.print("/");
+      brk();
       print(fieldProjectionEntry.field().name(), fieldProjectionEntry.fieldProjection());
       l.end();
     }
@@ -104,7 +105,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 //    printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk(); // FIXME don't need a break if model parameters will be printed next
+      brk(); // FIXME don't need a break if model parameters will be printed next
       printVar(fieldVarProjection, 1);
     }
     l.end();
@@ -114,13 +115,15 @@ public class ReqPathPrettyPrinter<E extends Exception>
     final @NotNull ReqPathKeyProjection key = mp.key();
 
     l.beginIInd();
-    l.print("/").brk();
+    l.print("/");
+    brk();
 
     dataPrinter.print(key.value());
     printParams(key.params());
     printAnnotations(key.annotations());
 
-    if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
+    if (!isPrintoutEmpty(mp.itemsProjection()))
+      brk();
 
     printVar(mp.itemsProjection(), 1);
     l.end();
@@ -138,7 +141,9 @@ public class ReqPathPrettyPrinter<E extends Exception>
     if (!params.isEmpty()) {
       for (ReqParam param : params.asMap().values()) {
         l.beginIInd();
-        l.print(";").print(param.name()).brk().print("=").brk();
+        l.print(";").print(param.name());
+        brk().print("=");
+        brk();
         dataPrinter.print(param.value());
         l.end();
       }
@@ -164,7 +169,9 @@ public class ReqPathPrettyPrinter<E extends Exception>
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
         l.beginIInd();
-        l.print("!").print(annotation.name()).brk().print("=").brk();
+        l.print("!").print(annotation.name());
+        brk().print("=");
+        brk();
         gdataPrettyPrinter.print(annotation.value());
         l.end();
       }

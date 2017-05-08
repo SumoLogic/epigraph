@@ -64,9 +64,10 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
 }

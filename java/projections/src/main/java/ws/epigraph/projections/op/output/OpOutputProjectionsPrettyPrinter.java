@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
@@ -64,9 +63,10 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
   private void printModelOnly(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
-    l.print("*(").brk();
+    l.print("*(");
+    brk();
     printVar(mp.itemsProjection(), 0);
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override

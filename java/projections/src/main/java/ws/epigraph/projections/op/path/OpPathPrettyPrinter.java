@@ -19,7 +19,6 @@ package ws.epigraph.projections.op.path;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -65,7 +64,8 @@ public class OpPathPrettyPrinter<E extends Exception>
 
     if (entry != null) {
       l.beginIInd();
-      l.print("/").brk();
+      l.print("/");
+      brk();
 
       printFieldProjection(entry.field().name(), entry.fieldProjection());
       l.end();
@@ -79,11 +79,12 @@ public class OpPathPrettyPrinter<E extends Exception>
     @NotNull OpParams keyParams = keyProjection.params();
     @NotNull Annotations keyAnnotations = keyProjection.annotations();
 
-    l.print("/").brk().print(".");
+    l.print("/");
+    brk().print(".");
 
     if (!keyParams.isEmpty() || !keyAnnotations.isEmpty()) {
       l.beginCInd();
-      l.brk().print("{");
+      brk().print("{");
 
       boolean commaNeeded = false;
 
@@ -94,9 +95,9 @@ public class OpPathPrettyPrinter<E extends Exception>
 
       if (!keyAnnotations.isEmpty()) printAnnotations(keyAnnotations, true, !commaNeeded);
 
-      l.brk(1, -l.getDefaultIndentation()).end().print("}");
+      brk(1, -l.getDefaultIndentation()).end().print("}");
     } else {
-      if (!isPrintoutEmpty(mp.itemsProjection())) l.brk();
+      if (!isPrintoutEmpty(mp.itemsProjection())) brk();
     }
 
     printVar(mp.itemsProjection(), 0);

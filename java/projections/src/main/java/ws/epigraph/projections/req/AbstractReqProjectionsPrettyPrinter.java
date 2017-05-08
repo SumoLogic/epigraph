@@ -84,7 +84,9 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     if (!params.isEmpty()) {
       for (ReqParam param : params.asMap().values()) {
         l.beginIInd();
-        l.print(";").print(param.name()).brk().print("=").brk();
+        l.print(";").print(param.name());
+        brk().print("=");
+        brk();
         dataPrinter.print(param.value());
         l.end();
       }
@@ -98,7 +100,9 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     if (!annotations.isEmpty()) {
       for (Annotation annotation : annotations.asMap().values()) {
         l.beginIInd();
-        l.print("!").print(annotation.name()).brk().print("=").brk();
+        l.print("!").print(annotation.name());
+        brk().print("=");
+        brk();
         gdataPrettyPrinter.print(annotation.value());
         l.end();
       }
@@ -117,7 +121,8 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
       Map.Entry<String, FPE> entry = fieldProjections.entrySet().iterator().next();
       l.beginIInd();
-      l.print("/").brk();
+      l.print("/");
+      brk();
       print(entry.getKey(), entry.getValue().fieldProjection(), decSteps(pathSteps));
       l.end();
 
@@ -128,12 +133,12 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       for (Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
         if (first) first = false;
         else l.print(",");
-        l.brk();
+        brk();
 
         print(entry.getKey(), entry.getValue().fieldProjection(), 0);
 
       }
-      l.brk(1, -l.getDefaultIndentation()).end().print(")");
+      brk(1, -l.getDefaultIndentation()).end().print(")");
     }
   }
 
@@ -151,7 +156,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 //    printAnnotations(fieldAnnotations);
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      l.brk();
+      brk();
       printVar(fieldVarProjection, pathSteps);
     }
     l.end();
@@ -209,13 +214,16 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       boolean first = true;
       for (ReqKeyProjection key : keys) {
         if (first) {
-          l.brk();
+          brk();
           first = false;
-        } else l.print(", ");
+        } else {
+          l.print(",");
+          nbsp(); // why not brk() ?
+        }
 
         printReqKey(key);
       }
-      if (!first) l.brk();
+      if (!first) brk();
     }
 
     l.print("]");
@@ -223,10 +231,10 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.print("(");
 
     if (!isPrintoutEmpty(itemsProjection)) {
-      l.brk();
+      brk();
       printVar(itemsProjection, 0);
     }
-    l.brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")");
 
   }
 }
