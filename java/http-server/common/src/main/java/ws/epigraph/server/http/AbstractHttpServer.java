@@ -43,7 +43,6 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.*;
 import ws.epigraph.util.EBean;
 import ws.epigraph.util.HttpStatusCode;
-import ws.epigraph.wire.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -422,7 +421,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 context,
                 operationInvocationContext
             );
-          } catch (FormatException | IOException e) {
+          } catch (IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
@@ -573,7 +572,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 context,
                 operationInvocationContext
             );
-          } catch (FormatException | IOException e) {
+          } catch (IOException e) {
             return CompletableFuture.completedFuture(
                 OperationInvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
@@ -877,7 +876,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                  context,
                  operationInvocationContext
              );
-    } catch (FormatException | IOException e) {
+    } catch (IOException e) {
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new MalformedInputInvocationError(String.format(

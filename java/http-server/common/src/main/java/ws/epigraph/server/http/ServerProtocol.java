@@ -29,7 +29,6 @@ import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.schema.operations.OperationKind;
-import ws.epigraph.wire.FormatException;
 
 import java.io.IOException;
 
@@ -37,18 +36,19 @@ import java.io.IOException;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface ServerProtocol<C extends HttpInvocationContext> {
+  // server-side counterpart of ws.epigraph.client.http.ServerProtocol
 
   @Nullable Data readInput(
       @NotNull OpInputVarProjection opInputProjection,
       @Nullable ReqInputVarProjection reqInputProjection,
       @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException;
+      @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
   @Nullable Data readUpdateInput(
       @NotNull OpInputVarProjection opInputProjection,
       @Nullable ReqUpdateVarProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException;
+      @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
   void writeDataResponse(
       @NotNull OperationKind operationKind,

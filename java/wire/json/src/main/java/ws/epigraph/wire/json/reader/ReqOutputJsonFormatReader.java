@@ -23,6 +23,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.wire.FormatReader;
+import ws.epigraph.wire.ReqOutputFormatReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,7 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     ReqOutputFieldProjection,
     ReqOutputMapModelProjection,
     ReqOutputListModelProjection
-    > {
+    > implements ReqOutputFormatReader {
 
   public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
 

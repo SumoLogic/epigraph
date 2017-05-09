@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface HttpExchange {
+public interface HttpExchange extends AutoCloseable {
   // add multi-headers support?
 
   @Nullable String getHeader(@NotNull String headerName);
@@ -39,5 +39,6 @@ public interface HttpExchange {
 
   @NotNull OutputStream getOutputStream() throws IOException;
 
+  @Override
   void close() throws IOException;
 }

@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.wire;
 
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.wire.FormatException;
-import ws.epigraph.wire.FormatFactories;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 
 /**
- * Selects format factories to be used based on given invocation context
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface FormatSelector<C extends HttpInvocationContext> {
-  /**
-   * Gets format factories based on passed context
-   *
-   * @param context invocation context
-   *
-   * @return format factories
-   * @throws FormatException in case if format can't be determined based on context
-   */
-  @NotNull FormatFactories getFactories(@NotNull C context) throws FormatException;
-}
+public interface ReqOutputFormatReader extends FormatReader<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {}

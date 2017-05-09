@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.wire;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.wire.*;
-import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
 
 /**
  * A set of input/output format factories for some format
@@ -35,25 +30,7 @@ public interface FormatFactories {
 
   @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory();
 
+  @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory();
+
   @NotNull FormatWriter.Factory writerFactory();
-
-  FormatFactories JSON_FORMAT = new FormatFactories() {
-    @Override
-    public @NotNull FormatReader.Factory<? extends OpInputFormatReader> opInputReaderFactory() {
-      return new OpInputJsonFormatReader.Factory();
-    }
-
-    @Override
-    public @NotNull FormatReader.Factory<? extends ReqInputFormatReader> reqInputReaderFactory() {
-      return new ReqInputJsonFormatReader.Factory();
-    }
-
-    @Override
-    public @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory() {
-      return new ReqUpdateJsonFormatReader.Factory();
-    }
-
-    @Override
-    public @NotNull FormatWriter.Factory writerFactory() { return new JsonFormatWriter.JsonFormatWriterFactory(); }
-  };
 }

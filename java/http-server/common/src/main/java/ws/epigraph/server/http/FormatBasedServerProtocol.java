@@ -32,13 +32,13 @@ import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.FormatException;
+import ws.epigraph.wire.FormatFactories;
 import ws.epigraph.wire.FormatWriter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Map;
 import java.util.function.Function;
 
 import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
@@ -66,18 +66,23 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       @NotNull OpInputVarProjection opInputProjection,
       @Nullable ReqInputVarProjection reqInputProjection,
       @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException {
+      @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
     HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
-    FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
 
-    return reqInputProjection == null
-           ? factories.opInputReaderFactory()
-               .newFormatReader(httpExchange.getInputStream())
-               .readData(opInputProjection)
-           : factories.reqInputReaderFactory()
-               .newFormatReader(httpExchange.getInputStream())
-               .readData(reqInputProjection);
+    try {
+      FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
+
+      return reqInputProjection == null
+             ? factories.opInputReaderFactory()
+                 .newFormatReader(httpExchange.getInputStream())
+                 .readData(opInputProjection)
+             : factories.reqInputReaderFactory()
+                 .newFormatReader(httpExchange.getInputStream())
+                 .readData(reqInputProjection);
+    } catch (FormatException e) {
+      throw new IOException(e.getMessage(), e);
+    }
   }
 
   @Override
@@ -85,18 +90,23 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       @NotNull OpInputVarProjection opInputProjection,
       @Nullable ReqUpdateVarProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws FormatException, IOException {
+      @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
     HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
-    FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
 
-    return reqUpdateProjection == null
-           ? factories.opInputReaderFactory()
-               .newFormatReader(httpExchange.getInputStream())
-               .readData(opInputProjection)
-           : factories.reqUpdateReaderFactory()
-               .newFormatReader(httpExchange.getInputStream())
-               .readData(reqUpdateProjection);
+    try {
+      FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
+
+      return reqUpdateProjection == null
+             ? factories.opInputReaderFactory()
+                 .newFormatReader(httpExchange.getInputStream())
+                 .readData(opInputProjection)
+             : factories.reqUpdateReaderFactory()
+                 .newFormatReader(httpExchange.getInputStream())
+                 .readData(reqUpdateProjection);
+    } catch (FormatException e) {
+      throw new IOException(e.getMessage(), e);
+    }
   }
 
   @Override
@@ -209,30 +219,34 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       httpExchange.setStatusCode(statusCode);
       httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, writerFactory.characterEncoding()));
 
-      FormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream());
-      try {
+      try (FormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream())) {
         formatResponseWriter.write(formatWriter);
-      } finally {
-        formatWriter.close();
       }
 
     } catch (IOException e) {
       httpInvocationContext.logger().error("Error writing response", e);
     } catch (FormatException e) {
-      httpExchange.setStatusCode(HttpStatusCode.BAD_REQUEST);
-      try {
-        OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
-        sw.write(e.getMessage());
-        sw.close();
-      } catch (IOException ioe) {
-        httpInvocationContext.logger().error("Error writing out FormatException error", ioe);
-      }
+      handleFormatException(httpInvocationContext, httpExchange, e);
     } finally {
       try {
         httpExchange.close();
       } catch (IOException e) {
         httpInvocationContext.logger().error("Error closing HTTP exchange", e);
       }
+    }
+  }
+
+  private void handleFormatException(
+      final @NotNull C httpInvocationContext,
+      final HttpExchange httpExchange,
+      final FormatException e) {
+    httpExchange.setStatusCode(HttpStatusCode.BAD_REQUEST);
+    try {
+      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
+      sw.write(e.getMessage());
+      sw.close();
+    } catch (IOException ioe) {
+      httpInvocationContext.logger().error("Error writing out FormatException error", ioe);
     }
   }
 

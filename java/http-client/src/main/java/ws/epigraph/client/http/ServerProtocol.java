@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.client.http;
 
+import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.wire.FormatException;
-import ws.epigraph.wire.FormatFactories;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
+import ws.epigraph.invocation.OperationInvocationContext;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+
+import java.io.IOException;
 
 /**
- * Selects format factories to be used based on given invocation context
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface FormatSelector<C extends HttpInvocationContext> {
-  /**
-   * Gets format factories based on passed context
-   *
-   * @param context invocation context
-   *
-   * @return format factories
-   * @throws FormatException in case if format can't be determined based on context
-   */
-  @NotNull FormatFactories getFactories(@NotNull C context) throws FormatException;
+public interface ServerProtocol {
+  // client-side counterpart of ws.epigraph.server.http.ServerProtocol
+
+  @Nullable Data readResponse(
+      @NotNull ReqOutputVarProjection projection,
+      @NotNull OperationInvocationContext operationInvocationContext,
+      @NotNull HttpResponse httpResponse) throws IOException;
 }

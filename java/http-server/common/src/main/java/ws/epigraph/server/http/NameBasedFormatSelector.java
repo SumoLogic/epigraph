@@ -18,6 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.wire.FormatException;
+import ws.epigraph.wire.FormatFactories;
 
 import java.util.Map;
 import java.util.function.Function;

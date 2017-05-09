@@ -48,6 +48,7 @@ Map<String, String> modules = [
     'java/gdata'                          : 'epigraph-java-gdata',
     'java/gdata-schema-psi-parser'        : 'epigraph-java-gdata-schema-psi-parser',
     'java/gradle-plugin'                  : 'epigraph-java-gradle-plugin',
+    'java/http-client'                    : 'epigraph-java-http-client',
     'java/http-server/common'             : 'epigraph-java-http-server-common',
     'java/http-server/jetty-handler'      : 'epigraph-java-http-server-jetty-handler',
     'java/http-server/servlet'            : 'epigraph-java-http-server-servlet',

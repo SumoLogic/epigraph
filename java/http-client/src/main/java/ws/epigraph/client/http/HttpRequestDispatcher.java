@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.client.http;
 
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.wire.FormatException;
-import ws.epigraph.wire.FormatFactories;
+
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /**
- * Selects format factories to be used based on given invocation context
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface FormatSelector<C extends HttpInvocationContext> {
-  /**
-   * Gets format factories based on passed context
-   *
-   * @param context invocation context
-   *
-   * @return format factories
-   * @throws FormatException in case if format can't be determined based on context
-   */
-  @NotNull FormatFactories getFactories(@NotNull C context) throws FormatException;
+public interface HttpRequestDispatcher {
+  <T> @NotNull CompletableFuture<T> runRequest(
+      @NotNull HttpHost target,
+      @NotNull HttpRequest request,
+      @NotNull Function<HttpResponse, T> resultProcessor);
+
+  void shutdown() throws IOException;
 }

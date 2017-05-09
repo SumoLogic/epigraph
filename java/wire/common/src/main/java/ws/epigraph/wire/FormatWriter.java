@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @NotThreadSafe
-public interface FormatWriter {
+public interface FormatWriter extends AutoCloseable {
   void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException;
 
   void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws IOException;
@@ -48,6 +48,7 @@ public interface FormatWriter {
 
   void writeError(@NotNull ErrorValue error) throws IOException;
 
+  @Override
   default void close() throws IOException {}
 
   @ThreadSafe

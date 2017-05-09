@@ -18,8 +18,9 @@ package ws.epigraph.server.http;
 
 import net.jcip.annotations.ThreadSafe;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.wire.FormatFactories;
+import ws.epigraph.wire.json.JsonFormatFactories;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -37,7 +38,7 @@ public final class DefaultFormats {
 
   static {
     DEFAULT_FACTORIES = new ConcurrentHashMap<>();
-    DEFAULT_FACTORIES.put(JSON_FORMAT_NAME, FormatFactories.JSON_FORMAT);
+    DEFAULT_FACTORIES.put(JSON_FORMAT_NAME, JsonFormatFactories.INSTANCE);
     // add more here as needed
   }
 
@@ -55,7 +56,7 @@ public final class DefaultFormats {
     return new NameBasedFormatSelector<>(
         DEFAULT_FACTORIES,
         formatNameExtractor,
-        FormatFactories.JSON_FORMAT
+        JsonFormatFactories.INSTANCE
     );
   }
 }
