@@ -43,7 +43,7 @@ public final class CreateOperationRouter
 
   @Override
   protected @Nullable CreateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedCreateOperation(name);
+    return resource.namedCreateOperation(CreateOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override

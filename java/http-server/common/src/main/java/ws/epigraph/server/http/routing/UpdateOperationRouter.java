@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.UpdateOperation;
@@ -43,7 +44,7 @@ public final class UpdateOperationRouter
 
   @Override
   protected @Nullable UpdateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedUpdateOperation(name);
+    return resource.namedUpdateOperation(DeleteOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override

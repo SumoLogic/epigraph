@@ -16,10 +16,14 @@
 
 package ws.epigraph.client.http;
 
+import org.apache.http.HttpHost;
+import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.http.RequestHeaders;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
@@ -31,16 +35,24 @@ import java.util.concurrent.CompletableFuture;
 public class RemoteReadOperationInvocation
     implements OperationInvocation<ReadOperationRequest, ReadOperationResponse<?>> {
 
-  private final @NotNull HttpRequestDispatcher serverConnection;
+  private final @NotNull HttpHost host;
+  private final @NotNull HttpRequestDispatcher requestDispatcher;
   private final @NotNull String resourceName;
-//  private final @NotNull ServerProtocol serverProtocol;
+  private final @NotNull ReadOperationDeclaration operationDeclaration;
+  private final @NotNull ServerProtocol serverProtocol;
 
   public RemoteReadOperationInvocation(
-      final @NotNull HttpRequestDispatcher serverConnection,
-      final @NotNull String resourceName) {
+      final @NotNull HttpHost host,
+      final @NotNull HttpRequestDispatcher requestDispatcher,
+      final @NotNull String resourceName,
+      final @NotNull ReadOperationDeclaration operationDeclaration,
+      final @NotNull ServerProtocol serverProtocol) {
 
-    this.serverConnection = serverConnection;
+    this.host = host;
+    this.requestDispatcher = requestDispatcher;
     this.resourceName = resourceName;
+    this.operationDeclaration = operationDeclaration;
+    this.serverProtocol = serverProtocol;
   }
 
   @Override
@@ -48,8 +60,27 @@ public class RemoteReadOperationInvocation
       @NotNull OperationInvocationContext context,
       @NotNull ReadOperationRequest request) {
 
-    String uri = UriComposer.composeReadUri(resourceName, request.outputProjection());
+    String uri = UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
 
-    return null; // todo
+    System.out.println("uri = {" + uri + "}"); // todo remove
+
+    HttpGet httpRequest = new HttpGet(uri);
+
+    // set up operation name header to disambiguate routing
+    String operationName = operationDeclaration.name();
+    httpRequest.addHeader(
+        RequestHeaders.OPERATION_NAME,
+        operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName
+    );
+
+    return requestDispatcher.runRequest(
+        host,
+        httpRequest,
+        response -> serverProtocol.readResponse(
+            request.outputProjection().varProjection(),
+            context,
+            response
+        )
+    );
   }
 }

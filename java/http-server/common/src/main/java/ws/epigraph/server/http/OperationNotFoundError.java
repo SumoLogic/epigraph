@@ -42,14 +42,13 @@ public class OperationNotFoundError extends OperationInvocationErrorImpl {
       @Nullable String operationName) {
 
     super(
-        String.format(
+        HttpStatusCode.BAD_REQUEST, String.format(
             "%s operation '%s'%s in resource '%s' not found",
             operationKind,
             operationName == null ? "<default>" : operationName,
             method == null ? "" : " for HTTP method '" + method + "'",
             resourceName
-        ),
-        HttpStatusCode.BAD_REQUEST
+        )
     );
   }
 }

@@ -119,7 +119,10 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
           if (first) {
             brk();
             first = false;
-          } else l.print(", ");
+          } else {
+            l.print(",");
+            nbsp();
+          }
 
           printReqKey(key);
         }

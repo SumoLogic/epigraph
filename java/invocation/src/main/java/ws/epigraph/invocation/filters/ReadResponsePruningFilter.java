@@ -60,9 +60,8 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
                 final ReqOutputRequiredDataPruner.Reason reason = fail.reason;
                 return OperationInvocationResult.failure(
                     new OperationInvocationErrorImpl(
-                        reason.toString(),
                         reason.isOperationError ? HttpStatusCode.INTERNAL_OPERATION_ERROR
-                                                : HttpStatusCode.PRECONDITION_FAILED
+                                                : HttpStatusCode.PRECONDITION_FAILED, reason.toString()
                     )
                 );
               } // else keep

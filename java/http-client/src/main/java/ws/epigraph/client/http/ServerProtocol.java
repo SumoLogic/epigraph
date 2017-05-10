@@ -19,11 +19,10 @@ package ws.epigraph.client.http;
 import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
+import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-
-import java.io.IOException;
+import ws.epigraph.service.operations.ReadOperationResponse;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,8 +30,8 @@ import java.io.IOException;
 public interface ServerProtocol {
   // client-side counterpart of ws.epigraph.server.http.ServerProtocol
 
-  @Nullable Data readResponse(
+  @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
-      @NotNull HttpResponse httpResponse) throws IOException;
+      @NotNull HttpResponse httpResponse);
 }

@@ -32,8 +32,7 @@ import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.schema.operations.HttpMethod;
-import ws.epigraph.schema.operations.OperationKind;
+import ws.epigraph.schema.operations.*;
 import ws.epigraph.server.http.routing.*;
 import ws.epigraph.service.*;
 import ws.epigraph.service.operations.*;
@@ -201,7 +200,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
-    if (operationName != null && resource.namedReadOperation(operationName) == null)
+    if (operationName != null &&
+        !operationName.equals(ReadOperationDeclaration.DEFAULT_NAME) &&
+        resource.namedReadOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationNotFoundError(
@@ -374,7 +375,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
-    if (operationName != null && resource.namedCreateOperation(operationName) == null)
+    if (operationName != null &&
+        !operationName.equals(CreateOperationDeclaration.DEFAULT_NAME) &&
+        resource.namedCreateOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationNotFoundError(
@@ -525,7 +528,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
-    if (operationName != null && resource.namedUpdateOperation(operationName) == null)
+    if (operationName != null &&
+        !operationName.equals(UpdateOperationDeclaration.DEFAULT_NAME) &&
+        resource.namedUpdateOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationNotFoundError(
@@ -676,7 +681,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
-    if (operationName != null && resource.namedDeleteOperation(operationName) == null)
+    if (operationName != null &&
+        !operationName.equals(DeleteOperationDeclaration.DEFAULT_NAME) &&
+        resource.namedDeleteOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationNotFoundError(
@@ -1084,7 +1091,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeInvocationErrorAndCloseContext(
-        new OperationInvocationErrorImpl(message, status),
+        new OperationInvocationErrorImpl(status, message),
         context,
         operationInvocationContext
     );

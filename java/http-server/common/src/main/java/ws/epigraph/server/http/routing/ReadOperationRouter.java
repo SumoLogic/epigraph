@@ -44,7 +44,7 @@ public final class ReadOperationRouter
   @Override
 
   protected @Nullable ReadOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedReadOperation(name);
+    return resource.namedReadOperation(ReadOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override

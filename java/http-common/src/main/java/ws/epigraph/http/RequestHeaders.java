@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
-
-import org.jetbrains.annotations.NotNull;
+package ws.epigraph.http;
 
 /**
+ * HTTP request parameters
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationInvocationErrorImpl implements OperationInvocationError {
-  private final @NotNull String message;
-  private final int statusCode;
+public final class RequestHeaders {
+  public static final String OPERATION_NAME = "Epigraph-Operation";
+  public static final String DEBUG_MODE = "Epigraph-Debug";
+  public static final String FORMAT = "Epigraph-Format";
 
-  public OperationInvocationErrorImpl(final int statusCode, final @NotNull String message) {
-    this.message = message;
-    this.statusCode = statusCode;
-  }
-
-  @Override
-  public @NotNull String message() { return message; }
-
-  @Override
-  public int statusCode() { return statusCode; }
+  private RequestHeaders() {}
 }

@@ -109,13 +109,17 @@ public class DataPrinter<Exc extends Exception> {
   }
 
   public void print(@NotNull ErrorValue error) throws Exc {
-    lo.print("!");
-    Integer statusCode = error.statusCode();
-    if (statusCode != null) lo.print(statusCode.toString());
+    lo.print("ERROR(");
+    lo.print(error.statusCode.toString()).print(", '");
+    lo.print(error.message.trim()).print("'");
+
     if (error.cause != null) {
       String message = error.cause.getMessage();
-      if (message != null) lo.print("\"").print(message).print("\"");
+      if (message != null)
+        lo.print(", cause: '").print(message.trim()).print("'");
     }
+
+    lo.print(")");
   }
 
   public void print(@Nullable Datum datum) throws Exc {

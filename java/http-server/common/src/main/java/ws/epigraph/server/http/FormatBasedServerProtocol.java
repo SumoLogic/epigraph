@@ -41,8 +41,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.function.Function;
 
-import static ws.epigraph.server.http.Constants.CONTENT_TYPE_HTML;
-import static ws.epigraph.server.http.Constants.CONTENT_TYPE_TEXT;
+import static ws.epigraph.server.http.ContentTypes.HTML;
+import static ws.epigraph.server.http.ContentTypes.TEXT;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -192,10 +192,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
     try {
       OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
       if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(httpExchange)) {
-        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, CONTENT_TYPE_HTML));
+        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, HTML));
         sw.write(((HtmlCapableOperationInvocationError) error).htmlMessage());
       } else {
-        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, CONTENT_TYPE_TEXT));
+        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, TEXT));
         sw.write(error.message() + "\n");
       }
       sw.close();
@@ -256,7 +256,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   private static boolean htmlAccepted(@NotNull HttpExchange exchange) {
     String accept = exchange.getHeader(ACCEPT__HEADER);
-    return accept != null && accept.contains(CONTENT_TYPE_HTML);
+    return accept != null && accept.contains(HTML);
   }
 
   public static class Factory<C extends HttpInvocationContext> {

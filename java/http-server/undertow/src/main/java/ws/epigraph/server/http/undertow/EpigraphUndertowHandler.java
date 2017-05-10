@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ws.epigraph.http.RequestHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
@@ -110,8 +111,7 @@ public class EpigraphUndertowHandler
     if (method == null) {
       writeInvocationErrorAndCloseContext(
           new OperationInvocationErrorImpl(
-              String.format("Unsupported HTTP method '%s'", exchange.getRequestMethod()),
-              HttpStatusCode.BAD_REQUEST
+              HttpStatusCode.BAD_REQUEST, String.format("Unsupported HTTP method '%s'", exchange.getRequestMethod())
           ), context, operationContext
       );
     } else {
@@ -120,8 +120,7 @@ public class EpigraphUndertowHandler
       } catch (URISyntaxException e) {
         writeInvocationErrorAndCloseContext(
             new OperationInvocationErrorImpl(
-                String.format("Invalid URI syntax '%s'", e.getMessage()),
-                HttpStatusCode.BAD_REQUEST
+                HttpStatusCode.BAD_REQUEST, String.format("Invalid URI syntax '%s'", e.getMessage())
             ), context, operationContext
         );
       }

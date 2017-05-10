@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.util;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
- * HTTP request parameters
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class RequestHeaders {
-  public static final String OPERATION_NAME = "Epigraph-Operation";
-  public static final String DEBUG_MODE = "Epigraph-Debug";
-  public static final String FORMAT = "Epigraph-Format";
+public final class IOUtil {
+  private IOUtil() {}
 
-  private RequestHeaders() {}
+  public static @NotNull String readInputStream(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
+    StringBuilder textBuilder = new StringBuilder();
+
+    try (Reader reader = new BufferedReader(new InputStreamReader(is, Charset.forName(charset.name())))) {
+      for (int c = reader.read(); c != -1; c = reader.read()) { textBuilder.append((char) c); }
+    }
+
+    return textBuilder.toString();
+  }
 }

@@ -14,33 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation.filters;
+package ws.epigraph.client.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
-import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.util.HttpStatusCode;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FilterUtil {
-  private FilterUtil() {}
-
-  public static @NotNull OperationInvocationError validationError(
-      @NotNull Collection<? extends DataValidationError> validationErrors) {
-    return new OperationInvocationErrorImpl(
-
-        validationErrors.stream().anyMatch(DataValidationError::isImplementationError)
-        ? HttpStatusCode.INTERNAL_OPERATION_ERROR
-        : HttpStatusCode.PRECONDITION_FAILED, validationErrors.stream()
-            .map(DataValidationError::toString)
-            .collect(Collectors.joining("\n"))
-
-    );
+public class IOExceptionInvocationError extends OperationInvocationErrorImpl {
+  public IOExceptionInvocationError(@NotNull IOException e) {
+    super(HttpStatusCode.INTERNAL_SERVER_ERROR, "I/O error while reading server output: " + e.getMessage()); // 500 or something else?
   }
 }

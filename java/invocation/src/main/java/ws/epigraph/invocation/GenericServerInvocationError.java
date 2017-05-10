@@ -24,6 +24,6 @@ import ws.epigraph.util.HttpStatusCode;
  */
 public class GenericServerInvocationError extends OperationInvocationErrorImpl {
   public GenericServerInvocationError(final @NotNull String message) {
-    super(message, HttpStatusCode.INTERNAL_SERVER_ERROR);
+    super(HttpStatusCode.INTERNAL_SERVER_ERROR, message);
   }
 }

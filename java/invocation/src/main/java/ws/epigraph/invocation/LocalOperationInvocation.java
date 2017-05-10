@@ -58,8 +58,7 @@ public class LocalOperationInvocation<
       return CompletableFuture.completedFuture(
           OperationInvocationResult.failure(
               new OperationInvocationErrorImpl(
-                  e.toString(),
-                  HttpStatusCode.INTERNAL_SERVER_ERROR
+                  HttpStatusCode.INTERNAL_SERVER_ERROR, e.toString()
               )
           )
       );

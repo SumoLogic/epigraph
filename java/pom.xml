@@ -37,6 +37,7 @@
     <module>gdata-schema-psi-parser</module>
     <module>gdata</module>
     <module>http-client</module>
+    <module>http-common</module>
     <module>http-server</module>
     <module>invocation</module>
     <module>lang-common</module>

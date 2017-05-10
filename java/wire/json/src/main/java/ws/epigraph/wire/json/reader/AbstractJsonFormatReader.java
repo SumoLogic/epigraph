@@ -846,7 +846,7 @@ abstract class AbstractJsonFormatReader<
     return finishReadingError();
   }
 
-  private @NotNull JsonToken nextNonEof() throws IOException {return checkEof(nextToken());}
+  private @NotNull JsonToken nextNonEof() throws IOException, JsonFormatException {return checkEof(nextToken());}
 
   @Contract("null -> fail")
   private @NotNull JsonToken checkEof(@Nullable JsonToken token) throws IllegalArgumentException {
@@ -964,28 +964,32 @@ abstract class AbstractJsonFormatReader<
 
   // next
 
-  private @Nullable JsonToken nextToken() throws IOException {
-    if (replaying) {
-      switch (replay.size()) {
-        case 0:
-          resetParserStateRecording();
-          return in.nextToken();
-        case 1:
-          resetParserStateRecording();
-          return in.currentToken();
-        default:
-          replay.pop();
-          return currentToken();
-      }
-    } else if (replay != null) {
-      replay.add(currentParserState());
-      in.nextToken();
-      return currentToken();
-    } else
-      return in.nextToken();
+  private @Nullable JsonToken nextToken() throws IOException, JsonFormatException {
+    try {
+      if (replaying) {
+        switch (replay.size()) {
+          case 0:
+            resetParserStateRecording();
+            return in.nextToken();
+          case 1:
+            resetParserStateRecording();
+            return in.currentToken();
+          default:
+            replay.pop();
+            return currentToken();
+        }
+      } else if (replay != null) {
+        replay.add(currentParserState());
+        in.nextToken();
+        return currentToken();
+      } else
+        return in.nextToken();
+    } catch (IOException e) {
+      throw new JsonFormatException(e.getMessage());
+    }
   }
 
-  private @Nullable String nextFieldName() throws IOException {
+  private @Nullable String nextFieldName() throws IOException, JsonFormatException {
     nextToken();
     return currentToken() == JsonToken.FIELD_NAME ? currentName() : null;
   }

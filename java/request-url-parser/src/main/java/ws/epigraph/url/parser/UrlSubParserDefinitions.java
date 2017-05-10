@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UrlSubParserDefinitions {
+public final class UrlSubParserDefinitions {
+
   public static final UrlSubParserDefinition<UrlReadUrl> READ_URL =
       new UrlSubParserDefinition<>(U_READ_URL, UrlReadUrl.class);
 
@@ -50,6 +51,9 @@ public class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlReqOutputTrunkVarProjection> REQ_OUTPUT_VAR_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, UrlReqOutputTrunkVarProjection.class);
 
+  public static final UrlSubParserDefinition<UrlReqOutputTrunkFieldProjection> REQ_OUTPUT_FIELD_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, UrlReqOutputTrunkFieldProjection.class);
+
   public static final UrlSubParserDefinition<UrlReqUpdateVarProjection> REQ_UPDATE_VAR_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_UPDATE_VAR_PROJECTION, UrlReqUpdateVarProjection.class);
   
@@ -59,11 +63,11 @@ public class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlReqInputVarProjection> REQ_INPUT_VAR_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_INPUT_VAR_PROJECTION, UrlReqInputVarProjection.class);
 
+  private UrlSubParserDefinitions() {}
+
   public static class UrlSubParserDefinition<T> extends UrlParserDefinition implements SubParserDefinition<T> {
-    @NotNull
-    private final Class<T> rootElementClass;
-    @NotNull
-    private final IElementType rootElementType;
+    private final @NotNull Class<T> rootElementClass;
+    private final @NotNull IElementType rootElementType;
 
     public UrlSubParserDefinition(@NotNull IElementType rootElementType, final @NotNull Class<T> rootElementClass) {
       this.rootElementType = rootElementType;
@@ -75,14 +79,13 @@ public class UrlSubParserDefinitions {
       return new UrlSubParser(rootElementType);
     }
 
-    @NotNull
-    public IElementType rootElementType() {
+    @Override
+    public @NotNull IElementType rootElementType() {
       return rootElementType;
     }
 
-    @NotNull
     @Override
-    public Class<T> rootElementClass() {
+    public @NotNull Class<T> rootElementClass() {
       return rootElementClass;
     }
   }

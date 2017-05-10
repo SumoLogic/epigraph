@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
-
-import org.jetbrains.annotations.NotNull;
+package ws.epigraph.server.http;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationInvocationErrorImpl implements OperationInvocationError {
-  private final @NotNull String message;
-  private final int statusCode;
-
-  public OperationInvocationErrorImpl(final int statusCode, final @NotNull String message) {
-    this.message = message;
-    this.statusCode = statusCode;
-  }
-
-  @Override
-  public @NotNull String message() { return message; }
-
-  @Override
-  public int statusCode() { return statusCode; }
+public interface ContentTypes { // move to http-common?
+  String TEXT = "text/plain";
+  String JSON = "application/json";
+  String HTML = "text/html";
 }

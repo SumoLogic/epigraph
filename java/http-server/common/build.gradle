@@ -17,6 +17,7 @@
 apply plugin: 'java'
 
 dependencies {
+  compile project(':epigraph-java-http-common')
   compile project(':epigraph-java-invocation')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-request-url')

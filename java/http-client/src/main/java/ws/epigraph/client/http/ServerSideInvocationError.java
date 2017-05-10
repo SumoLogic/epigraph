@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.client.http;
+
+import ws.epigraph.invocation.OperationInvocationErrorImpl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface Constants {
-  String CONTENT_TYPE_TEXT = "text/plain";
-  String CONTENT_TYPE_JSON = "application/json";
-  String CONTENT_TYPE_HTML = "text/html";
+public class ServerSideInvocationError extends OperationInvocationErrorImpl {
+
+  public ServerSideInvocationError(final int statusCode, final String message) {
+    super(statusCode, message);
+  }
 }

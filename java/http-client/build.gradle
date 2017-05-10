@@ -18,6 +18,7 @@ apply plugin: 'java'
 
 dependencies {
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-http-common')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-invocation')
   compile project(':epigraph-java-wire-common')
@@ -27,4 +28,13 @@ dependencies {
   compile 'org.apache.httpcomponents:httpcore-nio'
 
   compile 'org.slf4j:slf4j-api'
+
+  testCompile project(':epigraph-java-request-url-psi-parser')
+  testCompile project(':epigraph-java-test-util')
+  testCompile project(':epigraph-java-http-server-jetty-handler')
+  testCompile project(':epigraph-java-http-server-servlet')
+  testCompile project(':epigraph-java-http-server-undertow')
+  testCompile project(':tests-schema-java')
+  testCompile 'junit:junit'
+  testCompile 'org.slf4j:slf4j-simple'
 }

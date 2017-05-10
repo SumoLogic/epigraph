@@ -6,6 +6,23 @@
   - [ ] add `api` section to schema, listing a set of exposed resources and if they're federated
     - [ ] codegen something from it
     - [ ] validate at startup that stuff is actually?
+    
+- [ ] http client/server
+  - [ ] server must correctly set response content type for errors (json/plain text) + test
+  - [ ] client must correctly specify accepted content types
+  - [ ] client must correctly read errors based on response content type
+  - [ ] read
+  - [ ] create
+  - [ ] update
+  - [ ] delete
+  - [ ] custom
+  - tests
+    - [ ] bad request url
+    - [ ] non-existing user (should get 404 back with an ErrorValue)
+    - [ ] complex url with params (check data escaping)
+    - [ ] operations with paths
+  - [ ] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
+  - [ ] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
 
 - Docs
   - [x] service quick-start guide

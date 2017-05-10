@@ -43,7 +43,7 @@ public final class DeleteOperationRouter
 
   @Override
   protected @Nullable DeleteOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedDeleteOperation(name);
+    return resource.namedDeleteOperation(DeleteOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override

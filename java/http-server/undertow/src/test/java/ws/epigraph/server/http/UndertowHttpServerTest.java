@@ -20,8 +20,6 @@ import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.ServiceInitializationException;
 
@@ -29,8 +27,6 @@ import ws.epigraph.service.ServiceInitializationException;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UndertowHttpServerTest extends AbstractHttpServerTest {
-  private static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
-
   private static Undertow server;
 
   public static void main(String[] args) throws ServiceInitializationException {
@@ -42,10 +38,7 @@ public class UndertowHttpServerTest extends AbstractHttpServerTest {
     server = Undertow.builder()
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
-        .setHandler(new EpigraphUndertowHandler(
-            buildUsersService(),
-            resolver,
-            TIMEOUT))
+        .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))
         .build();
 
     server.start();
