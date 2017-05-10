@@ -18,14 +18,16 @@
 
 package ws.epigraph.wire.json;
 
+import ws.epigraph.http.MimeTypes;
 import ws.epigraph.wire.WireFormat;
 import org.jetbrains.annotations.NotNull;
 
 public class JsonFormat implements WireFormat {
+  public static final JsonFormat INSTANCE = new JsonFormat();
 
   public static final @NotNull String NAME = "json";
 
-  public static final @NotNull String MIME_TYPE = "application/json";
+  public static final @NotNull String MIME_TYPE = MimeTypes.JSON;
 
   public static final @NotNull String ERROR_CODE_FIELD = "ERROR";
 

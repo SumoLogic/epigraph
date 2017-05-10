@@ -28,6 +28,10 @@
   </parent>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

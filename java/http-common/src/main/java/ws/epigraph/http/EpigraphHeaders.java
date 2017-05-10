@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
+package ws.epigraph.http;
 
-dependencies {
-  compile 'org.jetbrains:annotations'
+/**
+ * HTTP request parameters
+ *
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+public interface EpigraphHeaders {
+  String OPERATION_NAME = "Epigraph-Operation";
+  String DEBUG_MODE = "Epigraph-Debug";
+  String FORMAT = "Epigraph-Format";
 }

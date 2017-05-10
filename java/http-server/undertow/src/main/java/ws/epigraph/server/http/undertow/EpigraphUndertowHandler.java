@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ws.epigraph.http.RequestHeaders;
+import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationErrorImpl;
@@ -92,7 +92,7 @@ public class EpigraphUndertowHandler
 
   @Contract(pure = true)
   public static @NotNull Function<UndertowInvocationContext, String> formatNameExtractor() {
-    return c -> c.exchange.getRequestHeaders().getFirst(RequestHeaders.FORMAT);
+    return c -> c.exchange.getRequestHeaders().getFirst(EpigraphHeaders.FORMAT);
   }
 
   @Override
@@ -146,7 +146,7 @@ public class EpigraphUndertowHandler
   }
 
   private @Nullable String getOperationName(@NotNull HttpServerExchange exchange) {
-    final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.OPERATION_NAME);
+    final HeaderValues headerValues = exchange.getRequestHeaders().get(EpigraphHeaders.OPERATION_NAME);
     return headerValues == null ? null : headerValues.getFirst(); // warn if more than one?
   }
 
@@ -165,7 +165,7 @@ public class EpigraphUndertowHandler
 
     @Override
     public boolean isDebug() {
-      final HeaderValues headerValues = exchange.getRequestHeaders().get(RequestHeaders.DEBUG_MODE);
+      final HeaderValues headerValues = exchange.getRequestHeaders().get(EpigraphHeaders.DEBUG_MODE);
       return headerValues != null && "true".equals(headerValues.getFirst());
     }
   }

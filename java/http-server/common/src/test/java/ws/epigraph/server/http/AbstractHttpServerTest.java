@@ -16,6 +16,7 @@
 
 package ws.epigraph.server.http;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
@@ -24,7 +25,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.http.RequestHeaders;
+import ws.epigraph.http.ContentTypes;
+import ws.epigraph.http.EpigraphHeaders;
+import ws.epigraph.http.Headers;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.Person;
@@ -40,6 +43,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
@@ -65,7 +69,7 @@ public abstract class AbstractHttpServerTest {
 
   @Test
   public void testEmptyRequest() throws IOException {
-    get("", 400, "Bad URL format. Supported resources: {/user, /users}");
+    get("", 400, "Bad URL format. Supported resources: {/user, /users}", ContentTypes.TEXT_UTF8);
   }
 
   @Test
@@ -130,7 +134,8 @@ public abstract class AbstractHttpServerTest {
     get(
         "/user:record(friends*(:record(firstName)~~User:record(+profile)))",
         520,
-        ":record/friends[2]:record : Required field ''profile'' is missing"
+        ":record/friends[2]:record : Required field ''profile'' is missing",
+        ContentTypes.TEXT_UTF8
     );
   }
 
@@ -215,6 +220,12 @@ public abstract class AbstractHttpServerTest {
   }
 
   protected void get(String requestUri, int expectedStatus, String expectedBody) throws IOException {
+    get(requestUri, expectedStatus, expectedBody, ContentTypes.JSON_UTF8);
+  }
+
+  protected void get(String requestUri, int expectedStatus, String expectedBody, String expectedContentType)
+      throws IOException {
+
     CloseableHttpClient httpClient = HttpClients.createDefault();
     HttpGet httpGet = new HttpGet(url(requestUri));
     final CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -226,6 +237,10 @@ public abstract class AbstractHttpServerTest {
     httpClient.close();
 
     assertEquals(actualBody, expectedStatus, status);
+
+    Header contentType = response.getFirstHeader(Headers.CONTENT_TYPE);
+    assertNotNull(contentType);
+    assertEquals(expectedContentType, contentType.getValue());
 
     String eb = unescape(expectedBody);
     assertEquals(eb, actualBody);
@@ -241,7 +256,7 @@ public abstract class AbstractHttpServerTest {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     HttpPost httpPost = new HttpPost(url(requestUri));
     if (operationName != null)
-      httpPost.addHeader(RequestHeaders.OPERATION_NAME, operationName);
+      httpPost.addHeader(EpigraphHeaders.OPERATION_NAME, operationName);
     if (requestBody != null)
       httpPost.setEntity(new StringEntity(unescape(requestBody)));
     CloseableHttpResponse response = httpClient.execute(httpPost);

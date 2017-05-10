@@ -19,7 +19,7 @@ package ws.epigraph.client.http;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.http.RequestHeaders;
+import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
@@ -69,7 +69,7 @@ public class RemoteReadOperationInvocation
     // set up operation name header to disambiguate routing
     String operationName = operationDeclaration.name();
     httpRequest.addHeader(
-        RequestHeaders.OPERATION_NAME,
+        EpigraphHeaders.OPERATION_NAME,
         operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName
     );
 

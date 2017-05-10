@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import ws.epigraph.data.Data;
-import ws.epigraph.http.RequestHeaders;
+import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -126,11 +126,11 @@ public abstract class EpigraphServlet extends HttpServlet {
 
   @Contract(pure = true)
   public static @NotNull Function<ServletInvocationContext, String> formatNameExtractor() {
-    return c -> ((HttpServletRequest) c.asyncContext.getRequest()).getHeader(RequestHeaders.FORMAT);
+    return c -> ((HttpServletRequest) c.asyncContext.getRequest()).getHeader(EpigraphHeaders.FORMAT);
   }
 
   private @Nullable String getOperationName(@NotNull HttpServletRequest req) {
-    return req.getHeader(RequestHeaders.OPERATION_NAME);
+    return req.getHeader(EpigraphHeaders.OPERATION_NAME);
   }
 
   private class ServletInvocationContext implements HttpInvocationContext {

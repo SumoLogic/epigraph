@@ -17,14 +17,10 @@
 package ws.epigraph.http;
 
 /**
- * HTTP request parameters
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class RequestHeaders {
-  public static final String OPERATION_NAME = "Epigraph-Operation";
-  public static final String DEBUG_MODE = "Epigraph-Debug";
-  public static final String FORMAT = "Epigraph-Format";
-
-  private RequestHeaders() {}
+public interface MimeTypes {
+  String TEXT = "text/plain";
+  String JSON = "application/json";
+  String HTML = "text/html";
 }

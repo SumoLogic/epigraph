@@ -20,6 +20,7 @@ package ws.epigraph.wire.json.writer;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
@@ -29,6 +30,7 @@ import ws.epigraph.types.*;
 import ws.epigraph.types.RecordType.Field;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatWriter;
+import ws.epigraph.wire.WireFormat;
 import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.*;
@@ -617,25 +619,17 @@ public class JsonFormatWriter implements FormatWriter {
 
   @ThreadSafe
   public static final class JsonFormatWriterFactory implements FormatWriter.Factory {
-    private final @NotNull Charset charset;
 
-    public JsonFormatWriterFactory() {this(StandardCharsets.UTF_8);}
-
-    public JsonFormatWriterFactory(final @NotNull Charset charset) {this.charset = charset;}
-
+    @Contract(pure = true)
     @Override
-    public @NotNull String httpContentType() {
-      return "application/json; charset=" + characterEncoding().toLowerCase();
+    public @NotNull WireFormat format() {
+      return JsonFormat.INSTANCE;
     }
 
     @Override
-    public @NotNull String characterEncoding() { return charset.name(); }
-
-    @Override
-    public @NotNull FormatWriter newFormatWriter(final @NotNull OutputStream out) {
+    public @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
       return new JsonFormatWriter(out, charset);
     }
   }
-
 
 }

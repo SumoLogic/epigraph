@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.http;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface ContentTypes { // move to http-common?
-  String TEXT = "text/plain";
-  String JSON = "application/json";
-  String HTML = "text/html";
+public interface Headers {
+  String ACCEPT = "Accept";
+  String CONTENT_TYPE = "Content-Type";
 }

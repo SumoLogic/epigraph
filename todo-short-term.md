@@ -8,7 +8,7 @@
     - [ ] validate at startup that stuff is actually?
     
 - [ ] http client/server
-  - [ ] server must correctly set response content type for errors (json/plain text) + test
+  - [x] server must correctly set response content type for errors (json/plain text) + test
   - [ ] client must correctly specify accepted content types
   - [ ] client must correctly read errors based on response content type
   - [ ] read
@@ -31,6 +31,7 @@
     - [x] create operation
     - [x] update operation
     - [x] delete operation
+    - [ ] client
   - Operations
     - [ ] Overview
     - [ ] IDL

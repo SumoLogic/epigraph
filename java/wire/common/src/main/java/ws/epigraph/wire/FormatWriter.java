@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 @NotThreadSafe
 public interface FormatWriter extends AutoCloseable {
@@ -53,10 +54,8 @@ public interface FormatWriter extends AutoCloseable {
 
   @ThreadSafe
   interface Factory {
-    @NotNull String httpContentType();
+    @NotNull WireFormat format();
 
-    @NotNull String characterEncoding();
-
-    @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out);
+    @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset);
   }
 }

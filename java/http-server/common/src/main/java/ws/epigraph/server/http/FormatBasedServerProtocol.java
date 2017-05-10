@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.http.ContentTypes;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationError;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
@@ -37,19 +38,21 @@ import ws.epigraph.wire.FormatWriter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.function.Function;
 
-import static ws.epigraph.server.http.ContentTypes.HTML;
-import static ws.epigraph.server.http.ContentTypes.TEXT;
+import static ws.epigraph.http.Headers.ACCEPT;
+import static ws.epigraph.http.Headers.CONTENT_TYPE;
+import static ws.epigraph.http.MimeTypes.HTML;
+import static ws.epigraph.http.MimeTypes.TEXT;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class FormatBasedServerProtocol<C extends HttpInvocationContext> implements ServerProtocol<C> {
-  public static final String ACCEPT__HEADER = "Accept";
-  public static final String CONTENT_TYPE_HEADER = "Content-Type";
+  private static final Charset charset = StandardCharsets.UTF_8; // should it be configurable?
 
   private final @NotNull Function<C, HttpExchange> httpExchangeFactory;
   private final @NotNull FormatSelector<C> formatSelector;
@@ -190,12 +193,12 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
     httpExchange.setStatusCode(error.statusCode());
 
     try {
-      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
+      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), charset);
       if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(httpExchange)) {
-        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, HTML));
+        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE, ContentTypes.contentType(HTML, charset)));
         sw.write(((HtmlCapableOperationInvocationError) error).htmlMessage());
       } else {
-        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, TEXT));
+        httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE, ContentTypes.contentType(TEXT, charset)));
         sw.write(error.message() + "\n");
       }
       sw.close();
@@ -217,9 +220,12 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       FormatWriter.Factory writerFactory = factories.writerFactory();
 
       httpExchange.setStatusCode(statusCode);
-      httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE_HEADER, writerFactory.characterEncoding()));
+      httpExchange.setHeaders(Collections.singletonMap(
+          CONTENT_TYPE,
+          ContentTypes.contentType(writerFactory.format().mimeType(), charset)
+      ));
 
-      try (FormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream())) {
+      try (FormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream(), charset)) {
         formatResponseWriter.write(formatWriter);
       }
 
@@ -242,7 +248,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       final FormatException e) {
     httpExchange.setStatusCode(HttpStatusCode.BAD_REQUEST);
     try {
-      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), StandardCharsets.UTF_8);
+      OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), charset);
       sw.write(e.getMessage());
       sw.close();
     } catch (IOException ioe) {
@@ -255,7 +261,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   }
 
   private static boolean htmlAccepted(@NotNull HttpExchange exchange) {
-    String accept = exchange.getHeader(ACCEPT__HEADER);
+    String accept = exchange.getHeader(ACCEPT);
     return accept != null && accept.contains(HTML);
   }
 
