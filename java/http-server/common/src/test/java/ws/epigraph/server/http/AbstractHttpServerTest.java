@@ -25,6 +25,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.http.ContentType;
 import ws.epigraph.http.ContentTypes;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.http.Headers;
@@ -223,7 +224,7 @@ public abstract class AbstractHttpServerTest {
     get(requestUri, expectedStatus, expectedBody, ContentTypes.JSON_UTF8);
   }
 
-  protected void get(String requestUri, int expectedStatus, String expectedBody, String expectedContentType)
+  protected void get(String requestUri, int expectedStatus, String expectedBody, ContentType expectedContentType)
       throws IOException {
 
     CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -240,7 +241,7 @@ public abstract class AbstractHttpServerTest {
 
     Header contentType = response.getFirstHeader(Headers.CONTENT_TYPE);
     assertNotNull(contentType);
-    assertEquals(expectedContentType, contentType.getValue());
+    assertEquals(expectedContentType.toString(), contentType.getValue());
 
     String eb = unescape(expectedBody);
     assertEquals(eb, actualBody);

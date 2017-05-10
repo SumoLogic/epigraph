@@ -16,6 +16,7 @@
 
 package ws.epigraph.client.http;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.http.ContentType;
+import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
@@ -38,7 +41,7 @@ import ws.epigraph.wire.ReqOutputFormatReader;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -47,9 +50,13 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
   private final @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory;
+  private final @NotNull Charset requestCharset;
 
-  public FormatBasedServerProtocol(final @NotNull FormatFactories formatFactories) {
+  public FormatBasedServerProtocol(
+      final @NotNull FormatFactories formatFactories,
+      final @NotNull Charset requestCharset) {
     reqOutputReaderFactory = formatFactories.reqOutputReaderFactory();
+    this.requestCharset = requestCharset;
   }
 
   @Override
@@ -75,21 +82,21 @@ public class FormatBasedServerProtocol implements ServerProtocol {
           return OperationInvocationResult.failure(new MalformedOutputInvocationError(e));
         }
       } else {
-        // todo IMPORTANT! this can be a json error or something else, there must be a way to tell between the two!
-        // use response content type? we should set accept correctly as well, to both json and plain text
+        @NotNull Charset responseCharset = Util.defaultCharset;
 
-//        ErrorValue error = readError(httpResponse);
-//        Data data = createErrorData(projection, error);
-//        return OperationInvocationResult.success(new ReadOperationResponse<>(data));
+        Header contentTypeHeader = httpResponse.getEntity().getContentType();
+        if (contentTypeHeader == null) // broken server?
+          return readPlainTextError(httpResponse, statusCode, responseCharset);
 
-        try (InputStream is = httpResponse.getEntity().getContent();) {
-          return OperationInvocationResult.failure(
-              new ServerSideInvocationError(
-                  statusCode,
-                  IOUtil.readInputStream(is, StandardCharsets.UTF_8)
-              )
-          );
-        }
+        ContentType contentType = Util.parseContentType(contentTypeHeader.getValue());
+        responseCharset = Optional.ofNullable(contentType.charset()).orElse(responseCharset);
+
+        if (contentType.mimeType().equals(MimeTypes.JSON)) {
+          ErrorValue error = readError(httpResponse, responseCharset);
+          Data data = createErrorData(projection, error);
+          return OperationInvocationResult.success(new ReadOperationResponse<>(data));
+        } else
+          return readPlainTextError(httpResponse, statusCode, responseCharset);
 
       }
     } catch (IOException e) {
@@ -100,40 +107,50 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     }
   }
 
-//  private @NotNull ErrorValue readError(@NotNull HttpResponse response) throws IOException {
-//    // read response text fully first as we might need to use it twice
-//
-//    Charset charset = StandardCharsets.UTF_8;
-//    StringBuilder textBuilder = new StringBuilder();
-//
-//    try (
-//        InputStream inputStream = response.getEntity().getContent();
-//        Reader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName(charset.name())))
-//    ) {
-//      for (int c = reader.read(); c != -1; c = reader.read()) { textBuilder.append((char) c); }
-//    }
-//
-//    String string = textBuilder.toString();
-//    try {
-//      ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
-//          new ByteArrayInputStream(string.getBytes(charset))
-//      );
-//      return formatReader.readError();
-//    } catch (FormatException ignored) { // log it? not all messages are guaranteed to be in proper format
-//      return new ErrorValue(response.getStatusLine().getStatusCode(), string);
-//    }
-//  }
+  private @NotNull OperationInvocationResult<ReadOperationResponse<?>> readPlainTextError(
+      @NotNull HttpResponse httpResponse,
+      int statusCode, @NotNull Charset responseCharset) throws IOException {
 
-//  private @NotNull Data createErrorData(@NotNull ReqOutputVarProjection projection, @NotNull ErrorValue errorValue) {
-//    // create data instance with all requested tags set to error
-//
-//    Type type = (Type) projection.type();
-//    Data.Builder builder = type.createDataBuilder();
-//
-//    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
-//      builder._raw().setError((Type.Tag) tpe.tag(), errorValue);
-//    }
-//
-//    return builder;
-//  }
+    try (InputStream is = httpResponse.getEntity().getContent()) {
+      return OperationInvocationResult.failure(
+          new ServerSideInvocationError(statusCode, IOUtil.readInputStream(is, responseCharset))
+      );
+    }
+  }
+
+  private @NotNull ErrorValue readError(@NotNull HttpResponse response, @NotNull Charset charset) throws IOException {
+    // read response text fully first as we might need to use it twice
+
+    StringBuilder textBuilder = new StringBuilder();
+
+    try (
+        InputStream inputStream = response.getEntity().getContent();
+        Reader reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName(charset.name())))
+    ) {
+      for (int c = reader.read(); c != -1; c = reader.read()) { textBuilder.append((char) c); }
+    }
+
+    String string = textBuilder.toString();
+    try {
+      ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
+          new ByteArrayInputStream(string.getBytes(charset))
+      );
+      return formatReader.readError();
+    } catch (FormatException ignored) { // log it? not all messages are guaranteed to be in proper format
+      return new ErrorValue(response.getStatusLine().getStatusCode(), string);
+    }
+  }
+
+  private @NotNull Data createErrorData(@NotNull ReqOutputVarProjection projection, @NotNull ErrorValue errorValue) {
+    // create data instance with all requested tags set to error
+
+    Type type = (Type) projection.type();
+    Data.Builder builder = type.createDataBuilder();
+
+    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
+      builder._raw().setError((Type.Tag) tpe.tag(), errorValue);
+    }
+
+    return builder;
+  }
 }

@@ -25,15 +25,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class ContentTypes {
-  public static final String TEXT_UTF8 = contentType(MimeTypes.TEXT, StandardCharsets.UTF_8);
-  public static final String HTML_UTF8 = contentType(MimeTypes.HTML, StandardCharsets.UTF_8);
-  public static final String JSON_UTF8 = contentType(MimeTypes.JSON, StandardCharsets.UTF_8);
-
-  private ContentTypes() {}
-
-  @Contract(pure = true)
-  public static @NotNull String contentType(@NotNull String mimeType, @NotNull Charset charset) {
-    return mimeType + ";charset=" + charset.name().toLowerCase(); // cache?
-  }
+public interface ContentTypes {
+  ContentType TEXT_UTF8 = new ContentType(MimeTypes.TEXT, StandardCharsets.UTF_8);
+  ContentType HTML_UTF8 = new ContentType(MimeTypes.HTML, StandardCharsets.UTF_8);
+  ContentType JSON_UTF8 = new ContentType(MimeTypes.JSON, StandardCharsets.UTF_8);
 }

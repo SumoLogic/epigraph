@@ -29,7 +29,6 @@ import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -38,26 +37,27 @@ import java.util.concurrent.CompletableFuture;
 public class RemoteReadOperationInvocation
     implements OperationInvocation<ReadOperationRequest, ReadOperationResponse<?>> {
 
-  private static final Charset charset = StandardCharsets.UTF_8; // any reason to be configurable?
-
   private final @NotNull HttpHost host;
   private final @NotNull HttpRequestDispatcher requestDispatcher;
   private final @NotNull String resourceName;
   private final @NotNull ReadOperationDeclaration operationDeclaration;
   private final @NotNull ServerProtocol serverProtocol;
+  private final @NotNull Charset charset;
 
   public RemoteReadOperationInvocation(
       final @NotNull HttpHost host,
       final @NotNull HttpRequestDispatcher requestDispatcher,
       final @NotNull String resourceName,
       final @NotNull ReadOperationDeclaration operationDeclaration,
-      final @NotNull ServerProtocol serverProtocol) {
+      final @NotNull ServerProtocol serverProtocol,
+      final @NotNull Charset charset) {
 
     this.host = host;
     this.requestDispatcher = requestDispatcher;
     this.resourceName = resourceName;
     this.operationDeclaration = operationDeclaration;
     this.serverProtocol = serverProtocol;
+    this.charset = charset;
   }
 
   @Override

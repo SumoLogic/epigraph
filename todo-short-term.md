@@ -9,8 +9,8 @@
     
 - [ ] http client/server
   - [x] server must correctly set response content type for errors (json/plain text) + test
-  - [ ] client must correctly specify accepted content types
-  - [ ] client must correctly read errors based on response content type
+  - [x] client must correctly specify accepted content types
+  - [x] client must correctly read errors based on response content type
   - [ ] read
   - [ ] create
   - [ ] update

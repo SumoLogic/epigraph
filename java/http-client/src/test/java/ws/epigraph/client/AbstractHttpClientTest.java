@@ -74,6 +74,8 @@ import ws.epigraph.wire.json.JsonFormatFactories;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -88,13 +90,14 @@ public class AbstractHttpClientTest {
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
+  protected static final Charset CHARSET = StandardCharsets.UTF_8;
 
   protected static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
   protected static final ResourceDeclaration resourceDeclaration = UsersResourceDeclaration.INSTANCE;
   protected static HttpRequestDispatcher dispatcher;
 
   protected final HttpHost httpHost = new HttpHost(HOST, PORT);
-  protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(JsonFormatFactories.INSTANCE);
+  protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(JsonFormatFactories.INSTANCE, CHARSET);
 
   // <todo test all 3 servers via subclassing>
   private static Undertow server;
@@ -161,7 +164,8 @@ public class AbstractHttpClientTest {
         dispatcher,
         resourceDeclaration.fieldName(),
         operationDeclaration,
-        serverProtocol
+        serverProtocol,
+        CHARSET
     );
 
     OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
