@@ -49,6 +49,8 @@ public interface FormatReader<
   @NotNull ErrorValue readError() throws IOException, FormatException;
 
   interface Factory<FR extends FormatReader<?, ?>> {
+    @NotNull WireFormat format();
+
     @NotNull FR newFormatReader(@NotNull InputStream is) throws IOException;
   }
 

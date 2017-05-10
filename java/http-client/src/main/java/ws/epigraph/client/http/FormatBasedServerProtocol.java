@@ -53,6 +53,12 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
+  public @NotNull String mimeType() {
+    // here we assume that all formatFactories use the same format, i.e. we don't mix json/xml
+    return reqOutputReaderFactory.format().mimeType();
+  }
+
+  @Override
   public @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,

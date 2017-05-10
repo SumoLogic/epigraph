@@ -24,6 +24,8 @@ import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.op.input.*;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.OpInputFormatReader;
+import ws.epigraph.wire.WireFormat;
+import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,6 +76,9 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   public static class Factory implements FormatReader.Factory<OpInputJsonFormatReader> {
+    @Override
+    public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
+
     @Override
     public @NotNull OpInputJsonFormatReader newFormatReader(final @NotNull InputStream is) throws IOException {
       return new OpInputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(is));

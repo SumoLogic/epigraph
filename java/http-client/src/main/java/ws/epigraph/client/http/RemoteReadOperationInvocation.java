@@ -16,6 +16,7 @@
 
 package ws.epigraph.client.http;
 
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,8 @@ import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,6 +37,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public class RemoteReadOperationInvocation
     implements OperationInvocation<ReadOperationRequest, ReadOperationResponse<?>> {
+
+  private static final Charset charset = StandardCharsets.UTF_8; // any reason to be configurable?
 
   private final @NotNull HttpHost host;
   private final @NotNull HttpRequestDispatcher requestDispatcher;
@@ -72,6 +77,9 @@ public class RemoteReadOperationInvocation
         EpigraphHeaders.OPERATION_NAME,
         operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName
     );
+
+    httpRequest.addHeader(HttpHeaders.ACCEPT, serverProtocol.mimeType());
+    httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name());
 
     return requestDispatcher.runRequest(
         host,

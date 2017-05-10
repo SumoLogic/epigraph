@@ -21,5 +21,6 @@ package ws.epigraph.http;
  */
 public interface Headers {
   String ACCEPT = "Accept";
+  String ACCEPT_CHARSET = "Accept-Charset";
   String CONTENT_TYPE = "Content-Type";
 }

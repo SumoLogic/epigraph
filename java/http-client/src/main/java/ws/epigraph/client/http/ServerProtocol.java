@@ -30,6 +30,8 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 public interface ServerProtocol {
   // client-side counterpart of ws.epigraph.server.http.ServerProtocol
 
+  @NotNull String mimeType();
+
   @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,

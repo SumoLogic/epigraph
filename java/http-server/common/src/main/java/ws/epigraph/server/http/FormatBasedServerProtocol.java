@@ -39,7 +39,6 @@ import ws.epigraph.wire.FormatWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -52,8 +51,6 @@ import static ws.epigraph.http.MimeTypes.TEXT;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class FormatBasedServerProtocol<C extends HttpInvocationContext> implements ServerProtocol<C> {
-  private static final Charset charset = StandardCharsets.UTF_8; // should it be configurable?
-
   private final @NotNull Function<C, HttpExchange> httpExchangeFactory;
   private final @NotNull FormatSelector<C> formatSelector;
 
@@ -192,6 +189,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
     httpExchange.setStatusCode(error.statusCode());
 
+    Charset charset = Util.getCharset(httpExchange);
     try {
       OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), charset);
       if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(httpExchange)) {
@@ -214,6 +212,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       @NotNull FormatBasedServerProtocol.FormatResponseWriter formatResponseWriter) {
 
     HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
+    Charset charset = Util.getCharset(httpExchange);
 
     try {
       FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
@@ -246,6 +245,8 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       final @NotNull C httpInvocationContext,
       final HttpExchange httpExchange,
       final FormatException e) {
+
+    Charset charset = Util.getCharset(httpExchange);
     httpExchange.setStatusCode(HttpStatusCode.BAD_REQUEST);
     try {
       OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), charset);
