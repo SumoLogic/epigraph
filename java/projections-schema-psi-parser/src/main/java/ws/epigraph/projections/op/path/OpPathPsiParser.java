@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,23 @@ package ws.epigraph.projections.op.path;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
-import ws.epigraph.schema.parser.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeKind;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
@@ -65,7 +63,7 @@ public final class OpPathPsiParser {
 
     if (isModelPathEmpty(modelProjection) && modelParams.isEmpty() && modelAnnotations.isEmpty()) {
       if (psi.getTagName() != null)
-        throw new PsiProcessingException("Path can't end with a tag", psi.getTagName(), context);
+        throw new PsiProcessingException("Path can't end with a tag (path tip type must be a data type)", psi.getTagName(), context);
 
       return new OpVarPath(
           type,
@@ -372,18 +370,7 @@ public final class OpPathPsiParser {
 
     @Nullable SchemaOpVarPath varPathPsi = psi.getOpVarPath();
 
-    if (varPathPsi == null) {
-      @Nullable TagApi defaultFieldTag = fieldType.defaultTag();
-      if (defaultFieldTag == null)
-        throw new PsiProcessingException(String.format(
-            "Can't construct default projection for type '%s' because it has no default tag",
-            fieldType.name()
-        ), psi, context);
-
-      varProjection = createDefaultVarPath(fieldType.type(), defaultFieldTag, psi, context);
-    } else {
-      varProjection = parseVarPath(fieldType, varPathPsi, resolver, context);
-    }
+    varProjection = parseVarPath(fieldType, varPathPsi, resolver, context);
 
     return new OpFieldPath(
 //        OpParams.fromCollection(fieldParamsList),

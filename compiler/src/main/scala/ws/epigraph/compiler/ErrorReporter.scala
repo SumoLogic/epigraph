@@ -35,6 +35,8 @@ object ErrorReporter {
 
         val errorPosition: CErrorPosition =
           if (location == TextLocation.UNKNOWN) CErrorPosition.NA
+          else if (location.startLine() == location.endLine())
+            csf.lnu.pos(location.startOffset(), location.endOffset() - location.startOffset())
           else csf.lnu.pos(location.startOffset())
 
 

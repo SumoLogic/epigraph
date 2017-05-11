@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,11 +55,13 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
   }
 
   def pos(@Nullable psi: PsiElement): CErrorPosition =
-    if (psi eq null) CErrorPosition.NA else pos(psi.getTextRange.getStartOffset)
+    if (psi eq null) CErrorPosition.NA else pos(psi.getTextRange.getStartOffset, psi.getTextRange.getLength)
 
-  def pos(offset: Int): CErrorPosition = {
+  def pos(offset: Int): CErrorPosition = pos(offset, 1)
+
+  def pos(offset: Int, len: Int): CErrorPosition = {
     lines.find(_.endOffset >= offset) match {
-      case Some(line) => CErrorPosition(line.number, column(line, offset), Some(line.text))
+      case Some(line) => CErrorPosition(line.number, column(line, offset), len, Some(line.text))
       case None => CErrorPosition.NA
     }
   }

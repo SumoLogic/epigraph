@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ public interface MapDatum extends Datum {
         @Override
         public int size() { return raw.size(); }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") // why doesn't it work?
         @Override
         public @NotNull MyImmDatum toImmutable() { return (MyImmDatum) this; }  // TODO or make abstract and implement in final static impl?
 

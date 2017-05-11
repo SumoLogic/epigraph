@@ -40,7 +40,7 @@ object CPrettyPrinters {
       Iterator(
         fansi.Color.Blue(t.filename + ":" + t.position.line.toString + ":" + t.position.column.toString + " " + intellijLink(t)).render,
         fansi.Color.Red("\nError").render, ": ", t.message, "\n"
-      ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^")
+      ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^" * t.position.tokenLength)
 
     private def intellijLink(t: CError): String = { // relies on '.' already rendered (as part of canonical path
       "(" + new File(t.filename).getName + ":" + t.position.line + ")"

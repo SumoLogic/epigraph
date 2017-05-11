@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,10 +82,12 @@ class CContext(val tabWidth: Int = 2) {
 
 case class CError(filename: String, position: CErrorPosition, message: String)
 
-case class CErrorPosition(line: Int, column: Int, lineText: Option[String])
+case class CErrorPosition(line: Int, column: Int, tokenLength: Int, lineText: Option[String])
 
 object CErrorPosition {
 
-  val NA: CErrorPosition = CErrorPosition(0, 0, None)
+  val NA: CErrorPosition = CErrorPosition(0, 0, 0, None)
+
+  def apply(line: Int, column: Int, lineText: Option[String]):CErrorPosition = CErrorPosition(line, column, 1, lineText)
 
 }
