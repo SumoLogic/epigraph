@@ -29,13 +29,9 @@ import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
 import ws.epigraph.tests.resources.users.operations._create.AbstractCreateOperation;
 import ws.epigraph.tests.resources.users.operations._create.input.InputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.capitalize.AbstractCustomCapitalizeOperation;
-import ws.epigraph.tests.resources.users.operations.capitalize.input.InputPersonRecordProjection;
-import ws.epigraph.tests.resources.users.operations.capitalize.path.UsersFieldPath;
 import ws.epigraph.tests.resources.users.operations._delete.AbstractDeleteOperation;
 import ws.epigraph.tests.resources.users.operations._delete.delete.DeletePersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations._delete.delete.DeleteUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.recursivetest.AbstractDeleteRecursiveTestOperation;
 import ws.epigraph.tests.resources.users.operations._read.AbstractReadOperation;
 import ws.epigraph.tests.resources.users.operations._read.output.OutputPersonMapKeyProjection;
 import ws.epigraph.tests.resources.users.operations._read.output.OutputPersonMapProjection;
@@ -45,6 +41,10 @@ import ws.epigraph.tests.resources.users.operations._update.AbstractUpdateOperat
 import ws.epigraph.tests.resources.users.operations._update.update.UpdateUsersFieldProjection;
 import ws.epigraph.tests.resources.users.operations._update.update.elements.UpdatePersonProjection;
 import ws.epigraph.tests.resources.users.operations._update.update.elements.record.UpdatePersonRecordProjection;
+import ws.epigraph.tests.resources.users.operations.capitalize.AbstractCustomCapitalizeOperation;
+import ws.epigraph.tests.resources.users.operations.capitalize.input.InputPersonRecordProjection;
+import ws.epigraph.tests.resources.users.operations.capitalize.path.UsersFieldPath;
+import ws.epigraph.tests.resources.users.operations.recursivetest.AbstractDeleteRecursiveTestOperation;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.List;
@@ -63,6 +63,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   protected @NotNull ReadOperation<PersonMap.Data> constructReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new ReadOp(operationDeclaration, storage);
+  }
+
+  @Override
+  protected @NotNull ReadOperation<Person> constructBestFriendReadOperation(final @NotNull ReadOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new ReadBestFriendOperation(operationDeclaration, storage);
   }
 
   @Override

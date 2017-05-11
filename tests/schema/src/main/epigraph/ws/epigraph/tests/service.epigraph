@@ -39,6 +39,11 @@ resource users: PersonMap {
     )
   }
 
+  read bestFriend {
+    path /.:`record`/bestFriend
+    outputProjection :`record`(id, firstName, lastName)
+  }
+
   create {
     inputType list[PersonRecord]
     inputProjection *(

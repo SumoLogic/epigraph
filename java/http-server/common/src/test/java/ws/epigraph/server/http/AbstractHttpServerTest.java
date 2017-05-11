@@ -150,6 +150,21 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
+  public void testGetWithPath() throws IOException {
+    get(
+        "/users/1:record/bestFriend:record(firstName)",
+        200,
+        "{'firstName':'First2'}"
+    );
+
+    get(
+        "/users/12:record/bestFriend:record(firstName)",
+        404,
+        "{'ERROR':404,'message':'User with id 12 not found'}"
+    );
+  }
+
+  @Test
   public void testCreateReadUpdateDelete() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
     int nextId = id + 1;
