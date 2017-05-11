@@ -11,6 +11,7 @@
   - [x] server must correctly set response content type for errors (json/plain text) + test
   - [x] client must correctly specify accepted content types
   - [x] client must correctly read errors based on response content type
+  - [ ] read operation with path return type must be path tip type
   - [ ] read
   - [ ] create
   - [ ] update

@@ -31,19 +31,7 @@ import ws.epigraph.data.Data;
 import ws.epigraph.invocation.DefaultOperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
-import ws.epigraph.lang.TextLocation;
 import ws.epigraph.printers.DataPrinter;
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.psi.DefaultPsiProcessingContext;
-import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -53,22 +41,10 @@ import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.UserResourceFactory;
 import ws.epigraph.tests.UsersResourceFactory;
 import ws.epigraph.tests.UsersStorage;
 import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
-import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
-import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
-import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 import ws.epigraph.util.EBean;
 import ws.epigraph.wire.json.JsonFormatFactories;
 
@@ -77,11 +53,11 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
+import static ws.epigraph.client.http.RequestFactory.constructReadRequest;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -202,111 +178,5 @@ public class AbstractHttpClientTest {
             new UsersResourceFactory(new UsersStorage()).getUsersResource()
         )
     );
-  }
-
-  private @NotNull ReadOperationRequest constructReadRequest(
-      @NotNull ReadOperationDeclaration operationDeclaration,
-      @NotNull String request,
-      @NotNull TypesResolver typesResolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqOutputTrunkFieldProjection psi =
-        EpigraphPsiUtil.parseText(request, UrlSubParserDefinitions.REQ_OUTPUT_FIELD_PROJECTION, errorsAccumulator);
-
-    TestUtil.failIfHasErrors(psi, errorsAccumulator);
-
-    final ReqFieldPath reqPath;
-    final ReqOutputFieldProjection reqFieldProjection;
-
-    PsiProcessingContext context = new DefaultPsiProcessingContext();
-
-    OpFieldPath opPath = operationDeclaration.path();
-    DataTypeApi outputDataType = operationDeclaration.outputType().dataType();
-
-    try {
-      if (opPath == null) {
-        reqPath = null;
-        ReqOutputReferenceContext reqOutputReferenceContext =
-            new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-        ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-            new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
-        StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
-            ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-                false,  // ?
-                outputDataType,
-                operationDeclaration.outputProjection(),
-                psi,
-                typesResolver,
-                reqOutputPsiProcessingContext
-            );
-
-        reqOutputReferenceContext.ensureAllReferencesResolved();
-
-        reqFieldProjection = stepsAndProjection.projection();
-      } else {
-        ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
-            outputDataType,
-            opPath,
-            psi,
-            typesResolver,
-            new ReqPathPsiProcessingContext(context)
-        );
-
-        reqPath = pathParsingResult.path();
-        DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
-
-        UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
-        UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
-
-        ReqOutputReferenceContext reqOutputReferenceContext =
-            new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-        ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-            new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
-
-        if (trunkVarProjection != null) {
-          StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
-              pathTipType,
-              operationDeclaration.outputProjection().varProjection(),
-              false,
-              trunkVarProjection,
-              typesResolver,
-              reqOutputPsiProcessingContext
-          );
-
-          reqFieldProjection = new ReqOutputFieldProjection(r.projection(), r.projection().location());
-        } else if (comaVarProjection != null) {
-          StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
-              pathTipType,
-              operationDeclaration.outputProjection().varProjection(),
-              false,
-              comaVarProjection,
-              typesResolver,
-              reqOutputPsiProcessingContext
-          );
-          reqFieldProjection = new ReqOutputFieldProjection(r.projection(), r.projection().location());
-        } else {
-          ReqOutputVarProjection vp = new ReqOutputVarProjection(
-              pathTipType.type(),
-              Collections.emptyMap(),
-              false, null,
-              TextLocation.UNKNOWN
-          );
-          reqFieldProjection = new ReqOutputFieldProjection(vp, vp.location());
-        }
-
-        reqOutputReferenceContext.ensureAllReferencesResolved();
-      }
-
-      return new ReadOperationRequest(
-          reqPath,
-          reqFieldProjection
-      );
-    } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
-    }
-
-    TestUtil.failIfHasErrors(context.errors());
-    throw new IllegalArgumentException();
   }
 }

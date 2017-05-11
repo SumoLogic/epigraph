@@ -45,6 +45,11 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-request-url-psi-parser</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-invocation</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
@@ -96,12 +101,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-request-url-psi-parser</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>

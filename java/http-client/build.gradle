@@ -20,6 +20,7 @@ dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-http-common')
   compile project(':epigraph-java-projections')
+  compile project(':epigraph-java-request-url-psi-parser')
   compile project(':epigraph-java-invocation')
   compile project(':epigraph-java-wire-common')
   compile project(':epigraph-java-wire-json')
@@ -29,7 +30,6 @@ dependencies {
 
   compile 'org.slf4j:slf4j-api'
 
-  testCompile project(':epigraph-java-request-url-psi-parser')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':epigraph-java-http-server-jetty-handler')
   testCompile project(':epigraph-java-http-server-servlet')
