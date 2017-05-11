@@ -71,7 +71,5 @@ public class SyncHttpRequestDispatcher implements HttpRequestDispatcher {
   }
 
   @Override
-  public void shutdown() throws IOException {
-    httpClient.close();
-  }
+  public void shutdown() throws IOException { httpClient.close(); }
 }

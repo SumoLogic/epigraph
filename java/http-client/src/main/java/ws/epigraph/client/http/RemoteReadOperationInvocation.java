@@ -67,7 +67,7 @@ public class RemoteReadOperationInvocation
 
     String uri = composeUri(request);
 
-    System.out.println("uri = {" + uri + "}"); // todo remove
+//    System.out.println("uri = {" + uri + "}");
 
     HttpGet httpRequest = new HttpGet(uri);
 

@@ -16,18 +16,14 @@
 
 package ws.epigraph.client;
 
-import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
 import org.apache.http.HttpHost;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.reactor.IOReactorException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import ws.epigraph.client.http.*;
+import ws.epigraph.client.http.FormatBasedServerProtocol;
+import ws.epigraph.client.http.HttpRequestDispatcher;
+import ws.epigraph.client.http.RemoteReadOperationInvocation;
+import ws.epigraph.client.http.ServerProtocol;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.DefaultOperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -37,7 +33,6 @@ import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperationRequest;
@@ -63,7 +58,7 @@ import static ws.epigraph.client.http.RequestFactory.constructReadRequest;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AbstractHttpClientTest {
+public abstract class AbstractHttpClientTest {
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
@@ -75,26 +70,6 @@ public class AbstractHttpClientTest {
 
   protected final HttpHost httpHost = new HttpHost(HOST, PORT);
   protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(JsonFormatFactories.INSTANCE, CHARSET);
-
-  // <todo test all 3 servers via subclassing>
-  private static Undertow server;
-
-  @BeforeClass
-  public static void start() throws ServiceInitializationException {
-    server = Undertow.builder()
-        .addHttpListener(PORT, HOST)
-        .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
-        .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))
-        .build();
-
-    server.start();
-  }
-
-  @AfterClass
-  public static void stop() {
-    server.stop();
-  }
-  // </todo>
 
   @Test
   public void testSimpleRead() throws ExecutionException, InterruptedException {
@@ -218,22 +193,6 @@ public class AbstractHttpClientTest {
       dataToString = null;
     }
     return dataToString;
-  }
-
-  @BeforeClass
-  public static void start2() throws IOReactorException {
-    // todo test both sync/async via subclassing
-    dispatcher = new AsyncHttpRequestDispatcher(
-        ConnectionConfig.DEFAULT,
-        IOReactorConfig.DEFAULT,
-        2,
-        TIMEOUT
-    );
-  }
-
-  @AfterClass
-  public static void stop2() throws IOException {
-    dispatcher.shutdown();
   }
 
   protected static @NotNull Service buildUsersService() throws ServiceInitializationException {

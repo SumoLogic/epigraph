@@ -21,7 +21,7 @@
     - [x] non-existing user (should get 404 back with an ErrorValue)
     - [ ] complex url with params (check data escaping)
     - [x] operations with paths
-  - [ ] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
+  - [x] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
   - [ ] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
     - [ ] read operation with path return type must be path tip type
 

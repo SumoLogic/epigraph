@@ -36,5 +36,6 @@ dependencies {
   testCompile project(':epigraph-java-http-server-undertow')
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
+  testCompile 'org.eclipse.jetty:jetty-servlet'
   testCompile 'org.slf4j:slf4j-simple'
 }
