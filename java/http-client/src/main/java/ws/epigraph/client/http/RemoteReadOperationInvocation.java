@@ -65,7 +65,7 @@ public class RemoteReadOperationInvocation
       @NotNull OperationInvocationContext context,
       @NotNull ReadOperationRequest request) {
 
-    String uri = UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
+    String uri = composeUri(request);
 
     System.out.println("uri = {" + uri + "}"); // todo remove
 
@@ -78,7 +78,9 @@ public class RemoteReadOperationInvocation
         operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName
     );
 
-    httpRequest.addHeader(HttpHeaders.ACCEPT, serverProtocol.mimeType());
+    for (String mimeType : serverProtocol.mimeTypes())
+      httpRequest.addHeader(HttpHeaders.ACCEPT, mimeType);
+
     httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name());
 
     return requestDispatcher.runRequest(
@@ -90,5 +92,9 @@ public class RemoteReadOperationInvocation
             response
         )
     );
+  }
+
+  protected  @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
+    return UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
   }
 }

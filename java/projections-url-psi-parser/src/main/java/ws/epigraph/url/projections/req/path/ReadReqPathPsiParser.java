@@ -146,7 +146,7 @@ public final class ReadReqPathPsiParser {
               "Operation path tag '%s' is not matched by the request",
               opTag.name()
           ),
-          multiTagProjectionPsi != null ? multiTagProjectionPsi : psi,
+          multiTagProjectionPsi == null ? psi : multiTagProjectionPsi,
           context
       );
 

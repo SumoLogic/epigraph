@@ -53,10 +53,13 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RequestFactory {
+public final class RequestFactory {
+  private RequestFactory() {}
+
   /**
    * Constructs read request from a string
    *
+   * @param resourceType         resource field type
    * @param operationDeclaration target operation declaration
    * @param requestString        request projection string
    * @param typesResolver        types resolver
@@ -65,6 +68,7 @@ public class RequestFactory {
    * @throws IllegalArgumentException if there was an error parsing {@code requestString}
    */
   public static @NotNull ReadOperationRequest constructReadRequest(
+      @NotNull DataTypeApi resourceType,
       @NotNull ReadOperationDeclaration operationDeclaration,
       @NotNull String requestString,
       @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
@@ -88,7 +92,6 @@ public class RequestFactory {
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
     OpFieldPath opPath = operationDeclaration.path();
-    DataTypeApi outputDataType = operationDeclaration.outputType().dataType();
 
     try {
       if (opPath == null) {
@@ -100,7 +103,7 @@ public class RequestFactory {
         StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
             ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
                 false,  // ?
-                outputDataType,
+                resourceType,
                 operationDeclaration.outputProjection(),
                 psi,
                 typesResolver,
@@ -112,7 +115,7 @@ public class RequestFactory {
         reqFieldProjection = stepsAndProjection.projection();
       } else {
         ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
-            outputDataType,
+            resourceType,
             opPath,
             psi,
             typesResolver,
@@ -186,7 +189,7 @@ public class RequestFactory {
       return null;
 
     String psiDump = DebugUtil.psiToString(psi, true, false).trim();
-    return errorsDump + "\n\nPSI Dump:\n" + psiDump;
+    return errorsDump + "\nPSI Dump:\n\n" + psiDump;
   }
 
   public static @Nullable String dumpErrors(final List<PsiProcessingError> errors) {

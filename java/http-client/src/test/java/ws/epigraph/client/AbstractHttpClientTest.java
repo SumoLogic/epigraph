@@ -23,6 +23,7 @@ import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.nio.reactor.IOReactorException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -104,36 +105,81 @@ public class AbstractHttpClientTest {
     );
   }
 
+  @Test
+  public void testMalformedUrl() throws ExecutionException, InterruptedException {
+    testReadError(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "[1,2](:record(firstName))",
+        400,
+        "Resource 'xxx' not found. Supported resources: {/user, /users}",
+        "/xxx"
+    );
+  }
+
+  @Test
+  public void testPathError() throws ExecutionException, InterruptedException {
+    testReadError(
+        UsersResourceDeclaration.bestFriendReadOperationDeclaration,
+        "/12:record/bestFriend:record(firstName)",
+        404,
+        "{\"ERROR\":404,\"message\":\"User with id 12 not found\"}",
+        null
+    );
+  }
+
+  @Test
+  public void testPathRead() throws ExecutionException, InterruptedException {
+    testSuccessfulRead(
+        UsersResourceDeclaration.bestFriendReadOperationDeclaration,
+        "/1:record/bestFriend:record(firstName)",
+        "< record: { firstName: \"First2\" } >"
+    );
+  }
+
   protected void testSuccessfulRead(
       @NotNull ReadOperationDeclaration operationDeclaration,
       @NotNull String requestString,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
     OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
-        runReadOperation(operationDeclaration, requestString);
+        runReadOperation(operationDeclaration, requestString, null);
 
     invocationResult.consume(
         ror -> {
           Data data = ror.getData();
-          try {
-            StringWriter sw = new StringWriter();
-            DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
-            printer.print(data);
-            assertEquals(expectedDataPrint, sw.toString());
-          } catch (IOException e) {
-            e.printStackTrace();
-            fail(e.toString());
-          }
+          String dataToString = printData(data);
+          assertEquals(expectedDataPrint, dataToString);
         },
 
         oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
+    );
+  }
+
+  protected void testReadError(
+      @NotNull ReadOperationDeclaration operationDeclaration,
+      @NotNull String requestString,
+      int expectedStatusCode,
+      @NotNull String expectedError,
+      @Nullable String uriOverride) throws ExecutionException, InterruptedException {
+
+    OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
+        runReadOperation(operationDeclaration, requestString, uriOverride);
+
+    invocationResult.consume(
+        ror -> fail("Expected request to fail, got: " + printData(ror.getData())),
+
+        oir -> {
+          assertEquals(oir.message(), expectedStatusCode, oir.statusCode());
+          assertEquals(expectedError, oir.message());
+        }
     );
 
   }
 
   protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runReadOperation(
       @NotNull ReadOperationDeclaration operationDeclaration,
-      @NotNull String requestString) throws ExecutionException, InterruptedException {
+      @NotNull String requestString,
+      @Nullable String requestUri) throws ExecutionException, InterruptedException {
 
     RemoteReadOperationInvocation inv = new RemoteReadOperationInvocation(
         httpHost,
@@ -141,17 +187,37 @@ public class AbstractHttpClientTest {
         resourceDeclaration.fieldName(),
         operationDeclaration,
         serverProtocol,
-        CHARSET
-    );
+        CHARSET) {
+      @Override
+      protected @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
+        return requestUri == null ? super.composeUri(request) : requestUri;
+      }
+    };
 
     OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
     ReadOperationRequest request = constructReadRequest(
+        resourceDeclaration.fieldType(),
         operationDeclaration,
         requestString,
         resolver
     );
 
     return inv.invoke(opctx, request).get();
+  }
+
+  private String printData(final Data data) {
+    String dataToString;
+    try {
+      StringWriter sw = new StringWriter();
+      DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
+      printer.print(data);
+      dataToString = sw.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.toString());
+      dataToString = null;
+    }
+    return dataToString;
   }
 
   @BeforeClass

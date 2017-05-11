@@ -11,19 +11,19 @@
   - [x] server must correctly set response content type for errors (json/plain text) + test
   - [x] client must correctly specify accepted content types
   - [x] client must correctly read errors based on response content type
-  - [ ] read operation with path return type must be path tip type
-  - [ ] read
+  - [x] read
   - [ ] create
   - [ ] update
   - [ ] delete
   - [ ] custom
   - tests
-    - [ ] bad request url
-    - [ ] non-existing user (should get 404 back with an ErrorValue)
+    - [x] bad request url
+    - [x] non-existing user (should get 404 back with an ErrorValue)
     - [ ] complex url with params (check data escaping)
-    - [ ] operations with paths
+    - [x] operations with paths
   - [ ] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
   - [ ] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
+    - [ ] read operation with path return type must be path tip type
 
 - Docs
   - [x] service quick-start guide

@@ -30,7 +30,10 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 public interface ServerProtocol {
   // client-side counterpart of ws.epigraph.server.http.ServerProtocol
 
-  @NotNull String mimeType();
+  /**
+   * @return collection of mime types accepted by this protocol
+   */
+  @NotNull String[] mimeTypes();
 
   @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       @NotNull ReqOutputVarProjection projection,

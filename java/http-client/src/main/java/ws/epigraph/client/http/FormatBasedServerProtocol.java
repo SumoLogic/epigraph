@@ -26,12 +26,11 @@ import ws.epigraph.data.Data;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
 import ws.epigraph.http.MimeTypes;
+import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.types.Type;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.util.IOUtil;
 import ws.epigraph.wire.FormatException;
@@ -50,7 +49,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
   private final @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory;
-  private final @NotNull Charset requestCharset;
+  private final @NotNull Charset requestCharset; //charset to be used for requests
 
   public FormatBasedServerProtocol(
       final @NotNull FormatFactories formatFactories,
@@ -60,9 +59,12 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull String mimeType() {
+  public @NotNull String[] mimeTypes() {
     // here we assume that all formatFactories use the same format, i.e. we don't mix json/xml
-    return reqOutputReaderFactory.format().mimeType();
+    return new String[]{
+        reqOutputReaderFactory.format().mimeType(),
+        MimeTypes.TEXT // for plain text messages
+    };
   }
 
   @Override
@@ -93,8 +95,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
         if (contentType.mimeType().equals(MimeTypes.JSON)) {
           ErrorValue error = readError(httpResponse, responseCharset);
-          Data data = createErrorData(projection, error);
-          return OperationInvocationResult.success(new ReadOperationResponse<>(data));
+          return OperationInvocationResult.failure(new ErrorValueInvocationError(error));
         } else
           return readPlainTextError(httpResponse, statusCode, responseCharset);
 
@@ -113,7 +114,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
     try (InputStream is = httpResponse.getEntity().getContent()) {
       return OperationInvocationResult.failure(
-          new ServerSideInvocationError(statusCode, IOUtil.readInputStream(is, responseCharset))
+          new ServerSideInvocationError(statusCode, IOUtil.readInputStream(is, responseCharset).trim())
       );
     }
   }
@@ -141,16 +142,16 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     }
   }
 
-  private @NotNull Data createErrorData(@NotNull ReqOutputVarProjection projection, @NotNull ErrorValue errorValue) {
-    // create data instance with all requested tags set to error
-
-    Type type = (Type) projection.type();
-    Data.Builder builder = type.createDataBuilder();
-
-    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
-      builder._raw().setError((Type.Tag) tpe.tag(), errorValue);
-    }
-
-    return builder;
-  }
+//  private @NotNull Data createErrorData(@NotNull ReqOutputVarProjection projection, @NotNull ErrorValue errorValue) {
+//    // create data instance with all requested tags set to error
+//
+//    Type type = (Type) projection.type();
+//    Data.Builder builder = type.createDataBuilder();
+//
+//    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
+//      builder._raw().setError((Type.Tag) tpe.tag(), errorValue);
+//    }
+//
+//    return builder;
+//  }
 }

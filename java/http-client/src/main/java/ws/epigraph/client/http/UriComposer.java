@@ -37,19 +37,12 @@ import java.util.BitSet;
 public final class UriComposer {
   protected static final BitSet SAFE_CHARACTERS = new BitSet(256);
 
-  // Static initializer for www_form_url
   static {
     // alpha characters
-    for (int i = 'a'; i <= 'z'; i++) {
-      SAFE_CHARACTERS.set(i);
-    }
-    for (int i = 'A'; i <= 'Z'; i++) {
-      SAFE_CHARACTERS.set(i);
-    }
+    for (int i = 'a'; i <= 'z'; i++) { SAFE_CHARACTERS.set(i); }
+    for (int i = 'A'; i <= 'Z'; i++) { SAFE_CHARACTERS.set(i); }
     // numeric characters
-    for (int i = '0'; i <= '9'; i++) {
-      SAFE_CHARACTERS.set(i);
-    }
+    for (int i = '0'; i <= '9'; i++) { SAFE_CHARACTERS.set(i); }
 
     CharSequence specialCharacters = "-_.*()<>{}";
 
@@ -149,6 +142,6 @@ public final class UriComposer {
 
     printer.print(fieldName, path);
 
-    return sb.toString();
+    return sb.getString();
   }
 }
