@@ -51,5 +51,7 @@ public class JsonFormatFactories implements FormatFactories {
   }
 
   @Override
-  public @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory() { return new ReqOutputJsonFormatWriter.JsonFormatWriterFactory(); }
+  public @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory() {
+    return new ReqOutputJsonFormatWriter.ReqOutputJsonFormatWriterFactory();
+  }
 }

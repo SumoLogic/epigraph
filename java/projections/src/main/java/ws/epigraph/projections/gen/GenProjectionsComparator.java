@@ -38,7 +38,7 @@ public class GenProjectionsComparator<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
 
-  private Map<RecEntry, Set<RecEntry>> visited = new HashMap<>();
+  private final Map<RecEntry, Set<RecEntry>> visited = new HashMap<>();
 
   /**
    * Checks if two var projections are structurally equal. Projection types are not checked.

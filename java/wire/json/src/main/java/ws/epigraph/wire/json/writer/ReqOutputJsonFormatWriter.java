@@ -23,296 +23,52 @@ import net.jcip.annotations.ThreadSafe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.*;
-import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.data.Datum;
 import ws.epigraph.projections.req.output.*;
-import ws.epigraph.types.*;
-import ws.epigraph.types.RecordType.Field;
-import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.ReqOutputFormatWriter;
 import ws.epigraph.wire.WireFormat;
 import ws.epigraph.wire.json.JsonFormat;
 
-import java.io.*;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static ws.epigraph.wire.json.JsonFormatCommon.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 @NotThreadSafe
-public class ReqOutputJsonFormatWriter implements ReqOutputFormatWriter {
-
-  private final @NotNull Writer out;
-  private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
-  private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
-  private int dataStackDepth = 0;
+public class ReqOutputJsonFormatWriter extends AbstractJsonFormatWriter<
+    ReqOutputVarProjection,
+    ReqOutputTagProjectionEntry,
+    ReqOutputModelProjection<?, ?, ?>,
+    ReqOutputRecordModelProjection,
+    ReqOutputFieldProjectionEntry,
+    ReqOutputFieldProjection,
+    ReqOutputMapModelProjection,
+    ReqOutputListModelProjection,
+    ReqOutputPrimitiveModelProjection,
+    ReqOutputKeyProjection
+    > implements ReqOutputFormatWriter {
 
   public ReqOutputJsonFormatWriter(@NotNull OutputStream out) {
     this(out, StandardCharsets.UTF_8);
   }
 
   public ReqOutputJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
-    this.out = new BufferedWriter(new OutputStreamWriter(out, charset));
+    super(out, charset);
   }
 
   @Override
-  public void close() throws IOException { out.close(); }
-
-  public void reset() {
-    visitedData.clear();
-    visitedDataNoProjection.clear();
-    dataStackDepth = 0;
-  }
-
-  @Override
-  public void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException {
-    if (data == null) {
-      out.write("null");
-    } else {
-      TypeApi type = data.type();
-      assert projection.type().isAssignableFrom(type);
-      writeData(projection.polymorphicTails() != null, varProjections(projection, type), data);
-    }
-  }
-
-  private void writeData(
-      boolean renderPoly,
-      @NotNull Deque<ReqOutputVarProjection> projections, // non-empty, polymorphic tails ignored
-      @NotNull Data data
-  ) throws IOException {
-
-    // don't do recursion check on primitives
-    final TypeKind kind = projections.peek().type().kind();
-    boolean doRecursionCheck = kind != TypeKind.PRIMITIVE;
-
-    List<VisitedDataEntry> visitedDataEntries = visitedData.get(data);
-    if (doRecursionCheck) {
-      Integer prevStackDepth = null;
-      if (visitedDataEntries == null) {
-        visitedDataEntries = new ArrayList<>();
-        visitedData.put(data, visitedDataEntries);
-      } else {
-        // NB this can lead to O(N^3), optimize if causes problems
-        VisitedDataEntry entry =
-            visitedDataEntries.stream().filter(e -> e.matches(projections)).findFirst().orElse(null);
-        if (entry != null)
-          prevStackDepth = entry.depth;
-      }
-
-      if (prevStackDepth != null) {
-        out.write("{\"" + JsonFormat.REC_FIELD + "\":");
-        out.write(String.valueOf(dataStackDepth - prevStackDepth));
-        out.write('}');
-        return;
-      }
-
-      visitedDataEntries.add(new VisitedDataEntry(dataStackDepth++, projections));
-    }
-
-    TypeApi type = projections.peekLast().type(); // use deepest match type from here on
-    // TODO check all projections (not just the ones that matched actual data type)?
-    boolean renderMulti = type.kind() == TypeKind.UNION && monoTag(projections) == null;
-    if (renderPoly) {
-      out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
-      out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection?
-      out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
-    }
-    if (renderMulti) out.write('{');
-    boolean comma = false;
-    for (TagApi tag : type.tags()) {
-      Deque<ReqOutputModelProjection<?, ?, ?>> tagModelProjections =
-          tagModelProjections(tag, projections, () -> new ArrayDeque<>(projections.size()));
-      if (tagModelProjections != null) { // if this tag was mentioned in at least one projection
-        if (renderMulti) {
-          if (comma) out.write(',');
-          else comma = true;
-          out.write('"');
-          out.write(tag.name());
-          out.write("\":");
-        }
-        final @Nullable Val value = data._raw().getValue((Tag) tag);
-        writeValue(
-            value == null || value.getDatum() == null ? tagModelProjections :
-            flatten(new ArrayDeque<>(), tagModelProjections, value.getDatum().type()),
-            value
-        );
-      }
-    } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
-    if (renderMulti) out.write('}');
-    if (renderPoly) out.write('}');
-
-    if (doRecursionCheck) {
-      dataStackDepth--;
-      visitedDataEntries.removeIf(e -> e.depth == dataStackDepth);
-      if (visitedDataEntries.isEmpty())
-        visitedData.remove(data);
-    }
-
-  }
-
-  private void writeValue(@NotNull Deque<ReqOutputModelProjection<?, ?, ?>> projections, @Nullable Val value)
-      throws IOException {
-    if (value == null) { // TODO in case of null value we should probably render NO_VALUE error?
-      out.write("null");
-    } else {
-      ErrorValue error = value.getError();
-      if (error == null) writeDatum(projections, value.getDatum());
-      else writeError(error);
-    }
-  }
-
-  @Override
-  public void writeDatum(
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
-      @Nullable Datum datum)
-      throws IOException {
-
-    final Deque<ReqOutputModelProjection<?, ?, ?>> projections;
-    if (datum == null) {
-      projections = new ArrayDeque<>(1);
-      projections.add(projection);
-    } else
-      projections = modelProjections(projection, datum.type());
-
-    writeDatum(projections, datum);
-  }
-
-  @SuppressWarnings("unchecked")
-  private void writeDatum(
-      @NotNull Deque<? extends ReqOutputModelProjection<?, ?, ?>> projections,
-      @Nullable Datum datum)
-      throws IOException {
-
-    DatumTypeApi model = projections.peekLast().type();
-    boolean renderPoly = projections.stream().anyMatch(p -> p.polymorphicTails() != null);
-
-    Deque<? extends ReqOutputModelProjection<?, ?, ?>> metaProjections = projections.stream()
-        .map(ReqOutputModelProjection::metaProjection)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toCollection(ArrayDeque::new));
-
-    if (renderPoly) {
-      out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
-      out.write(model.name().toString()); // TODO use (potentially short) type name used in request projection?
-      out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
-    }
-    if (!metaProjections.isEmpty()) {
-      out.write("{\"");
-      out.write(JsonFormat.DATUM_META_FIELD);
-      out.write("\":");
-      writeDatum(metaProjections, datum == null ? null : datum._raw().meta());
-      out.write(",\"");
-      out.write(JsonFormat.DATUM_VALUE_FIELD);
-      out.write("\":");
-    }
-
-    if (datum == null) {
-      out.write("null");
-    } else {
-      switch (model.kind()) {
-        case RECORD:
-          writeRecord((Deque<ReqOutputRecordModelProjection>) projections, (RecordDatum) datum);
-          break;
-        case MAP:
-          writeMap((Deque<ReqOutputMapModelProjection>) projections, (MapDatum) datum);
-          break;
-        case LIST:
-          writeList((Deque<ReqOutputListModelProjection>) projections, (ListDatum) datum);
-          break;
-        case PRIMITIVE:
-          writePrimitive((Deque<ReqOutputPrimitiveModelProjection>) projections, (PrimitiveDatum<?>) datum);
-          break;
-        case ENUM:
-//            writeEnum((Deque<ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
-//            break;
-        case UNION:
-        default:
-          throw new UnsupportedOperationException(model.kind().name());
-      }
-    }
-
-    if (!metaProjections.isEmpty()) {
-      out.write('}');
-    }
-    if (renderPoly) out.write('}');
-  }
-
-  @Override
-  public void writeError(@NotNull ErrorValue error) throws IOException {
-    out.write("{\"" + JsonFormat.ERROR_CODE_FIELD + "\":");
-    out.write(error.statusCode().toString());
-    out.write(",\"" + JsonFormat.ERROR_MESSAGE_FIELD + "\":");
-    writeString(error.message());
-    out.write('}');
-  }
-
-  private void writeRecord(
-      @NotNull Deque<ReqOutputRecordModelProjection> projections, // non-empty
-      @NotNull RecordDatum datum
-  ) throws IOException {
-    out.write('{');
-    // TODO take type from announced type tag (same for other datum kinds)?
-    RecordTypeApi type = projections.peekLast().type();
-    boolean comma = false;
-    for (FieldApi field : type.fields()) {
-      Deque<ReqOutputVarProjection> varProjections =
-          fieldVarProjections(projections, field, () -> new ArrayDeque<>(projections.size()));
-      if (varProjections != null) { // if this field was mentioned in at least one projection
-        Data fieldData = datum._raw().getData((Field) field);
-        if (fieldData != null) {
-          if (comma) out.write(',');
-          else comma = true;
-          out.write('"');
-          out.write(field.name());
-          out.write("\":");
-          writeData(
-              varProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null),
-              flatten(new ArrayDeque<>(), varProjections, fieldData.type()),
-              fieldData
-          );
-        }
-      }
-    }
-    out.write('}');
-  }
-
-  private void writeMap(
-      @NotNull Deque<ReqOutputMapModelProjection> projections, // non-empty
-      @NotNull MapDatum datum
-  ) throws IOException {
-    out.write("[");
-    List<ReqOutputKeyProjection> keyProjections = keyProjections(projections);
-    Deque<ReqOutputVarProjection> valueProjections = subProjections(
-        projections,
-        ReqOutputMapModelProjection::itemsProjection
-    );
-    boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
-    if (keyProjections == null) writeMapEntries(
-        valueProjections,
-        polymorphicCache,
-        datum._raw().elements().entrySet(),
-        Map.Entry::getKey,
-        Map.Entry::getValue
-    );
-    else writeMapEntries( // TODO check ReqOutputMapModelProjection::keysRequired() and throw(?) if a key is missing
-        valueProjections,
-        polymorphicCache,
-        keyProjections,
-        ReqOutputKeyProjection::value,
-        kp -> datum._raw().elements().get(kp.value()) // Datum.equals() contract says this is ok.
-    );
-    out.write("]");
+  protected @NotNull Datum keyDatum(final @NotNull ReqOutputKeyProjection keyProjection) {
+    return keyProjection.value();
   }
 
   /**
    * Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately.
    */
-  private static @Nullable List<ReqOutputKeyProjection> keyProjections(
+  @Override
+  protected @Nullable List<ReqOutputKeyProjection> keyProjections(
       @NotNull Deque<ReqOutputMapModelProjection> projections // non-empty
   ) {
     switch (projections.size()) {
@@ -332,294 +88,9 @@ public class ReqOutputJsonFormatWriter implements ReqOutputFormatWriter {
     }
   }
 
-  private static <P> @NotNull Deque<ReqOutputVarProjection> subProjections(
-      @NotNull Deque<? extends P> projections, // non-empty
-      @NotNull Function<P, ReqOutputVarProjection> varFunc
-  ) {
-    assert !projections.isEmpty() : "no projection(s)";
-    ArrayDeque<ReqOutputVarProjection> subProjections = new ArrayDeque<>(projections.size());
-    for (P projection : projections) subProjections.add(varFunc.apply(projection));
-    return subProjections;
-  }
-
-  private <E> void writeMapEntries(
-      @NotNull Deque<ReqOutputVarProjection> valueProjections,
-      @Nullable Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache,
-      @NotNull Iterable<E> entries,
-      @NotNull Function<E, @NotNull Datum> keyFunc,
-      @NotNull Function<E, @Nullable Data> valueFunc
-  ) throws IOException {
-    boolean comma = false;
-    for (E entry : entries) {
-      @NotNull Datum key = keyFunc.apply(entry);
-      @Nullable Data valueData = valueFunc.apply(entry);
-      if (valueData != null) {
-        if (comma) out.write(',');
-        else comma = true;
-        out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
-        writeDatum(key);
-        out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
-        Deque<ReqOutputVarProjection> flatValueProjections = polymorphicCache == null
-                                                             ? valueProjections
-                                                             : polymorphicCache.computeIfAbsent(
-                                                                 valueData.type(),
-                                                                 t -> flatten(new ArrayDeque<>(), valueProjections, t)
-                                                             );
-        writeData(polymorphicCache != null, flatValueProjections, valueData);
-        out.write('}');
-      }
-    }
-  }
-
-  private void writeList(@NotNull Deque<ReqOutputListModelProjection> projections, @NotNull ListDatum datum)
-      throws IOException {
-    out.write('[');
-    Deque<ReqOutputVarProjection> elementProjections = subProjections(
-        projections,
-        ReqOutputListModelProjection::itemsProjection
-    );
-    // TODO extract following to separate method and re-use in maps, too?
-    boolean polymorphicValue = elementProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<ReqOutputVarProjection>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
-    boolean comma = false;
-    for (Data element : datum._raw().elements()) {
-      if (comma) out.write(',');
-      else comma = true;
-      Deque<ReqOutputVarProjection> flatElementProjections = polymorphicCache == null
-                                                             ? elementProjections
-                                                             : polymorphicCache.computeIfAbsent(
-                                                                 element.type(),
-                                                                 t -> flatten(new ArrayDeque<>(), elementProjections, t)
-                                                             );
-      writeData(polymorphicCache != null, flatElementProjections, element);
-    }
-    out.write(']');
-  }
-
-  private void writePrimitive(
-      @NotNull Deque<ReqOutputPrimitiveModelProjection> projections,
-      @NotNull PrimitiveDatum<?> datum
-  ) throws IOException { writePrimitive(datum); }
-
-  private static @NotNull Deque<ReqOutputVarProjection> varProjections(
-      @NotNull ReqOutputVarProjection projection,
-      @NotNull TypeApi varType
-  ) { return append(new ArrayDeque<>(5), projection, varType); }
-
-  private static @NotNull Deque<ReqOutputModelProjection<?, ?, ?>> modelProjections(
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
-      @NotNull DatumTypeApi modelType
-  ) { return append(new ArrayDeque<>(5), projection, modelType); }
-
-  // FIXME take explicit type for all projectionless writes below
-
-  @Override
-  public void writeData(@Nullable Data data) throws IOException {
-    if (data == null) {
-      out.write("null");
-    } else {
-      final Integer prevStackDepth = visitedDataNoProjection.get(data);
-
-      if (prevStackDepth != null) {
-        out.write("{\"" + JsonFormat.REC_FIELD + "\":");
-        out.write(String.valueOf(dataStackDepth - prevStackDepth));
-        out.write('}');
-        return;
-      }
-      visitedDataNoProjection.put(data, dataStackDepth++);
-
-      Type type = data.type();
-      if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
-        out.write('{');
-        boolean comma = false;
-        for (Tag tag : type.tags()) {
-          Val value = data._raw().getValue(tag);
-          if (value != null) {
-            if (comma) out.write(',');
-            else comma = true;
-            out.write('"');
-            out.write(tag.name());
-            out.write("\":");
-            writeValue(value);
-          }
-        }
-        out.write('}');
-      } else {
-        Val value = data._raw().getValue(((DatumType) type).self);
-        if (value == null) writeError(NO_VALUE);
-        else writeValue(value);
-      }
-    }
-
-    visitedDataNoProjection.remove(data);
-    dataStackDepth--;
-  }
-
-  private static final ErrorValue NO_VALUE = new ErrorValue(500, "No value", null);
-
-  @Override
-  public void writeValue(@NotNull Val value) throws IOException {
-    ErrorValue error = value.getError();
-    if (error == null) writeDatum(value.getDatum());
-    else writeError(error);
-  }
-
-  @Override
-  public void writeDatum(@Nullable Datum datum) throws IOException {
-    if (datum == null) {
-      out.write("null");
-    } else {
-      DatumType model = datum.type();
-      switch (model.kind()) {
-        case RECORD:
-          writeRecord((RecordDatum) datum);
-          break;
-        case MAP:
-          writeMap((MapDatum) datum);
-          break;
-        case LIST:
-          writeList((ListDatum) datum);
-          break;
-        case PRIMITIVE:
-          writePrimitive((PrimitiveDatum<?>) datum);
-          break;
-        case ENUM:
-//        writeEnum((EnumDatum) datum);
-//        break;
-        case UNION:
-        default:
-          throw new UnsupportedOperationException(model.kind().name());
-      }
-    }
-  }
-
-  private void writeRecord(@NotNull RecordDatum datum) throws IOException {
-    out.write('{');
-    boolean comma = false;
-    for (Field field : datum.type().fields()) {
-      Data fieldData = datum._raw().getData(field);
-      if (fieldData != null) {
-        if (comma) out.write(',');
-        else comma = true;
-        out.write('"');
-        out.write(field.name());
-        out.write("\":");
-        writeData(fieldData);
-      }
-    }
-    out.write('}');
-  }
-
-  private void writeMap(@NotNull MapDatum datum) throws IOException {
-    out.write("[");
-    boolean comma = false;
-    for (Map.Entry<Datum.Imm, @NotNull ? extends Data> entry : datum._raw().elements().entrySet()) {
-      if (comma) out.write(',');
-      else comma = true;
-      out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
-      writeDatum(entry.getKey());
-      out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
-      writeData(entry.getValue());
-      out.write('}');
-    }
-    out.write("]");
-  }
-
-  private void writeList(@NotNull ListDatum datum) throws IOException {
-    out.write('[');
-    boolean comma = false;
-    for (Data elementData : datum._raw().elements()) {
-      if (comma) out.write(',');
-      else comma = true;
-      writeData(elementData);
-    }
-    out.write(']');
-  }
-
-  private void writePrimitive(@NotNull PrimitiveDatum<?> datum) throws IOException {
-    if (datum instanceof StringDatum) writeString(((StringDatum) datum).getVal());
-    else if (datum instanceof DoubleDatum) writeDouble(((DoubleDatum) datum).getVal());
-    else out.write(datum.getVal().toString());
-  }
-
-  /**
-   * See https://tools.ietf.org/html/rfc7159#section-6.
-   */
-  private void writeDouble(@NotNull Double d) throws IOException {
-    if (d.isInfinite() || d.isNaN()) out.write("null"); // TODO render ErrorValue(500) instead?
-    else out.write(d.toString()); // TODO more compact representation / better rfc compliance?
-  }
-
-  /**
-   * See https://tools.ietf.org/html/rfc7159#section-7.
-   */
-  private void writeString(@Nullable String s) throws IOException {
-    if (s == null) {
-      out.write("null");
-    } else {
-      out.write('"');
-      int length = s.length(), from = 0;
-      String escape = null;
-      for (int i = 0; i < length; ++i) {
-        char c = s.charAt(i);
-        switch (c) {
-          case '\b':
-            escape = "\\b";
-            break;
-          case '\t':
-            escape = "\\t";
-            break;
-          case '\n':
-            escape = "\\n";
-            break;
-          case '\f':
-            escape = "\\f";
-            break;
-          case '\r':
-            escape = "\\r";
-            break;
-          case '"':
-            escape = "\\\"";
-            break;
-          case '\\':
-            escape = "\\\\";
-            break;
-          default:
-            if (c < 0x20) escape = "\\u00" + HEX_DIGITS[c >> 4] + HEX_DIGITS[c & 0x0f];
-        }
-        if (escape != null) {
-          int len = i - from;
-          if (len != 0) out.write(s, from, len);
-          out.write(escape);
-          escape = null;
-          from = i + 1;
-        }
-      }
-      int len = length - from;
-      if (len != 0) out.write(s, from, len);
-      out.write('"');
-    }
-  }
-
-  private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
-
-  private static final class VisitedDataEntry {
-    final int depth;
-    final Collection<ReqOutputVarProjection> projections;
-
-    VisitedDataEntry(final int depth, final Collection<ReqOutputVarProjection> projections) {
-      this.depth = depth;
-      this.projections = projections;
-    }
-
-    boolean matches(Collection<ReqOutputVarProjection> projections) {
-      return new ReqOutputProjectionsComparator(false, false).
-          varEquals(projections, this.projections);
-    }
-  }
-
   @ThreadSafe
-  public static final class JsonFormatWriterFactory implements FormatWriter.Factory<ReqOutputJsonFormatWriter> {
+  public static final class ReqOutputJsonFormatWriterFactory
+      implements FormatWriter.Factory<ReqOutputJsonFormatWriter> {
 
     @Contract(pure = true)
     @Override
