@@ -22,6 +22,8 @@ import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqOutputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
+import ws.epigraph.wire.json.writer.OpInputJsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqInputJsonFormatWriter;
 import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
 
 /**
@@ -53,5 +55,15 @@ public class JsonFormatFactories implements FormatFactories {
   @Override
   public @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory() {
     return new ReqOutputJsonFormatWriter.ReqOutputJsonFormatWriterFactory();
+  }
+
+  @Override
+  public @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory() {
+    return new ReqInputJsonFormatWriter.ReqInputJsonFormatWriterFactory();
+  }
+
+  @Override
+  public @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory() {
+    return new OpInputJsonFormatWriter.OpInputJsonFormatWriterFactory();
   }
 }
