@@ -25,6 +25,11 @@
 - [x] operations codegen: parameter accessors should be non-null for requried parameters
 - [ ] `OperationFilterChains`: add filters that ensure req<->op validity
 - [ ] Feature: Wrap `Data` in Futures to support async operations
+- [ ] Performance: true async support for http
+  - [ ] `FormatReader` must use push, not pull style: feed it with data chunks until the whole object is ready
+  - [ ] server and client `ServerProtocol.read*` methods must return `CompletableFuture` of results and stay async
+  - [ ] `AbstractRemoteOperationInvocation` must use new push readers instead of in-memory buffering `BasicAsyncResponseConsumer`
+  - See also: https://github.com/FasterXML/jackson-core/issues/57
 
 # Type system
 - [ ] Enums

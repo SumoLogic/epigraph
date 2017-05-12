@@ -16,31 +16,32 @@
 
 package ws.epigraph.client;
 
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.reactor.IOReactorException;
+import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.client.http.AsyncHttpRequestDispatcher;
-
-import java.io.IOException;
+import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
+import ws.epigraph.service.ServiceInitializationException;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AsyncUndertowHttpClientTest extends AbstractUndertowHttpClientTest {
+public class UndertowHttpClientTest extends AbstractHttpClientTest {
+  private static Undertow server;
+
   @BeforeClass
-  public static void startDispatcher() throws IOReactorException {
-    dispatcher = new AsyncHttpRequestDispatcher(
-        ConnectionConfig.DEFAULT,
-        IOReactorConfig.DEFAULT,
-        2,
-        TIMEOUT
-    );
+  public static void start() throws ServiceInitializationException {
+    server = Undertow.builder()
+        .addHttpListener(PORT, HOST)
+        .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
+        .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))
+        .build();
+
+    server.start();
   }
 
   @AfterClass
-  public static void stopDispatcher() throws IOException {
-    dispatcher.shutdown();
+  public static void stop() {
+    server.stop();
   }
 }

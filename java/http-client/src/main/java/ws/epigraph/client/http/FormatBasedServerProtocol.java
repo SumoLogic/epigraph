@@ -17,8 +17,8 @@
 package ws.epigraph.client.http;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -38,7 +38,10 @@ import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.util.IOUtil;
-import ws.epigraph.wire.*;
+import ws.epigraph.wire.FormatException;
+import ws.epigraph.wire.FormatFactories;
+import ws.epigraph.wire.FormatReader;
+import ws.epigraph.wire.ReqOutputFormatReader;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -71,12 +74,12 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull HttpEntity createRequestEntity(
+  public @NotNull HttpAsyncContentProducer createRequestContentProducer(
       final @Nullable ReqInputVarProjection reqInputProjection,
       final @Nullable OpInputVarProjection opInputProjection,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    return null; // todo
+    return null;  // todo
   }
 
   @Override

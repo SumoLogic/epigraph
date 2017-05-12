@@ -16,8 +16,8 @@
 
 package ws.epigraph.client.http;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -43,7 +43,7 @@ public interface ServerProtocol {
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse);
 
-  @NotNull HttpEntity createRequestEntity(
+  @NotNull HttpAsyncContentProducer createRequestContentProducer(
       @Nullable ReqInputVarProjection reqInputProjection,
       @Nullable OpInputVarProjection opInputProjection,
       @NotNull OperationInvocationContext operationInvocationContext);

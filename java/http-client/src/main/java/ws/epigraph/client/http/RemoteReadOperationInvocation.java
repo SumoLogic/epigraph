@@ -19,6 +19,7 @@ package ws.epigraph.client.http;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
@@ -34,19 +35,20 @@ public class RemoteReadOperationInvocation
 
   public RemoteReadOperationInvocation(
       final @NotNull HttpHost host,
-      final @NotNull HttpRequestDispatcher requestDispatcher,
+      final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
       final @NotNull ReadOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
 
-    super(host, requestDispatcher, resourceName, operationDeclaration, serverProtocol, charset);
+    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset);
   }
 
   @Override
   protected HttpRequest composeHttpRequest(
       final @NotNull ReadOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
+
     return new HttpGet(composeUri(operationRequest));
   }
 

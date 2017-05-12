@@ -17,11 +17,14 @@
 package ws.epigraph.client;
 
 import org.apache.http.HttpHost;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.client.http.FormatBasedServerProtocol;
-import ws.epigraph.client.http.HttpRequestDispatcher;
 import ws.epigraph.client.http.RemoteReadOperationInvocation;
 import ws.epigraph.client.http.ServerProtocol;
 import ws.epigraph.data.Data;
@@ -66,7 +69,7 @@ public abstract class AbstractHttpClientTest {
 
   protected static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
   protected static final ResourceDeclaration resourceDeclaration = UsersResourceDeclaration.INSTANCE;
-  protected static HttpRequestDispatcher dispatcher;
+  protected static CloseableHttpAsyncClient httpClient;
 
   protected final HttpHost httpHost = new HttpHost(HOST, PORT);
   protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(JsonFormatFactories.INSTANCE, CHARSET);
@@ -158,11 +161,12 @@ public abstract class AbstractHttpClientTest {
 
     RemoteReadOperationInvocation inv = new RemoteReadOperationInvocation(
         httpHost,
-        dispatcher,
+        httpClient,
         resourceDeclaration.fieldName(),
         operationDeclaration,
         serverProtocol,
-        CHARSET) {
+        CHARSET
+    ) {
       @Override
       protected @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
         return requestUri == null ? super.composeUri(request) : requestUri;
@@ -204,4 +208,13 @@ public abstract class AbstractHttpClientTest {
         )
     );
   }
+
+  @BeforeClass
+  public static void startClient() {
+    httpClient = HttpAsyncClients.createDefault();
+    httpClient.start();
+  }
+
+  @AfterClass
+  public static void stopClient() throws IOException { httpClient.close(); }
 }

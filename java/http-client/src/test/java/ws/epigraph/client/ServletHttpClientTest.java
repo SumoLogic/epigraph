@@ -16,29 +16,31 @@
 
 package ws.epigraph.client;
 
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.reactor.IOReactorException;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletHandler;
+import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.client.http.AsyncHttpRequestDispatcher;
-import ws.epigraph.server.http.jetty.EpigraphJettyHandler;
+import ws.epigraph.server.http.servlet.EpigraphServlet;
+import ws.epigraph.service.Service;
+import ws.epigraph.service.ServiceInitializationException;
 
-import java.io.IOException;
+import javax.servlet.ServletConfig;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class AsyncJettyHandlerHttpClientTest extends AbstractHttpClientTest {
+public class ServletHttpClientTest extends AbstractHttpClientTest {
   private static Server jettyServer;
 
   @BeforeClass
   public static void start() throws Exception {
     jettyServer = new Server(PORT);
-    EpigraphJettyHandler handler = new EpigraphJettyHandler(buildUsersService(), -1);
-    jettyServer.setHandler(handler);
 
+    ServletHandler handler = new ServletHandler();
+    handler.addServletWithMapping(TestServlet.class, "/*");
+
+    jettyServer.setHandler(handler);
     jettyServer.start();
   }
 
@@ -47,18 +49,10 @@ public class AsyncJettyHandlerHttpClientTest extends AbstractHttpClientTest {
     jettyServer.stop();
   }
 
-  @BeforeClass
-  public static void startDispatcher() throws IOReactorException {
-    dispatcher = new AsyncHttpRequestDispatcher(
-        ConnectionConfig.DEFAULT,
-        IOReactorConfig.DEFAULT,
-        2,
-        TIMEOUT
-    );
-  }
-
-  @AfterClass
-  public static void stopDispatcher() throws IOException {
-    dispatcher.shutdown();
+  public static class TestServlet extends EpigraphServlet {
+    @Override
+    protected @NotNull Service initService(final ServletConfig config) throws ServiceInitializationException {
+      return buildUsersService();
+    }
   }
 }

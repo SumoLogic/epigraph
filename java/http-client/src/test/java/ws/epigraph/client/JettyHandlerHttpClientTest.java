@@ -16,32 +16,29 @@
 
 package ws.epigraph.client;
 
-import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
+import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
-import ws.epigraph.service.ServiceInitializationException;
+import ws.epigraph.server.http.jetty.EpigraphJettyHandler;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractUndertowHttpClientTest extends AbstractHttpClientTest {
-  private static Undertow server;
+public class JettyHandlerHttpClientTest extends AbstractHttpClientTest {
+  private static Server jettyServer;
 
   @BeforeClass
-  public static void start() throws ServiceInitializationException {
-    server = Undertow.builder()
-        .addHttpListener(PORT, HOST)
-        .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
-        .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))
-        .build();
+  public static void start() throws Exception {
+    jettyServer = new Server(PORT);
+    EpigraphJettyHandler handler = new EpigraphJettyHandler(buildUsersService(), -1);
+    jettyServer.setHandler(handler);
 
-    server.start();
+    jettyServer.start();
   }
 
   @AfterClass
-  public static void stop() {
-    server.stop();
+  public static void stop() throws Exception {
+    jettyServer.stop();
   }
+
 }

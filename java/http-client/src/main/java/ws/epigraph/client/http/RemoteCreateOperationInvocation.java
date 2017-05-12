@@ -16,9 +16,13 @@
 
 package ws.epigraph.client.http;
 
-import org.apache.http.*;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.nio.client.HttpAsyncClient;
+import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
@@ -34,12 +38,12 @@ public class RemoteCreateOperationInvocation
 
   protected RemoteCreateOperationInvocation(
       final @NotNull HttpHost host,
-      final @NotNull HttpRequestDispatcher requestDispatcher,
+      final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
       final @NotNull CreateOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
-    super(host, requestDispatcher, resourceName, operationDeclaration, serverProtocol, charset);
+    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset);
   }
 
   @Override
@@ -58,14 +62,19 @@ public class RemoteCreateOperationInvocation
 
     System.out.println("uri = " + uri);
 
-    HttpPost post = new HttpPost(uri);
-    post.setEntity(serverProtocol.createRequestEntity(
+    return new HttpPost(uri);
+  }
+
+  @Override
+  protected @Nullable HttpAsyncContentProducer requestContentProducer(
+      @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
+
+    ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+
+    return serverProtocol.createRequestContentProducer(
         inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
         operationDeclaration.inputProjection().varProjection(),
         operationInvocationContext
-    ));
-
-    return post;
+    );
   }
-
 }

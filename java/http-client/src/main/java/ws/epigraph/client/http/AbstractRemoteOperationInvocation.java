@@ -16,10 +16,15 @@
 
 package ws.epigraph.client.http;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
+import org.apache.http.*;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.nio.client.HttpAsyncClient;
+import org.apache.http.nio.entity.HttpAsyncContentProducer;
+import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -35,11 +40,11 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractRemoteOperationInvocation <Req extends OperationRequest, OD extends OperationDeclaration>
+public abstract class AbstractRemoteOperationInvocation<Req extends OperationRequest, OD extends OperationDeclaration>
     implements OperationInvocation<Req, ReadOperationResponse<?>> {
 
   protected final @NotNull HttpHost host;
-  protected final @NotNull HttpRequestDispatcher requestDispatcher;
+  protected final @NotNull HttpAsyncClient httpClient;
   protected final @NotNull String resourceName;
   protected final @NotNull OD operationDeclaration;
   protected final @NotNull ServerProtocol serverProtocol;
@@ -47,14 +52,14 @@ public abstract class AbstractRemoteOperationInvocation <Req extends OperationRe
 
   protected AbstractRemoteOperationInvocation(
       final @NotNull HttpHost host,
-      final @NotNull HttpRequestDispatcher requestDispatcher,
+      final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
       final @NotNull OD operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
 
     this.host = host;
-    this.requestDispatcher = requestDispatcher;
+    this.httpClient = httpClient;
     this.resourceName = resourceName;
     this.operationDeclaration = operationDeclaration;
     this.serverProtocol = serverProtocol;
@@ -79,18 +84,76 @@ public abstract class AbstractRemoteOperationInvocation <Req extends OperationRe
 
     httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name());
 
-    return requestDispatcher.runRequest(
-        host,
-        httpRequest,
-        response -> serverProtocol.readResponse(
-            request.outputProjection().varProjection(),
-            context,
-            response
-        )
+    final HttpAsyncRequestProducer requestProducer;
+    HttpAsyncContentProducer contentProducer = requestContentProducer(request, context);
+
+    if (contentProducer == null)
+      requestProducer = new BasicAsyncRequestProducer(host, httpRequest);
+    else {
+      if (!(httpRequest instanceof HttpEntityEnclosingRequest))
+        throw new IllegalStateException(String.format(
+            "Operation %s/%s remote invocation error: request is not an HttpEntityEnclosingRequest (%s), while contentProducer is non null",
+            resourceName,
+            operationDeclaration.nameOrDefaultName(),
+            httpRequest.getClass().getName()
+        ));
+
+      requestProducer = new RequestProducer(host, (HttpEntityEnclosingRequest) httpRequest, contentProducer);
+    }
+
+    CompletableFuture<OperationInvocationResult<ReadOperationResponse<?>>> f = new CompletableFuture<>();
+
+    httpClient.execute(
+        requestProducer,
+
+        // NB this consumer does in-memory buffering of the respose and currently there's no way around it
+        // see 'true async support for http' in `todo.md`
+        new BasicAsyncResponseConsumer(),
+
+        new FutureCallback<HttpResponse>() {
+          @Override
+          public void completed(final HttpResponse result) {
+            f.complete(
+                serverProtocol.readResponse(
+                    request.outputProjection().varProjection(),
+                    context,
+                    result
+                )
+            );
+          }
+
+          @Override
+          public void failed(final Exception ex) {
+            f.completeExceptionally(ex);
+          }
+
+          @Override
+          public void cancelled() {
+            f.cancel(false);
+          }
+        }
     );
+
+    return f;
+
   }
 
   protected abstract HttpRequest composeHttpRequest(
       @NotNull Req operationRequest,
       @NotNull OperationInvocationContext operationInvocationContext);
+
+  protected @Nullable HttpAsyncContentProducer requestContentProducer(
+      @NotNull Req request,
+      @NotNull OperationInvocationContext context) { return null; }
+
+  private static class RequestProducer extends BasicAsyncRequestProducer {
+    RequestProducer(
+        final HttpHost target,
+        final HttpEntityEnclosingRequest request,
+        final HttpAsyncContentProducer producer) {
+
+      super(target, request, producer);
+    }
+  }
+
 }
