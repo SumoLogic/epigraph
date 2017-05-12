@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+package ws.epigraph.client.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.service.operations.OperationRequest;
-import ws.epigraph.service.operations.OperationResponse;
 
-import java.util.concurrent.CompletableFuture;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * Operation invocation
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse> {
-  /**
-   * Invokes an operation returning a future of invocation result
-   *
-   * @param request request
-   * @param context operation invocation context
-   *
-   * @return future of invocation result
-   */
-  CompletableFuture<OperationInvocationResult<Rsp>> invoke(
-      @NotNull Req request, @NotNull OperationInvocationContext context
-  );
+public interface OutputProducer {
+  void produce(@NotNull OutputStream os) throws IOException;
 }

@@ -43,9 +43,8 @@ public class LocalOperationInvocation<
   public LocalOperationInvocation(final @NotNull Operation<?, Req, Rsp> operation) {this.operation = operation;}
 
   @Override
-  public @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(
-      @NotNull OperationInvocationContext context,
-      @NotNull Req request) {
+  public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      @NotNull Req request, @NotNull OperationInvocationContext context) {
 
     try {
       return operation.process(request).thenApply(OperationInvocationResult::success);

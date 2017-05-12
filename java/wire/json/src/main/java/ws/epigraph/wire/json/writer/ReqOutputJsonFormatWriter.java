@@ -30,6 +30,7 @@ import ws.epigraph.types.*;
 import ws.epigraph.types.RecordType.Field;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.wire.FormatWriter;
+import ws.epigraph.wire.ReqOutputFormatWriter;
 import ws.epigraph.wire.WireFormat;
 import ws.epigraph.wire.json.JsonFormat;
 
@@ -43,18 +44,18 @@ import java.util.stream.Collectors;
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
 @NotThreadSafe
-public class JsonFormatWriter implements FormatWriter {
+public class ReqOutputJsonFormatWriter implements ReqOutputFormatWriter {
 
   private final @NotNull Writer out;
   private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
   private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
   private int dataStackDepth = 0;
 
-  public JsonFormatWriter(@NotNull OutputStream out) {
+  public ReqOutputJsonFormatWriter(@NotNull OutputStream out) {
     this(out, StandardCharsets.UTF_8);
   }
 
-  public JsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
+  public ReqOutputJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
     this.out = new BufferedWriter(new OutputStreamWriter(out, charset));
   }
 
@@ -618,7 +619,7 @@ public class JsonFormatWriter implements FormatWriter {
   }
 
   @ThreadSafe
-  public static final class JsonFormatWriterFactory implements FormatWriter.Factory {
+  public static final class JsonFormatWriterFactory implements FormatWriter.Factory<ReqOutputJsonFormatWriter> {
 
     @Contract(pure = true)
     @Override
@@ -627,8 +628,8 @@ public class JsonFormatWriter implements FormatWriter {
     }
 
     @Override
-    public @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
-      return new JsonFormatWriter(out, charset);
+    public @NotNull ReqOutputJsonFormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
+      return new ReqOutputJsonFormatWriter(out, charset);
     }
   }
 

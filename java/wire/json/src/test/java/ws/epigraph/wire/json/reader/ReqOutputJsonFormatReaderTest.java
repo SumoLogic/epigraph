@@ -29,7 +29,7 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -402,13 +402,13 @@ public class ReqOutputJsonFormatReaderTest {
 
     if (!DataComparator.equals(expectedData, data)) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      JsonFormatWriter jsonWriter = new JsonFormatWriter(baos);
+      ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
       jsonWriter.writeData(data);
       jsonWriter.close();
       String dataStr = baos.toString();
 
       baos = new ByteArrayOutputStream();
-      jsonWriter = new JsonFormatWriter(baos);
+      jsonWriter = new ReqOutputJsonFormatWriter(baos);
       jsonWriter.writeData(expectedData);
       jsonWriter.close();
       String expectedDataStr = baos.toString();

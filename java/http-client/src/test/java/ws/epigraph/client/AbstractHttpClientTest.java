@@ -177,7 +177,7 @@ public abstract class AbstractHttpClientTest {
         resolver
     );
 
-    return inv.invoke(opctx, request).get();
+    return inv.invoke(request, opctx).get();
   }
 
   private String printData(final Data data) {

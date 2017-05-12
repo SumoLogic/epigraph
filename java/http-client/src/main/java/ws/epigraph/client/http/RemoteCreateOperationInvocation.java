@@ -16,41 +16,56 @@
 
 package ws.epigraph.client.http;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.*;
+import org.apache.http.client.methods.HttpPost;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.service.operations.ReadOperationRequest;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.service.operations.CreateOperationRequest;
 
 import java.nio.charset.Charset;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RemoteReadOperationInvocation
-    extends AbstractRemoteOperationInvocation<ReadOperationRequest, ReadOperationDeclaration> {
+public class RemoteCreateOperationInvocation
+    extends AbstractRemoteOperationInvocation<CreateOperationRequest, CreateOperationDeclaration> {
 
-  public RemoteReadOperationInvocation(
+  protected RemoteCreateOperationInvocation(
       final @NotNull HttpHost host,
       final @NotNull HttpRequestDispatcher requestDispatcher,
       final @NotNull String resourceName,
-      final @NotNull ReadOperationDeclaration operationDeclaration,
+      final @NotNull CreateOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
-
     super(host, requestDispatcher, resourceName, operationDeclaration, serverProtocol, charset);
   }
 
   @Override
   protected HttpRequest composeHttpRequest(
-      final @NotNull ReadOperationRequest operationRequest,
+      final @NotNull CreateOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
-    return new HttpGet(composeUri(operationRequest));
+
+    ReqInputFieldProjection inputFieldProjection = operationRequest.inputProjection();
+
+    String uri = UriComposer.composeCreateUri(
+        resourceName,
+        operationRequest.path(),
+        inputFieldProjection,
+        operationRequest.outputProjection()
+    );
+
+    System.out.println("uri = " + uri);
+
+    HttpPost post = new HttpPost(uri);
+    post.setEntity(serverProtocol.createRequestEntity(
+        inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
+        operationDeclaration.inputProjection().varProjection(),
+        operationInvocationContext
+    ));
+
+    return post;
   }
 
-  protected @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
-    return UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
-  }
 }

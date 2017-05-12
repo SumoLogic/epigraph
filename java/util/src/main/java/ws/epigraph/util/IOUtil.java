@@ -36,4 +36,15 @@ public final class IOUtil {
 
     return textBuilder.toString();
   }
+
+  public static long copy(@NotNull InputStream input, @NotNull OutputStream os) throws IOException {
+    byte[] buffer = new byte[4096];
+    long count = 0;
+    int n;
+    while ((n = input.read(buffer)) != -1) {
+      os.write(buffer, 0, n);
+      count += n;
+    }
+    return count;
+  }
 }

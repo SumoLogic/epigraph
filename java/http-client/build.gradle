@@ -25,6 +25,7 @@ dependencies {
   compile project(':epigraph-java-wire-common')
   compile project(':epigraph-java-wire-json')
 
+//  compile 'org.apache.httpcomponents:httpasyncclient'
   compile 'org.apache.httpcomponents:httpclient'
   compile 'org.apache.httpcomponents:httpcore-nio'
 

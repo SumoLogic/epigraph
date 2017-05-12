@@ -20,6 +20,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.http.CommonHttpUtil;
 import ws.epigraph.http.Headers;
 import ws.epigraph.psi.PsiProcessingError;
 import ws.epigraph.service.Service;
@@ -28,8 +29,6 @@ import ws.epigraph.url.parser.psi.UrlUrl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -109,18 +108,10 @@ public final class Util {
   }
 
   public static @NotNull Charset getCharset(@NotNull HttpExchange httpExchange) {
-    try {
-      String acceptCharset = httpExchange.getHeader(Headers.ACCEPT_CHARSET);
-      if (acceptCharset != null)
-        return Charset.forName(acceptCharset);
-
-      // todo parse ACCEPT header. Keep in mind that it may contain multiple mime types, so this
-      // method should take desired one as an argument
-
-      return StandardCharsets.UTF_8;
-    } catch (UnsupportedCharsetException ignored) {
-      return StandardCharsets.UTF_8;
-    }
+    return CommonHttpUtil.getCharset(
+        httpExchange.getHeader(Headers.ACCEPT_CHARSET),
+        httpExchange.getHeader(Headers.ACCEPT)
+    );
   }
 
   // async timeouts support. Use `onTimeout` instead once on JDK9

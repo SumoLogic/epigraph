@@ -17,6 +17,7 @@
 package ws.epigraph.client.http;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,19 +25,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.http.CommonHttpUtil;
 import ws.epigraph.http.ContentType;
+import ws.epigraph.http.Headers;
 import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.util.IOUtil;
-import ws.epigraph.wire.FormatException;
-import ws.epigraph.wire.FormatFactories;
-import ws.epigraph.wire.FormatReader;
-import ws.epigraph.wire.ReqOutputFormatReader;
+import ws.epigraph.wire.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -49,6 +51,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
   private final @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory;
+
   private final @NotNull Charset requestCharset; //charset to be used for requests
 
   public FormatBasedServerProtocol(
@@ -68,16 +71,30 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
+  public @NotNull HttpEntity createRequestEntity(
+      final @Nullable ReqInputVarProjection reqInputProjection,
+      final @Nullable OpInputVarProjection opInputProjection,
+      final @NotNull OperationInvocationContext operationInvocationContext) {
+
+    return null; // todo
+  }
+
+  @Override
   public @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse) {
 
     int statusCode = httpResponse.getStatusLine().getStatusCode();
+    Charset charset = CommonHttpUtil.getCharset(
+        Optional.ofNullable(httpResponse.getFirstHeader(Headers.ACCEPT_CHARSET)).map(Header::getValue).orElse(null),
+        Optional.ofNullable(httpResponse.getFirstHeader(Headers.ACCEPT)).map(Header::getValue).orElse(null)
+    );
+
     try {
       if (statusCode == HttpStatusCode.OK) {
         try (InputStream inputStream = httpResponse.getEntity().getContent()) {
-          ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(inputStream);
+          ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(inputStream, charset);
           Data data = formatReader.readData(projection);
           return OperationInvocationResult.success(new ReadOperationResponse<>(data));
         } catch (FormatException e) {
@@ -134,7 +151,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     String string = textBuilder.toString();
     try {
       ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
-          new ByteArrayInputStream(string.getBytes(charset))
+          new ByteArrayInputStream(string.getBytes(charset)), charset
       );
       return formatReader.readError();
     } catch (FormatException ignored) { // log it? not all messages are guaranteed to be in proper format

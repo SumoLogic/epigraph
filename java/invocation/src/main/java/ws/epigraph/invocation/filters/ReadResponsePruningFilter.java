@@ -37,7 +37,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
   public OperationInvocation<Req, ReadOperationResponse<D>>
   apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
 
-    return (context, request) -> invocation.invoke(context, request).thenApply(operationInvocationResult ->
+    return (request, context) -> invocation.invoke(request, context).thenApply(operationInvocationResult ->
         operationInvocationResult.apply(
             readOperationResponse -> {
               Data data = readOperationResponse.getData();

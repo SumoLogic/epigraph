@@ -22,7 +22,7 @@ import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqOutputJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.JsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -51,5 +51,5 @@ public class JsonFormatFactories implements FormatFactories {
   }
 
   @Override
-  public @NotNull FormatWriter.Factory writerFactory() { return new JsonFormatWriter.JsonFormatWriterFactory(); }
+  public @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory() { return new ReqOutputJsonFormatWriter.JsonFormatWriterFactory(); }
 }

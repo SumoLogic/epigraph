@@ -16,11 +16,14 @@
 
 package ws.epigraph.client.http;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
@@ -39,4 +42,9 @@ public interface ServerProtocol {
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse);
+
+  @NotNull HttpEntity createRequestEntity(
+      @Nullable ReqInputVarProjection reqInputProjection,
+      @Nullable OpInputVarProjection opInputProjection,
+      @NotNull OperationInvocationContext operationInvocationContext);
 }

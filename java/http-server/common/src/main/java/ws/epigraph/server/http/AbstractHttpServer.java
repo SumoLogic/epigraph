@@ -244,11 +244,10 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.readOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              operationInvocationContext,
               new ReadOperationRequest(
                   requestUrl.path(),
                   outputProjection.projection()
-              )
+              ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
                   success.getData(),
@@ -445,13 +444,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.createOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              operationInvocationContext,
               new CreateOperationRequest(
                   requestUrl.path(),
                   body,
                   inputProjection,
                   outputProjection.projection()
-              )
+              ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
                   success.getData(),
@@ -598,13 +596,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.updateOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              operationInvocationContext,
               new UpdateOperationRequest(
                   requestUrl.path(),
                   body,
                   updateProjection,
                   outputProjection.projection()
-              )
+              ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
                   success.getData(),
@@ -726,12 +723,11 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               operationFilterChains.deleteOperationInvocation(operation);
 
           return operationInvocation.invoke(
-              operationInvocationContext,
               new DeleteOperationRequest(
                   requestUrl.path(),
                   deleteProjection,
                   outputProjection.projection()
-              )
+              ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
                   success.getData(),
@@ -899,13 +895,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationFilterChains.customOperationInvocation(operation);
 
     return operationInvocation.invoke(
-        operationInvocationContext,
         new CustomOperationRequest(
             requestUrl.path(),
             body,
             inputProjection,
             outputProjection.projection()
-        )
+        ), operationInvocationContext
     ).thenApply(result -> result.mapSuccess(success ->
         new ReadResult(
             success.getData(),

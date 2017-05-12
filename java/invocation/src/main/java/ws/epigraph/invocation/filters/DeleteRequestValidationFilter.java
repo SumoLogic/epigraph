@@ -38,11 +38,11 @@ public class DeleteRequestValidationFilter<Rsp extends OperationResponse>
   @Override
   public OperationInvocation<DeleteOperationRequest, Rsp>
   apply(final OperationInvocation< DeleteOperationRequest, Rsp> invocation) {
-    return (context, request) -> {
+    return (request, context) -> {
       // todo check that req projection matches op projection and that all leaf
       // req var projections have corresponding op var projections with canDelete = true
 
-      return invocation.invoke(context, request);
+      return invocation.invoke(request, context);
     };
   }
 }

@@ -29,6 +29,8 @@ import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -91,8 +93,8 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull ReqOutputJsonFormatReader newFormatReader(final @NotNull InputStream is) throws IOException {
-      return new ReqOutputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(is));
+    public @NotNull ReqOutputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
+      return new ReqOutputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)));
     }
   }
 }

@@ -47,13 +47,13 @@ public class UpdateRequestValidationFilter<Rsp extends OperationResponse>
   @Override
   public OperationInvocation<UpdateOperationRequest, Rsp>
   apply(final OperationInvocation<UpdateOperationRequest, Rsp> invocation) {
-    return (context, request) -> {
+    return (request, context) -> {
       OpInputDataValidator validator = new OpInputDataValidator();
       validator.validateData(request.data(), operationDeclaration.inputProjection().varProjection());
       List<? extends DataValidationError> errors = validator.errors();
 
       return errors.isEmpty()
-             ? invocation.invoke(context, request)
+             ? invocation.invoke(request, context)
              : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
     };
 

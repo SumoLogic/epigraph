@@ -20,24 +20,27 @@ package ws.epigraph.wire;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenVarProjection;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 @NotThreadSafe
-public interface FormatWriter extends AutoCloseable {
-  void writeData(@NotNull ReqOutputVarProjection projection, @Nullable Data data) throws IOException;
+public interface FormatWriter<
+    VP extends GenVarProjection<VP, ?, ?>,
+    MP extends GenModelProjection</*MP*/?, ?, ?, ?>> extends AutoCloseable {
 
-  void writeDatum(@NotNull ReqOutputModelProjection<?, ?, ?> projection, @Nullable Datum datum) throws IOException;
+  void writeData(@NotNull VP projection, @Nullable Data data) throws IOException;
+
+  void writeDatum(@NotNull MP projection, @Nullable Datum datum) throws IOException;
 
   // FIXME take explicit type for all projectionless writes below (or add another set of methods that does):
 
@@ -53,9 +56,9 @@ public interface FormatWriter extends AutoCloseable {
   default void close() throws IOException {}
 
   @ThreadSafe
-  interface Factory {
+  interface Factory<FW extends FormatWriter<?,?>> {
     @NotNull WireFormat format();
 
-    @NotNull FormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset);
+    @NotNull FW newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset);
   }
 }

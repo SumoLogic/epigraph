@@ -31,6 +31,7 @@ import ws.epigraph.types.DatumType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 public interface FormatReader<
     VP extends GenVarProjection<VP, ?, ?>,
@@ -51,7 +52,7 @@ public interface FormatReader<
   interface Factory<FR extends FormatReader<?, ?>> {
     @NotNull WireFormat format();
 
-    @NotNull FR newFormatReader(@NotNull InputStream is) throws IOException;
+    @NotNull FR newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException;
   }
 
 }

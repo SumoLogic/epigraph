@@ -33,9 +33,8 @@ public class FailureOperationInvocation<Req extends OperationRequest, Rsp extend
   public FailureOperationInvocation(@NotNull OperationInvocationError error) {this.error = error;}
 
   @Override
-  public @NotNull CompletableFuture<OperationInvocationResult<Rsp>> invoke(
-      @NotNull OperationInvocationContext context,
-      @NotNull Req request) {
+  public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      @NotNull Req request, @NotNull OperationInvocationContext context) {
     return CompletableFuture.completedFuture(OperationInvocationResult.failure(error));
   }
 }

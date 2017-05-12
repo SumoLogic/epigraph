@@ -49,19 +49,19 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
   @Override
   public OperationInvocation<CustomOperationRequest, Rsp>
   apply(final OperationInvocation<CustomOperationRequest, Rsp> invocation) {
-    return (context, request) -> {
+    return (request, context) -> {
       OpInputDataValidator validator = new OpInputDataValidator();
       Data data = request.data();
       OpInputFieldProjection inputProjection = operationDeclaration.inputProjection();
 
       if (data == null || inputProjection == null)
-        return invocation.invoke(context, request);
+        return invocation.invoke(request, context);
 
       validator.validateData(data, inputProjection.varProjection());
       List<? extends DataValidationError> errors = validator.errors();
 
       return errors.isEmpty()
-             ? invocation.invoke(context, request)
+             ? invocation.invoke(request, context)
              : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
     };
 

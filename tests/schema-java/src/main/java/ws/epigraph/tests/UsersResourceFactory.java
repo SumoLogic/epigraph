@@ -22,6 +22,8 @@ import epigraph.Error;
 import epigraph.PersonId_Error_Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
@@ -53,6 +55,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class UsersResourceFactory extends AbstractUsersResourceFactory {
+  public static final Logger LOG = LoggerFactory.getLogger(UsersResourceFactory.class);
+
   private final UsersStorage storage;
 
   public UsersResourceFactory(@NotNull UsersStorage storage) {
@@ -136,7 +140,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       // keys check
       final List<OutputPersonMapKeyProjection> keys = mapProjection.keys();
       if (keys != null) {
-        System.out.println("Requested keys: " +
+        LOG.debug("Requested keys: " +
                            keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
         );
       }

@@ -37,7 +37,7 @@ import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class JsonFormatWriterTest {
+public class ReqOutputJsonFormatWriterTest {
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
@@ -376,7 +376,7 @@ public class JsonFormatWriterTest {
       @NotNull String expectedJson)
       throws IOException {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final JsonFormatWriter jsonWriter = new JsonFormatWriter(baos);
+    final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
 
     jsonWriter.writeData(reqProjection, data);
     jsonWriter.close();

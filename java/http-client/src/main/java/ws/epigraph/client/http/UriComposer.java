@@ -22,6 +22,8 @@ import de.uka.ilkd.pp.StringBackend;
 import org.apache.commons.codec.net.URLCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
@@ -70,8 +72,38 @@ public final class UriComposer {
       decodedUri = pathStr + varStr;
     }
 
-    byte[] urlBytes = URLCodec.encodeUrl(SAFE_CHARACTERS, decodedUri.getBytes(StandardCharsets.UTF_8));
+    return encodeUri(decodedUri);
+  }
+
+  public static @NotNull String composeCreateUri(
+      @NotNull String fieldName,
+      @Nullable ReqFieldPath path,
+      @Nullable ReqInputFieldProjection inputProjection,
+      @NotNull ReqOutputFieldProjection outputProjection) {
+
+    final StringBuilder decodedUri = new StringBuilder();
+
+    if (path == null)
+      decodedUri.append(fieldName);
+    else
+      decodedUri.append(printReqPath(fieldName, path));
+
+    if (inputProjection != null) {
+      decodedUri.append('<').append(printReqInputProjection(inputProjection));
+    }
+
+    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+
+    return encodeUri(decodedUri.toString());
+  }
+
+  private static @NotNull String encodeUri(@NotNull String decodedUriNoLeadSlash) {
+    byte[] urlBytes = URLCodec.encodeUrl(SAFE_CHARACTERS, decodedUriNoLeadSlash.getBytes(StandardCharsets.UTF_8));
     return "/" + new String(urlBytes, StandardCharsets.UTF_8);
+  }
+
+  private static @NotNull String printReqOutputProjection(@NotNull ReqOutputFieldProjection projection) {
+    return printReqOutputProjection(projection.varProjection());
   }
 
   private static @NotNull String printReqOutputProjection(
@@ -141,6 +173,28 @@ public final class UriComposer {
         };
 
     printer.print(fieldName, path);
+
+    return sb.getString();
+  }
+
+  private static @NotNull String printReqInputProjection(@NotNull ReqInputFieldProjection projection) {
+
+    StringBackend sb = new StringBackend(2000);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+
+    ReqInputProjectionsPrettyPrinter<NoExceptions> printer =
+        new ReqInputProjectionsPrettyPrinter<NoExceptions>(layouter) {
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
+        };
+
+    printer.printVar(projection.varProjection(), 0);
 
     return sb.getString();
   }
