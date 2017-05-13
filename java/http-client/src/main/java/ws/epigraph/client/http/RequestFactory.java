@@ -21,17 +21,21 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.*;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
@@ -177,6 +181,43 @@ public final class RequestFactory {
 
     errorsDump = dumpErrors(context.errors());
     throw new IllegalArgumentException(errorsDump);
+  }
+
+  /**
+   * Constructs create request
+   *
+   * @param resourceType         resource field type
+   * @param operationDeclaration target operation declaration
+   * @param pathString           operation path string
+   * @param inputRequestString   optional (nullable) request projection string
+   * @param requestData          request data (body)
+   * @param outputRequestString  output request projection string
+   * @param typesResolver        types resolver
+   *
+   * @return create request instance
+   * @throws IllegalArgumentException if there was an error parsing {@code requestString}
+   */
+  public static @NotNull CreateOperationRequest constructCreateRequest(
+      @NotNull DataTypeApi resourceType,
+      @NotNull CreateOperationDeclaration operationDeclaration,
+      @Nullable String pathString,
+      @Nullable String inputRequestString,
+      @NotNull Data requestData,
+      @NotNull String outputRequestString,
+      @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
+
+    ReqFieldPath reqFieldPath = null;
+    ReqInputFieldProjection reqInputFieldProjection = null;
+    ReqOutputFieldProjection reqOutputFieldProjection = null;
+
+    // todo
+
+    return new CreateOperationRequest(
+        reqFieldPath,
+        requestData,
+        reqInputFieldProjection,
+        reqOutputFieldProjection
+    );
   }
 
   private static @Nullable String dumpErrors(

@@ -25,6 +25,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.client.http.FormatBasedServerProtocol;
+import ws.epigraph.client.http.RemoteCreateOperationInvocation;
 import ws.epigraph.client.http.RemoteReadOperationInvocation;
 import ws.epigraph.client.http.ServerProtocol;
 import ws.epigraph.data.Data;
@@ -35,9 +36,11 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
+import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.UserResourceFactory;
@@ -56,6 +59,7 @@ import java.util.concurrent.ExecutionException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
+import static ws.epigraph.client.http.RequestFactory.constructCreateRequest;
 import static ws.epigraph.client.http.RequestFactory.constructReadRequest;
 
 /**
@@ -178,6 +182,36 @@ public abstract class AbstractHttpClientTest {
         resourceDeclaration.fieldType(),
         operationDeclaration,
         requestString,
+        resolver
+    );
+
+    return inv.invoke(request, opctx).get();
+  }
+
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCreateOperation(
+      @NotNull CreateOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String inputProjectionString,
+      @NotNull Data requestInput,
+      @NotNull String outputProjectionString) throws ExecutionException, InterruptedException {
+
+    RemoteCreateOperationInvocation inv = new RemoteCreateOperationInvocation(
+        httpHost,
+        httpClient,
+        resourceDeclaration.fieldName(),
+        operationDeclaration,
+        serverProtocol,
+        CHARSET
+    );
+
+    OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
+    CreateOperationRequest request = constructCreateRequest(
+        resourceDeclaration.fieldType(),
+        operationDeclaration,
+        path,
+        inputProjectionString,
+        requestInput,
+        outputProjectionString,
         resolver
     );
 

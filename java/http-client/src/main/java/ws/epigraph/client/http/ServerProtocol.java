@@ -20,6 +20,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
@@ -43,8 +44,9 @@ public interface ServerProtocol {
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse);
 
-  @NotNull HttpAsyncContentProducer createRequestContentProducer(
+  @NotNull ContentProducer createRequestContentProducer(
       @Nullable ReqInputVarProjection reqInputProjection,
-      @Nullable OpInputVarProjection opInputProjection,
+      @NotNull OpInputVarProjection opInputProjection,
+      @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 }

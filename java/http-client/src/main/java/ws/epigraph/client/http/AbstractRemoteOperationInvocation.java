@@ -26,6 +26,7 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.http.EpigraphHeaders;
+import ws.epigraph.http.Headers;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
@@ -85,7 +86,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
     httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name());
 
     final HttpAsyncRequestProducer requestProducer;
-    HttpAsyncContentProducer contentProducer = requestContentProducer(request, context);
+    @Nullable ContentProducer contentProducer = requestContentProducer(request, context);
 
     if (contentProducer == null)
       requestProducer = new BasicAsyncRequestProducer(host, httpRequest);
@@ -98,7 +99,9 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
             httpRequest.getClass().getName()
         ));
 
-      requestProducer = new RequestProducer(host, (HttpEntityEnclosingRequest) httpRequest, contentProducer);
+      httpRequest.addHeader(Headers.CONTENT_TYPE, contentProducer.contentType().toString());
+      requestProducer =
+          new RequestProducer(host, (HttpEntityEnclosingRequest) httpRequest, contentProducer.httpContentProducer());
     }
 
     CompletableFuture<OperationInvocationResult<ReadOperationResponse<?>>> f = new CompletableFuture<>();
@@ -142,7 +145,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
       @NotNull Req operationRequest,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  protected @Nullable HttpAsyncContentProducer requestContentProducer(
+  protected @Nullable ContentProducer requestContentProducer(
       @NotNull Req request,
       @NotNull OperationInvocationContext context) { return null; }
 

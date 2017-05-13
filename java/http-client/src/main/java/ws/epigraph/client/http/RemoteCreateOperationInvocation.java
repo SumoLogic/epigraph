@@ -20,7 +20,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.nio.client.HttpAsyncClient;
-import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -36,7 +35,7 @@ import java.nio.charset.Charset;
 public class RemoteCreateOperationInvocation
     extends AbstractRemoteOperationInvocation<CreateOperationRequest, CreateOperationDeclaration> {
 
-  protected RemoteCreateOperationInvocation(
+  public RemoteCreateOperationInvocation(
       final @NotNull HttpHost host,
       final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
@@ -66,7 +65,7 @@ public class RemoteCreateOperationInvocation
   }
 
   @Override
-  protected @Nullable HttpAsyncContentProducer requestContentProducer(
+  protected @Nullable ContentProducer requestContentProducer(
       @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
     ReqInputFieldProjection inputFieldProjection = request.inputProjection();
@@ -74,6 +73,7 @@ public class RemoteCreateOperationInvocation
     return serverProtocol.createRequestContentProducer(
         inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
         operationDeclaration.inputProjection().varProjection(),
+        request.data(),
         operationInvocationContext
     );
   }
