@@ -70,6 +70,12 @@ resource users: PersonMap {
     outputType list[PersonId] // todo list[PersonId throws epigraph.Error]
   }
 
+  create friends {
+    path /.:`record`/friends
+    inputProjection *:id
+    outputProjection *:id  // id or error for failure
+  }
+
   update {
     inputProjection [ required ](
       :(

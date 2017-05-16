@@ -82,6 +82,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   }
 
   @Override
+  protected @NotNull CreateOperation<Person_List.Data> constructFriendsCreateOperation(final @NotNull CreateOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new CreateFriendsOperation(operationDeclaration, storage);
+  }
+
+  @Override
   protected @NotNull UpdateOperation<PersonId_Error_Map.Data> constructUpdateOperation(final @NotNull UpdateOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new UpdateOp(operationDeclaration, storage);
