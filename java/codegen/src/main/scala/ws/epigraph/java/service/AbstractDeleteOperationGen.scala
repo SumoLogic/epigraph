@@ -76,7 +76,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process delete request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param path request path
  * @param deleteProjection request delete projection
  * @param outputProjection request output projection
@@ -84,7 +84,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  * @return future of the result
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType builder,
+  @NotNull $shortBuilderType resultBuilder,
   @NotNull ${pathProjectionGen.shortClassName} path,
   @NotNull ${deleteFieldProjectionGen.shortClassName} deleteProjection,
   @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
@@ -108,14 +108,14 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process delete request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param deleteProjection request delete projection
  * @param outputProjection request output projection
  *
  * @return future of the result
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType builder,
+  @NotNull $shortBuilderType resultBuilder,
   @NotNull ${deleteFieldProjectionGen.shortClassName} deleteProjection,
   @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
 );

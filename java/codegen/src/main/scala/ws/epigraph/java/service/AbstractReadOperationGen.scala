@@ -61,13 +61,13 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process read request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param path request path
  * @param projection request projection
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType builder, @NotNull ${pathProjectionGen.shortClassName} path, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
+protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType resultBuilder, @NotNull ${pathProjectionGen.shortClassName} path, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
 """/*@formatter:off*/
         )
 
@@ -86,12 +86,12 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process read request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param projection request projection
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType builder, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
+protected abstract @NotNull CompletableFuture<$shortDataType> process(@NotNull $shortBuilderType resultBuilder, @NotNull ${outputFieldProjectionGen.shortClassName} projection);
 """/*@formatter:off*/
         )
     }

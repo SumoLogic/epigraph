@@ -81,7 +81,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process create request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param inputData input data
  * @param path request path
  * @param inputProjection request input projection, may be {@code null} if not specified
@@ -90,7 +90,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  * @return future of the result
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType builder,
+  @NotNull $shortBuilderType resultBuilder,
   @NotNull $inputTypeClass inputData,
   @NotNull ${pathProjectionGen.shortClassName} path,
   @Nullable ${inputFieldProjectionGen.shortClassName} inputProjection,
@@ -116,7 +116,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
 /**
  * Process create request
  *
- * @param builder result builder, initially empty
+ * @param resultBuilder result builder, initially empty
  * @param inputData input data
  * @param inputProjection request input projection, may be {@code null} if not specified
  * @param outputProjection request output projection
@@ -124,7 +124,7 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  * @return future of the result
  */
 protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType builder,
+  @NotNull $shortBuilderType resultBuilder,
   @NotNull $inputTypeClass inputData,
   @Nullable ${inputFieldProjectionGen.shortClassName} inputProjection,
   @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
