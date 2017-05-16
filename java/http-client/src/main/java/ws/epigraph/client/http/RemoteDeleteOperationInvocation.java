@@ -18,12 +18,13 @@ package ws.epigraph.client.http;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.service.operations.ReadOperationRequest;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
+import ws.epigraph.schema.operations.DeleteOperationDeclaration;
+import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.nio.charset.Charset;
@@ -31,14 +32,14 @@ import java.nio.charset.Charset;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RemoteReadOperationInvocation
-    extends AbstractRemoteOperationInvocation<ReadOperationRequest, ReadOperationDeclaration> {
+public class RemoteDeleteOperationInvocation
+    extends AbstractRemoteOperationInvocation<DeleteOperationRequest, DeleteOperationDeclaration> {
 
-  public RemoteReadOperationInvocation(
+  public RemoteDeleteOperationInvocation(
       final @NotNull HttpHost host,
       final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
-      final @NotNull ReadOperationDeclaration operationDeclaration,
+      final @NotNull DeleteOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
 
@@ -47,13 +48,19 @@ public class RemoteReadOperationInvocation
 
   @Override
   protected HttpRequest composeHttpRequest(
-      final @NotNull ReadOperationRequest operationRequest,
+      final @NotNull DeleteOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    return new HttpGet(composeUri(operationRequest));
+    ReqDeleteFieldProjection deleteFieldProjection = operationRequest.deleteProjection();
+
+    String uri = UriComposer.composeDeleteUri(
+        resourceName,
+        operationRequest.path(),
+        deleteFieldProjection,
+        operationRequest.outputProjection()
+    );
+
+    return new HttpDelete(uri);
   }
 
-  protected @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
-    return UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
-  }
 }

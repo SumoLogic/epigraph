@@ -43,7 +43,7 @@ public class RemoteCreateOperationInvocation
       final @NotNull CreateOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
-    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset);
+    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset, HttpStatusCode.CREATED);
   }
 
   @Override
@@ -77,6 +77,4 @@ public class RemoteCreateOperationInvocation
     );
   }
 
-  @Override
-  protected int okStatusCode() { return HttpStatusCode.CREATED; }
 }

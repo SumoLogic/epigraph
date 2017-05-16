@@ -22,6 +22,8 @@ import de.uka.ilkd.pp.StringBackend;
 import org.apache.commons.codec.net.URLCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -91,6 +93,26 @@ public final class UriComposer {
     if (inputProjection != null) {
       decodedUri.append('<').append(printReqInputProjection(inputProjection));
     }
+
+    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+
+    return encodeUri(decodedUri.toString());
+  }
+  
+  public static @NotNull String composeDeleteUri(
+      @NotNull String fieldName,
+      @Nullable ReqFieldPath path,
+      @NotNull ReqDeleteFieldProjection deleteProjection,
+      @NotNull ReqOutputFieldProjection outputProjection) {
+
+    final StringBuilder decodedUri = new StringBuilder();
+
+    if (path == null)
+      decodedUri.append(fieldName);
+    else
+      decodedUri.append(printReqPath(fieldName, path));
+
+    decodedUri.append('<').append(printReqDeleteProjection(deleteProjection));
 
     decodedUri.append('>').append(printReqOutputProjection(outputProjection));
 
@@ -184,6 +206,28 @@ public final class UriComposer {
 
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer =
         new ReqInputProjectionsPrettyPrinter<NoExceptions>(layouter) {
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
+        };
+
+    printer.printVar(projection.varProjection(), 0);
+
+    return sb.getString();
+  }
+  
+  private static @NotNull String printReqDeleteProjection(@NotNull ReqDeleteFieldProjection projection) {
+
+    StringBackend sb = new StringBackend(2000);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+
+    ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer =
+        new ReqDeleteProjectionsPrettyPrinter<NoExceptions>(layouter) {
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 

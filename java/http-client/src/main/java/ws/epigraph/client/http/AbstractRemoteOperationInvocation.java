@@ -34,7 +34,6 @@ import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.util.HttpStatusCode;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,6 +52,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
   protected final @NotNull OD operationDeclaration;
   protected final @NotNull ServerProtocol serverProtocol;
   protected final @NotNull Charset charset;
+  private final int okStatusCode;
 
   protected AbstractRemoteOperationInvocation(
       final @NotNull HttpHost host,
@@ -60,7 +60,8 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
       final @NotNull String resourceName,
       final @NotNull OD operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
-      final @NotNull Charset charset) {
+      final @NotNull Charset charset,
+      final int okStatusCode) {
 
     this.host = host;
     this.httpClient = httpClient;
@@ -68,6 +69,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
     this.operationDeclaration = operationDeclaration;
     this.serverProtocol = serverProtocol;
     this.charset = charset;
+    this.okStatusCode = okStatusCode;
   }
 
   @Override
@@ -144,7 +146,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
                       request.outputProjection().varProjection(),
                       context,
                       result,
-                      okStatusCode()
+                      okStatusCode
                   )
               );
             } catch (RuntimeException e) { f.completeExceptionally(e); }
@@ -161,8 +163,6 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
     return f;
 
   }
-
-  protected int okStatusCode() { return HttpStatusCode.OK;}
 
   protected abstract HttpRequest composeHttpRequest(
       @NotNull Req operationRequest,

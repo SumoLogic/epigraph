@@ -24,10 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ws.epigraph.client.http.FormatBasedServerProtocol;
-import ws.epigraph.client.http.RemoteCreateOperationInvocation;
-import ws.epigraph.client.http.RemoteReadOperationInvocation;
-import ws.epigraph.client.http.ServerProtocol;
+import ws.epigraph.client.http.*;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.DefaultOperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -37,10 +34,12 @@ import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.CreateOperationRequest;
+import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.tests.*;
@@ -54,16 +53,20 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
-import static ws.epigraph.client.http.RequestFactory.constructCreateRequest;
-import static ws.epigraph.client.http.RequestFactory.constructReadRequest;
+import static ws.epigraph.client.http.RequestFactory.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpClientTest {
+  // todo reimplement using generated clients (once available)
+
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
@@ -118,17 +121,44 @@ public abstract class AbstractHttpClientTest {
 
   @Test
   public void testSimpleCreateWithoutProjection() throws ExecutionException, InterruptedException {
-    testCreate(
+    testSimpleCreate(null);
+  }
+
+  @Test
+  public void testSimpleCreateWithProjection() throws ExecutionException, InterruptedException {
+    testSimpleCreate("*(firstName)");
+  }
+
+  private void testSimpleCreate(@Nullable String inputProjection) throws ExecutionException, InterruptedException {
+    String key = testCreate(
         UsersResourceDeclaration.createOperationDeclaration,
         null,
-        null,
+        inputProjection,
         PersonRecord_List.type.createDataBuilder().set(
             PersonRecord_List.create().add(PersonRecord.create().setFirstName("testCreate"))
         ),
         "*",
-        "[ 11 ]"
+        "\\[ (\\d+) \\]"
     );
+
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "[" + key + "](:record(firstName))",
+        "( " + key + ": < record: { firstName: \"testCreate\" } > )"
+    );
+
+    testDelete(
+        UsersResourceDeclaration.deleteOperationDeclaration,
+        null,
+        "[" + key + "]",
+        "[*]",
+        "( )"
+    );
+
   }
+
+  // todo create with path
+  // todo create with projection
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,7 +170,7 @@ public abstract class AbstractHttpClientTest {
     OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
         runReadOperation(operationDeclaration, requestString, null);
 
-    checkReadResult(expectedDataPrint, invocationResult);
+    checkReadResult(expectedDataPrint, false, invocationResult);
   }
 
   protected void testReadError(
@@ -193,7 +223,7 @@ public abstract class AbstractHttpClientTest {
     return inv.invoke(request, opctx).get();
   }
 
-  protected void testCreate(
+  protected String testCreate(
       @NotNull CreateOperationDeclaration operationDeclaration,
       @Nullable String path,
       @Nullable String inputProjection,
@@ -209,22 +239,55 @@ public abstract class AbstractHttpClientTest {
         outputProjection
     );
 
-    checkReadResult(expectedDataPrint, invocationResult);
+    return checkReadResult(expectedDataPrint, true, invocationResult);
   }
 
-  private void checkReadResult(
+  protected void testDelete(
+      @NotNull DeleteOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @NotNull String deleteProjection,
+      @NotNull String outputProjection,
+      @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
+
+    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runDeleteOperation(
+        operationDeclaration,
+        path,
+        deleteProjection,
+        outputProjection
+    );
+
+    checkReadResult(expectedDataPrint, false, invocationResult);
+  }
+
+  private String checkReadResult(
       final @NotNull String expectedDataPrint,
+      boolean isRegexExpected,
       final OperationInvocationResult<ReadOperationResponse<?>> invocationResult) {
-    
-    invocationResult.consume(
+
+    invocationResult.onFailure(
+        oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
+    );
+
+    return invocationResult.mapSuccess(
         ror -> {
           Data data = ror.getData();
           String dataToString = printData(data);
-          assertEquals(expectedDataPrint, dataToString);
-        },
+          if (isRegexExpected) {
+            Pattern pattern = Pattern.compile(expectedDataPrint);
+            Matcher matcher = pattern.matcher(dataToString);
+            assertTrue(dataToString, matcher.matches());
 
-        oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
-    );
+            if (matcher.groupCount() == 1) {
+              return matcher.group(1);
+            }
+
+          } else
+            assertEquals(expectedDataPrint, dataToString);
+
+          return dataToString;
+        }
+    ).result();
+
   }
 
   protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCreateOperation(
@@ -250,6 +313,34 @@ public abstract class AbstractHttpClientTest {
         path,
         inputProjectionString,
         requestInput,
+        outputProjectionString,
+        resolver
+    );
+
+    return inv.invoke(request, opctx).get();
+  }
+
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runDeleteOperation(
+      @NotNull DeleteOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @NotNull String deleteProjectionString,
+      @NotNull String outputProjectionString) throws ExecutionException, InterruptedException {
+
+    RemoteDeleteOperationInvocation inv = new RemoteDeleteOperationInvocation(
+        httpHost,
+        httpClient,
+        resourceDeclaration.fieldName(),
+        operationDeclaration,
+        serverProtocol,
+        CHARSET
+    );
+
+    OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
+    DeleteOperationRequest request = constructDeleteRequest(
+        resourceDeclaration.fieldType(),
+        operationDeclaration,
+        path,
+        deleteProjectionString,
         outputProjectionString,
         resolver
     );
