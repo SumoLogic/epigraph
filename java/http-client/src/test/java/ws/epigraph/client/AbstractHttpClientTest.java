@@ -65,7 +65,7 @@ import static ws.epigraph.client.http.RequestFactory.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpClientTest {
-  // todo reimplement using generated clients (once available)
+  // todo implement using generated clients (once available)
 
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
@@ -157,7 +157,22 @@ public abstract class AbstractHttpClientTest {
 
   }
 
-  // todo create with path
+  @Test
+  public void testCreateWithPath() throws ExecutionException, InterruptedException {
+    testCreate(
+        UsersResourceDeclaration.friendsCreateOperationDeclaration,
+        "/1:record/friends",
+        null,
+        Person_List.Type.instance().createDataBuilder()
+            .set(Person_List.create()
+                .add(Person.create().setId(PersonId.create(2)))
+                .add(Person.create().setId(PersonId.create(3)))
+                .add(Person.create().setId(PersonId.create(22)))
+            ),
+        "*:id",
+        "\\[ < id: ERROR\\(400, 'Friend with id 2 already exists'\\) >, < id: 3 >, < id: ERROR\\(404, 'User with id 22 not found'\\) > \\]"
+    );
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
