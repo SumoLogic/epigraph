@@ -73,7 +73,7 @@ resource users: PersonMap {
   create friends {
     path /.:`record`/friends
     inputProjection *:id
-    outputProjection *:id  // id or error for failure
+    outputProjection *:id  // id or error for failure; todo: use epigrph.Error instead
   }
 
   update {

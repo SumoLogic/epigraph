@@ -147,7 +147,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       final List<OutputPersonMapKeyProjection> keys = mapProjection.keys();
       if (keys != null) {
         LOG.debug("Requested keys: " +
-                           keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
+                  keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
         );
       }
 
@@ -225,15 +225,39 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         // do we want to treat puts for non-existent keys as creates or as errors?
         // treating as creates for now
 
-        final Person.Builder currentPerson =
-            (Person.Builder) storage.users().datas().get(entry.getKey()); // todo toBuilder
-        final Person personUpdate = entry.getValue();
+        Person currentPerson = storage.users().datas().get(entry.getKey());
 
-        final @Nullable Person update = update(currentPerson, personUpdate, updatePersonProjection);
-        if (update == null)
-          storage.users().datas().remove(entry.getKey());
-        else
-          storage.users().put$(entry.getKey(), update);
+        if (currentPerson == null) {
+
+          resultMapBuilder.put(entry.getKey(), Error.create()
+              .setCode(HttpStatusCode.NOT_FOUND)
+              .setMessage("User with id " + entry.getKey().getVal() + " not found"));
+
+        } else {
+
+          if (currentPerson instanceof Person.Builder) {
+            final Person.Builder currentPersonBuilder = (Person.Builder) currentPerson; // todo fragile, toBuilder
+
+            final Person personUpdate = entry.getValue();
+
+            final @Nullable Person update = update(currentPersonBuilder, personUpdate, updatePersonProjection);
+            if (update == null)
+              storage.users().datas().remove(entry.getKey());
+            else
+              storage.users().put$(entry.getKey(), update);
+
+          } else {
+            final User.Builder currentUserBuilder = (User.Builder) currentPerson; // todo fragile, toBuilder
+
+            final Person personUpdate = entry.getValue();
+
+            final @Nullable Person update = updateUser(currentUserBuilder, personUpdate, updatePersonProjection);
+            if (update == null)
+              storage.users().datas().remove(entry.getKey());
+            else
+              storage.users().put$(entry.getKey(), update);
+          }
+        }
       }
 
       return CompletableFuture.completedFuture(builder.set(resultMapBuilder));
@@ -271,6 +295,40 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
       return current;
     }
+
+    private @Nullable Person updateUser(
+        @Nullable User.Builder current,
+        Person update,
+        @Nullable UpdatePersonProjection userProjection) {
+      if (current == null) return update;
+
+      final UserRecord.Builder currentRecord = (UserRecord.Builder) current.getRecord(); // toBuilder
+      if (currentRecord == null) return update; // or fail?
+
+      final PersonRecord updateRecord = update.getRecord();
+      if (updateRecord == null) return current;
+
+      if (userProjection == null) { // projection not specified = data driven
+        if (updateRecord.getFirstName_() != null)
+          currentRecord.setFirstName(updateRecord.getFirstName());
+
+        if (updateRecord.getLastName_() != null)
+          currentRecord.setLastName(updateRecord.getLastName());
+
+      } else { // projection driven
+        final @Nullable UpdatePersonRecordProjection recordProjection = userProjection.record();
+        if (recordProjection == null) return null; // projection for record not specified.. remove element?
+
+        if (recordProjection.firstName() != null)
+          currentRecord.setFirstName(updateRecord.getFirstName());
+
+        if (recordProjection.lastName() != null)
+          currentRecord.setLastName(updateRecord.getLastName());
+      }
+
+      return current;
+    }
+
   }
 
   private static final class DeleteOp extends AbstractDeleteOperation {

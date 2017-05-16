@@ -31,6 +31,8 @@ import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
+import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
+import ws.epigraph.projections.req.update.ReqUpdateProjectionsPrettyPrinter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -92,6 +94,28 @@ public final class UriComposer {
 
     if (inputProjection != null) {
       decodedUri.append('<').append(printReqInputProjection(inputProjection));
+    }
+
+    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+
+    return encodeUri(decodedUri.toString());
+  }
+  
+  public static @NotNull String composeUpdateUri(
+      @NotNull String fieldName,
+      @Nullable ReqFieldPath path,
+      @Nullable ReqUpdateFieldProjection updateProjection,
+      @NotNull ReqOutputFieldProjection outputProjection) {
+
+    final StringBuilder decodedUri = new StringBuilder();
+
+    if (path == null)
+      decodedUri.append(fieldName);
+    else
+      decodedUri.append(printReqPath(fieldName, path));
+
+    if (updateProjection != null) {
+      decodedUri.append('<').append(printReqUpdateProjection(updateProjection));
     }
 
     decodedUri.append('>').append(printReqOutputProjection(outputProjection));
@@ -206,6 +230,28 @@ public final class UriComposer {
 
     ReqInputProjectionsPrettyPrinter<NoExceptions> printer =
         new ReqInputProjectionsPrettyPrinter<NoExceptions>(layouter) {
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
+
+          @Override
+          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
+        };
+
+    printer.printVar(projection.varProjection(), 0);
+
+    return sb.getString();
+  }
+  
+  private static @NotNull String printReqUpdateProjection(@NotNull ReqUpdateFieldProjection projection) {
+
+    StringBackend sb = new StringBackend(2000);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+
+    ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer =
+        new ReqUpdateProjectionsPrettyPrinter<NoExceptions>(layouter) {
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 

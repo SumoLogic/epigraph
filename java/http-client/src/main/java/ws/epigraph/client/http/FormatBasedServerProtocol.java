@@ -37,6 +37,7 @@ import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.IOUtil;
 import ws.epigraph.wire.*;
@@ -53,9 +54,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
   private final @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory;
-  private final @NotNull FormatReader.Factory<? extends ReqInputFormatReader> reqInputReaderFactory;
-  private final @NotNull FormatReader.Factory<? extends OpInputFormatReader> opInputReaderFactory;
   private final @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory;
+  private final @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory;
   private final @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory;
 
   private final @NotNull Charset requestCharset; //charset to be used for requests
@@ -67,9 +67,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     this.requestCharset = requestCharset;
 
     reqOutputReaderFactory = formatFactories.reqOutputReaderFactory();
-    reqInputReaderFactory = formatFactories.reqInputReaderFactory();
-    opInputReaderFactory = formatFactories.opInputReaderFactory();
     reqInputWriterFactory = formatFactories.reqInputWriterFactory();
+    reqUpdateWriterFactory = formatFactories.reqUpdateWriterFactory();
     opInputWriterFactory = formatFactories.opInputWriterFactory();
   }
 
@@ -83,7 +82,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull ContentProducer createRequestContentProducer(
+  public @NotNull HttpContentProducer createRequestContentProducer(
       final @Nullable ReqInputVarProjection reqInputProjection,
       final @NotNull OpInputVarProjection opInputProjection,
       final @NotNull Data inputData,
@@ -112,22 +111,45 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       };
     }
 
-    return new ContentProducer(
+    return new HttpContentProducer(
         ContentType.get(mimeType, requestCharset),
-        new HttpAsyncContentProducer() {
-          ContentWriter writer = null;
-          @Override
-          public void produceContent(final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
-            writer = producerFunc.apply(encoder);
-            writer.write();
-          }
+        new MyHttpAsyncContentProducer(producerFunc)
+    );
+  }
 
-          @Override
-          public boolean isRepeatable() { return true; }
+  @Override
+  public @NotNull HttpContentProducer updateRequestContentProducer(
+      final @Nullable ReqUpdateVarProjection reqUpdateProjection,
+      final @NotNull OpInputVarProjection opInputProjection,
+      final @NotNull Data inputData,
+      final @NotNull OperationInvocationContext operationInvocationContext) {
 
-          @Override
-          public void close() { }
-        }
+    final Function<ContentEncoder, ContentWriter> producerFunc;
+    final String mimeType;
+
+    if (reqUpdateProjection == null) {
+      mimeType = opInputWriterFactory.format().mimeType();
+      producerFunc = ce -> () -> {
+        ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
+        OpInputFormatWriter writer = opInputWriterFactory.newFormatWriter(cos, requestCharset);
+        writer.writeData(opInputProjection, inputData);
+        writer.close();
+        cos.close();
+      };
+    } else {
+      mimeType = reqUpdateWriterFactory.format().mimeType();
+      producerFunc = ce -> () -> {
+        ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
+        ReqUpdateFormatWriter writer = reqUpdateWriterFactory.newFormatWriter(cos, requestCharset);
+        writer.writeData(reqUpdateProjection, inputData);
+        writer.close();
+        cos.close();
+      };
+    }
+
+    return new HttpContentProducer(
+        ContentType.get(mimeType, requestCharset),
+        new MyHttpAsyncContentProducer(producerFunc)
     );
   }
 
@@ -227,5 +249,27 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   private interface ContentWriter {
     void write() throws IOException;
+  }
+
+  private static class MyHttpAsyncContentProducer implements HttpAsyncContentProducer {
+    private final Function<ContentEncoder, ContentWriter> producerFunc;
+    ContentWriter writer;
+
+    MyHttpAsyncContentProducer(final Function<ContentEncoder, ContentWriter> producerFunc) {
+      this.producerFunc = producerFunc;
+      writer = null;
+    }
+
+    @Override
+    public void produceContent(final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
+      writer = producerFunc.apply(encoder);
+      writer.write();
+    }
+
+    @Override
+    public boolean isRepeatable() { return true; }
+
+    @Override
+    public void close() { }
   }
 }

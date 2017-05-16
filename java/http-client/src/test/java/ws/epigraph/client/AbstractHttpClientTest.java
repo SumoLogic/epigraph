@@ -36,12 +36,10 @@ import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
-import ws.epigraph.service.operations.CreateOperationRequest;
-import ws.epigraph.service.operations.DeleteOperationRequest;
-import ws.epigraph.service.operations.ReadOperationRequest;
-import ws.epigraph.service.operations.ReadOperationResponse;
+import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
 import ws.epigraph.util.EBean;
@@ -56,9 +54,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
+import static junit.framework.TestCase.*;
 import static ws.epigraph.client.http.RequestFactory.*;
 
 /**
@@ -66,6 +62,7 @@ import static ws.epigraph.client.http.RequestFactory.*;
  */
 public abstract class AbstractHttpClientTest {
   // todo implement using generated clients (once available)
+  // todo test params
 
   protected static final int PORT = 8888;
   protected static final String HOST = "localhost";
@@ -174,6 +171,46 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
+  @Test
+  public void testUpdateWithoutProjection() throws ExecutionException, InterruptedException {
+    testSimpleUpdate(null);
+  }
+
+  @Test
+  public void testUpdateWithProjection() throws ExecutionException, InterruptedException {
+    testSimpleUpdate("[1,22]:record(firstName)");
+  }
+
+  private void testSimpleUpdate(String updateProjection) throws ExecutionException, InterruptedException {
+    testUpdate(
+        UsersResourceDeclaration.updateOperationDeclaration,
+        null,
+        updateProjection,
+        PersonMap.Type.instance().createDataBuilder()
+            .set(PersonMap.create()
+                .put$(PersonId.create(1), Person.create().setRecord(PersonRecord.create().setFirstName("Alfred2")))
+                .put$(PersonId.create(22), Person.create().setRecord(PersonRecord.create().setFirstName("Alfred2")))
+            ),
+        "[*](code,message)",
+        "( 22: { code: 404, message: \"User with id 22 not found\" } )"
+    );
+
+    // change back
+    testUpdate(
+        UsersResourceDeclaration.updateOperationDeclaration,
+        null,
+        updateProjection,
+        PersonMap.Type.instance().createDataBuilder()
+            .set(PersonMap.create()
+                .put$(PersonId.create(1), Person.create().setRecord(PersonRecord.create().setFirstName("Alfred")))
+            ),
+        "[*](code,message)",
+        "( )"
+    );
+  }
+
+  // todo test update with path
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   protected void testRead(
@@ -256,6 +293,25 @@ public abstract class AbstractHttpClientTest {
     return checkReadResult(expectedDataPrint, true, invocationResult);
   }
 
+  protected String testUpdate(
+      @NotNull UpdateOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String updateProjection,
+      @NotNull Data inputData,
+      @NotNull String outputProjection,
+      @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
+
+    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runUpdateOperation(
+        operationDeclaration,
+        path,
+        updateProjection,
+        inputData,
+        outputProjection
+    );
+
+    return checkReadResult(expectedDataPrint, false, invocationResult);
+  }
+
   protected void testDelete(
       @NotNull DeleteOperationDeclaration operationDeclaration,
       @Nullable String path,
@@ -326,6 +382,36 @@ public abstract class AbstractHttpClientTest {
         operationDeclaration,
         path,
         inputProjectionString,
+        requestInput,
+        outputProjectionString,
+        resolver
+    );
+
+    return inv.invoke(request, opctx).get();
+  }
+
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runUpdateOperation(
+      @NotNull UpdateOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String updateProjectionString,
+      @NotNull Data requestInput,
+      @NotNull String outputProjectionString) throws ExecutionException, InterruptedException {
+
+    RemoteUpdateOperationInvocation inv = new RemoteUpdateOperationInvocation(
+        httpHost,
+        httpClient,
+        resourceDeclaration.fieldName(),
+        operationDeclaration,
+        serverProtocol,
+        CHARSET
+    );
+
+    OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
+    UpdateOperationRequest request = constructUpdateRequest(
+        resourceDeclaration.fieldType(),
+        operationDeclaration,
+        path,
+        updateProjectionString,
         requestInput,
         outputProjectionString,
         resolver

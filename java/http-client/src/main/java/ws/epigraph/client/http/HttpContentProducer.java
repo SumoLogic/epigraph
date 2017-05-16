@@ -23,11 +23,11 @@ import ws.epigraph.http.ContentType;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ContentProducer {
+public class HttpContentProducer {
   private final @NotNull ContentType contentType;
   private final @NotNull HttpAsyncContentProducer contentProducer;
 
-  public ContentProducer(
+  public HttpContentProducer(
       final @NotNull ContentType type,
       final @NotNull HttpAsyncContentProducer producer) {
     contentType = type;

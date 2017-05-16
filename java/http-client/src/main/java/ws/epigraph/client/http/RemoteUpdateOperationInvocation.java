@@ -18,14 +18,14 @@ package ws.epigraph.client.http;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.schema.operations.CreateOperationDeclaration;
-import ws.epigraph.service.operations.CreateOperationRequest;
+import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
+import ws.epigraph.schema.operations.UpdateOperationDeclaration;
+import ws.epigraph.service.operations.UpdateOperationRequest;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.nio.charset.Charset;
@@ -33,43 +33,43 @@ import java.nio.charset.Charset;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class RemoteCreateOperationInvocation
-    extends AbstractRemoteOperationInvocation<CreateOperationRequest, CreateOperationDeclaration> {
+public class RemoteUpdateOperationInvocation
+    extends AbstractRemoteOperationInvocation<UpdateOperationRequest, UpdateOperationDeclaration> {
 
-  public RemoteCreateOperationInvocation(
+  public RemoteUpdateOperationInvocation(
       final @NotNull HttpHost host,
       final @NotNull HttpAsyncClient httpClient,
       final @NotNull String resourceName,
-      final @NotNull CreateOperationDeclaration operationDeclaration,
+      final @NotNull UpdateOperationDeclaration operationDeclaration,
       final @NotNull ServerProtocol serverProtocol,
       final @NotNull Charset charset) {
-    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset, HttpStatusCode.CREATED);
+    super(host, httpClient, resourceName, operationDeclaration, serverProtocol, charset, HttpStatusCode.OK);
   }
 
   @Override
   protected HttpRequest composeHttpRequest(
-      final @NotNull CreateOperationRequest operationRequest,
+      final @NotNull UpdateOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    ReqUpdateFieldProjection inputFieldProjection = operationRequest.updateProjection();
 
-    String uri = UriComposer.composeCreateUri(
+    String uri = UriComposer.composeUpdateUri(
         resourceName,
         operationRequest.path(),
         inputFieldProjection,
         operationRequest.outputProjection()
     );
 
-    return new HttpPost(uri);
+    return new HttpPut(uri);
   }
 
   @Override
   protected @Nullable HttpContentProducer requestContentProducer(
-      @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
+      @NotNull UpdateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+    ReqUpdateFieldProjection inputFieldProjection = request.updateProjection();
 
-    return serverProtocol.createRequestContentProducer(
+    return serverProtocol.updateRequestContentProducer(
         inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
         operationDeclaration.inputProjection().varProjection(),
         request.data(),

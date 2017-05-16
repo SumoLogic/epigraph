@@ -1,5 +1,5 @@
 - Federator prerequisites
-  - [ ] `toBuilder` on data
+  - [ ] `toBuilder` on data? Will be tricky because of covariance
   - [x] local service invocation layer
   - [ ] remote service invocation layer
   - [ ] introduce transformers +codegen?
@@ -12,7 +12,7 @@
   - [x] client must correctly specify accepted content types
   - [x] client must correctly read errors based on response content type
   - [x] read
-  - [ ] create
+  - [x] create
   - [ ] update
   - [ ] delete
   - [ ] custom

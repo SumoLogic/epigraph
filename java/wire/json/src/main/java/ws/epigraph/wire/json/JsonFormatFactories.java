@@ -25,6 +25,7 @@ import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
 import ws.epigraph.wire.json.writer.OpInputJsonFormatWriter;
 import ws.epigraph.wire.json.writer.ReqInputJsonFormatWriter;
 import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqUpdateJsonFormatWriter;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -60,6 +61,11 @@ public class JsonFormatFactories implements FormatFactories {
   @Override
   public @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory() {
     return new ReqInputJsonFormatWriter.ReqInputJsonFormatWriterFactory();
+  }
+
+  @Override
+  public @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory() {
+    return new ReqUpdateJsonFormatWriter.ReqUpdateJsonFormatWriterFactory();
   }
 
   @Override

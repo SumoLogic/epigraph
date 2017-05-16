@@ -91,7 +91,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
     httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
 
     final HttpAsyncRequestProducer requestProducer;
-    @Nullable ContentProducer contentProducer = requestContentProducer(request, context);
+    @Nullable HttpContentProducer contentProducer = requestContentProducer(request, context);
 
     if (contentProducer == null)
       requestProducer = new BasicAsyncRequestProducer(host, httpRequest);
@@ -168,7 +168,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
       @NotNull Req operationRequest,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  protected @Nullable ContentProducer requestContentProducer(
+  protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull Req request,
       @NotNull OperationInvocationContext context) { return null; }
 

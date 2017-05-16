@@ -25,6 +25,7 @@ import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
 /**
@@ -44,8 +45,14 @@ public interface ServerProtocol {
       @NotNull HttpResponse httpResponse,
       int okStatusCode);
 
-  @NotNull ContentProducer createRequestContentProducer(
+  @NotNull HttpContentProducer createRequestContentProducer(
       @Nullable ReqInputVarProjection reqInputProjection,
+      @NotNull OpInputVarProjection opInputProjection,
+      @NotNull Data inputData,
+      @NotNull OperationInvocationContext operationInvocationContext);
+
+  @NotNull HttpContentProducer updateRequestContentProducer(
+      @Nullable ReqUpdateVarProjection reqInputProjection,
       @NotNull OpInputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);

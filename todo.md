@@ -65,10 +65,10 @@
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
-- [ ] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
-  - [ ] update parser
-  - [ ] input parser
-  - [ ] delete parser
+- [x] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
+  - [x] update parser
+  - [x] input parser
+  - [x] delete parser
 - [ ] ~~Perform full tails normalization in parsers~~
 - [x] Unify req projections pretty printers, there's lots of code duplication
 - [x] Unify op projections pretty printers, there's lots of code duplication
@@ -87,13 +87,14 @@
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
 - [ ] allow merging multiple recursive projections (seems to be a hard task)
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
-- [ ] req update projections should support paths (trunk), with trimmed input data
+- [ ] req update projections should support paths (trunk), with trimmed input data on the wire
+- [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 
 # Operations
 
 # Service
 - [ ] Add (limited?) support for passing operation name via query parameter
-- [ ] Add Jetty support
+- [x] Add Jetty support
 
 # Build
 - [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)
