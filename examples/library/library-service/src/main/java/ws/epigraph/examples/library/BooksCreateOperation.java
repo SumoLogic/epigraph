@@ -38,7 +38,7 @@ public class BooksCreateOperation extends AbstractCreateOperation {
 
   @Override
   protected @NotNull CompletableFuture<BookId_List.Data> process(
-      @NotNull BookId_List.Builder.Data responseBuilder,
+      @NotNull BookId_List.Data.Builder responseBuilder,
       @NotNull BookRecord_List inputData,
       @Nullable InputBooksFieldProjection inputProjection,
       @NotNull OutputBooksFieldProjection outputProjection) {

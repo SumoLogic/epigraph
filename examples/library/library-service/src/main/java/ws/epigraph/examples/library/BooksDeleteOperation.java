@@ -37,7 +37,7 @@ public class BooksDeleteOperation extends AbstractDeleteOperation {
 
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      @NotNull BookId_BookRecord_Map.Builder.Data responseBuilder,
+      @NotNull BookId_BookRecord_Map.Data.Builder responseBuilder,
       @NotNull DeleteBooksFieldProjection deleteProjection,
       @NotNull OutputBooksFieldProjection outputProjection) {
 

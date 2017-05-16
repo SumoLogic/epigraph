@@ -40,7 +40,7 @@ public class BooksUpdateOperation extends AbstractUpdateOperation {
 
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      @NotNull BookId_BookRecord_Map.Builder.Data responseBuilder,
+      @NotNull BookId_BookRecord_Map.Data.Builder responseBuilder,
       @NotNull BookId_BookRecord_Map updateData,
       @Nullable UpdateBooksFieldProjection updateProjection,
       @NotNull OutputBooksFieldProjection outputProjection) {

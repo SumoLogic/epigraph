@@ -45,8 +45,8 @@ public class BooksReadOperation extends AbstractReadOperation {
    */
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      final @NotNull BookId_BookRecord_Map.Builder.Data booksDataBuilder,
-      final @NotNull OutputBooksFieldProjection booksFieldProjection) {
+      @NotNull BookId_BookRecord_Map.Data.Builder booksDataBuilder,
+      @NotNull OutputBooksFieldProjection booksFieldProjection) {
 
     final BookId_BookRecord_Map.Builder booksMap = BookId_BookRecord_Map.create();
     final OutputBookId_BookRecord_MapProjection booksMapProjection = booksFieldProjection.dataProjection();

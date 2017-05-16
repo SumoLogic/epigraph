@@ -46,8 +46,8 @@ public class SearchByAuthorOperation extends AbstractReadSearchByAuthorOperation
    */
   @Override
   protected @NotNull CompletableFuture<BookId_BookRecord_Map.Data> process(
-      final @NotNull BookId_BookRecord_Map.Builder.@NotNull Data booksDataBuilder,
-      final @NotNull OutputBooksFieldProjection outputProjection) {
+      @NotNull BookId_BookRecord_Map.Data.Builder booksDataBuilder,
+      @NotNull OutputBooksFieldProjection outputProjection) {
 
 
     final BookId_BookRecord_Map.Builder booksMap = BookId_BookRecord_Map.create();
