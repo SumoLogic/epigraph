@@ -51,7 +51,7 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
 
   @Override
   protected @NotNull CompletableFuture<NameString_Type_Map.Data> process(
-      final @NotNull NameString_Type_Map.Builder.Data builder,
+      final @NotNull NameString_Type_Map.Data.Builder builder,
       final @NotNull EpigraphFieldPath path,
       final @NotNull OutputEpigraphFieldProjection projection) {
 

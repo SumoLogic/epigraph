@@ -101,10 +101,10 @@ object JavaGenNames {
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
-  /** locally qualified name for type's Data Builder type (e.g. `PersonRecord.Builder.Data` or `Person.Builder`) */
+  /** locally qualified name for type's Data Builder type (e.g. `PersonRecord.Data.Builder` or `Person.Builder`) */
   def lqbrn(t: CType, namespace: String): String = t match {
     case t: CVarTypeDef => lqn2(t, namespace) + ".Builder"
-    case t: CDatumType => lqn2(t, namespace) + ".Builder.Data"
+    case t: CDatumType => lqn2(t, namespace) + ".Data.Builder"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 

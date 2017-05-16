@@ -26,15 +26,18 @@ class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDef
     with DatumTypeJavaGen {
 
   protected override def generate: String = /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
+${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Generated;
+
 /**
  * Base interface for `${t.name.name}` datum.
  */
+@Generated("${getClass.getName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.${kind(t)}Datum.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
@@ -59,12 +62,7 @@ ${t.meta match {
    * Class for `${t.name.name}` datum type.
    */
   final class Type extends ws.epigraph.types.${kind(t)}Type.Static<
-      $ln.Imm,
-      $ln.Builder,
-      $ln.Imm.Value,
-      $ln.Builder.Value,
-      $ln.Imm.Data,
-      $ln.Builder.Data
+      Imm, Builder, Value.Imm, Value.Builder, Data.Imm, Data.Builder
   > {
 
     private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
@@ -77,128 +75,9 @@ ${t.meta match {
           java.util.Arrays.asList(${parents(".Type.instance()")}),
           ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           $ln.Builder::new,
-          $ln.Imm.Value.Impl::new,
-          $ln.Builder.Data::new
+          $ln.Value.Imm.Impl::new,
+          $ln.Data.Builder::new
       );
-    }
-
-  }
-
-  /**
-   * Base interface for `${t.name.name}` value (holding a datum or an error).
-   */
-  interface Value extends${withParents(".Value")} ws.epigraph.data.Val.Static {
-
-    @Override
-    @Nullable $ln getDatum();
-
-    @Override
-    @NotNull $ln.Imm.Value toImmutable();
-
-  }
-
-  /**
-   * Base interface for `${t.name.name}` data (holding single default representation of the type).
-   */
-  interface Data extends${withParents(".Data")} ws.epigraph.data.Data.Static {
-
-    @Override
-    @NotNull $ln.Imm.Data toImmutable();
-
-    /** Returns default tag datum. */
-    @Nullable $ln get();
-
-    /** Returns default tag value. */
-    @Nullable $ln.Value get_();
-
-  }
-
-  /**
-   * Immutable interface for `${t.name.name}` datum.
-   */
-  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.${kind(t)}Datum.Imm.Static {
-${t.meta match {
-    case Some(mt) => sn"""\
-
-    ${"/**"}
-     * @return meta-data instance
-     */
-    @Override
-    @Nullable ${lqn(mt, t)}.Imm meta();
-"""
-    case None => ""
-  }
-}\
-
-    /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends ws.epigraph.data.${kind(t)}Datum.Imm.Static.Impl<$ln.Imm, $ln.Imm.Value> implements $ln.Imm {
-
-      Impl(@NotNull ws.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
-${t.meta match {
-      case Some(mt) => sn"""\
-
-      ${"/**"}
-       * @return meta-data instance
-       */
-      @Override
-      public @Nullable ${lqn(mt, t)}.Imm meta() {
-        return (${lqn(mt, t)}.Imm) _raw().meta();
-      }
-"""
-    case None => ""
-  }
-}\
-
-    }
-
-    /**
-     * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
-     */
-    interface Value extends $ln.Value,${withParents(".Imm.Value")} ws.epigraph.data.Val.Imm.Static {
-
-      /** Returns immutable default tag datum. */
-      @Override
-      @Nullable $ln.Imm getDatum();
-
-      /** Private implementation of `$ln.Imm.Value` interface. */
-      final class Impl extends ws.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
-          implements $ln.Imm.Value {
-
-        Impl(@NotNull ws.epigraph.data.Val.Imm.Raw raw) { super(raw); }
-
-      }
-
-    }
-
-    /**
-     * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
-     */
-    interface Data extends $ln.Data,${withParents(".Imm.Data")} ws.epigraph.data.Data.Imm.Static {
-
-      /** Returns immutable default tag datum. */
-      @Override
-      @Nullable $ln.Imm get();
-
-      /** Returns immutable default tag value. */
-      @Override
-      @Nullable $ln.Imm.Value get_();
-
-      /** Private implementation of `$ln.Imm.Data` interface. */
-      final class Impl extends ws.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data> implements $ln.Imm.Data {
-
-        Impl(@NotNull ws.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
-
-        @Override
-        public @Nullable $ln.Imm get() {
-          $ln.Imm.Value value = get_();
-          return value == null ? null : value.getDatum();
-        }
-
-        @Override
-        public @Nullable $ln.Imm.Value get_() { return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self); }
-
-      }
-
     }
 
   }
@@ -206,9 +85,9 @@ ${t.meta match {
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends ws.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm, $ln.Builder.Value> implements $ln {
+  final class Builder extends ws.epigraph.data.${kind(t)}Datum.Builder.Static<$ln.Imm, $ln.Value.Builder> implements $ln {
 
-    Builder(@NotNull ws.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new); }
+    Builder(@NotNull ws.epigraph.data.${kind(t)}Datum.Builder.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Value.Builder::new); }
 ${t.meta match {
     case Some(mt) => sn"""\
 
@@ -236,9 +115,51 @@ ${t.meta match {
   }
 }\
 
-$builderValueAndDataBuilder\
+  }
+
+  /**
+   * Immutable interface for `${t.name.name}` datum.
+   */
+  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.${kind(t)}Datum.Imm.Static {
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    @Nullable ${lqn(mt, t)}.Imm meta();
+"""
+    case None => ""
+  }
+}\
+
+    /** Private implementation of `$ln.Imm` interface. */
+    final class Impl extends ws.epigraph.data.${kind(t)}Datum.Imm.Static.Impl<$ln.Imm, $ln.Value.Imm> implements $ln.Imm {
+
+      Impl(@NotNull ws.epigraph.data.${kind(t)}Datum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Value.Imm.Impl::new); }
+${t.meta match {
+      case Some(mt) => sn"""\
+
+      ${"/**"}
+       * @return meta-data instance
+       */
+      @Override
+      public @Nullable ${lqn(mt, t)}.Imm meta() {
+        return (${lqn(mt, t)}.Imm) _raw().meta();
+      }
+"""
+    case None => ""
+  }
+}\
+
+    }
 
   }
+
+$datumValue\
+
+$datumData\
 
 }
 """/*@formatter:on*/

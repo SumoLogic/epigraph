@@ -25,7 +25,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
   protected def generate: String = /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
+${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
 import ws.epigraph.types.Type.Tag;
@@ -33,9 +33,12 @@ import ws.epigraph.types.Type.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Generated;
+
 /**
  * Base (read) interface for `${t.name.name}` data.
  */
+@Generated("${getClass.getCanonicalName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Data.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();
@@ -97,7 +100,7 @@ ${t.effectiveTags.map { tag => sn"""\
 
     ${"/**"} Returns immutable `${tag.name}` tag value. */
     @Override
-    @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}_();
+    @Nullable ${lqrn(tag.typeRef, t)}.Value.Imm get${up(tag.name)}_();
 """
   }.mkString
 }\
@@ -111,13 +114,13 @@ ${t.effectiveTags.map { tag => sn"""\
       ${"/**"} Returns immutable `${tag.name}` tag datum. */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Imm get${up(tag.name)}() {
-        return ws.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Imm.Value::getDatum);
+        return ws.epigraph.util.Util.apply(get${up(tag.name)}_(), ${lqrn(tag.typeRef, t)}.Value.Imm::getDatum);
       }
 
       ${"/**"} Returns immutable `${tag.name}` tag value. */
       @Override
-      public @Nullable ${lqrn(tag.typeRef, t)}.Imm.Value get${up(tag.name)}_() {
-        return (${lqrn(tag.typeRef, t)}.Imm.Value) _raw().getValue($ln.${jn(tag.name)});
+      public @Nullable ${lqrn(tag.typeRef, t)}.Value.Imm get${up(tag.name)}_() {
+        return (${lqrn(tag.typeRef, t)}.Value.Imm) _raw().getValue($ln.${jn(tag.name)});
       }
 """
   }.mkString

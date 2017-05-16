@@ -42,15 +42,18 @@ abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) ext
   private val vt = vtr.resolved
 
   override def generate: String = /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
+${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Generated;
+
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
+@Generated("${getClass.getCanonicalName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.MapDatum.Static<${lqn(kt, t)}.Imm> {
 
   $ln.Type type = $ln.Type.instance();
@@ -120,10 +123,10 @@ ${t.meta match {
       ${lqn(kt, t)}.Imm,
       $ln.Imm,
       $ln.Builder,
-      $ln.Imm.Value,
-      $ln.Builder.Value,
-      $ln.Imm.Data,
-      $ln.Builder.Data
+      $ln.Value.Imm,
+      $ln.Value.Builder,
+      $ln.Data.Imm,
+      $ln.Data.Builder
   > {
 
     private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
@@ -137,248 +140,9 @@ ${t.meta match {
           ${lqn(kt, t)}.Type.instance(),
           ${dataTypeExpr(vv, t)},
           $ln.Builder::new,
-          $ln.Imm.Value.Impl::new,
-          $ln.Builder.Data::new
+          $ln.Value.Imm.Impl::new,
+          $ln.Data.Builder::new
       );
-    }
-
-  }
-
-  /**
-   * Base interface for `${t.name.name}` value (holding a datum or an error).
-   */
-  interface Value extends${withParents(".Value")} ws.epigraph.data.Val.Static {
-
-    @Override
-    @NotNull $ln.Imm.Value toImmutable();
-
-    @Override
-    @Nullable $ln getDatum();
-
-  }
-
-  /**
-   * Base interface for `${t.name.name}` data (holding single default representation of the type).
-   */
-  interface Data extends${withParents(".Data")} ws.epigraph.data.Data.Static {
-
-    @Override
-    @NotNull $ln.Imm.Data toImmutable();
-
-    /**
-     * Returns `${t.name.name}` datum.
-     */
-    @Nullable $ln get();
-
-    /**
-     * Returns `${t.name.name}` value.
-     */
-    @Nullable $ln.Value get_();
-
-  }
-
-  /**
-   * Immutable interface for `${t.name.name}` datum.
-   */
-  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.MapDatum.Imm.Static<${lqn(kt, t)}.Imm> {
-${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
-      case None => ""
-      case Some(dtn) => sn"""\
-
-    ${"/**"}
-     * Returns immutable map view of element default tag datums. Elements where the tag datum is not set will be `null`.
-     */
-    @Override
-    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm> datums();
-
-    ${"/**"}
-     * Returns immutable map view of element default tag values. Elements where the tag value is not set will be `null`.
-     */
-    @Override
-    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm.Value> values();
-"""
-  }
-}\
-${vt match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
-
-    ${"/**"}
-     * Returns immutable map view of elements data.
-     */
-    @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm> datas();
-${
-        evt.effectiveTags.map { tag => sn"""\
-//
-//    /**
-//     * Returns immutable map view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-//     */
-//    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
-//
-//    /**
-//     * Returns immutable map view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-//     */
-//    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}();
-"""
-      }.mkString
-}\
-"""
-    case _ => ""
-  }
-}\
-${t.meta match {
-    case Some(mt) => sn"""\
-
-    ${"/**"}
-     * @return meta-data instance
-     */
-    @Override
-    @Nullable ${lqn(mt, t)}.Imm meta();
-"""
-    case None => ""
-  }
-}\
-
-    /** Private implementation of `$ln.Imm` interface. */
-    final class Impl extends ws.epigraph.data.MapDatum.Imm.Static.Impl<${lqn(kt, t)}.Imm, $ln.Imm, $ln.Imm.Value> implements $ln.Imm {
-
-      Impl(@NotNull ws.epigraph.data.MapDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Imm.Value.Impl::new); }
-${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
-      case None => ""
-      case Some(dtn) => sn"""\
-
-      ${"/**"}
-       * Returns immutable map view of element default tag datums. Elements where the tag datum is not set will be `null`.
-       */
-      @Override
-      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm> datums() {
-        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, dtn), t)}.Imm>(
-            datas(),
-            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}
-        );
-      }
-
-      ${"/**"}
-       * Returns immutable map view of element default tag values. Elements where the tag value is not set will be `null`.
-       */
-      @Override
-      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm.Value> values() {
-        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, dtn), t)}.Imm.Value>(
-            datas(),
-            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")}_
-        );
-      }
-"""
-  }
-}\
-${vt match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
-
-      ${"/**"}
-       * Returns immutable map view of elements data.
-       */
-      @Override
-      public @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm> datas() {
-        return ws.epigraph.util.Util.castEx(_raw().elements());
-      }
-${
-      evt.effectiveTags.map { tag => sn"""\
-//
-//      /**
-//       * Returns immutable map view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
-//       */
-//      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}() {
-//        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, tag.name), t)}.Imm>(
-//            datas(),
-//            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}
-//        );
-//      }
-//
-//      /**
-//       * Returns immutable map view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
-//       */
-//      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm.Value> ${jn(tag.name + "Values")}() {
-//        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}, ${lqn(tt(vtr, tag.name), t)}.Imm.Value>(
-//            datas(),
-//            ${lqn(vt, t)}.Imm${vt(vt, "", ".Data")}::get${vt(vt, up(tag.name), "")}_
-//        );
-//      }
-"""
-      }.mkString
-}\
-"""
-    case _ => sn"""\
-
-    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-    private @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm.Data> datas() {
-      return ws.epigraph.util.Util.castEx(_raw().elements());
-    }
-"""
-  }
-}\
-${t.meta match {
-      case Some(mt) => sn"""\
-
-      ${"/**"}
-       * @return meta-data instance
-       */
-      @Override
-      public @Nullable ${lqn(mt, t)}.Imm meta() {
-        return (${lqn(mt, t)}.Imm) _raw().meta();
-      }
-"""
-    case None => ""
-  }
-}\
-
-    }
-
-    /**
-     * Immutable interface for `${t.name.name}` value (holding an immutable datum or an error).
-     */
-    interface Value extends $ln.Value,${withParents(".Imm.Value")} ws.epigraph.data.Val.Imm.Static {
-
-      @Override
-      @Nullable $ln.Imm getDatum();
-
-      /** Private implementation of `${lqn(vt, t)}.Imm.Value` interface. */
-      final class Impl extends ws.epigraph.data.Val.Imm.Static.Impl<$ln.Imm.Value, $ln.Imm>
-          implements $ln.Imm.Value {
-
-        Impl(@NotNull ws.epigraph.data.Val.Imm.Raw raw) { super(raw); }
-
-      }
-
-    }
-
-    /**
-     * Immutable interface for `${t.name.name}` data (holding single default representation of the type).
-     */
-    interface Data extends $ln.Data,${withParents(".Imm.Data")} ws.epigraph.data.Data.Imm.Static {
-
-      @Override
-      @Nullable $ln.Imm get();
-
-      @Override
-      @Nullable $ln.Imm.Value get_();
-
-      /** Private implementation of `$ln.Imm.Data` interface. */
-      final class Impl extends ws.epigraph.data.Data.Imm.Static.Impl<$ln.Imm.Data>
-          implements $ln.Imm.Data {
-
-        Impl(@NotNull ws.epigraph.data.Data.Imm.Raw raw) { super($ln.Type.instance(), raw); }
-
-        @Override
-        public @Nullable $ln.Imm get() {
-          return ws.epigraph.util.Util.apply(get_(), $ln.Imm.Value::getDatum);
-        }
-
-        @Override
-        public @Nullable $ln.Imm.Value get_() {
-          return ($ln.Imm.Value) _raw().getValue($ln.Type.instance().self);
-        }
-
-      }
-
     }
 
   }
@@ -386,10 +150,10 @@ ${t.meta match {
   /**
    * Builder for `${t.name.name}` datum.
    */
-  final class Builder extends ws.epigraph.data.MapDatum.Builder.Static<${lqn(kt, t)}.Imm, $ln.Imm, $ln.Builder.Value> implements $ln {
+  final class Builder extends ws.epigraph.data.MapDatum.Builder.Static<${lqn(kt, t)}.Imm, $ln.Imm, $ln.Value.Builder> implements $ln {
 
     Builder(@NotNull ws.epigraph.data.MapDatum.Builder.Raw raw) {
-      super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Builder.Value::new);
+      super($ln.Type.instance(), raw, $ln.Imm.Impl::new, $ln.Value.Builder::new);
     }
 ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
       case None => ""
@@ -513,20 +277,170 @@ ${t.meta match {
   }
 }\
 
-    /**
-     * Builder value for `${t.name.name}` (holding a builder or an error).
-     */
-    public static final class Value extends ws.epigraph.data.Val.Builder.Static<$ln.Imm.Value, $ln.Builder> implements $ln.Value {
+  }
 
-      Value(@NotNull ws.epigraph.data.Val.Builder.Raw raw) { super(raw, $ln.Imm.Value.Impl::new); }
+  /**
+   * Immutable interface for `${t.name.name}` datum.
+   */
+  interface Imm extends $ln,${withParents(".Imm")} ws.epigraph.data.MapDatum.Imm.Static<${lqn(kt, t)}.Imm> {
+${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
+      case None => ""
+      case Some(dtn) => sn"""\
+
+    ${"/**"}
+     * Returns immutable map view of element default tag datums. Elements where the tag datum is not set will be `null`.
+     */
+    @Override
+    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm> datums();
+
+    ${"/**"}
+     * Returns immutable map view of element default tag values. Elements where the tag value is not set will be `null`.
+     */
+    @Override
+    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Value.Imm> values();
+"""
+  }
+}\
+${vt match { // element tags (for vartypes)
+    case evt: CVarTypeDef => sn"""\
+
+    ${"/**"}
+     * Returns immutable map view of elements data.
+     */
+    @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm> datas();
+${
+        evt.effectiveTags.map { tag => sn"""\
+//
+//    /**
+//     * Returns immutable map view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//     */
+//    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}();
+//
+//    /**
+//     * Returns immutable map view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//     */
+//    @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Value.Imm> ${jn(tag.name + "Values")}();
+"""
+      }.mkString
+}\
+"""
+    case _ => ""
+  }
+}\
+${t.meta match {
+    case Some(mt) => sn"""\
+
+    ${"/**"}
+     * @return meta-data instance
+     */
+    @Override
+    @Nullable ${lqn(mt, t)}.Imm meta();
+"""
+    case None => ""
+  }
+}\
+
+    /** Private implementation of `$ln.Imm` interface. */
+    final class Impl extends ws.epigraph.data.MapDatum.Imm.Static.Impl<${lqn(kt, t)}.Imm, $ln.Imm, $ln.Value.Imm> implements $ln.Imm {
+
+      Impl(@NotNull ws.epigraph.data.MapDatum.Imm.Raw raw) { super($ln.Type.instance(), raw, $ln.Value.Imm.Impl::new); }
+${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
+      case None => ""
+      case Some(dtn) => sn"""\
+
+      ${"/**"}
+       * Returns immutable map view of element default tag datums. Elements where the tag datum is not set will be `null`.
+       */
+      @Override
+      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Imm> datums() {
+        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm, ${lqn(tt(vtr, dtn), t)}.Imm>(
+            datas(),
+            ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm::get${vt(vt, up(dtn), "")}
+        );
+      }
+
+      ${"/**"}
+       * Returns immutable map view of element default tag values. Elements where the tag value is not set will be `null`.
+       */
+      @Override
+      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, dtn), t)}.Value.Imm> values() {
+        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm, ${lqn(tt(vtr, dtn), t)}.Value.Imm>(
+            datas(),
+            ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm::get${vt(vt, up(dtn), "")}_
+        );
+      }
+"""
+  }
+}\
+${vt match { // element tags (for vartypes)
+    case evt: CVarTypeDef => sn"""\
+
+      ${"/**"}
+       * Returns immutable map view of elements data.
+       */
+      @Override
+      public @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Imm> datas() {
+        return ws.epigraph.util.Util.castEx(_raw().elements());
+      }
+${
+      evt.effectiveTags.map { tag => sn"""\
+//
+//      /**
+//       * Returns immutable map view of `${tag.name}` tag datums. Elements where the tag value is not set will be `null`.
+//       */
+//      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Imm> ${jn(tag.name + "Datums")}() {
+//        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm, ${lqn(tt(vtr, tag.name), t)}.Imm>(
+//            datas(),
+//            ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm::get${vt(vt, up(tag.name), "")}
+//        );
+//      }
+//
+//      /**
+//       * Returns immutable map view of `${tag.name}` tag values. Elements where the tag value is not set will be `null`.
+//       */
+//      public @NotNull java.util.Map<${lqn(kt, t)}.@NotNull Imm, @Nullable ? extends ${lqn(tt(vtr, tag.name), t)}.Value.Imm> ${jn(tag.name + "Values")}() {
+//        return new ws.epigraph.util.Unmodifiable.MapView<${lqn(kt, t)}.Imm, ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm, ${lqn(tt(vtr, tag.name), t)}.Value.Imm>(
+//            datas(),
+//            ${lqn(vt, t)}${vt(vt, "", ".Data")}.Imm::get${vt(vt, up(tag.name), "")}_
+//        );
+//      }
+"""
+      }.mkString
+}\
+"""
+    case _ => sn"""\
+
+    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+    private @NotNull java.util.Map<@NotNull ? extends ${lqn(kt, t)}.Imm, @NotNull ? extends ${lqn(vt, t)}.Data.Imm> datas() {
+      return ws.epigraph.util.Util.castEx(_raw().elements());
+    }
+"""
+  }
+}\
+${t.meta match {
+      case Some(mt) => sn"""\
+
+      ${"/**"}
+       * @return meta-data instance
+       */
+      @Override
+      public @Nullable ${lqn(mt, t)}.Imm meta() {
+        return (${lqn(mt, t)}.Imm) _raw().meta();
+      }
+"""
+    case None => ""
+  }
+}\
 
     }
 
-$dataBuilder\
-
   }
 
+$datumValue\
+
+$datumData\
+
 }
-"""//@formatter:on
+"""/*@formatter:on*/
 
 }

@@ -99,7 +99,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
     return new AbstractDeleteRecursiveTestOperation(operationDeclaration) {
       @Override
       protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
-          final @NotNull PersonId_Error_Map.Builder.Data builder,
+          final @NotNull PersonId_Error_Map.Data.Builder builder,
           final @NotNull ws.epigraph.tests.resources.users.operations.recursivetest.delete.DeleteUsersFieldProjection deleteProjection,
           final @NotNull ws.epigraph.tests.resources.users.operations.recursivetest.output.OutputUsersFieldProjection outputProjection) {
         throw new RuntimeException("Unimplemented");
@@ -127,7 +127,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
     @Override
     protected @NotNull CompletableFuture<PersonMap.Data> process(
-        @NotNull PersonMap.Builder.Data builder,
+        @NotNull PersonMap.Data.Builder builder,
         @NotNull OutputUsersFieldProjection projection) {
 
       final OutputPersonMapProjection mapProjection = projection.dataProjection();
@@ -175,7 +175,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
     @Override
     protected @NotNull CompletableFuture<PersonId_List.Data> process(
-        @NotNull PersonId_List.Builder.Data builder,
+        @NotNull PersonId_List.Data.Builder builder,
         @NotNull PersonRecord_List inputList,
         @Nullable InputUsersFieldProjection inputProjection,
         @NotNull ws.epigraph.tests.resources.users.operations._create.output.OutputUsersFieldProjection outputProjection) {
@@ -204,7 +204,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
     @Override
     protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
-        @NotNull PersonId_Error_Map.Builder.Data builder,
+        @NotNull PersonId_Error_Map.Data.Builder builder,
         @NotNull PersonMap inputMap,
         @Nullable UpdateUsersFieldProjection updateProjection,
         @NotNull ws.epigraph.tests.resources.users.operations._update.output.OutputUsersFieldProjection outputProjection) {
@@ -277,7 +277,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
     @Override
     protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
-        @NotNull PersonId_Error_Map.Builder.Data builder,
+        @NotNull PersonId_Error_Map.Data.Builder builder,
         @NotNull DeleteUsersFieldProjection deleteProjection,
         @NotNull ws.epigraph.tests.resources.users.operations._delete.output.OutputUsersFieldProjection outputProjection) {
 
@@ -315,7 +315,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected @NotNull CompletableFuture<PersonRecord.Data> process(
-        @NotNull PersonRecord.Builder.Data builder,
+        @NotNull PersonRecord.Data.Builder builder,
         @Nullable PersonRecord inputData,
         @NotNull UsersFieldPath path,
         @Nullable ws.epigraph.tests.resources.users.operations.capitalize.input.InputUsersFieldProjection inputFieldProjection,

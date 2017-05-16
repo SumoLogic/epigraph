@@ -24,6 +24,7 @@ import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 
 import ws.epigraph.compiler.{CDatumType, CDatumTypeApiWrapper, CType, CTypeApiWrapper}
 import ws.epigraph.lang.Qn
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.types.{DatumTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
@@ -41,7 +42,7 @@ object JavaGenUtils {
 
   val EmptyPath: Path = Paths.get("")
 
-  val topLevelComment = "// This is a generated file. Not intended for manual editing."
+  val topLevelComment = sn""""""
 
   def spaces(i: Int): String = spacesCache.getOrElseUpdate(i, " " * i)
 
