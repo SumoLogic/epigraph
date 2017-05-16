@@ -38,7 +38,6 @@ import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.util.IOUtil;
 import ws.epigraph.wire.*;
 
@@ -66,7 +65,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       final @NotNull Charset requestCharset) {
 
     this.requestCharset = requestCharset;
-    
+
     reqOutputReaderFactory = formatFactories.reqOutputReaderFactory();
     reqInputReaderFactory = formatFactories.reqInputReaderFactory();
     opInputReaderFactory = formatFactories.opInputReaderFactory();
@@ -99,6 +98,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         OpInputFormatWriter writer = opInputWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(opInputProjection, inputData);
+        writer.close();
+        cos.close();
       };
     } else {
       mimeType = reqInputWriterFactory.format().mimeType();
@@ -106,15 +107,19 @@ public class FormatBasedServerProtocol implements ServerProtocol {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         ReqInputFormatWriter writer = reqInputWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(reqInputProjection, inputData);
+        writer.close();
+        cos.close();
       };
     }
 
     return new ContentProducer(
         ContentType.get(mimeType, requestCharset),
         new HttpAsyncContentProducer() {
+          ContentWriter writer = null;
           @Override
           public void produceContent(final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
-            producerFunc.apply(encoder).write();
+            writer = producerFunc.apply(encoder);
+            writer.write();
           }
 
           @Override
@@ -127,10 +132,11 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
+  public OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
-      final @NotNull HttpResponse httpResponse) {
+      final @NotNull HttpResponse httpResponse,
+      final int okStatusCode) {
 
     int statusCode = httpResponse.getStatusLine().getStatusCode();
     Charset charset = CommonHttpUtil.getCharset(
@@ -139,7 +145,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     );
 
     try {
-      if (statusCode == HttpStatusCode.OK) {
+      if (statusCode == okStatusCode) { // should we support multiple options here? Or accept any 2xx?
         try (InputStream inputStream = httpResponse.getEntity().getContent()) {
           ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(inputStream, charset);
           Data data = formatReader.readData(projection);

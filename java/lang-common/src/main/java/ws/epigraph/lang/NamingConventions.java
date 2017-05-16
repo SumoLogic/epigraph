@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,13 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class NamingConventions {
+public final class NamingConventions {
+  private NamingConventions() {}
+
   // TODO validation logic should be common with epigraph-java|scala-core?
 
-  @Nullable
-  public static String validateTypeName(@NotNull String typeName) {
-    if (typeName.length() == 0) return null;
+  public static @Nullable String validateTypeName(@NotNull String typeName) {
+    if (typeName.isEmpty()) return null;
     if (isProperlyQuoted(typeName)) return null;
 
     if (!Character.isUpperCase(typeName.charAt(0)))
@@ -37,23 +38,20 @@ public class NamingConventions {
     return null;
   }
 
-  @Nullable
-  public static String validateFieldName(@NotNull String fieldName) {
+  public static @Nullable String validateFieldName(@NotNull String fieldName) {
     if (isProperlyQuoted(fieldName)) return null;
 
     return validateMemberName(fieldName, "Field name");
   }
 
-  @Nullable
-  public static String validateVarTypeTagName(@NotNull String varTagName) {
+  public static @Nullable String validateVarTypeTagName(@NotNull String varTagName) {
     if (isProperlyQuoted(varTagName)) return null;
 
     return validateMemberName(varTagName, "VarType tag");
   }
 
-  @Nullable
-  private static String validateMemberName(@NotNull String memberName, @NotNull String memberKind) {
-    if (memberName.length() == 0) return null;
+  private static @Nullable String validateMemberName(@NotNull String memberName, @NotNull String memberKind) {
+    if (memberName.isEmpty()) return null;
     if (isProperlyQuoted(memberName)) return null;
 
     if (!Character.isLowerCase(memberName.charAt(0)))
@@ -68,14 +66,12 @@ public class NamingConventions {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static String enquote(@NotNull String name) {
+  public static @NotNull String enquote(@NotNull String name) {
     return '`' + name + '`';
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static String unquote(@NotNull String name) {
+  public static @NotNull String unquote(@NotNull String name) {
     if (isProperlyQuoted(name)) return name.substring(1, name.length() - 1);
     return name;
   }

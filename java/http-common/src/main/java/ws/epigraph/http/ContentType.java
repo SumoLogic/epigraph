@@ -60,6 +60,6 @@ public class ContentType {
   public String toString() { return toString; }
 
   private String _toString() {
-    return charset == null ? mimeType : mimeType + ";charset" + charset.name().toLowerCase();
+    return charset == null ? mimeType : mimeType + ";charset=" + charset.name().toLowerCase();
   }
 }

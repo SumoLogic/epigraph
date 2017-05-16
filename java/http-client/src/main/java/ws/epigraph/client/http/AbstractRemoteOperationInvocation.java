@@ -18,6 +18,7 @@ package ws.epigraph.client.http;
 
 import org.apache.http.*;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
@@ -31,10 +32,12 @@ import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
+import ws.epigraph.util.HttpStatusCode;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.concurrent.CompletableFuture;
 
@@ -74,16 +77,16 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
     HttpRequest httpRequest = composeHttpRequest(request, context);
 
     // set up operation name header to disambiguate routing
-    String operationName = operationDeclaration.name();
     httpRequest.addHeader(
         EpigraphHeaders.OPERATION_NAME,
-        operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName
+        operationDeclaration.nameOrDefaultName()
     );
 
-    for (String mimeType : serverProtocol.mimeTypes())
-      httpRequest.addHeader(HttpHeaders.ACCEPT, mimeType);
+    String mimeTypes = String.join(", ", serverProtocol.mimeTypes());
+    if (!mimeTypes.isEmpty())
+      httpRequest.addHeader(HttpHeaders.ACCEPT, mimeTypes);
 
-    httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name());
+    httpRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, charset.name().toLowerCase());
 
     final HttpAsyncRequestProducer requestProducer;
     @Nullable ContentProducer contentProducer = requestContentProducer(request, context);
@@ -102,6 +105,25 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
       httpRequest.addHeader(Headers.CONTENT_TYPE, contentProducer.contentType().toString());
       requestProducer =
           new RequestProducer(host, (HttpEntityEnclosingRequest) httpRequest, contentProducer.httpContentProducer());
+
+      ((HttpEntityEnclosingRequest) httpRequest).setEntity(new AbstractHttpEntity() {
+        @Override
+        public boolean isRepeatable() { return true; }
+
+        @Override
+        public long getContentLength() { return -1; }
+
+        @Override
+        public InputStream getContent() throws UnsupportedOperationException {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void writeTo(final OutputStream stream) { throw new UnsupportedOperationException(); }
+
+        @Override
+        public boolean isStreaming() { return true; }
+      });
     }
 
     CompletableFuture<OperationInvocationResult<ReadOperationResponse<?>>> f = new CompletableFuture<>();
@@ -116,30 +138,31 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
         new FutureCallback<HttpResponse>() {
           @Override
           public void completed(final HttpResponse result) {
-            f.complete(
-                serverProtocol.readResponse(
-                    request.outputProjection().varProjection(),
-                    context,
-                    result
-                )
-            );
+            try {
+              f.complete(
+                  serverProtocol.readResponse(
+                      request.outputProjection().varProjection(),
+                      context,
+                      result,
+                      okStatusCode()
+                  )
+              );
+            } catch (RuntimeException e) { f.completeExceptionally(e); }
           }
 
           @Override
-          public void failed(final Exception ex) {
-            f.completeExceptionally(ex);
-          }
+          public void failed(final Exception ex) { f.completeExceptionally(ex); }
 
           @Override
-          public void cancelled() {
-            f.cancel(false);
-          }
+          public void cancelled() { f.cancel(false); }
         }
     );
 
     return f;
 
   }
+
+  protected int okStatusCode() { return HttpStatusCode.OK;}
 
   protected abstract HttpRequest composeHttpRequest(
       @NotNull Req operationRequest,

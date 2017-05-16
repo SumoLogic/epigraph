@@ -47,6 +47,7 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.*;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
@@ -222,8 +223,6 @@ public final class RequestFactory {
 
     ReqFieldPath reqFieldPath = null;
 
-    DataTypeApi pathTipType = resourceType;
-
     if (pathString != null) {
       OpFieldPath opPath = operationDeclaration.path();
       if (opPath == null)
@@ -240,13 +239,12 @@ public final class RequestFactory {
           TextLocation.UNKNOWN
       );
 
-      pathTipType = ProjectionUtils.tipType(reqVarPath);
     }
 
     ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
-            pathTipType,
+            operationDeclaration.outputType().dataType(),
             operationDeclaration.outputProjection().varProjection(),
             typesResolver
         ).projection(),
@@ -258,7 +256,7 @@ public final class RequestFactory {
       reqInputFieldProjection = new ReqInputFieldProjection(
           parseReqInputProjection(
               inputRequestString,
-              pathTipType,
+              operationDeclaration.inputType().dataType(),
               operationDeclaration.inputProjection().varProjection(),
               typesResolver
           ),
@@ -299,8 +297,6 @@ public final class RequestFactory {
 
     ReqFieldPath reqFieldPath = null;
 
-    DataTypeApi pathTipType = resourceType;
-
     if (pathString != null) {
       OpFieldPath opPath = operationDeclaration.path();
       if (opPath == null)
@@ -316,14 +312,12 @@ public final class RequestFactory {
           reqVarPath,
           TextLocation.UNKNOWN
       );
-
-      pathTipType = ProjectionUtils.tipType(reqVarPath);
     }
 
     ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
-            pathTipType,
+            operationDeclaration.outputType().dataType(),
             operationDeclaration.outputProjection().varProjection(),
             typesResolver
         ).projection(),
@@ -339,7 +333,7 @@ public final class RequestFactory {
           parseReqUpdateProjection(
               replace ? updateRequestString.substring(1) : updateRequestString,
               replace,
-              pathTipType,
+              operationDeclaration.inputType().dataType(),
               operationDeclaration.inputProjection().varProjection(),
               typesResolver
           ),
@@ -378,8 +372,6 @@ public final class RequestFactory {
 
     ReqFieldPath reqFieldPath = null;
 
-    DataTypeApi pathTipType = resourceType;
-
     if (pathString != null) {
       OpFieldPath opPath = operationDeclaration.path();
       if (opPath == null)
@@ -395,14 +387,12 @@ public final class RequestFactory {
           reqVarPath,
           TextLocation.UNKNOWN
       );
-
-      pathTipType = ProjectionUtils.tipType(reqVarPath);
     }
 
     ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
-            pathTipType,
+            operationDeclaration.outputType().dataType(),
             operationDeclaration.outputProjection().varProjection(),
             typesResolver
         ).projection(),
@@ -412,7 +402,7 @@ public final class RequestFactory {
     ReqDeleteFieldProjection reqDeleteFieldProjection = new ReqDeleteFieldProjection(
         parseReqDeleteProjection(
             deleteRequestString,
-            pathTipType,
+            resourceType,
             operationDeclaration.deleteProjection().varProjection(),
             typesResolver
         ),
@@ -451,8 +441,6 @@ public final class RequestFactory {
 
     ReqFieldPath reqFieldPath = null;
 
-    DataTypeApi pathTipType = resourceType;
-
     if (pathString != null) {
       OpFieldPath opPath = operationDeclaration.path();
       if (opPath == null)
@@ -468,14 +456,12 @@ public final class RequestFactory {
           reqVarPath,
           TextLocation.UNKNOWN
       );
-
-      pathTipType = ProjectionUtils.tipType(reqVarPath);
     }
 
     ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
-            pathTipType,
+            operationDeclaration.outputType().dataType(),
             operationDeclaration.outputProjection().varProjection(),
             typesResolver
         ).projection(),
@@ -493,10 +479,13 @@ public final class RequestFactory {
             )
         );
 
+      TypeApi inputType = operationDeclaration.inputType();
+      assert inputType != null;
+
       reqInputFieldProjection = new ReqInputFieldProjection(
           parseReqInputProjection(
               inputRequestString,
-              pathTipType,
+              inputType.dataType(),
               opInputFieldProjection.varProjection(),
               typesResolver
           ),

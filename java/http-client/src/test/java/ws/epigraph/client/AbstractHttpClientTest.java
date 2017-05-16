@@ -43,9 +43,7 @@ import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.tests.UserResourceFactory;
-import ws.epigraph.tests.UsersResourceFactory;
-import ws.epigraph.tests.UsersStorage;
+import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
 import ws.epigraph.util.EBean;
 import ws.epigraph.wire.json.JsonFormatFactories;
@@ -80,7 +78,7 @@ public abstract class AbstractHttpClientTest {
 
   @Test
   public void testSimpleRead() throws ExecutionException, InterruptedException {
-    testSuccessfulRead(
+    testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "[1,2](:record(firstName))",
         "( 1: < record: { firstName: \"First1\" } >, 2: < record: { firstName: \"First2\" } > )"
@@ -111,14 +109,30 @@ public abstract class AbstractHttpClientTest {
 
   @Test
   public void testPathRead() throws ExecutionException, InterruptedException {
-    testSuccessfulRead(
+    testRead(
         UsersResourceDeclaration.bestFriendReadOperationDeclaration,
         "/1:record/bestFriend:record(firstName)",
         "< record: { firstName: \"First2\" } >"
     );
   }
 
-  protected void testSuccessfulRead(
+  @Test
+  public void testSimpleCreateWithoutProjection() throws ExecutionException, InterruptedException {
+    testCreate(
+        UsersResourceDeclaration.createOperationDeclaration,
+        null,
+        null,
+        PersonRecord_List.type.createDataBuilder().set(
+            PersonRecord_List.create().add(PersonRecord.create().setFirstName("testCreate"))
+        ),
+        "*",
+        "[ 11 ]"
+    );
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  protected void testRead(
       @NotNull ReadOperationDeclaration operationDeclaration,
       @NotNull String requestString,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
@@ -126,15 +140,7 @@ public abstract class AbstractHttpClientTest {
     OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
         runReadOperation(operationDeclaration, requestString, null);
 
-    invocationResult.consume(
-        ror -> {
-          Data data = ror.getData();
-          String dataToString = printData(data);
-          assertEquals(expectedDataPrint, dataToString);
-        },
-
-        oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
-    );
+    checkReadResult(expectedDataPrint, invocationResult);
   }
 
   protected void testReadError(
@@ -155,7 +161,6 @@ public abstract class AbstractHttpClientTest {
           assertEquals(expectedError, oir.message());
         }
     );
-
   }
 
   protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runReadOperation(
@@ -186,6 +191,40 @@ public abstract class AbstractHttpClientTest {
     );
 
     return inv.invoke(request, opctx).get();
+  }
+
+  protected void testCreate(
+      @NotNull CreateOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String inputProjection,
+      @NotNull Data inputData,
+      @NotNull String outputProjection,
+      @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
+
+    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runCreateOperation(
+        operationDeclaration,
+        path,
+        inputProjection,
+        inputData,
+        outputProjection
+    );
+
+    checkReadResult(expectedDataPrint, invocationResult);
+  }
+
+  private void checkReadResult(
+      final @NotNull String expectedDataPrint,
+      final OperationInvocationResult<ReadOperationResponse<?>> invocationResult) {
+    
+    invocationResult.consume(
+        ror -> {
+          Data data = ror.getData();
+          String dataToString = printData(data);
+          assertEquals(expectedDataPrint, dataToString);
+        },
+
+        oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
+    );
   }
 
   protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCreateOperation(

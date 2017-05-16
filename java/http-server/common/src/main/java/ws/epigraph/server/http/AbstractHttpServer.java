@@ -428,7 +428,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 OperationInvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
                         "Error reading %screate request body: %s",
-                        operationName == null ? "" : "'" + operationName + "'",
+                        operationName == null ||
+                        CreateOperationDeclaration.DEFAULT_NAME.equals(operationName) ? "" : "'" + operationName + "' ",
                         e.getMessage()
                     ))
                 )
@@ -580,7 +581,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 OperationInvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
                         "Error reading %supdate request body: %s",
-                        operationName == null ? "" : "'" + operationName + "'",
+                        operationName == null ||
+                        UpdateOperationDeclaration.DEFAULT_NAME.equals(operationName) ? "" : "'" + operationName + "' ",
                         e.getMessage()
                     ))
                 )

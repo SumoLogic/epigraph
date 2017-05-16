@@ -17,7 +17,6 @@
 package ws.epigraph.client.http;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.nio.entity.HttpAsyncContentProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
@@ -39,10 +38,11 @@ public interface ServerProtocol {
    */
   @NotNull String[] mimeTypes();
 
-  @Nullable OperationInvocationResult<ReadOperationResponse<?>> readResponse(
+  OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
-      @NotNull HttpResponse httpResponse);
+      @NotNull HttpResponse httpResponse,
+      int okStatusCode);
 
   @NotNull ContentProducer createRequestContentProducer(
       @Nullable ReqInputVarProjection reqInputProjection,

@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class Util {
-  private static final Pattern charsetPattern = Pattern.compile(".*;charset\\s*=\\s*[^;]+.*");
+  private static final Pattern charsetPattern = Pattern.compile(".*;charset\\s*=\\s*([^;]+).*");
 
   public static final Charset defaultCharset = StandardCharsets.ISO_8859_1; // https://tools.ietf.org/html/rfc2616#section-3.7.1
 
@@ -37,7 +37,6 @@ public final class Util {
 
   public static @NotNull ContentType parseContentType(@NotNull String contentTypeStr) {
     // https://www.w3.org/Protocols/rfc1341/4_Content-Type.html
-
 
     String mimeType = contentTypeStr;
     Charset charset = defaultCharset;

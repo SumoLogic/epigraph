@@ -26,6 +26,7 @@ import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.service.operations.CreateOperationRequest;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.nio.charset.Charset;
 
@@ -59,8 +60,6 @@ public class RemoteCreateOperationInvocation
         operationRequest.outputProjection()
     );
 
-    System.out.println("uri = " + uri);
-
     return new HttpPost(uri);
   }
 
@@ -77,4 +76,7 @@ public class RemoteCreateOperationInvocation
         operationInvocationContext
     );
   }
+
+  @Override
+  protected int okStatusCode() { return HttpStatusCode.CREATED; }
 }

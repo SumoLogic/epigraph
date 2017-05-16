@@ -38,6 +38,7 @@ public class UndertowHttpServerTest extends AbstractHttpServerTest {
     server = Undertow.builder()
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
+        .setServerOption(UndertowOptions.REQUEST_PARSE_TIMEOUT, 100)
         .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))
         .build();
 

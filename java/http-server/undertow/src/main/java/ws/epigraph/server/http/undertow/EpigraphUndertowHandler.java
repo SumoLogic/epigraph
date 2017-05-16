@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import static ws.epigraph.server.http.Util.decodeUri;
@@ -102,7 +103,8 @@ public class EpigraphUndertowHandler
       exchange.dispatch(this);
       return;
     }
-    exchange.startBlocking();
+
+    exchange.startBlocking(new TimeoutAwareBlockingHttpExchange(exchange, responseTimeout, TimeUnit.MILLISECONDS));
 
     final UndertowInvocationContext context = new UndertowInvocationContext(exchange);
     final OperationInvocationContext operationContext = newOperationInvocationContext(context);

@@ -57,6 +57,7 @@ public class ContentEncodingOutputStream extends OutputStream {
 
   @Override
   public void close() throws IOException {
-    encoder.complete();
+    if (!encoder.isCompleted())
+      encoder.complete();
   }
 }
