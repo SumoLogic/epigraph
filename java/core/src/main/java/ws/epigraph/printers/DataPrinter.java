@@ -23,7 +23,7 @@ import de.uka.ilkd.pp.WriterBackend;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.types.DatumType;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.Field;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,7 +146,7 @@ public class DataPrinter<Exc extends Exception> {
       lo.print("{").beginCInd();
       RecordDatum.Raw raw = datum._raw();
       boolean first = true;
-      for (RecordType.Field field : datum.type().fields()) {
+      for (Field field : datum.type().fields()) {
         @Nullable Data data = raw.getData(field);
         if (data != null) {
           if (!first) lo.print(",").end();

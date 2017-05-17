@@ -151,7 +151,7 @@ public final class GDataToData {
 
     for (Map.Entry<String, GDataValue> entry : gdata.fields().entrySet()) {
       String fieldName = entry.getKey();
-      RecordType.Field field = type.fieldsMap().get(fieldName);
+      Field field = type.fieldsMap().get(fieldName);
 
       if (field == null)
         throw new ProcessingException(

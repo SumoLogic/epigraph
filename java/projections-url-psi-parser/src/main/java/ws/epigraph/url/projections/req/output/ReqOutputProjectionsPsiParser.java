@@ -1222,7 +1222,7 @@ public final class ReqOutputProjectionsPsiParser {
 
 //            if (opFieldProjection.includeInDefault()) {
 //              final String fieldName = entry.getKey();
-//              final RecordType.Field field = opFieldProjectionEntry.field();
+//              final Field field = opFieldProjectionEntry.field();
 //
 //              fields.put(
 //                  fieldName,

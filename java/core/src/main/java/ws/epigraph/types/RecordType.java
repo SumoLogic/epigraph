@@ -118,45 +118,6 @@ public abstract class RecordType extends DatumType implements RecordTypeApi {
   }
 
 
-  public static class Field implements FieldApi { // TODO move out
-
-    public final @NotNull String name;
-
-    public final @NotNull DataType dataType;
-
-    @Deprecated // use dataType().type()
-    public final @NotNull Type type;
-
-    public Field(
-        @NotNull String name,
-        @NotNull DataType dataType
-    ) { // TODO capture overridden super-fields?
-      this.name = name;
-      this.dataType = dataType;
-      this.type = dataType.type;
-    }
-
-    @Override
-    public @NotNull String name() { return name; }
-
-    @Override
-    public @NotNull DataType dataType() { return dataType; }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Field field = (Field) o;
-      return Objects.equals(name, field.name) &&
-          Objects.equals(dataType, field.dataType);
-    }
-
-    @Override
-    public int hashCode() { return Objects.hash(name, dataType); }
-
-  }
-
-
   public abstract static class Raw extends RecordType implements DatumType.Raw {
 
     protected Raw(

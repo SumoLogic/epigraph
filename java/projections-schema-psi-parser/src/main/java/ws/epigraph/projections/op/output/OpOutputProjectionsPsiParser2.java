@@ -601,7 +601,7 @@
 //
 //    for (IdlOpOutputFieldProjectionEntry fieldProjectionEntryPsi : fieldProjectionEntriesPsi) {
 //      final String fieldName = fieldProjectionEntryPsi.getQid().getCanonicalName();
-//      RecordType.Field field = type.fieldsMap().get(fieldName);
+//      Field field = type.fieldsMap().get(fieldName);
 //
 //      if (field == null) {
 //        errors.add(new PsiProcessingError(

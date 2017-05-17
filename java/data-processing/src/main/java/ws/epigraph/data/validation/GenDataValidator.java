@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.FieldApi;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.Field;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.Type;
 
@@ -112,7 +112,7 @@ public abstract class GenDataValidator<
       final FieldApi field = fpe.field();
 
       context.withStackItem(new DataValidationContext.FieldStackItem(field), () -> {
-        final Data data = datum._raw().getData((RecordType.Field) field);
+        final Data data = datum._raw().getData((Field) field);
         if (data != null)
           validateData(data, fpe.fieldProjection().varProjection());
       });

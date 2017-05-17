@@ -23,7 +23,7 @@ import ws.epigraph.data.traversal.DataTraversalContext;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.DatumType;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.Field;
 import ws.epigraph.types.Type;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.util.HttpStatusCode;
@@ -148,7 +148,7 @@ public class ReqOutputRequiredDataPruner {
 
     for (final Map.Entry<String, ReqOutputFieldProjectionEntry> entry : projection.fieldProjections().entrySet()) {
       final String fieldName = entry.getKey();
-      final RecordType.Field field = datum.type().fieldsMap().get(fieldName);
+      final Field field = datum.type().fieldsMap().get(fieldName);
 
       final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
       final ReqOutputFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
@@ -199,7 +199,7 @@ public class ReqOutputRequiredDataPruner {
       final RecordDatum.Builder builder = datum.type().createBuilder();
       for (final Map.Entry<String, ? extends Data> entry : fieldsData.entrySet()) {
         String fieldName = entry.getKey();
-        final RecordType.Field field = datum.type().fieldsMap().get(fieldName);
+        final Field field = datum.type().fieldsMap().get(fieldName);
 
         final Data data = replacements.containsKey(fieldName) ? replacements.get(fieldName) : entry.getValue();
         builder._raw().setData(field, data);

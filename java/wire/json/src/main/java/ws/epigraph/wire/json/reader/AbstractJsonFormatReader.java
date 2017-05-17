@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.types.RecordType.Field;
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
 

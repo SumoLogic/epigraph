@@ -19,7 +19,7 @@ package ws.epigraph.service;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
-import ws.epigraph.types.RecordType;
+import ws.epigraph.types.Field;
 import ws.epigraph.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +106,7 @@ public final class ProjectionDataTrimmer {
 
     for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
       final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
-      final RecordType.Field field = raw.type().fieldsMap().get(entry.getKey());
+      final Field field = raw.type().fieldsMap().get(entry.getKey());
       assert field != null : raw.type().name().toString() + "." + entry.getKey();
       final @Nullable Data data = raw.getData(field);
 

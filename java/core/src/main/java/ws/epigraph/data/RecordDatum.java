@@ -20,7 +20,7 @@ package ws.epigraph.data;
 
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.types.RecordType;
-import ws.epigraph.types.RecordType.Field;
+import ws.epigraph.types.Field;
 import ws.epigraph.types.Type.Tag;
 import ws.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;

@@ -29,7 +29,7 @@ class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CR
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
-import ws.epigraph.types.RecordType.Field;
+import ws.epigraph.types.Field;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
