@@ -109,6 +109,8 @@ tagName ::= qid
 // this one isn't used actually, sub-parsers for read/create/... are used instead
 url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 
+// todo get rid of requestParms?
+
 // real entry points:
 readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
   extends = "url"

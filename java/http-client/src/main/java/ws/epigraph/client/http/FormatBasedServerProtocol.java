@@ -154,6 +154,16 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
+  public @NotNull HttpContentProducer customRequestContentProducer(
+      final @Nullable ReqInputVarProjection reqInputProjection,
+      final @NotNull OpInputVarProjection opInputProjection,
+      final @NotNull Data inputData,
+      final @NotNull OperationInvocationContext operationInvocationContext) {
+
+    return createRequestContentProducer(reqInputProjection, opInputProjection, inputData, operationInvocationContext);
+  }
+
+  @Override
   public OperationInvocationResult<ReadOperationResponse<?>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,

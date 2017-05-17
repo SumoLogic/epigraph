@@ -143,6 +143,15 @@ public final class UriComposer {
     return encodeUri(decodedUri.toString());
   }
 
+  public static @NotNull String composeCustomUri(
+      @NotNull String fieldName,
+      @Nullable ReqFieldPath path,
+      @Nullable ReqInputFieldProjection inputProjection,
+      @NotNull ReqOutputFieldProjection outputProjection) {
+
+    return composeCreateUri(fieldName, path, inputProjection, outputProjection); // same
+  }
+
   private static @NotNull String encodeUri(@NotNull String decodedUriNoLeadSlash) {
     byte[] urlBytes = URLCodec.encodeUrl(SAFE_CHARACTERS, decodedUriNoLeadSlash.getBytes(StandardCharsets.UTF_8));
     return "/" + new String(urlBytes, StandardCharsets.UTF_8);

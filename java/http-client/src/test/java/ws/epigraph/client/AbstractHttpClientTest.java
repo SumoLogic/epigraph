@@ -33,10 +33,7 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.CreateOperationDeclaration;
-import ws.epigraph.schema.operations.DeleteOperationDeclaration;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.schema.operations.UpdateOperationDeclaration;
+import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
@@ -303,6 +300,37 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
+  @Test
+  public void testCustomWithPath() throws ExecutionException, InterruptedException {
+    String key = testCreate(
+        UsersResourceDeclaration.createOperationDeclaration,
+        null,
+        null,
+        PersonRecord_List.type.createDataBuilder().set(
+            PersonRecord_List.create().add(PersonRecord.create().setFirstName("first").setLastName("last"))
+        ),
+        "*",
+        "\\[ (\\d+) \\]"
+    );
+
+    testCustom(
+        UsersResourceDeclaration.capitalizeCustomOperationDeclaration,
+        "/" + key,
+        "(lastName)",
+        null,
+        "(firstName,lastName)",
+        "{ firstName: \"FIRST\", lastName: \"last\" }"
+    );
+
+    testDelete(
+        UsersResourceDeclaration.deleteOperationDeclaration,
+        null,
+        "[" + key + "]",
+        "[*]",
+        "( )"
+    );
+  }
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   protected void testRead(
@@ -421,6 +449,25 @@ public abstract class AbstractHttpClientTest {
     checkReadResult(expectedDataPrint, false, invocationResult);
   }
 
+  protected void testCustom(
+      @NotNull CustomOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String inputProjection,
+      @Nullable Data inputData,
+      @NotNull String outputProjection,
+      @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
+
+    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runCustomOperation(
+        operationDeclaration,
+        path,
+        inputProjection,
+        inputData,
+        outputProjection
+    );
+
+    checkReadResult(expectedDataPrint, false, invocationResult);
+  }
+
   private String checkReadResult(
       final @NotNull String expectedDataPrint,
       boolean isRegexExpected,
@@ -533,6 +580,36 @@ public abstract class AbstractHttpClientTest {
         operationDeclaration,
         path,
         deleteProjectionString,
+        outputProjectionString,
+        resolver
+    );
+
+    return inv.invoke(request, opctx).get();
+  }
+
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCustomOperation(
+      @NotNull CustomOperationDeclaration operationDeclaration,
+      @Nullable String path,
+      @Nullable String inputProjectionString,
+      @Nullable Data requestInput,
+      @NotNull String outputProjectionString) throws ExecutionException, InterruptedException {
+
+    RemoteCustomOperationInvocation inv = new RemoteCustomOperationInvocation(
+        httpHost,
+        httpClient,
+        resourceDeclaration.fieldName(),
+        operationDeclaration,
+        serverProtocol,
+        CHARSET
+    );
+
+    OperationInvocationContext opctx = new DefaultOperationInvocationContext(true, new EBean());
+    CustomOperationRequest request = constructCustomRequest(
+        resourceDeclaration.fieldType(),
+        operationDeclaration,
+        path,
+        inputProjectionString,
+        requestInput,
         outputProjectionString,
         resolver
     );

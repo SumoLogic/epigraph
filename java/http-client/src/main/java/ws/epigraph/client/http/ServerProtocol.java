@@ -56,4 +56,10 @@ public interface ServerProtocol {
       @NotNull OpInputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
+
+  @NotNull HttpContentProducer customRequestContentProducer(
+      @Nullable ReqInputVarProjection reqInputProjection,
+      @NotNull OpInputVarProjection opInputProjection,
+      @NotNull Data inputData,
+      @NotNull OperationInvocationContext operationInvocationContext);
 }

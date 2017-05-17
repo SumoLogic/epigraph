@@ -30,6 +30,7 @@
   - [ ] server and client `ServerProtocol.read*` methods must return `CompletableFuture` of results and stay async
   - [ ] `AbstractRemoteOperationInvocation` must use new push readers instead of in-memory buffering `BasicAsyncResponseConsumer`
   - See also: https://github.com/FasterXML/jackson-core/issues/57
+- [ ] remove `requestParams` from requests/URLs?
 
 # Type system
 - [ ] Enums
