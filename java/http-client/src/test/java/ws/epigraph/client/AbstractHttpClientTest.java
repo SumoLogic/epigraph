@@ -209,7 +209,52 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
-  // todo test update with path
+  @Test
+  public void testUpdateWithPath() throws ExecutionException, InterruptedException {
+    testUpdate(
+        UsersResourceDeclaration.bestFriendUpdateOperationDeclaration,
+        "/1:record/bestFriend",
+        null,
+        Person.create().setId(PersonId.create(3)),
+        "(code,message)",
+        "null"
+    );
+
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "/1:record/bestFriend:id",
+        "( 1: < record: { bestFriend: < id: 3 > } > )"
+    );
+
+    // change it back
+    testUpdate(
+        UsersResourceDeclaration.bestFriendUpdateOperationDeclaration,
+        "/1:record/bestFriend",
+        null,
+        Person.create().setId(PersonId.create(2)),
+        "(code,message)",
+        "null"
+    );
+
+    testUpdate(
+        UsersResourceDeclaration.bestFriendUpdateOperationDeclaration,
+        "/21:record/bestFriend",
+        null,
+        Person.create().setId(PersonId.create(3)),
+        "(code,message)",
+        "{ code: 404, message: \"User with id 21 not found\" }"
+    );
+
+    testUpdate(
+        UsersResourceDeclaration.bestFriendUpdateOperationDeclaration,
+        "/1:record/bestFriend",
+        null,
+        Person.create().setId(PersonId.create(31)),
+        "(code,message)",
+        "{ code: 404, message: \"User with id 31 not found\" }"
+    );
+
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -293,7 +338,7 @@ public abstract class AbstractHttpClientTest {
     return checkReadResult(expectedDataPrint, true, invocationResult);
   }
 
-  protected String testUpdate(
+  protected void testUpdate(
       @NotNull UpdateOperationDeclaration operationDeclaration,
       @Nullable String path,
       @Nullable String updateProjection,
@@ -309,7 +354,7 @@ public abstract class AbstractHttpClientTest {
         outputProjection
     );
 
-    return checkReadResult(expectedDataPrint, false, invocationResult);
+    checkReadResult(expectedDataPrint, false, invocationResult);
   }
 
   protected void testDelete(

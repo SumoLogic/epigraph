@@ -76,7 +76,8 @@ public abstract class AbstractJsonFormatWriter<
       out.write("null");
     } else {
       TypeApi type = data.type();
-      assert projection.type().isAssignableFrom(type);
+      assert projection.type().isAssignableFrom(type) :
+          "Projection type " + projection.type().name() + " is not assignable from " + type.name();
       writeData(projection.polymorphicTails() != null, varProjections(projection, type), data);
     }
   }

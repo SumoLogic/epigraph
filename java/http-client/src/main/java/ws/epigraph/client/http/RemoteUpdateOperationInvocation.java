@@ -22,10 +22,13 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.operations.UpdateOperationRequest;
+import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.nio.charset.Charset;
@@ -67,12 +70,23 @@ public class RemoteUpdateOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull UpdateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqUpdateFieldProjection inputFieldProjection = request.updateProjection();
+    ReqUpdateFieldProjection updateFieldProjection = request.updateProjection();
+    Data data = request.data();
+
+    Type dataType = data.type();
+    TypeApi projectionType = updateFieldProjection == null
+                             ? operationDeclaration.inputProjection().varProjection().type()
+                             : updateFieldProjection.varProjection().type();
+
+    if (!projectionType.isAssignableFrom(dataType)) {
+      throw new IllegalArgumentException(
+          "Update projection type " + projectionType.name() + " is not assignable from data type " + dataType.name());
+    }
 
     return serverProtocol.updateRequestContentProducer(
-        inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
+        updateFieldProjection == null ? null : updateFieldProjection.varProjection(),
         operationDeclaration.inputProjection().varProjection(),
-        request.data(),
+        data,
         operationInvocationContext
     );
   }

@@ -22,10 +22,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.service.operations.CreateOperationRequest;
+import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.nio.charset.Charset;
@@ -68,11 +71,22 @@ public class RemoteCreateOperationInvocation
       @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
     ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+    Data data = request.data();
+
+    Type dataType = data.type();
+    TypeApi projectionType = inputFieldProjection == null
+                             ? operationDeclaration.inputProjection().varProjection().type()
+                             : inputFieldProjection.varProjection().type();
+
+    if (!projectionType.isAssignableFrom(dataType)) {
+      throw new IllegalArgumentException(
+          "Input projection type " + projectionType.name() + " is not assignable from data type " + dataType.name());
+    }
 
     return serverProtocol.createRequestContentProducer(
         inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
         operationDeclaration.inputProjection().varProjection(),
-        request.data(),
+        data,
         operationInvocationContext
     );
   }
