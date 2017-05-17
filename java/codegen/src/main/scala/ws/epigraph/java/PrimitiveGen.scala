@@ -63,9 +63,7 @@ ${t.meta match {
       Imm, Builder, Value.Imm, Value.Builder, Data.Imm, Data.Builder
   > {
 
-    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
-
-    public static $ln.Type instance() { return Holder.instance; }
+$typeInstance\
 
     private Type() {
       super(

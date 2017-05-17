@@ -18,10 +18,10 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.compiler.CType
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
-trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
+trait DatumTypeJavaGen { this: JavaTypeGen[_ >: Null <: CType] =>
 
   /** Generates .Value, .Value.Builder, .Value.Imm, and .Value.Imm.Impl for the datum type. */
   def datumValue: String = /*@formatter:off*/sn"""\
@@ -65,7 +65,7 @@ trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
     }
 
   }
-"""
+"""/*@formatter:on*/
 
   /** Generates .Data, .Data.Builder, .Data.Imm, and .Data.Imm.Impl for the datum type. */
   def datumData: String = /*@formatter:off*/sn"""\
@@ -143,6 +143,6 @@ trait DatumTypeJavaGen {this: JavaTypeGen[_ >: Null <: CType] =>
     }
 
   }
-"""
+"""/*@formatter:on*/
 
 }

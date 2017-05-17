@@ -88,6 +88,8 @@ record Field {
   getField: Field // field name collides with generated .getField() method
   tag: Tag
   type: Type // field name collides with static .type field
+  self: Field // might collide with static .Type.self field
+  instance: Type // might collide with .Type.Holder.instance
 }
 
 // type name collides with imported Tag class
@@ -100,3 +102,4 @@ vartype Tag {
 // type name collides with one of the classes/interfaces nested in a framework supertype of the generated interface
 record Static
 record Raw
+record Holder // might collide with .Type.Holder // fixed

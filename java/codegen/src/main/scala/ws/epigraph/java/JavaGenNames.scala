@@ -182,7 +182,7 @@ object JavaGenNames {
     // these are names of classes/interfaces nested in supertypes of generated classes (and TODO might be fnq-able)
     "Raw", "Static", "Builder", "Imm", "Impl",
 
-    // these are imported (and TODO can be fqn-ed instead of escaping)
+    // these are imported and referenced by short name (and TODO can be fqn-ed instead of escaping)
     "Tag", "Field", "NotNull", "Nullable"
 
   )

@@ -62,9 +62,7 @@ ${t.effectiveTags.map { tag => sn"""\
    */
   final class Type extends ws.epigraph.types.UnionType.Static<$ln.Imm, $ln.Builder> {
 
-    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
-
-    public static $ln.Type instance() { return Holder.instance; }
+$typeInstance\
 
     private Type() {
       super(

@@ -21,7 +21,8 @@ package ws.epigraph.java
 import java.nio.file.Path
 
 import ws.epigraph.compiler.{CDataType, CType, CTypeRef, CVarTypeDef}
-import ws.epigraph.java.JavaGenNames.{getNamedTypeComponent, lqn, lqrn, pn, dttr}
+import ws.epigraph.java.JavaGenNames.{dttr, getNamedTypeComponent, lqn, lqrn, pn}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 
 import scala.collection.JavaConversions._
@@ -77,5 +78,12 @@ abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, protect
     case _: CVarTypeDef => yes
     case _ => no
   }
+
+  /** Generates .Type.instance() implementation. */
+  def typeInstance: String = /*@formatter:off*/sn"""\
+    private static final class _Holder { static final @NotNull $ln.Type instance = new $ln.Type(); }
+
+    public static @NotNull $ln.Type instance() { return _Holder.instance; }
+"""/*@formatter:on*/
 
 }

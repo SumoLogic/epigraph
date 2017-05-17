@@ -128,9 +128,7 @@ ${t.meta match {
       $ln.Data.Builder
   > {
 
-    private static final class Holder { public static $ln.Type instance = new $ln.Type(); }
-
-    public static $ln.Type instance() { return Holder.instance; }
+$typeInstance\
 
     private Type() {
       super(
