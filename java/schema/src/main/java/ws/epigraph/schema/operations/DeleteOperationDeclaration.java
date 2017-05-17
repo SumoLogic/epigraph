@@ -16,6 +16,7 @@
 
 package ws.epigraph.schema.operations;
 
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.lang.TextLocation;
@@ -25,6 +26,7 @@ import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +51,18 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
     );
 
     this.deleteProjection = deleteProjection;
+
+    if (path != null) {
+      TypeApi tipType = ProjectionUtils.tipType(path.varProjection()).type();
+      TypeApi deleteType = deleteProjection.varProjection().type();
+
+      if (!deleteType.isAssignableFrom(tipType))
+        throw new IllegalArgumentException(
+            String.format("'%s' %s operation: output projection type %s is not assignable from path tip type %s",
+                nameOrDefaultName(), kind(), deleteType.name(), tipType.name()
+            )
+        );
+    }
   }
 
 //  @Override

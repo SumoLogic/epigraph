@@ -106,6 +106,15 @@ resource users: PersonMap {
     outputProjection [] (code, message)
   }
 
+  delete bestFriend {
+    path /.:`record`/bestFriend
+
+    deleteProjection +
+
+    outputType epigraph.Error
+    outputProjection (code, message)
+  }
+
   // output projection generator test
   delete recursiveTest {
     deleteProjection [ ] ( $recTest = :`record` (id, bestFriend $recTest ) )

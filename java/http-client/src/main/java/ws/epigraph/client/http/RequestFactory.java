@@ -402,7 +402,7 @@ public final class RequestFactory {
     ReqDeleteFieldProjection reqDeleteFieldProjection = new ReqDeleteFieldProjection(
         parseReqDeleteProjection(
             deleteRequestString,
-            resourceType,
+            operationDeclaration.deleteProjection().varProjection().type().dataType(),
             operationDeclaration.deleteProjection().varProjection(),
             typesResolver
         ),

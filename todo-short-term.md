@@ -14,7 +14,7 @@
   - [x] read
   - [x] create
   - [x] update
-  - [ ] delete
+  - [x] delete
   - [ ] custom
   - tests
     - [x] bad request url

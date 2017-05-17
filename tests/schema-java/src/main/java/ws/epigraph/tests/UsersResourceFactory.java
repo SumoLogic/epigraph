@@ -106,6 +106,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   }
 
   @Override
+  protected @NotNull DeleteOperation<Error.Data> constructBestFriendDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new DeleteBestFriendOperation(operationDeclaration, storage);
+  }
+
+  @Override
   protected @NotNull DeleteOperation<PersonId_Error_Map.Data> constructRecursiveTestDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new AbstractDeleteRecursiveTestOperation(operationDeclaration) {

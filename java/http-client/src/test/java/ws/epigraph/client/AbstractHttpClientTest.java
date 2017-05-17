@@ -152,6 +152,12 @@ public abstract class AbstractHttpClientTest {
         "( )"
     );
 
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "[" + key + "](:record(firstName))",
+        "( )" // backend doesn't return 404s for missing users, we get nulls back instead
+    );
+
   }
 
   @Test
@@ -254,6 +260,47 @@ public abstract class AbstractHttpClientTest {
         "{ code: 404, message: \"User with id 31 not found\" }"
     );
 
+  }
+
+  @Test
+  public void testDeleteWithPath() throws ExecutionException, InterruptedException {
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "/8:record/bestFriend:id",
+        "( 8: < record: { bestFriend: < id: 9 > } > )"
+    );
+
+    testDelete(
+        UsersResourceDeclaration.bestFriendDeleteOperationDeclaration,
+        "/8:record/bestFriend",
+        "",
+        "(code,message)",
+        "null"
+    );
+
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "/8:record/bestFriend:id",
+        "( 8: < record: { } > )"
+    );
+
+    // change it back
+    testUpdate(
+        UsersResourceDeclaration.bestFriendUpdateOperationDeclaration,
+        "/8:record/bestFriend",
+        null,
+        Person.create().setId(PersonId.create(9)),
+        "(code,message)",
+        "null"
+    );
+
+    testDelete(
+        UsersResourceDeclaration.bestFriendDeleteOperationDeclaration,
+        "/28:record/bestFriend",
+        "",
+        "(code,message)",
+        "{ code: 404, message: \"User with id 28 not found\" }"
+    );
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,8 +16,8 @@
 
 package ws.epigraph.schema.operations;
 
-import ws.epigraph.schema.ResourceDeclarationError;
-import ws.epigraph.schema.ResourceDeclaration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
@@ -25,9 +25,9 @@ import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.types.TypeApi;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +58,7 @@ public abstract class OperationDeclaration {
       @Nullable OpInputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
+
     this.type = type;
     this.method = method;
     this.name = name;
