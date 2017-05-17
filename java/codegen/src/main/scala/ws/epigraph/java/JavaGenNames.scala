@@ -175,9 +175,16 @@ object JavaGenNames {
 
   /** set of type names that conflict with our own generated java classes */
   private val ReservedTypeNames: Set[String] = Set(
-      "Type", "Value", "Data", "Imm", "Builder", "Impl", // these are nested class/interface names and cannot be fqn-ed
-      "Static", // TODO these are supertypes of generated classes and might be fnq-able
-      "Tag", "Field", "NotNull", "Nullable" // TODO these can be fqn-ed (instead of escaping)
+
+    // these are names of generated nested classes/interfaces (and cannot be fqn-ed)
+    "Type", "Builder", "Imm", "Impl", "Value", "Data",
+
+    // these are names of classes/interfaces nested in supertypes of generated classes (and TODO might be fnq-able)
+    "Raw", "Static", "Builder", "Imm", "Impl",
+
+    // these are imported (and TODO can be fqn-ed instead of escaping)
+    "Tag", "Field", "NotNull", "Nullable"
+
   )
 
   private val ReservedFieldNames: Set[String] = Set("type")

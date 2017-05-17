@@ -97,5 +97,6 @@ vartype Tag {
   type: Type // tag name collides with static .type field
 }
 
-// type name collides with one of the framework supertypes
+// type name collides with one of the classes/interfaces nested in a framework supertype of the generated interface
 record Static
+record Raw

@@ -141,7 +141,7 @@ public abstract class Type implements TypeApi {
   }
 
 
-  public static class Tag implements TagApi {
+  public static class Tag implements TagApi { // TODO move out
 
     public final @NotNull String name;
 
