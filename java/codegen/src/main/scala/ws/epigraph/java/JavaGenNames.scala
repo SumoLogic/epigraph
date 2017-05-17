@@ -173,78 +173,11 @@ object JavaGenNames {
 
   def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else fn
 
-//  def objName(s: String): String = s
-//
-//  def objName(t: CTypeDef): String = javaLocalName(t, objName)
-
-//  def baseName(s: String): String = s
-
-//  @deprecated("use ln")
-//  def baseName(t: CType): String = javaLocalName(t, baseName)
-//
-//  def baseQName(t: CType, ht: CType): String = javaQName(t, ht, baseName)
-
-//  def baseValueName(s: String): String = s + ".Value"
-
-//  def baseValueName(t: CTypeDef): String = javaLocalName(t, baseValueName)
-
-//  def baseDataName(s: String): String = s + ".Data"
-
-//  def baseDataName(t: CTypeDef): String = javaLocalName(t, baseDataName)
-
-//  def elementName(t: CType): String = t match {
-//    case alt: CAnonListType =>
-//      elementName(alt.elementTypeRef.resolved) + ".List"
-//    case amt: CAnonMapType =>
-//      elementName(amt.valueTypeRef.resolved) + ".Map<" + elementName(amt.keyTypeRef.resolved) + ".Imm>"
-//    case td: CTypeDef =>
-//      ln(td)
-//    case unknown => throw new UnsupportedOperationException(unknown.toString)
-//  }
-
-//  def typeComponents(t: CType): Seq[String] = t match {
-//    case alt: CAnonListType => typeComponents(alt.elementTypeRef.resolved) :+ "List"
-//    case amt: CAnonMapType => typeComponents(amt.valueTypeRef.resolved) :+ "Map"
-//    case td: CTypeDef => Seq(ln(td))
-//    case unknown => throw new UnsupportedOperationException(unknown.toString)
-//  }
-
-//  def immName(s: String): String = s + ".Imm"
-//
-//  def immName(t: CTypeDef): String = javaLocalName(t, immName)
-
-//  def immQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, immName)
-//
-//  @Deprecated
-//  def mutName(s: String): String = s + ".Builder"
-//
-//  @Deprecated
-//  def mutName(t: CTypeDef): String = javaLocalName(t, mutName)
-//
-//  @Deprecated
-//  def mutImplName(s: String): String = mutName(s) + ".Impl"
-//
-//  @Deprecated
-//  def mutImplName(t: CTypeDef): String = javaLocalName(t, mutImplName)
-//
-//  @Deprecated
-/// def mutQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, mutName)
-//
-//  def bldName(s: String): String = s + ".Builder"
-//
-//  def bldName(t: CTypeDef): String = jn(bldName(ln(t)))
-//
-//  def bldImplName(s: String): String = bldName(s)// + ".Impl"
-//
-//  def bldImplName(t: CTypeDef): String = javaLocalName(t, bldImplName)
-//
-//  def bldQName(t: CTypeDef, ht: CTypeDef): String = javaQName(t, ht, bldName)
-
-//  def parentNames(t: CType, trans: (String) => String = identity): String =
-//    t.getLinearizedParentsReversed.map(javaQName(_, t, trans)).mkString(", ")
-
   /** set of type names that conflict with our own generated java classes */
-  private val ReservedTypeNames: Set[String] = Set("Type", "Value", "Data", "Imm", "Builder", "Impl", "Tag", "Field")
+  private val ReservedTypeNames: Set[String] = Set(
+      "Type", "Value", "Data", "Imm", "Builder", "Impl",
+      "Tag", "Field", "NotNull", "Nullable" // TODO these can be fqn-ed instead
+  )
 
   private val ReservedFieldNames: Set[String] = Set("type")
 

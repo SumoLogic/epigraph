@@ -32,12 +32,10 @@ package ${pn(t)};
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Generated;
-
 /**
  * Base interface for `${t.name.name}` datum.
  */
-@Generated("${getClass.getName}")
+@javax.annotation.Generated("${getClass.getName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.${kind(t)}Datum.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();

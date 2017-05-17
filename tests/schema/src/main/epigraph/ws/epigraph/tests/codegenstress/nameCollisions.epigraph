@@ -72,3 +72,27 @@ record ImmBuilderRec {
   foo: ImmTypeDataValueBuilder
   fooPrim: primitives.ImmTypeDataValueBuilder
 }
+
+// type name collides with imported @Nullable annotation
+record Nullable
+
+// type name collides with imported @NotNull annotation
+record NotNull
+
+// type name collides with (no longer imported) @Generated annotation
+record Generated
+
+// type name collides with imported Field class
+record Field {
+  field: Field
+  tag: Tag
+  type: Type
+}
+
+// type name collides with imported Tag class
+vartype Tag {
+//tag: Tag // FIXME compiler doesn't fail non-datum type typed tag here
+  tag: Field
+  field: Field
+//type: Type // FIXME generator should escape to type_
+}

@@ -33,12 +33,10 @@ import ws.epigraph.types.Type.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Generated;
-
 /**
  * Base (read) interface for `${t.name.name}` data.
  */
-@Generated("${getClass.getCanonicalName}")
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Data.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();

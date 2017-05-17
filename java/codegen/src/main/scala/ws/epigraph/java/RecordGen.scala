@@ -34,12 +34,10 @@ import ws.epigraph.types.RecordType.Field;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Generated;
-
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-@Generated("${getClass.getName}")
+@javax.annotation.Generated("${getClass.getName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.RecordDatum.Static {
 
   @NotNull $ln.Type type = $ln.Type.instance();

@@ -48,12 +48,10 @@ package ${pn(t)};
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Generated;
-
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-@Generated("${getClass.getCanonicalName}")
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.MapDatum.Static<${lqn(kt, t)}.Imm> {
 
   $ln.Type type = $ln.Type.instance();
