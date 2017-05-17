@@ -15,7 +15,7 @@
   - [x] create
   - [x] update
   - [x] delete
-  - [ ] custom
+  - [x] custom
   - tests
     - [x] bad request url
     - [x] non-existing user (should get 404 back with an ErrorValue)

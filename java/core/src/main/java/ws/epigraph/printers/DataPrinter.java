@@ -133,6 +133,12 @@ public class DataPrinter<Exc extends Exception> {
 //    else if (datum instanceof EnumDatum) print((EnumDatum) datum);
       else if (datum instanceof Datum) lo.print(datum.type().name().toString());
       else throw new UnsupportedOperationException(datum.type().name().toString());
+
+      Datum meta = datum._raw().meta();
+      if (meta != null) {
+        lo.print("@");
+        print(meta);
+      }
     }
   }
 

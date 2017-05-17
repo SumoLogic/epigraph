@@ -83,6 +83,15 @@ public abstract class AbstractHttpClientTest {
   }
 
   @Test
+  public void testReadWithMeta() throws ExecutionException, InterruptedException {
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        ";start=1;count=2[1,2](:record(firstName))@(start,count)", // backend doesn't actually take params into account
+        "( 1: < record: { firstName: \"First1\" } >, 2: < record: { firstName: \"First2\" } > )@{ start: 1, count: 2 }"
+    );
+  }
+
+  @Test
   public void testMalformedUrl() throws ExecutionException, InterruptedException {
     testReadError(
         UsersResourceDeclaration.readOperationDeclaration,
