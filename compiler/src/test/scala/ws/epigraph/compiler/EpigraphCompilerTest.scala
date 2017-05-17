@@ -30,32 +30,25 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
 
   it should "detect incompatible overridden fields" in {
     val compiler = new EpigraphCompiler(
-      Collections.singleton(
-        new ResourceSource("/ws/epigraph/compiler/tests/incompatibleFields.epigraph")
-      )
+      Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/incompatibleFields.epigraph"))
     )
     val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
     errors.size() shouldBe 1
     errors.iterator().next().toString should include("is not a subtype")
   }
 
-// FIXME uncomment once compiler gets fixed
-//  it should "fail on tags of vartype types" in {
-//    val compiler = new EpigraphCompiler(
-//      Collections.singleton(
-//        new ResourceSource("/ws/epigraph/compiler/tests/badTagType.epigraph")
-//      )
-//    )
-//    val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
-//    errors.size() shouldBe 1
-//    errors.iterator().next().toString should include("TODO")
-//  }
+  it should "fail on tags of vartype types" in {
+    val compiler = new EpigraphCompiler(
+      Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/badTagType.epigraph"))
+    )
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
+    errors.size() shouldBe 1
+    errors.iterator().next().toString should include("is not a datum type")
+  }
 
   it should "collect types from resources" in {
     val compiler = new EpigraphCompiler(
-      Collections.singleton(
-        new ResourceSource("/ws/epigraph/compiler/tests/typesAndResources.epigraph")
-      )
+      Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/typesAndResources.epigraph"))
     )
     val cc = compiler.compile()
     cc.errors shouldBe empty

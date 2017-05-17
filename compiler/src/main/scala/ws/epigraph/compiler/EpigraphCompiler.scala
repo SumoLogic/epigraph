@@ -107,6 +107,7 @@ class EpigraphCompiler(
 
     ctx.phase(OTHER_TYPES)
 
+    validateVarTypeTags()
     validateMapKeyTypes()
 
     handleErrors(6)
@@ -183,7 +184,24 @@ class EpigraphCompiler(
     }
   }
 
-  private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach{
+    private def validateVarTypeTags(): Unit = ctx.typeDefs.values().foreach{
+      case vt: CVarTypeDef =>
+        vt.declaredTags.foreach {tag =>
+          tag.typeRef.resolved match {
+            case dt: CDatumType =>
+            case t => ctx.errors.add(
+              CError(
+                vt.csf.filename,
+                tag.csf.position(tag.psi),
+                s"Type `${t.name.name}` of tag `${tag.name}` in type `${vt.name.name}` is not a datum type"
+              )
+            )
+          }
+        }
+      case _ =>
+    }
+
+    private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach{
     case md: CMapTypeDef =>
       md.keyTypeRef.resolved match {
         case kdt: CDatumType =>

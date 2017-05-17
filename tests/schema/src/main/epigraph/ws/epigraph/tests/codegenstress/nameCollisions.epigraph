@@ -85,15 +85,17 @@ record Generated
 // type name collides with imported Field class
 record Field {
   field: Field
-  getField: Field
+  getField: Field // field name collides with generated .getField() method
   tag: Tag
-  type: Type
+  type: Type // field name collides with static .type field
 }
 
 // type name collides with imported Tag class
 vartype Tag {
-//tag: Tag // FIXME compiler doesn't fail non-datum type typed tag here
   tag: Field
   field: Field
-  type: Type // tag name collides with .type field
+  type: Type // tag name collides with static .type field
 }
+
+// type name collides with one of the framework supertypes
+record Static

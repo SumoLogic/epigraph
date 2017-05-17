@@ -1,14 +1,16 @@
 namespace ws.epigraph.tests.codegenstress.primitives
 
-boolean Imm // type name collides with generated .Imm interface
-
 boolean Type // type name collides with generated .Type class
 
-boolean Data // type name collides with generated .Data interface
+boolean Builder // type name collides with generated .Builder class
+
+boolean Imm // type name collides with generated .Imm interface
+
+boolean Impl // type name collides with generated .Imm.Impl class
 
 boolean Value // type name collides with generated .Value interface
 
-boolean Builder // type name collides with generated .Builder class
+boolean Data // type name collides with generated .Data interface
 
 // inherited same-namespace type names collide with generated nested classes/interfaces
 boolean ImmTypeDataValueBuilder extends Imm, Type, Data, Value, Builder
