@@ -90,6 +90,15 @@ resource users: PersonMap {
     outputProjection [] (code, message)
   }
 
+  update bestFriend {
+    path /.:`record`/bestFriend
+
+    inputProjection :+id
+
+    outputType epigraph.Error
+    outputProjection (code, message)
+  }
+
   delete {
     deleteProjection [ required ] +
 
