@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames.{jn, pn, lqn, lqrn, qnameArgs}
+import ws.epigraph.java.JavaGenNames.{lqrn, pn, qnameArgs, tcn}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
@@ -46,7 +46,7 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Data
 ${t.effectiveTags.map { tag => sn"""\
 
   ${"/**"} Tag `${tag.name}`. */
-  @NotNull Tag ${jn(tag.name)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance());
+  @NotNull Tag ${tcn(tag)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance());
 
   ${"/**"} Returns `${tag.name}` tag datum. */
   @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
@@ -78,7 +78,7 @@ ${t.effectiveTags.map { tag => sn"""\
     public @NotNull java.util.List<@NotNull Tag> immediateTags() {
       return java.util.Arrays.asList(\
 ${t.declaredTags.map { tag => sn"""
-          ${ln + '.' + jn(tag.name)}"""
+          $ln.${tcn(tag)}"""
   }.mkString(",")
 }
       );
@@ -118,7 +118,7 @@ ${t.effectiveTags.map { tag => sn"""\
       ${"/**"} Returns immutable `${tag.name}` tag value. */
       @Override
       public @Nullable ${lqrn(tag.typeRef, t)}.Value.Imm get${up(tag.name)}_() {
-        return (${lqrn(tag.typeRef, t)}.Value.Imm) _raw().getValue($ln.${jn(tag.name)});
+        return (${lqrn(tag.typeRef, t)}.Value.Imm) _raw().getValue($ln.${tcn(tag)});
       }
 """
   }.mkString
@@ -144,24 +144,24 @@ ${t.effectiveTags.map { tag => // for each effective tag
     }
 
     ${"/**"} Sets `${tag.name}` tag datum. */
-    public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)} ${jn(tag.name)}) {
-      _raw().setDatum($ln.${jn(tag.name)}, ${jn(tag.name)}); return this; // TODO return set${up(tag.name)}_(${jn(tag.name)}.asValue());
+    public @NotNull $ln.Builder set${up(tag.name)}(@Nullable ${lqrn(tag.typeRef, t)} ${tcn(tag)}) {
+      _raw().setDatum($ln.${tcn(tag)}, ${tcn(tag)}); return this; // TODO return set${up(tag.name)}_(${tcn(tag)}.asValue());
     }
 
     ${"/**"} Sets `${tag.name}` tag error. */
     public @NotNull $ln.Builder set${up(tag.name)}_Error(@NotNull ws.epigraph.errors.ErrorValue error) {
-      _raw().setError($ln.${jn(tag.name)}, error); return this;
+      _raw().setError($ln.${tcn(tag)}, error); return this;
     }
 
     ${"/**"} Returns `${tag.name}` tag value. */
     @Override
     public @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}_() {
-      return (${lqrn(tag.typeRef, t)}.Value) _raw().getValue($ln.${jn(tag.name)});
+      return (${lqrn(tag.typeRef, t)}.Value) _raw().getValue($ln.${tcn(tag)});
     }
 
     ${"/**"} Sets `${tag.name}` tag value. */
-    public @NotNull $ln.Builder set${up(tag.name)}_(@Nullable ${lqrn(tag.typeRef, t)}.Value ${jn(tag.name)}Value) {
-      _raw().setValue($ln.${jn(tag.name)}, ${jn(tag.name)}Value); return this;
+    public @NotNull $ln.Builder set${up(tag.name)}_(@Nullable ${lqrn(tag.typeRef, t)}.Value ${tcn(tag)}Value) {
+      _raw().setValue($ln.${tcn(tag)}, ${tcn(tag)}Value); return this;
     }
 """
   }.mkString

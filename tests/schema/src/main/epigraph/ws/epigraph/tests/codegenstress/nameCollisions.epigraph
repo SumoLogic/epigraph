@@ -85,6 +85,7 @@ record Generated
 // type name collides with imported Field class
 record Field {
   field: Field
+  getField: Field
   tag: Tag
   type: Type
 }
@@ -94,5 +95,5 @@ vartype Tag {
 //tag: Tag // FIXME compiler doesn't fail non-datum type typed tag here
   tag: Field
   field: Field
-//type: Type // FIXME generator should escape to type_
+  type: Type // tag name collides with .type field
 }
