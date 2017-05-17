@@ -26,6 +26,7 @@ import com.intellij.lang.ParserDefinition
 import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
+import org.slf4s.Logging
 import ws.epigraph.psi.{DefaultPsiProcessingContext, PsiProcessingContext, PsiProcessingError, PsiProcessingException}
 import ws.epigraph.schema.parser.psi._
 import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
@@ -36,10 +37,10 @@ import scala.collection.{GenTraversableOnce, mutable}
 class EpigraphCompiler(
   private val sources: util.Collection[_ <: Source],
   private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
-) {
+) extends Logging {
 
-  println(sources.map(_.name).mkString("Sources: [\n", ",\n", "\n]")) // TODO use log or remove
-  println(dependencies.map(_.name).mkString("Dependencies: [\n", ",\n", "\n]")) // TODO use log or remove
+  sources foreach { s => log.info(s"Source: ${s.name}") }
+  dependencies foreach { s => log.info(s"Dependency: ${s.name}") }
 
   private val spd = new SchemaParserDefinition
 
@@ -281,11 +282,14 @@ class EpigraphCompiler(
     throw new EpigraphCompilerException(exitCode.toString, ctx.errors, null)
   }
 
-  private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach pprint.pprintln
+  private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach {
+    sf => log.debug(pprint.stringify(sf))
+  }
 
 }
 
-object EpigraphCompiler {
+object EpigraphCompiler extends Logging {
+
   //      import pprint.Config.Colors._
   implicit private val PPConfig = pprint.Config(
     width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
@@ -294,8 +298,9 @@ object EpigraphCompiler {
   def renderErrors(ctx: CContext): Unit = {
     // bring pretty printers into scope
     import CPrettyPrinters._
-    ctx.errors foreach pprint.pprintln
+    ctx.errors foreach {err => log.error(pprint.stringify(err)) }
   }
+
 }
 
 

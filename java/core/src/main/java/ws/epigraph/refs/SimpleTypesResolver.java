@@ -68,20 +68,20 @@ public class SimpleTypesResolver implements TypesResolver {
 
   @Override
   public @Nullable TypeApi resolve(@NotNull AnonListRef reference) {
-    @NotNull ValueTypeRef itemTypeRef = reference.itemsType();
-    @Nullable DataTypeApi itemType = resolve(itemTypeRef);
+    ValueTypeRef itemTypeRef = reference.itemsType();
+    DataTypeApi itemType = resolve(itemTypeRef);
     return itemType == null ? null : anonLists.get(itemType);
   }
 
   @Override
   public @Nullable Type resolve(@NotNull AnonMapRef reference) {
-    @NotNull ValueTypeRef valueTypeRef = reference.itemsType();
-    @Nullable DataTypeApi valueType = resolve(valueTypeRef);
+    ValueTypeRef valueTypeRef = reference.itemsType();
+    DataTypeApi valueType = resolve(valueTypeRef);
     if (valueType == null) return null;
     Map<DatumType, AnonMapType> mapsByKey = anonMaps.get(valueType);
     if (mapsByKey == null) return null;
 
-    @Nullable TypeApi keyType = reference.keysType().resolve(this);
+    TypeApi keyType = reference.keysType().resolve(this);
     if (keyType instanceof DatumType) {
       DatumType keyDatumType = (DatumType) keyType;
       return mapsByKey.get(keyDatumType);

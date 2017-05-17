@@ -305,16 +305,20 @@
         <artifactId>slf4j-api</artifactId>
         <version>1.7.25</version>
       </dependency>
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-nop</artifactId>
         <version>1.7.25</version>
       </dependency>
-
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
+        <version>1.7.25</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4s</groupId>
+        <artifactId>slf4s-api_${scala.version.major.minor}</artifactId>
         <version>1.7.25</version>
       </dependency>
 
@@ -534,7 +538,6 @@
         </plugin>
 
       </plugins>
-
 
     </pluginManagement>
 
