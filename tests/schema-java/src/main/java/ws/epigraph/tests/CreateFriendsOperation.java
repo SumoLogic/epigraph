@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.friends.AbstractCreateFriendsOperation;
-import ws.epigraph.tests.resources.users.operations.friends.input.InputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.friends.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.friends.path.UsersFieldPath;
+import ws.epigraph.tests.resources.users.operations.create.friends.AbstractCreateFriendsOperation;
+import ws.epigraph.tests.resources.users.operations.create.friends.input.InputUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations.create.friends.output.OutputUsersFieldProjection;
+import ws.epigraph.tests.resources.users.operations.create.friends.path.UsersFieldPath;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.Map;
@@ -96,7 +96,7 @@ public class CreateFriendsOperation extends AbstractCreateFriendsOperation {
 
           boolean friendExists =
               friends.datas().stream().anyMatch(f -> f.getId() != null && friendIdVal.equals(f.getId().getVal()));
-          
+
           if (friendExists) {
             resultListBuilder.add(Person.Type.instance().createDataBuilder().setId_Error(
                 new ErrorValue(HttpStatusCode.BAD_REQUEST, "Friend with id " + friendIdVal + " already exists")

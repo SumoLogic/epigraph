@@ -17,9 +17,9 @@
 package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.AbstractReadSearchByAuthorOperation;
-import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBookId_BookRecord_MapProjection;
-import ws.epigraph.examples.library.resources.books.operations.searchbyauthor.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.searchbyauthor.AbstractReadSearchByAuthorOperation;
+import ws.epigraph.examples.library.resources.books.operations.read.searchbyauthor.output.OutputBookId_BookRecord_MapProjection;
+import ws.epigraph.examples.library.resources.books.operations.read.searchbyauthor.output.OutputBooksFieldProjection;
 import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 

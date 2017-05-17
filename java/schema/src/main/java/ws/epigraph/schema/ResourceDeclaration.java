@@ -19,11 +19,13 @@ package ws.epigraph.schema;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -64,28 +66,60 @@ public class ResourceDeclaration {
   public String toString() { return "resource /" + fieldName; }
 
   private void verifyNameClashes(@NotNull List<ResourceDeclarationError> errors) {
-    Map<String, OperationDeclaration> operationsByName = new HashMap<>();
+    Map<NameAndKind, OperationDeclaration> operationsByName = new HashMap<>();
 
     for (final OperationDeclaration operation : operations) {
-      OperationDeclaration clashesWith = operationsByName.get(operation.nameOrDefaultName());
+      OperationKind kind = operation.kind();
+
+      NameAndKind key = new NameAndKind(operation.nameOrDefaultName(), kind);
+      OperationDeclaration clashesWith = operationsByName.get(key);
 
       if (clashesWith == null)
-        operationsByName.put(operation.nameOrDefaultName(), operation);
+        operationsByName.put(key, operation);
       else {
         String name = operation.isDefault()
-                      ? String.format("default %s", operation.kind().toString().toLowerCase())
+                      ? "default"
                       : String.format("'%s'", operation.name());
 
         errors.add(
             new ResourceDeclarationError(
                 this,
                 operation,
-                name + " operation is already defined at " + clashesWith.location(),
+                String.format(
+                    "%s %s operation is already defined at %s",
+                    name,
+                    kind.toString().toLowerCase(),
+                    clashesWith.location()
+                ),
                 operation.location()
             )
         );
 
       }
+    }
+  }
+
+  private static final class NameAndKind {
+    final @NotNull String name;
+    final @NotNull OperationKind kind;
+
+    private NameAndKind(final @NotNull String name, final @NotNull OperationKind kind) {
+      this.name = name;
+      this.kind = kind;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      final NameAndKind kind1 = (NameAndKind) o;
+      return Objects.equals(name, kind1.name) &&
+             kind == kind1.kind;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, kind);
     }
   }
 }

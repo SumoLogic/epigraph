@@ -36,6 +36,6 @@ object ServiceNames {
     new Namespaces(baseNamespace).resourceNamespace(resourceFieldName)
 
   def operationNamespace(baseNamespace: Qn, resourceFieldName: String, op: OperationDeclaration): Qn =
-    new Namespaces(baseNamespace).operationNamespace(resourceFieldName, op.nameOrDefaultName())
+    new Namespaces(baseNamespace).operationNamespace(resourceFieldName, op.kind(), op.nameOrDefaultName())
 
 }

@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadOperationDeclaration extends OperationDeclaration {
-  public static final @NotNull String DEFAULT_NAME = "_read";
+//  public static final @NotNull String DEFAULT_NAME = "_read";
 
   public ReadOperationDeclaration(
       @Nullable String name,
@@ -45,8 +45,8 @@ public class ReadOperationDeclaration extends OperationDeclaration {
     );
   }
 
-  @Override
-  protected @NotNull String defaultName() { return DEFAULT_NAME; }
+//  @Override
+//  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   @Override
   public void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) {

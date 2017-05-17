@@ -29,7 +29,7 @@ import ws.epigraph.types.TypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CreateOperationDeclaration extends OperationDeclaration {
-  public static final @NotNull String DEFAULT_NAME = "_create";
+//  public static final @NotNull String DEFAULT_NAME = "_create";
 
   public CreateOperationDeclaration(
       @Nullable String name,
@@ -44,8 +44,8 @@ public class CreateOperationDeclaration extends OperationDeclaration {
     );
   }
 
-  @Override
-  protected @NotNull String defaultName() { return DEFAULT_NAME; }
+//  @Override
+//  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   @Override
   public @NotNull OpInputFieldProjection inputProjection() {

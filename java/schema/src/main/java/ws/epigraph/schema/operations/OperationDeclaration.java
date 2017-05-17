@@ -38,6 +38,8 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OperationDeclaration {
+  public static final String DEFAULT_NAME = "_default";
+
   protected final @NotNull OperationKind type;
   protected final @NotNull HttpMethod method;
   protected final @Nullable String name;
@@ -74,7 +76,7 @@ public abstract class OperationDeclaration {
 
   public @NotNull String nameOrDefaultName() { return name == null ? defaultName() : name; }
 
-  protected abstract @NotNull String defaultName();
+  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   public boolean isDefault() { return name == null; }
 
