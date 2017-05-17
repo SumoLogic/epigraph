@@ -20,7 +20,7 @@ import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.Field;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +44,7 @@ public final class ProjectionDataTrimmer {
 
     for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
-      final Type.Tag tag = (Type.Tag) normalizedProjection.type().tagsMap().get(tagName);
+      final Tag tag = (Tag) normalizedProjection.type().tagsMap().get(tagName);
 
       final @Nullable Val val = raw.getValue(tag);
       if (val != null) {

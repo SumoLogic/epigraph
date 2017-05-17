@@ -24,7 +24,7 @@ import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Field;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +75,7 @@ public class DataPrinter<Exc extends Exception> {
           /*if (!single)*/
           lo.print("<").beginCInd();
           boolean comma = false;
-          for (Type.Tag tag : data.type().tags()) {
+          for (Tag tag : data.type().tags()) {
             @Nullable Val value = raw.getValue(tag);
             if (value != null) {
               if (comma) lo.print(",").end();

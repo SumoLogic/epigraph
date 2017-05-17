@@ -22,8 +22,8 @@ import ws.epigraph.data.*;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.Field;
+import ws.epigraph.types.Tag;
 import ws.epigraph.types.TagApi;
-import ws.epigraph.types.Type;
 
 import java.util.*;
 
@@ -65,7 +65,7 @@ public abstract class GenDataValidator<
     for (final TP tagProjection : normalizedProjection.tagProjections().values()) {
       final TagApi tag = tagProjection.tag();
       context.withStackItem(new DataValidationContext.TagStackItem(tag), () -> {
-        final Datum datum = data._raw().getDatum((Type.Tag) tag);
+        final Datum datum = data._raw().getDatum((Tag) tag);
         if (datum != null)
           validateDatum(datum, tagProjection.projection());
       });

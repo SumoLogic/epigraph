@@ -24,7 +24,7 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.req.output.*;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Field;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.Tag;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -49,7 +49,7 @@ public class ReqOutputRequiredDataPruner {
 
     for (final Map.Entry<String, ReqOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
-      final Type.Tag tag = data.type().tagsMap().get(tagName);
+      final Tag tag = data.type().tagsMap().get(tagName);
 
       final ReqOutputTagProjectionEntry tagProjectionEntry = entry.getValue();
       final ReqOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();

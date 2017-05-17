@@ -20,7 +20,7 @@ package ws.epigraph.types;
 
 import ws.epigraph.data.Data;
 import ws.epigraph.names.DataTypeName;
-import ws.epigraph.types.Type.Tag;
+import ws.epigraph.types.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

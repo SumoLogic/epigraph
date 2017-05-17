@@ -26,7 +26,7 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.Field;
-import ws.epigraph.types.Type.Tag;
+import ws.epigraph.types.Tag;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.json.JsonFormat;
 

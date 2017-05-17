@@ -141,37 +141,4 @@ public abstract class Type implements TypeApi {
   }
 
 
-  public static class Tag implements TagApi { // TODO move out
-
-    public final @NotNull String name;
-
-    public final @NotNull DatumType type;
-
-    public Tag(@NotNull String name, @NotNull DatumType type) {
-      this.name = name;
-      this.type = type;
-    }
-
-    @Override
-    public @NotNull String name() { return name; }
-
-    @Override
-    public @NotNull DatumTypeApi type() { return type; }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      final Tag tag = (Tag) o;
-      return Objects.equals(name, tag.name) &&
-             Objects.equals(type, tag.type);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(name, type);
-    }
-  }
-
-
 }

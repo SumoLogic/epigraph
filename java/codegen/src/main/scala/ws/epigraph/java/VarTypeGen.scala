@@ -28,7 +28,7 @@ class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVar
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
-import ws.epigraph.types.Type.Tag;
+import ws.epigraph.types.Tag;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

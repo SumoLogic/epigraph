@@ -19,6 +19,7 @@
 package ws.epigraph.data;
 
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.types.Tag;
 import ws.epigraph.types.Type;
 import ws.epigraph.util.Unmodifiable;
 import org.jetbrains.annotations.NotNull;
@@ -58,11 +59,11 @@ public interface Data { // TODO Var? Union? Values?
 
     @NotNull Map<@NotNull String, @NotNull ? extends Val> tagValues();
 
-    @Nullable Val getValue(@NotNull Type.Tag tag);
+    @Nullable Val getValue(@NotNull Tag tag);
 
-    @Nullable Datum getDatum(@NotNull Type.Tag tag);
+    @Nullable Datum getDatum(@NotNull Tag tag);
 
-    @Nullable ErrorValue getError(@NotNull Type.Tag tag);
+    @Nullable ErrorValue getError(@NotNull Tag tag);
 
   }
 
@@ -103,19 +104,19 @@ public interface Data { // TODO Var? Union? Values?
       public @NotNull Map<@NotNull String, @NotNull ? extends Val.Imm> tagValues() { return tagValues; }
 
       @Override
-      public @Nullable Val.Imm getValue(@NotNull Type.Tag tag) {
+      public @Nullable Val.Imm getValue(@NotNull Tag tag) {
         // TODO check tag compatibility with this.type
         return tagValues.get(tag.name);
       }
 
       @Override
-      public @Nullable Datum.Imm getDatum(@NotNull Type.Tag tag) {
+      public @Nullable Datum.Imm getDatum(@NotNull Tag tag) {
         Val.Imm value = getValue(tag);
         return value == null ? null : value.getDatum();
       }
 
       @Override
-      public @Nullable ErrorValue getError(@NotNull Type.Tag tag) {
+      public @Nullable ErrorValue getError(@NotNull Tag tag) {
         Val.Imm value = getValue(tag);
         return value == null ? null : value.getError();
       }
@@ -201,24 +202,24 @@ public interface Data { // TODO Var? Union? Values?
       }
 
       @Override
-      public @Nullable Val getValue(@NotNull Type.Tag tag) {
+      public @Nullable Val getValue(@NotNull Tag tag) {
         // TODO check tag compatibility with this.type
         return tagValues.get(tag.name);
       }
 
       @Override
-      public @Nullable Datum getDatum(@NotNull Type.Tag tag) {
+      public @Nullable Datum getDatum(@NotNull Tag tag) {
         Val value = getValue(tag);
         return value == null ? null : value.getDatum();
       }
 
       @Override
-      public @Nullable ErrorValue getError(@NotNull Type.Tag tag) {
+      public @Nullable ErrorValue getError(@NotNull Tag tag) {
         Val value = getValue(tag);
         return value == null ? null : value.getError();
       }
 
-      public Data.Builder.Raw setValue(@NotNull Type.Tag tag, @Nullable Val value) {
+      public Data.Builder.Raw setValue(@NotNull Tag tag, @Nullable Val value) {
         // TODO check tag compatibility with this.type
         if (value == null) {
           tagValues.remove(tag.name);
@@ -229,11 +230,11 @@ public interface Data { // TODO Var? Union? Values?
         return this;
       }
 
-      public void setDatum(@NotNull Type.Tag tag, @Nullable Datum datum) {
+      public void setDatum(@NotNull Tag tag, @Nullable Datum datum) {
         setValue(tag, datum == null ? tag.type.createValue(null) : datum.asValue());
       }
 
-      public void setError(@NotNull Type.Tag tag, @NotNull ErrorValue error) {
+      public void setError(@NotNull Tag tag, @NotNull ErrorValue error) {
         setValue(tag, tag.type.createValue(error));
       }
 

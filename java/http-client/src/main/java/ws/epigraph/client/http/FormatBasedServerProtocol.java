@@ -241,7 +241,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 //    Data.Builder builder = type.createDataBuilder();
 //
 //    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
-//      builder._raw().setError((Type.Tag) tpe.tag(), errorValue);
+//      builder._raw().setError((Tag) tpe.tag(), errorValue);
 //    }
 //
 //    return builder;

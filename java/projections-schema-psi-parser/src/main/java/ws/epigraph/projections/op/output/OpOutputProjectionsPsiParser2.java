@@ -69,7 +69,7 @@
 ////      boolean isDatum = type.kind() != TypeKind.UNION;
 //
 //      final OpOutputModelProjection<?, ?> parsedModelProjection;
-//      final Type.Tag tag = getTag(
+//      final Tag tag = getTag(
 //          type,
 //          singleTagProjectionPsi.getTagName(),
 //          dataType.defaultTag,
@@ -116,7 +116,7 @@
 //          multiTagProjection.getOpOutputMultiTagProjectionItemList();
 //
 //      for (IdlOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-//        final Type.Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
+//        final Tag tag = getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag, tagProjectionPsi, errors);
 //
 //        final OpOutputModelProjection<?, ?> parsedModelProjection;
 //
@@ -328,7 +328,7 @@
 //  @NotNull
 //  private static OpOutputVarProjection createDefaultVarProjection(
 //      @NotNull Type type,
-//      @NotNull Type.Tag tag,
+//      @NotNull Tag tag,
 //      @NotNull PsiElement locationPsi,
 //      @NotNull List<PsiProcessingError> errors) throws PsiProcessingException {
 //    return new OpOutputVarProjection(
@@ -367,7 +367,7 @@
 //      @NotNull List<PsiProcessingError> errors)
 //      throws PsiProcessingException {
 //
-//    @Nullable Type.Tag defaultTag = type.defaultTag;
+//    @Nullable Tag defaultTag = type.defaultTag;
 //    if (defaultTag == null) {
 //
 //      if (type.type instanceof DatumType) {

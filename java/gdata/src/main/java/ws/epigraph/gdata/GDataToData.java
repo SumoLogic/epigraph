@@ -50,7 +50,7 @@ public final class GDataToData {
       @NotNull Data.Builder builder = type.createDataBuilder();
 
       for (Map.Entry<String, GDatum> entry : gData.tags().entrySet()) {
-        Type.Tag tag = type.tagsMap().get(entry.getKey());
+        Tag tag = type.tagsMap().get(entry.getKey());
         if (tag == null) throw new ProcessingException(
             String.format("Unknown tag '%s' in type '%s'", entry.getKey(), typeRef),
             gdata.location()

@@ -22,36 +22,32 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Field implements FieldApi {
+public class Tag implements TagApi {
 
   public final @NotNull String name;
 
-  public final @NotNull DataType dataType;
+  public final @NotNull DatumType type;
 
-  @Deprecated // use dataType().type()
-  public final @NotNull Type type;
-
-  public Field(@NotNull String name, @NotNull DataType dataType) { // TODO capture overridden super-fields?
+  public Tag(@NotNull String name, @NotNull DatumType type) {
     this.name = name;
-    this.dataType = dataType;
-    this.type = dataType.type;
+    this.type = type;
   }
 
   @Override
   public @NotNull String name() { return name; }
 
   @Override
-  public @NotNull DataType dataType() { return dataType; }
+  public @NotNull DatumTypeApi type() { return type; }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Field that = (Field) o;
-    return Objects.equals(name, that.name) && Objects.equals(dataType, that.dataType);
+    Tag that = (Tag) o;
+    return Objects.equals(name, that.name) && Objects.equals(type, that.type);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(name, dataType); }
+  public int hashCode() { return Objects.hash(name, type); }
 
 }
