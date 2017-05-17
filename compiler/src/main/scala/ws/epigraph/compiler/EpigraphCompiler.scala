@@ -39,8 +39,13 @@ class EpigraphCompiler(
   private val dependencies: util.Collection[_ <: Source] = Collections.emptyList()
 ) extends Logging {
 
-  sources foreach { s => log.info(s"Source: ${s.name}") }
-  dependencies foreach { s => log.info(s"Dependency: ${s.name}") }
+  {
+    val files = if (sources.size == 1) "file" else "files"
+    val deps = if (dependencies.size == 1) "dependency" else "dependencies"
+    log.info(s"Compiling ${sources.size} Epigraph source $files and ${dependencies.size} $deps")
+    sources foreach { s => log.debug(s"Source: ${s.name}") }
+    dependencies foreach { s => log.debug(s"Dependency: ${s.name}") }
+  }
 
   private val spd = new SchemaParserDefinition
 
