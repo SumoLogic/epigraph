@@ -13,7 +13,7 @@
   - [x] client must correctly read errors based on response content type
   - [x] read
   - [x] create
-  - [ ] update
+  - [x] update
   - [ ] delete
   - [ ] custom
   - tests

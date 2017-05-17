@@ -94,6 +94,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   }
 
   @Override
+  protected @NotNull UpdateOperation<Error.Data> constructBestFriendUpdateOperation(final @NotNull UpdateOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new UpdateBestFriendOperation(operationDeclaration, storage);
+  }
+
+  @Override
   protected @NotNull DeleteOperation<PersonId_Error_Map.Data> constructDeleteOperation(final @NotNull DeleteOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new DeleteOp(operationDeclaration, storage);

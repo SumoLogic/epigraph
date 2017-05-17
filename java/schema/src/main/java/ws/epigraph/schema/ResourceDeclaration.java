@@ -16,9 +16,9 @@
 
 package ws.epigraph.schema;
 
-import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.lang.TextLocation;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.types.DataTypeApi;
 
@@ -66,37 +66,65 @@ public class ResourceDeclaration {
   public String toString() { return "resource /" + fieldName; }
 
   private void verifyNameClashes(@NotNull List<ResourceDeclarationError> errors) {
+    Map<String, OperationDeclaration> customOperationsByName = new HashMap<>();
     Map<NameAndKind, OperationDeclaration> operationsByName = new HashMap<>();
 
     for (final OperationDeclaration operation : operations) {
       OperationKind kind = operation.kind();
 
-      NameAndKind key = new NameAndKind(operation.nameOrDefaultName(), kind);
+      String name = operation.nameOrDefaultName();
+
+      NameAndKind key = new NameAndKind(name, kind);
       OperationDeclaration clashesWith = operationsByName.get(key);
 
-      if (clashesWith == null)
+      if (clashesWith == null) {
+        // check clashes with custom operations
+        if (kind == OperationKind.CUSTOM) {
+          customOperationsByName.put(name, operation);
+          operationsByName.entrySet().stream().filter(e -> e.getKey().name.equals(name)).forEach(e ->
+              addClashingError(
+                  operation,
+                  e.getValue().kind(),
+                  e.getValue(),
+                  errors
+              )
+          );
+        } else {
+          OperationDeclaration clashesWithCustom = customOperationsByName.get(name);
+          if (clashesWithCustom != null)
+            addClashingError(operation, OperationKind.CUSTOM, clashesWithCustom, errors);
+        }
+
         operationsByName.put(key, operation);
-      else {
-        String name = operation.isDefault()
-                      ? "default"
-                      : String.format("'%s'", operation.name());
-
-        errors.add(
-            new ResourceDeclarationError(
-                this,
-                operation,
-                String.format(
-                    "%s %s operation is already defined at %s",
-                    name,
-                    kind.toString().toLowerCase(),
-                    clashesWith.location()
-                ),
-                operation.location()
-            )
-        );
-
+      } else {
+        addClashingError(operation, kind, clashesWith, errors);
       }
     }
+  }
+
+  private void addClashingError(
+      final @NotNull OperationDeclaration operation,
+      final @NotNull OperationKind kind,
+      final @NotNull OperationDeclaration clashesWith,
+      final @NotNull List<ResourceDeclarationError> errors) {
+
+    String name = operation.isDefault()
+                  ? "default"
+                  : String.format("'%s'", operation.name());
+
+    errors.add(
+        new ResourceDeclarationError(
+            this,
+            operation,
+            String.format(
+                "%s %s operation is already defined at %s",
+                name,
+                kind.toString().toLowerCase(),
+                clashesWith.location()
+            ),
+            operation.location()
+        )
+    );
   }
 
   private static final class NameAndKind {
