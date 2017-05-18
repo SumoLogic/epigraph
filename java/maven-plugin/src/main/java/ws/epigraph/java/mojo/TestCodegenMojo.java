@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.java.GenSettings;
+import ws.epigraph.java.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -80,6 +81,18 @@ public class TestCodegenMojo extends BaseCodegenMojo {
   @Override
   protected String[] excludes() { return testExcludes; }
 
+  /**
+   * Server generator configuration
+   */
+  @Parameter
+  private Server server = null; // keep name in sync with `EpigraphJavaPluginExtension.groovy`
+
+  /**
+   * Client generator configuration
+   */
+  @Parameter
+  private Client client = null; // keep name in sync with `EpigraphJavaPluginExtension.groovy`
+
   @Override
   protected Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException {
     project.addCompileSourceRoot(testSourceDirectory.getCanonicalPath());
@@ -96,7 +109,16 @@ public class TestCodegenMojo extends BaseCodegenMojo {
   protected void addResultsToProject(MavenProject project, String path) { project.addTestCompileSourceRoot(path); }
 
   @Override
-  protected GenSettings constructSettings() {
-    return new GenSettings(false, false, null);
+  protected Settings constructSettings() {
+    return new Settings(
+        new Settings.ServerSettings(
+            server != null && server.generate(),
+            server == null || server.services() == null ? null : Arrays.asList(server.services())
+        ),
+        new Settings.ClientSettings(
+            client != null && client.generate(),
+            client == null || client.services() == null ? null : Arrays.asList(client.services())
+        )
+    );
   }
 }

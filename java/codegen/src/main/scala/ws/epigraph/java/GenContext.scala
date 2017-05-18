@@ -25,7 +25,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName
 /**
  * @author yegor 2016-12-15.
  */
-class GenContext(val settings: GenSettings) {
+class GenContext(val settings: Settings) {
 
   // type name -> Java type class FQN
   val generatedTypes: ConcurrentHashMap[CTypeName, Qn] = new ConcurrentHashMap

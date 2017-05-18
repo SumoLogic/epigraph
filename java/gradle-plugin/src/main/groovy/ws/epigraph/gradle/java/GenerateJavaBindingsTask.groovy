@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.gradle.api.tasks.TaskAction
 import ws.epigraph.gradle.EmptyFileTree
 import ws.epigraph.gradle.EpigraphCompileTaskBase
 import ws.epigraph.java.EpigraphJavaGenerator
-import ws.epigraph.java.GenSettings
+import ws.epigraph.java.Settings
 
 @ParallelizableTask
 class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTaskBase {
@@ -36,7 +36,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
   GenerateJavaBindingsTask() {}
 
   @TaskAction
-  public void run() {
+  void run() {
     destinationDir.mkdirs()
 
     def context = compileFiles();
@@ -45,10 +45,18 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
 
     getLogger().info("Generating Java bindings to '${getDestinationDir()}'")
 
-    def settings = new GenSettings(
-        false,  // create parameters if needed
-        false,
-        project.epigraph.generateImplementationStubs
+    Server server = project.epigraph.server
+    Client client = project.epigraph.client
+    
+    def settings = new Settings(
+        new Settings.ServerSettings(
+            server != null && server.generate,
+            server == null ? null : server.services
+        ),
+        new Settings.ClientSettings(
+            client != null && client.generate,
+            client == null ? null : client.services
+        )
     )
 
     new EpigraphJavaGenerator(context, getDestinationDir(), settings).generate()
@@ -65,7 +73,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
   }
 
   @OutputDirectory
-  public File getDestinationDir() {
+  File getDestinationDir() {
     if (destinationDir == null) {
       if (sourceSetName == null)
         throw new GradleException('Neither destination dir nor source name is set')
@@ -79,7 +87,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
     return destinationDir
   }
 
-  public void setDestinationDir(File destinationDir) {
+  void setDestinationDir(File destinationDir) {
     this.destinationDir = destinationDir
   }
 }

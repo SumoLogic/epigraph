@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package ws.epigraph.java.mojo;
 
 import ws.epigraph.java.EpigraphJavaGenerator;
-import ws.epigraph.java.GenSettings;
+import ws.epigraph.java.Settings;
 import ws.epigraph.maven.AbstractCompilingMojo;
 import ws.epigraph.compiler.CContext;
 import ws.epigraph.compiler.FileSource;
@@ -54,6 +54,6 @@ public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
 
   protected abstract void addResultsToProject(MavenProject project, String path);
 
-  protected abstract GenSettings constructSettings();
+  protected abstract Settings constructSettings();
 
 }

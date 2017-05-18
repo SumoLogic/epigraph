@@ -135,6 +135,11 @@ public class DataPrinter<Exc extends Exception> {
   }
 
   public void print(@Nullable DatumType type, @Nullable Datum datum) throws Exc {
+    // todo ideally we shoud have acces to value type here and only print out type
+    // information if type != container type, e.g. op parameter type
+    // In reality this means reimplementing req/data printers for client-side URI composer
+    // so that they can take op projections into account (unlike current req printers that don't)
+
     if (datum == null) {
       if (withTypes && type != null && !type.immediateSupertypes().isEmpty())
         lo.print(type.name().toString()).print("@");

@@ -29,10 +29,10 @@ import ws.epigraph.schema.ResourcesSchema
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
 
-class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: GenSettings) {
+class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: Settings) {
   private val ctx: GenContext = new GenContext(settings)
 
-  def this(ctx: CContext, outputRoot: File, settings: GenSettings) {
+  def this(ctx: CContext, outputRoot: File, settings: Settings) {
     this(ctx, outputRoot.toPath, settings)
   }
 
@@ -126,23 +126,28 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     generators += new IndexGen(ctx)
 
-    val generateImplementationStubs = ctx.settings.generateImplementationStubs
+    if (ctx.settings.serverSettings().generate()) {
 
-    for (entry <- cctx.resourcesSchemas.entrySet) {
-      // todo: check that there are no duplicate resource declarations
-      val rs: ResourcesSchema = entry.getValue
-      val namespace: Qn = rs.namespace
+      val servicesOpt = Option(ctx.settings.serverSettings().services())
 
-      for (resourceDeclaration <- rs.resources.values) {
-        generators += new ResourceDeclarationGen(resourceDeclaration, namespace, ctx)
+      for (entry <- cctx.resourcesSchemas.entrySet) {
+        // todo: check that there are no duplicate resource declarations
+        val rs: ResourcesSchema = entry.getValue
+        val namespace: Qn = rs.namespace
 
-        val resourceName: String = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName)).toString
+        for (resourceDeclaration <- rs.resources.values) {
+          generators += new ResourceDeclarationGen(resourceDeclaration, namespace, ctx)
 
-        // change them to be patters/regex?
-        if (generateImplementationStubs == null || generateImplementationStubs.contains(resourceName)) {
-          generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
+//          val resourceName: String = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName)).toString
+          val resourceName: String = namespace.append(resourceDeclaration.fieldName).toString
+
+          // change them to be patters/regex?
+          if (servicesOpt.isEmpty || servicesOpt.exists(services => services.contains(resourceName))) {
+            generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
+          }
         }
       }
+
     }
 
     runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))

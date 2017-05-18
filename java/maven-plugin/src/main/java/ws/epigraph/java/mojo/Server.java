@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-plugins {
-  id 'ws.epigraph.java' version '0.0.1'
-}
+package ws.epigraph.java.mojo;
 
-group = 'ws.epigraph.examples'
+/**
+ * Server generator configuration object.
+ *
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ * @see <a href="https://maven.apache.org/guides/mini/guide-configuring-plugins.html#Mapping_Complex_Objects">mapping complex objects</a>
+ */
+public class Server {
+  private boolean generate = true;
+  private String[] services = null;
 
-dependencies {
-  epigraph project(':examples-library-schema')
+  public boolean generate() { return generate; }
 
-  compile project(':epigraph-java-http-server-undertow')
-  compile 'org.slf4j:slf4j-simple'
-}
-
-epigraph {
-  server {}
+  public String[] services() { return services; }
 }

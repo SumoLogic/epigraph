@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-  id 'ws.epigraph.java' version '0.0.1'
-}
+package ws.epigraph.gradle.java
 
-group = 'ws.epigraph.examples'
-
-dependencies {
-  epigraph project(':examples-library-schema')
-
-  compile project(':epigraph-java-http-server-undertow')
-  compile 'org.slf4j:slf4j-simple'
-}
-
-epigraph {
-  server {}
+/**
+ * Client generator configuration object
+ *
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+class Client {
+  boolean generate = true
+  List<String> services = null
 }

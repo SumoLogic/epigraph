@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.gradle.api.tasks.util.PatternFilterable
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class EmptyFileTree extends AbstractFileCollection implements FileTreeInternal {
+class EmptyFileTree extends AbstractFileCollection implements FileTreeInternal {
   public static final FileTree INSTANCE = new EmptyFileTree()
 
   @Override

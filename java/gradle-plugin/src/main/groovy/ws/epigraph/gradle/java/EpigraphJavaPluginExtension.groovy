@@ -20,5 +20,21 @@ package ws.epigraph.gradle.java
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class EpigraphJavaPluginExtension {
-  List<String> generateImplementationStubs = null // keep name in sync with `MainCodegenMojo.java`
+  // keep name in sync with `MainCodegenMojo.java`
+  Server server = null
+  Client client = null
+
+  def server(Closure c) {
+    c.resolveStrategy = Closure.DELEGATE_FIRST
+    if (server == null) server = new Server()
+    c.delegate = server
+    c()
+  }
+
+  def client(Closure c) {
+    c.resolveStrategy = Closure.DELEGATE_FIRST
+    if (client == null) client = new Client()
+    c.delegate = client
+    c()
+  }
 }

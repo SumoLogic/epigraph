@@ -31,9 +31,6 @@ dependencies {
   testCompile 'org.slf4j:slf4j-simple'
 }
 
-//epigraph {
-//  generateImplementationStubs = [
-//      "ws.epigraph.tests.User",
-//      "ws.epigraph.tests.Users"
-//  ]
-//}
+epigraph {
+  server {}
+}

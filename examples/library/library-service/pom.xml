@@ -53,6 +53,7 @@
       <plugin>
         <groupId>ws.epigraph</groupId>
         <artifactId>epigraph-java-maven-plugin</artifactId>
+        <configuration><server/></configuration>
       </plugin>
 
       <plugin>

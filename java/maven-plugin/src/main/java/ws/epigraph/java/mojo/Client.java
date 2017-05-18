@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java
+package ws.epigraph.java.mojo;
 
 /**
- * Java generator parameters
+ * Client generator configuration object.
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ * @see <a href="https://maven.apache.org/guides/mini/guide-configuring-plugins.html#Mapping_Complex_Objects">mapping complex objects</a>
  */
-sealed class GenSettings(
-  val generateTextLocations: Boolean,
-  val generateSeparateMethodsForVarProjections: Boolean,
-  val generateImplementationStubs: java.util.List[String]
-) {
-  def debug: Boolean = "true" == System.getProperty("epigraph.debug") // get from build file?
+public class Client {
+  private boolean generate = true;
+  private String[] services = null;
+
+  public boolean generate() { return generate; }
+
+  public String[] services() { return services; }
 }
