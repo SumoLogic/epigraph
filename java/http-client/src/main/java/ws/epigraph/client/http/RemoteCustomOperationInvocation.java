@@ -18,7 +18,10 @@ package ws.epigraph.client.http;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +67,22 @@ public class RemoteCustomOperationInvocation
         operationRequest.outputProjection()
     );
 
-    return new HttpPost(uri);
+    switch (operationDeclaration.method()) {
+      case GET:
+        return new HttpGet(uri);
+      case POST:
+        return new HttpPost(uri);
+      case PUT:
+        return new HttpPut(uri);
+      case DELETE:
+        return new HttpDelete(uri);
+      default:
+        throw new IllegalArgumentException(String.format(
+            "Unsupported HTTP method for '%s': %s",
+            operationDeclaration.name(),
+            operationDeclaration.method()
+        ));
+    }
   }
 
   @Override

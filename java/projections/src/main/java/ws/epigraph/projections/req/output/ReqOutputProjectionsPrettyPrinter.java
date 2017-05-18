@@ -19,11 +19,9 @@ package ws.epigraph.projections.req.output;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqParams;
 
 import java.util.List;
 

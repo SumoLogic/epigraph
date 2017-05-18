@@ -20,13 +20,13 @@ package ws.epigraph.printers;
 
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.WriterBackend;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Field;
 import ws.epigraph.types.Tag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -34,6 +34,10 @@ import java.io.StringWriter;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+/**
+ * DataPrinter compatible with the data language syntax from {@code url.bnf}
+ * except for metadata, error values and recursive data support (which are not present in url syntax)
+ */
 public class DataPrinter<Exc extends Exception> {
 
   public final Layouter<Exc> lo;
@@ -64,11 +68,20 @@ public class DataPrinter<Exc extends Exception> {
     return new DataPrinter<>(new Layouter<>(new WriterBackend(writer, width), 2), withTypes);
   }
 
+  protected Layouter<Exc> brk(int i) throws Exc {
+    return lo.brk(i);
+  }
+
+  protected Layouter<Exc> brk(int i, int k) throws Exc {
+    return lo.brk(i, k);
+  }
+
   public void print(@Nullable Data data) throws Exc {
     if (data == null) { lo.print("null"); } else {
       switch (data.type().kind()) {
         case UNION:
-          if (withTypes) lo.print("(").print(data.type().name().toString()).print(") ");
+         if (withTypes && !data.type().immediateSupertypes().isEmpty())
+            lo.print(data.type().name().toString());
           Data.Raw raw = data._raw();
 //        boolean single = raw.tagValues().size() == 1;
 //        lo.print(":");
@@ -81,28 +94,27 @@ public class DataPrinter<Exc extends Exception> {
               if (comma) lo.print(",").end();
               else comma = true;
             /*if (!single)*/
-              lo.brk(1);
+              brk(1);
               lo.beginIInd(0).print("").print(tag.name).print(": ");
-              print(value);
+              print(tag.type, value);
             }
           }
           if (comma) lo.end();
           /*if (!single)*/
-          lo.brk(1, -lo.getDefaultIndentation()).print(">").end();
+          brk(1, -lo.getDefaultIndentation()).print(">").end();
           break;
         default:
-          print(data._raw()
-              .getValue(((DatumType) data.type()).self)); // expecting datum data to always have self-tag...
+          DatumType datumType = (DatumType) data.type();
+          print(datumType, data._raw().getValue(datumType.self)); // expecting datum data to always have self-tag...
       }
     }
   }
 
-  public void print(@NotNull Val value) throws Exc {
+  public void print(@NotNull DatumType type, @NotNull Val value) throws Exc {
     ErrorValue error = value.getError();
     if (error == null) {
       Datum datum = value.getDatum();
-      if (withTypes && datum != null) lo.print("(").print(value.getDatum().type().name().toString()).print(") ");
-      print(datum);
+      print(type, datum);
     } else {
       print(error);
     }
@@ -122,10 +134,15 @@ public class DataPrinter<Exc extends Exception> {
     lo.print(")");
   }
 
-  public void print(@Nullable Datum datum) throws Exc {
+  public void print(@Nullable DatumType type, @Nullable Datum datum) throws Exc {
     if (datum == null) {
+      if (withTypes && type != null && !type.immediateSupertypes().isEmpty())
+        lo.print(type.name().toString()).print("@");
       lo.print("null");
     } else {
+      if (withTypes && !datum.type().immediateSupertypes().isEmpty())
+        lo.print(datum.type().name().toString());
+
       if (datum instanceof PrimitiveDatum) print((PrimitiveDatum) datum);
       else if (datum instanceof RecordDatum) print((RecordDatum) datum);
       else if (datum instanceof ListDatum) print((ListDatum) datum);
@@ -137,14 +154,20 @@ public class DataPrinter<Exc extends Exception> {
       Datum meta = datum._raw().meta();
       if (meta != null) {
         lo.print("@");
-        print(meta);
+        print(meta.type(), meta);
       }
     }
   }
 
   public void print(@NotNull PrimitiveDatum datum) throws Exc {
-    if (datum instanceof StringDatum) lo.print("\"").print(datum.getVal().toString()).print("\"");
-    else lo.print(datum.getVal().toString());
+    if (withTypes && !datum.type().immediateSupertypes().isEmpty())
+      lo.print("@");
+    if (datum instanceof StringDatum) {
+      String s = datum.getVal().toString();
+      String escaped = s.replace("'", "\\'");
+      lo.print("'").print(escaped).print("'");
+    } else
+      lo.print(datum.getVal().toString());
   }
 
   public void print(@NotNull RecordDatum datum) throws Exc {
@@ -157,12 +180,12 @@ public class DataPrinter<Exc extends Exception> {
         if (data != null) {
           if (!first) lo.print(",").end();
           else first = false;
-          lo.brk(1).beginI(0).print("").print(field.name).print(": ");
+          brk(1).beginI(0).print("").print(field.name).print(": ");
           print(data);
         }
       }
       if (!first) lo.end();
-      lo.brk(1, -lo.getDefaultIndentation()).print("}").end();
+      brk(1, -lo.getDefaultIndentation()).print("}").end();
     } finally { leave(datum); }
   }
 
@@ -174,11 +197,11 @@ public class DataPrinter<Exc extends Exception> {
       for (Data data : raw.elements()) {
         if (!first) lo.print(",").end();
         else first = false;
-        lo.brk(1).beginI(0);
+        brk(1).beginI(0);
         print(data);
       }
       if (!first) lo.end();
-      lo.brk(1, -lo.getDefaultIndentation()).print("]").end();
+      brk(1, -lo.getDefaultIndentation()).print("]").end();
     } finally { leave(datum); }
   }
 
@@ -190,13 +213,13 @@ public class DataPrinter<Exc extends Exception> {
       for (Map.Entry<Datum.@NotNull Imm, @NotNull ? extends Data> entry : raw.elements().entrySet()) {
         if (!first) lo.print(",").end();
         else first = false;
-        lo.brk(1).beginI(0);
-        print(entry.getKey());
+        brk(1).beginI(0);
+        print(entry.getKey().type(), entry.getKey());
         lo.print(": ");
         print(entry.getValue());
       }
       if (!first) lo.end();
-      lo.brk(1, -lo.getDefaultIndentation()).print(")").end();
+      brk(1, -lo.getDefaultIndentation()).print(")").end();
     } finally { leave(datum); }
   }
 

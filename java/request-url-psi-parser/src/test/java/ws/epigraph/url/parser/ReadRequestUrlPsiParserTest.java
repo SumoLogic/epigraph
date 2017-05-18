@@ -99,7 +99,7 @@ public class ReadRequestUrlPsiParserTest {
         "/users/123:record(id)?format='json'&verbose=true",
         "users",
         3,
-        "users / \"123\" :record ( id )",
+        "users / '123' :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }

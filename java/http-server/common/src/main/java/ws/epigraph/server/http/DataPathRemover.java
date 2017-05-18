@@ -139,7 +139,7 @@ public final class DataPathRemover {
                 try {
                   StringWriter sw = new StringWriter();
                   DataPrinter<IOException> printer = DataPrinter.toString(80, false, sw);
-                  printer.print(key);
+                  printer.print(null, key);
                   keyString = "key '" + sw.toString() + "' ";
                 } catch (IOException ignored) {}
 

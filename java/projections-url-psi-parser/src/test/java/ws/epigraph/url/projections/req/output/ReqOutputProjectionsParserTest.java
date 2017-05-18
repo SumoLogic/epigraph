@@ -120,7 +120,7 @@ public class ReqOutputProjectionsParserTest {
         3
     );
 
-    testParse(":record / middleName ;param1 = 'p1';param3 = { firstName: 'Alfred' };param2 = 'p2'", 3);
+    testParse(":record / middleName ;param1 = 'p1';param3 = {firstName: 'Alfred'};param2 = 'p2'", 3);
 
     try {
       testParse(":record / middleName ;param1 = 'p1';param3 = { lastName: 'Hitchcock' };param2 = 'p2'", 3);
@@ -132,8 +132,7 @@ public class ReqOutputProjectionsParserTest {
     testParse(
         lines(
             ":record /",
-            "  middleName",
-            "    ;param1 = 'p1';param3 = { firstName: 'Hitchcock', bestFriend: < record: { lastName: 'Lee' } > };param2 = 'p2'"
+            "  middleName ;param1 = 'p1';param3 = {firstName: 'Hitchcock',bestFriend: <record: {lastName: 'Lee'}>};param2 = 'p2'"
         ), 3
     );
 
@@ -141,8 +140,7 @@ public class ReqOutputProjectionsParserTest {
       testParse(
           lines(
               ":record /",
-              "  middleName",
-              "    ;param1 = 'p1';param3 = { firstName: 'Hitchcock', bestFriend: < record: { firstName: 'Bruce' } > };param2 = 'p2'"
+              "  middleName ;param1 = 'p1';param3 = {firstName: 'Hitchcock',bestFriend: <record: {firstName: 'Bruce'}>};param2 = 'p2'"
           ), 3
       );
       fail();
@@ -190,13 +188,13 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParseEmptyRecordParam() {
-    testParse(":( id, record ( id ;param2 = { } ) )", 0);
+    testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{} ) )", 0);
   }
 
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testParseEmptyRecordFieldParam() {
-    ReqOutputVarProjection vp = testParse(":( id, record ( id ;param2 = { firstName: null } ) )", 0);
+    ReqOutputVarProjection vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null} ) )", 0);
 
     ReqOutputRecordModelProjection recordProjection =
         (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
@@ -350,7 +348,7 @@ public class ReqOutputProjectionsParserTest {
     testTailsNormalization(
         ":record(id,firstName;param='foo')~~ws.epigraph.tests.User :record(firstName;param='bar')",
         User.type,
-        ":record ( firstName ;param = \"bar\", id )"
+        ":record ( firstName ;param = 'bar', id )"
     );
 
     // annotations merging
@@ -375,13 +373,13 @@ public class ReqOutputProjectionsParserTest {
     testTailsNormalization(
         ":record(friendsMap[1](:id))~~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
-        ":record ( friendsMap [ \"2\";keyParam = \"foo\", \"1\" ]( :( record ( id ), id ) ) )"
+        ":record ( friendsMap [ '2';keyParam = 'foo', '1' ]( :( record ( id ), id ) ) )"
     );
 
     testTailsNormalization(
         ":record(friendsMap[2 ;keyParam='bar'](:id))~~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
-        ":record ( friendsMap [ \"2\";keyParam = \"foo\" ]( :( record ( id ), id ) ) )"
+        ":record ( friendsMap [ '2';keyParam = 'foo' ]( :( record ( id ), id ) ) )"
     );
   }
 

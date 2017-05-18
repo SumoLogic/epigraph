@@ -138,7 +138,7 @@ public class CreateOperationRouterTest {
 
   @Test
   public void testPathless() throws PsiProcessingException {
-    testRouting("/users>[1](:record(id))", "pathless.1", null, null, 1, "[ \"1\" ]( :record ( id ) )");
+    testRouting("/users>[1](:record(id))", "pathless.1", null, null, 1, "[ '1' ]( :record ( id ) )");
   }
 
   @Test
@@ -149,7 +149,7 @@ public class CreateOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         1,
-        "[ \"1\" ]( :record ( firstName ) )"
+        "[ '1' ]( :record ( firstName ) )"
     );
   }
 
@@ -161,7 +161,7 @@ public class CreateOperationRouterTest {
         null,
         null,
         1,
-        "[ \"1\" ]( :record ( id, lastName ) )"
+        "[ '1' ]( :record ( id, lastName ) )"
     );
   }
 
@@ -173,13 +173,13 @@ public class CreateOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         1,
-        "[ \"1\" ]( :record ( id, lastName ) )"
+        "[ '1' ]( :record ( id, lastName ) )"
     );
   }
 
   @Test
   public void testPathless3() throws PsiProcessingException {
-    testRouting("/users>/1:record(id,lastName)", "pathless.2", null, null, 3, "/ \"1\" :record ( id, lastName )");
+    testRouting("/users>/1:record(id,lastName)", "pathless.2", null, null, 3, "/ '1' :record ( id, lastName )");
   }
 
   @Test
@@ -190,18 +190,18 @@ public class CreateOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         3,
-        "/ \"1\" :record ( id, lastName )"
+        "/ '1' :record ( id, lastName )"
     );
   }
 
   @Test
   public void testPath1() throws PsiProcessingException {
-    testRouting("/users/1>:record(id)", "path.1", "/ \"1\"", null, 1, ":record ( id )");
+    testRouting("/users/1>:record(id)", "path.1", "/ '1'", null, 1, ":record ( id )");
   }
 
   @Test
   public void testPath1WithInput() throws PsiProcessingException {
-    testRouting("/users/1<(id)>:record(id)", "path.1", "/ \"1\"", "( id )", 1, ":record ( id )");
+    testRouting("/users/1<(id)>:record(id)", "path.1", "/ '1'", "( id )", 1, ":record ( id )");
   }
 
   @Test
@@ -209,7 +209,7 @@ public class CreateOperationRouterTest {
     testRouting(
         "/users/1:record/bestFriend>:record(id)",
         "path.2",
-        "/ \"1\" :record / bestFriend",
+        "/ '1' :record / bestFriend",
         null,
         1,
         ":record ( id )"
@@ -221,7 +221,7 @@ public class CreateOperationRouterTest {
     testRouting(
         "/users/1:record/bestFriend<(id,firstName)>:record(id)",
         "path.2",
-        "/ \"1\" :record / bestFriend",
+        "/ '1' :record / bestFriend",
         "( id, firstName )",
         1,
         ":record ( id )"
@@ -233,7 +233,7 @@ public class CreateOperationRouterTest {
     testRouting(
         "/users/1:record/bestFriend<(id)>:record(id)",
         "path.3", // should not select path.2 because required field is missing from input projection
-        "/ \"1\" :record / bestFriend",
+        "/ '1' :record / bestFriend",
         "( id )",
         1,
         ":record ( id )"

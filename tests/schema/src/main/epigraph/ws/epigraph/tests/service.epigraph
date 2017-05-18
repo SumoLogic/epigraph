@@ -134,6 +134,24 @@ resource users: PersonMap {
     outputProjection (firstName, lastName)
   }
 
+  custom echo {
+    method GET
+
+    inputType Integer
+    inputProjection { ;+param : PersonMap []:(id,`record`(id,firstName,bestFriend :id,friends *: id)) }
+
+    outputType PersonMap
+    outputProjection [ forbidden ]:(
+      id,
+      `record` (
+        id,
+        firstName,
+        bestFriend :id,
+        friends *:id
+      )
+    )
+  }
+
 }
 
 resource user: Person {

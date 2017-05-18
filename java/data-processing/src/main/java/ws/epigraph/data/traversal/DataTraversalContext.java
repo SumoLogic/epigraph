@@ -90,7 +90,7 @@ public class DataTraversalContext {
       try {
         StringWriter sw = new StringWriter();
         DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
-        printer.print(key);
+        printer.print(null, key);
         keyPrintout = sw.toString();
       } catch (IOException e) {
         keyPrintout = e.toString();

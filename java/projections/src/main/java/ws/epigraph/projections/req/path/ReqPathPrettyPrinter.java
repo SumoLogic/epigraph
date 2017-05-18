@@ -19,7 +19,6 @@ package ws.epigraph.projections.req.path;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
@@ -118,7 +117,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
     l.print("/");
     brk();
 
-    dataPrinter.print(key.value());
+    dataPrinter.print(null, key.value());
     printParams(key.params());
     printAnnotations(key.annotations());
 
@@ -144,7 +143,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
         l.print(";").print(param.name());
         brk().print("=");
         brk();
-        dataPrinter.print(param.value());
+        dataPrinter.print(null, param.value());
         l.end();
       }
     }

@@ -42,12 +42,22 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
   protected @NotNull DataPrinter<E> dataPrinter;
+  protected @NotNull DataPrinter<E> paramsDataPrinter;
 
   protected AbstractReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
       final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
-    dataPrinter = new DataPrinter<>(layouter);
+
+    dataPrinter = new DataPrinter<E>(layouter, false);
+
+    paramsDataPrinter = new DataPrinter<E>(layouter, true) {
+      @Override
+      protected Layouter<E> brk(final int i) { return lo; }
+
+      @Override
+      protected Layouter<E> brk(final int i, final int k) { return lo; }
+    };
   }
 
   @Override
@@ -87,7 +97,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
         l.print(";").print(param.name());
         brk().print("=");
         brk();
-        dataPrinter.print(param.value());
+        paramsDataPrinter.print(null, param.value());
         l.end();
       }
     }
@@ -189,7 +199,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   }
 
   protected void printReqKey(final ReqKeyProjection key) throws E {
-    dataPrinter.print(key.value());
+    dataPrinter.print(null, key.value());
     printParams(key.params());
     printAnnotations(key.annotations());
   }

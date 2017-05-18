@@ -35,6 +35,8 @@ dependencies {
   compile project(':epigraph-java-schema-parser')
   compile project(':epigraph-java-lang-common')
 
+  compile "org.slf4s:slf4s-api_$scalaVersionMajorMinor"
+
   // dependencies for the copied code
   compile project(':epigraph-java-projections-psi-parser-util')
   compile project(':epigraph-java-data-processing')
@@ -45,6 +47,7 @@ dependencies {
   compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
+  testCompile 'org.slf4j:slf4j-nop'
   testCompile 'junit:junit'
   testRuntime 'org.pegdown:pegdown'
 }

@@ -393,6 +393,7 @@ private dataTypeSpec ::= typeRef
 data ::= dataTypeSpec? '<' dataEntry* '>' {pin=2}
 dataEntry ::= qid ':' datum ','? {pin=2 recoverWhile=dataValueRecover}
 
+// add metadata support?
 datum ::= recordDatum | mapDatum | listDatum | primitiveDatum | enumDatum | nullDatum
 
 recordDatum ::= dataTypeSpec? '{' recordDatumEntry* '}' {pin=2 extends=datum}

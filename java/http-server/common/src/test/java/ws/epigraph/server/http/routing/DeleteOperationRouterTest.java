@@ -135,7 +135,7 @@ public class DeleteOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         1,
-        "[ \"1\" ]( :record ( firstName ) )"
+        "[ '1' ]( :record ( firstName ) )"
     );
   }
 
@@ -147,7 +147,7 @@ public class DeleteOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         1,
-        "[ \"1\" ]( :record ( id, lastName ) )"
+        "[ '1' ]( :record ( id, lastName ) )"
     );
   }
 
@@ -159,13 +159,13 @@ public class DeleteOperationRouterTest {
         null,
         "[]( :record ( id ) )",
         3,
-        "/ \"1\" :record ( id, lastName )"
+        "/ '1' :record ( id, lastName )"
     );
   }
 
   @Test
   public void testPath1WithDelete() throws PsiProcessingException {
-    testRouting("/users/1<:record(id)>:record(id)", "path.1", "/ \"1\"", ":record ( id )", 1, ":record ( id )");
+    testRouting("/users/1<:record(id)>:record(id)", "path.1", "/ '1'", ":record ( id )", 1, ":record ( id )");
   }
 
 
@@ -174,7 +174,7 @@ public class DeleteOperationRouterTest {
     testRouting(
         "/users/1:record/bestFriend<:record(id)>:record(id)",
         "path.2",
-        "/ \"1\" :record / bestFriend",
+        "/ '1' :record / bestFriend",
         ":record ( id )",
         1,
         ":record ( id )"

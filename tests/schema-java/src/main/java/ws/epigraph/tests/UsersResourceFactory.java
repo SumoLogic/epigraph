@@ -126,6 +126,12 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
   }
 
   @Override
+  protected @NotNull CustomOperation<PersonMap.Data> constructEchoCustomOperation(final @NotNull CustomOperationDeclaration operationDeclaration)
+      throws ServiceInitializationException {
+    return new EchoOperation(operationDeclaration);
+  }
+
+  @Override
   protected @NotNull CustomOperation<PersonRecord.Data> constructCapitalizeCustomOperation(final @NotNull CustomOperationDeclaration operationDeclaration)
       throws ServiceInitializationException {
     return new CapitalizeOp(operationDeclaration, storage);

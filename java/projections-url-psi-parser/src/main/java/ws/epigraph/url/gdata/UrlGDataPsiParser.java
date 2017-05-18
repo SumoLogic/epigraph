@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public final class UrlGDataPsiParser {
     final Object value;
     if (psi.getString() != null) {
       String text = psi.getString().getText();
-      value = text.substring(1, text.length() - 1);
+      value = text.substring(1, text.length() - 1).replace("\\'", "'");
     } else if (psi.getBoolean() != null) {
       value = Boolean.valueOf(psi.getBoolean().getText());
     } else if (psi.getNumber() != null) {

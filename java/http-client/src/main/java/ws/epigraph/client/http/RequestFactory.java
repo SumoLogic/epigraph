@@ -765,7 +765,7 @@ public final class RequestFactory {
       return null;
 
     String psiDump = DebugUtil.psiToString(psi, true, false).trim();
-    return errorsDump + "\nPSI Dump:\n\n" + psiDump;
+    return "\n" + psi.getText() + "\n\n" + errorsDump + "\nPSI Dump:\n\n" + psiDump;
   }
 
   private static void throwErrors(@NotNull List<PsiProcessingError> errors) {

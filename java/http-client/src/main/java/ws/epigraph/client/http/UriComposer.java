@@ -50,7 +50,7 @@ public final class UriComposer {
     // numeric characters
     for (int i = '0'; i <= '9'; i++) { SAFE_CHARACTERS.set(i); }
 
-    CharSequence specialCharacters = "-_.*(){}";
+    CharSequence specialCharacters = "-_.*()"; // <>{} are prohibited by java.net.URI
 
     for (int i = 0; i < specialCharacters.length(); i++)
       SAFE_CHARACTERS.set(specialCharacters.charAt(i));

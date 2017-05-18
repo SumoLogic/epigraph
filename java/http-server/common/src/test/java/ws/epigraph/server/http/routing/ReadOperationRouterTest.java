@@ -123,27 +123,27 @@ public class ReadOperationRouterTest {
 
   @Test
   public void testPathless() throws PsiProcessingException {
-    testRouting("/users[1](:record(id))", "pathless.1", null, 1, "[ \"1\" ]( :record ( id ) )");
+    testRouting("/users[1](:record(id))", "pathless.1", null, 1, "[ '1' ]( :record ( id ) )");
   }
 
   @Test
   public void testPathless2() throws PsiProcessingException {
-    testRouting("/users[1](:record(id,lastName))", "pathless.2", null, 1, "[ \"1\" ]( :record ( id, lastName ) )");
+    testRouting("/users[1](:record(id,lastName))", "pathless.2", null, 1, "[ '1' ]( :record ( id, lastName ) )");
   }
 
   @Test
   public void testPath1() throws PsiProcessingException {
-    testRouting("/users/1:record(id)", "path.1", "/ \"1\"", 1, ":record ( id )");
+    testRouting("/users/1:record(id)", "path.1", "/ '1'", 1, ":record ( id )");
   }
 
   @Test
   public void testPathless3() throws PsiProcessingException {
-    testRouting("/users/1:record(id,lastName)", "pathless.2", null, 3, "/ \"1\" :record ( id, lastName )");
+    testRouting("/users/1:record(id,lastName)", "pathless.2", null, 3, "/ '1' :record ( id, lastName )");
   }
 
   @Test
   public void testPath2() throws PsiProcessingException {
-    testRouting("/users/1:record/bestFriend:record(id)", "path.2", "/ \"1\" :record / bestFriend", 1, ":record ( id )");
+    testRouting("/users/1:record/bestFriend:record(id)", "path.2", "/ '1' :record / bestFriend", 1, ":record ( id )");
   }
 
   // todo test routing based on input projection

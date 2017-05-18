@@ -78,7 +78,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "[1,2](:record(firstName))",
-        "( 1: < record: { firstName: \"First1\" } >, 2: < record: { firstName: \"First2\" } > )"
+        "( 1: < record: { firstName: 'First1' } >, 2: < record: { firstName: 'First2' } > )"
     );
   }
 
@@ -87,7 +87,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         ";start=1;count=2[1,2](:record(firstName))@(start,count)", // backend doesn't actually take params into account
-        "( 1: < record: { firstName: \"First1\" } >, 2: < record: { firstName: \"First2\" } > )@{ start: 1, count: 2 }"
+        "( 1: < record: { firstName: 'First1' } >, 2: < record: { firstName: 'First2' } > )@{ start: 1, count: 2 }"
     );
   }
 
@@ -118,7 +118,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.bestFriendReadOperationDeclaration,
         "/1:record/bestFriend:record(firstName)",
-        "< record: { firstName: \"First2\" } >"
+        "< record: { firstName: 'First2' } >"
     );
   }
 
@@ -147,7 +147,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "[" + key + "](:record(firstName))",
-        "( " + key + ": < record: { firstName: \"testCreate\" } > )"
+        "( " + key + ": < record: { firstName: 'testCreate' } > )"
     );
 
     testDelete(
@@ -204,7 +204,7 @@ public abstract class AbstractHttpClientTest {
                 .put$(PersonId.create(22), Person.create().setRecord(PersonRecord.create().setFirstName("Alfred2")))
             ),
         "[*](code,message)",
-        "( 22: { code: 404, message: \"User with id 22 not found\" } )"
+        "( 22: { code: 404, message: 'User with id 22 not found' } )"
     );
 
     // change back
@@ -254,7 +254,7 @@ public abstract class AbstractHttpClientTest {
         null,
         Person.create().setId(PersonId.create(3)),
         "(code,message)",
-        "{ code: 404, message: \"User with id 21 not found\" }"
+        "{ code: 404, message: 'User with id 21 not found' }"
     );
 
     testUpdate(
@@ -263,7 +263,7 @@ public abstract class AbstractHttpClientTest {
         null,
         Person.create().setId(PersonId.create(31)),
         "(code,message)",
-        "{ code: 404, message: \"User with id 31 not found\" }"
+        "{ code: 404, message: 'User with id 31 not found' }"
     );
 
   }
@@ -305,7 +305,7 @@ public abstract class AbstractHttpClientTest {
         "/28:record/bestFriend",
         "",
         "(code,message)",
-        "{ code: 404, message: \"User with id 28 not found\" }"
+        "{ code: 404, message: 'User with id 28 not found' }"
     );
   }
 
@@ -328,7 +328,7 @@ public abstract class AbstractHttpClientTest {
         "(lastName)",
         null,
         "(firstName,lastName)",
-        "{ firstName: \"FIRST\", lastName: \"last\" }"
+        "{ firstName: 'FIRST', lastName: 'last' }"
     );
 
     testDelete(
@@ -339,6 +339,19 @@ public abstract class AbstractHttpClientTest {
         "( )"
     );
   }
+
+  // todo: depends on Yegor's fix
+//  @Test
+//  public void testComplexParams() throws ExecutionException, InterruptedException {
+//    testCustom(
+//        UsersResourceDeclaration.echoCustomOperationDeclaration,
+//        null,
+//        ";param=ws.epigraph.tests.PersonMap(1:<id:1,record:{id:1,firstName:'{foo}\\'+\"[bar]',friends:[<id:2>]}>)",
+//        null,
+//        "[*]:(id,record(id,firstName,bestFriend:id,friends*:id))",
+//        ""
+//    );
+//  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
