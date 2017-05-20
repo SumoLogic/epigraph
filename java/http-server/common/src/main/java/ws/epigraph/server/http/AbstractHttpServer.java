@@ -90,71 +90,81 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
 
-    // extract resource name from URI
-    Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
-    if (!matcher.matches()) {
-      writeGenericErrorAndClose(
-          String.format(
-              "Bad URL format. Supported resources: {%s}",
-              Util.listSupportedResources(service)
-          ),
-          HttpStatusCode.BAD_REQUEST,
-          context,
-          operationInvocationContext
-      );
-      return;
-    }
-
-    String resourceName = matcher.group(1);
-
-    // find resource by name
-    final Resource resource;
     try {
-      resource = ResourceRouter.findResource(resourceName, service);
-    } catch (ResourceNotFoundException ignored) {
-      writeGenericErrorAndClose(
-          String.format(
-              "Resource '%s' not found. Supported resources: {%s}",
-              resourceName,
-              Util.listSupportedResources(service)
-          ),
-          HttpStatusCode.BAD_REQUEST,
-          context,
-          operationInvocationContext
-      );
-      return;
-    }
-
-    if (operationName != null) {
-      CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
-      if (customOperation != null) {
-        handleCustomRequest(
-            resource,
-            operationName,
-            requestMethod,
-            decodedUri,
+      // extract resource name from URI
+      Matcher matcher = RESOURCE_PATTERN.matcher(decodedUri);
+      if (!matcher.matches()) {
+        writeGenericErrorAndClose(
+            String.format(
+                "Bad URL format. Supported resources: {%s}",
+                Util.listSupportedResources(service)
+            ),
+            HttpStatusCode.BAD_REQUEST,
             context,
             operationInvocationContext
         );
         return;
       }
-    }
 
-    if (requestMethod == HttpMethod.GET)
-      handleReadRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-    else if (requestMethod == HttpMethod.POST)
-      handleCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-    else if (requestMethod == HttpMethod.PUT)
-      handleUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-    else if (requestMethod == HttpMethod.DELETE)
-      handleDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-    else {
+      String resourceName = matcher.group(1);
+
+      // find resource by name
+      final Resource resource;
+      try {
+        resource = ResourceRouter.findResource(resourceName, service);
+      } catch (ResourceNotFoundException ignored) {
+        writeGenericErrorAndClose(
+            String.format(
+                "Resource '%s' not found. Supported resources: {%s}",
+                resourceName,
+                Util.listSupportedResources(service)
+            ),
+            HttpStatusCode.BAD_REQUEST,
+            context,
+            operationInvocationContext
+        );
+        return;
+      }
+
+      if (operationName != null) {
+        CustomOperation<?> customOperation = resource.customOperation(requestMethod, operationName);
+        if (customOperation != null) {
+          handleCustomRequest(
+              resource,
+              operationName,
+              requestMethod,
+              decodedUri,
+              context,
+              operationInvocationContext
+          );
+          return;
+        }
+      }
+
+      if (requestMethod == HttpMethod.GET)
+        handleReadRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+      else if (requestMethod == HttpMethod.POST)
+        handleCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+      else if (requestMethod == HttpMethod.PUT)
+        handleUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+      else if (requestMethod == HttpMethod.DELETE)
+        handleDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+      else {
+        writeGenericErrorAndClose(
+            String.format("Unsupported HTTP method '%s'", requestMethod),
+            HttpStatusCode.BAD_REQUEST,
+            context,
+            operationInvocationContext
+        );
+      }
+    } catch (RuntimeException e) {
       writeGenericErrorAndClose(
-          String.format("Unsupported HTTP method '%s'", requestMethod),
-          HttpStatusCode.BAD_REQUEST,
+          String.format("Internal error '%s'", e),
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           context,
           operationInvocationContext
       );
+      context.logger().error("Unexpected exception", e);
     }
 
   }
@@ -240,8 +250,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           ReadOperation<Data> operation = operationSearchResult.operation();
 
-          OperationInvocation<ReadOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationFilterChains.readOperationInvocation(operation);
+          OperationInvocation<ReadOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
+              operationFilterChains.filterRead(new LocalOperationInvocation<>(operation));
 
           return operationInvocation.invoke(
               new ReadOperationRequest(
@@ -441,8 +451,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for create operation"))
             );
 
-          OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationFilterChains.createOperationInvocation(operation);
+          OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
+              operationFilterChains.filterCreate(new LocalOperationInvocation<>(operation));
 
           return operationInvocation.invoke(
               new CreateOperationRequest(
@@ -594,8 +604,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                 OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for update operation"))
             );
 
-          OperationInvocation<UpdateOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationFilterChains.updateOperationInvocation(operation);
+          OperationInvocation<UpdateOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
+              operationFilterChains.filterUpdate(new LocalOperationInvocation<>(operation));
 
           return operationInvocation.invoke(
               new UpdateOperationRequest(
@@ -721,8 +731,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           @NotNull DeleteOperation<Data> operation = operationSearchResult.operation();
 
-          OperationInvocation<DeleteOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-              operationFilterChains.deleteOperationInvocation(operation);
+          OperationInvocation<DeleteOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
+              operationFilterChains.filterDelete(new LocalOperationInvocation<>(operation));
 
           return operationInvocation.invoke(
               new DeleteOperationRequest(
@@ -893,8 +903,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
     }
 
-    OperationInvocation<CustomOperationRequest, ReadOperationResponse<Data>> operationInvocation =
-        operationFilterChains.customOperationInvocation(operation);
+    OperationInvocation<CustomOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
+        operationFilterChains.filterCustom(new LocalOperationInvocation<>(operation));
 
     return operationInvocation.invoke(
         new CustomOperationRequest(

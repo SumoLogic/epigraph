@@ -18,7 +18,11 @@ package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
-import ws.epigraph.invocation.filters.*;
+import ws.epigraph.invocation.filters.CreateRequestValidationFilter;
+import ws.epigraph.invocation.filters.CustomRequestValidationFilter;
+import ws.epigraph.invocation.filters.ReadResponsePruningFilter;
+import ws.epigraph.invocation.filters.UpdateRequestValidationFilter;
+import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.operations.*;
 
 import java.util.Arrays;
@@ -28,54 +32,54 @@ import java.util.Collections;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OperationFilterChains<D extends Data> {
-  private final @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>>
-      readOperationOperationInvocationFiltersChain;
-  private final @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>>
-      createOperationOperationInvocationFiltersChain;
-  private final @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperation<D>>
-      updateOperationOperationInvocationFiltersChain;
-  private final @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperation<D>>
-      deleteOperationOperationInvocationFiltersChain;
-  private final @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperation<D>>
-      customOperationOperationInvocationFiltersChain;
+  private final @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperationDeclaration>
+      readChain;
+  private final @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperationDeclaration>
+      createChain;
+  private final @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperationDeclaration>
+      updateChain;
+  private final @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperationDeclaration>
+      deleteChain;
+  private final @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperationDeclaration>
+      customChain;
 
   public OperationFilterChains(
-      @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperation<D>> readChain,
-      @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperation<D>> createChain,
-      @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperation<D>> updateChain,
-      @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperation<D>> deleteChain,
-      @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperation<D>> customChain) {
+      @NotNull OperationInvocationFiltersChain<ReadOperationRequest, ReadOperationResponse<D>, ReadOperationDeclaration> readChain,
+      @NotNull OperationInvocationFiltersChain<CreateOperationRequest, ReadOperationResponse<D>, CreateOperationDeclaration> createChain,
+      @NotNull OperationInvocationFiltersChain<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperationDeclaration> updateChain,
+      @NotNull OperationInvocationFiltersChain<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperationDeclaration> deleteChain,
+      @NotNull OperationInvocationFiltersChain<CustomOperationRequest, ReadOperationResponse<D>, CustomOperationDeclaration> customChain) {
 
-    readOperationOperationInvocationFiltersChain = readChain;
-    createOperationOperationInvocationFiltersChain = createChain;
-    updateOperationOperationInvocationFiltersChain = updateChain;
-    deleteOperationOperationInvocationFiltersChain = deleteChain;
-    customOperationOperationInvocationFiltersChain = customChain;
+    this.readChain = readChain;
+    this.createChain = createChain;
+    this.updateChain = updateChain;
+    this.deleteChain = deleteChain;
+    this.customChain = customChain;
   }
 
-  public @NotNull OperationInvocation<ReadOperationRequest, ReadOperationResponse<D>>
-  readOperationInvocation(@NotNull ReadOperation<D> operation) {
-    return readOperationOperationInvocationFiltersChain.invocation(operation);
+  public @NotNull OperationInvocation<ReadOperationRequest, ReadOperationResponse<D>, ReadOperationDeclaration>
+  filterRead(@NotNull OperationInvocation<ReadOperationRequest, ReadOperationResponse<D>, ReadOperationDeclaration> inv) {
+    return readChain.filter(inv);
   }
 
-  public @NotNull OperationInvocation<CreateOperationRequest, ReadOperationResponse<D>>
-  createOperationInvocation(@NotNull CreateOperation<D> operation) {
-    return createOperationOperationInvocationFiltersChain.invocation(operation);
+  public @NotNull OperationInvocation<CreateOperationRequest, ReadOperationResponse<D>, CreateOperationDeclaration>
+  filterCreate(@NotNull OperationInvocation<CreateOperationRequest, ReadOperationResponse<D>, CreateOperationDeclaration> inv) {
+    return createChain.filter(inv);
   }
 
-  public @NotNull OperationInvocation<UpdateOperationRequest, ReadOperationResponse<D>>
-  updateOperationInvocation(@NotNull UpdateOperation<D> operation) {
-    return updateOperationOperationInvocationFiltersChain.invocation(operation);
+  public @NotNull OperationInvocation<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperationDeclaration>
+  filterUpdate(@NotNull OperationInvocation<UpdateOperationRequest, ReadOperationResponse<D>, UpdateOperationDeclaration> inv) {
+    return updateChain.filter(inv);
   }
 
-  public @NotNull OperationInvocation<DeleteOperationRequest, ReadOperationResponse<D>>
-  deleteOperationInvocation(@NotNull DeleteOperation<D> operation) {
-    return deleteOperationOperationInvocationFiltersChain.invocation(operation);
+  public @NotNull OperationInvocation<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperationDeclaration>
+  filterDelete(@NotNull OperationInvocation<DeleteOperationRequest, ReadOperationResponse<D>, DeleteOperationDeclaration> inv) {
+    return deleteChain.filter(inv);
   }
 
-  public @NotNull OperationInvocation<CustomOperationRequest, ReadOperationResponse<D>>
-  customOperationInvocation(@NotNull CustomOperation<D> operation) {
-    return customOperationOperationInvocationFiltersChain.invocation(operation);
+  public @NotNull OperationInvocation<CustomOperationRequest, ReadOperationResponse<D>, CustomOperationDeclaration>
+  filterCustom(@NotNull OperationInvocation<CustomOperationRequest, ReadOperationResponse<D>, CustomOperationDeclaration> inv) {
+    return customChain.filter(inv);
   }
 
   // todo add filters ensuring that req projections are correct wrt op projections
@@ -83,36 +87,31 @@ public final class OperationFilterChains<D extends Data> {
     return new OperationFilterChains<>(
         //read
         new DefaultOperationInvocationFiltersChain<>(
-            LocalOperationInvocation::new,
-            Collections.singletonList(operation -> new ReadResponsePruningFilter<>())
+            Collections.singleton(new ReadResponsePruningFilter<>())
         ),
         //create
         new DefaultOperationInvocationFiltersChain<>(
-            LocalOperationInvocation::new,
             Arrays.asList(
-                operation -> new CreateRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponsePruningFilter<>()
+                new CreateRequestValidationFilter<>(),
+                new ReadResponsePruningFilter<>()
             )
         ),
         //update
         new DefaultOperationInvocationFiltersChain<>(
-            LocalOperationInvocation::new,
             Arrays.asList(
-                operation -> new UpdateRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponsePruningFilter<>()
+                new UpdateRequestValidationFilter<>(),
+                new ReadResponsePruningFilter<>()
             )
         ),
         //delete
         new DefaultOperationInvocationFiltersChain<>(
-            LocalOperationInvocation::new,
-            Collections.singletonList(operation -> new ReadResponsePruningFilter<>())
+            Collections.singleton(new ReadResponsePruningFilter<>())
         ),
         //custom
         new DefaultOperationInvocationFiltersChain<>(
-            LocalOperationInvocation::new,
             Arrays.asList(
-                operation -> new CustomRequestValidationFilter<>(operation.declaration()),
-                operation -> new ReadResponsePruningFilter<>()
+                new CustomRequestValidationFilter<>(),
+                new ReadResponsePruningFilter<>()
             )
         )
     );

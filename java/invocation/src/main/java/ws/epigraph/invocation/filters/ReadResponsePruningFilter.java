@@ -16,12 +16,16 @@
 
 package ws.epigraph.invocation.filters;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.pruning.ReqOutputRequiredDataPruner;
 import ws.epigraph.invocation.*;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.HttpStatusCode;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Tries to keep `required` contract by pruning output data.
@@ -29,15 +33,17 @@ import ws.epigraph.util.HttpStatusCode;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/required#request-projections">required flag for request projections</a>
  */
-public class ReadResponsePruningFilter<Req extends OperationRequest, D extends Data>
-    implements OperationInvocationFilter<Req, ReadOperationResponse<D>> {
+public class ReadResponsePruningFilter<Req extends OperationRequest, D extends Data, OD extends OperationDeclaration>
+    extends AbstractOperationInvocationFilter<Req, ReadOperationResponse<D>, OD> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public OperationInvocation<Req, ReadOperationResponse<D>>
-  apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
+  protected CompletableFuture<OperationInvocationResult<ReadOperationResponse<D>>> invoke(
+      final @NotNull OperationInvocation<Req, ReadOperationResponse<D>, OD> invocation,
+      final @NotNull Req request,
+      final @NotNull OperationInvocationContext context) {
 
-    return (request, context) -> invocation.invoke(request, context).thenApply(operationInvocationResult ->
+    return invocation.invoke(request, context).thenApply(operationInvocationResult ->
         operationInvocationResult.apply(
             readOperationResponse -> {
               Data data = readOperationResponse.getData();

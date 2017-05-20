@@ -25,6 +25,7 @@ import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
 import ws.epigraph.util.HttpStatusCode;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,13 +35,14 @@ import java.util.concurrent.CompletableFuture;
  */
 public class LocalOperationInvocation<
     Req extends OperationRequest,
-    Rsp extends OperationResponse> implements OperationInvocation<Req, Rsp> {
+    Rsp extends OperationResponse,
+    D extends OperationDeclaration> implements OperationInvocation<Req, Rsp, D> {
 
   private static final Logger LOG = LoggerFactory.getLogger(LocalOperationInvocation.class);
 
-  private final @NotNull Operation<?, Req, Rsp> operation;
+  private final @NotNull Operation<D, Req, Rsp> operation;
 
-  public LocalOperationInvocation(final @NotNull Operation<?, Req, Rsp> operation) {this.operation = operation;}
+  public LocalOperationInvocation(final @NotNull Operation<D, Req, Rsp> operation) {this.operation = operation;}
 
   @Override
   public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
@@ -62,5 +64,21 @@ public class LocalOperationInvocation<
           )
       );
     }
+  }
+
+  @Override
+  public @NotNull D operationDeclaration() { return operation.declaration(); }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    final LocalOperationInvocation<?, ?, ?> that = (LocalOperationInvocation<?, ?, ?>) o;
+    return Objects.equals(operation, that.operation);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(operation);
   }
 }

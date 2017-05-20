@@ -16,6 +16,7 @@
 
 package ws.epigraph.invocation;
 
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
 
@@ -26,5 +27,9 @@ import java.util.function.Function;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocationFilter<Req extends OperationRequest, Rsp extends OperationResponse>
-    extends Function<OperationInvocation<Req, Rsp>, OperationInvocation<Req, Rsp>> {}
+public interface OperationInvocationFilter<
+    Req extends OperationRequest,
+    Rsp extends OperationResponse,
+    D extends OperationDeclaration>
+    extends Function<OperationInvocation<Req, Rsp, D>, OperationInvocation<Req, Rsp, D>> {}
+

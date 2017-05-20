@@ -16,16 +16,20 @@
 
 package ws.epigraph.invocation.filters;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
-import ws.epigraph.invocation.OperationInvocation;
-import ws.epigraph.invocation.OperationInvocationFilter;
-import ws.epigraph.invocation.OperationInvocationResult;
-import ws.epigraph.service.operations.OperationRequest;
-import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.ReqOutputDataValidator;
+import ws.epigraph.invocation.AbstractOperationInvocationFilter;
+import ws.epigraph.invocation.OperationInvocation;
+import ws.epigraph.invocation.OperationInvocationContext;
+import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.service.operations.OperationRequest;
+import ws.epigraph.service.operations.ReadOperationResponse;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Ensures that all bits required by the output projection are actually present
@@ -33,13 +37,15 @@ import java.util.Collection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReadResponseValidationFilter<Req extends OperationRequest, D extends Data>
-    implements OperationInvocationFilter<Req, ReadOperationResponse<D>> {
+    extends AbstractOperationInvocationFilter<Req, ReadOperationResponse<D>, ReadOperationDeclaration> {
 
   @Override
-  public OperationInvocation<Req, ReadOperationResponse<D>>
-  apply(final OperationInvocation<Req, ReadOperationResponse<D>> invocation) {
+  protected CompletableFuture<OperationInvocationResult<ReadOperationResponse<D>>> invoke(
+      final @NotNull OperationInvocation<Req, ReadOperationResponse<D>, ReadOperationDeclaration> invocation,
+      final @NotNull Req request,
+      final @NotNull OperationInvocationContext context) {
 
-    return (request, context) -> invocation.invoke(request, context).thenApply(result ->
+    return invocation.invoke(request, context).thenApply(result ->
         result.apply(
             response -> {
               Data data = response.getData();

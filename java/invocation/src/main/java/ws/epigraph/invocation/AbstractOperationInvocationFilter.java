@@ -24,26 +24,33 @@ import ws.epigraph.service.operations.OperationResponse;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Operation invocation
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OperationInvocation<
+public abstract class AbstractOperationInvocationFilter<
     Req extends OperationRequest,
     Rsp extends OperationResponse,
-    D extends OperationDeclaration> {
+    D extends OperationDeclaration> implements OperationInvocationFilter<Req, Rsp, D> {
 
-  /**
-   * Invokes an operation returning a future of invocation result
-   *
-   * @param request request
-   * @param context operation invocation context
-   *
-   * @return future of invocation result
-   */
-  CompletableFuture<OperationInvocationResult<Rsp>> invoke(
-      @NotNull Req request, @NotNull OperationInvocationContext context
-  );
+  @Override
+  public OperationInvocation<Req, Rsp, D> apply(final OperationInvocation<Req, Rsp, D> invocation) {
+    return new OperationInvocation<Req, Rsp, D>() {
 
-  @NotNull D operationDeclaration();
+      @Override
+      public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+          final @NotNull Req request, final @NotNull OperationInvocationContext context) {
+
+        return AbstractOperationInvocationFilter.this.invoke(invocation, request, context);
+      }
+
+      @Override
+      public @NotNull D operationDeclaration() {
+        return invocation.operationDeclaration();
+      }
+    };
+  }
+
+  protected abstract CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      @NotNull OperationInvocation<Req, Rsp, D> invocation,
+      @NotNull Req request,
+      @NotNull OperationInvocationContext context);
 }

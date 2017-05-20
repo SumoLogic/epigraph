@@ -17,15 +17,12 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.service.operations.Operation;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -33,22 +30,15 @@ import java.util.stream.StreamSupport;
 public abstract class OperationInvocationFiltersChain<
     Req extends OperationRequest,
     Rsp extends OperationResponse,
-    O extends Operation<?, Req, Rsp>> {
+    D extends OperationDeclaration> {
 
-  private final @NotNull Function<O, OperationInvocation<Req, Rsp>> seedFactory;
-  private final @NotNull Map<O, OperationInvocation<Req, Rsp>> invocationsCache = new IdentityHashMap<>();
+  private final @NotNull Map<OperationInvocation<Req, Rsp, D>, OperationInvocation<Req, Rsp, D>> invocationsCache =
+      new IdentityHashMap<>();
 
-  protected OperationInvocationFiltersChain(@NotNull Function<O, OperationInvocation<Req, Rsp>> invocationFactory) {
-    this.seedFactory = invocationFactory;
-  }
+  protected abstract @NotNull Iterable<OperationInvocationFilter<Req, Rsp, D>> filters();
 
-  protected abstract @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories();
-
-  public @NotNull OperationInvocation<Req, Rsp> invocation(@NotNull O operation) {
-    return invocationsCache.computeIfAbsent(operation, o -> buildChain(
-        seedFactory.apply(o),
-        StreamSupport.stream(filterFactories().spliterator(), false).map(f -> f.apply(o)).collect(Collectors.toList())
-    ));
+  public @NotNull OperationInvocation<Req, Rsp, D> filter(@NotNull OperationInvocation<Req, Rsp, D> inv) {
+    return invocationsCache.computeIfAbsent(inv, o -> buildChain(inv, filters()));
   }
 
   /**
@@ -63,14 +53,14 @@ public abstract class OperationInvocationFiltersChain<
    * @return {@code OperationInvocation} instance combining all the filters with
    * {@code seed} at the deepest level
    */
-  public static <Req extends OperationRequest, Rsp extends OperationResponse>
-  @NotNull OperationInvocation<Req, Rsp> buildChain(
-      @NotNull OperationInvocation<Req, Rsp> seed,
-      @NotNull Iterable<OperationInvocationFilter<Req, Rsp>> filters
-  ) {
-    OperationInvocation<Req, Rsp> result = seed;
+  private static <Req extends OperationRequest, Rsp extends OperationResponse, D extends OperationDeclaration>
+  @NotNull OperationInvocation<Req, Rsp, D> buildChain(
+      @NotNull OperationInvocation<Req, Rsp, D> seed,
+      @NotNull Iterable<OperationInvocationFilter<Req, Rsp, D>> filters) {
 
-    for (final OperationInvocationFilter<Req, Rsp> filter : filters) {
+    OperationInvocation<Req, Rsp, D> result = seed;
+
+    for (final OperationInvocationFilter<Req, Rsp, D> filter : filters) {
       result = filter.apply(result);
     }
 

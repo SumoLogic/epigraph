@@ -17,14 +17,15 @@
 package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.data.validation.OpInputDataValidator;
+import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
-import ws.epigraph.invocation.OperationInvocationFilter;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.operations.OperationResponse;
 import ws.epigraph.service.operations.UpdateOperationRequest;
-import ws.epigraph.data.validation.DataValidationError;
-import ws.epigraph.data.validation.OpInputDataValidator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -36,26 +37,21 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class UpdateRequestValidationFilter<Rsp extends OperationResponse>
-    implements OperationInvocationFilter<UpdateOperationRequest, Rsp> {
-
-  private final @NotNull UpdateOperationDeclaration operationDeclaration;
-
-  public UpdateRequestValidationFilter(final @NotNull UpdateOperationDeclaration declaration) {
-    operationDeclaration = declaration;
-  }
+    extends AbstractOperationInvocationFilter<UpdateOperationRequest, Rsp, UpdateOperationDeclaration> {
 
   @Override
-  public OperationInvocation<UpdateOperationRequest, Rsp>
-  apply(final OperationInvocation<UpdateOperationRequest, Rsp> invocation) {
-    return (request, context) -> {
-      OpInputDataValidator validator = new OpInputDataValidator();
-      validator.validateData(request.data(), operationDeclaration.inputProjection().varProjection());
-      List<? extends DataValidationError> errors = validator.errors();
+  protected CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      final @NotNull OperationInvocation<UpdateOperationRequest, Rsp, UpdateOperationDeclaration> invocation,
+      final @NotNull UpdateOperationRequest request,
+      final @NotNull OperationInvocationContext context) {
 
-      return errors.isEmpty()
-             ? invocation.invoke(request, context)
-             : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
-    };
+    OpInputDataValidator validator = new OpInputDataValidator();
+    validator.validateData(request.data(), invocation.operationDeclaration().inputProjection().varProjection());
+    List<? extends DataValidationError> errors = validator.errors();
+
+    return errors.isEmpty()
+           ? invocation.invoke(request, context)
+           : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
 
   }
 }

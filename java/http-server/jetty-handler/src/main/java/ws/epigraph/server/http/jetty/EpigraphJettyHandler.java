@@ -32,6 +32,7 @@ import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
 import ws.epigraph.server.http.servlet.ServletExchange;
 import ws.epigraph.service.Service;
+import ws.epigraph.util.HttpStatusCode;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
@@ -94,7 +95,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
     final HttpMethod method = HttpMethod.fromString(request.getMethod());
 
     if (method == null) {
-      response.setStatus(400);
+      response.setStatus(HttpStatusCode.BAD_REQUEST);
       response.getWriter().write("Invalid HTTP method '" + request.getMethod() + "'");
     } else {
       try {
@@ -113,7 +114,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
         );
 
       } catch (URISyntaxException e) {
-        response.setStatus(400);
+        response.setStatus(HttpStatusCode.BAD_REQUEST);
         response.getWriter().write("Invalid URI syntax '" + e.getMessage() + "'");
       }
     }

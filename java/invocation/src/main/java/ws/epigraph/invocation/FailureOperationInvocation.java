@@ -17,6 +17,7 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
 
@@ -25,8 +26,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@Deprecated
 public class FailureOperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse>
-    implements OperationInvocation<Req, Rsp> {
+    implements OperationInvocation<Req, Rsp, OperationDeclaration> {
 
   private final @NotNull OperationInvocationError error;
 
@@ -36,5 +38,10 @@ public class FailureOperationInvocation<Req extends OperationRequest, Rsp extend
   public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context) {
     return CompletableFuture.completedFuture(OperationInvocationResult.failure(error));
+  }
+
+  @Override
+  public @NotNull OperationDeclaration operationDeclaration() {
+    throw new UnsupportedOperationException();
   }
 }

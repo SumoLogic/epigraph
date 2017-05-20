@@ -17,11 +17,9 @@
 package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.service.operations.Operation;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
-
-import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,21 +27,15 @@ import java.util.function.Function;
 public class DefaultOperationInvocationFiltersChain<
     Req extends OperationRequest,
     Rsp extends OperationResponse,
-    O extends Operation<?, Req, Rsp>>
+    D extends OperationDeclaration>
+    extends OperationInvocationFiltersChain<Req, Rsp, D> {
 
-    extends OperationInvocationFiltersChain<Req, Rsp, O> {
+  private final @NotNull Iterable<OperationInvocationFilter<Req, Rsp, D>> filters;
 
-  private final @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories;
-
-  public DefaultOperationInvocationFiltersChain(
-      final @NotNull Function<O, OperationInvocation<Req, Rsp>> invocationFactory,
-      final @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> factories) {
-    super(invocationFactory);
-    filterFactories = factories;
+  public DefaultOperationInvocationFiltersChain(@NotNull Iterable<OperationInvocationFilter<Req, Rsp, D>> filters) {
+    this.filters = filters;
   }
 
   @Override
-  protected @NotNull Iterable<Function<O, OperationInvocationFilter<Req, Rsp>>> filterFactories() {
-    return filterFactories;
-  }
+  protected @NotNull Iterable<OperationInvocationFilter<Req, Rsp, D>> filters() { return filters; }
 }

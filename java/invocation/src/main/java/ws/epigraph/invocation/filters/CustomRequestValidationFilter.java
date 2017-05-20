@@ -18,15 +18,16 @@ package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
+import ws.epigraph.data.validation.DataValidationError;
+import ws.epigraph.data.validation.OpInputDataValidator;
+import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
-import ws.epigraph.invocation.OperationInvocationFilter;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
-import ws.epigraph.data.validation.DataValidationError;
-import ws.epigraph.data.validation.OpInputDataValidator;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,32 +39,26 @@ import java.util.concurrent.CompletableFuture;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CustomRequestValidationFilter<Rsp extends OperationResponse>
-    implements OperationInvocationFilter<CustomOperationRequest, Rsp> {
-
-  private final @NotNull CustomOperationDeclaration operationDeclaration;
-
-  public CustomRequestValidationFilter(final @NotNull CustomOperationDeclaration declaration) {
-    operationDeclaration = declaration;
-  }
+    extends AbstractOperationInvocationFilter<CustomOperationRequest, Rsp, CustomOperationDeclaration> {
 
   @Override
-  public OperationInvocation<CustomOperationRequest, Rsp>
-  apply(final OperationInvocation<CustomOperationRequest, Rsp> invocation) {
-    return (request, context) -> {
-      OpInputDataValidator validator = new OpInputDataValidator();
-      Data data = request.data();
-      OpInputFieldProjection inputProjection = operationDeclaration.inputProjection();
+  protected CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      final @NotNull OperationInvocation<CustomOperationRequest, Rsp, CustomOperationDeclaration> invocation,
+      final @NotNull CustomOperationRequest request,
+      final @NotNull OperationInvocationContext context) {
 
-      if (data == null || inputProjection == null)
-        return invocation.invoke(request, context);
+    OpInputDataValidator validator = new OpInputDataValidator();
+    Data data = request.data();
+    OpInputFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
 
-      validator.validateData(data, inputProjection.varProjection());
-      List<? extends DataValidationError> errors = validator.errors();
+    if (data == null || inputProjection == null)
+      return invocation.invoke(request, context);
 
-      return errors.isEmpty()
-             ? invocation.invoke(request, context)
-             : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
-    };
+    validator.validateData(data, inputProjection.varProjection());
+    List<? extends DataValidationError> errors = validator.errors();
 
+    return errors.isEmpty()
+           ? invocation.invoke(request, context)
+           : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
   }
 }

@@ -38,13 +38,14 @@ import ws.epigraph.service.operations.ReadOperationResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractRemoteOperationInvocation<Req extends OperationRequest, OD extends OperationDeclaration>
-    implements OperationInvocation<Req, ReadOperationResponse<?>> {
+    implements OperationInvocation<Req, ReadOperationResponse<?>, OD> {
 
   protected final @NotNull HttpHost host;
   protected final @NotNull HttpAsyncClient httpClient;
@@ -162,6 +163,24 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
 
     return f;
 
+  }
+
+  @Override
+  public @NotNull OD operationDeclaration() { return operationDeclaration; }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    final AbstractRemoteOperationInvocation<?, ?> that = (AbstractRemoteOperationInvocation<?, ?>) o;
+    return Objects.equals(host, that.host) &&
+           Objects.equals(resourceName, that.resourceName) &&
+           Objects.equals(operationDeclaration, that.operationDeclaration);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(host, resourceName, operationDeclaration);
   }
 
   protected abstract HttpRequest composeHttpRequest(

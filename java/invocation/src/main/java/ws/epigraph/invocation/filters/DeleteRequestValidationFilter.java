@@ -17,32 +17,31 @@
 package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
-import ws.epigraph.invocation.OperationInvocationFilter;
+import ws.epigraph.invocation.OperationInvocationContext;
+import ws.epigraph.invocation.OperationInvocationResult;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteRequestValidationFilter<Rsp extends OperationResponse>
-    implements OperationInvocationFilter<DeleteOperationRequest, Rsp> {
-
-  private final @NotNull DeleteOperationDeclaration operationDeclaration;
-
-  public DeleteRequestValidationFilter(final @NotNull DeleteOperationDeclaration operationDeclaration) {
-    this.operationDeclaration = operationDeclaration;
-  }
+    extends AbstractOperationInvocationFilter<DeleteOperationRequest, Rsp, DeleteOperationDeclaration> {
 
   @Override
-  public OperationInvocation<DeleteOperationRequest, Rsp>
-  apply(final OperationInvocation< DeleteOperationRequest, Rsp> invocation) {
-    return (request, context) -> {
-      // todo check that req projection matches op projection and that all leaf
-      // req var projections have corresponding op var projections with canDelete = true
+  protected CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      final @NotNull OperationInvocation<DeleteOperationRequest, Rsp, DeleteOperationDeclaration> invocation,
+      final @NotNull DeleteOperationRequest request,
+      final @NotNull OperationInvocationContext context) {
 
-      return invocation.invoke(request, context);
-    };
+    // todo check that req projection matches op projection and that all leaf
+    // req var projections have corresponding op var projections with canDelete = true
+
+    return invocation.invoke(request, context);
   }
 }
