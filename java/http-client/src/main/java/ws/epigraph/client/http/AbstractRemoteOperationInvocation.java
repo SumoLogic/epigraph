@@ -26,6 +26,7 @@ import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.http.Headers;
 import ws.epigraph.invocation.OperationInvocation;
@@ -44,8 +45,10 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractRemoteOperationInvocation<Req extends OperationRequest, OD extends OperationDeclaration>
-    implements OperationInvocation<Req, ReadOperationResponse<?>, OD> {
+public abstract class AbstractRemoteOperationInvocation<
+    Req extends OperationRequest,
+    OD extends OperationDeclaration>
+    implements OperationInvocation<Req, ReadOperationResponse<Data>, OD> {
 
   protected final @NotNull HttpHost host;
   protected final @NotNull HttpAsyncClient httpClient;
@@ -74,7 +77,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
   }
 
   @Override
-  public CompletableFuture<OperationInvocationResult<ReadOperationResponse<?>>> invoke(
+  public CompletableFuture<OperationInvocationResult<ReadOperationResponse<Data>>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context) {
 
     HttpRequest httpRequest = composeHttpRequest(request, context);
@@ -129,7 +132,7 @@ public abstract class AbstractRemoteOperationInvocation<Req extends OperationReq
       });
     }
 
-    CompletableFuture<OperationInvocationResult<ReadOperationResponse<?>>> f = new CompletableFuture<>();
+    CompletableFuture<OperationInvocationResult<ReadOperationResponse<Data>>> f = new CompletableFuture<>();
 
     httpClient.execute(
         requestProducer,

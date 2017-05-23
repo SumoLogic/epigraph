@@ -83,7 +83,7 @@ public final class OperationFilterChains<D extends Data> {
   }
 
   // todo add filters ensuring that req projections are correct wrt op projections
-  public static @NotNull <D extends Data> OperationFilterChains<D> defaultLocalFilterChains() {
+  public static @NotNull <D extends Data> OperationFilterChains<D> defaultFilterChains() {
     return new OperationFilterChains<>(
         //read
         new DefaultOperationInvocationFiltersChain<>(

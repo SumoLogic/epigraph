@@ -36,13 +36,13 @@ import java.util.concurrent.CompletableFuture;
 public class LocalOperationInvocation<
     Req extends OperationRequest,
     Rsp extends OperationResponse,
-    D extends OperationDeclaration> implements OperationInvocation<Req, Rsp, D> {
+    OD extends OperationDeclaration> implements OperationInvocation<Req, Rsp, OD> {
 
   private static final Logger LOG = LoggerFactory.getLogger(LocalOperationInvocation.class);
 
-  private final @NotNull Operation<D, Req, Rsp> operation;
+  private final @NotNull Operation<OD, Req, Rsp> operation;
 
-  public LocalOperationInvocation(final @NotNull Operation<D, Req, Rsp> operation) {this.operation = operation;}
+  public LocalOperationInvocation(final @NotNull Operation<OD, Req, Rsp> operation) {this.operation = operation;}
 
   @Override
   public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
@@ -67,7 +67,7 @@ public class LocalOperationInvocation<
   }
 
   @Override
-  public @NotNull D operationDeclaration() { return operation.declaration(); }
+  public @NotNull OD operationDeclaration() { return operation.declaration(); }
 
   @Override
   public boolean equals(final Object o) {

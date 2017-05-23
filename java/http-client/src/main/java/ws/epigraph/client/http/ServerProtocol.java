@@ -39,7 +39,7 @@ public interface ServerProtocol {
    */
   @NotNull String[] mimeTypes();
 
-  OperationInvocationResult<ReadOperationResponse<?>> readResponse(
+  OperationInvocationResult<ReadOperationResponse<Data>> readResponse(
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,

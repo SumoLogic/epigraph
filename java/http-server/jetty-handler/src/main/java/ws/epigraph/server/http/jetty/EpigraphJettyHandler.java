@@ -65,7 +65,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
         service,
         new FormatBasedServerProtocol.Factory<>(),
         DefaultFormats.instance(formatNameExtractor()),
-        OperationFilterChains.defaultLocalFilterChains(),
+        OperationFilterChains.defaultFilterChains(),
         typesResolver,
         responseTimeout
     );

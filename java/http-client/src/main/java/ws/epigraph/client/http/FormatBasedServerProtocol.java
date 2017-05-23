@@ -164,7 +164,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public OperationInvocationResult<ReadOperationResponse<?>> readResponse(
+  public OperationInvocationResult<ReadOperationResponse<Data>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse,
@@ -210,7 +210,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     }
   }
 
-  private @NotNull OperationInvocationResult<ReadOperationResponse<?>> readPlainTextError(
+  private @NotNull OperationInvocationResult<ReadOperationResponse<Data>> readPlainTextError(
       @NotNull HttpResponse httpResponse,
       int statusCode, @NotNull Charset responseCharset) throws IOException {
 

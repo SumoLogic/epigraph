@@ -85,7 +85,7 @@ public class EpigraphUndertowHandler
     super(
         service,
         serverProtocolFactory.newServerProtocol(c -> new Exchange(c.exchange), formatSelector),
-        OperationFilterChains.defaultLocalFilterChains() // make configurable?
+        OperationFilterChains.defaultFilterChains() // make configurable?
     );
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;

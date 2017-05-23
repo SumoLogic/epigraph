@@ -83,7 +83,7 @@ public abstract class EpigraphServlet extends HttpServlet {
   protected abstract @NotNull Service initService(ServletConfig config) throws ServiceInitializationException;
 
   protected @NotNull OperationFilterChains<? extends Data>
-  initOperationFilterChains(ServletConfig config) { return OperationFilterChains.defaultLocalFilterChains(); }
+  initOperationFilterChains(ServletConfig config) { return OperationFilterChains.defaultFilterChains(); }
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) { handleRequest(HttpMethod.GET, req, resp); }
