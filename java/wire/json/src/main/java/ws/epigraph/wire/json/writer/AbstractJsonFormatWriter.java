@@ -38,6 +38,11 @@ import java.util.stream.Collectors;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
+/**
+ * Abstract projection-driven JSON data writer
+ * <p>
+ * See {@link ws.epigraph.wire.json.reader.AbstractJsonFormatReader} for format specification
+ */
 @NotThreadSafe
 public abstract class AbstractJsonFormatWriter<
     VP extends GenVarProjection<VP, TP, MP>,
@@ -57,6 +62,8 @@ public abstract class AbstractJsonFormatWriter<
   private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
   private int dataStackDepth = 0;
 
+  private boolean typefulProjectionlessData = false;
+
   protected AbstractJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
     this.out = new BufferedWriter(new OutputStreamWriter(out, charset));
   }
@@ -68,6 +75,10 @@ public abstract class AbstractJsonFormatWriter<
     visitedData.clear();
     visitedDataNoProjection.clear();
     dataStackDepth = 0;
+  }
+
+  public void useTypesForProjectionlessData(boolean useTypes) {
+    typefulProjectionlessData = useTypes;
   }
 
   @Override
@@ -421,6 +432,11 @@ public abstract class AbstractJsonFormatWriter<
 
       Type type = data.type();
       if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
+        if (typefulProjectionlessData) {
+          out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
+          out.write(type.name().toString());
+          out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
+        }
         out.write('{');
         boolean comma = false;
         for (Tag tag : type.tags()) {
@@ -435,6 +451,7 @@ public abstract class AbstractJsonFormatWriter<
           }
         }
         out.write('}');
+        if (typefulProjectionlessData) out.write('}');
       } else {
         Val value = data._raw().getValue(((DatumType) type).self);
         if (value == null) writeError(NO_VALUE);
@@ -461,6 +478,11 @@ public abstract class AbstractJsonFormatWriter<
       out.write("null");
     } else {
       DatumType model = datum.type();
+      if (typefulProjectionlessData) {
+        out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
+        out.write(model.name().toString());
+        out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
+      }
       switch (model.kind()) {
         case RECORD:
           writeRecord((RecordDatum) datum);
@@ -481,6 +503,7 @@ public abstract class AbstractJsonFormatWriter<
         default:
           throw new UnsupportedOperationException(model.kind().name());
       }
+      if (typefulProjectionlessData) out.write('}');
     }
   }
 

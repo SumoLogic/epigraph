@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.update.*;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.ReqUpdateFormatReader;
 import ws.epigraph.wire.WireFormat;
@@ -51,7 +52,12 @@ public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
     ReqUpdateListModelProjection
     > implements ReqUpdateFormatReader {
 
-  public ReqUpdateJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
+  public ReqUpdateJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typesResolver) {
+    super(
+        jsonParser,
+        typesResolver
+    );
+  }
 
   @Override
   protected GenProjectionsComparator<ReqUpdateVarProjection, ReqUpdateTagProjectionEntry, ReqUpdateModelProjection<?, ?, ?>, ReqUpdateRecordModelProjection, ReqUpdateMapModelProjection, ReqUpdateListModelProjection, ?, ReqUpdateFieldProjectionEntry, ReqUpdateFieldProjection> projectionsComparator() {
@@ -76,14 +82,26 @@ public class ReqUpdateJsonFormatReader extends AbstractJsonFormatReader<
     }
     return expectedKeys;
   }
-  
+
   public static class Factory implements FormatReader.Factory<ReqUpdateJsonFormatReader> {
     @Override
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull ReqUpdateJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
-      return new ReqUpdateJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)));
+    public @NotNull ReqUpdateJsonFormatReader newFormatReader(
+        @NotNull InputStream is,
+        @NotNull Charset charset,
+        @NotNull TypesResolver typesResolver) throws IOException {
+
+      return new ReqUpdateJsonFormatReader(
+          AbstractJsonFormatReader.JSON_FACTORY.createParser(
+              new InputStreamReader(
+                  is,
+                  charset
+              )
+          ),
+          typesResolver
+      );
     }
   }
 

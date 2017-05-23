@@ -82,7 +82,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
     this.typesResolver = typesResolver;
     this.responseTimeout = responseTimeout;
 
-    server = new Server(service, serverProtocolFactory, formatSelector, filterChains);
+    server = new Server(service, serverProtocolFactory, formatSelector, filterChains, typesResolver);
   }
 
   @Override
@@ -149,10 +149,16 @@ public class EpigraphJettyHandler extends AbstractHandler {
         @NotNull Service service,
         @NotNull FormatBasedServerProtocol.Factory<JettyHandlerInvocationContext> serverProtocolFactory,
         @NotNull FormatSelector<JettyHandlerInvocationContext> formatSelector,
-        @NotNull OperationFilterChains<? extends Data> invocations) {
+        @NotNull OperationFilterChains<? extends Data> invocations,
+        @NotNull TypesResolver typesResolver) {
+
       super(
           service,
-          serverProtocolFactory.newServerProtocol(c -> new ServletExchange(c.asyncContext), formatSelector),
+          serverProtocolFactory.newServerProtocol(
+              c -> new ServletExchange(c.asyncContext),
+              formatSelector,
+              typesResolver
+          ),
           invocations
       );
     }

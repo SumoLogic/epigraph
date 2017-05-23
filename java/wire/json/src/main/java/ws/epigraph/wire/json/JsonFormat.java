@@ -35,13 +35,13 @@ public class JsonFormat implements WireFormat {
 
   public static final @NotNull String REC_FIELD = "REC";
 
-  public static final @NotNull String POLYMORPHIC_TYPE_FIELD = "type";
+  public static final @NotNull String POLYMORPHIC_TYPE_FIELD = "TYPE";
 
-  public static final @NotNull String POLYMORPHIC_VALUE_FIELD = "data";
+  public static final @NotNull String POLYMORPHIC_VALUE_FIELD = "DATA";
 
-  public static final @NotNull String DATUM_META_FIELD = "meta";
+  public static final @NotNull String DATUM_META_FIELD = "META";
 
-  public static final @NotNull String DATUM_VALUE_FIELD = "data";
+  public static final @NotNull String DATUM_VALUE_FIELD = "DATA";
 
   public static final @NotNull String MAP_ENTRY_KEY_FIELD = "K";
 

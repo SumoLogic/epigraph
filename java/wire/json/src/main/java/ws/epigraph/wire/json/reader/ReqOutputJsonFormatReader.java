@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.output.*;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.ReqOutputFormatReader;
 import ws.epigraph.wire.WireFormat;
@@ -52,7 +53,12 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     ReqOutputListModelProjection
     > implements ReqOutputFormatReader {
 
-  public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
+  public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typesResolver) {
+    super(
+        jsonParser,
+        typesResolver
+    );
+  }
 
   @Override
   protected GenProjectionsComparator<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?, ?>, ReqOutputRecordModelProjection, ReqOutputMapModelProjection, ReqOutputListModelProjection, ?, ReqOutputFieldProjectionEntry, ReqOutputFieldProjection> projectionsComparator() {
@@ -93,8 +99,20 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull ReqOutputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
-      return new ReqOutputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)));
+    public @NotNull ReqOutputJsonFormatReader newFormatReader(
+        @NotNull InputStream is,
+        @NotNull Charset charset,
+        @NotNull TypesResolver typesResolver) throws IOException {
+
+      return new ReqOutputJsonFormatReader(
+          AbstractJsonFormatReader.JSON_FACTORY.createParser(
+              new InputStreamReader(
+                  is,
+                  charset
+              )
+          ),
+          typesResolver
+      );
     }
   }
 }

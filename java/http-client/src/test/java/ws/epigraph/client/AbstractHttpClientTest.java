@@ -71,7 +71,11 @@ public abstract class AbstractHttpClientTest {
   protected static CloseableHttpAsyncClient httpClient;
 
   protected final HttpHost httpHost = new HttpHost(HOST, PORT);
-  protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(JsonFormatFactories.INSTANCE, CHARSET);
+  protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(
+      JsonFormatFactories.INSTANCE,
+      CHARSET,
+      resolver
+  );
 
   @Test
   public void testSimpleRead() throws ExecutionException, InterruptedException {

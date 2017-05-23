@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.req.input.*;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.ReqInputFormatReader;
 import ws.epigraph.wire.WireFormat;
@@ -51,7 +52,12 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
     ReqInputListModelProjection
     > implements ReqInputFormatReader {
 
-  public ReqInputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
+  public ReqInputJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typesResolver) {
+    super(
+        jsonParser,
+        typesResolver
+    );
+  }
 
   @Override
   protected GenProjectionsComparator<ReqInputVarProjection, ReqInputTagProjectionEntry, ReqInputModelProjection<?, ?, ?>, ReqInputRecordModelProjection, ReqInputMapModelProjection, ReqInputListModelProjection, ?, ReqInputFieldProjectionEntry, ReqInputFieldProjection> projectionsComparator() {
@@ -83,8 +89,20 @@ public class ReqInputJsonFormatReader extends AbstractJsonFormatReader<
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull ReqInputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException {
-      return new ReqInputJsonFormatReader(AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)));
+    public @NotNull ReqInputJsonFormatReader newFormatReader(
+        @NotNull InputStream is,
+        @NotNull Charset charset,
+        @NotNull TypesResolver typesResolver)
+        throws IOException {
+      return new ReqInputJsonFormatReader(
+          AbstractJsonFormatReader.JSON_FACTORY.createParser(
+              new InputStreamReader(
+                  is,
+                  charset
+              )
+          ),
+          typesResolver
+      );
     }
   }
 

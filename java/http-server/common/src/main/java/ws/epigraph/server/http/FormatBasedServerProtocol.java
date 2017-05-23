@@ -30,6 +30,7 @@ import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.FormatException;
@@ -54,12 +55,15 @@ import static ws.epigraph.http.MimeTypes.TEXT;
 public class FormatBasedServerProtocol<C extends HttpInvocationContext> implements ServerProtocol<C> {
   private final @NotNull Function<C, HttpExchange> httpExchangeFactory;
   private final @NotNull FormatSelector<C> formatSelector;
+  private final @NotNull TypesResolver typesResolver;
 
   public FormatBasedServerProtocol(
       @NotNull Function<C, HttpExchange> httpExchangeFactory,
-      @NotNull FormatSelector<C> formatSelector) {
+      @NotNull FormatSelector<C> formatSelector,
+      final @NotNull TypesResolver typesResolver) {
     this.httpExchangeFactory = httpExchangeFactory;
     this.formatSelector = formatSelector;
+    this.typesResolver = typesResolver;
   }
 
   @Override
@@ -77,10 +81,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
       return reqInputProjection == null
              ? factories.opInputReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset)
+                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(opInputProjection)
              : factories.reqInputReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset)
+                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(reqInputProjection);
     } catch (FormatException e) {
       throw new IOException(e.getMessage(), e);
@@ -102,10 +106,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
       return reqUpdateProjection == null
              ? factories.opInputReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset)
+                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(opInputProjection)
              : factories.reqUpdateReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset)
+                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(reqUpdateProjection);
     } catch (FormatException e) {
       throw new IOException(e.getMessage(), e);
@@ -273,9 +277,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
     public @NotNull FormatBasedServerProtocol<C> newServerProtocol(
         @NotNull Function<C, HttpExchange> httpExchangeFactory,
-        @NotNull FormatSelector<C> formatSelector) {
+        @NotNull FormatSelector<C> formatSelector,
+        @NotNull TypesResolver typesResolver) {
 
-      return new FormatBasedServerProtocol<>(httpExchangeFactory, formatSelector);
+      return new FormatBasedServerProtocol<>(httpExchangeFactory, formatSelector, typesResolver);
     }
   }
 

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
 import ws.epigraph.projections.op.input.*;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.OpInputFormatReader;
 import ws.epigraph.wire.WireFormat;
@@ -55,7 +56,12 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     return new GenProjectionsComparator<>();
   }
 
-  public OpInputJsonFormatReader(@NotNull JsonParser jsonParser) { super(jsonParser); }
+  public OpInputJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typeResolver) {
+    super(
+        jsonParser,
+        typeResolver
+    );
+  }
 
   @Override
   protected boolean tagRequired(final @NotNull OpInputTagProjectionEntry tagProjection) {
@@ -82,11 +88,11 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull OpInputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset)
+    public @NotNull OpInputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset, @NotNull TypesResolver typesResolver)
         throws IOException {
 
       return new OpInputJsonFormatReader(
-          AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset))
+          AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)), typesResolver
       );
     }
   }

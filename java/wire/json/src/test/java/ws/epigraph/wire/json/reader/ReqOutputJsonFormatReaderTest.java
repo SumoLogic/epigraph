@@ -48,6 +48,7 @@ public class ReqOutputJsonFormatReaderTest {
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
+      PersonRecord.type,
       User.type,
       UserId.type,
       UserRecord.type,
@@ -211,7 +212,7 @@ public class ReqOutputJsonFormatReaderTest {
   public void testReadTailNoMatch() throws IOException, JsonFormatException {
     testReadFail(
         ":record(id)~~ws.epigraph.tests.User :record(profile)",
-        "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}",
+        "{\"TYPE\":\"ws.epigraph.tests.Person\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}",
         "Unknown field 'record' in record type 'ws.epigraph.tests.PersonRecord'"
     );
   }
@@ -229,7 +230,7 @@ public class ReqOutputJsonFormatReaderTest {
 
     testRead(
         ":id~~ws.epigraph.tests.User :record(profile)",
-        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}", person
+        "{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}", person
     );
   }
 
@@ -246,7 +247,7 @@ public class ReqOutputJsonFormatReaderTest {
 
     testRead(
         ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
-        "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}", person
+        "{\"TYPE\":\"ws.epigraph.tests.SubUser\",\"DATA\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}", person
     );
   }
 
@@ -268,7 +269,7 @@ public class ReqOutputJsonFormatReaderTest {
 
     testRead(
         ":record(id,worstEnemy(id)~ws.epigraph.tests.UserRecord(profile))",
-        "{\"id\":1,\"worstEnemy\":{\"type\":\"ws.epigraph.tests.UserRecord\",\"data\":{\"id\":1,\"profile\":\"foo\"}}}",
+        "{\"id\":1,\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"id\":1,\"profile\":\"foo\"}}}",
         person
     );
   }
@@ -295,7 +296,7 @@ public class ReqOutputJsonFormatReaderTest {
         .setStart(10L).setCount(20L));
 
     String json =
-        "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
+        "{\"META\":{\"start\":10,\"count\":20},\"DATA\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
 
     testRead(
         reqProjection,
@@ -371,6 +372,42 @@ public class ReqOutputJsonFormatReaderTest {
     );
   }
 
+  @Test
+  public void testReadPolyDataNoProjection() throws IOException {
+    Person.Builder pb = Person.create();
+    pb.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setFirstName("Alfred")
+            .setLastName("Hitchcock")
+            .setBestFriend( // Using `User` instead of `Person`
+                User.create().setId(UserId.create(1))
+            )
+            .setWorstEnemy( // Using `UserRecord` instead of `PersonRecord`
+                UserRecord.create().setFirstName("Bruce")
+            )
+    );
+
+    testRead(
+        Person.type.dataType(null),
+
+        "{\"TYPE\":\"ws.epigraph.tests.Person\"," +
+        "\"DATA\":{" +
+        "\"record\":{" +
+        "\"TYPE\":\"ws.epigraph.tests.PersonRecord\"," +
+        "\"DATA\":{" +
+        "\"id\":{\"TYPE\":\"ws.epigraph.tests.PersonId\",\"DATA\":11}," +
+        "\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Alfred\"}," +
+        "\"lastName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Hitchcock\"}," +
+        "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":{\"TYPE\":\"ws.epigraph.tests.UserId\",\"DATA\":1}}}," +
+        "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Bruce\"}}}}}}}",
+
+        pb
+
+    );
+
+  }
+
   private void testRead(
       @NotNull String reqProjectionStr,
       @NotNull String json,
@@ -390,7 +427,7 @@ public class ReqOutputJsonFormatReaderTest {
       throws IOException {
 
     JsonParser parser = new JsonFactory().createParser(json);
-    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
+    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
 
     final Data data;
     try {
@@ -400,6 +437,30 @@ public class ReqOutputJsonFormatReaderTest {
       throw new RuntimeException(e);
     }
 
+    compareData(expectedData, data);
+  }
+
+  private void testRead(
+      @NotNull DataType typeUpperBound,
+      @NotNull String json,
+      @NotNull Data expectedData)
+      throws IOException {
+
+    JsonParser parser = new JsonFactory().createParser(json);
+    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
+
+    final Data data;
+    try {
+      data = jsonReader.readData(typeUpperBound);
+    } catch (JsonFormatException e) {
+      fail(e.toString());
+      throw new RuntimeException(e);
+    }
+
+    compareData(expectedData, data);
+  }
+
+  private void compareData(final @NotNull Data expectedData, final Data data) throws IOException {
     if (!DataComparator.equals(expectedData, data)) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
@@ -426,7 +487,7 @@ public class ReqOutputJsonFormatReaderTest {
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     JsonParser parser = new JsonFactory().createParser(json);
-    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser);
+    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
 
     try {
       jsonReader.readData(reqProjection);

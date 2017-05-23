@@ -22,7 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.*;
+import ws.epigraph.refs.QnTypeRef;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.json.JsonFormat;
@@ -82,9 +85,13 @@ abstract class AbstractJsonFormatReader<
   protected static final @NotNull JsonFactory JSON_FACTORY = new JsonFactory();
 
   private final @NotNull JsonParser in;
+  private final @NotNull TypesResolver typesResolver;
   private final @NotNull LinkedList<VisitedDataEntry> dataByLevel = new LinkedList<>();
 
-  protected AbstractJsonFormatReader(@NotNull JsonParser jsonParser) { this.in = jsonParser; }
+  protected AbstractJsonFormatReader(@NotNull JsonParser jsonParser, final @NotNull TypesResolver typesResolver) {
+    this.in = jsonParser;
+    this.typesResolver = typesResolver;
+  }
 
   public void reset() {
     dataByLevel.clear();
@@ -187,7 +194,7 @@ abstract class AbstractJsonFormatReader<
       data._raw().setValue(tag, finishReadingValue((DatumType) tag.type(), tagModelProjections));
     }
 
-    if (readPoly) stepOver(JsonToken.END_OBJECT); // TODO verify it's not already consumed (by invoked code)
+    if (readPoly) stepOver(JsonToken.END_OBJECT);
 
     dataByLevel.removeLast();
     return data;
@@ -630,31 +637,51 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Data readData(@NotNull DataType dataType) throws IOException, JsonFormatException {
+  public @Nullable Data readData(@NotNull DataType typeUpperBound) throws IOException, JsonFormatException {
     JsonToken token = nextNonEof();
 
     if (token == JsonToken.VALUE_NULL) return null;
 
-    final @NotNull Type type = dataType.type;
-    final Data.@NotNull Builder data = type.createDataBuilder();
+    @NotNull Type type = typeUpperBound.type;
+    final Data.Builder data;
 
     if (type.kind() == TypeKind.UNION) {
       ensure(token, JsonToken.START_OBJECT);
 
-      while ((token = nextToken()) == JsonToken.FIELD_NAME) {
-        String tagName = currentName();
-        Tag tag = type.tagsMap().get(tagName);
-        if (tag == null)
-          throw error("Unknown tag '" + tagName + "' in type '" + type.name().toString() + "'");
+      token = nextToken();
+      if (token == JsonToken.FIELD_NAME) {
+        boolean polyData = currentName().equals(JsonFormat.POLYMORPHIC_TYPE_FIELD);
 
-        Val value = finishReadingValue(tag);
-        data._raw().setValue(tag, value);
-      }
+        if (polyData) {
+          type = finishReadingType();
+          stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
+          stepOver(JsonToken.START_OBJECT);
+        }
+
+        data = type.createDataBuilder();
+        while ((token = nextToken()) == JsonToken.FIELD_NAME) {
+          String tagName = currentName();
+          Tag tag = type.tagsMap().get(tagName);
+          if (tag == null)
+            throw error("Unknown tag '" + tagName + "' in type '" + type.name().toString() + "'");
+
+          nextNonEof();
+          // current token = first value token
+          Val value = finishReadingValue(tag);
+          data._raw().setValue(tag, value);
+        }
+
+        if (polyData) stepOver(JsonToken.END_OBJECT);
+      } else
+        data = type.createDataBuilder();
+
       ensure(token, JsonToken.END_OBJECT);
     } else {
+      data = type.createDataBuilder();
       DatumType datumType = (DatumType) type;
       final @NotNull Tag selfTag = datumType.self;
 
+      // current token = first value token
       @NotNull Val val = finishReadingValue(selfTag);
       data._raw().setValue(selfTag, val);
     }
@@ -662,11 +689,26 @@ abstract class AbstractJsonFormatReader<
     return data;
   }
 
+  private @NotNull Type finishReadingType() throws IOException, JsonFormatException {
+    stepOver(JsonToken.VALUE_STRING, "string value");
+    String typeName = currentText();
+    Type type = resolveType(typeName);
+    if (type == null)
+      throw error("Unknown type '" + typeName + "'");
+    return type;
+  }
+
+  private @Nullable Type resolveType(@NotNull String typeName) {
+    // we don't support anything but qualified type names here
+    QnTypeRef typeRef = new QnTypeRef(Qn.fromDotSeparated(typeName));
+    return (Type) typesResolver.resolve(typeRef);
+  }
+
   // VALUE ::= ERROR or DATUM or null
   private @NotNull Val finishReadingValue(@NotNull Tag tag) throws IOException, JsonFormatException {
 
     DatumType type = tag.type;
-    @NotNull JsonToken token = nextNonEof();
+    @NotNull JsonToken token = currentToken();
     // null?
     if (token == JsonToken.VALUE_NULL) return type.createValue(null);
     // error?
@@ -687,10 +729,10 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Datum readDatum(@NotNull DatumType type) throws IOException, JsonFormatException {
+  public @Nullable Datum readDatum(@NotNull DatumType typeUpperBound) throws IOException, JsonFormatException {
     @NotNull JsonToken token = nextNonEof();
     @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
-    return finishReadingDatum(token, firstFieldName, type);
+    return finishReadingDatum(token, firstFieldName, typeUpperBound);
   }
 
   @Override
@@ -711,37 +753,59 @@ abstract class AbstractJsonFormatReader<
   }
 
   private @NotNull Datum finishReadingDatum(
-      final JsonToken token,
-      final String firstFieldName,
+      final @NotNull JsonToken token,
+      final @Nullable String firstFieldName,
       final @NotNull DatumType type) throws IOException, JsonFormatException {
 
+    JsonToken actualToken = token;
+    String actualFirstFieldName = firstFieldName;
+    DatumType actualType = type;
+
+    boolean polyData = JsonFormat.POLYMORPHIC_TYPE_FIELD.equals(firstFieldName);
+
+    if (polyData) {
+      TypeApi t = finishReadingType();
+      if (t instanceof DatumType)
+        actualType = (DatumType) t;
+      else
+        throw error("Expected to get a Datum type, got '" + t.name().toString() + "' of kind " + t.kind().toString());
+
+      stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
+
+      actualToken = nextNonEof();
+      if (actualToken == JsonToken.START_OBJECT)
+        actualFirstFieldName = nextFieldName();
+      else
+        actualFirstFieldName = null;
+    }
+
     final @NotNull Datum datum;
-    switch (type.kind()) {
+    switch (actualType.kind()) {
       case RECORD:
         datum = finishReadingRecord(
-            token,
-            firstFieldName,
-            (RecordType) type
+            actualToken,
+            actualFirstFieldName,
+            (RecordType) actualType
         );
         break;
       case MAP:
-        if (firstFieldName != null) throw expected("'['");
+        if (actualFirstFieldName != null) throw expected("'{'");
         datum = finishReadingMap(
-            token,
-            (MapType) type
+            actualToken,
+            (MapType) actualType
         );
         break;
       case LIST:
-        if (firstFieldName != null) throw expected("'['");
+        if (actualFirstFieldName != null) throw expected("'['");
         datum = finishReadingList(
-            token,
-            (ListType) type
+            actualToken,
+            (ListType) actualType
         );
         break;
       case PRIMITIVE:
-        if (firstFieldName != null) throw expected("primitive value");
+        if (actualFirstFieldName != null) throw expected("primitive value");
         datum = finishReadingPrimitive(
-            (PrimitiveType<?>) type
+            (PrimitiveType<?>) actualType
         );
         break;
 //    case ENUM: // TODO once enums are supported
@@ -752,8 +816,12 @@ abstract class AbstractJsonFormatReader<
 //      break;
       case UNION: // this one is 500 - there should be no such model projections
       default:
-        throw new UnsupportedOperationException(type.kind().name());
+        throw new UnsupportedOperationException(actualType.kind().name());
     }
+
+    if (polyData) // was a typeful data
+      stepOver(JsonToken.END_OBJECT);
+
     return datum;
   }
 
@@ -904,7 +972,6 @@ abstract class AbstractJsonFormatReader<
   private JsonFormatException expected(@NotNull String expected) throws IOException {
     return error("Expected " + expected + " but got " + str(currentText()));
   }
-
 
   protected JsonFormatException error(@NotNull String message) {
     final JsonLocation location = currentLocation();

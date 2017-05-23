@@ -84,7 +84,7 @@ public class EpigraphUndertowHandler
       final long responseTimeout) {
     super(
         service,
-        serverProtocolFactory.newServerProtocol(c -> new Exchange(c.exchange), formatSelector),
+        serverProtocolFactory.newServerProtocol(c -> new Exchange(c.exchange), formatSelector, typesResolver),
         OperationFilterChains.defaultFilterChains() // make configurable?
     );
     this.typesResolver = typesResolver;

@@ -38,6 +38,7 @@ import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.IOUtil;
 import ws.epigraph.wire.*;
@@ -59,10 +60,12 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   private final @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory;
 
   private final @NotNull Charset requestCharset; //charset to be used for requests
+  private final @NotNull TypesResolver typesResolver;
 
   public FormatBasedServerProtocol(
       final @NotNull FormatFactories formatFactories,
-      final @NotNull Charset requestCharset) {
+      final @NotNull Charset requestCharset,
+      final @NotNull TypesResolver resolver) {
 
     this.requestCharset = requestCharset;
 
@@ -70,6 +73,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     reqInputWriterFactory = formatFactories.reqInputWriterFactory();
     reqUpdateWriterFactory = formatFactories.reqUpdateWriterFactory();
     opInputWriterFactory = formatFactories.opInputWriterFactory();
+    typesResolver = resolver;
   }
 
   @Override
@@ -179,7 +183,9 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     try {
       if (statusCode == okStatusCode) { // should we support multiple options here? Or accept any 2xx?
         try (InputStream inputStream = httpResponse.getEntity().getContent()) {
-          ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(inputStream, charset);
+          ReqOutputFormatReader formatReader =
+              reqOutputReaderFactory.newFormatReader(inputStream, charset, typesResolver);
+
           Data data = formatReader.readData(projection);
           return OperationInvocationResult.success(new ReadOperationResponse<>(data));
         } catch (FormatException e) {
@@ -236,7 +242,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     String string = textBuilder.toString();
     try {
       ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
-          new ByteArrayInputStream(string.getBytes(charset)), charset
+          new ByteArrayInputStream(string.getBytes(charset)), charset, typesResolver
       );
       return formatReader.readError();
     } catch (FormatException ignored) { // log it? not all messages are guaranteed to be in proper format

@@ -17,6 +17,7 @@
 package ws.epigraph.wire.json.writer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
@@ -219,7 +220,7 @@ public class ReqOutputJsonFormatWriterTest {
     testRender(
         ":record(id)~~ws.epigraph.tests.User :record(profile)",
         person,
-        "{\"type\":\"ws.epigraph.tests.Person\",\"data\":{\"id\":1}}"
+        "{\"TYPE\":\"ws.epigraph.tests.Person\",\"DATA\":{\"id\":1}}"
     );
   }
 
@@ -238,7 +239,7 @@ public class ReqOutputJsonFormatWriterTest {
     testRender(
         ":id~~ws.epigraph.tests.User :record(profile)",
         person,
-        "{\"type\":\"ws.epigraph.tests.User\",\"data\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
+        "{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
     );
   }
 
@@ -256,7 +257,7 @@ public class ReqOutputJsonFormatWriterTest {
     testRender(
         ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         person,
-        "{\"type\":\"ws.epigraph.tests.SubUser\",\"data\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
+        "{\"TYPE\":\"ws.epigraph.tests.SubUser\",\"DATA\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
     );
   }
 
@@ -279,7 +280,7 @@ public class ReqOutputJsonFormatWriterTest {
     testRender(
         ":record(id,worstEnemy(id)~ws.epigraph.tests.UserRecord(profile))",
         person,
-        "{\"id\":1,\"worstEnemy\":{\"type\":\"ws.epigraph.tests.UserRecord\",\"data\":{\"id\":1,\"profile\":\"foo\"}}}"
+        "{\"id\":1,\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"id\":1,\"profile\":\"foo\"}}}"
     );
   }
 
@@ -305,7 +306,7 @@ public class ReqOutputJsonFormatWriterTest {
         .setStart(10L).setCount(20L));
 
     String expectedJson =
-        "{\"meta\":{\"start\":10,\"count\":20},\"data\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
+        "{\"META\":{\"start\":10,\"count\":20},\"DATA\":[{\"K\":2,\"V\":{\"id\":2,\"firstName\":\"Alfred\"}}]}";
     testRender(reqProjection, PersonMap.type.createDataBuilder().set(personMap), expectedJson);
   }
 
@@ -328,7 +329,7 @@ public class ReqOutputJsonFormatWriterTest {
         ":(id,record(id,bestFriend2 $bf= :record(id, bestFriend2 $bf) ))",
         person,
         "{\"id\":1,\"record\":{\"id\":1,\"bestFriend2\":{\"id\":11,\"bestFriend2\":{\"REC\":1}}}}"
-        );
+    );
   }
 
   @Test
@@ -362,23 +363,76 @@ public class ReqOutputJsonFormatWriterTest {
     );
   }
 
+  @Test
+  public void testPolyDataNoProjection() throws IOException {
+    Person.Builder pb = Person.create();
+    pb.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setFirstName("Alfred")
+            .setLastName("Hitchcock")
+            .setBestFriend( // Using `User` instead of `Person`
+                User.create().setId(UserId.create(1))
+            )
+            .setWorstEnemy( // Using `UserRecord` instead of `PersonRecord`
+                UserRecord.create().setFirstName("Bruce")
+            )
+    );
+
+    testRender(
+        null,
+        pb,
+        true,
+        "{\"TYPE\":\"ws.epigraph.tests.Person\"," +
+        "\"DATA\":{" +
+        "\"record\":{" +
+        "\"TYPE\":\"ws.epigraph.tests.PersonRecord\"," +
+        "\"DATA\":{" +
+        "\"id\":{\"TYPE\":\"ws.epigraph.tests.PersonId\",\"DATA\":11}," +
+        "\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Alfred\"}," +
+        "\"lastName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Hitchcock\"}," +
+        "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":{\"TYPE\":\"ws.epigraph.tests.UserId\",\"DATA\":1}}}," +
+        "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Bruce\"}}}}}}}"
+    );
+  }
+
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
       throws IOException {
+
     final @NotNull ReqOutputVarProjection reqProjection =
         parseReqOutputVarProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRender(reqProjection, data, expectedJson);
+
   }
 
   private void testRender(
-      @NotNull ReqOutputVarProjection reqProjection,
+      @Nullable ReqOutputVarProjection reqProjection,
       @NotNull Data data,
       @NotNull String expectedJson)
       throws IOException {
-    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
 
-    jsonWriter.writeData(reqProjection, data);
+    testRender(reqProjection, data, false, expectedJson);
+  }
+
+  private void testRender(
+      @Nullable ReqOutputVarProjection reqProjection,
+      @NotNull Data data,
+      boolean typefulProjectionlessData,
+      @NotNull String expectedJson)
+      throws IOException {
+
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
+    jsonWriter.useTypesForProjectionlessData(typefulProjectionlessData);
+
+    if (reqProjection == null)
+      jsonWriter.writeData(data);
+    else
+      jsonWriter.writeData(reqProjection, data);
+
+
     jsonWriter.close();
 
     assertEquals(expectedJson, baos.toString());

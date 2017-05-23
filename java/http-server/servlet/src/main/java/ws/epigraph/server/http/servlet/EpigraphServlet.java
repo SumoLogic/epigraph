@@ -62,10 +62,12 @@ public abstract class EpigraphServlet extends HttpServlet {
     typesResolver = initTypesResolver(config);
 
     try {
-      server = new Server(initService(config),
+      server = new Server(
+          initService(config),
           new FormatBasedServerProtocol.Factory<>(),
           DefaultFormats.instance(formatNameExtractor()),
-          initOperationFilterChains(config)
+          initOperationFilterChains(config),
+          typesResolver
       );
 
       String responseTimeoutParameter = config.getInitParameter(RESPONSE_TIMEOUT_SERVLET_PARAMETER);
@@ -150,10 +152,15 @@ public abstract class EpigraphServlet extends HttpServlet {
         @NotNull Service service,
         @NotNull FormatBasedServerProtocol.Factory<ServletInvocationContext> serverProtocolFactory,
         @NotNull FormatSelector<ServletInvocationContext> formatSelector,
-        @NotNull OperationFilterChains<? extends Data> filterChains) {
+        @NotNull OperationFilterChains<? extends Data> filterChains,
+        @NotNull TypesResolver typesResolver) {
       super(
           service,
-          serverProtocolFactory.newServerProtocol(c -> new ServletExchange(c.asyncContext), formatSelector),
+          serverProtocolFactory.newServerProtocol(
+              c -> new ServletExchange(c.asyncContext),
+              formatSelector,
+              typesResolver
+          ),
           filterChains
       );
     }

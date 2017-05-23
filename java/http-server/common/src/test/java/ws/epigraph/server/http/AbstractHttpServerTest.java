@@ -95,10 +95,10 @@ public abstract class AbstractHttpServerTest {
         200,
         "[{'K':4,'V':" +
         "{'id':4,'firstName':'First4','lastName':'Last4','bestFriend':" +
-        "{'type':'ws.epigraph.tests.User','data':{'id':5,'profile':'http://google.com/5'}}}}," +
+        "{'TYPE':'ws.epigraph.tests.User','DATA':{'id':5,'profile':'http://google.com/5'}}}}," +
         "{'K':5,'V':" +
         "{'id':5,'firstName':'First5','lastName':'Last5','bestFriend':" +
-        "{'type':'ws.epigraph.tests.Person','data':{'id':6}}}}]"
+        "{'TYPE':'ws.epigraph.tests.Person','DATA':{'id':6}}}}]"
     );
   }
 
@@ -107,7 +107,7 @@ public abstract class AbstractHttpServerTest {
     get(
         "/users;start=5;count=10[1](:id)@(start,count)",
         200,
-        "{\"meta\":{\"start\":5,\"count\":10},\"data\":[{\"K\":1,\"V\":1}]}"
+        "{\"META\":{\"start\":5,\"count\":10},\"DATA\":[{\"K\":1,\"V\":1}]}"
     );
   }
 

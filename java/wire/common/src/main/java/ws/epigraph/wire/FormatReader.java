@@ -26,6 +26,7 @@ import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 
@@ -41,9 +42,9 @@ public interface FormatReader<
 
   @Nullable Datum readDatum(@NotNull MP projection) throws IOException, FormatException;
 
-  @Nullable Data readData(@NotNull DataType type) throws IOException, FormatException;
+  @Nullable Data readData(@NotNull DataType typeUpperBound) throws IOException, FormatException;
 
-  @Nullable Datum readDatum(@NotNull DatumType type) throws IOException, FormatException;
+  @Nullable Datum readDatum(@NotNull DatumType typeUpperBound) throws IOException, FormatException;
 
   @NotNull Val readValue(@NotNull DatumType type) throws IOException, FormatException;
 
@@ -52,7 +53,8 @@ public interface FormatReader<
   interface Factory<FR extends FormatReader<?, ?>> {
     @NotNull WireFormat format();
 
-    @NotNull FR newFormatReader(@NotNull InputStream is, @NotNull Charset charset) throws IOException;
+    @NotNull FR newFormatReader(@NotNull InputStream is, @NotNull Charset charset, @NotNull TypesResolver typesResolver)
+        throws IOException;
   }
 
 }

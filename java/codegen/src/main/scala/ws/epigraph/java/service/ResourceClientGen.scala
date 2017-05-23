@@ -105,7 +105,8 @@ public class $className {
         httpClient,
         new FormatBasedServerProtocol(
             JsonFormatFactories.INSTANCE,
-            StandardCharsets.UTF_8
+            StandardCharsets.UTF_8,
+            IndexBasedTypesResolver.INSTANCE,
         ),
         StandardCharsets.UTF_8,
         IndexBasedTypesResolver.INSTANCE,
