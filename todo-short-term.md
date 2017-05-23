@@ -19,11 +19,11 @@
   - tests
     - [x] bad request url
     - [x] non-existing user (should get 404 back with an ErrorValue)
-    - [x] complex url with params (check data escaping)
+    - [ ] complex url with params (check data escaping)
     - [x] operations with paths
   - [x] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
   - [ ] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
-    - [ ] read operation with path return type must be path tip type
+    - [ ] ~~read operation with path return type must be path tip type~~ Not possible: don't know at build time where path ends
 
 - Docs
   - [x] service quick-start guide
@@ -38,21 +38,13 @@
     - [ ] IDL
     - [ ] Routing
     
-- [x] url decoding: try to allow [] and {} in requests; else update all curl examples in wiki
-- [ ] update introspection service using builder setters
-- [x] add request/response validation
-  - [x] Requried stuff must be present. 
-    - [x] Data validation (input/output)
-    - [x] GData validation (params)
-  - [x] Codegen should build @NotNull things (params). 
-  - [x] Update library example and wiki
+# Yegor dependencies
+- [ ] non-anonymous map/list types should have qualified type names
+  -[ ] enable `AbstractHttpClientTest.testComplexParams` once fixed
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
+- [ ] polymorphic builders or projections
+  - [ ] update introspection service, see `TypeBuilder`, `DatumTypeBuilder`
 - [ ] add enums
-- [x] servlet-based server
-- [x] `normalizedForType`: any reason for `keepPhantomTypes` to ever be `true`? Also check that sibling projections don't get merged: for (A,B,C,D) diamond and A~(C~D,B~D) projection, D projection should not receive B tail 
-- [x] move http servers under common `http-server` folder
-- [x] race condition in schema refs parsing?
-- [x] better required data validation: if required value is missing then remove enclosing entity, recurse
 
 # See also
 - See [General todo] (todo.md)
