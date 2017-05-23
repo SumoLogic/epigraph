@@ -34,6 +34,10 @@ public class Namespaces {
     return resourcesNamespace().append(resourceName);
   }
 
+  public @NotNull Qn clientNamespace(@NotNull String resourceName) {
+    return resourceNamespace(resourceName).append("client");
+  }
+
   public @NotNull Qn projectionsNamespace(@NotNull String resourceName) {
     return resourceNamespace(resourceName).append("projections");
   }

@@ -18,11 +18,11 @@
 package ws.epigraph.java
 
 import java.io.{File, IOException, PrintWriter, StringWriter}
-import java.nio.file.Path
+import java.nio.file.{Files, Path}
 import java.util.concurrent._
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.service.{AbstractResourceFactoryGen, ResourceDeclarationGen}
+import ws.epigraph.java.service.{AbstractResourceFactoryGen, ResourceClientGen, ResourceDeclarationGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 
@@ -124,11 +124,14 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 //      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpRoot);
 //    }
 
-    generators += new IndexGen(ctx)
+    if (cctx.schemaFiles.nonEmpty)
+      generators += new IndexGen(ctx)
 
-    if (ctx.settings.serverSettings().generate()) {
+    // generate server/client stubs
+    if (ctx.settings.serverSettings().generate() || ctx.settings.clientSettings().generate()) {
 
-      val servicesOpt = Option(ctx.settings.serverSettings().services())
+      val serverServicesOpt = Option(ctx.settings.serverSettings().services())
+      val clientServicesOpt = Option(ctx.settings.clientSettings().services())
 
       for (entry <- cctx.resourcesSchemas.entrySet) {
         // todo: check that there are no duplicate resource declarations
@@ -136,15 +139,21 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         val namespace: Qn = rs.namespace
 
         for (resourceDeclaration <- rs.resources.values) {
+          // resource declarations (mostly op projections) are used by both server and client
           generators += new ResourceDeclarationGen(resourceDeclaration, namespace, ctx)
 
-//          val resourceName: String = namespace.append(JavaGenUtils.up(resourceDeclaration.fieldName)).toString
           val resourceName: String = namespace.append(resourceDeclaration.fieldName).toString
 
+          // server stub
           // change them to be patters/regex?
-          if (servicesOpt.isEmpty || servicesOpt.exists(services => services.contains(resourceName))) {
+          if (serverServicesOpt.isEmpty || serverServicesOpt.exists(services => services.contains(resourceName))) {
             generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
           }
+
+          // client
+//          if (clientServicesOpt.isEmpty || clientServicesOpt.exists(services => services.contains(resourceName))) {
+//            generators += new ResourceClientGen(resourceDeclaration, namespace, ctx)
+//          }
         }
       }
 
@@ -155,7 +164,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     val endTime: Long = System.currentTimeMillis
     System.out.println(s"Epigraph Java code generation took ${ endTime - startTime }ms")
 
-    JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
+    if (Files.exists(tmpRoot))
+      JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
   }
 
   private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {

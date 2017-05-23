@@ -32,6 +32,13 @@
     <!-- test dependencies -->
 
     <dependency>
+      <groupId>ws.epigraph.tests</groupId>
+      <artifactId>tests-schema</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-core</artifactId>
       <version>${project.parent.version}</version>
@@ -47,7 +54,14 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-projections</artifactId>
+      <artifactId>epigraph-java-invocation</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-http-client</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
@@ -55,6 +69,13 @@
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-gdata-schema-psi-parser</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-projections</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
@@ -131,6 +152,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-maven-plugin</artifactId>
+        <configuration>
+          <client/>
+        </configuration>
       </plugin>
 
     </plugins>

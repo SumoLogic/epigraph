@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import org.gradle.api.tasks.SourceSet
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class GradleUtils {
-  public static boolean isMainSourceSet(SourceSet sourceSet) {
+  static boolean isMainSourceSet(SourceSet sourceSet) {
     return sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME
   }
 
-  public static boolean isTestSourceSet(SourceSet sourceSet) {
+  static boolean isTestSourceSet(SourceSet sourceSet) {
     return sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME
   }
 }

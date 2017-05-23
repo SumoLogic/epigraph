@@ -360,7 +360,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String requestString,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult =
         runReadOperation(operationDeclaration, requestString, null);
 
     checkReadResult(expectedDataPrint, false, invocationResult);
@@ -373,7 +373,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String expectedError,
       @Nullable String uriOverride) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult =
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult =
         runReadOperation(operationDeclaration, requestString, uriOverride);
 
     invocationResult.consume(
@@ -386,7 +386,7 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
-  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runReadOperation(
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<Data>> runReadOperation(
       @NotNull ReadOperationDeclaration operationDeclaration,
       @NotNull String requestString,
       @Nullable String requestUri) throws ExecutionException, InterruptedException {
@@ -424,7 +424,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String outputProjection,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runCreateOperation(
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult = runCreateOperation(
         operationDeclaration,
         path,
         inputProjection,
@@ -443,7 +443,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String outputProjection,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runUpdateOperation(
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult = runUpdateOperation(
         operationDeclaration,
         path,
         updateProjection,
@@ -461,7 +461,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String outputProjection,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runDeleteOperation(
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult = runDeleteOperation(
         operationDeclaration,
         path,
         deleteProjection,
@@ -479,7 +479,7 @@ public abstract class AbstractHttpClientTest {
       @NotNull String outputProjection,
       @NotNull String expectedDataPrint) throws ExecutionException, InterruptedException {
 
-    OperationInvocationResult<ReadOperationResponse<?>> invocationResult = runCustomOperation(
+    OperationInvocationResult<ReadOperationResponse<Data>> invocationResult = runCustomOperation(
         operationDeclaration,
         path,
         inputProjection,
@@ -493,7 +493,7 @@ public abstract class AbstractHttpClientTest {
   private String checkReadResult(
       final @NotNull String expectedDataPrint,
       boolean isRegexExpected,
-      final OperationInvocationResult<ReadOperationResponse<?>> invocationResult) {
+      final OperationInvocationResult<ReadOperationResponse<Data>> invocationResult) {
 
     invocationResult.onFailure(
         oir -> fail(String.format("[%d] %s", oir.statusCode(), oir.message()))
@@ -521,7 +521,7 @@ public abstract class AbstractHttpClientTest {
 
   }
 
-  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCreateOperation(
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<Data>> runCreateOperation(
       @NotNull CreateOperationDeclaration operationDeclaration,
       @Nullable String path,
       @Nullable String inputProjectionString,
@@ -551,7 +551,7 @@ public abstract class AbstractHttpClientTest {
     return inv.invoke(request, opctx).get();
   }
 
-  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runUpdateOperation(
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<Data>> runUpdateOperation(
       @NotNull UpdateOperationDeclaration operationDeclaration,
       @Nullable String path,
       @Nullable String updateProjectionString,
@@ -581,7 +581,7 @@ public abstract class AbstractHttpClientTest {
     return inv.invoke(request, opctx).get();
   }
 
-  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runDeleteOperation(
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<Data>> runDeleteOperation(
       @NotNull DeleteOperationDeclaration operationDeclaration,
       @Nullable String path,
       @NotNull String deleteProjectionString,
@@ -609,7 +609,7 @@ public abstract class AbstractHttpClientTest {
     return inv.invoke(request, opctx).get();
   }
 
-  protected @NotNull OperationInvocationResult<ReadOperationResponse<?>> runCustomOperation(
+  protected @NotNull OperationInvocationResult<ReadOperationResponse<Data>> runCustomOperation(
       @NotNull CustomOperationDeclaration operationDeclaration,
       @Nullable String path,
       @Nullable String inputProjectionString,

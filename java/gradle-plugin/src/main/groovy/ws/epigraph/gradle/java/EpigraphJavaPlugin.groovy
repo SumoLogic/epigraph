@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import static ws.epigraph.gradle.GradleUtils.isTestSourceSet
 class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
   private final Instantiator instantiator
   private Configuration epigraphConfiguration
+  private Configuration epigraphTestConfiguration
 
   @Inject
   EpigraphJavaPlugin(Instantiator instantiator) {
@@ -58,6 +59,7 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
     project.getConvention().getPlugins().put(EpigraphPluginConvention.NAME, epigraphConvention)
 
     epigraphConfiguration = project.configurations.create('epigraph')
+    epigraphTestConfiguration = project.configurations.create('testEpigraph')
 
     configureSourceSets(project)
   }
@@ -69,7 +71,7 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
     TaskContainer tasks = project.tasks
 
     sourceSets.all { SourceSet sourceSet ->
-      if (!isTestSourceSet(sourceSet)) {
+//      if (!isTestSourceSet(sourceSet)) {
         String taskName = sourceSet.getTaskName('generate', 'EpigraphJavaBindings')
         GenerateJavaBindingsTask task = tasks.create(taskName, GenerateJavaBindingsTask.class)
         task.setDescription("Generate $sourceSet.name Epigraph Java bindings")
@@ -86,14 +88,15 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
           compileJavaTask.source destinationDir
         }
 
-        task.setConfiguration(epigraphConfiguration)
-        task.dependsOn epigraphConfiguration
+        def configuration = isTestSourceSet(sourceSet) ? epigraphTestConfiguration : epigraphConfiguration
+        task.setConfiguration(configuration)
+        task.dependsOn configuration
 
         if (project.hasProperty('idea')) {
           def ideaModule = project.idea.module
           ideaModule.generatedSourceDirs += destinationDir
         }
-      }
+//      }
     }
   }
 }

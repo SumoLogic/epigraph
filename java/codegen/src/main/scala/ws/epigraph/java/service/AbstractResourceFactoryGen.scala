@@ -65,7 +65,7 @@ package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}
 /**
- * Abstract factory for constructing {@${rd.fieldName()}`} resource implementation
+ * Abstract factory for constructing {@code ${rd.fieldName()}} resource implementation
  */
 public abstract class $className {
   ${i(ServiceGenUtils.genFields(sgctx))}

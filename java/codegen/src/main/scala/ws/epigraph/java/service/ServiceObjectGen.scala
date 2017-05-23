@@ -40,6 +40,7 @@ import ws.epigraph.schema.operations._
  */
 abstract class ServiceObjectGen[T](val obj: T) extends AbstractServiceGen {
 
+  /** Generates an expression yielding an object of some type */
   override def generate(ctx: ServiceGenContext): String = {
     if (obj == null) "null"
     else {

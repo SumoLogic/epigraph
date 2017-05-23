@@ -38,4 +38,7 @@ object ServiceNames {
   def operationNamespace(baseNamespace: Qn, resourceFieldName: String, op: OperationDeclaration): Qn =
     new Namespaces(baseNamespace).operationNamespace(resourceFieldName, op.kind(), op.nameOrDefaultName())
 
+  def clientNamespace(baseNamespace: Qn, resourceFieldName: String): Qn =
+    new Namespaces(baseNamespace).clientNamespace(resourceFieldName)
+
 }

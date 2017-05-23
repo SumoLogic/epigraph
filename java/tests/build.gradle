@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
+plugins {
+  id 'ws.epigraph.java' version '0.0.1'
+}
+
 apply plugin: 'java'
 
 dependencies {
+  testEpigraph project(':tests-schema')
+
   testCompile project(':epigraph-java-core')
   testCompile project(':epigraph-java-data-processing')
-  testCompile project(':epigraph-java-projections')
   testCompile project(':epigraph-java-gdata-schema-psi-parser')
+  testCompile project(':epigraph-java-http-client')
+  testCompile project(':epigraph-java-invocation')
+  testCompile project(':epigraph-java-projections')
   testCompile project(':epigraph-java-projections-schema-psi-parser')
   testCompile project(':epigraph-java-projections-url-psi-parser')
   testCompile project(':epigraph-java-request-url-parser')
@@ -31,4 +39,8 @@ dependencies {
   testCompile 'org.jetbrains:annotations'
   testCompile 'org.slf4j:slf4j-nop'
   testCompile 'com.io7m.jpplib:io7m-jpplib-core'
+}
+
+epigraph {
+  client {}
 }
