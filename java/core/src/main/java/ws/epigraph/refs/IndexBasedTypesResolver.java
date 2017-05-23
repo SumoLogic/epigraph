@@ -19,6 +19,7 @@ package ws.epigraph.refs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gen.Constants;
+import ws.epigraph.types.AbstractTypesIndex;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 import ws.epigraph.types.TypeApi;
@@ -40,7 +41,8 @@ public final class IndexBasedTypesResolver implements TypesResolver {
   static {
     try {
       Class<?> indexClass = Class.forName(INDEX_CLASS_NAME);
-      index = (Map<String, ? extends Type>) indexClass.getField("types").get(null); // todo constant
+      Object inst = indexClass.getField("INSTANCE").get(null);
+      index = (Map<String, ? extends Type>) AbstractTypesIndex.class.getField("types").get(inst);
     } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
       throw new RuntimeException(e);
     }
