@@ -40,7 +40,7 @@
     
 # Yegor dependencies
 - [ ] non-anonymous map/list types should have qualified type names
-  -[ ] enable `AbstractHttpClientTest.testComplexParams` once fixed
+  - [ ] enable `AbstractHttpClientTest.testComplexParams` once fixed
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 - [ ] polymorphic builders or projections
   - [ ] update introspection service, see `TypeBuilder`, `DatumTypeBuilder`
