@@ -128,10 +128,13 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       generators += new IndexGen(ctx)
 
     // generate server/client stubs
-    if (ctx.settings.serverSettings().generate() || ctx.settings.clientSettings().generate()) {
+    val serverSettings = ctx.settings.serverSettings
+    val clientSettings = ctx.settings.clientSettings()
 
-      val serverServicesOpt = Option(ctx.settings.serverSettings().services())
-      val clientServicesOpt = Option(ctx.settings.clientSettings().services())
+    if (serverSettings.generate() || clientSettings.generate()) {
+
+      val serverServicesOpt = Option(serverSettings.services())
+      val clientServicesOpt = Option(clientSettings.services())
 
       for (entry <- cctx.resourcesSchemas.entrySet) {
         // todo: check that there are no duplicate resource declarations
@@ -146,14 +149,18 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
           // server stub
           // change them to be patters/regex?
-          if (serverServicesOpt.isEmpty || serverServicesOpt.exists(services => services.contains(resourceName))) {
-            generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
+          if (serverSettings.generate()) {
+            if (serverServicesOpt.isEmpty || serverServicesOpt.exists(services => services.contains(resourceName))) {
+              generators += new AbstractResourceFactoryGen(resourceDeclaration, namespace, ctx)
+            }
           }
 
           // client
-//          if (clientServicesOpt.isEmpty || clientServicesOpt.exists(services => services.contains(resourceName))) {
-//            generators += new ResourceClientGen(resourceDeclaration, namespace, ctx)
-//          }
+          if (clientSettings.generate()) {
+            if (clientServicesOpt.isEmpty || clientServicesOpt.exists(services => services.contains(resourceName))) {
+              generators += new ResourceClientGen(resourceDeclaration, namespace, ctx)
+            }
+          }
         }
       }
 

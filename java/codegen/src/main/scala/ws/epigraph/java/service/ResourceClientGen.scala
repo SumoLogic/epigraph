@@ -19,6 +19,7 @@ package ws.epigraph.java.service
 import java.nio.file.Path
 
 import ws.epigraph.compiler.CTypeKind
+import ws.epigraph.java.JavaGenNames._
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.CodeChunk
@@ -26,7 +27,6 @@ import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
-import ws.epigraph.java.JavaGenNames._
 
 import scala.collection.JavaConverters._
 
@@ -86,6 +86,7 @@ public class $className {
   private final boolean debug;
   private final TypesResolver typesResolver;
   private final OperationFilterChains<Data> filterChains;
+
   ${i(ServiceGenUtils.genFields(sgctx))}
 
   /**
@@ -106,7 +107,7 @@ public class $className {
         new FormatBasedServerProtocol(
             JsonFormatFactories.INSTANCE,
             StandardCharsets.UTF_8,
-            IndexBasedTypesResolver.INSTANCE,
+            IndexBasedTypesResolver.INSTANCE
         ),
         StandardCharsets.UTF_8,
         IndexBasedTypesResolver.INSTANCE,
@@ -181,33 +182,25 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
     val outTypeExpr = lqn2(outType, namespace.toString)
     val outDataTypeExpr = lqdrn2(outType, namespace.toString)
 
+    lazy val inType = JavaGenUtils.toCType(op.inputType())
+    lazy val inTypeExpr = lqn2(inType, namespace.toString)
+//    lazy val inDataTypeExpr = lqdrn2(inType, namespace.toString)
+
+    lazy val pathJavadoc = if (op.path() == null) "" else "   * @param path              path expression\n"
+    lazy val pathParam = if (op.path() == null) "" else "      @NotNull String path,\n"
+
     val resDeclInstance = s"${
-      ResourceDeclarationGen.resourceDeclarationNamespace(
-        baseNamespace,
-        rd
-      )
+      ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd)
     }.${ ResourceDeclarationGen.resourceDeclarationClassName(rd) }.INSTANCE"
+
     val opDecl = s"${
-      ResourceDeclarationGen.resourceDeclarationNamespace(
-        baseNamespace,
-        rd
-      )
+      ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd)
     }.${ ResourceDeclarationGen.resourceDeclarationClassName(rd) }.${
-      ResourceDeclarationGen.operationDeclarationFieldName(
-        op
-      )
+      ResourceDeclarationGen.operationDeclarationFieldName(op)
     }"
 
-    op.kind() match {
-      case OperationKind.READ =>
-        sgctx.addImport("ws.epigraph.client.http.RemoteReadOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.ReadOperationRequest")
-        sgctx.addImport("ws.epigraph.service.operations.ReadOperationResponse")
-
-        val fieldType = "RemoteReadOperationInvocation"
-
-        val fieldInit = /*@formatter:off*/sn"""\
-    $fieldName = new RemoteReadOperationInvocation(
+    def fieldInitExpr(kind: String): String = /*@formatter:off*/sn"""\
+    $fieldName = new Remote${kind}OperationInvocation(
       host,
       httpClient,
       $resDeclInstance.fieldName(),
@@ -216,7 +209,14 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
       charset
     );"""/*@formatter:on*/
 
+    op.kind() match {
+      case OperationKind.READ => //                                                                                 READ
+        sgctx.addImport("ws.epigraph.client.http.RemoteReadOperationInvocation")
+        sgctx.addImport("ws.epigraph.service.operations.ReadOperationRequest")
+        sgctx.addImport("ws.epigraph.service.operations.ReadOperationResponse")
 
+        val fieldType = "RemoteReadOperationInvocation"
+        val fieldInit = fieldInitExpr("Read")
 
         val method = /*@formatter:off*/sn"""\
   /**
@@ -226,7 +226,7 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
    *
    * @return future of invocation result
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<@Nullable $outTypeExpr>> $methodName(@NotNull String projection) {
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(@NotNull String projection) {
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
     ReadOperationRequest request = RequestFactory.constructReadRequest(
@@ -237,7 +237,7 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
     );
 
     return filterChains
-        .filterRead(readInv)
+        .filterRead($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
@@ -246,9 +246,222 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
 
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
 
-      case _ =>
-        // todo remove me
-        OpClientParts("void", "fixme", CodeChunk.empty, CodeChunk.empty)
+      case OperationKind.CREATE => //                                                                             CREATE
+        sgctx.addImport("ws.epigraph.client.http.RemoteCreateOperationInvocation")
+        sgctx.addImport("ws.epigraph.service.operations.CreateOperationRequest")
+
+        // one less space for better formatting
+        val pathJavadoc = if (op.path() == null) "" else "   * @param path             path expression\n"
+        val fieldType = "RemoteCreateOperationInvocation"
+        val fieldInit = fieldInitExpr("Create")
+
+        val method = /*@formatter:off*/sn"""\
+  /**
+   * Invokes ${if (isDefault) "default" else s"'$name'"} create operation
+   *
+$pathJavadoc   * @param inputProjection  (optional) input projection
+   * @param inputData        operation input data
+   * @param outputProjection output projection
+   *
+   * @return future of invocation result
+   */
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+$pathParam      @Nullable String inputProjection,
+      @NotNull $inTypeExpr inputData,
+      @NotNull String outputProjection) {
+
+    OperationInvocationContext ctx = newInvocationContext($opDecl);
+
+    CreateOperationRequest request = RequestFactory.constructCreateRequest(
+        $resDeclInstance.fieldType(),
+        $opDecl,
+        ${if (op.path() == null) "null" else "path"},
+        inputProjection,
+        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"$inTypeExpr.type.createDataBuilder().set(inputData)"},
+        outputProjection,
+        typesResolver
+    );
+
+    return filterChains
+        .filterCreate($fieldName)
+        .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
+          $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
+          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+        }));
+  }"""/*@formatter:on*/
+
+        OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
+
+      case OperationKind.UPDATE => //                                                                             UPDATE
+        sgctx.addImport("ws.epigraph.client.http.RemoteUpdateOperationInvocation")
+        sgctx.addImport("ws.epigraph.service.operations.UpdateOperationRequest")
+
+        val fieldType = "RemoteUpdateOperationInvocation"
+        val fieldInit = fieldInitExpr("Update")
+
+        val method = /*@formatter:off*/sn"""\
+  /**
+   * Invokes ${if (isDefault) "default" else s"'$name'"} update operation
+   *
+$pathJavadoc   * @param updateProjection  (optional) update projection
+   * @param updateData        operation update data
+   * @param outputProjection  output projection
+   *
+   * @return future of invocation result
+   */
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+$pathParam      @Nullable String updateProjection,
+      @NotNull $inTypeExpr updateData,
+      @NotNull String outputProjection) {
+
+    OperationInvocationContext ctx = newInvocationContext($opDecl);
+
+    UpdateOperationRequest request = RequestFactory.constructUpdateRequest(
+        $resDeclInstance.fieldType(),
+        $opDecl,
+        ${if (op.path() == null) "null" else "path"},
+        updateProjection,
+        ${if (inType.kind == CTypeKind.VARTYPE) "updateData" else s"$inTypeExpr.type.createDataBuilder().set(updateData)"},
+        outputProjection,
+        typesResolver
+    );
+
+    return filterChains
+        .filterUpdate($fieldName)
+        .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
+          $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
+          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+        }));
+  }"""/*@formatter:on*/
+
+        OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
+
+      case OperationKind.DELETE => //                                                                             DELETE
+        sgctx.addImport("ws.epigraph.client.http.RemoteDeleteOperationInvocation")
+        sgctx.addImport("ws.epigraph.service.operations.DeleteOperationRequest")
+
+        val fieldType = "RemoteDeleteOperationInvocation"
+        val fieldInit = fieldInitExpr("Delete")
+
+        val method = /*@formatter:off*/sn"""\
+  /**
+   * Invokes ${if (isDefault) "default" else s"'$name'"} delete operation
+   *
+$pathJavadoc   * @param deleteProjection  delete projection
+   * @param outputProjection  output projection
+   *
+   * @return future of invocation result
+   */
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+$pathParam      @NotNull String deleteProjection,
+      @NotNull String outputProjection) {
+
+    OperationInvocationContext ctx = newInvocationContext($opDecl);
+
+    DeleteOperationRequest request = RequestFactory.constructDeleteRequest(
+        $resDeclInstance.fieldType(),
+        $opDecl,
+        ${if (op.path() == null) "null" else "path"},
+        deleteProjection,
+        outputProjection,
+        typesResolver
+    );
+
+    return filterChains
+        .filterDelete($fieldName)
+        .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
+          $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
+          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+        }));
+  }"""/*@formatter:on*/
+
+        OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
+
+      case OperationKind.CUSTOM => //                                                                             CUSTOM
+        sgctx.addImport("ws.epigraph.client.http.RemoteCustomOperationInvocation")
+        sgctx.addImport("ws.epigraph.service.operations.CustomOperationRequest")
+
+        // one less space for better formatting
+        val pathJavadoc = if (op.path() == null) "" else "   * @param path             path expression\n"
+        val fieldType = "RemoteCustomOperationInvocation"
+        val fieldInit = fieldInitExpr("Custom")
+
+        val invCode = /*@formatter:off*/sn"""\
+    return filterChains
+        .filterCustom($fieldName)
+        .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
+          $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
+          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+        }));"""/*@formatter:on*/
+
+        // two options here: with and without input data
+
+        if (op.inputType() == null) { //                                                       CUSTOM WITHOUT INPUT DATA
+          val method = /*@formatter:off*/sn"""\
+  /**
+   * Invokes '$name' custom operation
+   *
+$pathJavadoc   * @param outputProjection output projection
+   *
+   * @return future of invocation result
+   */
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+$pathParam      @NotNull String outputProjection) {
+
+    OperationInvocationContext ctx = newInvocationContext($opDecl);
+
+    CustomOperationRequest request = RequestFactory.constructCustomRequest(
+        $resDeclInstance.fieldType(),
+        $opDecl,
+        ${if (op.path() == null) "null" else "path"},
+        null,
+        null,
+        outputProjection,
+        typesResolver
+    );
+
+$invCode
+  }"""/*@formatter:on*/
+
+          OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
+
+        } else {//                                                                                CUSTOM WITH INPUT DATA
+
+          val method = /*@formatter:off*/sn"""\
+  /**
+   * Invokes '$name' custom operation
+   *
+$pathJavadoc   * @param inputProjection  (optional) input projection
+   * @param inputData        operation input data
+   * @param outputProjection output projection
+   *
+   * @return future of invocation result
+   */
+  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+$pathParam      @Nullable String inputProjection,
+      @NotNull $inTypeExpr inputData,
+      @NotNull String outputProjection) {
+
+    OperationInvocationContext ctx = newInvocationContext($opDecl);
+
+    CustomOperationRequest request = RequestFactory.constructCustomRequest(
+        $resDeclInstance.fieldType(),
+        $opDecl,
+        ${if (op.path() == null) "null" else "path"},
+        inputProjection,
+        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"$inTypeExpr.type.createDataBuilder().set(inputData)"},
+        outputProjection,
+        typesResolver
+    );
+
+$invCode
+  }"""/*@formatter:on*/
+
+          OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
+
+        }
+
+      case _ => throw new RuntimeException("Unknown operation kind: " + op.kind().toString)
     }
   }
 
