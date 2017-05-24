@@ -62,8 +62,6 @@ public abstract class AbstractJsonFormatWriter<
   private final @NotNull Map<Data, Integer> visitedDataNoProjection = new IdentityHashMap<>();
   private int dataStackDepth = 0;
 
-  private boolean typefulProjectionlessData = false;
-
   protected AbstractJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
     this.out = new BufferedWriter(new OutputStreamWriter(out, charset));
   }
@@ -75,10 +73,6 @@ public abstract class AbstractJsonFormatWriter<
     visitedData.clear();
     visitedDataNoProjection.clear();
     dataStackDepth = 0;
-  }
-
-  public void useTypesForProjectionlessData(boolean useTypes) {
-    typefulProjectionlessData = useTypes;
   }
 
   @Override
@@ -308,6 +302,7 @@ public abstract class AbstractJsonFormatWriter<
     boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
     Map<Type, Deque<VP>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     if (keyProjections == null) writeMapEntries(
+        datum.type().keyType(),
         valueProjections,
         polymorphicCache,
         datum._raw().elements().entrySet(),
@@ -315,6 +310,7 @@ public abstract class AbstractJsonFormatWriter<
         Map.Entry::getValue
     );
     else writeMapEntries( // TODO check ReqOutputMapModelProjection::keysRequired() and throw(?) if a key is missing
+        datum.type().keyType(),
         valueProjections,
         polymorphicCache,
         keyProjections,
@@ -344,6 +340,7 @@ public abstract class AbstractJsonFormatWriter<
   }
 
   private <E> void writeMapEntries(
+      @NotNull DatumType keyType,
       @NotNull Deque<VP> valueProjections,
       @Nullable Map<Type, Deque<VP>> polymorphicCache,
       @NotNull Iterable<E> entries,
@@ -358,7 +355,7 @@ public abstract class AbstractJsonFormatWriter<
         if (comma) out.write(',');
         else comma = true;
         out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
-        writeDatum(key);
+        writeDatum(keyType, key);
         out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
         Deque<VP> flatValueProjections = polymorphicCache == null
                                          ? valueProjections
@@ -416,9 +413,9 @@ public abstract class AbstractJsonFormatWriter<
   // FIXME take explicit type for all projectionless writes below
 
   @Override
-  public void writeData(@Nullable Data data) throws IOException {
+  public void writeData(@NotNull Type valueType, @Nullable Data data) throws IOException {
     if (data == null) {
-      out.write("null");
+      writeNullData();
     } else {
       final Integer prevStackDepth = visitedDataNoProjection.get(data);
 
@@ -432,7 +429,8 @@ public abstract class AbstractJsonFormatWriter<
 
       Type type = data.type();
       if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
-        if (typefulProjectionlessData) {
+        boolean poly = !type.equals(valueType);
+        if (poly) {
           out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
           out.write(type.name().toString());
           out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
@@ -447,15 +445,16 @@ public abstract class AbstractJsonFormatWriter<
             out.write('"');
             out.write(tag.name());
             out.write("\":");
-            writeValue(value);
+            writeValue(tag.type, value);
           }
         }
         out.write('}');
-        if (typefulProjectionlessData) out.write('}');
+        if (poly) out.write('}');
       } else {
-        Val value = data._raw().getValue(((DatumType) type).self);
+        Tag selfTag = ((DatumType) valueType).self;
+        Val value = data._raw().getValue(selfTag);
         if (value == null) writeError(NO_VALUE);
-        else writeValue(value);
+        else writeValue(selfTag.type, value);
       }
     }
 
@@ -463,22 +462,28 @@ public abstract class AbstractJsonFormatWriter<
     dataStackDepth--;
   }
 
+  @Override
+  public void writeNullData() throws IOException {
+    out.write("null");
+  }
+
   private static final ErrorValue NO_VALUE = new ErrorValue(500, "No value", null);
 
   @Override
-  public void writeValue(@NotNull Val value) throws IOException {
+  public void writeValue(@NotNull DatumType valueType, @NotNull Val value) throws IOException {
     ErrorValue error = value.getError();
-    if (error == null) writeDatum(value.getDatum());
+    if (error == null) writeDatum(valueType, value.getDatum());
     else writeError(error);
   }
 
   @Override
-  public void writeDatum(@Nullable Datum datum) throws IOException {
+  public void writeDatum(@NotNull DatumType valueType, @Nullable Datum datum) throws IOException {
     if (datum == null) {
       out.write("null");
     } else {
       DatumType model = datum.type();
-      if (typefulProjectionlessData) {
+      boolean poly = !model.equals(valueType);
+      if (poly) {
         out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
         out.write(model.name().toString());
         out.write("\",\"" + JsonFormat.POLYMORPHIC_VALUE_FIELD + "\":");
@@ -503,7 +508,7 @@ public abstract class AbstractJsonFormatWriter<
         default:
           throw new UnsupportedOperationException(model.kind().name());
       }
-      if (typefulProjectionlessData) out.write('}');
+      if (poly) out.write('}');
     }
   }
 
@@ -518,34 +523,39 @@ public abstract class AbstractJsonFormatWriter<
         out.write('"');
         out.write(field.name());
         out.write("\":");
-        writeData(fieldData);
+        writeData(field.dataType().type(), fieldData);
       }
     }
     out.write('}');
   }
 
   private void writeMap(@NotNull MapDatum datum) throws IOException {
+    DatumType keyType = datum.type().keyType();
+    Type valueType = datum.type().valueType().type();
+
     out.write("[");
     boolean comma = false;
     for (Map.Entry<Datum.Imm, @NotNull ? extends Data> entry : datum._raw().elements().entrySet()) {
       if (comma) out.write(',');
       else comma = true;
       out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
-      writeDatum(entry.getKey());
+      writeDatum(keyType, entry.getKey());
       out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
-      writeData(entry.getValue());
+      writeData(valueType, entry.getValue());
       out.write('}');
     }
     out.write("]");
   }
 
   private void writeList(@NotNull ListDatum datum) throws IOException {
+    Type elementType = datum.type().elementType().type();
+
     out.write('[');
     boolean comma = false;
     for (Data elementData : datum._raw().elements()) {
       if (comma) out.write(',');
       else comma = true;
-      writeData(elementData);
+      writeData(elementType, elementData);
     }
     out.write(']');
   }

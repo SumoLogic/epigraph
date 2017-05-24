@@ -391,6 +391,8 @@ public class ReqOutputJsonFormatReaderTest {
     testRead(
         Person.type.dataType(null),
 
+        // full types everywhere
+
         "{\"TYPE\":\"ws.epigraph.tests.Person\"," +
         "\"DATA\":{" +
         "\"record\":{" +
@@ -401,6 +403,38 @@ public class ReqOutputJsonFormatReaderTest {
         "\"lastName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Hitchcock\"}," +
         "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":{\"TYPE\":\"ws.epigraph.tests.UserId\",\"DATA\":1}}}," +
         "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Bruce\"}}}}}}}",
+
+        pb
+
+    );
+
+  }
+
+  @Test
+  public void testReadPolyDataNoProjection2() throws IOException {
+    Person.Builder pb = Person.create();
+    pb.setRecord(
+        PersonRecord.create()
+            .setId(PersonId.create(11))
+            .setFirstName("Alfred")
+            .setLastName("Hitchcock")
+            .setBestFriend( // Using `User` instead of `Person`
+                User.create().setId(UserId.create(1))
+            )
+            .setWorstEnemy( // Using `UserRecord` instead of `PersonRecord`
+                UserRecord.create().setFirstName("Bruce")
+            )
+    );
+
+    testRead(
+        Person.type.dataType(null),
+
+        "{\"record\":{" +
+        "\"id\":11," +
+        "\"firstName\":\"Alfred\"," +
+        "\"lastName\":\"Hitchcock\"," +
+        "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1}}," +
+        "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":\"Bruce\"}}}}",
 
         pb
 
@@ -464,13 +498,13 @@ public class ReqOutputJsonFormatReaderTest {
     if (!DataComparator.equals(expectedData, data)) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
-      jsonWriter.writeData(data);
+      jsonWriter.writeData(data.type(), data);
       jsonWriter.close();
       String dataStr = baos.toString();
 
       baos = new ByteArrayOutputStream();
       jsonWriter = new ReqOutputJsonFormatWriter(baos);
-      jsonWriter.writeData(expectedData);
+      jsonWriter.writeData(data.type(), expectedData);
       jsonWriter.close();
       String expectedDataStr = baos.toString();
 

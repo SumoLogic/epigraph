@@ -176,7 +176,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
         getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
-        writer -> writer.writeData(null)
+        FormatWriter::writeNullData
     );
 
   }

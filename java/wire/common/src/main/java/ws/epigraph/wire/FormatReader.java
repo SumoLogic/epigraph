@@ -38,13 +38,17 @@ public interface FormatReader<
     VP extends GenVarProjection<VP, ?, ?>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>> {
 
+  // with projections
+
   @Nullable Data readData(@NotNull VP projection) throws IOException, FormatException;
 
   @Nullable Datum readDatum(@NotNull MP projection) throws IOException, FormatException;
 
-  @Nullable Data readData(@NotNull DataType typeUpperBound) throws IOException, FormatException;
+  // without projections
 
-  @Nullable Datum readDatum(@NotNull DatumType typeUpperBound) throws IOException, FormatException;
+  @Nullable Data readData(@NotNull DataType valueType) throws IOException, FormatException;
+
+  @Nullable Datum readDatum(@NotNull DatumType valueType) throws IOException, FormatException;
 
   @NotNull Val readValue(@NotNull DatumType type) throws IOException, FormatException;
 

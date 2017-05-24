@@ -637,18 +637,18 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Data readData(@NotNull DataType typeUpperBound) throws IOException, JsonFormatException {
+  public @Nullable Data readData(@NotNull DataType valueType) throws IOException, JsonFormatException {
     JsonToken token = nextNonEof();
 
     if (token == JsonToken.VALUE_NULL) return null;
 
-    @NotNull Type type = typeUpperBound.type;
+    @NotNull Type type = valueType.type;
     final Data.Builder data;
 
     if (type.kind() == TypeKind.UNION) {
       ensure(token, JsonToken.START_OBJECT);
 
-      token = nextToken();
+      token = nextNonEof();
       if (token == JsonToken.FIELD_NAME) {
         boolean polyData = currentName().equals(JsonFormat.POLYMORPHIC_TYPE_FIELD);
 
@@ -656,10 +656,11 @@ abstract class AbstractJsonFormatReader<
           type = finishReadingType();
           stepOver(JsonFormat.POLYMORPHIC_VALUE_FIELD); // "data"
           stepOver(JsonToken.START_OBJECT);
+          token = nextNonEof();
         }
 
         data = type.createDataBuilder();
-        while ((token = nextToken()) == JsonToken.FIELD_NAME) {
+        while (token == JsonToken.FIELD_NAME) {
           String tagName = currentName();
           Tag tag = type.tagsMap().get(tagName);
           if (tag == null)
@@ -669,6 +670,8 @@ abstract class AbstractJsonFormatReader<
           // current token = first value token
           Val value = finishReadingValue(tag);
           data._raw().setValue(tag, value);
+
+          token = nextNonEof();
         }
 
         if (polyData) stepOver(JsonToken.END_OBJECT);
@@ -729,10 +732,10 @@ abstract class AbstractJsonFormatReader<
   }
 
   @Override
-  public @Nullable Datum readDatum(@NotNull DatumType typeUpperBound) throws IOException, JsonFormatException {
+  public @Nullable Datum readDatum(@NotNull DatumType valueType) throws IOException, JsonFormatException {
     @NotNull JsonToken token = nextNonEof();
     @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
-    return finishReadingDatum(token, firstFieldName, typeUpperBound);
+    return finishReadingDatum(token, firstFieldName, valueType);
   }
 
   @Override

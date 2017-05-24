@@ -380,19 +380,14 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     testRender(
-        null,
+        (ReqOutputVarProjection) null,
         pb,
-        true,
-        "{\"TYPE\":\"ws.epigraph.tests.Person\"," +
-        "\"DATA\":{" +
-        "\"record\":{" +
-        "\"TYPE\":\"ws.epigraph.tests.PersonRecord\"," +
-        "\"DATA\":{" +
-        "\"id\":{\"TYPE\":\"ws.epigraph.tests.PersonId\",\"DATA\":11}," +
-        "\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Alfred\"}," +
-        "\"lastName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Hitchcock\"}," +
-        "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":{\"TYPE\":\"ws.epigraph.tests.UserId\",\"DATA\":1}}}," +
-        "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":{\"TYPE\":\"epigraph.String\",\"DATA\":\"Bruce\"}}}}}}}"
+        "{\"record\":{" +
+        "\"id\":11," +
+        "\"firstName\":\"Alfred\"," +
+        "\"lastName\":\"Hitchcock\"," +
+        "\"bestFriend\":{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1}}," +
+        "\"worstEnemy\":{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":\"Bruce\"}}}}"
     );
   }
 
@@ -412,23 +407,12 @@ public class ReqOutputJsonFormatWriterTest {
       @NotNull String expectedJson)
       throws IOException {
 
-    testRender(reqProjection, data, false, expectedJson);
-  }
-
-  private void testRender(
-      @Nullable ReqOutputVarProjection reqProjection,
-      @NotNull Data data,
-      boolean typefulProjectionlessData,
-      @NotNull String expectedJson)
-      throws IOException {
-
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
-    jsonWriter.useTypesForProjectionlessData(typefulProjectionlessData);
 
     if (reqProjection == null)
-      jsonWriter.writeData(data);
+      jsonWriter.writeData(data.type(), data);
     else
       jsonWriter.writeData(reqProjection, data);
 

@@ -28,6 +28,8 @@ import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.Type;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,25 +40,29 @@ public interface FormatWriter<
     VP extends GenVarProjection<VP, ?, ?>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>> extends AutoCloseable {
 
+  // with projections
+
   void writeData(@NotNull VP projection, @Nullable Data data) throws IOException;
 
   void writeDatum(@NotNull MP projection, @Nullable Datum datum) throws IOException;
 
-  // FIXME take explicit type for all projectionless writes below (or add another set of methods that does):
+  // without projections
 
-  void writeData(@Nullable Data data) throws IOException;
+  void writeData(@NotNull Type valueType, @Nullable Data data) throws IOException;
 
-  void writeValue(@NotNull Val value) throws IOException;
+  void writeValue(@NotNull DatumType valueType, @NotNull Val value) throws IOException;
 
-  void writeDatum(@Nullable Datum datum) throws IOException;
+  void writeDatum(@NotNull DatumType valueType, @Nullable Datum datum) throws IOException;
 
   void writeError(@NotNull ErrorValue error) throws IOException;
+
+  void writeNullData() throws IOException;
 
   @Override
   default void close() throws IOException {}
 
   @ThreadSafe
-  interface Factory<FW extends FormatWriter<?,?>> {
+  interface Factory<FW extends FormatWriter<?, ?>> {
     @NotNull WireFormat format();
 
     @NotNull FW newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset);
