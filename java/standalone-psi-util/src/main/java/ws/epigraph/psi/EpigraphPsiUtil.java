@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,8 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class EpigraphPsiUtil {
+  private static final Trinity<MockProjectEx, MockPsiManager, PsiFileFactoryImpl> model = LightPsi.Init.initPsiFileFactory(() -> { });
+
   private EpigraphPsiUtil() {}
 
   public static @NotNull <T extends PsiElement> T parseText(
@@ -70,9 +72,6 @@ public final class EpigraphPsiUtil {
       @NotNull Class<T> rootElementClass,
       @NotNull ParserDefinition parserDefinition,
       @Nullable ErrorProcessor errorProcessor) {
-
-    final Trinity<MockProjectEx, MockPsiManager, PsiFileFactoryImpl>
-        model = LightPsi.Init.initPsiFileFactory(() -> { });
 
     LanguageParserDefinitions.INSTANCE.addExplicitExtension(
         parserDefinition.getFileNodeType().getLanguage(),

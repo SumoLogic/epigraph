@@ -68,6 +68,27 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-http-server-jetty-handler</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-http-server-servlet</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-http-server-undertow</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-gdata-schema-psi-parser</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
@@ -116,6 +137,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
       <scope>test</scope>
@@ -160,6 +187,13 @@
         <configuration>
           <client/>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-test-sources</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>

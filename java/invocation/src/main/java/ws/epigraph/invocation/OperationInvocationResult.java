@@ -42,7 +42,7 @@ public final class OperationInvocationResult<R> {
   }
 
   public static @NotNull <R>
-  OperationInvocationResult<R> success(@NotNull R result) {
+  OperationInvocationResult<R> success(@Nullable R result) {
     return new OperationInvocationResult<>(result, null);
   }
 
@@ -69,7 +69,7 @@ public final class OperationInvocationResult<R> {
    * @return operation invocation result
    * @throws OperationInvocationException if there was an invocation error
    */
-  public @Nullable R getOrThrow() throws OperationInvocationException {
+  public @Nullable R get() throws OperationInvocationException {
     if (isSuccess()) return result;
     else throw new OperationInvocationException(error);
   }

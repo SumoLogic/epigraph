@@ -60,7 +60,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
       "ws.epigraph.invocation.DefaultOperationInvocationContext",
       "ws.epigraph.invocation.OperationFilterChains",
       "ws.epigraph.invocation.OperationInvocationContext",
-      "ws.epigraph.invocation.OperationInvocationResult",
+      "ws.epigraph.invocation.OperationInvocationException",
       "ws.epigraph.refs.IndexBasedTypesResolver",
       "ws.epigraph.refs.TypesResolver",
       "ws.epigraph.schema.operations.OperationDeclaration",
@@ -225,8 +225,9 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
    * @param projection output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(@NotNull String projection) {
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(@NotNull String projection) throws OperationInvocationException {
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
     ReadOperationRequest request = RequestFactory.constructReadRequest(
@@ -241,7 +242,7 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
-        }));
+        }).get());
   }"""/*@formatter:on*/
 
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
@@ -264,11 +265,12 @@ $pathJavadoc   * @param inputProjection  (optional) input projection
    * @param outputProjection output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(
 $pathParam      @Nullable String inputProjection,
       @NotNull $inTypeExpr inputData,
-      @NotNull String outputProjection) {
+      @NotNull String outputProjection) throws OperationInvocationException {
 
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
@@ -287,7 +289,7 @@ $pathParam      @Nullable String inputProjection,
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
-        }));
+        }).get());
   }"""/*@formatter:on*/
 
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
@@ -308,11 +310,12 @@ $pathJavadoc   * @param updateProjection  (optional) update projection
    * @param outputProjection  output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(
 $pathParam      @Nullable String updateProjection,
       @NotNull $inTypeExpr updateData,
-      @NotNull String outputProjection) {
+      @NotNull String outputProjection) throws OperationInvocationException {
 
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
@@ -331,7 +334,7 @@ $pathParam      @Nullable String updateProjection,
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
-        }));
+        }).get());
   }"""/*@formatter:on*/
 
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
@@ -342,19 +345,22 @@ $pathParam      @Nullable String updateProjection,
 
         val fieldType = "RemoteDeleteOperationInvocation"
         val fieldInit = fieldInitExpr("Delete")
+        // one less space for better formatting
+        val pathJavadoc = if (op.path() == null) "" else "   * @param path             path expression\n"
 
         val method = /*@formatter:off*/sn"""\
   /**
    * Invokes ${if (isDefault) "default" else s"'$name'"} delete operation
    *
-$pathJavadoc   * @param deleteProjection  delete projection
-   * @param outputProjection  output projection
+$pathJavadoc   * @param deleteProjection delete projection
+   * @param outputProjection output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(
 $pathParam      @NotNull String deleteProjection,
-      @NotNull String outputProjection) {
+      @NotNull String outputProjection) throws OperationInvocationException {
 
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
@@ -372,7 +378,7 @@ $pathParam      @NotNull String deleteProjection,
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
-        }));
+        }).get());
   }"""/*@formatter:on*/
 
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
@@ -392,7 +398,7 @@ $pathParam      @NotNull String deleteProjection,
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
           return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
-        }));"""/*@formatter:on*/
+        }).get());"""/*@formatter:on*/
 
         // two options here: with and without input data
 
@@ -404,9 +410,10 @@ $pathParam      @NotNull String deleteProjection,
 $pathJavadoc   * @param outputProjection output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
-$pathParam      @NotNull String outputProjection) {
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(
+$pathParam      @NotNull String outputProjection) throws OperationInvocationException {
 
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
@@ -436,11 +443,12 @@ $pathJavadoc   * @param inputProjection  (optional) input projection
    * @param outputProjection output projection
    *
    * @return future of invocation result
+   * @throws OperationInvocationException in case of invocation error
    */
-  public @NotNull CompletableFuture<@NotNull OperationInvocationResult<$outTypeExpr>> $methodName(
+  public @NotNull CompletableFuture<$outTypeExpr> $methodName(
 $pathParam      @Nullable String inputProjection,
-      @NotNull $inTypeExpr inputData,
-      @NotNull String outputProjection) {
+      @Nullable $inTypeExpr inputData,
+      @NotNull String outputProjection) throws OperationInvocationException {
 
     OperationInvocationContext ctx = newInvocationContext($opDecl);
 
@@ -449,7 +457,7 @@ $pathParam      @Nullable String inputProjection,
         $opDecl,
         ${if (op.path() == null) "null" else "path"},
         inputProjection,
-        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"$inTypeExpr.type.createDataBuilder().set(inputData)"},
+        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"inputData == null ? null : $inTypeExpr.type.createDataBuilder().set(inputData)"},
         outputProjection,
         typesResolver
     );

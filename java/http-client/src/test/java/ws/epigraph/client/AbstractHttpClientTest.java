@@ -344,7 +344,7 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
-  // todo: depends on Yegor's fix
+  // todo: depends on Yegor's fix. Add same test to AbstractGeneratedClientTEst
 //  @Test
 //  public void testComplexParams() throws ExecutionException, InterruptedException {
 //    testCustom(

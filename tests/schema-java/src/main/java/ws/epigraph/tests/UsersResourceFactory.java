@@ -245,6 +245,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
         Person currentPerson = storage.users().datas().get(entry.getKey());
 
+        //noinspection ConstantConditions
         if (currentPerson == null) {
 
           resultMapBuilder.put(entry.getKey(), Error.create()

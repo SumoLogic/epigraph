@@ -128,7 +128,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       generators += new IndexGen(ctx)
 
     // generate server/client stubs
-    val serverSettings = ctx.settings.serverSettings
+    val serverSettings = ctx.settings.serverSettings()
     val clientSettings = ctx.settings.clientSettings()
 
     if (serverSettings.generate() || clientSettings.generate()) {

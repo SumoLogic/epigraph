@@ -117,7 +117,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
       // samovar
       TP tp = tagProjections.values().iterator().next();
       printTag(null, tp, decSteps(pathSteps));
-    } else if (!p.parenthesized()) {
+    } else if (!p.parenthesized() && !tagProjections.isEmpty()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
       printTag(entry.getKey(), entry.getValue(), decSteps(pathSteps));
