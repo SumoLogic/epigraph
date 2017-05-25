@@ -24,6 +24,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>library-client</module>
     <module>library-schema</module>
     <module>library-service</module>
   </modules>

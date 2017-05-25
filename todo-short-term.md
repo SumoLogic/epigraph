@@ -7,7 +7,7 @@
     - [ ] codegen something from it
     - [ ] validate at startup that stuff is actually?
     
-- [ ] http client/server
+- [x] http client/server
   - [x] server must correctly set response content type for errors (json/plain text) + test
   - [x] client must correctly specify accepted content types
   - [x] client must correctly read errors based on response content type
@@ -22,7 +22,7 @@
     - [ ] complex url with params (check data escaping)
     - [x] operations with paths
   - [x] tests should cover all 3 servers, one of them (undertow?) in both sync/async modes
-  - [ ] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
+  - [x] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
     - [ ] ~~read operation with path return type must be path tip type~~ Not possible: don't know at build time where path ends
 
 - Docs
