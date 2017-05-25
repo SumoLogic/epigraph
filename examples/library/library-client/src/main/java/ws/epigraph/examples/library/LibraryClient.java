@@ -78,14 +78,14 @@ public class LibraryClient {
 
       //                                          read
       BookId_BookRecord_Map booksMap =
-          client.read("[" + createdId.getVal() + "](+author:+record(+firstName,+lastName))").get(); // '+' is 'required'
+          client.read("[" + createdId + "](+author:+record(+firstName,+lastName))").get(); // '+' is 'required'
       BookRecord bookRecord = booksMap.datums().get(createdId.toImmutable());
       AuthorRecord authorRecord = bookRecord.getAuthor().getRecord();
       System.out.println("\nNew author: " + authorRecord.getFirstName() + " " + authorRecord.getLastName());
 
 
       //                                          delete
-      client.delete("[" + createdId.getVal() + "]", "");
+      client.delete("[" + createdId + "]", "");
     }
 
   }
