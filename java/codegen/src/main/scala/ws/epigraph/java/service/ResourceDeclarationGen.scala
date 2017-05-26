@@ -77,6 +77,7 @@ ${JavaGenUtils.topLevelComment}
 package $namespace;
 
 ${ServiceGenUtils.genImports(sgctx)}
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public final class $resourceDeclarationClassName extends ResourceDeclaration {
   public static final $resourceDeclarationClassName INSTANCE = new $resourceDeclarationClassName();
 

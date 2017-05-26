@@ -82,6 +82,7 @@ ${ServiceGenUtils.genImports(sgctx)}
 /**
  * {@code ${rd.fieldName()}} resource client
  */
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public class $className {
   private final boolean debug;
   private final TypesResolver typesResolver;

@@ -144,6 +144,7 @@ ${ReqProjectionGen.generateImports(imports)}
 /**
  * Request projection for {@code ${ln(cType)}} type
  */
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public class $shortClassName {
   private final @NotNull ${reqVarProjectionFqn.last()} raw;
 

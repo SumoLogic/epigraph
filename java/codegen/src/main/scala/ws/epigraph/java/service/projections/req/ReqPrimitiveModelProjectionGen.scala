@@ -44,6 +44,7 @@ package $namespace;
 ${ReqProjectionGen.generateImports(imports)}
 
 $classJavadoc\
+@javax.annotation.Generated("${getClass.getCanonicalName}")
 public class $shortClassName {
   private final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;
 
