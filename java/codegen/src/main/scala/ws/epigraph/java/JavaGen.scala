@@ -40,7 +40,10 @@ trait JavaGen {
 //    }
   }
 
+  /** Yields "@NotNull " annotation in case java 8 (type use, type parameter) annotations are enabled. */
   def `NotNull_`: String = if (ctx.java8Annotations) "@NotNull " else ""
+
+  /** Yields "@Nullable " annotation in case java 8 (type use, type parameter) annotations are enabled. */
   def `Nullable_`: String = if (ctx.java8Annotations) "@Nullable " else ""
 
 }
