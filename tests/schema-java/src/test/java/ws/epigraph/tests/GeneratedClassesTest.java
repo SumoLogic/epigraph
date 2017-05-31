@@ -71,7 +71,7 @@ public class GeneratedClassesTest {
 
     final Data.Builder personDataBuilder = elementType.createDataBuilder();
     personDataBuilder._raw().setValue(
-        elementType.self,
+        elementType.self(),
         personValue
     );
 

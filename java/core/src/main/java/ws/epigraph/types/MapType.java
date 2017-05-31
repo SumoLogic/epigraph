@@ -14,68 +14,40 @@
  * limitations under the License.
  */
 
-/* Created by yegor on 9/20/16. */
+/* Created by yegor on 2017-05-30. */
 
 package ws.epigraph.types;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
 import ws.epigraph.data.Val;
-import ws.epigraph.names.TypeName;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class MapType extends DatumType implements MapTypeApi {
-
-  public final @NotNull DatumType keyType;
-  public final @NotNull DataType valueType;
-
-  protected MapType(
-      @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
-      @NotNull DatumType keyType,
-      @NotNull DataType valueType,
-      @Nullable DatumType declaredMetaType
-  ) {
-    super(name, immediateSupertypes, declaredMetaType);
-    this.keyType = keyType;
-    this.valueType = valueType;
-    if (keyType.metaType() != null) throw new IllegalArgumentException(
-        String.format(
-            "Map type '%s' key type '%s' should not have a meta-type",
-            name, keyType.name()
-        )
-    );
-  }
+public interface MapType extends DatumType, MapTypeApi {
 
   @Override
-  public final @NotNull TypeKind kind() { return TypeKind.MAP; }
+  @NotNull TypeKind kind();
 
   @Override
-  @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends MapType> immediateSupertypes() {
-    return (List<? extends MapType>) super.immediateSupertypes();
-  }
+  @NotNull List<@NotNull ? extends MapType> immediateSupertypes();
 
   @Override
-  @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends MapType> supertypes() {
-    return (List<? extends MapType>) super.supertypes();
-  }
+  @NotNull List<@NotNull ? extends MapType> supertypes();
 
   @Override
-  public @NotNull DatumType keyType() { return keyType; }
+  @NotNull DatumType keyType();
 
   @Override
-  public @NotNull DataType valueType() { return valueType; }
+  @NotNull DataType valueType();
 
-  public abstract @NotNull MapDatum.Builder createBuilder();
+  @NotNull MapDatum.Builder createBuilder();
 
+  interface Raw extends DatumType.Raw {}
 
-  public interface Static<
+  interface Static<
       K extends Datum.Imm.Static,
       MyImmDatum extends MapDatum.Imm.Static,
       MyBuilderDatum extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
@@ -84,6 +56,4 @@ public abstract class MapType extends DatumType implements MapTypeApi {
       MyImmData extends Data.Imm.Static,
       MyBuilderData extends Data.Builder.Static<MyImmData>
       > extends DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
-
-
 }

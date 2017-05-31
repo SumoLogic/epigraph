@@ -16,23 +16,66 @@
 
 package ws.epigraph.wire.json.reader;
 
-import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.*;
+import ws.epigraph.data.Data;
+import ws.epigraph.data.Datum;
+import ws.epigraph.data.ListDatum;
+import ws.epigraph.data.MapDatum;
+import ws.epigraph.data.PrimitiveDatum;
+import ws.epigraph.data.RecordDatum;
+import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.gen.*;
+import ws.epigraph.projections.gen.GenFieldProjection;
+import ws.epigraph.projections.gen.GenFieldProjectionEntry;
+import ws.epigraph.projections.gen.GenListModelProjection;
+import ws.epigraph.projections.gen.GenMapModelProjection;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenProjectionsComparator;
+import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.refs.QnTypeRef;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.*;
+import ws.epigraph.types.BooleanType;
+import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DoubleType;
+import ws.epigraph.types.Field;
+import ws.epigraph.types.IntegerType;
+import ws.epigraph.types.ListType;
+import ws.epigraph.types.LongType;
+import ws.epigraph.types.MapType;
+import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.RecordType;
+import ws.epigraph.types.StringType;
+import ws.epigraph.types.Tag;
+import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.json.JsonFormat;
 import ws.epigraph.wire.json.JsonFormatCommon;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -682,7 +725,7 @@ abstract class AbstractJsonFormatReader<
     } else {
       data = type.createDataBuilder();
       DatumType datumType = (DatumType) type;
-      final @NotNull Tag selfTag = datumType.self;
+      final @NotNull Tag selfTag = datumType.self();
 
       // current token = first value token
       @NotNull Val val = finishReadingValue(selfTag);

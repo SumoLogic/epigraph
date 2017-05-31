@@ -34,7 +34,7 @@ import java.util.Objects;
 public final class IndexBasedTypesResolver implements TypesResolver {
   public static final IndexBasedTypesResolver INSTANCE = new IndexBasedTypesResolver();
 
-  public static final String INDEX_CLASS_NAME = Constants.TypesIndex.namespace + "." + Constants.TypesIndex.className;
+  public static final String INDEX_CLASS_NAME = Constants.TypesIndex.namespace + '.' + Constants.TypesIndex.className;
 
   private static final Map<@NotNull String, @NotNull ? extends Type> index;
 

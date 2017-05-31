@@ -118,7 +118,7 @@ object AbstractOperationGen {
     val typeExpr = JavaGenNames.lqn2(dataType, namespace)
     dataType match {
       case t: CVarTypeDef => s"($typeExpr) $rawDataExpr" // todo double check
-      case t: CDatumType => s"($typeExpr) $rawDataExpr._raw().getDatum($typeExpr.type.self)"
+      case t: CDatumType => s"($typeExpr) $rawDataExpr._raw().getDatum($typeExpr.type.self())"
       case other => throw new IllegalArgumentException("Unknown type kind: " + other.getClass.getName)
     }
   }

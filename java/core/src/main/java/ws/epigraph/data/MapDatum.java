@@ -24,7 +24,11 @@ import ws.epigraph.types.MapType;
 import ws.epigraph.util.Unmodifiable;
 import ws.epigraph.util.Util;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 
@@ -260,7 +264,7 @@ public interface MapDatum extends Datum {
         public V put(K key, V value) {
           // FIXME we might have to restrict keys to exactly declared type only to ensure clients can properly parse these
           // FIXME better, wrap keys in an object that computes equals and hashCode based on declared type properties only
-          return map.put(mapType.keyType.checkAssignable(key), mapType.valueType.checkAssignable(value));
+          return map.put(mapType.keyType().checkAssignable(key), mapType.valueType().checkAssignable(value));
         }
 
         @Override

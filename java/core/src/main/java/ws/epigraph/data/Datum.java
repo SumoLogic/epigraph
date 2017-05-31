@@ -22,7 +22,6 @@ import ws.epigraph.types.DatumType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public interface Datum {
 
   @NotNull DatumType type();

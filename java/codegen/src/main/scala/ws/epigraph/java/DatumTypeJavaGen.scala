@@ -96,16 +96,16 @@ trait DatumTypeJavaGen { this: JavaTypeGen[_ >: Null <: CType] =>
 
       /** Returns default tag value. */
       @Override
-      public @Nullable $ln.Value get_() { return ($ln.Value) _raw().getValue($ln.Type.instance().self); }
+      public @Nullable $ln.Value get_() { return ($ln.Value) _raw().getValue($ln.Type.instance().self()); }
 
       /** Sets default tag datum. */
-      public @NotNull $ln.Data set(@Nullable $ln datum) { _raw().setDatum($ln.Type.instance().self, datum); return this; }
+      public @NotNull $ln.Data set(@Nullable $ln datum) { _raw().setDatum($ln.Type.instance().self(), datum); return this; }
 
       /** Sets default tag error. */
-      public @NotNull $ln.Data set_Error(@NotNull ws.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self, error); return this; }
+      public @NotNull $ln.Data set_Error(@NotNull ws.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self(), error); return this; }
 
       /** Sets default tag value. */
-      public @NotNull $ln.Data set_(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self, value); return this; }
+      public @NotNull $ln.Data set_(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self(), value); return this; }
 
     }
 
@@ -135,7 +135,7 @@ trait DatumTypeJavaGen { this: JavaTypeGen[_ >: Null <: CType] =>
 
         @Override
         public @Nullable $ln.Value.Imm get_() {
-          return ($ln.Value.Imm) _raw().getValue($ln.Type.instance().self);
+          return ($ln.Value.Imm) _raw().getValue($ln.Type.instance().self());
         }
 
       }

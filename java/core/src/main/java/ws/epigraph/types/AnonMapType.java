@@ -18,27 +18,35 @@
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.names.AnonMapTypeName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AnonMapType extends MapType {
+public abstract class AnonMapType extends MapTypeImpl {
 
-  protected AnonMapType(
+  AnonMapType(
       @NotNull List<@NotNull ? extends AnonMapType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
       @NotNull DatumType keyType,
       @NotNull DataType valueType
-  ) { super(new AnonMapTypeName(keyType.name(), valueType.name), immediateSupertypes, keyType, valueType, declaredMetaType); }
+  ) {
+    super(
+        new AnonMapTypeName(keyType.name(), valueType.name),
+        immediateSupertypes,
+        keyType,
+        valueType,
+        declaredMetaType
+    );
+  }
 
   @Override
   public @NotNull AnonMapTypeName name() { return (AnonMapTypeName) super.name(); }
@@ -55,7 +63,7 @@ public abstract class AnonMapType extends MapType {
         @NotNull DataType valueType
     ) {
       return valueType.type.immediateSupertypes().stream().map(st -> new AnonMapType.Raw(// FIXME too many new raw types
-          ((DatumType)st).declaredMetaType(),
+          ((DatumType) st).declaredMetaType(),
           keyType,
           new DataType(st, defaultTag(st, valueType.defaultTag))
       )).collect(Collectors.toList());
@@ -135,6 +143,5 @@ public abstract class AnonMapType extends MapType {
     }
 
   }
-
 
 }

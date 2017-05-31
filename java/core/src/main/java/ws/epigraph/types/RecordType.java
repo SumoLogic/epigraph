@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 
 
-public abstract class RecordType extends DatumType implements RecordTypeApi {
+public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi {
 
   private @Nullable Collection<@NotNull ? extends Field> fields = null;
 

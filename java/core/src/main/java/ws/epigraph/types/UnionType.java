@@ -26,7 +26,7 @@ import ws.epigraph.names.QualifiedTypeName;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class UnionType extends Type implements UnionTypeApi {
+public abstract class UnionType extends TypeImpl implements UnionTypeApi {
   // todo rename to VarType
 
   protected UnionType(

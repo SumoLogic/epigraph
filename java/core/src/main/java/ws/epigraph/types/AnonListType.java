@@ -18,21 +18,21 @@
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.names.AnonListTypeName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AnonListType extends ListType {
+public abstract class AnonListType extends ListTypeImpl {
 
-  protected AnonListType(
+  AnonListType(
       @NotNull List<@NotNull ? extends AnonListType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
       @NotNull DataType elementDataType
@@ -41,7 +41,6 @@ public abstract class AnonListType extends ListType {
   @Override
   public @NotNull AnonListTypeName name() { return (AnonListTypeName) super.name(); }
 
-
   public static final class Raw extends AnonListType implements ListType.Raw {
 
     public Raw(@Nullable DatumType declaredMetaType, @NotNull DataType elementDataType) {
@@ -49,7 +48,7 @@ public abstract class AnonListType extends ListType {
     }
 
     private static @NotNull List<@NotNull ? extends AnonListType.Raw> immediateSupertypes(@NotNull DataType elementDataType) {
-      // FIXME too many new raw types
+      // FIXME too many new raw types - cache/resolve
       return elementDataType.type.immediateSupertypes().stream().map(st -> new AnonListType.Raw(
           ((DatumType) st).declaredMetaType(),
           new DataType(
@@ -75,7 +74,6 @@ public abstract class AnonListType extends ListType {
     public @NotNull Data.Builder createDataBuilder() { return new Data.Builder.Raw(this); }
 
   }
-
 
   public abstract static class Static<
       MyImmDatum extends ListDatum.Imm.Static,
@@ -130,6 +128,5 @@ public abstract class AnonListType extends ListType {
     }
 
   }
-
 
 }

@@ -25,10 +25,9 @@ import ws.epigraph.data.Val;
 import ws.epigraph.names.QualifiedTypeName;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 
-public abstract class PrimitiveType<Native> extends DatumType implements PrimitiveTypeApi {
+public abstract class PrimitiveType<Native> extends DatumTypeImpl implements PrimitiveTypeApi {
 
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,

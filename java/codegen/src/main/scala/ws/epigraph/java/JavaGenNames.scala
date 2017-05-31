@@ -128,7 +128,7 @@ object JavaGenNames {
   /** tag constant reference for given type and its tag name */
   def ttr(t: CType, tn: String, namespace: String): String = t match {
     case t: CVarTypeDef => lqn2(t, namespace) + "." + jn(tn)
-    case t: CDatumType => lqn2(t, namespace) + ".Type.instance().self"
+    case t: CDatumType => lqn2(t, namespace) + ".Type.instance().self()"
     case unknown => throw new UnsupportedOperationException(unknown.name.name)
   }
 

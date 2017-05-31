@@ -451,7 +451,7 @@ public abstract class AbstractJsonFormatWriter<
         out.write('}');
         if (poly) out.write('}');
       } else {
-        Tag selfTag = ((DatumType) valueType).self;
+        Tag selfTag = ((DatumType) valueType).self();
         Val value = data._raw().getValue(selfTag);
         if (value == null) writeError(NO_VALUE);
         else writeValue(selfTag.type, value);

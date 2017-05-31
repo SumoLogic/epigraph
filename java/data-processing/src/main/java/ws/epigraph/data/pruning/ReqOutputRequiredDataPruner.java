@@ -18,17 +18,33 @@ package ws.epigraph.data.pruning;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.*;
+import ws.epigraph.data.Data;
+import ws.epigraph.data.Datum;
+import ws.epigraph.data.ListDatum;
+import ws.epigraph.data.MapDatum;
+import ws.epigraph.data.RecordDatum;
+import ws.epigraph.data.Val;
 import ws.epigraph.data.traversal.DataTraversalContext;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry;
+import ws.epigraph.projections.req.output.ReqOutputListModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Field;
 import ws.epigraph.types.Tag;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.util.HttpStatusCode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

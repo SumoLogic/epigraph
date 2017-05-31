@@ -18,10 +18,10 @@
 
 package ws.epigraph.data;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.ListType;
 import ws.epigraph.util.Unmodifiable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -267,7 +267,7 @@ public interface ListDatum extends Datum {
         public E remove(int index) { return list.remove(index); }
 
         private E validate(E element) throws IllegalArgumentException {
-          return listType.elementType.checkAssignable(element);
+          return listType.elementType().checkAssignable(element);
         }
 
       }

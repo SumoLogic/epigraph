@@ -14,127 +14,58 @@
  * limitations under the License.
  */
 
-/* Created by yegor on 7/22/16. */
+/* Created by yegor on 2017-05-30. */
 
 package ws.epigraph.types;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.names.TypeName;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public abstract class DatumType extends Type implements DatumTypeApi {
-
-  public final @NotNull Tag self = new Tag(MONO_TAG_NAME, this); // TODO rename to tag?
-
-  private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
-
-  private final @Nullable DatumType declaredMetaType;
-
-  private final @Nullable DatumType metaType;
-
-  protected DatumType(
-      @NotNull TypeName name,
-      @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
-      @Nullable DatumType declaredMetaType
-  ) {
-    super(name, immediateSupertypes);
-    this.declaredMetaType = declaredMetaType;
-    metaType = calculateMetaType(name.toString(), declaredMetaType, immediateSupertypes);
-  }
+public interface DatumType extends Type, DatumTypeApi {
 
   @Override
-  @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends DatumType> immediateSupertypes() {
-    return (List<? extends DatumType>) super.immediateSupertypes();
-  }
+  @NotNull List<@NotNull ? extends DatumType> immediateSupertypes();
 
   @Override
-  @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends DatumType> supertypes() {
-    return (List<? extends DatumType>) super.supertypes();
-  }
+  @NotNull List<@NotNull ? extends DatumType> supertypes();
 
   @Override
-  public @NotNull TagApi self() { return self; }
+  @NotNull Tag self();
 
   @Override
-  public @NotNull Collection<@NotNull ? extends Tag> immediateTags() { return immediateTags; }
+  @NotNull Collection<@NotNull ? extends Tag> immediateTags();
 
   /** @see Class#isInstance(Object) */
-  public boolean isInstance(@Nullable Datum datum) { return datum != null && isAssignableFrom(datum.type()); }
+  boolean isInstance(@Nullable Datum datum);
 
-  public <D extends Datum> D checkAssignable(@NotNull D datum) throws IllegalArgumentException { // TODO accept nulls?
-    if (!isInstance(datum))
-      throw new IllegalArgumentException(
-          String.format("Type '%s' is not an instance of type '%s'", datum.type().name(), name())
-      );
-    return datum;
-  }
+  <D extends Datum> D checkAssignable(@NotNull D datum) throws IllegalArgumentException;
 
-  public <D extends Datum> D checkMeta(@Nullable D meta) throws IllegalArgumentException {
-    if (meta == null) return null;
-    else {
-      final DatumType _metaType = metaType();
-      if (_metaType == null) throw new IllegalArgumentException(String.format("Type '%s' has no meta-type", name()));
-      return _metaType.checkAssignable(meta);
-    }
-  }
+  <D extends Datum> D checkMeta(@Nullable D meta) throws IllegalArgumentException;
 
   @Override
-  public @NotNull DataType dataType() { return new DataType(this, self); } // TODO cache
+  @NotNull DataType dataType();
 
-  public @Nullable DatumType declaredMetaType() { return declaredMetaType; }
+  @Nullable DatumType declaredMetaType();
 
   @Override
-  public @Nullable DatumType metaType() { return metaType; }
+  @Nullable DatumType metaType();
 
-  public abstract @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
+  @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
 
-  // generalize to something like `findMinimumType`?
-  private static @Nullable DatumType calculateMetaType(
-      @NotNull String typeName,
-      @Nullable DatumType declaredMetaType,
-      @NotNull List<? extends DatumType> immediateSupertypes) {
-
-    @Nullable DatumType minimalSuperMeta = null;
-    for (final DatumType supertype : immediateSupertypes) {
-      @Nullable DatumType superMeta = supertype.metaType;
-      if (minimalSuperMeta == null)
-        minimalSuperMeta = superMeta;
-      else if (superMeta != null) {
-        if (minimalSuperMeta.isAssignableFrom(superMeta))
-          minimalSuperMeta = superMeta;
-        else if (!superMeta.isAssignableFrom(minimalSuperMeta))
-          throw new IllegalArgumentException("Incompatible (inherited) meta types on '" + typeName + "'"); // todo better explanation
-      }
-    }
-
-    if (declaredMetaType == null) return minimalSuperMeta;
-    if (minimalSuperMeta == null) return declaredMetaType;
-
-    if (minimalSuperMeta.isAssignableFrom(declaredMetaType)) return declaredMetaType;
-    if (declaredMetaType.isAssignableFrom(minimalSuperMeta)) return minimalSuperMeta;
-
-    throw new IllegalArgumentException("Incompatible meta types on '" + typeName + "'"); // todo better explanation
-  }
-
-
-  public interface Raw extends Type.Raw {
+  interface Raw extends Type.Raw {
 
     @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull);
 
   }
 
-
-  public interface Static<
+  interface Static<
       MyImmDatum extends Datum.Imm.Static,
       MyDatumBuilder extends Datum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
@@ -149,6 +80,5 @@ public abstract class DatumType extends Type implements DatumTypeApi {
     @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull);
 
   }
-
 
 }

@@ -29,9 +29,9 @@ import ws.epigraph.names.QualifiedTypeName;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class NamedListType extends ListType {
+public abstract class NamedListType extends ListTypeImpl {
 
-  protected NamedListType(
+  NamedListType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
@@ -87,7 +87,7 @@ public abstract class NamedListType extends ListType {
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends NamedListType.Static // todo should be ListType.Static
+        @NotNull List<@NotNull ? extends NamedListType.Static
             <
                 ?,// super MyImmDatum,
                 ?,// extends ListDatum.Mut.Static<? super MyImmDatum>,

@@ -16,13 +16,30 @@
 
 package ws.epigraph.gdata;
 
-import ws.epigraph.data.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
+import ws.epigraph.data.Datum;
+import ws.epigraph.data.ListDatum;
+import ws.epigraph.data.MapDatum;
+import ws.epigraph.data.PrimitiveDatum;
+import ws.epigraph.data.RecordDatum;
+import ws.epigraph.data.Val;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.types.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.Field;
+import ws.epigraph.types.IntegerType;
+import ws.epigraph.types.ListType;
+import ws.epigraph.types.LongType;
+import ws.epigraph.types.MapType;
+import ws.epigraph.types.PrimitiveType;
+import ws.epigraph.types.RecordType;
+import ws.epigraph.types.StringType;
+import ws.epigraph.types.Tag;
+import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Map;
 
@@ -72,7 +89,7 @@ public final class GDataToData {
         Val value = transform(datumType, gDatum, resolver);
 
         @NotNull Data.Builder builder = type.createDataBuilder();
-        builder._raw().setValue(datumType.self, value);
+        builder._raw().setValue(datumType.self(), value);
 
         return builder;
       } else throw new ProcessingException(

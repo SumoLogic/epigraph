@@ -105,7 +105,7 @@ public class DataPrinter<Exc extends Exception> {
           break;
         default:
           DatumType datumType = (DatumType) data.type();
-          print(datumType, data._raw().getValue(datumType.self)); // expecting datum data to always have self-tag...
+          print(datumType, data._raw().getValue(datumType.self())); // expecting datum data to always have self-tag...
       }
     }
   }
