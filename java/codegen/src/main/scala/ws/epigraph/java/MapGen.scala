@@ -157,7 +157,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
 
     ${"/**"} Returns modifiable map view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
-    public @NotNull java.util.Map<${lqn(kt, t)}.${NotNull_}Imm, ${lqn("@Nullable ", tt(vtr, dtn), t)}> datums() {
+    public @NotNull java.util.Map<${lqn(kt, t)}.${NotNull_}Imm, ${lqn(Nullable_, tt(vtr, dtn), t)}> datums() {
       return new ws.epigraph.util.MapView<>(
           datas(),
           ${lqn(vt, t)}${vt(vt, "", ".Data")}::get${vt(vt, up(dtn), "")},
@@ -200,7 +200,7 @@ ${vt match { // data view (for vartypes)
 
     ${"/**"} Returns modifiable map view of element data builders. */
     @Override
-    public @NotNull java.util.Map<${lqn(kt, t)}.${NotNull_}Imm, ${lqn("@NotNull ", vt, t)}> datas() {
+    public @NotNull java.util.Map<${lqn(kt, t)}.${NotNull_}Imm, ${lqn(NotNull_, vt, t)}> datas() {
       return ws.epigraph.util.Util.cast(_raw().elements());
     }
 
@@ -406,10 +406,10 @@ ${
 """
     case _ => sn"""\
 
-    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-    private @NotNull java.util.Map<${NotNull_}? extends ${lqn(kt, t)}.Imm, ${NotNull_}? extends ${lqn(vt, t)}.Data.Imm> datas() {
-      return ws.epigraph.util.Util.castEx(_raw().elements());
-    }
+      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+      private @NotNull java.util.Map<${NotNull_}? extends ${lqn(kt, t)}.Imm, ${NotNull_}? extends ${lqn(vt, t)}.Data.Imm> datas() {
+        return ws.epigraph.util.Util.castEx(_raw().elements());
+      }
 """
   }
 }\

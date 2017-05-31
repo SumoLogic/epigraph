@@ -55,6 +55,11 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-maven-plugin</artifactId>
+      </plugin>
+
     </plugins>
 
   </build>

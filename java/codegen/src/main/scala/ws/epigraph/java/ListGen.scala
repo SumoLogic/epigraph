@@ -148,7 +148,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
 
     ${"/**"} Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
-    public @NotNull java.util.List<${lqn("@Nullable ", tt(etr, dtn), t)}> datums() {
+    public @NotNull java.util.List<${lqn(Nullable_, tt(etr, dtn), t)}> datums() {
       return new ws.epigraph.util.ListView<>(
           datas(),
           ${lqn(et, t)}${vt(et, "", ".Data")}::get${vt(et, up(dtn), "")},
@@ -191,7 +191,7 @@ ${et match { // data view (for vartypes)
 
     ${"/**"} Returns modifiable list view of element data builders. */
     @Override
-    public @NotNull java.util.List<${lqn("@NotNull ", et, t)}> datas() {
+    public @NotNull java.util.List<${lqn(NotNull_, et, t)}> datas() {
       return ws.epigraph.util.Util.cast(_raw().elements());
     }
 
@@ -397,10 +397,10 @@ ${
 """
     case _ => sn"""\
 
-    // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
-    private @NotNull java.util.List<${NotNull_}? extends ${lqn(et, t)}.Data.Imm> datas() {
-      return ws.epigraph.util.Util.castEx(_raw().elements());
-    }
+      // method is private to not expose datas() for non-union types (so simple type can be replaced with union type while preserving backwards-compatibility)
+      private @NotNull java.util.List<${NotNull_}? extends ${lqn(et, t)}.Data.Imm> datas() {
+        return ws.epigraph.util.Util.castEx(_raw().elements());
+      }
 """
   }
 }\
