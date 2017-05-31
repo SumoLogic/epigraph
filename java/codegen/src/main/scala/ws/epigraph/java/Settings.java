@@ -26,20 +26,30 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class Settings {
+
   // make these truly configurable if needed
   private final boolean generateTextLocations = false;
+
   private final boolean generateSeparateMethodsForVarProjections = false;
 
   private final @NotNull ServerSettings serverSettings;
+
   private final @NotNull ClientSettings clientSettings;
+
+  private final boolean java8Annotations;
 
   public Settings(
       final @NotNull ServerSettings serverSettings,
-      final @NotNull ClientSettings clientSettings) {
-
+      final @NotNull ClientSettings clientSettings,
+      boolean java8Annotations
+  ) {
     this.serverSettings = serverSettings;
     this.clientSettings = clientSettings;
+    this.java8Annotations = java8Annotations;
   }
+
+  /** Whether Java 8 annotations should be used in generated code. */
+  public boolean java8Annotations() { return java8Annotations; }
 
   @Contract(pure = true)
   public boolean generateTextLocations() { return generateTextLocations; }
@@ -57,12 +67,15 @@ public final class Settings {
 
 
   public static final class ServerSettings {
+
     private final boolean generate;
+
     private final @Nullable List<String> services; // null means include all
 
     public ServerSettings(
         final boolean generate,
-        final @Nullable List<String> services) {
+        final @Nullable List<String> services
+    ) {
 
       this.generate = generate;
       this.services = services;
@@ -76,12 +89,15 @@ public final class Settings {
   }
 
   public static final class ClientSettings {
+
     private final boolean generate;
+
     private final @Nullable List<String> services; // null means include all
 
     public ClientSettings(
         final boolean generate,
-        final @Nullable List<String> services) {
+        final @Nullable List<String> services
+    ) {
 
       this.generate = generate;
       this.services = services;

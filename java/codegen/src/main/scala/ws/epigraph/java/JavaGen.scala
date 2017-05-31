@@ -40,4 +40,7 @@ trait JavaGen {
 //    }
   }
 
+  def `NotNull_`: String = if (ctx.java8Annotations) "@NotNull " else ""
+  def `Nullable_`: String = if (ctx.java8Annotations) "@Nullable " else ""
+
 }

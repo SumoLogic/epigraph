@@ -18,6 +18,7 @@
 
 package ws.epigraph.java.mojo;
 
+import org.apache.maven.plugins.annotations.Parameter;
 import ws.epigraph.java.EpigraphJavaGenerator;
 import ws.epigraph.java.Settings;
 import ws.epigraph.maven.AbstractCompilingMojo;
@@ -37,6 +38,10 @@ import java.util.Collection;
  * Base for Epigraph Java Codegen Mojos.
  */
 public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
+
+  /** Whether Java 8 annotations should be used in generated code. */
+  @Parameter
+  protected boolean java8Annotations = true;
 
   @Override
   protected void produceOutput(

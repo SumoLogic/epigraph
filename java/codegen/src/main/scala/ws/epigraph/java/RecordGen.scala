@@ -142,7 +142,7 @@ $typeInstance\
     }
 
     @Override
-    public @NotNull java.util.List<@NotNull Field> immediateFields() {
+    public @NotNull java.util.List<${NotNull_}Field> immediateFields() {
       return java.util.Arrays.asList(\
 ${t.declaredFields.map { f => sn"""
           ${ln + '.' + fcn(f)}"""

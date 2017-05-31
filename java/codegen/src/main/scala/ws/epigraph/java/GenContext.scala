@@ -35,4 +35,7 @@ class GenContext(val settings: Settings) {
   val reqUpdateProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
   val reqDeleteProjections: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
   val reqPaths: java.util.Set[ProjectionReferenceName] = ConcurrentHashMap.newKeySet()
+
+  def java8Annotations: Boolean = settings.java8Annotations()
+
 }

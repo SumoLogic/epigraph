@@ -118,7 +118,8 @@ public class TestCodegenMojo extends BaseCodegenMojo {
         new Settings.ClientSettings(
             client != null && client.generate(),
             client == null || client.services() == null ? null : Arrays.asList(client.services())
-        )
+        ),
+        java8Annotations
     );
   }
 }

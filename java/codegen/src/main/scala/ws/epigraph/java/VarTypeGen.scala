@@ -73,7 +73,7 @@ $typeInstance\
     }
 
     @Override
-    public @NotNull java.util.List<@NotNull Tag> immediateTags() {
+    public @NotNull java.util.List<${NotNull_}Tag> immediateTags() {
       return java.util.Arrays.asList(\
 ${t.declaredTags.map { tag => sn"""
           $ln.${tcn(tag)}"""

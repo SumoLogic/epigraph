@@ -51,8 +51,8 @@ public final class $IndexClassName extends AbstractTypesIndex {
 
   private $IndexClassName() { super(types()); }
 
-  private static @NotNull Map<@NotNull String, @NotNull ? extends Type> types() {
-    Map<@NotNull String, @NotNull Type> types = new LinkedHashMap<>();
+  private static @NotNull Map<${NotNull_}String, ${NotNull_}? extends Type> types() {
+    Map<${NotNull_}String, ${NotNull_}Type> types = new LinkedHashMap<>();
 
 ${ctx.generatedTypes.asScala.toSeq./*TODO better*/sortWith((a, b) => a._1.name < b._1.name).map { entry => sn"""\
     types.put("${entry._1.name}", ${entry._2}.Type.instance());
