@@ -442,6 +442,32 @@ public class ReqOutputJsonFormatReaderTest {
 
   }
 
+  @Test
+  public void testReadPolyListDatumNoProjection() throws IOException {
+    Person.Builder pb = Person.create();
+    pb.setRecord(
+        PersonRecord.create()
+            .setFriendRecords(
+                PersonRecord_List.create()
+                    .add(PersonRecord.create().setFirstName("fn1"))
+                    .add(UserRecord.create().setFirstName("fn2"))
+            )
+    );
+
+    testRead(
+        Person.type.dataType(null),
+
+        "{\"record\":{\"friendRecords\":[" +
+        "{\"firstName\":\"fn1\"}," +
+        "{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":\"fn2\"}}" +
+        "]}}",
+
+        pb
+
+    );
+
+  }
+
   private void testRead(
       @NotNull String reqProjectionStr,
       @NotNull String json,

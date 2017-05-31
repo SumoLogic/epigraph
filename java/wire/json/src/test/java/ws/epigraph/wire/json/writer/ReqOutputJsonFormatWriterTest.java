@@ -391,6 +391,28 @@ public class ReqOutputJsonFormatWriterTest {
     );
   }
 
+  @Test
+  public void testPolyListDatumNoProjection() throws IOException {
+    Person.Builder pb = Person.create();
+    pb.setRecord(
+        PersonRecord.create()
+            .setFriendRecords(
+                PersonRecord_List.create()
+                    .add(PersonRecord.create().setFirstName("fn1"))
+                    .add(UserRecord.create().setFirstName("fn2"))
+            )
+    );
+
+    testRender(
+        (ReqOutputVarProjection) null,
+        pb,
+        "{\"record\":{\"friendRecords\":[" +
+        "{\"firstName\":\"fn1\"}," +
+        "{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":\"fn2\"}}" +
+        "]}}"
+    );
+  }
+
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
       throws IOException {
 

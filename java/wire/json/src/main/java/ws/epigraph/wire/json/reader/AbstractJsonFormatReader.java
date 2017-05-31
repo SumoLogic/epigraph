@@ -681,7 +681,12 @@ abstract class AbstractJsonFormatReader<
 
   @Override
   public @Nullable Data readData(@NotNull DataType valueType) throws IOException, JsonFormatException {
-    JsonToken token = nextNonEof();
+    if (nextToken() == null) return null;
+    return finishReadingData(valueType);
+  }
+
+  private  @Nullable Data finishReadingData(@NotNull DataType valueType) throws IOException, JsonFormatException {
+    JsonToken token = currentToken();
 
     if (token == JsonToken.VALUE_NULL) return null;
 
@@ -944,7 +949,7 @@ abstract class AbstractJsonFormatReader<
     while (true) {
       token = nextNonEof();
       if (token == JsonToken.END_ARRAY) break;
-      final @Nullable Data value = readData(type.elementType());
+      final @Nullable Data value = finishReadingData(type.elementType());
       if (value == null) throw error("Null list values are not allowed"); // or try to construct null datum?
       datum._raw().elements().add(value);
     }

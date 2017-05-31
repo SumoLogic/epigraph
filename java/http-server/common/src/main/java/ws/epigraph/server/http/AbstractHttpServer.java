@@ -343,6 +343,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
             );
 
     final Function<Throwable, Void> failureConsumer = throwable -> {
+      if (context.isDebug())
+        context.logger().error("Unhandled exception", throwable);
       writeInvocationErrorAndCloseContext(
           new GenericServerInvocationError(throwable.getMessage()),
           context,

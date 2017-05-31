@@ -31,6 +31,7 @@
   - [ ] `AbstractRemoteOperationInvocation` must use new push readers instead of in-memory buffering `BasicAsyncResponseConsumer`
   - See also: https://github.com/FasterXML/jackson-core/issues/57
 - [ ] remove `requestParams` from requests/URLs?
+- [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
 
 # Type system
 - [ ] Enums

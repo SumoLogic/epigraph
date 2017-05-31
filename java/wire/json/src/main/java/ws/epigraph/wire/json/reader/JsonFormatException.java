@@ -22,5 +22,5 @@ import ws.epigraph.wire.FormatException;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class JsonFormatException extends FormatException {
-  public JsonFormatException(final String message) { super(message); }
+  JsonFormatException(final String message) { super(message); }
 }
