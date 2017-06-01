@@ -36,7 +36,7 @@ public abstract class AbstractOperationInvocationFilter<
     return new OperationInvocation<Req, Rsp, D>() {
 
       @Override
-      public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+      public CompletableFuture<InvocationResult<Rsp>> invoke(
           final @NotNull Req request, final @NotNull OperationInvocationContext context) {
 
         return AbstractOperationInvocationFilter.this.invoke(invocation, request, context);
@@ -49,7 +49,7 @@ public abstract class AbstractOperationInvocationFilter<
     };
   }
 
-  protected abstract CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  protected abstract CompletableFuture<InvocationResult<Rsp>> invoke(
       @NotNull OperationInvocation<Req, Rsp, D> invocation,
       @NotNull Req request,
       @NotNull OperationInvocationContext context);

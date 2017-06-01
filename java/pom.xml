@@ -34,6 +34,7 @@
     <module>codegen</module>
     <module>core</module>
     <module>data-processing</module>
+    <module>federator</module>
     <module>gdata-schema-psi-parser</module>
     <module>gdata</module>
     <module>http-client</module>

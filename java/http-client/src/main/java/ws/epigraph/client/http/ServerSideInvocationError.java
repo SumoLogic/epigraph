@@ -16,12 +16,12 @@
 
 package ws.epigraph.client.http;
 
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationErrorImpl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ServerSideInvocationError extends OperationInvocationErrorImpl {
+public class ServerSideInvocationError extends InvocationErrorImpl {
 
   public ServerSideInvocationError(final int statusCode, final String message) {
     super(statusCode, message);

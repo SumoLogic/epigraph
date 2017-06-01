@@ -18,7 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationErrorImpl;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
@@ -26,8 +26,8 @@ import ws.epigraph.util.HttpStatusCode;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationNotFoundError extends OperationInvocationErrorImpl {
-  public OperationNotFoundError(
+public class NotFoundError extends InvocationErrorImpl {
+  public NotFoundError(
       @NotNull String resourceName,
       @NotNull OperationKind operationKind,
       @Nullable String operationName) {
@@ -35,7 +35,7 @@ public class OperationNotFoundError extends OperationInvocationErrorImpl {
     this(resourceName, operationKind, null, operationName);
   }
 
-  public OperationNotFoundError(
+  public NotFoundError(
       @NotNull String resourceName,
       @NotNull OperationKind operationKind,
       @Nullable HttpMethod method,

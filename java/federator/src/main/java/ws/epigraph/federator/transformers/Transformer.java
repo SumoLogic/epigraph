@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+package ws.epigraph.federator.transformers;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.data.Data;
+import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
- * {@code RuntimeException} wrapper around {@link InvocationError}
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationInvocationException extends RuntimeException {
-  private final @NotNull InvocationError error;
+public abstract class Transformer {
+  private final @NotNull TransformerDeclaration declaration;
 
-  public OperationInvocationException(@NotNull InvocationError error) {this.error = error;}
+  protected Transformer(@NotNull TransformerDeclaration declaration) {this.declaration = declaration;}
 
-  @Override
-  public String getMessage() {
-    return error.message();
-  }
+  public @NotNull TransformerDeclaration declaration() { return declaration; }
+
+  public abstract @NotNull CompletableFuture<InvocationResult<Data>> transform(
+      @NotNull Data input,
+      @NotNull ReqOutputVarProjection outputProjection
+  );
+
 }

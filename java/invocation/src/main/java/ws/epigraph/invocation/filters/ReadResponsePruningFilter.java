@@ -38,7 +38,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
 
   @SuppressWarnings("unchecked")
   @Override
-  protected CompletableFuture<OperationInvocationResult<ReadOperationResponse<D>>> invoke(
+  protected CompletableFuture<InvocationResult<ReadOperationResponse<D>>> invoke(
       final @NotNull OperationInvocation<Req, ReadOperationResponse<D>, OD> invocation,
       final @NotNull Req request,
       final @NotNull OperationInvocationContext context) {
@@ -48,7 +48,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
             readOperationResponse -> {
               Data data = readOperationResponse.getData();
               if (data == null)
-                return OperationInvocationResult.success(readOperationResponse);
+                return InvocationResult.success(readOperationResponse);
 
               ReqOutputRequiredDataPruner pruner = new ReqOutputRequiredDataPruner();
               final ReqOutputRequiredDataPruner.DataPruningResult pruningResult =
@@ -58,25 +58,25 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
                 ReqOutputRequiredDataPruner.ReplaceData replaceData =
                     (ReqOutputRequiredDataPruner.ReplaceData) pruningResult;
 
-                return OperationInvocationResult.success(new ReadOperationResponse<>((D) replaceData.newData));
+                return InvocationResult.success(new ReadOperationResponse<>((D) replaceData.newData));
               } else if (pruningResult instanceof ReqOutputRequiredDataPruner.RemoveData) {
-                return OperationInvocationResult.success(new ReadOperationResponse<>((D) null));
+                return InvocationResult.success(new ReadOperationResponse<>((D) null));
               } else if (pruningResult instanceof ReqOutputRequiredDataPruner.Fail) {
                 ReqOutputRequiredDataPruner.Fail fail = (ReqOutputRequiredDataPruner.Fail) pruningResult;
                 final ReqOutputRequiredDataPruner.Reason reason = fail.reason;
-                return OperationInvocationResult.failure(
-                    new OperationInvocationErrorImpl(
+                return InvocationResult.failure(
+                    new InvocationErrorImpl(
                         reason.isOperationError ? HttpStatusCode.INTERNAL_OPERATION_ERROR
                                                 : HttpStatusCode.PRECONDITION_FAILED, reason.toString()
                     )
                 );
               } // else keep
 
-              return OperationInvocationResult.success(readOperationResponse);
+              return InvocationResult.success(readOperationResponse);
 
             },
 
-            OperationInvocationResult::failure
+            InvocationResult::failure
         )
     );
   }

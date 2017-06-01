@@ -23,7 +23,7 @@ import ws.epigraph.data.validation.ReqOutputDataValidator;
 import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -40,7 +40,7 @@ public class ReadResponseValidationFilter<Req extends OperationRequest, D extend
     extends AbstractOperationInvocationFilter<Req, ReadOperationResponse<D>, ReadOperationDeclaration> {
 
   @Override
-  protected CompletableFuture<OperationInvocationResult<ReadOperationResponse<D>>> invoke(
+  protected CompletableFuture<InvocationResult<ReadOperationResponse<D>>> invoke(
       final @NotNull OperationInvocation<Req, ReadOperationResponse<D>, ReadOperationDeclaration> invocation,
       final @NotNull Req request,
       final @NotNull OperationInvocationContext context) {
@@ -50,19 +50,19 @@ public class ReadResponseValidationFilter<Req extends OperationRequest, D extend
             response -> {
               Data data = response.getData();
               if (data == null)
-                return OperationInvocationResult.success(response);
+                return InvocationResult.success(response);
 
               ReqOutputDataValidator validator = new ReqOutputDataValidator();
               validator.validateData(data, request.outputProjection().varProjection());
 
               Collection<? extends DataValidationError> validationErrors = validator.errors();
               return validationErrors.isEmpty()
-                     ? OperationInvocationResult.success(response)
-                     : OperationInvocationResult.failure(FilterUtil.validationError(validationErrors));
+                     ? InvocationResult.success(response)
+                     : InvocationResult.failure(FilterUtil.validationError(validationErrors));
 
             },
 
-            OperationInvocationResult::failure
+            InvocationResult::failure
         )
     );
   }

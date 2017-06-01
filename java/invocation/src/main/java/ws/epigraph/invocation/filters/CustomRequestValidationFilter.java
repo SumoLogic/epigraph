@@ -23,7 +23,7 @@ import ws.epigraph.data.validation.OpInputDataValidator;
 import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
@@ -42,7 +42,7 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
     extends AbstractOperationInvocationFilter<CustomOperationRequest, Rsp, CustomOperationDeclaration> {
 
   @Override
-  protected CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  protected CompletableFuture<InvocationResult<Rsp>> invoke(
       final @NotNull OperationInvocation<CustomOperationRequest, Rsp, CustomOperationDeclaration> invocation,
       final @NotNull CustomOperationRequest request,
       final @NotNull OperationInvocationContext context) {
@@ -59,6 +59,6 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
 
     return errors.isEmpty()
            ? invocation.invoke(request, context)
-           : CompletableFuture.completedFuture(OperationInvocationResult.failure(FilterUtil.validationError(errors)));
+           : CompletableFuture.completedFuture(InvocationResult.failure(FilterUtil.validationError(errors)));
   }
 }

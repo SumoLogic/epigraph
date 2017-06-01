@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
@@ -34,7 +34,7 @@ public class DeleteRequestValidationFilter<Rsp extends OperationResponse>
     extends AbstractOperationInvocationFilter<DeleteOperationRequest, Rsp, DeleteOperationDeclaration> {
 
   @Override
-  protected CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  protected CompletableFuture<InvocationResult<Rsp>> invoke(
       final @NotNull OperationInvocation<DeleteOperationRequest, Rsp, DeleteOperationDeclaration> invocation,
       final @NotNull DeleteOperationRequest request,
       final @NotNull OperationInvocationContext context) {

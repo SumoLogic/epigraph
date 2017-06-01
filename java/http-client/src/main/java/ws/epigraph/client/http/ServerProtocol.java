@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
@@ -39,7 +39,7 @@ public interface ServerProtocol {
    */
   @NotNull String[] mimeTypes();
 
-  OperationInvocationResult<ReadOperationResponse<Data>> readResponse(
+  InvocationResult<ReadOperationResponse<Data>> readResponse(
       @NotNull ReqOutputVarProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,

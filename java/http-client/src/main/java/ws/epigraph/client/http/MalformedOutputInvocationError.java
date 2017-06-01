@@ -17,14 +17,14 @@
 package ws.epigraph.client.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationErrorImpl;
 import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.FormatException;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class MalformedOutputInvocationError extends OperationInvocationErrorImpl {
+public class MalformedOutputInvocationError extends InvocationErrorImpl {
   public MalformedOutputInvocationError(@NotNull FormatException e) {
     super(HttpStatusCode.INTERNAL_SERVER_ERROR, "Error reading server output: " + e.getMessage());
   }

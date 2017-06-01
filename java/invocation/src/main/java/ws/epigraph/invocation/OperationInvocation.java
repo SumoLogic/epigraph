@@ -41,7 +41,7 @@ public interface OperationInvocation<
    *
    * @return future of invocation result
    */
-  CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  CompletableFuture<InvocationResult<Rsp>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context
   );
 

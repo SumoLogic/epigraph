@@ -17,8 +17,8 @@
 package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationError;
+import ws.epigraph.invocation.InvocationErrorImpl;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 public final class FilterUtil {
   private FilterUtil() {}
 
-  public static @NotNull OperationInvocationError validationError(
+  public static @NotNull InvocationError validationError(
       @NotNull Collection<? extends DataValidationError> validationErrors) {
-    return new OperationInvocationErrorImpl(
+    return new InvocationErrorImpl(
 
         validationErrors.stream().anyMatch(DataValidationError::isImplementationError)
         ? HttpStatusCode.INTERNAL_OPERATION_ERROR

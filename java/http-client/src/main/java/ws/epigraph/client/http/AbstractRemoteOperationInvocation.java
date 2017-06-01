@@ -31,7 +31,7 @@ import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.http.Headers;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -77,7 +77,7 @@ public abstract class AbstractRemoteOperationInvocation<
   }
 
   @Override
-  public CompletableFuture<OperationInvocationResult<ReadOperationResponse<Data>>> invoke(
+  public CompletableFuture<InvocationResult<ReadOperationResponse<Data>>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context) {
 
     HttpRequest httpRequest = composeHttpRequest(request, context);
@@ -132,7 +132,7 @@ public abstract class AbstractRemoteOperationInvocation<
       });
     }
 
-    CompletableFuture<OperationInvocationResult<ReadOperationResponse<Data>>> f = new CompletableFuture<>();
+    CompletableFuture<InvocationResult<ReadOperationResponse<Data>>> f = new CompletableFuture<>();
 
     httpClient.execute(
         requestProducer,

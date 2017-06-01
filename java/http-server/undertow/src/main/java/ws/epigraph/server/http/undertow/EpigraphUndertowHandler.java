@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationErrorImpl;
 import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
@@ -112,7 +112,7 @@ public class EpigraphUndertowHandler
     final HttpMethod method = getMethod(exchange);
     if (method == null) {
       writeInvocationErrorAndCloseContext(
-          new OperationInvocationErrorImpl(
+          new InvocationErrorImpl(
               HttpStatusCode.BAD_REQUEST, String.format("Unsupported HTTP method '%s'", exchange.getRequestMethod())
           ), context, operationContext
       );
@@ -121,7 +121,7 @@ public class EpigraphUndertowHandler
         handleRequest(getDecodedRequestString(exchange), method, getOperationName(exchange), context, operationContext);
       } catch (URISyntaxException e) {
         writeInvocationErrorAndCloseContext(
-            new OperationInvocationErrorImpl(
+            new InvocationErrorImpl(
                 HttpStatusCode.BAD_REQUEST, String.format("Invalid URI syntax '%s'", e.getMessage())
             ), context, operationContext
         );

@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+apply plugin: 'java'
 
-import org.jetbrains.annotations.NotNull;
+dependencies {
+  compile project(':epigraph-java-core')
+  compile project(':epigraph-java-invocation')
+  compile project(':epigraph-java-projections')
+  compile project(':epigraph-java-schema')
 
-/**
- * {@code RuntimeException} wrapper around {@link InvocationError}
- *
- * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
- */
-public class OperationInvocationException extends RuntimeException {
-  private final @NotNull InvocationError error;
-
-  public OperationInvocationException(@NotNull InvocationError error) {this.error = error;}
-
-  @Override
-  public String getMessage() {
-    return error.message();
-  }
+  compile 'org.jetbrains:annotations'
 }

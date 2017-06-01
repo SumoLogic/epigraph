@@ -22,7 +22,7 @@ import ws.epigraph.util.HttpStatusCode;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenericServerInvocationError extends OperationInvocationErrorImpl {
+public class GenericServerInvocationError extends InvocationErrorImpl {
   public GenericServerInvocationError(final @NotNull String message) {
     super(HttpStatusCode.INTERNAL_SERVER_ERROR, message);
   }

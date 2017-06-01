@@ -33,7 +33,7 @@ import ws.epigraph.http.Headers;
 import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationResult;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
@@ -168,7 +168,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public OperationInvocationResult<ReadOperationResponse<Data>> readResponse(
+  public InvocationResult<ReadOperationResponse<Data>> readResponse(
       final @NotNull ReqOutputVarProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse,
@@ -187,9 +187,9 @@ public class FormatBasedServerProtocol implements ServerProtocol {
               reqOutputReaderFactory.newFormatReader(inputStream, charset, typesResolver);
 
           Data data = formatReader.readData(projection);
-          return OperationInvocationResult.success(new ReadOperationResponse<>(data));
+          return InvocationResult.success(new ReadOperationResponse<>(data));
         } catch (FormatException e) {
-          return OperationInvocationResult.failure(new MalformedOutputInvocationError(e));
+          return InvocationResult.failure(new MalformedOutputInvocationError(e));
         }
       } else {
         @NotNull Charset responseCharset = Util.defaultCharset;
@@ -203,7 +203,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
         if (contentType.mimeType().equals(MimeTypes.JSON)) {
           ErrorValue error = readError(httpResponse, responseCharset);
-          return OperationInvocationResult.failure(new ErrorValueInvocationError(error));
+          return InvocationResult.failure(new ErrorValueInvocationError(error));
         } else
           return readPlainTextError(httpResponse, statusCode, responseCharset);
 
@@ -212,16 +212,16 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       if (operationInvocationContext.isDebug())
         LOG.error("Error reading operation response", e);
 
-      return OperationInvocationResult.failure(new IOExceptionInvocationError(e));
+      return InvocationResult.failure(new IOExceptionInvocationError(e));
     }
   }
 
-  private @NotNull OperationInvocationResult<ReadOperationResponse<Data>> readPlainTextError(
+  private @NotNull InvocationResult<ReadOperationResponse<Data>> readPlainTextError(
       @NotNull HttpResponse httpResponse,
       int statusCode, @NotNull Charset responseCharset) throws IOException {
 
     try (InputStream is = httpResponse.getEntity().getContent()) {
-      return OperationInvocationResult.failure(
+      return InvocationResult.failure(
           new ServerSideInvocationError(statusCode, IOUtil.readInputStream(is, responseCharset).trim())
       );
     }

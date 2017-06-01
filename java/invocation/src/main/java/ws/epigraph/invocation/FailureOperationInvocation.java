@@ -30,14 +30,14 @@ import java.util.concurrent.CompletableFuture;
 public class FailureOperationInvocation<Req extends OperationRequest, Rsp extends OperationResponse>
     implements OperationInvocation<Req, Rsp, OperationDeclaration> {
 
-  private final @NotNull OperationInvocationError error;
+  private final @NotNull InvocationError error;
 
-  public FailureOperationInvocation(@NotNull OperationInvocationError error) {this.error = error;}
+  public FailureOperationInvocation(@NotNull InvocationError error) {this.error = error;}
 
   @Override
-  public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  public CompletableFuture<InvocationResult<Rsp>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context) {
-    return CompletableFuture.completedFuture(OperationInvocationResult.failure(error));
+    return CompletableFuture.completedFuture(InvocationResult.failure(error));
   }
 
   @Override

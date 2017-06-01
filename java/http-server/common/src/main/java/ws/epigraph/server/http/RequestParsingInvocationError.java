@@ -28,7 +28,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class RequestParsingInvocationError extends PsiProcessingInvocationError
-    implements HtmlCapableOperationInvocationError {
+    implements HtmlCapableInvocationError {
 
   private final @NotNull String resourceName;
   private final @NotNull OperationKind operationKind;

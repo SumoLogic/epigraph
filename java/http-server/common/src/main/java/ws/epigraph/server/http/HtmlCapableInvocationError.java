@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.invocation;
+package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.invocation.InvocationError;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationInvocationErrorImpl implements OperationInvocationError {
-  private final @NotNull String message;
-  private final int statusCode;
-
-  public OperationInvocationErrorImpl(final int statusCode, final @NotNull String message) {
-    this.message = message;
-    this.statusCode = statusCode;
-  }
-
-  @Override
-  public @NotNull String message() { return message; }
-
-  @Override
-  public int statusCode() { return statusCode; }
+public interface HtmlCapableInvocationError extends InvocationError {
+  @NotNull String htmlMessage();
 }

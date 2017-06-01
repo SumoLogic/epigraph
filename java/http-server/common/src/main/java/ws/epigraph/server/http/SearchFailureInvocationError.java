@@ -30,14 +30,14 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OperationSearchFailureInvocationError extends PsiProcessingInvocationError
-    implements HtmlCapableOperationInvocationError {
+public class SearchFailureInvocationError extends PsiProcessingInvocationError
+    implements HtmlCapableInvocationError {
 
   private final @NotNull String resourceName;
   private final @NotNull String requestText;
   private final @NotNull OperationSearchFailure<?> failure;
 
-  public OperationSearchFailureInvocationError(
+  public SearchFailureInvocationError(
       final @NotNull String resourceName,
       final @NotNull String text,
       final @NotNull OperationSearchFailure<?> failure) {

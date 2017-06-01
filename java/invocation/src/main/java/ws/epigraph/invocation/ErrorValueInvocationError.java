@@ -24,7 +24,7 @@ import ws.epigraph.errors.ErrorValue;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ErrorValueInvocationError extends OperationInvocationErrorImpl {
+public class ErrorValueInvocationError extends InvocationErrorImpl {
   private final @NotNull ErrorValue errorValue;
 
   public ErrorValueInvocationError(final @NotNull ErrorValue errorValue) {

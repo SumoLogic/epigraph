@@ -17,7 +17,7 @@
 package ws.epigraph.client.http;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationErrorImpl;
+import ws.epigraph.invocation.InvocationErrorImpl;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class IOExceptionInvocationError extends OperationInvocationErrorImpl {
+public class IOExceptionInvocationError extends InvocationErrorImpl {
   public IOExceptionInvocationError(@NotNull IOException e) {
     super(HttpStatusCode.INTERNAL_SERVER_ERROR, "I/O error while reading server output: " + e.getMessage()); // 500 or something else?
   }

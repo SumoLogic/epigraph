@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.server.http;
+package ws.epigraph.invocation;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.invocation.OperationInvocationError;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface HtmlCapableOperationInvocationError extends OperationInvocationError {
-  @NotNull String htmlMessage();
+public interface InvocationError {
+  @NotNull String message();
+
+  int statusCode();
 }

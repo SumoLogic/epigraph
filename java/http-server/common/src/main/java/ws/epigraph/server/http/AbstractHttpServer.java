@@ -202,7 +202,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeReadRequest(
+  private @NotNull CompletionStage<InvocationResult<ReadResult>> invokeReadRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
@@ -214,8 +214,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         !operationName.equals(ReadOperationDeclaration.DEFAULT_NAME) &&
         resource.namedReadOperation(operationName) == null)
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationNotFoundError(
+          InvocationResult.failure(
+              new NotFoundError(
                   resource.declaration().fieldName(),
                   OperationKind.READ,
                   operationName
@@ -228,7 +228,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.READ,
@@ -290,12 +290,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private <R> CompletionStage<OperationInvocationResult<R>> withReadOperation(
+  private <R> CompletionStage<InvocationResult<R>> withReadOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull UrlReadUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<ReadOperation<Data>, ReadRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull Function<OperationSearchSuccess<ReadOperation<Data>, ReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -312,11 +312,11 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
   private void handleReadResponse(
       @NotNull OperationKind operationKind,
-      @NotNull CompletionStage<OperationInvocationResult<ReadResult>> responseFuture,
+      @NotNull CompletionStage<InvocationResult<ReadResult>> responseFuture,
       @NotNull C context,
       @NotNull OperationInvocationContext operationInvocationContext) {
 
-    final Consumer<OperationInvocationResult<ReadResult>> resultConsumer =
+    final Consumer<InvocationResult<ReadResult>> resultConsumer =
         invocationResult ->
             invocationResult.consume(
 
@@ -355,7 +355,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     long timeout = responseTimeout(context);
     if (timeout > 0) {
-      CompletionStage<OperationInvocationResult<ReadResult>> timeoutStage = Util.failAfter(Duration.ofMillis(timeout));
+      CompletionStage<InvocationResult<ReadResult>> timeoutStage = Util.failAfter(Duration.ofMillis(timeout));
       responseFuture.acceptEither(timeoutStage, resultConsumer).exceptionally(failureConsumer);
     } else {
       responseFuture.thenAccept(resultConsumer).exceptionally(failureConsumer);
@@ -378,7 +378,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeCreateRequest(
+  private @NotNull CompletionStage<InvocationResult<ReadResult>> invokeCreateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
@@ -390,8 +390,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         !operationName.equals(CreateOperationDeclaration.DEFAULT_NAME) &&
         resource.namedCreateOperation(operationName) == null)
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationNotFoundError(
+          InvocationResult.failure(
+              new NotFoundError(
                   resource.declaration().fieldName(),
                   OperationKind.CREATE,
                   operationName
@@ -404,7 +404,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.CREATE,
@@ -437,7 +437,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
             );
           } catch (IOException e) {
             return CompletableFuture.completedFuture(
-                OperationInvocationResult.failure(
+                InvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
                         "Error reading %screate request body: %s",
                         operationName == null ||
@@ -450,7 +450,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           if (body == null)
             return CompletableFuture.completedFuture(
-                OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for create operation"))
+                InvocationResult.failure(new MalformedInputInvocationError("Null body for create operation"))
             );
 
           OperationInvocation<CreateOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
@@ -495,12 +495,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private <R> CompletionStage<OperationInvocationResult<R>> withCreateOperation(
+  private <R> CompletionStage<InvocationResult<R>> withCreateOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull UrlCreateUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>, CreateRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>, CreateRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -531,7 +531,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeUpdateRequest(
+  private @NotNull CompletionStage<InvocationResult<ReadResult>> invokeUpdateRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
@@ -543,8 +543,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         !operationName.equals(UpdateOperationDeclaration.DEFAULT_NAME) &&
         resource.namedUpdateOperation(operationName) == null)
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationNotFoundError(
+          InvocationResult.failure(
+              new NotFoundError(
                   resource.declaration().fieldName(),
                   OperationKind.UPDATE,
                   operationName
@@ -557,7 +557,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.UPDATE,
@@ -590,7 +590,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
             );
           } catch (IOException e) {
             return CompletableFuture.completedFuture(
-                OperationInvocationResult.failure(
+                InvocationResult.failure(
                     new MalformedInputInvocationError(String.format(
                         "Error reading %supdate request body: %s",
                         operationName == null ||
@@ -603,7 +603,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           if (body == null)
             return CompletableFuture.completedFuture(
-                OperationInvocationResult.failure(new MalformedInputInvocationError("Null body for update operation"))
+                InvocationResult.failure(new MalformedInputInvocationError("Null body for update operation"))
             );
 
           OperationInvocation<UpdateOperationRequest, ReadOperationResponse<Data>, ?> operationInvocation =
@@ -648,12 +648,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private <R> CompletionStage<OperationInvocationResult<R>> withUpdateOperation(
+  private <R> CompletionStage<InvocationResult<R>> withUpdateOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull UrlUpdateUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, UpdateRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, UpdateRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -684,7 +684,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeDeleteRequest(
+  private @NotNull CompletionStage<InvocationResult<ReadResult>> invokeDeleteRequest(
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull String decodedUri,
@@ -696,8 +696,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         !operationName.equals(DeleteOperationDeclaration.DEFAULT_NAME) &&
         resource.namedDeleteOperation(operationName) == null)
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationNotFoundError(
+          InvocationResult.failure(
+              new NotFoundError(
                   resource.declaration().fieldName(),
                   OperationKind.DELETE,
                   operationName
@@ -710,7 +710,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.DELETE,
@@ -774,12 +774,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private <R> CompletionStage<OperationInvocationResult<R>> withDeleteOperation(
+  private <R> CompletionStage<InvocationResult<R>> withDeleteOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull UrlDeleteUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<DeleteOperation<Data>, DeleteRequestUrl>, CompletableFuture<OperationInvocationResult<R>>> continuation,
+      @NotNull Function<OperationSearchSuccess<DeleteOperation<Data>, DeleteRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -812,7 +812,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   }
 
   @SuppressWarnings("unchecked")
-  private @NotNull CompletionStage<OperationInvocationResult<ReadResult>> invokeCustomRequest(
+  private @NotNull CompletionStage<InvocationResult<ReadResult>> invokeCustomRequest(
       @NotNull Resource resource,
       @NotNull String operationName,
       @NotNull HttpMethod method,
@@ -823,8 +823,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     final CustomOperation<Data> operation = (CustomOperation<Data>) resource.customOperation(method, operationName);
     if (operation == null)
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationNotFoundError(
+          InvocationResult.failure(
+              new NotFoundError(
                   resource.declaration().fieldName(),
                   OperationKind.CUSTOM,
                   method,
@@ -838,7 +838,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.CUSTOM,
@@ -865,7 +865,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     if (!psiProcessingContext.errors().isEmpty()) {
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.CUSTOM,
@@ -895,7 +895,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
              );
     } catch (IOException e) {
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new MalformedInputInvocationError(String.format(
                   "Error reading '%s' custom request body: %s",
                   operationName,
@@ -1028,14 +1028,14 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       R extends AbstractOperationRouter<UP, ?, ?, U>,
       Rsp
       >
-  CompletionStage<OperationInvocationResult<Rsp>> withOperation(
+  CompletionStage<InvocationResult<Rsp>> withOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
       @NotNull UP urlPsi,
       @NotNull R router,
       @NotNull OperationKind operationKind,
-      @NotNull Function<OperationSearchSuccess<O, U>, CompletableFuture<OperationInvocationResult<Rsp>>> continuation,
+      @NotNull Function<OperationSearchSuccess<O, U>, CompletableFuture<InvocationResult<Rsp>>> continuation,
       @NotNull C context) {
 
     try {
@@ -1044,8 +1044,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
       if (searchResult instanceof OperationNotFound<?>) {
         return CompletableFuture.completedFuture(
-            OperationInvocationResult.failure(
-                new OperationNotFoundError(
+            InvocationResult.failure(
+                new NotFoundError(
                     resource.declaration().fieldName(),
                     operationKind,
                     operationName
@@ -1056,8 +1056,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
       if (searchResult instanceof OperationSearchFailure<?>) {
         return CompletableFuture.completedFuture(
-            OperationInvocationResult.failure(
-                new OperationSearchFailureInvocationError(
+            InvocationResult.failure(
+                new SearchFailureInvocationError(
                     resource.declaration().fieldName(),
                     requestText,
                     (OperationSearchFailure<?>) searchResult
@@ -1072,7 +1072,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     } catch (PsiProcessingException e) {
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
+          InvocationResult.failure(
               new RequestParsingInvocationError(
                   resource.declaration().fieldName(),
                   OperationKind.READ,
@@ -1100,14 +1100,14 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext) {
 
     writeInvocationErrorAndCloseContext(
-        new OperationInvocationErrorImpl(status, message),
+        new InvocationErrorImpl(status, message),
         context,
         operationInvocationContext
     );
   }
 
   protected void writeInvocationErrorAndCloseContext(
-      @NotNull OperationInvocationError error,
+      @NotNull InvocationError error,
       @NotNull C context,
       @NotNull OperationInvocationContext operationInvocationContext) {
 

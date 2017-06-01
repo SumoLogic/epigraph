@@ -24,31 +24,31 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Operation invocation results: either a success of type {@code Rsp} or
- * an {@code OperationInvocationError}
+ * Invocation results: either a success of type {@code R} or
+ * an {@code InvocationError}
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings("ConstantConditions")
-public final class OperationInvocationResult<R> {
+public final class InvocationResult<R> {
   private final @Nullable R result;
-  private final @Nullable OperationInvocationError error;
+  private final @Nullable InvocationError error;
 
-  private OperationInvocationResult(
+  private InvocationResult(
       final @Nullable R result,
-      final @Nullable OperationInvocationError error) {
+      final @Nullable InvocationError error) {
     this.result = result;
     this.error = error;
   }
 
   public static @NotNull <R>
-  OperationInvocationResult<R> success(@Nullable R result) {
-    return new OperationInvocationResult<>(result, null);
+  InvocationResult<R> success(@Nullable R result) {
+    return new InvocationResult<>(result, null);
   }
 
   public static @NotNull <R>
-  OperationInvocationResult<R> failure(@NotNull OperationInvocationError error) {
-    return new OperationInvocationResult<>(null, error);
+  InvocationResult<R> failure(@NotNull InvocationError error) {
+    return new InvocationResult<>(null, error);
   }
 
   @Contract(pure = true)
@@ -61,7 +61,7 @@ public final class OperationInvocationResult<R> {
   public @Nullable R result() { return result; }
 
   @Contract(pure = true)
-  public @Nullable OperationInvocationError error() { return error; }
+  public @Nullable InvocationError error() { return error; }
 
   /**
    * Gets invocation result or throw a runtime exception if there was an invocation error
@@ -76,24 +76,24 @@ public final class OperationInvocationResult<R> {
 
   public void onSuccess(@NotNull Consumer<@Nullable R> c) { if (isSuccess()) c.accept(result); }
 
-  public void onFailure(@NotNull Consumer<@NotNull OperationInvocationError> c) { if (isFailure()) c.accept(error); }
+  public void onFailure(@NotNull Consumer<@NotNull InvocationError> c) { if (isFailure()) c.accept(error); }
 
   public <T> @NotNull T apply(
       @NotNull Function<@Nullable R, T> successFunction,
-      @NotNull Function<@NotNull OperationInvocationError, T> errorFunction) {
+      @NotNull Function<@NotNull InvocationError, T> errorFunction) {
 
     return isSuccess() ? successFunction.apply(result) : errorFunction.apply(error);
   }
 
   public void consume(
       @NotNull Consumer<@Nullable R> successConsumer,
-      @NotNull Consumer<@NotNull OperationInvocationError> errorConsumer) {
+      @NotNull Consumer<@NotNull InvocationError> errorConsumer) {
 
     if (isSuccess()) successConsumer.accept(result);
     else errorConsumer.accept(error);
   }
 
-  public <T> @NotNull OperationInvocationResult<T> mapSuccess(@NotNull Function<@Nullable R, T> f) {
+  public <T> @NotNull InvocationResult<T> mapSuccess(@NotNull Function<@Nullable R, T> f) {
     return isSuccess() ? success(f.apply(result)) : failure(error);
   }
 }

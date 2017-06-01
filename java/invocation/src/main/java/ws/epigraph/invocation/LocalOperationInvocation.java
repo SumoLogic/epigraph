@@ -45,11 +45,11 @@ public class LocalOperationInvocation<
   public LocalOperationInvocation(final @NotNull Operation<OD, Req, Rsp> operation) {this.operation = operation;}
 
   @Override
-  public CompletableFuture<OperationInvocationResult<Rsp>> invoke(
+  public CompletableFuture<InvocationResult<Rsp>> invoke(
       @NotNull Req request, @NotNull OperationInvocationContext context) {
 
     try {
-      return operation.process(request).thenApply(OperationInvocationResult::success);
+      return operation.process(request).thenApply(InvocationResult::success);
     } catch (RuntimeException e) {
       final OperationDeclaration declaration = operation.declaration();
       String name = declaration.name() == null ? "" : " '" + declaration.name() + "'";
@@ -57,8 +57,8 @@ public class LocalOperationInvocation<
       LOG.error(String.format("Error invoking %s operation%s", declaration.kind(), name), e);
 
       return CompletableFuture.completedFuture(
-          OperationInvocationResult.failure(
-              new OperationInvocationErrorImpl(
+          InvocationResult.failure(
+              new InvocationErrorImpl(
                   HttpStatusCode.INTERNAL_SERVER_ERROR, e.toString()
               )
           )

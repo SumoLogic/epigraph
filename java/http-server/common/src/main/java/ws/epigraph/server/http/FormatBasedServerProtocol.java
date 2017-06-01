@@ -24,7 +24,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationError;
+import ws.epigraph.invocation.InvocationError;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
@@ -188,7 +188,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public void writeInvocationErrorResponse(
-      final @NotNull OperationInvocationError error,
+      final @NotNull InvocationError error,
       final @NotNull C httpInvocationContext,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -199,9 +199,9 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
     Charset charset = Util.getCharset(httpExchange);
     try {
       OutputStreamWriter sw = new OutputStreamWriter(httpExchange.getOutputStream(), charset);
-      if (error instanceof HtmlCapableOperationInvocationError && htmlAccepted(httpExchange)) {
+      if (error instanceof HtmlCapableInvocationError && htmlAccepted(httpExchange)) {
         httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE, ContentType.get(HTML, charset).toString()));
-        sw.write(((HtmlCapableOperationInvocationError) error).htmlMessage());
+        sw.write(((HtmlCapableInvocationError) error).htmlMessage());
       } else {
         httpExchange.setHeaders(Collections.singletonMap(CONTENT_TYPE, ContentType.get(TEXT, charset).toString()));
         sw.write(error.message() + "\n");

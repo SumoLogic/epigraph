@@ -22,7 +22,7 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationError;
+import ws.epigraph.invocation.InvocationError;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputModelProjection;
@@ -76,7 +76,7 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeInvocationErrorResponse(
-      @NotNull OperationInvocationError error,
+      @NotNull InvocationError error,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
