@@ -23,6 +23,7 @@ class EpigraphJavaPluginExtension {
   // keep name in sync with `MainCodegenMojo.java`
   Server server = null
   Client client = null
+  boolean java8Annotations = true
 
   def server(Closure c) {
     c.resolveStrategy = Closure.DELEGATE_FIRST

@@ -25,6 +25,16 @@
   - [x] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
     - [ ] ~~read operation with path return type must be path tip type~~ Not possible: don't know at build time where path ends
 
+- [ ] broken gradle build?
+- [ ] add 'required' on req output map keys
+- [ ] tests & fix for pruner (with support for the above)
+- [ ] report scalac bug for java.lang
+- [ ] move TypesIndex to another package to avoid scalac bug?
+- [ ] transformers interface
+- [ ] operations -> transformers ?
+- [ ] better release cycle. mvn 3.5.0?
+- [ ] Malformed class file [ws/epigraph/projections/abs/AbstractTagProjectionEntry.class] found on compile classpath, which means that this class will cause a compile error if referenced in a source file. Gradle 5.0 will no longer allow malformed classes on compile classpath.
+
 - Docs
   - [x] service quick-start guide
     - [x] simple read

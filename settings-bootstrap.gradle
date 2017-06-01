@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-pluginRepositories {
+pluginManagement.repositories {
   // pick up gradle plugin from local maven repo
   maven {
     url "file://" + System.getProperty("user.home") + "/.m2/repository"

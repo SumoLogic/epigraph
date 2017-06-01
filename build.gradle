@@ -1,13 +1,13 @@
 plugins {
-  id 'nebula.dependency-recommender' version '3.6.3'
-  id 'nebula.maven-publish' version '4.9.1'
+  id 'nebula.dependency-recommender' version '3.6.3' // '4.2.0' has a bug: https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/43
+  id 'nebula.maven-publish' version '4.8.0' // '5.0.0' generates duplicating <dependencies> sections in pom.xml
 }
 
 allprojects {
   apply plugin: 'idea'
   apply plugin: 'nebula.dependency-recommender'
-  // https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/9
   apply plugin: 'nebula.maven-publish'
+  apply plugin: 'nebula.maven-resolved-dependencies'
 
   group = epigraphGroup
   version = epigraphVersion

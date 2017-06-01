@@ -47,6 +47,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
 
     Server server = project.epigraph.server
     Client client = project.epigraph.client
+    boolean java8Annotations = project.epigraph.java8Annotations
     
     def settings = new Settings(
         new Settings.ServerSettings(
@@ -56,7 +57,8 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
         new Settings.ClientSettings(
             client != null && client.generate,
             client == null ? null : client.services
-        )
+        ),
+        java8Annotations
     )
 
     new EpigraphJavaGenerator(context, getDestinationDir(), settings).generate()

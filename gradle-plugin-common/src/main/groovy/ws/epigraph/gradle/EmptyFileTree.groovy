@@ -16,7 +16,9 @@
 
 package ws.epigraph.gradle
 
+import org.gradle.api.Action
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.file.FileVisitor
 import org.gradle.api.internal.file.AbstractFileCollection
 import org.gradle.api.internal.file.FileTreeInternal
@@ -29,41 +31,33 @@ class EmptyFileTree extends AbstractFileCollection implements FileTreeInternal {
   public static final FileTree INSTANCE = new EmptyFileTree()
 
   @Override
-  FileTree matching(Closure closure) {
-    return this
-  }
+  FileTree matching(Closure closure) { return this }
 
   @Override
-  FileTree matching(PatternFilterable patternFilterable) {
-    return this
-  }
+  FileTree matching(PatternFilterable patternFilterable) { return this }
 
   @Override
-  FileTree visit(FileVisitor fileVisitor) {
-    return this
-  }
+  FileTree visit(FileVisitor fileVisitor) { return this }
 
   @Override
-  FileTree visit(Closure closure) {
-    return this
-  }
+  FileTree visit(Closure closure) { return this }
 
   @Override
-  FileTree plus(FileTree fileTree) {
-    return this
-  }
+  FileTree plus(FileTree fileTree) { return this }
 
   @Override
-  String getDisplayName() {
-    return "-empty-"
-  }
+  String getDisplayName() { return "-empty-" }
 
   @Override
-  Set<File> getFiles() {
-    return Collections.emptySet()
-  }
+  Set<File> getFiles() { return Collections.emptySet() }
 
   @Override
-  void visitTreeOrBackingFile(FileVisitor fileVisitor) {
-  }
+  void visitTreeOrBackingFile(FileVisitor fileVisitor) { }
+
+  @Override
+  FileTree matching(final Action<? super PatternFilterable> action) { return INSTANCE }
+
+  @Override
+  FileTree visit(final Action<? super FileVisitDetails> action) { return INSTANCE }
+
 }
