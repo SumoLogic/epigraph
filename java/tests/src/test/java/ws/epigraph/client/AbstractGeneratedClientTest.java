@@ -40,6 +40,7 @@ import ws.epigraph.tests.resources.users.client.UsersClient;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -314,6 +315,34 @@ public abstract class AbstractGeneratedClientTest {
     );
 
     client.delete("[" + id + "]", "");
+  }
+
+  @Test
+  public void testComplexParams() throws ExecutionException, InterruptedException {
+    @NotNull CompletableFuture<PersonMap> future = client.customEcho(
+        ";param=ws.epigraph.tests.PersonMap(1:<id:1,record:{id:1,firstName:'{foo}\\'+\"[bar]',friends:[<id:2>]}>)",
+        null,
+        "[*]:(id,record(id,firstName,bestFriend:id,friends*:id))"
+    );
+
+    assertEquals(
+        PersonMap.create()
+            .put$(
+                PersonId.create(1),
+                Person.create()
+                    .setId(PersonId.create(1))
+                    .setRecord(
+                        PersonRecord.create()
+                            .setId(PersonId.create(1))
+                            .setFirstName("{foo}'+\"[bar]")
+                            .setFriends(
+                                Person_List.create()
+                                    .add(Person.create().setId(PersonId.create(2)))
+                            )
+                    )
+            ),
+        future
+    );
   }
 
   private void assertEquals(Data expected, Future<? extends Data> actualFuture)

@@ -344,18 +344,17 @@ public abstract class AbstractHttpClientTest {
     );
   }
 
-  // todo: depends on Yegor's fix. Add same test to AbstractGeneratedClientTEst
-//  @Test
-//  public void testComplexParams() throws ExecutionException, InterruptedException {
-//    testCustom(
-//        UsersResourceDeclaration.echoCustomOperationDeclaration,
-//        null,
-//        ";param=ws.epigraph.tests.PersonMap(1:<id:1,record:{id:1,firstName:'{foo}\\'+\"[bar]',friends:[<id:2>]}>)",
-//        null,
-//        "[*]:(id,record(id,firstName,bestFriend:id,friends*:id))",
-//        ""
-//    );
-//  }
+  @Test
+  public void testComplexParams() throws ExecutionException, InterruptedException {
+    testCustom(
+        UsersResourceDeclaration.echoCustomOperationDeclaration,
+        null,
+        ";param=ws.epigraph.tests.PersonMap(1:<id:1,record:{id:1,firstName:'{foo}\\'+\"[bar]',friends:[<id:2>]}>)",
+        null,
+        "[*]:(id,record(id,firstName,bestFriend:id,friends*:id))",
+        "( 1: < id: 1, record: { id: 1, firstName: '{foo}\\'+\"[bar]', friends: [ < id: 2 > ] } > )"
+    );
+  }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
