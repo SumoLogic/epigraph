@@ -34,7 +34,7 @@ class IndexGen(protected val ctx: GenContext) extends JavaGen {
       Paths.get(s"${Constants.TypesIndex.namespace.replaceAll("\\.", "/")}/$IndexClassName.java")
 
     override protected def generate: String = /*@formatter:off*/sn"""\
-package epigraph.java;
+package epigraph.index;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -28,7 +28,7 @@
 - [x] broken gradle build?
 - [ ] add 'required' on req output map keys
 - [ ] tests & fix for pruner (with support for the above)
-- [ ] report scalac bug for java.lang
+- [x] report scalac bug for java.lang
 - [ ] move TypesIndex to another package to avoid scalac bug?
 - [x] transformers interface
 - [ ] operations -> transformers ?
