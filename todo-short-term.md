@@ -1,8 +1,15 @@
-- Federator prerequisites
+- [x] non-anonymous map/list types should have qualified type names
+  - [ ] enable `AbstractHttpClientTest.testComplexParams` once fixed
+- [ ] add 'required' on req output map keys
+- [ ] tests & fix for pruner (with support for the above)
+
+- Federator
+  - [ ] support named projections on the top level (not inside service)
+  - [ ] add transformers to schema
+    - [ ] codegen implementation stubs
+  - [ ] operations -> transformers via annotations
+  
   - [ ] `toBuilder` on data? Will be tricky because of covariance
-  - [x] local service invocation layer
-  - [ ] remote service invocation layer
-  - [ ] introduce transformers +codegen?
   - [ ] add `api` section to schema, listing a set of exposed resources and if they're federated
     - [ ] codegen something from it
     - [ ] validate at startup that stuff is actually?
@@ -25,33 +32,7 @@
   - [x] codegen simple clients for operations? should work for federated responses too if we have client-side federated op projection
     - [ ] ~~read operation with path return type must be path tip type~~ Not possible: don't know at build time where path ends
 
-- [x] broken gradle build?
-- [ ] add 'required' on req output map keys
-- [ ] tests & fix for pruner (with support for the above)
-- [x] report scalac bug for java.lang
-- [ ] move TypesIndex to another package to avoid scalac bug?
-- [x] transformers interface
-- [ ] operations -> transformers ?
-- [ ] better release cycle. mvn 3.5.0?
-- [ ] Malformed class file [ws/epigraph/projections/abs/AbstractTagProjectionEntry.class] found on compile classpath, which means that this class will cause a compile error if referenced in a source file. Gradle 5.0 will no longer allow malformed classes on compile classpath.
-  - https://github.com/gradle/gradle/issues/1849
-
-- Docs
-  - [x] service quick-start guide
-    - [x] simple read
-    - [x] search operation
-    - [x] create operation
-    - [x] update operation
-    - [x] delete operation
-    - [x] client
-  - Operations
-    - [ ] Overview
-    - [ ] IDL
-    - [ ] Routing
-    
 # Yegor dependencies
-- [ ] non-anonymous map/list types should have qualified type names
-  - [ ] enable `AbstractHttpClientTest.testComplexParams` once fixed
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
 - [ ] polymorphic builders or projections
   - [ ] update introspection service, see `TypeBuilder`, `DatumTypeBuilder`

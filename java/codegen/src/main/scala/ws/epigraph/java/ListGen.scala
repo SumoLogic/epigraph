@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CListType, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CListType, CTypeRef, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
@@ -26,13 +26,15 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
     with DatumTypeJavaGen {
 
   /** element value type */
-  private val ev = t.elementDataType
+  protected val ev: CDataType = t.elementDataType
 
   /** element type ref */
-  private val etr = ev.typeRef
+  protected val etr: CTypeRef = ev.typeRef
 
   /** element type */
-  private val et = etr.resolved
+  protected val et: etr.Type = etr.resolved
+
+  protected def genTypeClass:String
 
   override def generate: String = /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
@@ -110,29 +112,7 @@ ${t.meta match {
   /**
    * Class for `${t.name.name}` type.
    */
-  final class Type extends ws.epigraph.types.AnonListType.Static<
-      $ln.Imm,
-      $ln.Builder,
-      $ln.Value.Imm,
-      $ln.Value.Builder,
-      $ln.Data.Imm,
-      $ln.Data.Builder
-  > {
-
-$typeInstance\
-
-    private Type() {
-      super(
-          java.util.Arrays.asList(${parents(".Type.instance()")}),
-          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
-          ${dataTypeExpr(ev, t)},
-          $ln.Builder::new,
-          $ln.Value.Imm.Impl::new,
-          $ln.Data.Builder::new
-      );
-    }
-
-  }
+  $genTypeClass\
 
   /**
    * Builder for `${t.name.name}` datum.

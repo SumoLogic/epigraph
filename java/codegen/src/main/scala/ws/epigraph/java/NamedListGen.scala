@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,35 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CContext, CListTypeDef}
+import ws.epigraph.compiler.CListTypeDef
+import ws.epigraph.java.JavaGenNames.{lqn, qnameArgs}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
-class NamedListGen(from: CListTypeDef, ctx: GenContext) extends ListGen[CListTypeDef](from, ctx) with DatumTypeJavaGen
+class NamedListGen(from: CListTypeDef, ctx: GenContext) extends ListGen[CListTypeDef](from, ctx) with DatumTypeJavaGen {
+  override protected def genTypeClass: String = sn"""\
+  final class Type extends ws.epigraph.types.NamedListType.Static<
+      $ln.Imm,
+      $ln.Builder,
+      $ln.Value.Imm,
+      $ln.Value.Builder,
+      $ln.Data.Imm,
+      $ln.Data.Builder
+  > {
+
+$typeInstance\
+
+    private Type() {
+      super(
+          new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
+          java.util.Arrays.asList(${ parents(".Type.instance()") }),
+          ${ t.meta.map { mt => lqn(mt, t, _ + ".type") }.getOrElse("null") },
+          ${ dataTypeExpr(ev, t) },
+          $ln.Builder::new,
+          $ln.Value.Imm.Impl::new,
+          $ln.Data.Builder::new
+      );
+    }
+
+  }
+"""
+}

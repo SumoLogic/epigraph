@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CMapType, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CMapType, CTypeRef, CVarTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
@@ -27,19 +27,21 @@ abstract class MapGen[Type >: Null <: CMapType](from: Type, ctx: GenContext) ext
     with DatumTypeJavaGen {
 
   /** key type ref */
-  private val ktr = t.keyTypeRef
+  protected val ktr: CTypeRef = t.keyTypeRef
 
   /** key type */
-  private val kt = ktr.resolved
+  protected val kt: ktr.Type = ktr.resolved
 
   /** value data type */
-  private val vv = t.valueDataType
+  protected val vv: CDataType = t.valueDataType
 
   /** value type ref */
-  private val vtr = vv.typeRef
+  protected val vtr: CTypeRef = vv.typeRef
 
   /** value type */
-  private val vt = vtr.resolved
+  protected val vt: vtr.Type = vtr.resolved
+
+  protected def genTypeClass:String
 
   override def generate: String = /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
@@ -117,31 +119,7 @@ ${t.meta match {
   /**
    * Class for `${t.name.name}` type.
    */
-  final class Type extends ws.epigraph.types.AnonMapType.Static<
-      ${lqn(kt, t)}.Imm,
-      $ln.Imm,
-      $ln.Builder,
-      $ln.Value.Imm,
-      $ln.Value.Builder,
-      $ln.Data.Imm,
-      $ln.Data.Builder
-  > {
-
-$typeInstance\
-
-    private Type() {
-      super(
-          java.util.Arrays.asList(${parents(".Type.instance()")}),
-          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
-          ${lqn(kt, t)}.Type.instance(),
-          ${dataTypeExpr(vv, t)},
-          $ln.Builder::new,
-          $ln.Value.Imm.Impl::new,
-          $ln.Data.Builder::new
-      );
-    }
-
-  }
+   $genTypeClass\
 
   /**
    * Builder for `${t.name.name}` datum.

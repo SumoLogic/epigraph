@@ -28,13 +28,9 @@ public class Field implements FieldApi {
 
   public final @NotNull DataType dataType;
 
-  @Deprecated // use dataType().type()
-  public final @NotNull Type type;
-
   public Field(@NotNull String name, @NotNull DataType dataType) { // TODO capture overridden super-fields?
     this.name = name;
     this.dataType = dataType;
-    this.type = dataType.type;
   }
 
   @Override

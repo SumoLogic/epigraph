@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,36 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CAnonMapType, CContext}
+import ws.epigraph.compiler.CAnonMapType
+import ws.epigraph.java.JavaGenNames.lqn
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
-class AnonMapGen(from: CAnonMapType, ctx: GenContext) extends MapGen[CAnonMapType](from, ctx) with DatumTypeJavaGen
+class AnonMapGen(from: CAnonMapType, ctx: GenContext) extends MapGen[CAnonMapType](from, ctx) with DatumTypeJavaGen {
+  override protected def genTypeClass: String = sn"""\
+  final class Type extends ws.epigraph.types.AnonMapType.Static<
+      ${lqn(kt, t)}.Imm,
+      $ln.Imm,
+      $ln.Builder,
+      $ln.Value.Imm,
+      $ln.Value.Builder,
+      $ln.Data.Imm,
+      $ln.Data.Builder
+  > {
+
+$typeInstance\
+
+    private Type() {
+      super(
+          java.util.Arrays.asList(${parents(".Type.instance()")}),
+          ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
+          ${lqn(kt, t)}.Type.instance(),
+          ${dataTypeExpr(vv, t)},
+          $ln.Builder::new,
+          $ln.Value.Imm.Impl::new,
+          $ln.Data.Builder::new
+      );
+    }
+
+  }
+"""
+}

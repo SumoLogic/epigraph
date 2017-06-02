@@ -21,42 +21,55 @@ package ws.epigraph.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.data.ListDatum;
+import ws.epigraph.data.Datum;
+import ws.epigraph.data.MapDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class NamedListType extends ListTypeImpl {
+public abstract class NamedMapType extends MapTypeImpl {
 
-  NamedListType(
+  NamedMapType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
+      @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
-      @NotNull DataType elementDataType
-  ) { super(name, immediateSupertypes, elementDataType, declaredMetaType); }
+      @NotNull DatumType keyType,
+      @NotNull DataType valueType
+  ) {
+    super(
+        name,
+        immediateSupertypes,
+        keyType,
+        valueType,
+        declaredMetaType
+    );
+  }
 
   @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
 
 
-  public static final class Raw extends NamedListType implements ListType.Raw {
+  public static final class Raw extends NamedMapType implements MapType.Raw {
 
     public Raw(
         @NotNull QualifiedTypeName name,
-        @NotNull List<? extends ListType> immediateSupertypes,
+        @NotNull List<? extends MapType> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
-        @NotNull DataType elementDataType
-    ) { super(name, immediateSupertypes, declaredMetaType, elementDataType); }
+        @NotNull DatumType keyType,
+        @NotNull DataType valueType
+    ) { super(name, immediateSupertypes, declaredMetaType, keyType, valueType); }
 
     private static @Nullable Tag defaultTag(Type type, @Nullable Tag tag) {
       return tag == null ? null : type.tagsMap().get(tag.name);
     }
 
     @Override
-    public @NotNull ListDatum.Builder createBuilder() { return new ListDatum.Builder.Raw(this); }
+    public @NotNull MapDatum.Builder createBuilder() { return new MapDatum.Builder.Raw(this); }
 
     @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
@@ -70,16 +83,17 @@ public abstract class NamedListType extends ListTypeImpl {
 
 
   public abstract static class Static<
-      MyImmDatum extends ListDatum.Imm.Static,
-      MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      K extends Datum.Imm.Static,
+      MyImmDatum extends MapDatum.Imm.Static,
+      MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends NamedListType
-      implements ListType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      > extends NamedMapType
+      implements MapType.Static<K, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
 
-    private final @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
+    private final @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
     private final @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor;
 
@@ -87,23 +101,23 @@ public abstract class NamedListType extends ListTypeImpl {
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends ListType.Static
-            <
-                ?,// super MyImmDatum,
-                ?,// extends ListDatum.Mut.Static<? super MyImmDatum>,
-                ?,// super MyImmVal,
-                ?,// extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
-                ?,// super MyImmData,
-                ? // extends Data.Mut.Static<? super MyImmData>
-                >
-            > immediateSupertypes,
+        @NotNull List<@NotNull ? extends MapType.Static<
+            K,
+            ?,// super MyImmDatum,
+            ?,// extends MapDatum.Mut.Static<? super MyImmDatum>,
+            ?,// super MyImmVal,
+            ?,// extends Val.Mut.Static<? super MyImmVal, ? extends MapDatum.Mut.Static<? super MyImmDatum>>,
+            ?,// super MyImmData,
+            ? // extends Data.Mut.Static<? super MyImmData>
+            >> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
-        @NotNull DataType elementDataType,
-        @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
+        @NotNull DatumType/*.Static<K, ?, ?, ?, ?, ?>*/ keyType,
+        @NotNull DataType valueType,
+        @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
-      super(name, immediateSupertypes, declaredMetaType, elementDataType);
+      super(name, immediateSupertypes, declaredMetaType, keyType, valueType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
@@ -111,7 +125,7 @@ public abstract class NamedListType extends ListTypeImpl {
 
     @Override
     public final @NotNull MyDatumBuilder createBuilder() {
-      return datumBuilderConstructor.apply(new ListDatum.Builder.Raw(this));
+      return datumBuilderConstructor.apply(new MapDatum.Builder.Raw(this));
     }
 
     @Override

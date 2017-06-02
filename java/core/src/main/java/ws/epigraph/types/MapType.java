@@ -55,5 +55,5 @@ public interface MapType extends DatumType, MapTypeApi {
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
       MyImmData extends Data.Imm.Static,
       MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
+      > extends MapType, DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
 }

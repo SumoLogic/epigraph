@@ -94,11 +94,12 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
     // TODO use asserts?
     if (knownField == null) throw new IllegalArgumentException("Unknown field '" + field.name + "'");
     // FIXME check vs known's overridden fields instead?
-    if (!field.type.isAssignableFrom(knownField.type)) throw new IllegalArgumentException(String.format(
+    if (!field.dataType().type().isAssignableFrom(knownField.dataType().type()))
+      throw new IllegalArgumentException(String.format(
         "Incompatible type for field '%s': expected '%s', actual '%s'",
         field.name,
-        field.type.name(),
-        knownField.type.name()
+        field.dataType().type().name(),
+        knownField.dataType().type().name()
     ));
     return field;
   }
@@ -108,11 +109,12 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
     // TODO use asserts?
     if (knownField == null) throw new IllegalArgumentException("Unknown field '" + field.name + "'");
     // FIXME check vs known's overridden fields instead?
-    if (!knownField.type.isAssignableFrom(field.type)) throw new IllegalArgumentException(String.format(
+    if (!knownField.dataType().type().isAssignableFrom(field.dataType().type()))
+      throw new IllegalArgumentException(String.format(
         "Incompatible type for field '%s': expected '%s', actual '%s'",
         field.name,
-        knownField.type.name(),
-        field.type.name()
+        knownField.dataType().type().name(),
+        field.dataType().type().name()
     ));
     return field;
   }

@@ -47,6 +47,6 @@ public interface ListType extends DatumType, ListTypeApi {
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
       MyImmData extends Data.Imm.Static,
       MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
+      > extends ListType, DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
 
 }
