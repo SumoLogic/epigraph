@@ -16,8 +16,13 @@
 
 plugins {
   id 'ws.epigraph' version '0.0.2'
+  id 'ws.epigraph.java' version '0.0.2'
 }
 
 dependencies {
-  compile project(':epigraph-builtin-types-schema')
+  epigraph project(':epigraph-builtin-types-schema')
+
+  compile project(':epigraph-java-core')
+
+  testCompile 'org.slf4j:slf4j-nop'
 }

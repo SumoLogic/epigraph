@@ -64,6 +64,7 @@
 
 # Gradle plugin
 - [ ] use slf4j for logging
+- [ ] allow to combine schema and java in one module. Make `java/codegen-test` work
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)

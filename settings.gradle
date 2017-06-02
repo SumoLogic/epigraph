@@ -44,6 +44,7 @@ Map<String, String> modules = [
 
     'compiler'                            : 'epigraph-compiler',
     'java/codegen'                        : 'epigraph-java-codegen',
+//    'java/codegen-test'                   : 'epigraph-java-codegen-test', // todo make it work
     'java/core'                           : 'epigraph-java-core',
     'java/data-processing'                : 'epigraph-java-data-processing',
     'java/federator'                      : 'epigraph-java-federator',

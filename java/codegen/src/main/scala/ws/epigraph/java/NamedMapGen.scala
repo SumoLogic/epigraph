@@ -39,7 +39,7 @@ $typeInstance\
     private Type() {
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${parents(".Type.instance()")}),
+          java.util.Arrays.<ws.epigraph.types.MapType.Static<${lqn(kt, t)}.Imm, ?, ?, ?, ?, ?, ?>>asList(${parents(".Type.instance()")}),
           ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           ${lqn(kt, t)}.Type.instance(),
           ${dataTypeExpr(vv, t)},
