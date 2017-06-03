@@ -34,10 +34,7 @@ import ws.epigraph.projections.req.output.ReqOutputModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
 import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Field;
-import ws.epigraph.types.Tag;
-import ws.epigraph.types.TypeKind;
+import ws.epigraph.types.*;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.ArrayList;
@@ -56,7 +53,7 @@ public class ReqOutputRequiredDataPruner {
 
   private final DataTraversalContext context = new DataTraversalContext();
 
-  public @Nullable DataPruningResult pruneData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
+  public @NotNull DataPruningResult pruneData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
 
     projection = projection.normalizedForType(data.type());
 
@@ -107,7 +104,7 @@ public class ReqOutputRequiredDataPruner {
         if (val == null) {
           return new Fail(operationError(String.format("Required %s is missing", name)));
         } else {
-          final ErrorValue error = val.getError();
+          ErrorValue error = val.getError();
           if (error == null) {
             if (val.getDatum() == null)
               return new RemoveData(error(String.format("Required %s is null", name)));
@@ -119,8 +116,21 @@ public class ReqOutputRequiredDataPruner {
                 error.message()
             )));
         }
-      }
+      } else if (data.type().kind() != TypeKind.UNION && replacements.containsKey(tagName)) {
+        // if (single) tag in a self-var must be replaced by an error: kill the whole data
+        assert val != null;
+        ErrorValue error = val.getError();
+        if (error == null) {
+          if (val.getDatum() == null)
+            return new RemoveData(error("Required data is null"));
+        } else
+          return new RemoveData(error(String.format(
+              "Required data is a [%d] error: %s",
+              error.statusCode(),
+              error.message()
+          )));
 
+      }
     }
 
     if (replacements.isEmpty())
@@ -137,7 +147,7 @@ public class ReqOutputRequiredDataPruner {
     }
   }
 
-  private @NotNull DatumPruningResult pruneDatum(
+  public @NotNull DatumPruningResult pruneDatum(
       @NotNull Datum datum,
       @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
 
@@ -246,13 +256,12 @@ public class ReqOutputRequiredDataPruner {
       if (prunedData instanceof RemoveData) {
         RemoveData removeData = (RemoveData) prunedData;
         if (keysRequired)
-//          return new UseNull(removeData.reason);
           return new UseError(
               removeData.reason,
               new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
           );
         else
-          replacements.put(key, null);
+          replacements.put(key, makeNull(datum.type().valueType().type()));
       } else if (prunedData instanceof ReplaceData) {
         ReplaceData replaceData = (ReplaceData) prunedData;
         replacements.put(key, replaceData.newData);
@@ -304,7 +313,7 @@ public class ReqOutputRequiredDataPruner {
           );
 
       if (prunedData instanceof RemoveData) {
-        replacements.put(index, null);
+        replacements.put(index, makeNull(datum.type().elementType().type()));
       } else if (prunedData instanceof ReplaceData) {
         ReplaceData replaceData = (ReplaceData) prunedData;
         replacements.put(index, replaceData.newData);
@@ -329,6 +338,14 @@ public class ReqOutputRequiredDataPruner {
       return new ReplaceDatum(builder);
     }
 
+  }
+
+  private @NotNull Data makeNull(@NotNull Type type) {
+    if (type instanceof DatumType) {
+      DatumType datumType = (DatumType) type;
+      return datumType.createDataBuilder()._raw().setValue(datumType.self(), null);
+    } else
+      return type.createDataBuilder();
   }
 
   private DatumPruningResult checkRequiredData(
@@ -386,6 +403,13 @@ public class ReqOutputRequiredDataPruner {
     final @NotNull Reason reason;
 
     RemoveData(final @NotNull Reason reason) {this.reason = reason;}
+
+    @Override
+    public String toString() {
+      return "RemoveData{" +
+             "reason=" + reason +
+             '}';
+    }
   }
 
   public interface DatumPruningResult {}
@@ -410,6 +434,14 @@ public class ReqOutputRequiredDataPruner {
       this.reason = reason;
       this.error = error;
     }
+
+    @Override
+    public String toString() {
+      return "UseError{" +
+             "reason=" + reason +
+             ", error=" + error +
+             '}';
+    }
   }
 
 //  public static class UseNull implements DatumPruningResult {
@@ -422,6 +454,13 @@ public class ReqOutputRequiredDataPruner {
     public final @NotNull Reason reason;
 
     Fail(final @NotNull Reason reason) {this.reason = reason;}
+
+    @Override
+    public String toString() {
+      return "Fail{" +
+             "reason=" + reason +
+             '}';
+    }
   }
 
   public static class Reason {
@@ -440,7 +479,9 @@ public class ReqOutputRequiredDataPruner {
 
     @Override
     public @NotNull String toString() {
-      String location = this.location.stream().map(DataTraversalContext.StackItem::toString).collect(Collectors.joining());
+      String location =
+          this.location.stream().map(DataTraversalContext.StackItem::toString).collect(Collectors.joining());
+
       return location.trim().isEmpty() ?
              message :
              location + " : " +

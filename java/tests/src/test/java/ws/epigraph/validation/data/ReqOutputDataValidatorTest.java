@@ -18,6 +18,7 @@ package ws.epigraph.validation.data;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.EpigraphTestUtil;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.ReqOutputDataValidator;
@@ -83,10 +84,10 @@ public class ReqOutputDataValidatorTest {
       String... expectedErrorMessages) {
 
     final DataType dataType = (DataType) type.dataType();
-    final OpOutputVarProjection varProjection = DataValidatorTestUtil.parseOpOutputVarProjection(dataType, op, resolver);
+    final OpOutputVarProjection varProjection = EpigraphTestUtil.parseOpOutputVarProjection(dataType, op, resolver);
     final ReqOutputVarProjection reqProjection =
-        DataValidatorTestUtil.parseReqOutputVarProjection(dataType, varProjection, req, resolver).projection();
-    final Data d = DataValidatorTestUtil.makeData(type, data, resolver);
+        EpigraphTestUtil.parseReqOutputVarProjection(dataType, varProjection, req, resolver).projection();
+    final Data d = EpigraphTestUtil.makeData(type, data, resolver);
 
     final ReqOutputDataValidator validator = new ReqOutputDataValidator();
     validator.validateData(d, reqProjection);

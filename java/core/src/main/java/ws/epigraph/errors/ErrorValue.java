@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,4 +58,12 @@ public class ErrorValue { // TODO rename to DatumError (to avoid clash with java
 
   public @Nullable Exception cause() { return cause; }
 
+  @Override
+  public String toString() {
+    return "ErrorValue{" +
+           "statusCode=" + statusCode +
+           ", message='" + message + '\'' +
+           ", cause=" + cause +
+           '}';
+  }
 }

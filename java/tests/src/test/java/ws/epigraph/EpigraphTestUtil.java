@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package ws.epigraph.validation.data;
+package ws.epigraph;
 
+import junit.framework.TestCase;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
+import ws.epigraph.data.Datum;
 import ws.epigraph.gdata.GData;
 import ws.epigraph.gdata.GDataToData;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
@@ -44,6 +48,9 @@ import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
 import static junit.framework.TestCase.fail;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -51,8 +58,8 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class DataValidatorTestUtil {
-  private DataValidatorTestUtil() {}
+public final class EpigraphTestUtil {
+  private EpigraphTestUtil() {}
 
   public static @NotNull Data makeData(@NotNull Type type, @NotNull String s, @NotNull TypesResolver resolver) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
@@ -77,6 +84,7 @@ public final class DataValidatorTestUtil {
       return null;
     }
   }
+
   public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
@@ -157,5 +165,61 @@ public final class DataValidatorTestUtil {
 
       return res;
     });
+  }
+
+  public static void checkEquals(@NotNull Data expected, @NotNull Data actual) {
+    if (!expected.equals(actual)) {
+      String expectedStr = printData(expected);
+      String actualStr = printData(actual);
+
+      if (expected.equals(actual))
+        fail("Broken equals() implementation!");
+      else
+        TestCase.assertEquals(expectedStr, actualStr); // will show nice diff in idea
+    }
+  }
+
+  public static void checkEquals(@NotNull Datum expected, @NotNull Datum actual) {
+    if (!expected.equals(actual)) {
+      String expectedStr = printDatum(expected);
+      String actualStr = printDatum(actual);
+
+      if (expected.equals(actual))
+        fail("Broken equals() implementation!");
+      else
+        TestCase.assertEquals(expectedStr, actualStr); // will show nice diff in idea
+    }
+  }
+
+  public static String printData(final Data data) {
+    String dataToString;
+    try {
+      StringWriter sw = new StringWriter();
+      DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
+      printer.print(data);
+      dataToString = sw.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.toString());
+      dataToString = null;
+    }
+    return dataToString;
+  }
+
+  @Contract("null -> !null")
+  public static String printDatum(final Datum datum) {
+    if (datum == null) return "null";
+    String dataToString;
+    try {
+      StringWriter sw = new StringWriter();
+      DataPrinter<IOException> printer = DataPrinter.toString(120, false, sw);
+      printer.print(datum.type(), datum);
+      dataToString = sw.toString();
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail(e.toString());
+      dataToString = null;
+    }
+    return dataToString;
   }
 }
