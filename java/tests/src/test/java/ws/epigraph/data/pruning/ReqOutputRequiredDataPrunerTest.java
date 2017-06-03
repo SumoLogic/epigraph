@@ -16,7 +16,6 @@
 
 package ws.epigraph.data.pruning;
 
-import org.intellij.lang.annotations.RegExp;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.EpigraphTestUtil;
@@ -27,11 +26,12 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.tests.*;
+import ws.epigraph.tests.Person;
+import ws.epigraph.tests.PersonId;
+import ws.epigraph.tests.PersonRecord;
+import ws.epigraph.tests.String_PersonRecord_Map;
 import ws.epigraph.types.DataType;
 import ws.epigraph.util.HttpStatusCode;
-
-import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -55,7 +55,7 @@ public class ReqOutputRequiredDataPrunerTest {
   public void testRequiredFieldError() {
     assertUseError(
         prune(PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")), "(id)", "(+id)"),
-        ".*/id : Required data is.*"
+        "/id : Required data is"
     );
   }
 
@@ -63,7 +63,7 @@ public class ReqOutputRequiredDataPrunerTest {
   public void testRequiredFieldMissing() {
     assertFail(
         prune(PersonRecord.create(), "(id)", "(+id)"),
-        ".*Required field 'id' is missing.*"
+        "Required field 'id' is missing"
     );
   }
 
@@ -77,7 +77,7 @@ public class ReqOutputRequiredDataPrunerTest {
             "(id)",
             "(+id)"
         ),
-        ".*/id : Required data is a \\[111] error: xxx.*"
+        "/id : Required data is a [111] error: xxx"
     );
   }
 
@@ -107,7 +107,7 @@ public class ReqOutputRequiredDataPrunerTest {
             ":record(+id)"
         ),
 
-        ".*:record : Required field 'id' is missing.*"
+        ":record : Required field 'id' is missing"
     );
   }
 
@@ -120,16 +120,15 @@ public class ReqOutputRequiredDataPrunerTest {
             ":+record(+id)"
         ),
 
-        ".*record/id : Required data is a \\[111] error: xxx.*"
+        "record/id : Required data is a [111] error: xxx"
     );
   }
 
-  //@Test
+  @Test
   public void testRequiredFieldInsideMapWithOptKeysIsError() {
     checkEquals(
         String_PersonRecord_Map.create()
             .put(epigraph.String.create("1"), PersonRecord.create().setId(PersonId.create(1)))
-            .putError(epigraph.String.create("2"), new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, "['2']"))
             .put(epigraph.String.create("3"), null),
 
         prune(
@@ -144,34 +143,51 @@ public class ReqOutputRequiredDataPrunerTest {
     );
   }
 
-  private void assertFail(@NotNull ReqOutputRequiredDataPruner.DataPruningResult pruningResult, @RegExp String rg) {
+  @Test
+  public void testRequiredFieldInsideMapWithReqKeysIsError() {
+    assertUseError(
+        prune(
+            String_PersonRecord_Map.create()
+                .put(epigraph.String.create("1"), PersonRecord.create().setId(PersonId.create(1)))
+                .put(epigraph.String.create("2"), PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")))
+                .put(epigraph.String.create("3"), null),
+
+            "[](id)",
+            "+[1,2,3](+id)"
+        ),
+
+        "['2']/id : Required data is a [111] error: xxx"
+    );
+  }
+
+  // todo test list, esp. elements replaced with nulls. Update wiki page if needed
+
+  private void assertFail(@NotNull ReqOutputRequiredDataPruner.DataPruningResult pruningResult, String s) {
     assertTrue(pruningResult.getClass().getName(), pruningResult instanceof ReqOutputRequiredDataPruner.Fail);
     ReqOutputRequiredDataPruner.Fail ue = (ReqOutputRequiredDataPruner.Fail) pruningResult;
 
-    assertTrue(ue.toString(), Pattern.compile(rg).matcher(ue.toString()).matches());
+    assertTrue(ue.toString(), ue.toString().contains(s));
   }
 
-  private void assertRemove(@NotNull ReqOutputRequiredDataPruner.DataPruningResult pruningResult, @RegExp String rg) {
+  private void assertRemove(@NotNull ReqOutputRequiredDataPruner.DataPruningResult pruningResult, String s) {
     assertTrue(pruningResult.getClass().getName(), pruningResult instanceof ReqOutputRequiredDataPruner.RemoveData);
     ReqOutputRequiredDataPruner.RemoveData ue = (ReqOutputRequiredDataPruner.RemoveData) pruningResult;
 
-    assertTrue(ue.toString(), Pattern.compile(rg).matcher(ue.toString()).matches());
+    assertTrue(ue.toString(), ue.toString().contains(s));
   }
 
-  private void assertUseError(
-      @NotNull ReqOutputRequiredDataPruner.DatumPruningResult pruningResult,
-      @RegExp String rg) {
+  private void assertUseError(@NotNull ReqOutputRequiredDataPruner.DatumPruningResult pruningResult, String s) {
     assertTrue(pruningResult.getClass().getName(), pruningResult instanceof ReqOutputRequiredDataPruner.UseError);
     ReqOutputRequiredDataPruner.UseError ue = (ReqOutputRequiredDataPruner.UseError) pruningResult;
 
-    assertTrue(ue.toString(), Pattern.compile(rg).matcher(ue.toString()).matches());
+    assertTrue(ue.toString(), ue.toString().contains(s));
   }
 
-  private void assertFail(@NotNull ReqOutputRequiredDataPruner.DatumPruningResult pruningResult, @RegExp String rg) {
+  private void assertFail(@NotNull ReqOutputRequiredDataPruner.DatumPruningResult pruningResult, String s) {
     assertTrue(pruningResult.getClass().getName(), pruningResult instanceof ReqOutputRequiredDataPruner.Fail);
     ReqOutputRequiredDataPruner.Fail ue = (ReqOutputRequiredDataPruner.Fail) pruningResult;
 
-    assertTrue(ue.toString(), Pattern.compile(rg).matcher(ue.toString()).matches());
+    assertTrue(ue.toString(), ue.toString().contains(s));
   }
 
   private void checkEquals(

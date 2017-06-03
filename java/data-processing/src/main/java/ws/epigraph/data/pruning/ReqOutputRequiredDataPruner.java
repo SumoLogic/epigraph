@@ -18,30 +18,17 @@ package ws.epigraph.data.pruning;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.Data;
-import ws.epigraph.data.Datum;
-import ws.epigraph.data.ListDatum;
-import ws.epigraph.data.MapDatum;
-import ws.epigraph.data.RecordDatum;
-import ws.epigraph.data.Val;
+import ws.epigraph.data.*;
 import ws.epigraph.data.traversal.DataTraversalContext;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputListModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputMapModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.types.*;
+import ws.epigraph.projections.req.output.*;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.Field;
+import ws.epigraph.types.Tag;
+import ws.epigraph.types.TypeKind;
 import ws.epigraph.util.HttpStatusCode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -49,8 +36,6 @@ import java.util.stream.Collectors;
  * @see <a href="https://github.com/SumoLogic/epigraph/wiki/required#request-projections">required flag for request projections</a>
  */
 public class ReqOutputRequiredDataPruner {
-  // todo more tests
-
   private final DataTraversalContext context = new DataTraversalContext();
 
   public @NotNull DataPruningResult pruneData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
@@ -89,8 +74,6 @@ public class ReqOutputRequiredDataPruner {
             if (datumPruningResult instanceof UseError) {
               UseError useError = (UseError) datumPruningResult;
               replacements.put(tagName, tag.type.createValue(useError.error));
-//            } else if (datumPruningResult instanceof UseNull) {
-//              replacements.put(tagName, tag.type.createValue(null));
             } // else keep
           }
         }
@@ -203,7 +186,6 @@ public class ReqOutputRequiredDataPruner {
                 removeData.reason,
                 new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
             );
-//            return new UseNull(removeData.reason);
           else
             replacements.put(fieldName, null);
         } // else keep
@@ -242,32 +224,40 @@ public class ReqOutputRequiredDataPruner {
     final boolean keysRequired = projection.keysRequired();
     final Map<Datum.Imm, Data> replacements = new HashMap<>();
 
-    for (final Map.Entry<Datum.Imm, ? extends Data> entry : datum._raw().elements().entrySet()) {
-      final Datum.Imm key = entry.getKey();
-      Data data = entry.getValue();
 
-      final Data data0 = data;
-      final DataPruningResult prunedData =
-          context.withStackItem(
-              new DataTraversalContext.MapKeyStackItem(key),
-              () -> pruneData(data0, itemsProjection)
-          );
+    List<ReqOutputKeyProjection> projectionKeys = projection.keys();
+    Collection<Datum.Imm> keys =
+        projectionKeys == null
+        ? datum._raw().elements().keySet()
+        : projectionKeys.stream().map(pk -> pk.value().toImmutable()).collect(Collectors.toList());
 
-      if (prunedData instanceof RemoveData) {
-        RemoveData removeData = (RemoveData) prunedData;
-        if (keysRequired)
-          return new UseError(
-              removeData.reason,
-              new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
-          );
-        else
-          replacements.put(key, makeNull(datum.type().valueType().type()));
-      } else if (prunedData instanceof ReplaceData) {
-        ReplaceData replaceData = (ReplaceData) prunedData;
-        replacements.put(key, replaceData.newData);
-      } else if (prunedData instanceof Fail)
-        return (Fail) prunedData;
-      // else keep
+    for (Datum.Imm key: keys) {
+      @Nullable Data data = datum._raw().elements().get(key);
+
+      if (data != null) {
+        final Data data0 = data;
+        final DataPruningResult prunedData =
+            context.withStackItem(
+                new DataTraversalContext.MapKeyStackItem(key),
+                () -> pruneData(data0, itemsProjection)
+            );
+
+        if (prunedData instanceof RemoveData) {
+          RemoveData removeData = (RemoveData) prunedData;
+          if (keysRequired)
+            return new UseError(
+                removeData.reason,
+                new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, removeData.reason.toString())
+            );
+          else
+            replacements.put(key, null);
+        } else if (prunedData instanceof ReplaceData) {
+          ReplaceData replaceData = (ReplaceData) prunedData;
+          replacements.put(key, replaceData.newData);
+        } else if (prunedData instanceof Fail)
+          return (Fail) prunedData;
+        // else keep
+      }
 
       if (replacements.containsKey(key))
         data = replacements.get(key);
@@ -287,7 +277,8 @@ public class ReqOutputRequiredDataPruner {
       for (final Map.Entry<Datum.Imm, ? extends Data> entry : datum._raw().elements().entrySet()) {
         final Datum.Imm key = entry.getKey();
         Data data = replacements.containsKey(key) ? replacements.get(key) : entry.getValue();
-        builder._raw().elements().put(key, data);
+        if (data != null)
+          builder._raw().elements().put(key, data);
       }
       return new ReplaceDatum(builder);
     }
@@ -313,7 +304,7 @@ public class ReqOutputRequiredDataPruner {
           );
 
       if (prunedData instanceof RemoveData) {
-        replacements.put(index, makeNull(datum.type().elementType().type()));
+        replacements.put(index, null);
       } else if (prunedData instanceof ReplaceData) {
         ReplaceData replaceData = (ReplaceData) prunedData;
         replacements.put(index, replaceData.newData);
@@ -340,19 +331,7 @@ public class ReqOutputRequiredDataPruner {
 
   }
 
-  private @NotNull Data makeNull(@NotNull Type type) {
-    if (type instanceof DatumType) {
-      DatumType datumType = (DatumType) type;
-      return datumType.createDataBuilder()._raw().setValue(datumType.self(), null);
-    } else
-      return type.createDataBuilder();
-  }
-
-  private DatumPruningResult checkRequiredData(
-      @Nullable Data data,
-      @NotNull String name,
-      @NotNull Object id) {
-
+  private @NotNull DatumPruningResult checkRequiredData(@Nullable Data data, @NotNull String name, @NotNull Object id) {
     if (data == null) {
       return new Fail(operationError(String.format("Required %s %s is missing", name, id)));
     } else if (data.type().kind() != TypeKind.UNION) {
@@ -370,7 +349,6 @@ public class ReqOutputRequiredDataPruner {
                 new ErrorValue(HttpStatusCode.PRECONDITION_FAILED, reason.toString())
             );
           }
-//            return new UseNull(error(String.format("Required %s %s is null", name, id)));
         } else {
           Reason reason = error(String.format("Required %s %s is an error: '%s'", name, id, error.message()));
           return new UseError(reason, new ErrorValue(error.statusCode(), reason.toString()));
@@ -405,11 +383,7 @@ public class ReqOutputRequiredDataPruner {
     RemoveData(final @NotNull Reason reason) {this.reason = reason;}
 
     @Override
-    public String toString() {
-      return "RemoveData{" +
-             "reason=" + reason +
-             '}';
-    }
+    public String toString() { return String.format("RemoveData{reason=%s}", reason); }
   }
 
   public interface DatumPruningResult {}
@@ -428,27 +402,14 @@ public class ReqOutputRequiredDataPruner {
     final @NotNull Reason reason;
     final @NotNull ErrorValue error;
 
-    UseError(
-        final @NotNull Reason reason,
-        final @NotNull ErrorValue error) {
+    UseError(@NotNull Reason reason, @NotNull ErrorValue error) {
       this.reason = reason;
       this.error = error;
     }
 
     @Override
-    public String toString() {
-      return "UseError{" +
-             "reason=" + reason +
-             ", error=" + error +
-             '}';
-    }
+    public String toString() { return String.format("UseError{reason=%s | error=%s}", reason, error); }
   }
-
-//  public static class UseNull implements DatumPruningResult {
-//    final @NotNull Reason reason;
-//
-//    UseNull(final @NotNull Reason reason) {this.reason = reason;}
-//  }
 
   public static class Fail implements DatumPruningResult, DataPruningResult {
     public final @NotNull Reason reason;
@@ -456,11 +417,7 @@ public class ReqOutputRequiredDataPruner {
     Fail(final @NotNull Reason reason) {this.reason = reason;}
 
     @Override
-    public String toString() {
-      return "Fail{" +
-             "reason=" + reason +
-             '}';
-    }
+    public String toString() { return String.format("Fail{reason=%s}", reason); }
   }
 
   public static class Reason {
@@ -469,7 +426,7 @@ public class ReqOutputRequiredDataPruner {
     public final @NotNull List<DataTraversalContext.StackItem> location;
 
     Reason(
-        final boolean isOperationError,
+        boolean isOperationError,
         @NotNull String message,
         @NotNull List<DataTraversalContext.StackItem> location) {
       this.isOperationError = isOperationError;
@@ -484,8 +441,7 @@ public class ReqOutputRequiredDataPruner {
 
       return location.trim().isEmpty() ?
              message :
-             location + " : " +
-             message;
+             location + " : " + message;
     }
   }
 }
