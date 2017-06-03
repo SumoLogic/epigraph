@@ -174,7 +174,27 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
           userRecordProjection = mapProjection.itemsProjection().normalizedFor_User().record();
       if (userRecordProjection != null) userRecordProjection.worstEnemy();
 
-      final PersonMap.Builder users = storage.users();
+      final PersonMap.Builder users;
+      if (keys == null)
+        users = storage.users();
+      else {
+        users = PersonMap.create();
+        for (final OutputPersonMapKeyProjection key : keys) {
+          PersonId.Imm keyValue = key.value();
+
+          @Nullable Person person = storage.users().datas().get(keyValue);
+          if (person == null) {
+            ErrorValue notFound = new ErrorValue(HttpStatusCode.NOT_FOUND, "User '" + keyValue + "' not found");
+            users.put$(keyValue, Person.create() // todo there must be a facility to do this
+                .setId_Error(notFound)
+                .setRecord_Error(notFound)
+            );
+          } else
+            users.put$(keyValue, person);
+
+        }
+      }
+
       if (metaProjection != null) {
         final PaginationInfo.Builder paginationInfoBuilder = PaginationInfo.type.createBuilder();
         if (start != null && metaProjection.start() != null)

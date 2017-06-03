@@ -32,6 +32,7 @@
   - See also: https://github.com/FasterXML/jackson-core/issues/57
 - [ ] remove `requestParams` from requests/URLs?
 - [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
+- [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
 
 # Type system
 - [ ] Enums
@@ -96,8 +97,6 @@
 # Operations
 
 # Service
-- [ ] Add (limited?) support for passing operation name via query parameter
-- [x] Add Jetty support
 
 # Build
 - [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)

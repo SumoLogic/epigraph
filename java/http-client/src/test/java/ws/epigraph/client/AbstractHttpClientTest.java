@@ -165,7 +165,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "[" + key + "](:record(firstName))",
-        "( )" // backend doesn't return 404s for missing users, we get nulls back instead
+        "( " + key + ": < record: ERROR(404, 'User '" + key + "' not found') > )"
     );
 
   }

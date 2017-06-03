@@ -80,7 +80,7 @@ public abstract class AbstractHttpServerTest {
 
   @Test
   public void testSimpleNotFound() throws IOException {
-    get("/users/123:id", 404, "{'ERROR':404,'message':'key ''123'' not found'}");
+    get("/users/123:id", 404, "{'ERROR':404,'message':'User ''123'' not found'}");
   }
 
   @Test

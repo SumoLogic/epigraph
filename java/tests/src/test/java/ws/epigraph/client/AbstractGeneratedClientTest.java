@@ -36,6 +36,7 @@ import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.*;
 import ws.epigraph.tests.resources.users.client.UsersClient;
+import ws.epigraph.util.HttpStatusCode;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -129,7 +130,11 @@ public abstract class AbstractGeneratedClientTest {
     client.delete("[" + id.getVal() + "]", "").get();
 
     assertEquals(
-        PersonMap.create(), // backend doesn't return 404s for missing users, we get nulls back instead
+        PersonMap.create()
+            .put$(
+                id,
+                Person.create().setRecord_Error(new ErrorValue(HttpStatusCode.NOT_FOUND, "User '" + id + "' not found"))
+            ),
         client.read("[" + id.getVal() + "](:record(firstName))")
     );
   }
