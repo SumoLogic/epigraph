@@ -45,6 +45,7 @@ public class ReqOutputMapModelProjection
     > {
 
   private /*final*/ @Nullable List<ReqOutputKeyProjection> keys;
+  private boolean keysRequired;
   private /*final @NotNull*/ @Nullable ReqOutputVarProjection valuesProjection;
 
   public ReqOutputMapModelProjection(
@@ -54,11 +55,13 @@ public class ReqOutputMapModelProjection
       @NotNull Annotations annotations,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
+      boolean keysRequired,
       @NotNull ReqOutputVarProjection valuesProjection,
       @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, required, params, annotations, metaProjection, tails, location);
     this.keys = keys;
+    this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;
   }
 
@@ -79,7 +82,7 @@ public class ReqOutputMapModelProjection
   }
 
   public boolean keysRequired() {
-    return false; // todo
+    return keysRequired;
   }
 
   @Override
@@ -121,6 +124,7 @@ public class ReqOutputMapModelProjection
         mergedAnnotations,
         mergedMetaProjection,
         mergedKeys,
+        modelProjections.stream().anyMatch(ReqOutputMapModelProjection::keysRequired),
         mergedItemsVarType,
         mergedTails,
         TextLocation.UNKNOWN
@@ -131,6 +135,7 @@ public class ReqOutputMapModelProjection
   protected @NotNull ReqOutputMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
       final @NotNull ReqOutputMapModelProjection n) {
+
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new ReqOutputMapModelProjection(
         n.type(),
@@ -139,6 +144,7 @@ public class ReqOutputMapModelProjection
         n.annotations(),
         n.metaProjection(),
         n.keys(),
+        n.keysRequired(),
         n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN
@@ -149,6 +155,7 @@ public class ReqOutputMapModelProjection
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputMapModelProjection value) {
     super.resolve(name, value);
     keys = value.keys();
+    keysRequired = value.keysRequired();
     valuesProjection = value.itemsProjection();
   }
 
@@ -159,9 +166,10 @@ public class ReqOutputMapModelProjection
     if (!super.equals(o)) return false;
     ReqOutputMapModelProjection that = (ReqOutputMapModelProjection) o;
     return Objects.equals(keys, that.keys) &&
+           keysRequired == that.keysRequired &&
            Objects.equals(valuesProjection, that.valuesProjection);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), keys, valuesProjection); }
+  public int hashCode() { return Objects.hash(super.hashCode(), keys, keysRequired, valuesProjection); }
 }

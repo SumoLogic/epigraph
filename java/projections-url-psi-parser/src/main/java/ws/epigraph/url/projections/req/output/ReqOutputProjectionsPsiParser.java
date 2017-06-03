@@ -1284,6 +1284,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             null,
             null,
+            false,
             valueVarProjection,
             null,
             location
@@ -1664,6 +1665,7 @@ public final class ReqOutputProjectionsPsiParser {
             annotations,
             metaProjection,
             Collections.singletonList(keyProjection),
+            true,
             valueProjection,
             tails,
             EpigraphPsiUtil.getLocation(psi)
@@ -1762,6 +1764,7 @@ public final class ReqOutputProjectionsPsiParser {
         annotations,
         metaProjection,
         keyProjections,
+        psi.getPlus() != null,
         valueProjection,
         tails,
         EpigraphPsiUtil.getLocation(psi)

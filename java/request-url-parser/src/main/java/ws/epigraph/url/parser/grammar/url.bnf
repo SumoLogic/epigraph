@@ -247,7 +247,7 @@ reqOutputComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqOutpu
 reqOutputComaListModelProjection ::= '*' ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )? { pin=1 }
 
 // req output map
-reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
+reqOutputComaMapModelProjection ::= '+'? reqOutputComaKeysProjection ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
 reqOutputComaKeysProjection ::= '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 

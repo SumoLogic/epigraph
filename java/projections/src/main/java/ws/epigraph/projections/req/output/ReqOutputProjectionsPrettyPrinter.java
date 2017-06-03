@@ -106,7 +106,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       l.end();
     } else {
       l.beginIInd();
-//      if (mp.keysRequired()) l.print("+");
+      if (mp.keysRequired()) l.print("+");
       l.print("[");
 
       if (keys == null) {
