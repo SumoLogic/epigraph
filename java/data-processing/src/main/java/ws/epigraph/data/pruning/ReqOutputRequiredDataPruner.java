@@ -231,7 +231,7 @@ public class ReqOutputRequiredDataPruner {
         ? datum._raw().elements().keySet()
         : projectionKeys.stream().map(pk -> pk.value().toImmutable()).collect(Collectors.toList());
 
-    for (Datum.Imm key: keys) {
+    for (Datum.Imm key : keys) {
       @Nullable Data data = datum._raw().elements().get(key);
 
       if (data != null) {
@@ -276,7 +276,7 @@ public class ReqOutputRequiredDataPruner {
       final MapDatum.Builder builder = datum.type().createBuilder();
       for (final Map.Entry<Datum.Imm, ? extends Data> entry : datum._raw().elements().entrySet()) {
         final Datum.Imm key = entry.getKey();
-        Data data = replacements.containsKey(key) ? replacements.get(key) : entry.getValue();
+        @Nullable Data data = replacements.containsKey(key) ? replacements.get(key) : entry.getValue();
         if (data != null)
           builder._raw().elements().put(key, data);
       }
@@ -319,13 +319,18 @@ public class ReqOutputRequiredDataPruner {
       return Keep.INSTANCE;
     else {
       final ListDatum.Builder builder = datum.type().createBuilder();
+
       index = 0;
-      for (Data data : datum._raw().elements()) {
+      for (@Nullable Data data : datum._raw().elements()) {
         if (replacements.containsKey(index))
           data = replacements.get(index);
-        builder._raw().elements().add(data);
+
+        if (data != null)
+          builder._raw().elements().add(data);
+
         index++;
       }
+
       return new ReplaceDatum(builder);
     }
 

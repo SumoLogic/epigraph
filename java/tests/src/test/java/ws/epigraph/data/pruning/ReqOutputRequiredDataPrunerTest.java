@@ -26,10 +26,7 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.tests.Person;
-import ws.epigraph.tests.PersonId;
-import ws.epigraph.tests.PersonRecord;
-import ws.epigraph.tests.String_PersonRecord_Map;
+import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -160,7 +157,24 @@ public class ReqOutputRequiredDataPrunerTest {
     );
   }
 
-  // todo test list, esp. elements replaced with nulls. Update wiki page if needed
+  @Test
+  public void testRequiredDataInsideMapIsError() {
+    checkEquals(
+        Person_List.create()
+            .add(Person.create().setId(PersonId.create(1)))
+
+        ,
+
+        prune(
+            Person_List.create()
+                .add(Person.create().setId(PersonId.create(1)))
+                .add(Person.create().setId_Error(new ErrorValue(HttpStatusCode.NOT_FOUND, "not found")))
+            ,
+            "*:id",
+            "*:+id"
+        )
+    );
+  }
 
   private void assertFail(@NotNull ReqOutputRequiredDataPruner.DataPruningResult pruningResult, String s) {
     assertTrue(pruningResult.getClass().getName(), pruningResult instanceof ReqOutputRequiredDataPruner.Fail);

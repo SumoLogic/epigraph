@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -258,15 +258,15 @@ public interface ListDatum extends Datum {
         public int size() { return list.size(); }
 
         @Override
-        public E set(int index, E element) { return list.set(index, validate(element)); }
+        public E set(int index, @NotNull E element) { return list.set(index, validate(element)); }
 
         @Override
-        public void add(int index, E element) { list.add(index, validate(element)); }
+        public void add(int index, @NotNull E element) { list.add(index, validate(element)); }
 
         @Override
         public E remove(int index) { return list.remove(index); }
 
-        private E validate(E element) throws IllegalArgumentException {
+        private E validate(@NotNull E element) throws IllegalArgumentException {
           return listType.elementType().checkAssignable(element);
         }
 

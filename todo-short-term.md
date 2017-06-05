@@ -1,5 +1,6 @@
 - [x] add 'required' on req output map keys
 - [ ] tests & fix for pruner (with support for the above)
+- [ ] make maps/lists take java natives as primitive keys/values
 
 - Federator
   - [ ] support named projections on the top level (not inside service)

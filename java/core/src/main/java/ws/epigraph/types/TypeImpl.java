@@ -110,6 +110,9 @@ abstract class TypeImpl implements Type {
   @Override
   public <D extends Data> @NotNull D checkAssignable(@NotNull D data)
       throws IllegalArgumentException { // TODO accept nulls?
+
+    if (data == null)
+      throw new IllegalArgumentException(String.format("Can't check if null is compatible with type '%s'", name()));
     if (!isInstance(data))
       throw new IllegalArgumentException(
           String.format("Type '%s' is not compatible with type '%s'", data.type().name(), name())

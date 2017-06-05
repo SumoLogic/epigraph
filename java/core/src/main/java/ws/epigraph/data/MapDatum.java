@@ -261,7 +261,7 @@ public interface MapDatum extends Datum {
         public @NotNull Set<Map.@NotNull Entry<@NotNull K, @NotNull V>> entrySet() { return map.entrySet(); }
 
         @Override
-        public V put(K key, V value) {
+        public V put(@NotNull K key, @NotNull V value) {
           // FIXME we might have to restrict keys to exactly declared type only to ensure clients can properly parse these
           // FIXME better, wrap keys in an object that computes equals and hashCode based on declared type properties only
           return map.put(mapType.keyType().checkAssignable(key), mapType.valueType().checkAssignable(value));
