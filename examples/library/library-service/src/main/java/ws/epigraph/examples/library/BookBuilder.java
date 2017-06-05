@@ -111,13 +111,13 @@ public final class BookBuilder {
     } else {
       AuthorRecord.Builder author = AuthorRecord.create();
 
-      if (authorData.firstName != null)
+      if (authorData.firstName != null || authorRecordProjection.firstName() != null)
         author.setFirstName(authorData.firstName);
 
-      if (authorData.middleName != null)
+      if (authorData.middleName != null || authorRecordProjection.middleName() != null)
         author.setMiddleName(authorData.middleName);
 
-      if (authorData.lastName != null)
+      if (authorData.lastName != null || authorRecordProjection.lastName() != null)
         author.setLastName(authorData.lastName);
 
       return author.asValue();

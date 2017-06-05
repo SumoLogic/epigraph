@@ -20,7 +20,7 @@
 
   <groupId>ws.epigraph.examples</groupId>
   <artifactId>examples-library</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -44,7 +44,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>0.0.2-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
@@ -58,7 +58,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>0.0.2-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
