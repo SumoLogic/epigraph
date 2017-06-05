@@ -131,7 +131,25 @@ ${t.meta match {
     }
 ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
       case None => ""
-      case Some(dtn) => sn"""\
+      case Some(dtn) =>
+
+        def primitiveKeyType(nativeType: String) = nativeType
+        def nonPrimitiveKeyType: String = lqn(kt, t)
+        val keyType = JavaGenUtils.builtInPrimitives.get(ktr.resolved.name.name).map(primitiveKeyType).getOrElse(nonPrimitiveKeyType)
+
+        def primitiveKeyExpr = s"${lqn(tt(ktr, dtn), t)}.create(key)"
+        val nonPrimitiveKeyExpr = "key"
+        val keyExpr = if (JavaGenUtils.builtInPrimitives.contains(ktr.resolved.name.name)) primitiveKeyExpr else nonPrimitiveKeyExpr
+
+        def primitiveValueType(nativeType: String) = nativeType
+        def nonPrimitiveValueType: String = lqn(tt(vtr, dtn), t)
+        val valueType = JavaGenUtils.builtInPrimitives.get(vtr.resolved.name.name).map(primitiveValueType).getOrElse(nonPrimitiveValueType)
+
+        def primitiveValueExpr = s"${lqn(tt(vtr, dtn), t)}.create(datum)"
+        val nonPrimitiveValueExpr = "datum"
+        val valueExpr = if (JavaGenUtils.builtInPrimitives.contains(vtr.resolved.name.name)) primitiveValueExpr else nonPrimitiveValueExpr
+
+        sn"""\
 
     ${"/**"} Returns modifiable map view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
@@ -154,8 +172,8 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} datum with specified key in this map. */
-    public @NotNull $ln.Builder put(@NotNull ${lqn(kt, t)} key, @Nullable ${lqn(tt(vtr, dtn), t)} datum) {
-      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}(datum));
+    public @NotNull $ln.Builder put(@NotNull $keyType key, @Nullable $valueType datum) {
+      datas().put($keyExpr.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}($valueExpr));
       return this;
     }
 

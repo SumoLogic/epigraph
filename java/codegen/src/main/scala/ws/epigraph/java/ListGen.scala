@@ -124,7 +124,34 @@ ${t.meta match {
     }
 ${t.effectiveDefaultElementTagName match { // default element tag (if defined) views
       case None => ""
-      case Some(dtn) => sn"""\
+      case Some(dtn) =>
+
+        def genPrimitiveAdd(nativeType: String): String =
+        sn"""\
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum element to the list. */
+    public @NotNull $ln.Builder add(@Nullable $nativeType datum) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(
+        datum == null ? null : ${lqn(tt(etr, dtn), t)}.create(datum)
+      ));
+      return this;
+    }
+"""
+
+        def genNonPrimitiveAdd: String =
+        sn"""\
+    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum element to the list. */
+    public @NotNull $ln.Builder add(@Nullable ${lqn(tt(etr, dtn), t)} datum) {
+      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(datum));
+      return this;
+    }
+"""
+
+        val add = JavaGenUtils.builtInPrimitives
+          .get(etr.resolved.name.name)
+          .map(genPrimitiveAdd)
+          .getOrElse(genNonPrimitiveAdd)
+
+        sn"""\
 
     ${"/**"} Returns modifiable list view of default `$dtn` tag element datums. Elements where the tag datum is not set will be `null`. */
     @Override
@@ -146,11 +173,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
       );
     }
 
-    ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} datum element to the list. */
-    public @NotNull $ln.Builder add(@Nullable ${lqn(tt(etr, dtn), t)} datum) {
-      datas().add(${lqn(et, t)}.Type.instance().createDataBuilder().set${vt(et, up(dtn), "")}(datum));
-      return this;
-    }
+$add\
 
     ${"/**"} Adds${vt(et, s" default `$dtn` tag", "")} error element to the list. */
     public @NotNull $ln.Builder addError(@NotNull ws.epigraph.errors.ErrorValue error) {

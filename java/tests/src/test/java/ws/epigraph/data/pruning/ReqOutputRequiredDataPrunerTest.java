@@ -125,14 +125,14 @@ public class ReqOutputRequiredDataPrunerTest {
   public void testRequiredFieldInsideMapWithOptKeysIsError() {
     checkEquals(
         String_PersonRecord_Map.create()
-            .put(epigraph.String.create("1"), PersonRecord.create().setId(PersonId.create(1)))
-            .put(epigraph.String.create("3"), null),
+            .put("1", PersonRecord.create().setId(PersonId.create(1)))
+            .put("3", null),
 
         prune(
             String_PersonRecord_Map.create()
-                .put(epigraph.String.create("1"), PersonRecord.create().setId(PersonId.create(1)))
-                .put(epigraph.String.create("2"), PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")))
-                .put(epigraph.String.create("3"), null),
+                .put("1", PersonRecord.create().setId(PersonId.create(1)))
+                .put("2", PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")))
+                .put("3", null),
 
             "[](id)",
             "[1,2,3](+id)"
@@ -145,9 +145,9 @@ public class ReqOutputRequiredDataPrunerTest {
     assertUseError(
         prune(
             String_PersonRecord_Map.create()
-                .put(epigraph.String.create("1"), PersonRecord.create().setId(PersonId.create(1)))
-                .put(epigraph.String.create("2"), PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")))
-                .put(epigraph.String.create("3"), null),
+                .put("1", PersonRecord.create().setId(PersonId.create(1)))
+                .put("2", PersonRecord.create().setId_Error(new ErrorValue(111, "xxx")))
+                .put("3", null),
 
             "[](id)",
             "+[1,2,3](+id)"

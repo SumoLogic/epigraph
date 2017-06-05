@@ -251,6 +251,13 @@ $setter\
     public @Nullable ${lqn(tt(f.typeRef, dtn), t)}.Value get${up(f.name)}_() {
       return (${lqn(tt(f.typeRef, dtn), t)}.Value) _raw().getValue($ln.${fcn(f)}, ${dttr(f.valueDataType, dtn, t)});
     }
+
+    /** Sets `${f.name}` field entry${vt(f.typeRef, s" for default `$dtn` tag", "")}. */
+    //@Override TODO where applicable
+    public @Nullable void set${up(f.name)}_(@NotNull ${lqn(tt(f.typeRef, dtn), t)}.Value value) {
+      _raw().setData($ln.${fcn(f)}, ${lqrn(f.typeRef, t)}.Type.instance().createDataBuilder().set${vt(f.typeRef, up(dtn), "")}_(value));
+    }
+
 """
     }
 }\
