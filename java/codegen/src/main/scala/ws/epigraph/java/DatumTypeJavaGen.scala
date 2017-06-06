@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.CType
+import ws.epigraph.compiler.{CType, CTypeKind}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 trait DatumTypeJavaGen { this: JavaTypeGen[_ >: Null <: CType] =>
@@ -105,7 +105,7 @@ trait DatumTypeJavaGen { this: JavaTypeGen[_ >: Null <: CType] =>
       public @NotNull $ln.Data set_Error(@NotNull ws.epigraph.errors.ErrorValue error) { _raw().setError($ln.Type.instance().self(), error); return this; }
 
       /** Sets default tag value. */
-      public @NotNull $ln.Data set_(@Nullable $ln.Value value) { _raw().setValue($ln.Type.instance().self(), value); return this; }
+      public @NotNull $ln.Data set_(@${if (t.kind == CTypeKind.VARTYPE) "Nullable" else "NotNull"} $ln.Value value) { _raw().setValue($ln.Type.instance().self(), value); return this; }
 
     }
 

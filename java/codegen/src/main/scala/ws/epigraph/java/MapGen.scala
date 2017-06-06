@@ -183,9 +183,12 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
       return this;
     }
 
-    ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} value with specified key in this map. */
+    ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} value with specified key in this map or removes it if {@code value} is {@code null}. */
     public @NotNull $ln.Builder put_(@NotNull ${lqn(kt, t)} key, @Nullable ${lqn(tt(vtr, dtn), t)}.Value value) {
-      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(value));
+      if (value == null)
+        datas().remove(key.toImmutable());
+      else
+        datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_(value));
       return this;
     }
 """
