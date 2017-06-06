@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,33 @@
 
 package ws.epigraph.schema;
 
-import ws.epigraph.lang.Qn;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.Qn;
 
 import java.util.Map;
 
 /**
+ * "Resources" part of the schema: describes resources and transformers
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ResourcesSchema {
   private final @NotNull Qn namespace;
-  // todo should contain TypesResolver too?
   private final @NotNull Map<String, ResourceDeclaration> resources;
+  private final @NotNull Map<String, TransformerDeclaration> transformers;
 
-  public ResourcesSchema(@NotNull Qn namespace, @NotNull Map<String, ResourceDeclaration> resources) {
+  public ResourcesSchema(
+      @NotNull Qn namespace,
+      @NotNull Map<String, ResourceDeclaration> resources,
+      @NotNull Map<String, TransformerDeclaration> transformers) {
     this.namespace = namespace;
     this.resources = resources;
+    this.transformers = transformers;
   }
 
   public @NotNull Qn namespace() { return namespace; }
 
   public @NotNull Map<String, ResourceDeclaration> resources() { return resources; }
+
+  public @NotNull Map<String, TransformerDeclaration> transformers() { return transformers; }
 }

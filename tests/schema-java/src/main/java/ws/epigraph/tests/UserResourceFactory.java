@@ -25,7 +25,7 @@ import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
-import ws.epigraph.tests.resources.user.AbstractUserResourceFactory;
+import ws.epigraph.tests._resources.user.AbstractUserResourceFactory;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;

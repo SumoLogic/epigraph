@@ -20,8 +20,8 @@ import epigraph.schema.NameString;
 import epigraph.schema.TagName;
 import epigraph.schema.Tag_;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.TagApi;
 
 /**

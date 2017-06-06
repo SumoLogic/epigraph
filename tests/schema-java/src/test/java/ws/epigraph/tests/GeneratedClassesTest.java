@@ -31,11 +31,11 @@ import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.schema.Namespaces;
 import ws.epigraph.schema.operations.OperationKind;
-import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
-import ws.epigraph.tests.resources.users.operations.update._default.update.UpdatePersonMapProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.update.UpdateUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.update.elements.UpdatePersonProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.update.elements.record.UpdatePersonRecordProjection;
+import ws.epigraph.tests._resources.users.UsersResourceDeclaration;
+import ws.epigraph.tests._resources.users.operations.update._default.update.UpdatePersonMapProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.update.UpdateUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.update.elements.UpdatePersonProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.update.elements.record.UpdatePersonRecordProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 
@@ -90,7 +90,7 @@ public class GeneratedClassesTest {
         UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
 
     assertEquals(
-        "[ ]( $recTest = :`record` ( +id, bestFriend $recTest ) )",
+        "[ ]( $recTest = :`record` ( bestFriend $recTest ) )",
         printOpDeleteVarProjection(
             Qn.fromDotSeparated("ws.epigraph.tests"),
             UsersResourceDeclaration.INSTANCE.fieldName(),

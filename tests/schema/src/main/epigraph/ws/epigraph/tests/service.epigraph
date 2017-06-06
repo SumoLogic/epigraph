@@ -117,7 +117,7 @@ resource users: PersonMap {
 
   // output projection generator test
   delete recursiveTest {
-    deleteProjection [ ] ( $recTest = :`record` (id, bestFriend $recTest ) )
+    deleteProjection [ ] ( $recTest = :`record` ( bestFriend $recTest ) )
 
     outputType map[PersonId, epigraph.Error]
     outputProjection [] (code, message)

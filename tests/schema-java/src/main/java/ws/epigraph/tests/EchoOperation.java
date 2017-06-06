@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.custom.echo.AbstractCustomEchoOperation;
-import ws.epigraph.tests.resources.users.operations.custom.echo.input.InputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.custom.echo.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.custom.echo.AbstractCustomEchoOperation;
+import ws.epigraph.tests._resources.users.operations.custom.echo.input.InputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.custom.echo.output.OutputUsersFieldProjection;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;

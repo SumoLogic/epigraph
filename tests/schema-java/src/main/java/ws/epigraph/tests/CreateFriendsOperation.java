@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.create.friends.AbstractCreateFriendsOperation;
-import ws.epigraph.tests.resources.users.operations.create.friends.input.InputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.create.friends.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.create.friends.path.UsersFieldPath;
+import ws.epigraph.tests._resources.users.operations.create.friends.AbstractCreateFriendsOperation;
+import ws.epigraph.tests._resources.users.operations.create.friends.input.InputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.create.friends.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.create.friends.path.UsersFieldPath;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.Map;

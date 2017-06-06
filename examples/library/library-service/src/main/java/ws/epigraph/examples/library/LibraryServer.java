@@ -18,8 +18,7 @@ package ws.epigraph.examples.library;
 
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
-import ws.epigraph.examples.library.resources.books.BooksResourceDeclaration;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.examples.library._resources.books.BooksResourceDeclaration;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;

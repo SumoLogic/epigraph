@@ -17,7 +17,7 @@
 package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.examples.library.resources.books.AbstractBooksResourceFactory;
+import ws.epigraph.examples.library._resources.books.AbstractBooksResourceFactory;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;

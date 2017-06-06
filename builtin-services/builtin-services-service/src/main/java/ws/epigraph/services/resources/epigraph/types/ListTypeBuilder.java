@@ -19,10 +19,10 @@ package ws.epigraph.services.resources.epigraph.types;
 import epigraph.schema.ListType;
 import epigraph.schema.ListType_List;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
-import ws.epigraph.services.resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.listtype.OutputListTypeProjection;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.listtype.supertypes.OutputListType_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.listtype.OutputListTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.listtype.supertypes.OutputListType_ListProjection;
 import ws.epigraph.types.ListTypeApi;
 
 /**

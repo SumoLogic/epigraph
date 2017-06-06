@@ -19,10 +19,10 @@ package ws.epigraph.tests;
 import epigraph.Error;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.delete.bestfriend.AbstractDeleteBestFriendOperation;
-import ws.epigraph.tests.resources.users.operations.delete.bestfriend.delete.DeleteUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.delete.bestfriend.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.delete.bestfriend.path.UsersFieldPath;
+import ws.epigraph.tests._resources.users.operations.delete.bestfriend.AbstractDeleteBestFriendOperation;
+import ws.epigraph.tests._resources.users.operations.delete.bestfriend.delete.DeleteUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.delete.bestfriend.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.delete.bestfriend.path.UsersFieldPath;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;

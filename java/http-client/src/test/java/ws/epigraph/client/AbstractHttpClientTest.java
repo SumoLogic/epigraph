@@ -38,7 +38,7 @@ import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
 import ws.epigraph.tests.*;
-import ws.epigraph.tests.resources.users.UsersResourceDeclaration;
+import ws.epigraph.tests._resources.users.UsersResourceDeclaration;
 import ws.epigraph.util.EBean;
 import ws.epigraph.wire.json.JsonFormatFactories;
 

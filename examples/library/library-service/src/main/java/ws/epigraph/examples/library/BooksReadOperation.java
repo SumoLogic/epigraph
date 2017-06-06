@@ -17,11 +17,11 @@
 package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.examples.library.resources.books.operations.read._default.AbstractReadOperation;
-import ws.epigraph.examples.library.resources.books.operations.read._default.output.OutputBookId_BookRecord_MapKeyProjection;
-import ws.epigraph.examples.library.resources.books.operations.read._default.output.OutputBookId_BookRecord_MapProjection;
-import ws.epigraph.examples.library.resources.books.operations.read._default.output.OutputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
+import ws.epigraph.examples.library._resources.books.operations.read._default.AbstractReadOperation;
+import ws.epigraph.examples.library._resources.books.operations.read._default.output.OutputBookId_BookRecord_MapKeyProjection;
+import ws.epigraph.examples.library._resources.books.operations.read._default.output.OutputBookId_BookRecord_MapProjection;
+import ws.epigraph.examples.library._resources.books.operations.read._default.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.OutputBookRecordProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 
 import java.util.concurrent.CompletableFuture;

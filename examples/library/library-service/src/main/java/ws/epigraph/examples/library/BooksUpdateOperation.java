@@ -19,10 +19,10 @@ package ws.epigraph.examples.library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.examples.library.resources.books.operations.update._default.AbstractUpdateOperation;
-import ws.epigraph.examples.library.resources.books.operations.update._default.output.OutputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations.update._default.update.UpdateBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
+import ws.epigraph.examples.library._resources.books.operations.update._default.AbstractUpdateOperation;
+import ws.epigraph.examples.library._resources.books.operations.update._default.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.operations.update._default.update.UpdateBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.OutputBookRecordProjection;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.util.HttpStatusCode;
 

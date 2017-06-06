@@ -19,9 +19,9 @@ package ws.epigraph.examples.library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.examples.library.resources.books.operations.create._default.AbstractCreateOperation;
-import ws.epigraph.examples.library.resources.books.operations.create._default.input.InputBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations.create._default.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.operations.create._default.AbstractCreateOperation;
+import ws.epigraph.examples.library._resources.books.operations.create._default.input.InputBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.operations.create._default.output.OutputBooksFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.util.HttpStatusCode;
 

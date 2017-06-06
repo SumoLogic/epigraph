@@ -35,7 +35,7 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.tests.*;
-import ws.epigraph.tests.resources.users.client.UsersClient;
+import ws.epigraph.tests._resources.users.client.UsersClient;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.io.IOException;

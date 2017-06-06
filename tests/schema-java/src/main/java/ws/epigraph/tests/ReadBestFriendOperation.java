@@ -19,9 +19,9 @@ package ws.epigraph.tests;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.read.bestfriend.AbstractReadBestFriendOperation;
-import ws.epigraph.tests.resources.users.operations.read.bestfriend.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.read.bestfriend.path.UsersFieldPath;
+import ws.epigraph.tests._resources.users.operations.read.bestfriend.AbstractReadBestFriendOperation;
+import ws.epigraph.tests._resources.users.operations.read.bestfriend.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.read.bestfriend.path.UsersFieldPath;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;

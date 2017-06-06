@@ -23,59 +23,49 @@ import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
+import ws.epigraph.psi.PsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
+public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
     implements ReferenceAwarePsiProcessingContext {
 
   private final @NotNull Qn namespace;
-  private final @NotNull String resourceName;
   private final @NotNull OpInputReferenceContext inputReferenceContext;
   private final @NotNull OpOutputReferenceContext outputReferenceContext;
   private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
 
-  public ResourcePsiProcessingContext(
-      @NotNull SchemaPsiProcessingContext psiProcessingContext,
-      @NotNull Qn namespace,
-      @NotNull String resourceName) {
+  public SchemaPsiProcessingContext(
+      final @NotNull PsiProcessingContext psiProcessingContext,
+      @NotNull Qn namespace) {
 
     super(psiProcessingContext);
 
     this.namespace = namespace;
-    this.resourceName = resourceName;
 
     final Namespaces namespaces = new Namespaces(namespace);
 
     inputReferenceContext = new OpInputReferenceContext(
-        ProjectionReferenceName.fromQn(
-            namespaces.inputProjectionsNamespace(resourceName)
-        ),
-        psiProcessingContext.inputReferenceContext(),
+        ProjectionReferenceName.fromQn(namespaces.inputProjectionsNamespace()),
+        null,
         psiProcessingContext
     );
 
     outputReferenceContext = new OpOutputReferenceContext(
-        ProjectionReferenceName.fromQn(
-            namespaces.outputProjectionsNamespace(resourceName)
-        ),
-        psiProcessingContext.outputReferenceContext(),
+        ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace()),
+        null,
         psiProcessingContext
     );
 
     deleteReferenceContext = new OpDeleteReferenceContext(
-        ProjectionReferenceName.fromQn(
-            namespaces.deleteProjectionsNamespace(resourceName)
-        ),
-        psiProcessingContext.deleteReferenceContext(),
+        ProjectionReferenceName.fromQn(namespaces.deleteProjectionsNamespace()),
+        null,
         psiProcessingContext
     );
   }
 
   public @NotNull Qn namespace() { return namespace; }
-
-  public @NotNull String resourceName() { return resourceName; }
 
   @Override
   public @NotNull OpInputReferenceContext inputReferenceContext() { return inputReferenceContext; }

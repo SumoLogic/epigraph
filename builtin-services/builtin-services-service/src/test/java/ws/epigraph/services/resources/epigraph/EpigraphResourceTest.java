@@ -25,6 +25,7 @@ import ws.epigraph.refs.IndexBasedTypesResolver;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
+import ws.epigraph.services._resources.epigraph.EpigraphResourceDeclaration;
 import ws.epigraph.types.Type;
 
 import java.util.Collections;

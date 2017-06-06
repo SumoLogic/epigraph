@@ -28,25 +28,25 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.*;
-import ws.epigraph.tests.resources.users.AbstractUsersResourceFactory;
-import ws.epigraph.tests.resources.users.operations.create._default.AbstractCreateOperation;
-import ws.epigraph.tests.resources.users.operations.create._default.input.InputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.delete._default.AbstractDeleteOperation;
-import ws.epigraph.tests.resources.users.operations.delete._default.delete.DeletePersonMapKeyProjection;
-import ws.epigraph.tests.resources.users.operations.delete._default.delete.DeleteUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.read._default.AbstractReadOperation;
-import ws.epigraph.tests.resources.users.operations.read._default.output.OutputPersonMapKeyProjection;
-import ws.epigraph.tests.resources.users.operations.read._default.output.OutputPersonMapProjection;
-import ws.epigraph.tests.resources.users.operations.read._default.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.read._default.output.meta.OutputPaginationInfoProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.AbstractUpdateOperation;
-import ws.epigraph.tests.resources.users.operations.update._default.update.UpdateUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.update.elements.UpdatePersonProjection;
-import ws.epigraph.tests.resources.users.operations.update._default.update.elements.record.UpdatePersonRecordProjection;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.AbstractCustomCapitalizeOperation;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.input.InputPersonRecordProjection;
-import ws.epigraph.tests.resources.users.operations.custom.capitalize.path.UsersFieldPath;
-import ws.epigraph.tests.resources.users.operations.delete.recursivetest.AbstractDeleteRecursiveTestOperation;
+import ws.epigraph.tests._resources.users.AbstractUsersResourceFactory;
+import ws.epigraph.tests._resources.users.operations.create._default.AbstractCreateOperation;
+import ws.epigraph.tests._resources.users.operations.create._default.input.InputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.delete._default.AbstractDeleteOperation;
+import ws.epigraph.tests._resources.users.operations.delete._default.delete.DeletePersonMapKeyProjection;
+import ws.epigraph.tests._resources.users.operations.delete._default.delete.DeleteUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.read._default.AbstractReadOperation;
+import ws.epigraph.tests._resources.users.operations.read._default.output.OutputPersonMapKeyProjection;
+import ws.epigraph.tests._resources.users.operations.read._default.output.OutputPersonMapProjection;
+import ws.epigraph.tests._resources.users.operations.read._default.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.read._default.output.meta.OutputPaginationInfoProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.AbstractUpdateOperation;
+import ws.epigraph.tests._resources.users.operations.update._default.update.UpdateUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.update.elements.UpdatePersonProjection;
+import ws.epigraph.tests._resources.users.operations.update._default.update.elements.record.UpdatePersonRecordProjection;
+import ws.epigraph.tests._resources.users.operations.custom.capitalize.AbstractCustomCapitalizeOperation;
+import ws.epigraph.tests._resources.users.operations.custom.capitalize.input.InputPersonRecordProjection;
+import ws.epigraph.tests._resources.users.operations.custom.capitalize.path.UsersFieldPath;
+import ws.epigraph.tests._resources.users.operations.delete.recursivetest.AbstractDeleteRecursiveTestOperation;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.List;
@@ -118,8 +118,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       @Override
       protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
           final @NotNull PersonId_Error_Map.Data.Builder builder,
-          final @NotNull ws.epigraph.tests.resources.users.operations.delete.recursivetest.delete.DeleteUsersFieldProjection deleteProjection,
-          final @NotNull ws.epigraph.tests.resources.users.operations.delete.recursivetest.output.OutputUsersFieldProjection outputProjection) {
+          final @NotNull ws.epigraph.tests._resources.users.operations.delete.recursivetest.delete.DeleteUsersFieldProjection deleteProjection,
+          final @NotNull ws.epigraph.tests._resources.users.operations.delete.recursivetest.output.OutputUsersFieldProjection outputProjection) {
         throw new RuntimeException("Unimplemented");
       }
     };
@@ -170,7 +170,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
       }
 
       // poly tails check
-      final @Nullable ws.epigraph.tests.resources.users.operations.read._default.output.elements._normalized.user.record.OutputUserRecordProjection
+      final @Nullable ws.epigraph.tests._resources.users.operations.read._default.output.elements._normalized.user.record.OutputUserRecordProjection
           userRecordProjection = mapProjection.itemsProjection().normalizedFor_User().record();
       if (userRecordProjection != null) userRecordProjection.worstEnemy();
 
@@ -222,7 +222,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         @NotNull PersonId_List.Data.Builder builder,
         @NotNull PersonRecord_List inputList,
         @Nullable InputUsersFieldProjection inputProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.create._default.output.OutputUsersFieldProjection outputProjection) {
+        @NotNull ws.epigraph.tests._resources.users.operations.create._default.output.OutputUsersFieldProjection outputProjection) {
 
       final PersonId_List.Builder resultListBuilder = PersonId_List.create();
 
@@ -251,7 +251,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         @NotNull PersonId_Error_Map.Data.Builder builder,
         @NotNull PersonMap inputMap,
         @Nullable UpdateUsersFieldProjection updateProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.update._default.output.OutputUsersFieldProjection outputProjection) {
+        @NotNull ws.epigraph.tests._resources.users.operations.update._default.output.OutputUsersFieldProjection outputProjection) {
 
       final PersonId_Error_Map.Builder resultMapBuilder = PersonId_Error_Map.create();
 
@@ -382,7 +382,7 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
     protected @NotNull CompletableFuture<PersonId_Error_Map.Data> process(
         @NotNull PersonId_Error_Map.Data.Builder builder,
         @NotNull DeleteUsersFieldProjection deleteProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.delete._default.output.OutputUsersFieldProjection outputProjection) {
+        @NotNull ws.epigraph.tests._resources.users.operations.delete._default.output.OutputUsersFieldProjection outputProjection) {
 
       final List<DeletePersonMapKeyProjection> keys = deleteProjection.dataProjection().keys();
 
@@ -421,8 +421,8 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         @NotNull PersonRecord.Data.Builder builder,
         @Nullable PersonRecord inputData,
         @NotNull UsersFieldPath path,
-        @Nullable ws.epigraph.tests.resources.users.operations.custom.capitalize.input.InputUsersFieldProjection inputFieldProjection,
-        @NotNull ws.epigraph.tests.resources.users.operations.custom.capitalize.output.OutputUsersFieldProjection outputProjection) {
+        @Nullable ws.epigraph.tests._resources.users.operations.custom.capitalize.input.InputUsersFieldProjection inputFieldProjection,
+        @NotNull ws.epigraph.tests._resources.users.operations.custom.capitalize.output.OutputUsersFieldProjection outputProjection) {
 
       PersonId.Imm key = path.dataProjection().key().value();
       final Person.Builder person = (Person.Builder) storage.users().datas().get(key);

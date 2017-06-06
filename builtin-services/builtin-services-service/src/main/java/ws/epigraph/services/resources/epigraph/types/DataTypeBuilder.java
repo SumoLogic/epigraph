@@ -18,9 +18,9 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.DataType;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
-import ws.epigraph.services.resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.federator.transformers;
+package ws.epigraph.schema;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

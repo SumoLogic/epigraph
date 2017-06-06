@@ -20,10 +20,10 @@ import epigraph.Error;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
-import ws.epigraph.tests.resources.users.operations.update.bestfriend.AbstractUpdateBestFriendOperation;
-import ws.epigraph.tests.resources.users.operations.update.bestfriend.output.OutputUsersFieldProjection;
-import ws.epigraph.tests.resources.users.operations.update.bestfriend.path.UsersFieldPath;
-import ws.epigraph.tests.resources.users.operations.update.bestfriend.update.UpdateUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.update.bestfriend.AbstractUpdateBestFriendOperation;
+import ws.epigraph.tests._resources.users.operations.update.bestfriend.output.OutputUsersFieldProjection;
+import ws.epigraph.tests._resources.users.operations.update.bestfriend.path.UsersFieldPath;
+import ws.epigraph.tests._resources.users.operations.update.bestfriend.update.UpdateUsersFieldProjection;
 import ws.epigraph.util.HttpStatusCode;
 
 import java.util.concurrent.CompletableFuture;

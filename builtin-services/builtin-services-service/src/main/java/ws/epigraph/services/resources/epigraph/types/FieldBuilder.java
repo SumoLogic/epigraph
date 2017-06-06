@@ -20,8 +20,8 @@ import epigraph.schema.FieldName;
 import epigraph.schema.Field_;
 import epigraph.schema.NameString;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
-import ws.epigraph.services.resources.epigraph.projections.output.fieldprojection.OutputField_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.OutputField_Projection;
 import ws.epigraph.types.FieldApi;
 
 /**

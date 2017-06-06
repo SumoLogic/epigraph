@@ -18,10 +18,10 @@ package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.examples.library.resources.books.operations.delete._default.AbstractDeleteOperation;
-import ws.epigraph.examples.library.resources.books.operations.delete._default.delete.DeleteBookId_BookRecord_MapKeyProjection;
-import ws.epigraph.examples.library.resources.books.operations.delete._default.delete.DeleteBooksFieldProjection;
-import ws.epigraph.examples.library.resources.books.operations.delete._default.output.OutputBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.operations.delete._default.AbstractDeleteOperation;
+import ws.epigraph.examples.library._resources.books.operations.delete._default.delete.DeleteBookId_BookRecord_MapKeyProjection;
+import ws.epigraph.examples.library._resources.books.operations.delete._default.delete.DeleteBooksFieldProjection;
+import ws.epigraph.examples.library._resources.books.operations.delete._default.output.OutputBooksFieldProjection;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.util.HttpStatusCode;
 

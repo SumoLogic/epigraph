@@ -19,7 +19,7 @@ package ws.epigraph.examples.library;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import ws.epigraph.examples.library.resources.books.client.BooksClient;
+import ws.epigraph.examples.library._resources.books.client.BooksClient;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;

@@ -28,7 +28,31 @@ public class Namespaces {
 
   public Namespaces(final @NotNull Qn namespace) {this.namespace = namespace;}
 
-  public @NotNull Qn resourcesNamespace() { return namespace.append("resources"); }
+  // global stuff
+
+  public @NotNull Qn projectionsNamespace() { return namespace.append("_projections"); }
+
+  public @NotNull Qn inputProjectionsNamespace() { return projectionsNamespace().append("input"); }
+
+  public @NotNull Qn inputProjectionNamespace(@NotNull String projectionName) {
+    return inputProjectionsNamespace().append(projectionName.toLowerCase());
+  }
+
+  public @NotNull Qn outputProjectionsNamespace() { return projectionsNamespace().append("output"); }
+
+  public @NotNull Qn outputProjectionNamespace(@NotNull String projectionName) {
+    return outputProjectionsNamespace().append(projectionName.toLowerCase());
+  }
+
+  public @NotNull Qn deleteProjectionsNamespace() { return projectionsNamespace().append("delete"); }
+
+  public @NotNull Qn deleteProjectionNamespace(@NotNull String projectionName) {
+    return deleteProjectionsNamespace().append(projectionName.toLowerCase());
+  }
+
+  // resource stuff
+
+  public @NotNull Qn resourcesNamespace() { return namespace.append("_resources"); }
 
   public @NotNull Qn resourceNamespace(@NotNull String resourceName) {
     return resourcesNamespace().append(resourceName);

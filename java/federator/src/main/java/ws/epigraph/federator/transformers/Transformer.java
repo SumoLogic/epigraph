@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.schema.TransformerDeclaration;
 
 import java.util.concurrent.CompletableFuture;
 

@@ -18,11 +18,11 @@ package ws.epigraph.examples.library;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.OutputBookRecordProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.author.OutputAuthorProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.author.record.OutputAuthorRecordProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.text.OutputTextProjection;
-import ws.epigraph.examples.library.resources.books.projections.output.bookprojection.text.plain.OutputPlainTextProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.OutputBookRecordProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.author.OutputAuthorProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.author.record.OutputAuthorRecordProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.text.OutputTextProjection;
+import ws.epigraph.examples.library._resources.books.projections.output.bookprojection.text.plain.OutputPlainTextProjection;
 import ws.epigraph.util.HttpStatusCode;
 
 /**

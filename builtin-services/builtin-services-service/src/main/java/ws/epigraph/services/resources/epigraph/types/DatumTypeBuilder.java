@@ -18,7 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.DatumType;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection._normalized.datumtype.OutputDatumTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype.OutputDatumTypeProjection;
 import ws.epigraph.types.*;
 
 /**

@@ -18,7 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services.resources.epigraph.projections.output.typeprojection.OutputType_Projection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.UnionTypeApi;
