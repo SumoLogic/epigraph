@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import ws.epigraph.ideaplugin.schema.brains.SchemaQnReference;
 import ws.epigraph.ideaplugin.schema.brains.SchemaQnReferenceResolver;
-import ws.epigraph.ideaplugin.schema.brains.SchemaVarTagReference;
+import ws.epigraph.ideaplugin.schema.brains.SchemaEntityTagReference;
 import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.refs.ImportAwareTypesResolver;
@@ -87,17 +87,17 @@ public class SchemaReferenceFactory {
   }
 
   @Nullable
-  public static PsiReference getVarTagReference(@NotNull SchemaVarTagRef varTagRef) {
+  public static PsiReference getEntityTagReference(@NotNull SchemaEntityTagRef varTagRef) {
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(varTagRef, SchemaValueTypeRef.class);
     if (valueTypeRef == null) return null;
 
-    SchemaTypeRef varTypeRef = valueTypeRef.getTypeRef();
-    if (varTypeRef instanceof SchemaQnTypeRef) {
-      SchemaQnTypeRef fqnVarTypeRef = (SchemaQnTypeRef) varTypeRef;
-      SchemaTypeDef typeDef = fqnVarTypeRef.resolve();
-      if (typeDef instanceof SchemaVarTypeDef) {
-        SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) typeDef;
-        return new SchemaVarTagReference(varTypeDef, varTagRef.getQid());
+    SchemaTypeRef entityTypeRef = valueTypeRef.getTypeRef();
+    if (entityTypeRef instanceof SchemaQnTypeRef) {
+      SchemaQnTypeRef fqnEntityTypeRef = (SchemaQnTypeRef) entityTypeRef;
+      SchemaTypeDef typeDef = fqnEntityTypeRef.resolve();
+      if (typeDef instanceof SchemaEntityTypeDef) {
+        SchemaEntityTypeDef entityDef = (SchemaEntityTypeDef) typeDef;
+        return new SchemaEntityTagReference(entityDef, varTagRef.getQid());
       }
     }
 

@@ -54,7 +54,7 @@ record Bar extends SetBar {
   builder: Builder
 }
 
-vartype Baz {
+entity Baz {
   imm: Bar
   builder: Bar
   setBar: Bar
@@ -93,7 +93,7 @@ record Field {
 }
 
 // type name collides with imported Tag class
-vartype Tag {
+entity Tag {
   tag: Field
   field: Field
   type: Type // tag name collides with static .type field

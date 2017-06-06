@@ -1,10 +1,10 @@
 namespace some2
 
-vartype V1 {
+entity V1 {
   tag1: X
 }
 
-vartype V2 extends V1 {
+entity V2 extends V1 {
   tag2: X
 }
 

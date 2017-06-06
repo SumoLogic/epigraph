@@ -2,7 +2,7 @@ namespace ws.epigraph.examples.library
 
 // book types
 
-vartype Book {
+entity Book {
   id: BookId
   `record`: BookRecord
 }
@@ -17,7 +17,7 @@ record BookRecord {
 
 // author types
 
-vartype Author {
+entity Author {
   id: AuthorId
   `record`: AuthorRecord
 }
@@ -32,7 +32,7 @@ record AuthorRecord {
 
 // book content types
 
-vartype Text {
+entity Text {
   plain: PlainText
 }
 

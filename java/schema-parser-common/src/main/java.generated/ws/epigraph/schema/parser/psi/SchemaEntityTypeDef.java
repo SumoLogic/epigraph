@@ -20,13 +20,30 @@ package ws.epigraph.schema.parser.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
+import ws.epigraph.schema.parser.psi.stubs.SchemaEntityTypeDefStub;
 
-public interface SchemaQnTypeRef extends SchemaTypeRef {
-
-  @NotNull
-  SchemaQn getQn();
+public interface SchemaEntityTypeDef extends SchemaTypeDef, StubBasedPsiElement<SchemaEntityTypeDefStub> {
 
   @Nullable
-  SchemaTypeDef resolve();
+  SchemaEntityTypeBody getEntityTypeBody();
+
+  @Nullable
+  SchemaExtendsDecl getExtendsDecl();
+
+  @Nullable
+  SchemaQid getQid();
+
+  @Nullable
+  SchemaSupplementsDecl getSupplementsDecl();
+
+  @Nullable
+  PsiElement getAbstract();
+
+  @NotNull
+  PsiElement getEntity();
+
+  @NotNull
+  List<SchemaTypeDef> supplemented();
 
 }

@@ -39,7 +39,7 @@
     LIST = 'list'
     RECORD = 'record'
     EXTENDS = 'extends'
-    VARTYPE='vartype'
+    ENTITY='entity'
     ENUM='enum'
     META='meta'
     SUPPLEMENT='supplement'
@@ -144,7 +144,7 @@ namespaceDecl ::= 'namespace' qn namespaceBody? {
   recoverWhile="namespaceDeclRecover"
 }
 private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
-                           'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+                           'map' | 'list' | 'entity' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
@@ -164,7 +164,7 @@ qn ::= qnSegment ('.' qnSegment)* { methods=[getQn] }
 private typeName ::= qid
 typeRef ::= qnTypeRef | anonList | anonMap {name="type"}
 qnTypeRef ::= qn { methods=[resolve] extends="typeRef" }
-varTagRef ::= qid {
+entityTagRef ::= qid {
   implements="com.intellij.psi.PsiNameIdentifierOwner"
   methods=[setName getNameIdentifier getReference]
 }
@@ -177,7 +177,7 @@ private def ::= typeDefWrapper | supplementDef | resourceDef | projectionDef {re
 // ============= schema language =============
 
 // need a wrapper because inheritance doesn't play nicely with PSI stubs
-typeDefWrapper ::= varTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primitiveTypeDef | enumTypeDef {
+typeDefWrapper ::= entityTypeDef | recordTypeDef | mapTypeDef | listTypeDef | primitiveTypeDef | enumTypeDef {
   name="type definition"
   methods=[getElement delete toString]
   stubClass="ws.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStub"
@@ -195,8 +195,8 @@ anonMap ::= 'map' '[' typeRef ',' valueTypeRef ']' {pin=1 extends="typeRef" }
 extendsDecl ::= 'extends' qnTypeRef (',' qnTypeRef)* {pin=1}
 supplementsDecl ::= 'supplements' qnTypeRef (',' qnTypeRef)* {pin=1}
 
-// TODO Fix: varTagRef doesn't resolve
-retroDecl ::= 'retro' varTagRef
+// TODO Fix: entityTagRef doesn't resolve
+retroDecl ::= 'retro' entityTagRef
 annotation ::= qid '=' dataValue {
   name="custom annotation"
   implements="com.intellij.psi.PsiNamedElement"
@@ -206,28 +206,28 @@ annotation ::= qid '=' dataValue {
 
 metaDecl ::= 'meta' qnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
 
-/// vartype
+/// entity
 
-varTypeDef ::= typeDefModifiers 'vartype' typeName extendsDecl? supplementsDecl? varTypeBody? {
+entityTypeDef ::= typeDefModifiers 'entity' typeName extendsDecl? supplementsDecl? entityTypeBody? {
   methods=[supplemented]
-  extends="ws.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImplBase"
-  stubClass="ws.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub"
-  elementTypeClass="ws.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStubElementType"
+  extends="ws.epigraph.schema.parser.psi.impl.SchemaEntityTypeDefImplBase"
+  stubClass="ws.epigraph.schema.parser.psi.stubs.SchemaEntityTypeDefStub"
+  elementTypeClass="ws.epigraph.schema.parser.psi.stubs.SchemaEntityTypeDefStubElementType"
   pin=2
   //recoverWhile=defRecover
 }
-varTypeBody ::= '{' (varTypeBodyPart ','?)* '}' {
+entityTypeBody ::= '{' (entityBodyPart ','?)* '}' {
 //  recoverWhile = defRecover
 }
-private varTypeBodyPart ::= varTagDecl | annotation
-varTagDecl ::= typeMemberModifiers qid ':' typeRef varTypeMemberBody? {
+private entityBodyPart ::= entityTagDecl | annotation
+entityTagDecl ::= typeMemberModifiers qid ':' typeRef entityMemberBody? {
   implements=["ws.epigraph.schema.parser.psi.AnnotationsHolder" "com.intellij.psi.PsiNamedElement"]
   extends="ws.epigraph.schema.parser.psi.impl.AnnotationsHolderImpl"
-  methods=[getName setName getNameIdentifier getTextOffset getPresentation getVarTypeDef]
+  methods=[getName setName getNameIdentifier getTextOffset getPresentation getEntityDef]
   pin=3
 }
-private varTypeMemberBody ::= '{' (varTypeMemberBodyPart ','?)* '}'
-private varTypeMemberBodyPart ::= annotation
+private entityMemberBody ::= '{' (entityMemberBodyPart ','?)* '}'
+private entityMemberBodyPart ::= annotation
 
 /// record
 
@@ -331,7 +331,7 @@ supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
 }
 
 private defRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
-                           'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
+                           'map' | 'list' | 'entity' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
 

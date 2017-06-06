@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,19 +35,19 @@ interface SchemaBlockFactory {
   Map<IElementType, SchemaBlockFactory> factories =
       new ContainerUtil.ImmutableMapBuilder<IElementType, SchemaBlockFactory>()
           .put(S_RECORD_TYPE_DEF, TypeDefBlock::new)
-          .put(S_VAR_TYPE_DEF, TypeDefBlock::new)
+          .put(S_ENTITY_TYPE_DEF, TypeDefBlock::new)
           .put(S_ENUM_TYPE_DEF, TypeDefBlock::new)
           .put(S_PRIMITIVE_TYPE_DEF, TypeDefBlock::new)
           .put(S_LIST_TYPE_DEF, TypeDefBlock::new)
           .put(S_MAP_TYPE_DEF, TypeDefBlock::new)
 
-          .put(S_VAR_TYPE_BODY, TypeDefBodyBlock::new)
+          .put(S_ENTITY_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_RECORD_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_ENUM_TYPE_BODY, TypeDefBodyBlock::new)
           .put(S_PRIMITIVE_TYPE_BODY, TypeDefBodyBlock::new)
 
           .put(S_FIELD_DECL, TypeMemberDeclBlock::new)
-          .put(S_VAR_TAG_DECL, TypeMemberDeclBlock::new)
+          .put(S_ENTITY_TAG_DECL, TypeMemberDeclBlock::new)
           .put(S_ENUM_MEMBER_DECL, TypeMemberDeclBlock::new)
 
           .put(S_EXTENDS_DECL, ExtendsBlock::new)

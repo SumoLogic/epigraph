@@ -20,7 +20,7 @@ integer PersonId extends Id
 
 integer UserId extends PersonId
 
-vartype Person {
+entity Person {
   /*abstract*/ id: PersonId // cannot be written to
   rec: PersonRec
 }
@@ -30,7 +30,7 @@ record PersonRec {
   name: String
 }
 
-vartype User extends Person {
+entity User extends Person {
   id: UserId
 }
 
@@ -38,7 +38,7 @@ record UserRec extends PersonRec {
   doc = { firstName: "vasya", lastName: "bob" }
 }
 
-// NB: self-vartype is not mutable!
+// NB: self-entity is not mutable!
 
 /*
 

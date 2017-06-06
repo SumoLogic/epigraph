@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class SchemaRetroTagLinePainter extends EditorLinePainter {
     if (valueTypeRef == null) return PsiTreeUtil.nextVisibleLeaf(element);
 
     if (valueTypeRef.getRetroDecl() == null) {
-      SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
+      SchemaEntityTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
       if (defaultTag != null) {
         String defaultTagName = defaultTag.getQid().getText();
         String defaultTagTypeName = getDefaultTagTypeName(defaultTag);
@@ -118,7 +118,7 @@ public class SchemaRetroTagLinePainter extends EditorLinePainter {
   }
 
   @Nullable
-  private String getDefaultTagTypeName(@NotNull SchemaVarTagDecl defaultTag) {
+  private String getDefaultTagTypeName(@NotNull SchemaEntityTagDecl defaultTag) {
     SchemaTypeRef defaultTagTypeRef = defaultTag.getTypeRef();
     String defaultTagTypeName = defaultTagTypeRef == null ? null : defaultTagTypeRef.getText();
     if (defaultTagTypeRef instanceof SchemaQnTypeRef) {

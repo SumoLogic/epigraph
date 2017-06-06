@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package ws.epigraph.ideaplugin.schema.brains.hierarchy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +34,7 @@ public class OverridesTest extends LightCodeInsightFixtureTestCase {
   public void testQuotedVarTagOverride() {
     myFixture.configureByFile("QuotedTagOverride.epigraph");
     PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    SchemaVarTagDecl tagDecl = PsiTreeUtil.getParentOfType(element, SchemaVarTagDecl.class);
+    SchemaEntityTagDecl tagDecl = PsiTreeUtil.getParentOfType(element, SchemaEntityTagDecl.class);
     assertNotNull(tagDecl);
     assertEquals(1, TypeMembers.getOverridenTags(tagDecl).size());
   }

@@ -1,6 +1,6 @@
 namespace com.example
 
-vartype Person {
+entity Person {
   id: PersonId
   `record`: PersonRecord
 }
@@ -27,7 +27,7 @@ map[String, Person] PersonsMap
 
 map[String, Integer] StrToInt
 
-vartype Bad {
+entity Bad {
   //bad: Person
 }
 

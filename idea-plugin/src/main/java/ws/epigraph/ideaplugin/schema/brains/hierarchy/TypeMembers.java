@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,22 +60,22 @@ public final class TypeMembers {
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getOverridenTags(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static List<SchemaEntityTagDecl> getOverridenTags(@NotNull SchemaEntityTagDecl varTagDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTagDecl.getProject());
-    return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getVarTypeDef()));
+    return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getEntityDef()));
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getOverridingTags(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static List<SchemaEntityTagDecl> getOverridingTags(@NotNull SchemaEntityTagDecl varTagDecl) {
     Project project = varTagDecl.getProject();
-    return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getVarTypeDef()));
+    return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getEntityDef()));
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getOverridableTags(@NotNull SchemaVarTypeDef varTypeDef) {
-    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTypeDef.getProject());
-    List<SchemaVarTagDecl> allTagDecls = getVarTagDecls(varTypeDef, null);
-    List<SchemaVarTagDecl> existingFieldDecls = getVarTagDecls(null, Collections.singletonList(varTypeDef));
+  public static List<SchemaEntityTagDecl> getOverridableTags(@NotNull SchemaEntityTypeDef entityTypeDef) {
+    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(entityTypeDef.getProject());
+    List<SchemaEntityTagDecl> allTagDecls = getEntityTagDecls(entityTypeDef, null);
+    List<SchemaEntityTagDecl> existingFieldDecls = getEntityTagDecls(null, Collections.singletonList(entityTypeDef));
     allTagDecls.removeAll(existingFieldDecls);
     return allTagDecls;
   }
@@ -86,8 +86,8 @@ public final class TypeMembers {
   }
 
   @NotNull
-  public static List<SchemaVarTagDecl> getVarTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
-    return getVarTagDecls(tagName, getTypeAndParents(hostType));
+  public static List<SchemaEntityTagDecl> getEntityTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
+    return getEntityTagDecls(tagName, getTypeAndParents(hostType));
   }
 
   public static boolean canHaveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
@@ -96,15 +96,15 @@ public final class TypeMembers {
       SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
       SchemaTypeDef typeDef = fqnTypeRef.resolve();
 
-      return typeDef instanceof SchemaVarTypeDef;
+      return typeDef instanceof SchemaEntityTypeDef;
     } else return false;
   }
 
   @Nullable
-  public static SchemaVarTagDecl getEffectiveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
+  public static SchemaEntityTagDecl getEffectiveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
     if (!canHaveRetro(valueTypeRef)) return null;
 
-    SchemaVarTagDecl defaultTag = getRetroTag(valueTypeRef);
+    SchemaEntityTagDecl defaultTag = getRetroTag(valueTypeRef);
     if (defaultTag != null) return defaultTag;
 
     SchemaFieldDecl fieldDecl = PsiTreeUtil.getParentOfType(valueTypeRef, SchemaFieldDecl.class);
@@ -124,14 +124,14 @@ public final class TypeMembers {
 
   @Contract("null -> null")
   @Nullable
-  private static SchemaVarTagDecl getRetroTag(@Nullable SchemaValueTypeRef valueTypeRef) {
+  private static SchemaEntityTagDecl getRetroTag(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef == null) return null;
 
     SchemaRetroDecl retroDecl = valueTypeRef.getRetroDecl();
     if (retroDecl != null) {
-      SchemaVarTagRef varTagRef = retroDecl.getVarTagRef();
+      SchemaEntityTagRef varTagRef = retroDecl.getEntityTagRef();
       PsiReference reference = varTagRef.getReference();
-      return reference == null ? null : (SchemaVarTagDecl) reference.resolve();
+      return reference == null ? null : (SchemaEntityTagDecl) reference.resolve();
     }
     return null;
   }
@@ -171,19 +171,21 @@ public final class TypeMembers {
         .flatMap(type -> {
           SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) type;
           SchemaRecordTypeBody recordTypeBody = recordTypeDef.getRecordTypeBody();
-          if (recordTypeBody != null) {
-            return recordTypeBody.getFieldDeclList().stream().filter(f -> fieldName == null || fieldName.equals(f.getQid().getCanonicalName()));
-          } else {
+          if (recordTypeBody == null) {
             return Stream.empty();
+          } else {
+            return recordTypeBody.getFieldDeclList()
+                .stream()
+                .filter(f -> fieldName == null || fieldName.equals(f.getQid().getCanonicalName()));
           }
         })
         .collect(Collectors.toList());
   }
 
   @NotNull
-  private static List<SchemaVarTagDecl> getSameNameTags(@NotNull SchemaVarTagDecl varTagDecl,
+  private static List<SchemaEntityTagDecl> getSameNameTags(@NotNull SchemaEntityTagDecl varTagDecl,
                                                         @NotNull List<SchemaTypeDef> types) {
-    final String varTypeMemberName = varTagDecl.getQid().getCanonicalName();
+    final String entityTypeMemberName = varTagDecl.getQid().getCanonicalName();
 
     PsiElement body = varTagDecl.getParent();
     if (body == null) return Collections.emptyList();
@@ -191,22 +193,24 @@ public final class TypeMembers {
     SchemaTypeDef typeDef = (SchemaTypeDef) body.getParent();
     if (typeDef == null) return Collections.emptyList();
 
-    return getVarTagDecls(varTypeMemberName, types);
+    return getEntityTagDecls(entityTypeMemberName, types);
   }
 
-  private static List<SchemaVarTagDecl> getVarTagDecls(@Nullable String varTagName,
+  private static List<SchemaEntityTagDecl> getEntityTagDecls(@Nullable String varTagName,
                                                        @NotNull List<SchemaTypeDef> typeAndParents) {
     if (typeAndParents.isEmpty()) return Collections.emptyList();
 
     return typeAndParents.stream()
-        .filter(type -> type instanceof SchemaVarTypeDef)
+        .filter(type -> type instanceof SchemaEntityTypeDef)
         .flatMap(type -> {
-          SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) type;
-          SchemaVarTypeBody varTypeBody = varTypeDef.getVarTypeBody();
-          if (varTypeBody != null) {
-            return varTypeBody.getVarTagDeclList().stream().filter(f -> varTagName == null || varTagName.equals(f.getQid().getCanonicalName()));
-          } else {
+          SchemaEntityTypeDef entityTypeDef = (SchemaEntityTypeDef) type;
+          SchemaEntityTypeBody entityTypeBody = entityTypeDef.getEntityTypeBody();
+          if (entityTypeBody == null) {
             return Stream.empty();
+          } else {
+            return entityTypeBody.getEntityTagDeclList()
+                .stream()
+                .filter(f -> varTagName == null || varTagName.equals(f.getQid().getCanonicalName()));
           }
         })
         .collect(Collectors.toList());

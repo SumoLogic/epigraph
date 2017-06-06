@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,16 +37,14 @@ public class SchemaPsiImplUtilExt {
   // record --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
     return Collections.emptyList();
   }
   
   // var --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaEntityTypeDef entityTypeDef) {
     return Collections.emptyList();
   }
 
@@ -54,16 +52,14 @@ public class SchemaPsiImplUtilExt {
 
   // not exposed through PSI
   @Contract(pure = true)
-  @Nullable
-  public static PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
+  public static @Nullable PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
     List<SchemaQnSegment> fqnSegmentList = typeRef.getQn().getQnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
+  public static @Nullable SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -76,22 +72,19 @@ public class SchemaPsiImplUtilExt {
   // can't use SchemaSupplementDef::getQnTypeRefList as it will include both source and all supplemented
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static @Nullable SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
     SchemaQnTypeRef ref = sourceRef(supplementDef);
     if (ref == null) return null;
     return ref.resolve();
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
     throw new UnsupportedOperationException();
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
     throw new UnsupportedOperationException();
   }
 
@@ -99,16 +92,14 @@ public class SchemaPsiImplUtilExt {
   // field decl
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
     throw new UnsupportedOperationException();
   }
 
-  // varTypeMember decl
+  // entityTypeMember decl
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaEntityTagDecl entityTagDecl) {
     throw new UnsupportedOperationException();
   }
 

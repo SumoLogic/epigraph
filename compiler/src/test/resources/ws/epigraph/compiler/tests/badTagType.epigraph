@@ -1,7 +1,7 @@
 namespace ws.epigraph.schema.compiler.tests
 
-vartype VT
+entity VT
 
-vartype VT2 {
+entity VT2 {
   someTag: VT // compiler should complain about tag type not being a datum type
 }

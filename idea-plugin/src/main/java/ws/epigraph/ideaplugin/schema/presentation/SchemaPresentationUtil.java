@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public final class SchemaPresentationUtil {
   private static Icon TYPE_ICON;
   private static Icon RECORD_TYPE_ICON;
   private static Icon ENUM_TYPE_ICON;
-  private static Icon VAR_TYPE_ICON;
+  private static Icon ENTITY_TYPE_ICON;
   private static Icon SUPPLEMENT_ICON;
 
   public static final Icon PARENT_TYPES_GUTTER_ICON = AllIcons.Gutter.OverridingMethod;
@@ -117,9 +117,9 @@ public final class SchemaPresentationUtil {
       if (ENUM_TYPE_ICON == null) ENUM_TYPE_ICON = addOverlay(AllIcons.Nodes.Enum);
       return ENUM_TYPE_ICON;
     }
-    if (element instanceof SchemaVarTypeDef) {
-      if (VAR_TYPE_ICON == null) VAR_TYPE_ICON = addOverlay(AllIcons.Nodes.Interface);
-      return VAR_TYPE_ICON;
+    if (element instanceof SchemaEntityTypeDef) {
+      if (ENTITY_TYPE_ICON == null) ENTITY_TYPE_ICON = addOverlay(AllIcons.Nodes.Interface);
+      return ENTITY_TYPE_ICON;
     }
 
     if (element instanceof SchemaTypeDef) {
@@ -135,7 +135,7 @@ public final class SchemaPresentationUtil {
     if (element instanceof SchemaAnnotation) return ANNOTATION_ICON;
     if (element instanceof SchemaFieldDecl) return FIELD_ICON;
     if (element instanceof SchemaEnumMemberDecl) return ENUM_MEMBER_ICON;
-    if (element instanceof SchemaVarTagDecl) return TAG_ICON;
+    if (element instanceof SchemaEntityTagDecl) return TAG_ICON;
 
     // TODO icons for all!
     return null;
@@ -170,17 +170,17 @@ public final class SchemaPresentationUtil {
       return typeName + '.' + name;
     }
 
-    if (element instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) element;
+    if (element instanceof SchemaEntityTagDecl) {
+      SchemaEntityTagDecl varTagDecl = (SchemaEntityTagDecl) element;
       String name = varTagDecl.getQid().getName();
 
       if (structureView) return name;
 
-      SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
-      String varTypeName = varTypeDef == null ? null : varTypeDef.getName();
-      varTypeName = varTypeName == null ? "???" : varTypeName;
+      SchemaEntityTypeDef entityTypeDef = PsiTreeUtil.getParentOfType(element, SchemaEntityTypeDef.class);
+      String entityTypeName = entityTypeDef == null ? null : entityTypeDef.getName();
+      entityTypeName = entityTypeName == null ? "???" : entityTypeName;
 
-      return varTypeName + '.' + name;
+      return entityTypeName + '.' + name;
     }
 
     if (element instanceof SchemaEnumMemberDecl) {
@@ -244,14 +244,14 @@ public final class SchemaPresentationUtil {
     if (element instanceof SchemaListTypeDef) return "List type";
     if (element instanceof SchemaPrimitiveTypeDef) return "Primitive type";
     if (element instanceof SchemaEnumTypeDef) return "Enum type";
-    if (element instanceof SchemaVarTypeDef) return "Var type";
+    if (element instanceof SchemaEntityTypeDef) return "Entity type";
     if (element instanceof SchemaRecordTypeDef) return "Record type";
     if (element instanceof SchemaMapTypeDef) return "Map type";
     if (element instanceof SchemaQnSegment) return "Namespace";
-    if (element instanceof SchemaVarTagDecl) return "Var tag";
+    if (element instanceof SchemaEntityTagDecl) return "Var tag";
     if (element instanceof SchemaFieldDecl) return "Record field";
-    if (element instanceof SchemaVarTagRef)
-      return "Var tag reference";
+    if (element instanceof SchemaEntityTagRef)
+      return "Entity tag reference";
 
     return "(getType) Unknown element: " + element;
   }

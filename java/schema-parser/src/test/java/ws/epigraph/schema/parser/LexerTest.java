@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class LexerTest {
         "  prop2 = ( a.b/c:d )\n" +
         "  `field`: Integer\n" +
         "}\n" +
-        "vartype MyType3 {\n" +
+        "entity MyType3 {\n" +
         "  `record`: MyType2\n" +
         "}";
 
@@ -76,7 +76,7 @@ public class LexerTest {
         S_ID, S_EQ, S_PAREN_LEFT, S_ID, S_DOT, S_ID, S_SLASH, S_ID, S_COLON, S_ID, S_PAREN_RIGHT,
         S_ID, S_COLON, S_ID,
         S_CURLY_RIGHT,
-        S_VARTYPE, S_ID, S_CURLY_LEFT,
+        S_ENTITY, S_ID, S_CURLY_LEFT,
         S_ID, S_COLON, S_ID,
         S_CURLY_RIGHT
     };

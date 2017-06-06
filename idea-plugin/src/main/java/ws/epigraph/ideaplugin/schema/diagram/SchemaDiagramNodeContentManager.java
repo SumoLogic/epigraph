@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.intellij.diagram.DiagramCategory;
 import com.intellij.diagram.presentation.DiagramState;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import ws.epigraph.schema.parser.psi.SchemaAnnotation;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import ws.epigraph.schema.parser.psi.SchemaEnumMemberDecl;
 import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -41,7 +41,7 @@ public class SchemaDiagramNodeContentManager extends AbstractDiagramNodeContentM
   @SuppressWarnings("RedundantIfStatement")
   @Override
   public boolean isInCategory(Object o, DiagramCategory category, DiagramState diagramState) {
-    if (o instanceof SchemaVarTagDecl && category == TAGS) return true;
+    if (o instanceof SchemaEntityTagDecl && category == TAGS) return true;
     if (o instanceof SchemaFieldDecl && category == FIELDS) return true;
     if (o instanceof SchemaAnnotation && category == ANNOTATIONS) return true;
     if (o instanceof SchemaEnumMemberDecl && category == ENUM_MEMBERS) return true;

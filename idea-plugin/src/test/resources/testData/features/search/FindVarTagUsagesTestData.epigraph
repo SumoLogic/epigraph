@@ -1,6 +1,6 @@
 namespace foo2
 
-vartype T {
+entity T {
   abstract fo<caret>o: T
 }
 

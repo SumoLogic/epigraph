@@ -2,4 +2,4 @@ namespace epigraph.projections
 
 import epigraph.schema.LocalName
 
-vartype  ParamName extends LocalName
+entity  ParamName extends LocalName

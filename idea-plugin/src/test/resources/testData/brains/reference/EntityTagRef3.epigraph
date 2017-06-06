@@ -1,6 +1,6 @@
 namespace some3
 
-vartype V1 {
+entity V1 {
   `string`: X
 }
 

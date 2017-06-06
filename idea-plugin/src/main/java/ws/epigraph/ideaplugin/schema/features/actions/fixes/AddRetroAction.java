@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,19 +79,19 @@ public class AddRetroAction extends PsiElementBaseIntentionAction implements Low
     if (element.getNode().getElementType() == TokenType.WHITE_SPACE) element = PsiTreeUtil.prevVisibleLeaf(element);
 
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, SchemaValueTypeRef.class);
-    SchemaVarTypeDef varTypeDef = findVarTypeDef(valueTypeRef);
+    SchemaEntityTypeDef entityTypeDef = findEntityTypeDef(valueTypeRef);
 
-    return varTypeDef != null && !TypeMembers.getVarTagDecls(varTypeDef, null).isEmpty();
+    return entityTypeDef != null && !TypeMembers.getEntityTagDecls(entityTypeDef, null).isEmpty();
   }
 
-  private SchemaVarTypeDef findVarTypeDef(@Nullable SchemaValueTypeRef valueTypeRef) {
+  private SchemaEntityTypeDef findEntityTypeDef(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef != null && valueTypeRef.getRetroDecl() == null) {
       SchemaTypeRef typeRef = valueTypeRef.getTypeRef();
       if (typeRef instanceof SchemaQnTypeRef) {
         SchemaQnTypeRef fqnTypeRef = (SchemaQnTypeRef) typeRef;
         SchemaTypeDef typeDef = fqnTypeRef.resolve();
-        if (typeDef instanceof SchemaVarTypeDef) {
-          return (SchemaVarTypeDef) typeDef;
+        if (typeDef instanceof SchemaEntityTypeDef) {
+          return (SchemaEntityTypeDef) typeDef;
         }
       }
     }

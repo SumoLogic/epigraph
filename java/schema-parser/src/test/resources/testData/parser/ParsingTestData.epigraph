@@ -7,7 +7,7 @@ record Baz {
   field: SomeType
 }
 
-vartype Var {
+entity Var {
   `map`: Baz
 }
 

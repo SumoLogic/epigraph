@@ -1,6 +1,6 @@
 namespace ws.epigraph.tests
 
-vartype SubUser extends User {
+entity SubUser extends User {
   override id: SubUserId
   override `record`: SubUserRecord
 }

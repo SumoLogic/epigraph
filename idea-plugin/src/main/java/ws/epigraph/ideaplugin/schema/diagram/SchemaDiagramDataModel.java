@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,11 +123,11 @@ public class SchemaDiagramDataModel extends DiagramDataModel<PsiNamedElement> im
   private void addMembers(SchemaTypeDef typeDef,
                           DiagramNode<PsiNamedElement> node,
                           Collection<PsiNamedElement> allElements) {
-    if (typeDef instanceof SchemaVarTypeDef) {
-      SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) typeDef;
-      SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
+    if (typeDef instanceof SchemaEntityTypeDef) {
+      SchemaEntityTypeDef entityTypeDef = (SchemaEntityTypeDef) typeDef;
+      SchemaEntityTypeBody body = entityTypeDef.getEntityTypeBody();
       if (body != null) {
-        for (SchemaVarTagDecl tagDecl : body.getVarTagDeclList()) {
+        for (SchemaEntityTagDecl tagDecl : body.getEntityTagDeclList()) {
           SchemaTypeRef typeRef = tagDecl.getTypeRef();
           addMember(node, typeRef, allElements, tagDecl.getQid().getCanonicalName(), null, null);
         }

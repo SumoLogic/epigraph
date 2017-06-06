@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,8 @@ public class SchemaFoldingBuilder extends CustomFoldingBuilder implements DumbAw
       PsiElement body = null;
 
       // TODO add a mixin with getBody?
-      if (element instanceof SchemaVarTypeDef) {
-        body = ((SchemaVarTypeDef) element).getVarTypeBody();
+      if (element instanceof SchemaEntityTypeDef) {
+        body = ((SchemaEntityTypeDef) element).getEntityTypeBody();
       } else if (element instanceof SchemaRecordTypeDef) {
         body = ((SchemaRecordTypeDef) element).getRecordTypeBody();
       } else if (element instanceof SchemaPrimitiveTypeDef) {

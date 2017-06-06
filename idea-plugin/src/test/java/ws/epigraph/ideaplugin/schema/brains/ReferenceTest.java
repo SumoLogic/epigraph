@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,17 +104,17 @@ public class ReferenceTest extends LightCodeInsightFixtureTestCase {
     checkReference(element.getParent().getParent().getReference(), "Bar", "QuotedSourceRefTest.epigraph");
   }
 
-  public void testVarTagRef() {
-    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef.epigraph");
-    checkReference(reference, "tag1", "VarTagRef.epigraph");
+  public void testEntityTagRef() {
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("EntityTagRef.epigraph");
+    checkReference(reference, "tag1", "EntityTagRef.epigraph");
 
-    reference = myFixture.getReferenceAtCaretPosition("VarTagRef2.epigraph");
-    checkReference(reference, "tag1", "VarTagRef2.epigraph");
+    reference = myFixture.getReferenceAtCaretPosition("EntityTagRef2.epigraph");
+    checkReference(reference, "tag1", "EntityTagRef2.epigraph");
   }
 
-  public void testQuotedVarTag() {
-    PsiReference reference = myFixture.getReferenceAtCaretPosition("VarTagRef3.epigraph");
-    checkReference(reference, "`string`", "VarTagRef3.epigraph");
+  public void testQuotedEntityTag() {
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("EntityTagRef3.epigraph");
+    checkReference(reference, "`string`", "EntityTagRef3.epigraph");
   }
 
   @SuppressWarnings("ConstantConditions")

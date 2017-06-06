@@ -20,6 +20,7 @@ package ws.epigraph.schema.lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
+import ws.epigraph.schema.parser.psi.stubs.SchemaEntityTypeDefStubElementType;
 import ws.epigraph.schema.parser.psi.stubs.SchemaEnumTypeDefStubElementType;
 import ws.epigraph.schema.parser.psi.stubs.SchemaListTypeDefStubElementType;
 import ws.epigraph.schema.parser.psi.stubs.SchemaMapTypeDefStubElementType;
@@ -28,7 +29,6 @@ import ws.epigraph.schema.parser.psi.stubs.SchemaPrimitiveTypeDefStubElementType
 import ws.epigraph.schema.parser.psi.stubs.SchemaRecordTypeDefStubElementType;
 import ws.epigraph.schema.parser.psi.stubs.SchemaSupplementDefStubElementType;
 import ws.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStubElementType;
-import ws.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStubElementType;
 import ws.epigraph.schema.parser.psi.impl.*;
 
 public interface SchemaElementTypes {
@@ -48,6 +48,10 @@ public interface SchemaElementTypes {
   IElementType S_DELETE_OPERATION_BODY_PART = new SchemaElementType("S_DELETE_OPERATION_BODY_PART");
   IElementType S_DELETE_OPERATION_DEF = new SchemaElementType("S_DELETE_OPERATION_DEF");
   IElementType S_DELETE_PROJECTION_DEF = new SchemaElementType("S_DELETE_PROJECTION_DEF");
+  IElementType S_ENTITY_TAG_DECL = new SchemaElementType("S_ENTITY_TAG_DECL");
+  IElementType S_ENTITY_TAG_REF = new SchemaElementType("S_ENTITY_TAG_REF");
+  IElementType S_ENTITY_TYPE_BODY = new SchemaElementType("S_ENTITY_TYPE_BODY");
+  IElementType S_ENTITY_TYPE_DEF = new SchemaEntityTypeDefStubElementType("S_ENTITY_TYPE_DEF");
   IElementType S_ENUM_DATUM = new SchemaElementType("S_ENUM_DATUM");
   IElementType S_ENUM_MEMBER_DECL = new SchemaElementType("S_ENUM_MEMBER_DECL");
   IElementType S_ENUM_TYPE_BODY = new SchemaElementType("S_ENUM_TYPE_BODY");
@@ -204,10 +208,6 @@ public interface SchemaElementTypes {
   IElementType S_UPDATE_OPERATION_BODY_PART = new SchemaElementType("S_UPDATE_OPERATION_BODY_PART");
   IElementType S_UPDATE_OPERATION_DEF = new SchemaElementType("S_UPDATE_OPERATION_DEF");
   IElementType S_VALUE_TYPE_REF = new SchemaElementType("S_VALUE_TYPE_REF");
-  IElementType S_VAR_TAG_DECL = new SchemaElementType("S_VAR_TAG_DECL");
-  IElementType S_VAR_TAG_REF = new SchemaElementType("S_VAR_TAG_REF");
-  IElementType S_VAR_TYPE_BODY = new SchemaElementType("S_VAR_TYPE_BODY");
-  IElementType S_VAR_TYPE_DEF = new SchemaVarTypeDefStubElementType("S_VAR_TYPE_DEF");
 
   IElementType S_ABSTRACT = new SchemaElementType("abstract");
   IElementType S_ANGLE_LEFT = new SchemaElementType("<");
@@ -230,6 +230,7 @@ public interface SchemaElementTypes {
   IElementType S_DOLLAR = new SchemaElementType("$");
   IElementType S_DOT = new SchemaElementType(".");
   IElementType S_DOUBLE_T = new SchemaElementType("double");
+  IElementType S_ENTITY = new SchemaElementType("entity");
   IElementType S_ENUM = new SchemaElementType("enum");
   IElementType S_EQ = new SchemaElementType("=");
   IElementType S_EXTENDS = new SchemaElementType("extends");
@@ -277,7 +278,6 @@ public interface SchemaElementTypes {
   IElementType S_SUPPLEMENTS = new SchemaElementType("supplements");
   IElementType S_TILDA = new SchemaElementType("~");
   IElementType S_UNDERSCORE = new SchemaElementType("_");
-  IElementType S_VARTYPE = new SchemaElementType("vartype");
   IElementType S_WITH = new SchemaElementType("with");
 
   class Factory {
@@ -324,6 +324,18 @@ public interface SchemaElementTypes {
       }
       else if (type == S_DELETE_PROJECTION_DEF) {
         return new SchemaDeleteProjectionDefImpl(node);
+      }
+      else if (type == S_ENTITY_TAG_DECL) {
+        return new SchemaEntityTagDeclImpl(node);
+      }
+      else if (type == S_ENTITY_TAG_REF) {
+        return new SchemaEntityTagRefImpl(node);
+      }
+      else if (type == S_ENTITY_TYPE_BODY) {
+        return new SchemaEntityTypeBodyImpl(node);
+      }
+      else if (type == S_ENTITY_TYPE_DEF) {
+        return new SchemaEntityTypeDefImpl(node);
       }
       else if (type == S_ENUM_DATUM) {
         return new SchemaEnumDatumImpl(node);
@@ -789,18 +801,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_VALUE_TYPE_REF) {
         return new SchemaValueTypeRefImpl(node);
-      }
-      else if (type == S_VAR_TAG_DECL) {
-        return new SchemaVarTagDeclImpl(node);
-      }
-      else if (type == S_VAR_TAG_REF) {
-        return new SchemaVarTagRefImpl(node);
-      }
-      else if (type == S_VAR_TYPE_BODY) {
-        return new SchemaVarTypeBodyImpl(node);
-      }
-      else if (type == S_VAR_TYPE_DEF) {
-        return new SchemaVarTypeDefImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

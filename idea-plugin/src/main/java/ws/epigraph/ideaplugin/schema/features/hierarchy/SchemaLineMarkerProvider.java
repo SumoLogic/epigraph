@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import ws.epigraph.schema.parser.psi.SchemaFieldDecl;
 import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
 import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,25 +121,25 @@ public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
       }
     }
 
-    if (parent instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) parent;
+    if (parent instanceof SchemaEntityTagDecl) {
+      SchemaEntityTagDecl varTagDecl = (SchemaEntityTagDecl) parent;
 
-      List<SchemaVarTagDecl> overridenVarTypeMembers = TypeMembers.getOverridenTags(varTagDecl);
-      if (!overridenVarTypeMembers.isEmpty()) {
+      List<SchemaEntityTagDecl> overridenEntityTypeMembers = TypeMembers.getOverridenTags(varTagDecl);
+      if (!overridenEntityTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDING_TAG_GUTTER_ICON)
-                .setTargets(overridenVarTypeMembers)
+                .setTargets(overridenEntityTypeMembers)
                 .setAlignment(GutterIconRenderer.Alignment.LEFT)
                 .setTooltipText("Navigate to parent tag");
 
         result.add(builder.createLineMarkerInfo(element));
       }
 
-      List<SchemaVarTagDecl> overridingVarTypeMembers = TypeMembers.getOverridingTags(varTagDecl);
-      if (!overridingVarTypeMembers.isEmpty()) {
+      List<SchemaEntityTagDecl> overridingEntityTypeMembers = TypeMembers.getOverridingTags(varTagDecl);
+      if (!overridingEntityTypeMembers.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
             NavigationGutterIconBuilder.create(SchemaPresentationUtil.OVERRIDEN_TAG_GUTTER_ICON)
-                .setTargets(overridingVarTypeMembers)
+                .setTargets(overridingEntityTypeMembers)
                 .setAlignment(GutterIconRenderer.Alignment.RIGHT)
                 .setTooltipText("Navigate to overriding tag");
 

@@ -1,6 +1,6 @@
 namespace some1
 
-vartype V1 {
+entity V1 {
   tag1: X
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
 import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,9 +84,9 @@ public class SchemaDirectTypeParentsSearcher implements QueryExecutor<SchemaType
             if (candidate instanceof SchemaRecordTypeDef) {
               SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) candidate;
               supplementedList = recordTypeDef.supplemented();
-            } else if (candidate instanceof SchemaVarTypeDef) {
-              SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) candidate;
-              supplementedList = varTypeDef.supplemented();
+            } else if (candidate instanceof SchemaEntityTypeDef) {
+              SchemaEntityTypeDef entityTypeDef = (SchemaEntityTypeDef) candidate;
+              supplementedList = entityTypeDef.supplemented();
             }
 
             if (supplementedList != null && supplementedList.stream().anyMatch(target::equals))

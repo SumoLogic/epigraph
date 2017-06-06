@@ -2,21 +2,21 @@ namespace epigraph.schema
 
 string NameString
 
-abstract vartype Name {
+abstract entity Name {
   `string`: NameString // or 'name' ?
 }
 
-abstract vartype TypeName extends Name { }
+abstract entity TypeName extends Name { }
 
-vartype QualifiedTypeName extends TypeName {
+entity QualifiedTypeName extends TypeName {
   segments: list[NameString]
 }
 
-vartype AnonListTypeName extends TypeName {
+entity AnonListTypeName extends TypeName {
   elementTypeName: DataTypeName
 }
 
-vartype AnonMapTypeName extends TypeName {
+entity AnonMapTypeName extends TypeName {
   `record`: AnonMapTypeNameRecord
 }
 
@@ -30,13 +30,13 @@ record DataTypeName {
   retroTagName: TagName
 }
 
-vartype LocalName extends Name
+entity LocalName extends Name
 
-vartype TagName extends LocalName
+entity TagName extends LocalName
 
-vartype FieldName extends LocalName
+entity FieldName extends LocalName
 
-vartype EnumValueName extends LocalName
+entity EnumValueName extends LocalName
 
 abstract record Named {
   abstract name: Name

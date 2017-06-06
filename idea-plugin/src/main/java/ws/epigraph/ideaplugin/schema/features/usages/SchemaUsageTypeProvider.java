@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.intellij.usages.impl.rules.UsageTypeProvider;
 import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.schema.parser.psi.SchemaQnSegment;
 import ws.epigraph.schema.parser.psi.SchemaImportStatement;
-import ws.epigraph.schema.parser.psi.SchemaVarTagRef;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagRef;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,7 +45,7 @@ public class SchemaUsageTypeProvider implements UsageTypeProvider {
       return TYPE_REF_USAGE_TYPE; // be more precise: extends, list getElement type etc ?
     }
 
-    if (PsiTreeUtil.getParentOfType(element, SchemaVarTagRef.class) != null)
+    if (PsiTreeUtil.getParentOfType(element, SchemaEntityTagRef.class) != null)
       return VAR_TAG_USAGE_TYPE;
 
     return null;

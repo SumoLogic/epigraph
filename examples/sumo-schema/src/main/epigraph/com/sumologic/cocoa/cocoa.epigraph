@@ -10,7 +10,7 @@ import com.sumologic.org.OrganizationId
 
 long CollectorId extends LocalId
 
-vartype Collector {
+entity Collector {
   id: CollectorId
   rec: CollectorRec
 }
@@ -56,7 +56,7 @@ string SyncMode // TODO: change to Enumeration once available
 
 long SourceId extends LocalId
 
-vartype Source {
+entity Source {
   id: SourceId
   rec: SourceRec
 }

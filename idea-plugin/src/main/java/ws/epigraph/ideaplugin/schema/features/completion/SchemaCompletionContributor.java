@@ -43,32 +43,32 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaCompletionContributor extends CompletionContributor {
-  // TODO default` doesn't show up in auto-complete/suggestions after `vartype Foo `
+  // TODO `retro` doesn't show up in auto-complete/suggestions after `entity Foo `
 
   private static final String[] TOP_LEVEL_COMPLETIONS = {
-      "abstract ", "record ", "map", "list", "vartype ", "enum ",
+      "abstract ", "record ", "map", "list", "entity ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
       "supplement ", "resource ", "outputProjection ", "inputProjection ", "deleteProjection "
   };
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
-      "abstract ", "vartype ", "enum ", "supplement ", "outputProjection ", "inputProjection ", "deleteProjection "
+      "abstract ", "entity ", "enum ", "supplement ", "outputProjection ", "inputProjection ", "deleteProjection "
   ));
 
   // which types can have 'extends' clause
   private static final Set<IElementType> DEFS_SUPPORTING_EXTENDS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+      S_ENTITY_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'meta' clause
   private static final Set<IElementType> DEFS_SUPPORTING_META = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_ENUM_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
+      S_ENTITY_TYPE_DEF, S_RECORD_TYPE_DEF, S_LIST_TYPE_DEF, S_MAP_TYPE_DEF, S_ENUM_TYPE_DEF, S_PRIMITIVE_TYPE_DEF
   ));
 
   // which types can have 'supplements' clause
   private static final Set<IElementType> DEFS_SUPPORTING_SUPPLEMENTS = new HashSet<>(Arrays.asList(
-      S_VAR_TYPE_DEF, S_RECORD_TYPE_DEF
+      S_ENTITY_TYPE_DEF, S_RECORD_TYPE_DEF
   ));
 
   public SchemaCompletionContributor() {
@@ -211,7 +211,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
         if (schemaTypeDef instanceof SchemaRecordTypeDef) {
           return schemaTypeDef.getSupplementsDecl() != null;
         }
-        if (schemaTypeDef instanceof SchemaVarTypeDef) {
+        if (schemaTypeDef instanceof SchemaEntityTypeDef) {
           return schemaTypeDef.getSupplementsDecl() != null;
         }
       }
@@ -325,7 +325,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 //    PsiElement parent = position.getParent();
 
     SchemaRecordTypeDef recordTypeDef = null;
-    SchemaVarTypeDef varTypeDef = null;
+    SchemaEntityTypeDef entityTypeDef = null;
 
     PsiElement element = SchemaPsiUtil.prevNonWhitespaceSibling(position);
 
@@ -333,8 +333,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
       recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
     }
 
-    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
-      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaEntityTypeDef) {
+      entityTypeDef = (SchemaEntityTypeDef) element.getFirstChild();
     }
 
     if (recordTypeDef != null) {
@@ -342,8 +342,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
       if (!fieldDecls.isEmpty()) addOverride = true;
     }
 
-    if (varTypeDef != null) {
-      if (!TypeMembers.getVarTagDecls(varTypeDef, null).isEmpty()) addOverride = true;
+    if (entityTypeDef != null) {
+      if (!TypeMembers.getEntityTagDecls(entityTypeDef, null).isEmpty()) addOverride = true;
     }
 
     element = PsiTreeUtil.prevVisibleLeaf(position);
@@ -356,9 +356,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
         addOverride = true;
       }
 
-      SchemaVarTagDecl prevVarTagDecl = PsiTreeUtil.getParentOfType(element, SchemaVarTagDecl.class);
-      varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
-      if (varTypeDef != null && isValid(prevVarTagDecl, position)) {
+      SchemaEntityTagDecl prevEntityTagDecl = PsiTreeUtil.getParentOfType(element, SchemaEntityTagDecl.class);
+      entityTypeDef = PsiTreeUtil.getParentOfType(element, SchemaEntityTypeDef.class);
+      if (entityTypeDef != null && isValid(prevEntityTagDecl, position)) {
         addOverride = true;
       }
     }
@@ -367,7 +367,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     if (addOverride && recordTypeDef != null && TypeMembers.getOverridableFields(recordTypeDef).isEmpty())
       addOverride = false;
 
-    if (addOverride && varTypeDef != null && TypeMembers.getOverridableTags(varTypeDef).isEmpty())
+    if (addOverride && entityTypeDef != null && TypeMembers.getOverridableTags(entityTypeDef).isEmpty())
       addOverride = false;
 
     if (addOverride) result.addElement(LookupElementBuilder.create("override "));
@@ -382,7 +382,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     return false;
   }
 
-  private boolean isValid(@Nullable SchemaVarTagDecl tagDecl, @NotNull PsiElement position) {
+  private boolean isValid(@Nullable SchemaEntityTagDecl tagDecl, @NotNull PsiElement position) {
     if (tagDecl == null) return true;
     if (tagDecl.getCurlyRight() != null) return true;
     SchemaTypeRef typeRef = tagDecl.getTypeRef();
@@ -393,7 +393,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   private void completeOverrideMember(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
     SchemaRecordTypeDef recordTypeDef = null;
-    SchemaVarTypeDef varTypeDef = null;
+    SchemaEntityTypeDef entityTypeDef = null;
 
     PsiElement element = PsiTreeUtil.prevVisibleLeaf(position);
     if (element == null || element.getNode().getElementType() != S_OVERRIDE) return;
@@ -406,8 +406,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
 //      recordTypeDef = (SchemaRecordTypeDef) element.getFirstChild();
 //    }
 //
-//    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaVarTypeDef) {
-//      varTypeDef = (SchemaVarTypeDef) element.getFirstChild();
+//    if (element instanceof SchemaTypeDefWrapper && element.getFirstChild() instanceof SchemaEntityTypeDef) {
+//      entityTypeDef = (SchemaEntityTypeDef) element.getFirstChild();
 //    }
 
     PsiElement elementParent = element.getParent();
@@ -418,9 +418,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
       recordTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), SchemaRecordTypeDef.class);
     }
 
-    varTypeDef = PsiTreeUtil.getParentOfType(element, SchemaVarTypeDef.class);
-    if (varTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
-      varTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), SchemaVarTypeDef.class);
+    entityTypeDef = PsiTreeUtil.getParentOfType(element, SchemaEntityTypeDef.class);
+    if (entityTypeDef == null && elementParent.getNode().getElementType() == S_DEFS) {
+      entityTypeDef = PsiTreeUtil.getParentOfType(PsiTreeUtil.prevVisibleLeaf(element), SchemaEntityTypeDef.class);
     }
 
     if (recordTypeDef != null) {
@@ -430,9 +430,9 @@ public class SchemaCompletionContributor extends CompletionContributor {
       }
     }
 
-    if (varTypeDef != null) {
-      List<SchemaVarTagDecl> overrideableTags = TypeMembers.getOverridableTags(varTypeDef);
-      for (SchemaVarTagDecl varTagDecl : overrideableTags) {
+    if (entityTypeDef != null) {
+      List<SchemaEntityTagDecl> overrideableTags = TypeMembers.getOverridableTags(entityTypeDef);
+      for (SchemaEntityTagDecl varTagDecl : overrideableTags) {
         result.addElement(LookupElementBuilder.create(varTagDecl));
       }
     }
@@ -462,7 +462,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
         // resolve it and ensure it points to a var type
         SchemaQnTypeRef qnTypeRef = (SchemaQnTypeRef) typeRef;
         SchemaTypeDef typeDef = qnTypeRef.resolve();
-        if (typeDef instanceof SchemaVarTypeDef) {
+        if (typeDef instanceof SchemaEntityTypeDef) {
           PsiElement prevSibling = SchemaPsiUtil.prevNonWhitespaceSibling(valueTypeRef);
           if (prevSibling != null && prevSibling.getNode().getElementType() == S_COLON) {
             result.addElement(LookupElementBuilder.create("retro "));

@@ -68,11 +68,11 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitVarTagDecl(@NotNull SchemaVarTagDecl memberDecl) {
+      public void visitEntityTagDecl(@NotNull SchemaEntityTagDecl memberDecl) {
         PsiElement id = memberDecl.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
 
-        String namingError = NamingConventions.validateVarTypeTagName(id.getText());
+        String namingError = NamingConventions.validateEntityTypeTagName(id.getText());
         if (namingError != null)
           holder.createErrorAnnotation(id, namingError);
 
@@ -84,7 +84,7 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
 
       @Override
       public void visitRetroDecl(@NotNull final SchemaRetroDecl retroDecl) {
-        SchemaVarTagRef varTagRef = retroDecl.getVarTagRef();
+        SchemaEntityTagRef varTagRef = retroDecl.getEntityTagRef();
         PsiElement id = varTagRef.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
       }
@@ -94,15 +94,15 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
 
         SchemaRetroDecl retroDecl = valueTypeRef.getRetroDecl();
 
-        if (retroDecl != null) {
-          if (!TypeMembers.canHaveRetro(valueTypeRef))
-            holder.createErrorAnnotation(retroDecl, SchemaBundle.message("annotator.retro.non.var"));
-        } else {
-          SchemaVarTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
+        if (retroDecl == null) {
+          SchemaEntityTagDecl defaultTag = TypeMembers.getEffectiveRetro(valueTypeRef);
 //          if (defaultTag == null && TypeMembers.canHaveDefault(valueTypeRef)) {
 //            Annotation annotation = holder.createWeakWarningAnnotation(valueTypeRef, SchemaBundle.message("annotator.default.override.missing"));
 //            annotation.registerFix(new AddDefaultAction());
 //          }
+        } else {
+          if (!TypeMembers.canHaveRetro(valueTypeRef))
+            holder.createErrorAnnotation(retroDecl, SchemaBundle.message("annotator.retro.non.var"));
         }
       }
 
@@ -154,8 +154,8 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
 //      @Override
-//      public void visitVarTypeDef(@NotNull SchemaVarTypeDef varTypeDef) {
-//        visitTypeDef(varTypeDef);
+//      public void visitEntityTypeDef(@NotNull SchemaEntityTypeDef entityTypeDef) {
+//        visitTypeDef(entityTypeDef);
 //      }
 //
 //      @Override
@@ -214,7 +214,7 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitVarTagRef(@NotNull SchemaVarTagRef tagRef) {
+      public void visitEntityTagRef(@NotNull SchemaEntityTagRef tagRef) {
         PsiReference reference = tagRef.getReference();
         if (reference == null || reference.resolve() == null) {
           holder.createErrorAnnotation(tagRef.getNode(), SchemaBundle.message("annotator.unresolved.reference"));
@@ -283,7 +283,7 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
           tooltipText.append("''").append(typeDefQn).append("''");
         }
         annotation.setTooltip(tooltipText.toString());
-      } // else we have import prefix matching varTypeple namespaces, OK
+      } // else we have import prefix matching entityTypeple namespaces, OK
 //      }
     }
   }

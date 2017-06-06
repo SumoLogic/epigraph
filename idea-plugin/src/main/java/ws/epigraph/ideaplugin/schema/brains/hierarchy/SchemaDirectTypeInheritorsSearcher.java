@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import ws.epigraph.ideaplugin.schema.index.SchemaSearchScopeUtil;
 import ws.epigraph.schema.parser.psi.SchemaRecordTypeDef;
 import ws.epigraph.schema.parser.psi.SchemaSupplementDef;
 import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -73,9 +73,9 @@ public class SchemaDirectTypeInheritorsSearcher implements QueryExecutor<SchemaT
     if (target instanceof SchemaRecordTypeDef) {
       SchemaRecordTypeDef recordTypeDef = (SchemaRecordTypeDef) target;
       children.addAll(application.runReadAction((Computable<List<SchemaTypeDef>>) recordTypeDef::supplemented));
-    } else if (target instanceof SchemaVarTypeDef) {
-      SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) target;
-      children.addAll(application.runReadAction((Computable<List<SchemaTypeDef>>) varTypeDef::supplemented));
+    } else if (target instanceof SchemaEntityTypeDef) {
+      SchemaEntityTypeDef entityTypeDef = (SchemaEntityTypeDef) target;
+      children.addAll(application.runReadAction((Computable<List<SchemaTypeDef>>) entityTypeDef::supplemented));
     }
 
     // -- process 'supplement x with y'

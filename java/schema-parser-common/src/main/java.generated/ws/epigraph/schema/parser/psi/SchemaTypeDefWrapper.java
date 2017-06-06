@@ -26,6 +26,9 @@ import ws.epigraph.schema.parser.psi.stubs.SchemaTypeDefWrapperStub;
 public interface SchemaTypeDefWrapper extends PsiElement, StubBasedPsiElement<SchemaTypeDefWrapperStub> {
 
   @Nullable
+  SchemaEntityTypeDef getEntityTypeDef();
+
+  @Nullable
   SchemaEnumTypeDef getEnumTypeDef();
 
   @Nullable
@@ -39,9 +42,6 @@ public interface SchemaTypeDefWrapper extends PsiElement, StubBasedPsiElement<Sc
 
   @Nullable
   SchemaRecordTypeDef getRecordTypeDef();
-
-  @Nullable
-  SchemaVarTypeDef getVarTypeDef();
 
   @NotNull
   SchemaTypeDef getElement();

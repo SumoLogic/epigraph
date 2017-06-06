@@ -4,7 +4,7 @@ import com.example.UserRecord
 import com.example.User
 import com.example.UserId
 
-vartype Guest extends User {
+entity Guest extends User {
   override id: GuestId
 //  override `record`: GuestRecord
 }

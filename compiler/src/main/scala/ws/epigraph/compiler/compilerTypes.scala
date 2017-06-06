@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -169,7 +169,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 object CTypeDef {
 
   def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
-    case typeDef: SchemaVarTypeDef => new CVarTypeDef(csf, typeDef)
+    case typeDef: SchemaEntityTypeDef => new CVarTypeDef(csf, typeDef)
     case typeDef: SchemaRecordTypeDef => new CRecordTypeDef(csf, typeDef)
     case typeDef: SchemaMapTypeDef => new CMapTypeDef(csf, typeDef)
     case typeDef: SchemaListTypeDef => new CListTypeDef(csf, typeDef)
@@ -182,7 +182,7 @@ object CTypeDef {
     if (srd == null) {
       None
     } else {
-      @Nullable val vtr = srd.getVarTagRef
+      @Nullable val vtr = srd.getEntityTagRef
       if (vtr == null) {
         Some(None)
       } else {
@@ -194,15 +194,15 @@ object CTypeDef {
 }
 
 
-class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.VARTYPE
 ) {
 
   final override type Super = CVarTypeDef
 
   val declaredTags: Seq[CTag] = {
-    @Nullable val body = psi.getVarTypeBody
-    if (body == null) Nil else body.getVarTagDeclList.map(new CTag(csf, _)).toList
+    @Nullable val body = psi.getEntityTypeBody
+    if (body == null) Nil else body.getEntityTagDeclList.map(new CTag(csf, _)).toList
   }
 
   // TODO check for dupes
@@ -269,7 +269,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaVarTypeDef)(implicit
 
 class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nullable val psi: PsiElement) {
 
-  def this(csf: CSchemaFile, psi: SchemaVarTagDecl)(implicit ctx: CContext) =
+  def this(csf: CSchemaFile, psi: SchemaEntityTagDecl)(implicit ctx: CContext) =
     this(csf, psi.getQid.getCanonicalName, CTypeRef(csf, psi.getTypeRef), psi)
 
   def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,26 @@
 package ws.epigraph.schema.parser.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
-import ws.epigraph.schema.parser.psi.impl.SchemaVarTypeDefImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
+import ws.epigraph.schema.parser.psi.impl.SchemaEntityTypeDefImpl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaVarTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaVarTypeDefStub, SchemaVarTypeDef> {
-  public SchemaVarTypeDefStubElementType(@NotNull @NonNls String debugName) {
+public class SchemaEntityTypeDefStubElementType extends SchemaTypeDefStubElementTypeBase<SchemaEntityTypeDefStub, SchemaEntityTypeDef> {
+  public SchemaEntityTypeDefStubElementType(@NotNull @NonNls String debugName) {
     super(debugName, "vartypedef");
   }
 
   @Override
-  public SchemaVarTypeDef createPsi(@NotNull SchemaVarTypeDefStub stub) {
-    return new SchemaVarTypeDefImpl(stub, this);
+  public SchemaEntityTypeDef createPsi(@NotNull SchemaEntityTypeDefStub stub) {
+    return new SchemaEntityTypeDefImpl(stub, this);
   }
 
   @Override
-  public SchemaVarTypeDefStub createStub(@NotNull SchemaVarTypeDef typeDef, StubElement parentStub) {
-    return new SchemaVarTypeDefStubImpl(parentStub);
+  public SchemaEntityTypeDefStub createStub(@NotNull SchemaEntityTypeDef typeDef, StubElement parentStub) {
+    return new SchemaEntityTypeDefStubImpl(parentStub);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewShortNameLocation;
-import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
-import ws.epigraph.schema.parser.psi.SchemaQnSegment;
-import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTagRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagRef;
+import ws.epigraph.schema.parser.psi.SchemaQnSegment;
+import ws.epigraph.schema.parser.psi.SchemaTypeDef;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -49,8 +49,8 @@ public class SchemaElementDescriptionProvider implements ElementDescriptionProvi
         return fqnSegment.getQn().toString();
       }
 
-      if (element instanceof SchemaVarTagRef) {
-        SchemaVarTagRef tagRef = (SchemaVarTagRef) element;
+      if (element instanceof SchemaEntityTagRef) {
+        SchemaEntityTagRef tagRef = (SchemaEntityTagRef) element;
         return tagRef.getQid().getText();
       }
     }

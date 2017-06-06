@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi.impl;
 
@@ -10,14 +26,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaVarTypeBodyImpl extends AnnotationsHolderImpl implements SchemaVarTypeBody {
+public class SchemaEntityTypeBodyImpl extends AnnotationsHolderImpl implements SchemaEntityTypeBody {
 
-  public SchemaVarTypeBodyImpl(ASTNode node) {
+  public SchemaEntityTypeBodyImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitVarTypeBody(this);
+    visitor.visitEntityTypeBody(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -33,8 +49,8 @@ public class SchemaVarTypeBodyImpl extends AnnotationsHolderImpl implements Sche
 
   @Override
   @NotNull
-  public List<SchemaVarTagDecl> getVarTagDeclList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaVarTagDecl.class);
+  public List<SchemaEntityTagDecl> getEntityTagDeclList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaEntityTagDecl.class);
   }
 
   @Override

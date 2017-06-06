@@ -2,7 +2,7 @@ namespace some
 
 import bar
 
-vartype V extends V {}
+entity V extends V {}
 
 <caret>
 

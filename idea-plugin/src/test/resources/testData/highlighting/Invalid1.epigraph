@@ -22,7 +22,7 @@ record Q1 {
   w: Q1 <error descr="Retro is only applicable to var types">retro <error descr="Unresolved reference">x</error></error>
 }
 
-vartype <warning descr="Type 'EE' is shadowed by 'import bar.EE'">EE</warning> {
+entity <warning descr="Type 'EE' is shadowed by 'import bar.EE'">EE</warning> {
   <error descr="Tag overrides nothing">override</error> t: <error descr="Ambiguous type reference">R</error>
 }
 

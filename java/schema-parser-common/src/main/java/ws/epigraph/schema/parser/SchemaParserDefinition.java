@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,12 +86,12 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_STRING_T,
       S_SUPPLEMENT,
       S_SUPPLEMENTS,
-      S_VARTYPE,
+      S_ENTITY,
       S_WITH
   );
   public static final TokenSet STRING_LITERALS = TokenSet.create(S_STRING);
   public static final TokenSet LITERALS = TokenSet.andSet(STRING_LITERALS, TokenSet.create(S_NUMBER, S_BOOLEAN));
-  public static final TokenSet TYPE_KINDS = TokenSet.create(S_VARTYPE, S_RECORD, S_MAP, S_LIST, S_ENUM,
+  public static final TokenSet TYPE_KINDS = TokenSet.create(S_ENTITY, S_RECORD, S_MAP, S_LIST, S_ENUM,
       S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T);
 
   @Override

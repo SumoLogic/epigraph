@@ -3,10 +3,10 @@ namespace testData.brains.hierarchy
 string S
 string R
 
-vartype Foo {
+entity Foo {
   `string`: S
 }
 
-vartype Bar extends Foo {
+entity Bar extends Foo {
   `str<caret>ing`: R
 }

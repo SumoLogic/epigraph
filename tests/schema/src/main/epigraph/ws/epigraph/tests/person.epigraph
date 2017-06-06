@@ -1,6 +1,6 @@
 namespace ws.epigraph.tests
 
-vartype Person {
+entity Person {
   id: PersonId
   `record`: PersonRecord
 }

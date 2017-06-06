@@ -44,10 +44,10 @@ public final class NamingConventions {
     return validateMemberName(fieldName, "Field name");
   }
 
-  public static @Nullable String validateVarTypeTagName(@NotNull String varTagName) {
+  public static @Nullable String validateEntityTypeTagName(@NotNull String varTagName) {
     if (isProperlyQuoted(varTagName)) return null;
 
-    return validateMemberName(varTagName, "VarType tag");
+    return validateMemberName(varTagName, "Entity tag");
   }
 
   private static @Nullable String validateMemberName(@NotNull String memberName, @NotNull String memberKind) {

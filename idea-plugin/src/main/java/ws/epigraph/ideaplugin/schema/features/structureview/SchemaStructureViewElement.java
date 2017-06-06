@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,11 +78,11 @@ class SchemaStructureViewElement implements StructureViewTreeElement {
         children.addAll(recordTypeBody.getAnnotationList()); // SchemaCustomParam
         children.addAll(recordTypeBody.getFieldDeclList()); // SchemaFieldDecl
       }
-    } else if (element instanceof SchemaVarTypeDef) {
-      SchemaVarTypeBody varTypeBody = ((SchemaVarTypeDef) element).getVarTypeBody();
-      if (varTypeBody != null) {
-        children.addAll(varTypeBody.getAnnotationList());
-        children.addAll(varTypeBody.getVarTagDeclList()); // SchemaVarTagDecl
+    } else if (element instanceof SchemaEntityTypeDef) {
+      SchemaEntityTypeBody entityTypeBody = ((SchemaEntityTypeDef) element).getEntityTypeBody();
+      if (entityTypeBody != null) {
+        children.addAll(entityTypeBody.getAnnotationList());
+        children.addAll(entityTypeBody.getEntityTagDeclList()); // SchemaEntityTagDecl
       }
     } else if (element instanceof SchemaEnumTypeDef) {
       SchemaEnumTypeBody enumTypeBody = ((SchemaEnumTypeDef) element).getEnumTypeBody();

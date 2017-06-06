@@ -85,6 +85,23 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitEntityTagDecl(@NotNull SchemaEntityTagDecl o) {
+    visitAnnotationsHolder(o);
+    // visitPsiNamedElement(o);
+  }
+
+  public void visitEntityTagRef(@NotNull SchemaEntityTagRef o) {
+    visitPsiNameIdentifierOwner(o);
+  }
+
+  public void visitEntityTypeBody(@NotNull SchemaEntityTypeBody o) {
+    visitAnnotationsHolder(o);
+  }
+
+  public void visitEntityTypeDef(@NotNull SchemaEntityTypeDef o) {
+    visitTypeDef(o);
+  }
+
   public void visitEnumDatum(@NotNull SchemaEnumDatum o) {
     visitDatum(o);
   }
@@ -709,23 +726,6 @@ public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitValueTypeRef(@NotNull SchemaValueTypeRef o) {
     visitPsiElement(o);
-  }
-
-  public void visitVarTagDecl(@NotNull SchemaVarTagDecl o) {
-    visitAnnotationsHolder(o);
-    // visitPsiNamedElement(o);
-  }
-
-  public void visitVarTagRef(@NotNull SchemaVarTagRef o) {
-    visitPsiNameIdentifierOwner(o);
-  }
-
-  public void visitVarTypeBody(@NotNull SchemaVarTypeBody o) {
-    visitAnnotationsHolder(o);
-  }
-
-  public void visitVarTypeDef(@NotNull SchemaVarTypeDef o) {
-    visitTypeDef(o);
   }
 
   public void visitAnnotationsHolder(@NotNull AnnotationsHolder o) {

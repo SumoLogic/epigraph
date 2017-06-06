@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,8 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
         SchemaValueTypeRef valueTypeRef = fieldDecl.getValueTypeRef();
 
         itemType = valueTypeRef == null ? null : valueTypeRef.getTypeRef().getText();
-      } else if (namedElement instanceof SchemaVarTagDecl) {
-        SchemaVarTagDecl tagDecl = (SchemaVarTagDecl) namedElement;
+      } else if (namedElement instanceof SchemaEntityTagDecl) {
+        SchemaEntityTagDecl tagDecl = (SchemaEntityTagDecl) namedElement;
 
         itemName = tagDecl.getQid().getCanonicalName();
         SchemaTypeRef typeRef = tagDecl.getTypeRef();
@@ -95,11 +95,11 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
   public Object[] getNodeItems(PsiNamedElement parent) {
     List<Object> res = new ArrayList<>();
 
-    if (parent instanceof SchemaVarTypeDef) {
-      SchemaVarTypeDef varTypeDef = (SchemaVarTypeDef) parent;
-      SchemaVarTypeBody body = varTypeDef.getVarTypeBody();
+    if (parent instanceof SchemaEntityTypeDef) {
+      SchemaEntityTypeDef entityTypeDef = (SchemaEntityTypeDef) parent;
+      SchemaEntityTypeBody body = entityTypeDef.getEntityTypeBody();
       if (body != null) {
-        res.addAll(body.getVarTagDeclList());
+        res.addAll(body.getEntityTagDeclList());
         res.addAll(body.getAnnotationList());
       }
     }
@@ -153,7 +153,7 @@ public class SchemaDiagramElementManager extends AbstractDiagramElementManager<P
   public Icon getItemIcon(Object element, DiagramState presentation) {
     // todo make them Iconable instead?
 
-    if (element instanceof SchemaVarTagDecl)
+    if (element instanceof SchemaEntityTagDecl)
       return SchemaPresentationUtil.TAG_ICON;
 
     if (element instanceof SchemaFieldDecl)

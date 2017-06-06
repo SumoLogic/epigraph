@@ -17,7 +17,7 @@ record GlobalId {
   id: SumoId
 }
 
-vartype SumoId {
+entity SumoId {
   id: LocalId
   globalId: GlobalId
 }

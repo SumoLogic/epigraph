@@ -1,6 +1,6 @@
 namespace com.example.users
 
-vartype User {
+entity User {
   id: UserId
   `record`: UserRecord
 }

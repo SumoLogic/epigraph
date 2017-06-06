@@ -6,6 +6,6 @@ record Baz {
   abstract zz: Baz
 }
 
-vartype V {
+entity V {
   v: Baz
 }

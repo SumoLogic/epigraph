@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 public class TypeDefBlock extends SchemaBlock {
   private static final TokenSet noIndentTokenSet = TokenSet.create(
       S_RECORD_TYPE_BODY,
-      S_ENUM_TYPE_BODY, S_VAR_TYPE_BODY,
+      S_ENUM_TYPE_BODY, S_ENTITY_TYPE_BODY,
       S_PRIMITIVE_TYPE_BODY, S_MAP_TYPE_BODY, S_LIST_TYPE_BODY,
 
       S_ABSTRACT,
-      S_ID, S_RECORD, S_VARTYPE, S_ENUM,
+      S_ID, S_RECORD, S_ENTITY, S_ENUM,
       S_ANON_LIST, S_ANON_MAP,
       S_STRING_T, S_INTEGER_T, S_LONG_T, S_DOUBLE_T, S_BOOLEAN_T
   );

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,7 @@ public class SchemaPsiImplUtil {
   // namespace --------------------------------------------
 
   @Contract(pure = true)
-  @Nullable
-  public static Qn getFqn(SchemaNamespaceDecl namespaceDecl) {
+  public static @Nullable Qn getFqn(SchemaNamespaceDecl namespaceDecl) {
     SchemaNamespaceDeclStub stub = namespaceDecl.getStub();
     if (stub != null) return stub.getFqn();
 
@@ -57,8 +56,7 @@ public class SchemaPsiImplUtil {
   // qid --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement setName(SchemaQid qid, String name) {
+  public static @NotNull PsiElement setName(SchemaQid qid, String name) {
     PsiElement oldId = qid.getId();
     PsiElement newId = SchemaElementFactory.createId(qid.getProject(), name);
     oldId.replace(newId);
@@ -66,14 +64,12 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static String getName(SchemaQid qid) {
+  public static @NotNull String getName(SchemaQid qid) {
     return qid.getId().getText();
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static String getCanonicalName(SchemaQid qid) {
+  public static @NotNull String getCanonicalName(SchemaQid qid) {
     String name = getName(qid);
     return NamingConventions.unquote(name);
   }
@@ -81,8 +77,7 @@ public class SchemaPsiImplUtil {
   // fqn --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static Qn getQn(SchemaQn e) {
+  public static @NotNull Qn getQn(SchemaQn e) {
     List<SchemaQnSegment> fqnSegmentList = e.getQnSegmentList();
     String[] segments = new String[fqnSegmentList.size()];
     int idx = 0;
@@ -111,9 +106,8 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static SchemaTypeDef getElement(SchemaTypeDefWrapper typeDef) {
-    SchemaTypeDef e = typeDef.getVarTypeDef();
+  public static @NotNull SchemaTypeDef getElement(SchemaTypeDefWrapper typeDef) {
+    SchemaTypeDef e = typeDef.getEntityTypeDef();
     if (e != null) return e;
     e = typeDef.getRecordTypeDef();
     if (e != null) return e;
@@ -132,15 +126,13 @@ public class SchemaPsiImplUtil {
   // record --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaRecordTypeDef recordTypeDef) {
     return SchemaPsiImplUtilExt.supplemented(recordTypeDef);
   }
 
   // primitive --------------------------------------------
   @Contract(pure = true)
-  @NotNull
-  public static PrimitiveTypeKind getPrimitiveTypeKind(@NotNull SchemaPrimitiveTypeDef primitiveTypeDef) {
+  public static @NotNull PrimitiveTypeKind getPrimitiveTypeKind(@NotNull SchemaPrimitiveTypeDef primitiveTypeDef) {
     if (primitiveTypeDef.getStringT() != null) return PrimitiveTypeKind.STRING;
     if (primitiveTypeDef.getLongT() != null) return PrimitiveTypeKind.LONG;
     if (primitiveTypeDef.getIntegerT() != null) return PrimitiveTypeKind.INTEGER;
@@ -153,9 +145,8 @@ public class SchemaPsiImplUtil {
   // var --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
-    return SchemaPsiImplUtilExt.supplemented(varTypeDef);
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaEntityTypeDef entityTypeDef) {
+    return SchemaPsiImplUtilExt.supplemented(entityTypeDef);
   }
 
 //  @Nullable
@@ -167,16 +158,14 @@ public class SchemaPsiImplUtil {
 
   // not exposed through PSI
   @Contract(pure = true)
-  @Nullable
-  public static PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
+  public static @Nullable PsiReference getReference(@NotNull SchemaQnTypeRef typeRef) {
     List<SchemaQnSegment> fqnSegmentList = typeRef.getQn().getQnSegmentList();
     if (fqnSegmentList.isEmpty()) return null;
     return fqnSegmentList.get(fqnSegmentList.size() - 1).getReference();
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
+  public static @Nullable SchemaTypeDef resolve(@NotNull SchemaQnTypeRef typeRef) {
     PsiReference reference = getReference(typeRef);
     if (reference == null) return null;
     PsiElement element = reference.resolve();
@@ -190,16 +179,14 @@ public class SchemaPsiImplUtil {
   // can't use SchemaSupplementDef::getFqnTypeRefList as it will include both source and all supplemented
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaQnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
+  public static @Nullable SchemaQnTypeRef sourceRef(@NotNull SchemaSupplementDef supplementDef) {
     PsiElement with = supplementDef.getWith();
     if (with == null) return null;
     return PsiTreeUtil.getNextSiblingOfType(with, SchemaQnTypeRef.class);
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaQnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
+  public static @NotNull List<SchemaQnTypeRef> supplementedRefs(@NotNull SchemaSupplementDef supplementDef) {
     /*
     PsiElement with = supplementDef.getWith();
     if (with == null) return Collections.emptyList();
@@ -229,20 +216,17 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
+  public static @Nullable SchemaTypeDef source(@NotNull SchemaSupplementDef supplementDef) {
     return SchemaPsiImplUtilExt.source(supplementDef);
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
+  public static @NotNull List<SchemaTypeDef> supplemented(@NotNull SchemaSupplementDef supplementDef) {
     return SchemaPsiImplUtilExt.supplemented(supplementDef);
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaSupplementDef supplementDef) {
     return SchemaPsiImplUtilExt.getPresentation(supplementDef);
   }
 
@@ -260,8 +244,7 @@ public class SchemaPsiImplUtil {
    * (including) this one are returned.
    */
   @Contract(pure = true)
-  @NotNull
-  public static Qn getQn(SchemaQnSegment e) {
+  public static @NotNull Qn getQn(SchemaQnSegment e) {
     SchemaQn schemaQn = (SchemaQn) e.getParent();
     assert schemaQn != null;
 
@@ -277,8 +260,7 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaQn getSchemaFqn(SchemaQnSegment segment) {
+  public static @Nullable SchemaQn getSchemaFqn(SchemaQnSegment segment) {
     PsiElement fqn = segment.getParent();
     if (fqn instanceof SchemaQn) {
       return (SchemaQn) fqn;
@@ -288,8 +270,7 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static SchemaQnTypeRef getSchemaFqnTypeRef(SchemaQnSegment segment) {
+  public static @Nullable SchemaQnTypeRef getSchemaFqnTypeRef(SchemaQnSegment segment) {
     PsiElement fqn = segment.getParent();
     if (fqn instanceof SchemaQn) {
       PsiElement fqnParent = fqn.getParent();
@@ -302,21 +283,18 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaQnSegment segment) {
+  public static @Nullable String getName(SchemaQnSegment segment) {
     return getNameIdentifier(segment).getText();
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement setName(SchemaQnSegment segment, String name) {
+  public static @NotNull PsiElement setName(SchemaQnSegment segment, String name) {
     segment.getQid().setName(name);
     return segment;
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaQnSegment segment) {
+  public static @NotNull PsiElement getNameIdentifier(SchemaQnSegment segment) {
     return segment.getQid().getId();
   }
 
@@ -332,8 +310,7 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static PsiReference getReference(SchemaQnSegment segment) {
+  public static @Nullable PsiReference getReference(SchemaQnSegment segment) {
     return SchemaReferenceFactory.getQnReference(segment);
   }
 
@@ -342,8 +319,7 @@ public class SchemaPsiImplUtil {
   // field decl
 
   @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaFieldDecl fieldDecl) {
+  public static @Nullable String getName(SchemaFieldDecl fieldDecl) {
     return getNameIdentifier(fieldDecl).getText();
   }
 
@@ -354,8 +330,7 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
+  public static @NotNull PsiElement getNameIdentifier(SchemaFieldDecl fieldDecl) {
     return fieldDecl.getQid().getId();
   }
 
@@ -365,13 +340,11 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaFieldDecl fieldDecl) {
     return SchemaPsiImplUtilExt.getPresentation(fieldDecl);
   }
 
-  @NotNull
-  public static SchemaRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
+  public static @NotNull SchemaRecordTypeDef getRecordTypeDef(@NotNull SchemaFieldDecl fieldDecl) {
     SchemaRecordTypeDef recordTypeDef = PsiTreeUtil.getParentOfType(fieldDecl, SchemaRecordTypeDef.class);
     assert recordTypeDef != null;
     return recordTypeDef;
@@ -380,37 +353,33 @@ public class SchemaPsiImplUtil {
   // varTypeMember decl
 
   @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaVarTagDecl varTagDecl) {
-    return getNameIdentifier(varTagDecl).getText();
+  public static @Nullable String getName(SchemaEntityTagDecl entityTagDecl) {
+    return getNameIdentifier(entityTagDecl).getText();
   }
 
-  public static PsiElement setName(SchemaVarTagDecl varTagDecl, String name) {
+  public static PsiElement setName(SchemaEntityTagDecl entityTagDecl, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
-    varTagDecl.getQid().setName(name);
-    return varTagDecl;
+    entityTagDecl.getQid().setName(name);
+    return entityTagDecl;
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaVarTagDecl varTagDecl) {
+  public static @NotNull PsiElement getNameIdentifier(SchemaEntityTagDecl varTagDecl) {
     return varTagDecl.getQid().getId();
   }
 
-  public static int getTextOffset(@NotNull SchemaVarTagDecl varTagDecl) {
-    PsiElement nameIdentifier = varTagDecl.getNameIdentifier();
+  public static int getTextOffset(@NotNull SchemaEntityTagDecl entityTagDecl) {
+    PsiElement nameIdentifier = entityTagDecl.getNameIdentifier();
     return nameIdentifier.getTextOffset();
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
-    return SchemaPsiImplUtilExt.getPresentation(varTagDecl);
+  public static @NotNull ItemPresentation getPresentation(@NotNull SchemaEntityTagDecl entityTagDecl) {
+    return SchemaPsiImplUtilExt.getPresentation(entityTagDecl);
   }
 
-  @NotNull
-  public static SchemaVarTypeDef getVarTypeDef(@NotNull SchemaVarTagDecl varTagDecl) {
-    SchemaVarTypeDef varTypeDef = PsiTreeUtil.getParentOfType(varTagDecl, SchemaVarTypeDef.class);
+  public static @NotNull SchemaEntityTypeDef getEntityDef(@NotNull SchemaEntityTagDecl entityTagDecl) {
+    SchemaEntityTypeDef varTypeDef = PsiTreeUtil.getParentOfType(entityTagDecl, SchemaEntityTypeDef.class);
     assert varTypeDef != null;
     return varTypeDef;
   }
@@ -418,28 +387,25 @@ public class SchemaPsiImplUtil {
   // vartype default ref
 
   @Contract(pure = true)
-  @Nullable
-  public static PsiReference getReference(@NotNull SchemaVarTagRef varTagRef) {
-    return SchemaReferenceFactory.getVarTagReference(varTagRef);
+  public static @Nullable PsiReference getReference(@NotNull SchemaEntityTagRef entityTagRef) {
+    return SchemaReferenceFactory.getEntityTagReference(entityTagRef);
   }
 
   @Contract(pure = true)
-  @Nullable
-  public static PsiElement getNameIdentifier(@NotNull SchemaVarTagRef varTagRef) {
-    return varTagRef.getQid().getId();
+  public static @NotNull PsiElement getNameIdentifier(@NotNull SchemaEntityTagRef entityTagRef) {
+    return entityTagRef.getQid().getId();
   }
 
-  public static PsiElement setName(SchemaVarTagRef varTagRef, String name) {
+  public static PsiElement setName(SchemaEntityTagRef entityTagRef, String name) {
 //    if (NamingConventions.validateTagName(name) != null) name = NamingConventions.enquote(name);
-    varTagRef.getQid().setName(name);
-    return varTagRef;
+    entityTagRef.getQid().setName(name);
+    return entityTagRef;
   }
 
   // enumMember decl
 
   @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaEnumMemberDecl enumMemberDecl) {
+  public static @Nullable String getName(SchemaEnumMemberDecl enumMemberDecl) {
     return getNameIdentifier(enumMemberDecl).getText();
   }
 
@@ -449,16 +415,14 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
+  public static @NotNull PsiElement getNameIdentifier(SchemaEnumMemberDecl enumMemberDecl) {
     return enumMemberDecl.getQid().getId();
   }
 
   // annotation
 
   @Contract(pure = true)
-  @Nullable
-  public static String getName(SchemaAnnotation annotation) {
+  public static @Nullable String getName(SchemaAnnotation annotation) {
     return getNameIdentifier(annotation).getText();
   }
 
@@ -468,16 +432,14 @@ public class SchemaPsiImplUtil {
   }
 
   @Contract(pure = true)
-  @NotNull
-  public static PsiElement getNameIdentifier(SchemaAnnotation annotation) {
+  public static @NotNull PsiElement getNameIdentifier(SchemaAnnotation annotation) {
     return annotation.getQid().getId();
   }
 
   // common toNullableString for all stub-based elements --------------------------------------------
 
   @Contract(pure = true)
-  @NotNull
-  public static String toString(PsiElement element) {
+  public static @NotNull String toString(PsiElement element) {
     return element.getClass().getSimpleName() + "(" + element.getNode().getElementType().toString() + ")";
   }
 

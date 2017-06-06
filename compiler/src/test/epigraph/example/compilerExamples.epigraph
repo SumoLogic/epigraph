@@ -17,7 +17,7 @@ record Foo123 extends epigraph.schema.BooleanTypeData {
 
 }
 
-vartype Bar234 extends epigraph.schema.ByNameRef {
+entity Bar234 extends epigraph.schema.ByNameRef {
   `id`: Integer
   `record`: Foo123
 }
@@ -36,7 +36,7 @@ vartype Bar234 extends epigraph.schema.ByNameRef {
 //boolean B1 extends B2
 //boolean B2 extends B1
 //
-//vartype BadSupertypeKind extends Foo123
+//entity BadSupertypeKind extends Foo123
 //
 //supplement Foo123 with Bar234
 
@@ -44,11 +44,11 @@ integer CompanyId extends Integer
 integer SelfEmployedId extends CompanyId, PersonId
 supplement PersonId with Integer
 
-vartype VT0 { foo: Integer }
-vartype VT1 extends VT0 { foo: PersonId }
-vartype VT2 extends VT0 { foo: CompanyId }
-vartype VT3 extends VT1, VT2 { foo: SelfEmployedId }
-vartype VT4 extends VT1, VT3, VT2, VT3
+entity VT0 { foo: Integer }
+entity VT1 extends VT0 { foo: PersonId }
+entity VT2 extends VT0 { foo: CompanyId }
+entity VT3 extends VT1, VT2 { foo: SelfEmployedId }
+entity VT4 extends VT1, VT3, VT2, VT3
 
 record A { foo: String, bar: Integer }
 record B extends A { foo: String }

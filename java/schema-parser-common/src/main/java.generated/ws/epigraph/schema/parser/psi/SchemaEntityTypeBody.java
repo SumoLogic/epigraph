@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
+// This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi;
 
-import com.intellij.psi.PsiReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
-/**
- * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
- */
-public class SchemaReferenceFactory {
+public interface SchemaEntityTypeBody extends AnnotationsHolder {
 
-  private SchemaReferenceFactory() {}
+  @NotNull
+  List<SchemaAnnotation> getAnnotationList();
 
-  public static @Nullable PsiReference getQnReference(@NotNull SchemaQnSegment segment) {
-    return null;
-  }
+  @NotNull
+  List<SchemaEntityTagDecl> getEntityTagDeclList();
 
-  public static @Nullable PsiReference getEntityTagReference(@NotNull SchemaEntityTagRef varTagRef) {
-    return null;
-  }
+  @NotNull
+  PsiElement getCurlyLeft();
+
+  @Nullable
+  PsiElement getCurlyRight();
+
 }

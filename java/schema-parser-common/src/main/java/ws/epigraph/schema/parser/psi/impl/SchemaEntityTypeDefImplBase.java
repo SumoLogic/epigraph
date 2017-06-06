@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,25 @@ package ws.epigraph.schema.parser.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
-import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
-import ws.epigraph.schema.parser.psi.TypeKind;
-import ws.epigraph.schema.parser.psi.stubs.SchemaVarTypeDefStub;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
+import ws.epigraph.schema.parser.psi.TypeKind;
+import ws.epigraph.schema.parser.psi.stubs.SchemaEntityTypeDefStub;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-abstract public class SchemaVarTypeDefImplBase extends SchemaTypeDefImplBase<SchemaVarTypeDefStub, SchemaVarTypeDef> implements SchemaTypeDef {
-  SchemaVarTypeDefImplBase(@NotNull ASTNode node) {
+public abstract class SchemaEntityTypeDefImplBase extends SchemaTypeDefImplBase<SchemaEntityTypeDefStub, SchemaEntityTypeDef> {
+  SchemaEntityTypeDefImplBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  SchemaVarTypeDefImplBase(@NotNull SchemaVarTypeDefStub stub, @NotNull IStubElementType nodeType) {
+  SchemaEntityTypeDefImplBase(@NotNull SchemaEntityTypeDefStub stub, @NotNull IStubElementType nodeType) {
     super(stub, nodeType);
   }
 
-  @NotNull
   @Override
-  public TypeKind getKind() {
+  public @NotNull TypeKind getKind() {
     return TypeKind.VAR;
   }
 }

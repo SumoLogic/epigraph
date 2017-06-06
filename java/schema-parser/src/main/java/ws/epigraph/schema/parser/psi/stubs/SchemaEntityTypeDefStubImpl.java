@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.schema.parser.psi;
+package ws.epigraph.schema.parser.psi.stubs;
 
-import com.intellij.psi.PsiReference;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubElement;
+import ws.epigraph.schema.lexer.SchemaElementTypes;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaReferenceFactory {
-
-  private SchemaReferenceFactory() {}
-
-  public static @Nullable PsiReference getQnReference(@NotNull SchemaQnSegment segment) {
-    return null;
-  }
-
-  public static @Nullable PsiReference getEntityTagReference(@NotNull SchemaEntityTagRef varTagRef) {
-    return null;
+public class SchemaEntityTypeDefStubImpl extends SchemaTypeDefStubBaseImpl<SchemaEntityTypeDef> implements
+    SchemaEntityTypeDefStub {
+  SchemaEntityTypeDefStubImpl(StubElement parent) {
+    super(parent, (IStubElementType) SchemaElementTypes.S_ENTITY_TYPE_DEF);
   }
 }

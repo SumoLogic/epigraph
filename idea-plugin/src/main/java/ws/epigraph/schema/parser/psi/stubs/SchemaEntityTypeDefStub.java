@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package ws.epigraph.schema.parser.psi.stubs;
 
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface SchemaVarTypeDefStub extends SchemaTypeDefStubBase<SchemaVarTypeDef> {
+public interface SchemaEntityTypeDefStub extends SchemaTypeDefStubBase<SchemaEntityTypeDef> {
   @Nullable
   List<SerializedFqnTypeRef> getSupplementedTypeRefs();
 }

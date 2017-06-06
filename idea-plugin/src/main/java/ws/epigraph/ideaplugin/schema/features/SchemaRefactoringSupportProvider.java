@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import ws.epigraph.schema.parser.psi.SchemaQnSegment;
 import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 public class SchemaRefactoringSupportProvider extends RefactoringSupportProvider {
   @Override
   public boolean isMemberInplaceRenameAvailable(@NotNull PsiElement element, @Nullable PsiElement context) {
-    return element instanceof SchemaTypeDef || element instanceof SchemaQnSegment || element instanceof SchemaVarTagDecl;
+    return element instanceof SchemaTypeDef || element instanceof SchemaQnSegment || element instanceof SchemaEntityTagDecl;
   }
 
   @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,18 +56,19 @@ class SchemaPsiImplUtilExt {
     return resolveTypeRefs(supplementsDecl.getQnTypeRefList());
   }
 
-  // var --------------------------------------------
+  // entity --------------------------------------------
 
   @Contract(pure = true)
   @NotNull
-  public static List<SchemaTypeDef> supplemented(@NotNull SchemaVarTypeDef varTypeDef) {
-    SchemaVarTypeDefStub stub = varTypeDef.getStub();
+  public static List<SchemaTypeDef> supplemented(@NotNull SchemaEntityTypeDef entityDef) {
+    SchemaEntityTypeDefStub stub = entityDef.getStub();
     if (stub != null) {
       List<SerializedFqnTypeRef> supplementedTypeRefs = stub.getSupplementedTypeRefs();
-      return resolveSerializedTypeRefs(supplementedTypeRefs, varTypeDef.getProject(), SchemaSearchScopeUtil.getSearchScope(varTypeDef));
+      return resolveSerializedTypeRefs(supplementedTypeRefs, entityDef.getProject(), SchemaSearchScopeUtil.getSearchScope(
+          entityDef));
     }
 
-    SchemaSupplementsDecl supplementsDecl = varTypeDef.getSupplementsDecl();
+    SchemaSupplementsDecl supplementsDecl = entityDef.getSupplementsDecl();
     if (supplementsDecl == null) return Collections.emptyList();
     return resolveTypeRefs(supplementsDecl.getQnTypeRefList());
   }
@@ -116,12 +117,12 @@ class SchemaPsiImplUtilExt {
     return SchemaPresentationUtil.getPresentation(fieldDecl, false);
   }
 
-  // varTypeMember decl
+  // entityMember decl
 
   @Contract(pure = true)
   @NotNull
-  public static ItemPresentation getPresentation(@NotNull SchemaVarTagDecl varTagDecl) {
-    return SchemaPresentationUtil.getPresentation(varTagDecl, false);
+  public static ItemPresentation getPresentation(@NotNull SchemaEntityTagDecl entityTagDecl) {
+    return SchemaPresentationUtil.getPresentation(entityTagDecl, false);
   }
 
 //  /////////////

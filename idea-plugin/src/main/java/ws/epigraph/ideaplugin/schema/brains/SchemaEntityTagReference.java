@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import ws.epigraph.ideaplugin.schema.brains.hierarchy.TypeMembers;
 import ws.epigraph.ideaplugin.schema.presentation.SchemaPresentationUtil;
 import ws.epigraph.lang.NamingConventions;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
+import ws.epigraph.schema.parser.psi.SchemaEntityTypeDef;
 import ws.epigraph.schema.parser.psi.SchemaQid;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
-import ws.epigraph.schema.parser.psi.SchemaVarTypeDef;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import ws.epigraph.schema.parser.psi.impl.SchemaElementFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,21 +38,21 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
+public class SchemaEntityTagReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   /**
    * host type def
    */
   @NotNull
-  private final SchemaVarTypeDef typeDef;
+  private final SchemaEntityTypeDef typeDef;
 
   @NotNull
   private final String tagName;
 
   private final ResolveCache.Resolver cachedResolver = ((psiReference, incompleteCode) -> resolveImpl());
-  private final ResolveCache.PolyVariantResolver<SchemaVarTagReference> polyVariantResolver =
+  private final ResolveCache.PolyVariantResolver<SchemaEntityTagReference> polyVariantResolver =
       (reference, incompleteCode) -> multiResolveImpl();
 
-  public SchemaVarTagReference(@NotNull SchemaVarTypeDef typeDef, @NotNull SchemaQid id) {
+  public SchemaEntityTagReference(@NotNull SchemaEntityTypeDef typeDef, @NotNull SchemaQid id) {
     super(id);
     this.typeDef = typeDef;
 
@@ -68,8 +68,8 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @Nullable
   protected PsiElement resolveImpl() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
-    if (tagDecls.size() == 0)
+    List<SchemaEntityTagDecl> tagDecls = TypeMembers.getEntityTagDecls(typeDef, tagName);
+    if (tagDecls.isEmpty())
       return null;
 
     return tagDecls.get(0);
@@ -84,7 +84,7 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
 
   @NotNull
   protected ResolveResult[] multiResolveImpl() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, tagName);
+    List<SchemaEntityTagDecl> tagDecls = TypeMembers.getEntityTagDecls(typeDef, tagName);
     return tagDecls.stream()
         .map(PsiElementResult::new)
         .toArray(ResolveResult[]::new);
@@ -93,17 +93,17 @@ public class SchemaVarTagReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
-    List<SchemaVarTagDecl> tagDecls = TypeMembers.getVarTagDecls(typeDef, null);
+    List<SchemaEntityTagDecl> tagDecls = TypeMembers.getEntityTagDecls(typeDef, null);
     return tagDecls.stream()
         .map(varTagDecl ->
             LookupElementBuilder.create(getCompletionName(varTagDecl))
                 .withIcon(SchemaPresentationUtil.getIcon(varTagDecl))
-                .withTypeText(SchemaPresentationUtil.getName(varTagDecl.getVarTypeDef(), true))
+                .withTypeText(SchemaPresentationUtil.getName(varTagDecl.getEntityDef(), true))
         )
         .toArray();
   }
 
-  private String getCompletionName(@NotNull SchemaVarTagDecl varTagDecl) {
+  private String getCompletionName(@NotNull SchemaEntityTagDecl varTagDecl) {
     String name = varTagDecl.getQid().getCanonicalName();
     return SchemaParserDefinition.isKeyword(name) ?
         NamingConventions.enquote(name) : name;

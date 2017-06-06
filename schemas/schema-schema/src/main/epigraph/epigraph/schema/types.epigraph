@@ -1,10 +1,10 @@
 namespace epigraph.schema
 
-// alternatively this could be designed as two parallel hierarchies of vartypes + records
+// alternatively this could be designed as two parallel hierarchies of entitys + records
 // this allows more clean `supertypes` type, but makes the model twice more complex
 
 abstract record Type extends Named {
-  doc = "Common interface for data type and vartype records"
+  doc = "Common interface for data type and entity records"
 
   override name: TypeName
 

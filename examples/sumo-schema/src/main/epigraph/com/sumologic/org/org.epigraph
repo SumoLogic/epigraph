@@ -29,7 +29,7 @@ record BaseObjectProperties {
   metadata: Metadata
 }
 
-vartype Organization {
+entity Organization {
   id: OrganizationId
   rec: OrganizationRec
 }
@@ -140,7 +140,7 @@ record ProtocolRetentionPolicy {
 
 long UserId extends LocalId
 
-vartype User {
+entity User {
   id: UserId
   rec: UserRec
 }

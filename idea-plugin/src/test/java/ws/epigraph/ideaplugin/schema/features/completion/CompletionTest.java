@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(
-      "abstract ", "vartype ", "record ", "map", "list", "enum ",
+      "abstract ", "entity ", "record ", "map", "list", "enum ",
       "string ", "double ", "integer ", "long ", "boolean ", "supplement ", "resource ",
       "inputProjection ", "outputProjection ", "deleteProjection "
   );
@@ -124,8 +124,8 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     myFixture.testCompletion("CompleteWith.epigraph", "CompleteWith-after.epigraph");
   }
 
-  public void testVarTagCompletion() {
-    myFixture.configureByFile("VarTagCompletion.epigraph");
+  public void testEntityTagCompletion() {
+    myFixture.configureByFile("EntityTagCompletion.epigraph");
     checkCompletionVariants("`string`", "foo");
   }
 
@@ -243,27 +243,27 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     checkCompletionVariants("override ");
 
     configureByText("namespace foo record Bar { bar: Bar } record Baz extends Bar { qux: Baz <caret> }");
-    checkCompletionVariants("override "); // Baz is not a vartype, so no 'retro'
+    checkCompletionVariants("override "); // Baz is not a entity, so no 'retro'
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: <caret> }");
+    configureByText("namespace foo entity V { v: Baz } record Baz { qux: <caret> }");
     checkCompletionVariants("V", "Baz");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V <caret> }");
+    configureByText("namespace foo entity V { v: Baz } record Baz { qux: V <caret> }");
     checkCompletionVariants("override ", "retro ");
 
-    configureByText("namespace foo record A { a: A } record Baz extends A { qux: V e<caret> abstract zz: Baz} vartype V { v: Baz }");
+    configureByText("namespace foo record A { a: A } record Baz extends A { qux: V e<caret> abstract zz: Baz} entity V { v: Baz }");
     checkCompletionVariants("override ", "retro ");
 
-    configureByText("namespace foo vartype V { v: Baz } record A { a: A} record Baz extends A { qux: Baz <caret> }");
+    configureByText("namespace foo entity V { v: Baz } record A { a: A} record Baz extends A { qux: Baz <caret> }");
     checkCompletionVariants("override ");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> }");
+    configureByText("namespace foo entity V { v: Baz } record Baz { q: Baz qux: V <caret> }");
     checkCompletionVariants("retro ");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { q: Baz qux: V <caret> w: Baz}");
+    configureByText("namespace foo entity V { v: Baz } record Baz { q: Baz qux: V <caret> w: Baz}");
     checkCompletionVariants("retro ");
 
-    configureByText("namespace foo vartype V { v: Baz } record Baz { qux: V retro <caret> }");
+    configureByText("namespace foo entity V { v: Baz } record Baz { qux: V retro <caret> }");
     checkCompletionVariants("v");
   }
 
@@ -283,32 +283,32 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   // todo: complete field name after override
 
-  // --------------- vartype tags
+  // --------------- entity tags
 
   public void testNoCompletionInEmptyVartype() {
-    configureByText("namespace foo vartype Bar { <caret> }");
+    configureByText("namespace foo entity Bar { <caret> }");
     checkCompletionVariants();
   }
 
   public void testOverrideCompletionInVartype() {
-    configureByText("namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { <caret> }");
+    configureByText("namespace foo entity Bar { bar: Bar } entity Baz extends Bar { <caret> }");
     checkCompletionVariants("override ");
 
-    configureByText("namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { qux: Baz <caret> }");
+    configureByText("namespace foo entity Bar { bar: Bar } entity Baz extends Bar { qux: Baz <caret> }");
     checkCompletionVariants("override ");
   }
 
   public void testOverrideTagCompletionInVartype() {
-    configureByText("namespace foo vartype Bar { } vartype Baz extends Bar { override <caret> }");
+    configureByText("namespace foo entity Bar { } entity Baz extends Bar { override <caret> }");
     checkCompletionVariants();
 
-    configureByText("namespace foo vartype Bar { `bar`: Bar } vartype Baz extends Bar { override <caret> }");
+    configureByText("namespace foo entity Bar { `bar`: Bar } entity Baz extends Bar { override <caret> }");
     checkCompletionVariants("`bar`");
 
-    configureByText("namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { override bar override <caret> }");
+    configureByText("namespace foo entity Bar { bar: Bar } entity Baz extends Bar { override bar override <caret> }");
     checkCompletionVariants();
 
-    configureByText("namespace foo vartype Bar { bar: Bar } vartype Baz extends Bar { override <caret> foo : Bar { doc = \"xx\" } }");
+    configureByText("namespace foo entity Bar { bar: Bar } entity Baz extends Bar { override <caret> foo : Bar { doc = \"xx\" } }");
     checkCompletionVariants("bar");
   }
 

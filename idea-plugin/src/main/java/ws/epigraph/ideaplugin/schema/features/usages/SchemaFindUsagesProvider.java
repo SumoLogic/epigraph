@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.lexer.SchemaFlexAdapter;
 import ws.epigraph.schema.parser.psi.SchemaQnSegment;
 import ws.epigraph.schema.parser.psi.SchemaTypeDef;
-import ws.epigraph.schema.parser.psi.SchemaVarTagDecl;
+import ws.epigraph.schema.parser.psi.SchemaEntityTagDecl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,8 +57,8 @@ public class SchemaFindUsagesProvider implements FindUsagesProvider {
       return fqnSegment.getName() != null;
     }
 
-    if (psiElement instanceof SchemaVarTagDecl) {
-      SchemaVarTagDecl varTagDecl = (SchemaVarTagDecl) psiElement;
+    if (psiElement instanceof SchemaEntityTagDecl) {
+      SchemaEntityTagDecl varTagDecl = (SchemaEntityTagDecl) psiElement;
       return varTagDecl.getName() != null;
     }
 
