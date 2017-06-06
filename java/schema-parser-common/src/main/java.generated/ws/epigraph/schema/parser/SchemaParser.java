@@ -919,7 +919,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefWrapper | supplementDef | resourceDef
+  // typeDefWrapper | supplementDef | resourceDef | projectionDef
   static boolean def(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "def")) return false;
     boolean r;
@@ -927,6 +927,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = typeDefWrapper(b, l + 1);
     if (!r) r = supplementDef(b, l + 1);
     if (!r) r = resourceDef(b, l + 1);
+    if (!r) r = projectionDef(b, l + 1);
     exit_section_(b, l, m, r, false, defRecover_parser_);
     return r;
   }
@@ -934,7 +935,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
-  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
   static boolean defRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defRecover")) return false;
     boolean r;
@@ -946,7 +948,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   // 'import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
   //                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
-  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource'
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'outputProjection' | 'inputProjection' | 'deleteProjection'
   private static boolean defRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defRecover_0")) return false;
     boolean r;
@@ -968,6 +971,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_DOUBLE_T);
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
     exit_section_(b, m, null, r);
     return r;
   }

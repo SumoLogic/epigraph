@@ -172,7 +172,7 @@ varTagRef ::= qid {
 /// defs
 
 defs ::= def*
-private def ::= typeDefWrapper | supplementDef | resourceDef {recoverWhile="defRecover"}
+private def ::= typeDefWrapper | supplementDef | resourceDef | projectionDef {recoverWhile="defRecover"}
 
 // ============= schema language =============
 
@@ -332,7 +332,8 @@ supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
 
 private defRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
                            'map' | 'list' | 'vartype' | 'enum' | 'supplement'|
-                           'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
+                           'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+                           'outputProjection' | 'inputProjection' | 'deleteProjection' )
 
 private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
 //private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ import java.util.*;
 public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(
       "abstract ", "vartype ", "record ", "map", "list", "enum ",
-      "string ", "double ", "integer ", "long ", "boolean ", "supplement ", "resource "
+      "string ", "double ", "integer ", "long ", "boolean ", "supplement ", "resource ",
+      "inputProjection ", "outputProjection ", "deleteProjection "
   );
 
   @Override

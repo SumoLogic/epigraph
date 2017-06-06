@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,12 +48,12 @@ public class SchemaCompletionContributor extends CompletionContributor {
   private static final String[] TOP_LEVEL_COMPLETIONS = {
       "abstract ", "record ", "map", "list", "vartype ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
-      "supplement ", "resource "
+      "supplement ", "resource ", "outputProjection ", "inputProjection ", "deleteProjection "
   };
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
-      "abstract ", "vartype ", "enum ", "supplement "
+      "abstract ", "vartype ", "enum ", "supplement ", "outputProjection ", "inputProjection ", "deleteProjection "
   ));
 
   // which types can have 'extends' clause
