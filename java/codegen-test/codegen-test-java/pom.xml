@@ -19,18 +19,47 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>epigraph-java-codegen-test</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>epigraph-java-codegen-test-java</artifactId>
 
   <parent>
     <groupId>ws.epigraph</groupId>
-    <artifactId>epigraph-java</artifactId>
+    <artifactId>epigraph-java-codegen-test</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
 
-  <modules>
-    <module>codegen-test-java</module>
-    <module>codegen-test-schema</module>
-  </modules>
+  <dependencies>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-codegen-test-schema</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>epigraph-java-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>epigraph-java-projections</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-maven-plugin</artifactId>
+        <configuration><client/><server/></configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
 
 </project>
