@@ -30,7 +30,6 @@
   <description>Epigraph for Java</description>
 
   <modules>
-    <module>codegen-test</module>
     <module>codegen</module>
     <module>core</module>
     <module>data-processing</module>
