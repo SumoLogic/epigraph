@@ -708,6 +708,22 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitTransformerBodyPart(@NotNull SchemaTransformerBodyPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTransformerDef(@NotNull SchemaTransformerDef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTransformerName(@NotNull SchemaTransformerName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTransformerType(@NotNull SchemaTransformerType o) {
+    visitPsiElement(o);
+  }
+
   public void visitTypeDefWrapper(@NotNull SchemaTypeDefWrapper o) {
     visitPsiElement(o);
   }

@@ -48,12 +48,14 @@ public class SchemaCompletionContributor extends CompletionContributor {
   private static final String[] TOP_LEVEL_COMPLETIONS = {
       "abstract ", "record ", "map", "list", "entity ", "enum ",
       "integer ", "long ", "double ", "boolean ", "string ",
-      "supplement ", "resource ", "outputProjection ", "inputProjection ", "deleteProjection "
+      "supplement ", "resource ", "outputProjection ", "inputProjection ", "deleteProjection ",
+      "transformer "
   };
 
   // items from TOP_LEVEL_COMPLETIONS that can't follow 'abstract' keyword
   private static final Set<String> TOP_LEVEL_CANT_FOLLOW_ABSTRACT = new HashSet<>(Arrays.asList(
-      "abstract ", "entity ", "enum ", "supplement ", "outputProjection ", "inputProjection ", "deleteProjection "
+      "abstract ", "entity ", "enum ", "supplement ", "outputProjection ", "inputProjection ", "deleteProjection ",
+      "transformer ", "resource "
   ));
 
   // which types can have 'extends' clause

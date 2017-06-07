@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
+public class SchemaTransformerTypeImpl extends ASTWrapperPsiElement implements SchemaTransformerType {
 
-  public SchemaDefsImpl(ASTNode node) {
+  public SchemaTransformerTypeImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDefs(this);
+    visitor.visitTransformerType(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,32 +44,14 @@ public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
 
   @Override
   @NotNull
-  public List<SchemaProjectionDef> getProjectionDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaProjectionDef.class);
+  public SchemaTypeRef getTypeRef() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
   }
 
   @Override
   @NotNull
-  public List<SchemaResourceDef> getResourceDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaResourceDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaSupplementDef> getSupplementDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTransformerDef> getTransformerDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTransformerDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTypeDefWrapper> getTypeDefWrapperList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDefWrapper.class);
+  public PsiElement getColon() {
+    return notNullChild(findChildByType(S_COLON));
   }
 
 }

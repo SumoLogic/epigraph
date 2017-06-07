@@ -46,6 +46,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "default"            { return S_DEFAULT; }
   "retro"              { return S_RETRO; }
   "resource"           { return S_RESOURCE; }
+  "transformer"        { return S_TRANSFORMER; }
   "nodefault"          { return S_NODEFAULT; }
   "map"                { return S_MAP; }
   "list"               { return S_LIST; }

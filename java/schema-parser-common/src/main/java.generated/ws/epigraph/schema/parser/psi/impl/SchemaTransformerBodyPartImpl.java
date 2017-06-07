@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
+public class SchemaTransformerBodyPartImpl extends ASTWrapperPsiElement implements SchemaTransformerBodyPart {
 
-  public SchemaDefsImpl(ASTNode node) {
+  public SchemaTransformerBodyPartImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDefs(this);
+    visitor.visitTransformerBodyPart(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -43,33 +43,21 @@ public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
   }
 
   @Override
-  @NotNull
-  public List<SchemaProjectionDef> getProjectionDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaProjectionDef.class);
+  @Nullable
+  public SchemaAnnotation getAnnotation() {
+    return PsiTreeUtil.getChildOfType(this, SchemaAnnotation.class);
   }
 
   @Override
-  @NotNull
-  public List<SchemaResourceDef> getResourceDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaResourceDef.class);
+  @Nullable
+  public SchemaInputProjectionDef getInputProjectionDef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaInputProjectionDef.class);
   }
 
   @Override
-  @NotNull
-  public List<SchemaSupplementDef> getSupplementDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTransformerDef> getTransformerDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTransformerDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTypeDefWrapper> getTypeDefWrapperList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDefWrapper.class);
+  @Nullable
+  public SchemaOutputProjectionDef getOutputProjectionDef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOutputProjectionDef.class);
   }
 
 }

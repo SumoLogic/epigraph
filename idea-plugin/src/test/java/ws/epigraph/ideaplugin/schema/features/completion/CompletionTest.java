@@ -30,7 +30,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   private final List<String> TOP_LEVEL = Arrays.asList(
       "abstract ", "entity ", "record ", "map", "list", "enum ",
       "string ", "double ", "integer ", "long ", "boolean ", "supplement ", "resource ",
-      "inputProjection ", "outputProjection ", "deleteProjection "
+      "inputProjection ", "outputProjection ", "deleteProjection ", "transformer "
   );
 
   @Override
@@ -81,7 +81,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
 
   public void testCompletionAfterAbstract() {
     myFixture.configureByFile("CompletionAfterAbstract.epigraph");
-    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ", "resource ");
+    checkCompletionVariants("record ", "map", "list", "string ", "double ", "integer ", "long ", "boolean ");
   }
 
   public void testCompletionAfterRecordName() {

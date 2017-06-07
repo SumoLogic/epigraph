@@ -203,6 +203,10 @@ public interface SchemaElementTypes {
   IElementType S_SUPPLEMENTS_DECL = new SchemaElementType("S_SUPPLEMENTS_DECL");
   IElementType S_SUPPLEMENT_DEF = new SchemaSupplementDefStubElementType("S_SUPPLEMENT_DEF");
   IElementType S_TAG_NAME = new SchemaElementType("S_TAG_NAME");
+  IElementType S_TRANSFORMER_BODY_PART = new SchemaElementType("S_TRANSFORMER_BODY_PART");
+  IElementType S_TRANSFORMER_DEF = new SchemaElementType("S_TRANSFORMER_DEF");
+  IElementType S_TRANSFORMER_NAME = new SchemaElementType("S_TRANSFORMER_NAME");
+  IElementType S_TRANSFORMER_TYPE = new SchemaElementType("S_TRANSFORMER_TYPE");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
   IElementType S_UPDATE_OPERATION_BODY_PART = new SchemaElementType("S_UPDATE_OPERATION_BODY_PART");
@@ -277,6 +281,7 @@ public interface SchemaElementTypes {
   IElementType S_SUPPLEMENT = new SchemaElementType("supplement");
   IElementType S_SUPPLEMENTS = new SchemaElementType("supplements");
   IElementType S_TILDA = new SchemaElementType("~");
+  IElementType S_TRANSFORMER = new SchemaElementType("transformer");
   IElementType S_UNDERSCORE = new SchemaElementType("_");
   IElementType S_WITH = new SchemaElementType("with");
 
@@ -789,6 +794,18 @@ public interface SchemaElementTypes {
       }
       else if (type == S_TAG_NAME) {
         return new SchemaTagNameImpl(node);
+      }
+      else if (type == S_TRANSFORMER_BODY_PART) {
+        return new SchemaTransformerBodyPartImpl(node);
+      }
+      else if (type == S_TRANSFORMER_DEF) {
+        return new SchemaTransformerDefImpl(node);
+      }
+      else if (type == S_TRANSFORMER_NAME) {
+        return new SchemaTransformerNameImpl(node);
+      }
+      else if (type == S_TRANSFORMER_TYPE) {
+        return new SchemaTransformerTypeImpl(node);
       }
       else if (type == S_TYPE_DEF_WRAPPER) {
         return new SchemaTypeDefWrapperImpl(node);

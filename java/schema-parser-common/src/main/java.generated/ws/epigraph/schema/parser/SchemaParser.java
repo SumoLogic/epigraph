@@ -549,6 +549,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_TAG_NAME) {
       r = tagName(b, 0);
     }
+    else if (t == S_TRANSFORMER_BODY_PART) {
+      r = transformerBodyPart(b, 0);
+    }
+    else if (t == S_TRANSFORMER_DEF) {
+      r = transformerDef(b, 0);
+    }
+    else if (t == S_TRANSFORMER_NAME) {
+      r = transformerName(b, 0);
+    }
+    else if (t == S_TRANSFORMER_TYPE) {
+      r = transformerType(b, 0);
+    }
     else if (t == S_TYPE_DEF_WRAPPER) {
       r = typeDefWrapper(b, 0);
     }
@@ -919,7 +931,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeDefWrapper | supplementDef | resourceDef | projectionDef
+  // typeDefWrapper | supplementDef | resourceDef | transformerDef | projectionDef
   static boolean def(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "def")) return false;
     boolean r;
@@ -927,6 +939,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = typeDefWrapper(b, l + 1);
     if (!r) r = supplementDef(b, l + 1);
     if (!r) r = resourceDef(b, l + 1);
+    if (!r) r = transformerDef(b, l + 1);
     if (!r) r = projectionDef(b, l + 1);
     exit_section_(b, l, m, r, false, defRecover_parser_);
     return r;
@@ -936,6 +949,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
   //                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'transformer' |
   //                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
   static boolean defRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defRecover")) return false;
@@ -949,6 +963,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // 'import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
   //                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
   //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'transformer' |
   //                            'outputProjection' | 'inputProjection' | 'deleteProjection'
   private static boolean defRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defRecover_0")) return false;
@@ -971,6 +986,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_DOUBLE_T);
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
+    if (!r) r = consumeToken(b, S_TRANSFORMER);
     if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
     if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
     if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
@@ -2089,7 +2105,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
-  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'transformer' |
+  //                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
   static boolean namespaceDeclRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceDeclRecover")) return false;
     boolean r;
@@ -2101,7 +2119,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   // 'import' | 'namespace' | 'abstract' | 'record' | ',' |
   //                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
-  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource'
+  //                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+  //                            'transformer' |
+  //                            'outputProjection' | 'inputProjection' | 'deleteProjection'
   private static boolean namespaceDeclRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namespaceDeclRecover_0")) return false;
     boolean r;
@@ -2122,6 +2142,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_DOUBLE_T);
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
+    if (!r) r = consumeToken(b, S_TRANSFORMER);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -6122,6 +6146,134 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // inputProjectionDef | outputProjectionDef | annotation
+  public static boolean transformerBodyPart(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerBodyPart")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_BODY_PART, "<transformer body part>");
+    r = inputProjectionDef(b, l + 1);
+    if (!r) r = outputProjectionDef(b, l + 1);
+    if (!r) r = annotation(b, l + 1);
+    exit_section_(b, l, m, r, false, transformerBodyRecover_parser_);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=') )
+  static boolean transformerBodyRecover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerBodyRecover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !transformerBodyRecover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=')
+  private static boolean transformerBodyRecover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerBodyRecover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_CURLY_RIGHT);
+    if (!r) r = consumeToken(b, S_COMMA);
+    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
+    if (!r) r = transformerBodyRecover_0_4(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // qid '='
+  private static boolean transformerBodyRecover_0_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerBodyRecover_0_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    r = r && consumeToken(b, S_EQ);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // 'transformer' transformerName transformerType transformerDefBody
+  public static boolean transformerDef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerDef")) return false;
+    if (!nextTokenIs(b, S_TRANSFORMER)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_DEF, null);
+    r = consumeToken(b, S_TRANSFORMER);
+    p = r; // pin = 1
+    r = r && report_error_(b, transformerName(b, l + 1));
+    r = p && report_error_(b, transformerType(b, l + 1)) && r;
+    r = p && transformerDefBody(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '{' (transformerBodyPart ',')* '}'
+  static boolean transformerDefBody(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerDefBody")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, transformerDefBody_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (transformerBodyPart ',')*
+  private static boolean transformerDefBody_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerDefBody_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!transformerDefBody_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "transformerDefBody_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // transformerBodyPart ','
+  private static boolean transformerDefBody_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerDefBody_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = transformerBodyPart(b, l + 1);
+    r = r && consumeToken(b, S_COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // qid
+  public static boolean transformerName(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerName")) return false;
+    if (!nextTokenIs(b, S_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = qid(b, l + 1);
+    exit_section_(b, m, S_TRANSFORMER_NAME, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ':' typeRef
+  public static boolean transformerType(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerType")) return false;
+    if (!nextTokenIs(b, S_COLON)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COLON);
+    r = r && typeRef(b, l + 1);
+    exit_section_(b, m, S_TRANSFORMER_TYPE, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // 'abstract'?
   static boolean typeDefModifiers(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeDefModifiers")) return false;
@@ -6360,6 +6512,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   final static Parser resourceDefBodyRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return resourceDefBodyRecover(b, l + 1);
+    }
+  };
+  final static Parser transformerBodyRecover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return transformerBodyRecover(b, l + 1);
     }
   };
 }

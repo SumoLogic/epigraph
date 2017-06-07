@@ -21,21 +21,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaDefs extends PsiElement {
+public interface SchemaTransformerType extends PsiElement {
 
   @NotNull
-  List<SchemaProjectionDef> getProjectionDefList();
+  SchemaTypeRef getTypeRef();
 
   @NotNull
-  List<SchemaResourceDef> getResourceDefList();
-
-  @NotNull
-  List<SchemaSupplementDef> getSupplementDefList();
-
-  @NotNull
-  List<SchemaTransformerDef> getTransformerDefList();
-
-  @NotNull
-  List<SchemaTypeDefWrapper> getTypeDefWrapperList();
+  PsiElement getColon();
 
 }

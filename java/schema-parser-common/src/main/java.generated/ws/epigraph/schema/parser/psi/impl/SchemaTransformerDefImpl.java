@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
+public class SchemaTransformerDefImpl extends ASTWrapperPsiElement implements SchemaTransformerDef {
 
-  public SchemaDefsImpl(ASTNode node) {
+  public SchemaTransformerDefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitDefs(this);
+    visitor.visitTransformerDef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,32 +44,38 @@ public class SchemaDefsImpl extends ASTWrapperPsiElement implements SchemaDefs {
 
   @Override
   @NotNull
-  public List<SchemaProjectionDef> getProjectionDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaProjectionDef.class);
+  public List<SchemaTransformerBodyPart> getTransformerBodyPartList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTransformerBodyPart.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaTransformerName getTransformerName() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTransformerName.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaTransformerType getTransformerType() {
+    return PsiTreeUtil.getChildOfType(this, SchemaTransformerType.class);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyLeft() {
+    return findChildByType(S_CURLY_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getCurlyRight() {
+    return findChildByType(S_CURLY_RIGHT);
   }
 
   @Override
   @NotNull
-  public List<SchemaResourceDef> getResourceDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaResourceDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaSupplementDef> getSupplementDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaSupplementDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTransformerDef> getTransformerDefList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTransformerDef.class);
-  }
-
-  @Override
-  @NotNull
-  public List<SchemaTypeDefWrapper> getTypeDefWrapperList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SchemaTypeDefWrapper.class);
+  public PsiElement getTransformer() {
+    return notNullChild(findChildByType(S_TRANSFORMER));
   }
 
 }

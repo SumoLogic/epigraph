@@ -60,6 +60,7 @@
     REQUIRED = 'required'
     DEFAULT = 'default'
     RESOURCE = 'resource'
+    TRANSFORMER = 'transformer'
     // http methods
     GET = 'GET'
     POST = 'POST'
@@ -145,7 +146,9 @@ namespaceDecl ::= 'namespace' qn namespaceBody? {
 }
 private namespaceDeclRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
-                           'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource')
+                           'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+                           'transformer' |
+                           'outputProjection' | 'inputProjection' | 'deleteProjection' )
 
 private namespaceBody ::= '{' namespaceBodyPart* '}'
 private namespaceBodyPart ::= annotation // | ...
@@ -172,7 +175,7 @@ entityTagRef ::= qid {
 /// defs
 
 defs ::= def*
-private def ::= typeDefWrapper | supplementDef | resourceDef | projectionDef {recoverWhile="defRecover"}
+private def ::= typeDefWrapper | supplementDef | resourceDef | transformerDef | projectionDef {recoverWhile="defRecover"}
 
 // ============= schema language =============
 
@@ -333,6 +336,7 @@ supplementDef ::= 'supplement' qnTypeRef (',' qnTypeRef)* 'with' qnTypeRef {
 private defRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' | '}' |
                            'map' | 'list' | 'entity' | 'enum' | 'supplement'|
                            'string' | 'integer' | 'long' | 'double' | 'boolean' | 'resource' |
+                           'transformer' |
                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
 
 private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
@@ -342,13 +346,32 @@ private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | '
 
 tagName ::= qid | '_' // `_` is default tag
 
+//                                                                                                           transformer
+
+transformerDef ::= 'transformer' transformerName transformerType transformerDefBody {
+  pin = 1
+  //recoverWhile = defRecover
+}
+
+transformerName ::= qid
+transformerType ::= ':' typeRef
+
+private transformerDefBody ::= '{' (transformerBodyPart ',')* '}'
+transformerBodyPart ::= inputProjectionDef | outputProjectionDef | annotation {
+  recoverWhile = transformerBodyRecover
+}
+
+private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=') )
+
+//                                                                                                              resource
+
 resourceDef ::= 'resource' resourceName resourceType resourceDefBody {
   pin = 1
   //recoverWhile = defRecover
 }
 
 resourceName ::= qid
-resourceType ::= ':' valueTypeRef
+resourceType ::= ':' valueTypeRef // todo should it be just typeRef ?
 
 private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
   recoverWhile = defRecover
