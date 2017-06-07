@@ -149,7 +149,7 @@ public class GenProjectionsComparator<
       return false;
 
     switch (kind) {
-      case UNION:
+      case ENTITY:
         throw new IllegalArgumentException("Unsupported model kind: " + kind);
       case RECORD:
         return recordModelEquals((Collection<RMP>) mps1, (Collection<RMP>) mps2);

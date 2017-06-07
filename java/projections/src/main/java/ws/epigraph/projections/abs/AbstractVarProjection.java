@@ -74,7 +74,7 @@ public abstract class AbstractVarProjection<
     validateTails();
 
     // set model projection name in case of self-var
-    if (type.kind() != TypeKind.UNION) {
+    if (type.kind() != TypeKind.ENTITY) {
       final TP tp = singleTagProjection();
       if (tp != null) {
         tp.projection().runOnResolved(
@@ -323,7 +323,7 @@ public abstract class AbstractVarProjection<
 
         @Nullable TP mergedTag = null;
 
-        if (effectiveType.kind() != TypeKind.UNION) {
+        if (effectiveType.kind() != TypeKind.ENTITY) {
           if (tagProjections.size() == 1) {
             if (!tp0.projection().isResolved()) // recursive self-var
               mergedTag = tp0;
@@ -458,7 +458,7 @@ public abstract class AbstractVarProjection<
     onResolvedCallbacks.clear();
 
     // set model projection name in case of self-var
-    if (type().kind() != TypeKind.UNION) {
+    if (type().kind() != TypeKind.ENTITY) {
       final TP tp = singleTagProjection();
       if (tp != null) {
         final MP mp = tp.projection();

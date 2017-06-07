@@ -83,7 +83,7 @@ public class ReqOutputRequiredDataPruner {
         val = replacements.get(tagName);
 
       if (required) {
-        final String name = data.type().kind() == TypeKind.UNION ? String.format("tag '%s'", tagName) : "data";
+        final String name = data.type().kind() == TypeKind.ENTITY ? String.format("tag '%s'", tagName) : "data";
         if (val == null) {
           return new Fail(operationError(String.format("Required %s is missing", name)));
         } else {
@@ -99,7 +99,7 @@ public class ReqOutputRequiredDataPruner {
                 error.message()
             )));
         }
-      } else if (data.type().kind() != TypeKind.UNION && replacements.containsKey(tagName)) {
+      } else if (data.type().kind() != TypeKind.ENTITY && replacements.containsKey(tagName)) {
         // if (single) tag in a self-var must be replaced by an error: kill the whole data
         assert val != null;
         ErrorValue error = val.getError();
@@ -339,7 +339,7 @@ public class ReqOutputRequiredDataPruner {
   private @NotNull DatumPruningResult checkRequiredData(@Nullable Data data, @NotNull String name, @NotNull Object id) {
     if (data == null) {
       return new Fail(operationError(String.format("Required %s %s is missing", name, id)));
-    } else if (data.type().kind() != TypeKind.UNION) {
+    } else if (data.type().kind() != TypeKind.ENTITY) {
       final Val val = data._raw().tagValues().get(DatumType.MONO_TAG_NAME);
 
       if (val == null) {

@@ -230,7 +230,7 @@ public final class ProjectionsParsingUtil {
       @NotNull PsiElement locationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (type.kind() != TypeKind.UNION) {
+    if (type.kind() != TypeKind.ENTITY) {
       DatumTypeApi datumType = (DatumTypeApi) type;
       final @NotNull TagApi self = datumType.self();
       if (op != null) getTagProjection(self.name(), op, locationPsi, context); // check that op contains it

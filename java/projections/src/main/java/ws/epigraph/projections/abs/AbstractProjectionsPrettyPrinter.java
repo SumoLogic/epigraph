@@ -92,7 +92,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         shouldPrint = false;
       } else {
         visitedVarRefs.add(shortName);
-        if (p.type().kind() == TypeKind.UNION) { // otherwise label will be printed by model
+        if (p.type().kind() == TypeKind.ENTITY) { // otherwise label will be printed by model
           l.print("$").print(shortName.toString()); //.print(" = ");
           nbsp();
           l.print("=");
@@ -106,14 +106,18 @@ public abstract class AbstractProjectionsPrettyPrinter<
   }
 
   public final void printVarNoRefCheck(@NotNull VP p, int pathSteps) throws E {
-    printVarOnly(p, pathSteps);
-    printTailsOnly(p);
+    if (p.isResolved()) {
+      printVarOnly(p, pathSteps);
+      printTailsOnly(p);
+    } else {
+      l.print("<UNRESOLVED>");
+    }
   }
 
   protected void printVarOnly(@NotNull VP p, int pathSteps) throws E {
     printVarDecoration(p);
     Map<String, TP> tagProjections = p.tagProjections();
-    if (p.type().kind() != TypeKind.UNION) {
+    if (p.type().kind() != TypeKind.ENTITY) {
       // samovar
       TP tp = tagProjections.values().iterator().next();
       printTag(null, tp, decSteps(pathSteps));
@@ -320,9 +324,10 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected boolean isPrintoutEmpty(@NotNull VP vp) {
 
+    if (!vp.isResolved()) return false;
     Collection<VP> tails = vp.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
-    if (vp.type().kind() == TypeKind.UNION) return false; // non-samovar always prints something
+    if (vp.type().kind() == TypeKind.ENTITY) return false; // non-samovar always prints something
 
     for (TP tagProjection : vp.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();

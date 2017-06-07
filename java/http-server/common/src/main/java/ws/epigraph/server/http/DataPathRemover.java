@@ -86,7 +86,7 @@ public final class DataPathRemover {
     if (steps == 0) return new PathRemovalResult(mp, datum);
 
     switch (mp.type().kind()) {
-      case UNION:
+      case ENTITY:
         throw new IllegalArgumentException("Unsupported model kind: " + mp.type().kind());
       case RECORD:
         ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) mp;

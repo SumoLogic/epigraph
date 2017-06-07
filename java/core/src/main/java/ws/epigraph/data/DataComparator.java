@@ -98,7 +98,7 @@ public final class DataComparator {
     if (!d1.type().equals(d2.type())) return false;
 
     switch (d1.type().kind()) {
-      case UNION:
+      case ENTITY:
         throw new IllegalArgumentException("Unsupported model kind: " + d1.type().name());
       case RECORD:
         return equal((RecordDatum) d1, (RecordDatum) d2);

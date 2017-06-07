@@ -206,7 +206,7 @@ public final class ReqUpdateProjectionsPsiParser {
         @NotNull UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
 
         final boolean replaceModel = singleTagProjectionPsi.getPlus() != null || isLeaf(singleTagProjectionPsi)
-                                     || (replace && type.kind() != TypeKind.UNION);
+                                     || (replace && type.kind() != TypeKind.ENTITY);
 
         final ReqUpdateModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
             opModelProjection,
@@ -585,7 +585,7 @@ public final class ReqUpdateProjectionsPsiParser {
             psi
         );
 
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, context);
 
       default:
@@ -773,7 +773,7 @@ public final class ReqUpdateProjectionsPsiParser {
             null,
             location
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,

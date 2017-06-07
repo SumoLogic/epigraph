@@ -294,8 +294,8 @@ public class SchemaParserTest {
       );
       fail();
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      assertTrue(e.getMessage().contains("Projection 'person1' is not defined"));
-      assertTrue(e.getMessage().contains("Projection 'person2' is not defined"));
+      assertTrue(e.getMessage(), e.getMessage().contains("Projection 'person1' is not defined"));
+      assertTrue(e.getMessage(), e.getMessage().contains("Projection 'person2' is not defined"));
     }
   }
 
@@ -308,14 +308,29 @@ public class SchemaParserTest {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     @NotNull SchemaFile psiFile =
-        (SchemaFile) EpigraphPsiUtil.parseFile("test.epigraph", text, SchemaParserDefinition.INSTANCE, errorsAccumulator);
+        (SchemaFile) EpigraphPsiUtil.parseFile(
+            "test.epigraph",
+            text,
+            SchemaParserDefinition.INSTANCE,
+            errorsAccumulator
+        );
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
 //    String psiDump = DebugUtil.psiToString(psiFile, true, false).trim();
 //    System.out.println(psiDump);
 
-    return runPsiParser(context -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, context));
+    return runPsiParser(context -> {
+      SchemasPsiProcessingContext schemasPsiProcessingContext = new SchemasPsiProcessingContext();
+      ResourcesSchema schema = ResourcesSchemaPsiParser.parseResourcesSchema(
+          psiFile,
+          resolver,
+          schemasPsiProcessingContext
+      );
+      schemasPsiProcessingContext.ensureAllReferencesResolved();
+      context.setErrors(schemasPsiProcessingContext.errors());
+      return schema;
+    });
   }
 
 }

@@ -77,7 +77,7 @@ object ReqInputVarProjectionGen {
     namespaceSuffix: Qn,
     ctx: GenContext): ReqInputProjectionGen = op.`type`().kind() match {
 
-    case TypeKind.UNION =>
+    case TypeKind.ENTITY =>
       new ReqInputVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(

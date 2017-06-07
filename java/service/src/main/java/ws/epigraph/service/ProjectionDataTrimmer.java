@@ -88,7 +88,7 @@ public final class ProjectionDataTrimmer {
         return trimPrimitiveDatum((PrimitiveDatum<?>) datum, (ReqOutputPrimitiveModelProjection) projection);
       case ENUM:
         throw new RuntimeException("Unsupported kind kind: " + datum.type().kind());
-      case UNION:
+      case ENTITY:
         throw new RuntimeException("Unexpected kind kind: " + datum.type().kind());
       default:
         throw new RuntimeException("Unknown kind kind: " + datum.type().kind());

@@ -69,7 +69,7 @@ public class OpInputDataValidator extends GenDataValidator<
       final Data fieldData = datum._raw().fieldsData().get(fieldName);
       boolean failed = fieldData == null;
 
-      if (!failed && fieldData.type().kind() != TypeKind.UNION) {
+      if (!failed && fieldData.type().kind() != TypeKind.ENTITY) {
         final Val val = fieldData._raw().tagValues().get(DatumType.MONO_TAG_NAME);
         failed = val == null || val.getDatum() == null;
       }

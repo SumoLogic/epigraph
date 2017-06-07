@@ -221,7 +221,7 @@ abstract class AbstractJsonFormatReader<
     // read MONODATA
     List<VP> flattened = flatten(new ArrayList<>(), projections, type);
 
-    String monoTagName = type.kind() == TypeKind.UNION ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
+    String monoTagName = type.kind() == TypeKind.ENTITY ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
     final Data.Builder data = type.createDataBuilder();
 
     dataByLevel.add(new VisitedDataEntry(data, projections));
@@ -459,7 +459,7 @@ abstract class AbstractJsonFormatReader<
 //        (Collection<ReqOutputEnumModelProjection>) tagModelProjections
 //      );
 //      break;
-      case UNION: // this one is 500 - there should be no such model projections
+      case ENTITY: // this one is 500 - there should be no such model projections
       default:
         throw new UnsupportedOperationException(type.kind().name());
     }
@@ -517,7 +517,7 @@ abstract class AbstractJsonFormatReader<
           final Data data = datum._raw().getData((Field) entry.getValue().field());
           if (data == null)
             throw error("Required field '" + entry.getKey() + "' is missing");
-          else if (data.type().kind() != TypeKind.UNION) {
+          else if (data.type().kind() != TypeKind.ENTITY) {
             final Val val = data._raw().tagValues().get(DatumType.MONO_TAG_NAME);
             if (val == null || val.getDatum() == null)
               throw error("Required field '" + entry.getKey() + "' is missing");
@@ -693,7 +693,7 @@ abstract class AbstractJsonFormatReader<
     @NotNull Type type = valueType.type;
     final Data.Builder data;
 
-    if (type.kind() == TypeKind.UNION) {
+    if (type.kind() == TypeKind.ENTITY) {
       ensure(token, JsonToken.START_OBJECT);
 
       token = nextNonEof();
@@ -865,7 +865,7 @@ abstract class AbstractJsonFormatReader<
 //        (EnumType) type,
 //      );
 //      break;
-      case UNION: // this one is 500 - there should be no such model projections
+      case ENTITY: // this one is 500 - there should be no such model projections
       default:
         throw new UnsupportedOperationException(actualType.kind().name());
     }

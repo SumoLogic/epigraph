@@ -205,7 +205,7 @@ public final class OpPathPsiParser {
             annotations,
             psi
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);
@@ -284,7 +284,7 @@ public final class OpPathPsiParser {
         );
       case LIST:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,

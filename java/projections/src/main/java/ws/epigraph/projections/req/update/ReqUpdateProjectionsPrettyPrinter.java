@@ -53,7 +53,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected void printVarOnly(final @NotNull ReqUpdateVarProjection p, final int pathSteps) throws E {
-    if (p.type().kind() != TypeKind.UNION) {
+    if (p.type().kind() != TypeKind.ENTITY) {
       ReqUpdateTagProjectionEntry tp = p.tagProjections().values().iterator().next();
       ReqUpdateModelProjection<?, ?, ?> projection = tp.projection();
       if (isReplaceModelProjection(projection))

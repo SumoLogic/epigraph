@@ -45,7 +45,7 @@ public class ReqOutputDataValidator extends GenDataValidator<
     projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
-      final String obj = data.type().kind() == TypeKind.UNION ? "tag '" + tagName + "'" : "value";
+      final String obj = data.type().kind() == TypeKind.ENTITY ? "tag '" + tagName + "'" : "value";
       final Val val = data._raw().tagValues().get(tagName);
       if (val == null)
         context.addOperationImplementationError(String.format("Required %s is missing", obj));

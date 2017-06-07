@@ -29,7 +29,6 @@ import ws.epigraph.projections.op.delete.*;
 import ws.epigraph.projections.op.input.*;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.ImportAwareTypesResolver;
 import ws.epigraph.refs.TypeRef;
@@ -53,10 +52,13 @@ import java.util.stream.Collectors;
 public final class ResourcesSchemaPsiParser { // todo this must be ported to scala/ctypes
   private ResourcesSchemaPsiParser() {}
 
+  // currently we can get multiple ResourcesSchema instances for the same namespace (if there are multiple files for it)
+  // not sure if there's any reason to merge them into one instance
+
   public static @NotNull ResourcesSchema parseResourcesSchema(
       @NotNull SchemaFile psi,
       @NotNull TypesResolver basicResolver,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+      @NotNull SchemasPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaNamespaceDecl namespaceDeclPsi = PsiTreeUtil.getChildOfType(psi, SchemaNamespaceDecl.class);
     if (namespaceDeclPsi == null)
@@ -67,7 +69,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
     Qn namespace = namespaceFqnPsi.getQn();
 
-    SchemaPsiProcessingContext schemaProcessingContext = new SchemaPsiProcessingContext(context, namespace);
+    SchemaPsiProcessingContext schemaProcessingContext = context.getSchemaPsiProcessingContext(namespace);
 
     TypesResolver resolver = new ImportAwareTypesResolver(namespace, parseImports(psi), basicResolver);
 
@@ -76,10 +78,6 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
     parseGlobalProjections(namespace, defs, schemaProcessingContext, resolver);
 
     Map<String, ResourceDeclaration> resources = parseResources(namespace, defs, schemaProcessingContext, resolver);
-
-    schemaProcessingContext.inputReferenceContext().ensureAllReferencesResolved();
-    schemaProcessingContext.outputReferenceContext().ensureAllReferencesResolved();
-    schemaProcessingContext.deleteReferenceContext().ensureAllReferencesResolved();
 
     return new ResourcesSchema(namespace, resources, Collections.emptyMap());
   }
@@ -182,7 +180,7 @@ public final class ResourcesSchemaPsiParser { // todo this must be ported to sca
 
     // convert datum kind to samovar
     @NotNull TypeApi type = resourceType.type();
-    if (resourceType.defaultTag() == null && valueTypeRef.defaultOverride() == null && type.kind() != TypeKind.UNION) {
+    if (resourceType.defaultTag() == null && valueTypeRef.defaultOverride() == null && type.kind() != TypeKind.ENTITY) {
       resourceType = type.dataType();
     }
 

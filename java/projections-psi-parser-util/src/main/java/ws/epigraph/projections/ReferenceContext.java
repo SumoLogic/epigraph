@@ -123,7 +123,7 @@ public abstract class ReferenceContext<
       VP varRef = (VP) reference;
       final TypeApi varType = varRef.type();
 
-      if (varType.kind() == TypeKind.UNION)
+      if (varType.kind() == TypeKind.ENTITY)
         throw new PsiProcessingException(
             String.format(
                 "Expected reference '%s' to be a model reference, got var reference instead",
@@ -194,7 +194,7 @@ public abstract class ReferenceContext<
             VP _normalized = varValue.normalizedForType(ref.type());
 
             if (ref instanceof GenModelProjection<?, ?, ?, ?>) {
-              if (_normalized.type().kind() == TypeKind.UNION)
+              if (_normalized.type().kind() == TypeKind.ENTITY)
                 throw new RuntimeException(
                     String.format("Broken isAssignableFrom between %s and %s", ref.type().name(), value.type().name())
                 );

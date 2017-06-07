@@ -123,7 +123,7 @@ public abstract class AbstractJsonFormatWriter<
 
     TypeApi type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
-    boolean renderMulti = type.kind() == TypeKind.UNION && monoTag(projections) == null;
+    boolean renderMulti = type.kind() == TypeKind.ENTITY && monoTag(projections) == null;
     if (renderPoly) {
       out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
       out.write(type.name().toString()); // TODO use (potentially short) type name used in request projection?
@@ -237,7 +237,7 @@ public abstract class AbstractJsonFormatWriter<
         case ENUM:
 //            writeEnum((Deque<ReqOutputEnumModelProjection>) modelProjections, (EnumDatum) datum);
 //            break;
-        case UNION:
+        case ENTITY:
         default:
           throw new UnsupportedOperationException(model.kind().name());
       }
@@ -428,7 +428,7 @@ public abstract class AbstractJsonFormatWriter<
       visitedDataNoProjection.put(data, dataStackDepth++);
 
       Type type = data.type();
-      if (type.kind() == TypeKind.UNION) { // TODO use instanceof instead of kind?
+      if (type.kind() == TypeKind.ENTITY) { // TODO use instanceof instead of kind?
         boolean poly = !type.equals(valueType);
         if (poly) {
           out.write("{\"" + JsonFormat.POLYMORPHIC_TYPE_FIELD + "\":\"");
@@ -504,7 +504,7 @@ public abstract class AbstractJsonFormatWriter<
         case ENUM:
 //        writeEnum((EnumDatum) datum);
 //        break;
-        case UNION:
+        case ENTITY:
         default:
           throw new UnsupportedOperationException(model.kind().name());
       }

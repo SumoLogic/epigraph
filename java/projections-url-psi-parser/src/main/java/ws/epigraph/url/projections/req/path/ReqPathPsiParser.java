@@ -170,7 +170,7 @@ public final class ReqPathPsiParser {
             annotations,
             psi
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);

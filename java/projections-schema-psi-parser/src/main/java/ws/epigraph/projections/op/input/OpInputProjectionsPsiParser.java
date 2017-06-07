@@ -152,7 +152,7 @@ public final class OpInputProjectionsPsiParser {
     final TypeApi type = dataType.type();
     final LinkedHashMap<String, OpInputTagProjectionEntry> tagProjections;
 
-    boolean isDatumType = type.kind() != TypeKind.UNION;
+    boolean isDatumType = type.kind() != TypeKind.ENTITY;
 
     @Nullable SchemaOpInputSingleTagProjection singleTagProjectionPsi = psi.getOpInputSingleTagProjection();
     if (singleTagProjectionPsi == null) {
@@ -826,7 +826,7 @@ public final class OpInputProjectionsPsiParser {
             psi
         );
 
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
 
       default:
@@ -1014,7 +1014,7 @@ public final class OpInputProjectionsPsiParser {
             null,
             location
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,

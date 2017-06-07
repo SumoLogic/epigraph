@@ -77,7 +77,7 @@ object ReqDeleteVarProjectionGen {
     namespaceSuffix: Qn,
     ctx: GenContext): ReqDeleteProjectionGen = op.`type`().kind() match {
 
-    case TypeKind.UNION =>
+    case TypeKind.ENTITY =>
       new ReqDeleteVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(

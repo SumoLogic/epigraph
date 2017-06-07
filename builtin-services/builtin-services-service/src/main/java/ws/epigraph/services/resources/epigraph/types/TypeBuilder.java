@@ -40,7 +40,7 @@ public final class TypeBuilder {
 
     // todo: `abstract` and `doc` fields support
 
-    if (type.kind() == ws.epigraph.types.TypeKind.UNION)
+    if (type.kind() == ws.epigraph.types.TypeKind.ENTITY)
       return VarTypeBuilder.buildVarType((UnionTypeApi) type, projection.normalizedFor_VarType(), context);
     else
       return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_DatumType(), context);

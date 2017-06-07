@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.SchemasPsiProcessingContext;
 import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
@@ -57,6 +58,16 @@ public final class RequestUrlPsiParserTestUtil {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(context -> ResourcesSchemaPsiParser.parseResourcesSchema(psiFile, resolver, context));
+    return runPsiParser(context -> {
+      SchemasPsiProcessingContext schemasPsiProcessingContext = new SchemasPsiProcessingContext();
+      ResourcesSchema schema = ResourcesSchemaPsiParser.parseResourcesSchema(
+          psiFile,
+          resolver,
+          schemasPsiProcessingContext
+      );
+      schemasPsiProcessingContext.ensureAllReferencesResolved();
+      context.setErrors(schemasPsiProcessingContext.errors());
+      return schema;
+    });
   }
 }

@@ -556,7 +556,7 @@ public final class ReqInputProjectionsPsiParser {
             psi
         );
 
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, context);
 
       default:
@@ -743,7 +743,7 @@ public final class ReqInputProjectionsPsiParser {
             null,
             location
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,

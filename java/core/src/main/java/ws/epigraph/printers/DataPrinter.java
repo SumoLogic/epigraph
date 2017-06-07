@@ -79,7 +79,7 @@ public class DataPrinter<Exc extends Exception> {
   public void print(@Nullable Data data) throws Exc {
     if (data == null) { lo.print("null"); } else {
       switch (data.type().kind()) {
-        case UNION:
+        case ENTITY:
          if (withTypes && !data.type().immediateSupertypes().isEmpty())
             lo.print(data.type().name().toString());
           Data.Raw raw = data._raw();

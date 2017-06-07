@@ -29,18 +29,36 @@ trait ErrorReporter {
 }
 
 object ErrorReporter {
+  private def cErrorPosition(csf: CSchemaFile, location: TextLocation): CErrorPosition =
+    if (location == TextLocation.UNKNOWN)
+      CErrorPosition.NA
+    else if (location.startLine() == location.endLine())
+      csf.lnu.pos(location.startOffset(), location.endOffset() - location.startOffset())
+    else
+      csf.lnu.pos(location.startOffset())
+
   def reporter(csf: CSchemaFile)(implicit ctx: CContext): ErrorReporter =
     new ErrorReporter {
       override def error(message: String, location: TextLocation): Unit = {
 
+        val errorPosition = cErrorPosition(csf, location)
+        ctx.errors.add(CError(location.fileName(), errorPosition, message))
+
+      }
+    }
+
+  def reporter(csfm: Map[String, CSchemaFile])(implicit ctx: CContext): ErrorReporter =
+    new ErrorReporter {
+      override def error(message: String, location: TextLocation): Unit = {
+
         val errorPosition: CErrorPosition =
-          if (location == TextLocation.UNKNOWN) CErrorPosition.NA
-          else if (location.startLine() == location.endLine())
-            csf.lnu.pos(location.startOffset(), location.endOffset() - location.startOffset())
-          else csf.lnu.pos(location.startOffset())
+          if (location == TextLocation.UNKNOWN)
+            CErrorPosition.NA
+          else
+            csfm.get(location.fileName()).map(csf => cErrorPosition(csf, location)).getOrElse(CErrorPosition.NA)
 
+        ctx.errors.add(CError(location.fileName(), errorPosition, message))
 
-        ctx.errors.add(CError(csf.filename, errorPosition, message))
       }
     }
 }

@@ -35,7 +35,7 @@ public abstract class UnionType extends TypeImpl implements UnionTypeApi {
   ) { super(name, immediateSupertypes); }
 
   @Override
-  public final @NotNull TypeKind kind() { return TypeKind.UNION; }
+  public final @NotNull TypeKind kind() { return TypeKind.ENTITY; }
 
   @Override
   public @NotNull QualifiedTypeName name() {

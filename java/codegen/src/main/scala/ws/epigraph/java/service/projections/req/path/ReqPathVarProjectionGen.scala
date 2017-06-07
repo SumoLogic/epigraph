@@ -63,7 +63,7 @@ object ReqPathVarProjectionGen {
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathProjectionGen = op.`type`().kind() match {
 
-    case TypeKind.UNION =>
+    case TypeKind.ENTITY =>
       new ReqPathVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(

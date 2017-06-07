@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 import org.slf4s.Logging
-import ws.epigraph.psi.{DefaultPsiProcessingContext, PsiProcessingContext, PsiProcessingError, PsiProcessingException}
+import ws.epigraph.psi.{PsiProcessingError, PsiProcessingException}
+import ws.epigraph.schema.SchemasPsiProcessingContext
 import ws.epigraph.schema.parser.psi._
 import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
 
@@ -262,9 +263,10 @@ class EpigraphCompiler(
   }
 
   private def parseResources(): Unit = {
-    ctx.schemaFiles.values().par.foreach{ csf =>
+    val context: SchemasPsiProcessingContext = new SchemasPsiProcessingContext
+
+    ctx.schemaFiles.values().par.foreach { csf =>
       val typesResolver = new CTypesResolver(csf)
-      val context: PsiProcessingContext = new DefaultPsiProcessingContext
 
       try {
         val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, context)
@@ -274,11 +276,20 @@ class EpigraphCompiler(
         case e: PsiProcessingException => handlePsiErrors(csf, e.errors())
       }
     }
+
+    context.ensureAllReferencesResolved()
+    if (context.errors().nonEmpty)
+      handlePsiErrors(ctx.schemaFiles.toMap, context.errors())
   }
 
   private def handlePsiErrors(csf: CSchemaFile, psiErrors: Traversable[PsiProcessingError]): Unit = {
     lazy val reporter = ErrorReporter.reporter(csf)
     psiErrors.foreach{ e => reporter.error(e.message(), e.location()) }
+  }
+
+  private def handlePsiErrors(csfs: Map[String, CSchemaFile], psiErrors: Traversable[PsiProcessingError]): Unit = {
+    lazy val reporter = ErrorReporter.reporter(csfs)
+    psiErrors.foreach { e => reporter.error(e.message(), e.location()) }
   }
 
   @throws[EpigraphCompilerException]

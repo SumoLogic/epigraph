@@ -87,7 +87,7 @@ object ReqUpdateVarProjectionGen {
     namespaceSuffix: Qn,
     ctx: GenContext): ReqUpdateProjectionGen = op.`type`().kind() match {
 
-    case TypeKind.UNION =>
+    case TypeKind.ENTITY =>
       new ReqUpdateVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public interface TypesResolver {
     final TagApi defaultTag;
     @Nullable String defaultTagOverride = valueTypeRef.defaultOverride();
     if (defaultTagOverride == null) {
-      if (type.kind() == TypeKind.UNION) defaultTag = null;
+      if (type.kind() == TypeKind.ENTITY) defaultTag = null;
       else defaultTag = ((DatumTypeApi) type).self();
     } else {
       defaultTag = type.tagsMap().get(defaultTagOverride);

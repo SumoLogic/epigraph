@@ -617,7 +617,7 @@ public final class OpDeleteProjectionsPsiParser {
             psi
         );
 
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
 
       default:
@@ -793,7 +793,7 @@ public final class OpDeleteProjectionsPsiParser {
             null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
             locationPsi,

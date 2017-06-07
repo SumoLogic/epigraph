@@ -240,7 +240,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
         if (!printedVarNames.contains(shortName)) {
           printedVarNames.add(shortName);
 
-          if (outputProjection.type().kind() == TypeKind.UNION) { // real var
+          if (outputProjection.type().kind() == TypeKind.ENTITY) { // real var
 
             final ProjectionsPrettyPrinterContext<VP, MP> printerContext =
                 prettyPrinterContextFactory.apply(shortName.toString());

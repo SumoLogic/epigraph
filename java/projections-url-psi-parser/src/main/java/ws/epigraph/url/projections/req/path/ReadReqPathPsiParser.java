@@ -154,7 +154,7 @@ public final class ReadReqPathPsiParser {
 
     final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
     // for unions: check that provided tag is correct
-    if (type.kind() == TypeKind.UNION) {
+    if (type.kind() == TypeKind.ENTITY) {
       if (tagNamePsi == null || !tagNamePsi.getQid().getCanonicalName().equals(opTag.name()))
         throw new PathNotMatchedException(
             String.format(
@@ -308,7 +308,7 @@ public final class ReadReqPathPsiParser {
             psi,
             context
         );
-      case UNION:
+      case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), psi, context);

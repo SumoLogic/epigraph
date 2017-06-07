@@ -195,7 +195,7 @@ object CTypeDef {
 
 
 class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(implicit ctx: CContext) extends CTypeDef(
-  csf, psi, CTypeKind.VARTYPE
+  csf, psi, CTypeKind.ENTITY
 ) {
 
   final override type Super = CVarTypeDef

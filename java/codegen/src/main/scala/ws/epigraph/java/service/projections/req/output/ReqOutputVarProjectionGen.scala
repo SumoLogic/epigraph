@@ -78,7 +78,7 @@ object ReqOutputVarProjectionGen {
     namespaceSuffix: Qn,
     ctx: GenContext): ReqOutputProjectionGen = op.`type`().kind() match {
 
-    case TypeKind.UNION =>
+    case TypeKind.ENTITY =>
       new ReqOutputVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(

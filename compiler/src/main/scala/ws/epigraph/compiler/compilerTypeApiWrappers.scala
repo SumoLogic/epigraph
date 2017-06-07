@@ -30,7 +30,7 @@ trait CTypeApiWrapper extends TypeApi {
   val cType: CType
 
   override def kind(): TypeKind = cType.kind match {
-    case CTypeKind.VARTYPE => TypeKind.UNION
+    case CTypeKind.ENTITY => TypeKind.ENTITY
     case CTypeKind.RECORD => TypeKind.RECORD
     case CTypeKind.MAP => TypeKind.MAP
     case CTypeKind.LIST => TypeKind.LIST

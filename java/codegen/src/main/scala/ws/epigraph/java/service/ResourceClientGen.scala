@@ -242,7 +242,7 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
         .filterRead($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
-          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+          return ${if (outType.kind == CTypeKind.ENTITY) "data" else "data == null ? null : data.get()"};
         }).get());
   }"""/*@formatter:on*/
 
@@ -280,7 +280,7 @@ $pathParam      @Nullable String inputProjection,
         $opDecl,
         ${if (op.path() == null) "null" else "path"},
         inputProjection,
-        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"$inTypeExpr.type.createDataBuilder().set(inputData)"},
+        ${if (inType.kind == CTypeKind.ENTITY) "inputData" else s"$inTypeExpr.type.createDataBuilder().set(inputData)"},
         outputProjection,
         typesResolver
     );
@@ -289,7 +289,7 @@ $pathParam      @Nullable String inputProjection,
         .filterCreate($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
-          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+          return ${if (outType.kind == CTypeKind.ENTITY) "data" else "data == null ? null : data.get()"};
         }).get());
   }"""/*@formatter:on*/
 
@@ -325,7 +325,7 @@ $pathParam      @Nullable String updateProjection,
         $opDecl,
         ${if (op.path() == null) "null" else "path"},
         updateProjection,
-        ${if (inType.kind == CTypeKind.VARTYPE) "updateData" else s"$inTypeExpr.type.createDataBuilder().set(updateData)"},
+        ${if (inType.kind == CTypeKind.ENTITY) "updateData" else s"$inTypeExpr.type.createDataBuilder().set(updateData)"},
         outputProjection,
         typesResolver
     );
@@ -334,7 +334,7 @@ $pathParam      @Nullable String updateProjection,
         .filterUpdate($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
-          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+          return ${if (outType.kind == CTypeKind.ENTITY) "data" else "data == null ? null : data.get()"};
         }).get());
   }"""/*@formatter:on*/
 
@@ -378,7 +378,7 @@ $pathParam      @NotNull String deleteProjection,
         .filterDelete($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
-          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+          return ${if (outType.kind == CTypeKind.ENTITY) "data" else "data == null ? null : data.get()"};
         }).get());
   }"""/*@formatter:on*/
 
@@ -398,7 +398,7 @@ $pathParam      @NotNull String deleteProjection,
         .filterCustom($fieldName)
         .invoke(request, ctx).thenApply(oir -> oir.mapSuccess(ror -> {
           $outDataTypeExpr data = ($outDataTypeExpr) ror.getData();
-          return ${if (outType.kind == CTypeKind.VARTYPE) "data" else "data == null ? null : data.get()"};
+          return ${if (outType.kind == CTypeKind.ENTITY) "data" else "data == null ? null : data.get()"};
         }).get());"""/*@formatter:on*/
 
         // two options here: with and without input data
@@ -458,7 +458,7 @@ $pathParam      @Nullable String inputProjection,
         $opDecl,
         ${if (op.path() == null) "null" else "path"},
         inputProjection,
-        ${if (inType.kind == CTypeKind.VARTYPE) "inputData" else s"inputData == null ? null : $inTypeExpr.type.createDataBuilder().set(inputData)"},
+        ${if (inType.kind == CTypeKind.ENTITY) "inputData" else s"inputData == null ? null : $inTypeExpr.type.createDataBuilder().set(inputData)"},
         outputProjection,
         typesResolver
     );
