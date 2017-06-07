@@ -21,6 +21,7 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,23 +34,57 @@ public class ProjectionsPrettyPrinterContext<
     MP extends GenModelProjection<?, ?, ?, ?>> {
 
   private final @NotNull ProjectionReferenceName projectionsNamespace;
-  private final Map<ProjectionReferenceName, VP> otherNamespaceVarProjections = new HashMap<>();
+  private final Map<ProjectionReferenceName, VP> otherNamespaceEntityProjections = new HashMap<>();
   private final Map<ProjectionReferenceName, MP> otherNamespaceModelProjections = new HashMap<>();
 
-  public ProjectionsPrettyPrinterContext(final @NotNull ProjectionReferenceName namespace) {projectionsNamespace = namespace;}
+  public ProjectionsPrettyPrinterContext(final @NotNull ProjectionReferenceName namespace) {
+    projectionsNamespace = namespace;
+  }
+
+  /**
+   * Returns all projections matching namespace of this context and adds the rest to the
+   * list of 'other namespace' projection
+   */
+  public @NotNull Collection<VP> filterEntityProjections(@NotNull Collection<VP> entityProjections) {
+    Collection<VP> matching = new ArrayList<>(entityProjections.size());
+    for (final VP ep : entityProjections) {
+      //noinspection unchecked
+      if (inNamespace(ep.referenceName()))
+        matching.add(ep);
+      else
+        addOtherNamespaceEntityProjection(ep);
+    }
+    return matching;
+  }
+
+  /**
+   * Returns all projections matching namespace of this context and adds the rest to the
+   * list of 'other namespace' projection
+   */
+  public @NotNull Collection<MP> filterModelProjections(@NotNull Collection<MP> modelProjections) {
+    Collection<MP> matching = new ArrayList<>(modelProjections.size());
+    for (final MP mp : modelProjections) {
+      //noinspection unchecked
+      if (inNamespace(mp.referenceName()))
+        matching.add(mp);
+      else
+        addOtherNamespaceModelProjection(mp);
+    }
+    return matching;
+  }
 
   public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
     return projectionName.removeLastSegment().equals(projectionsNamespace);
   }
 
-  public void addOtherNamespaceVarProjection(@NotNull VP projection) {
+  public void addOtherNamespaceEntityProjection(@NotNull VP projection) {
     @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
     assert projectionName != null;
     assert !inNamespace(projectionName);
-    assert !otherNamespaceVarProjections.containsKey(projectionName) : projectionName.toString();
+    assert !otherNamespaceEntityProjections.containsKey(projectionName) : projectionName.toString();
 
-    otherNamespaceVarProjections.put(projectionName, projection);
+    otherNamespaceEntityProjections.put(projectionName, projection);
   }
 
   public void addOtherNamespaceModelProjection(@NotNull MP projection) {
@@ -62,9 +97,9 @@ public class ProjectionsPrettyPrinterContext<
     otherNamespaceModelProjections.put(projectionName, projection);
   }
 
-  public Collection<VP> otherNamespaceVarProjections() { return otherNamespaceVarProjections.values(); }
+  public Collection<VP> otherNamespaceVarProjections() { return otherNamespaceEntityProjections.values(); }
 
   public Collection<MP> otherNamespaceModelProjections() { return otherNamespaceModelProjections.values(); }
 
-  public void reset() { otherNamespaceVarProjections.clear(); }
+  public void reset() { otherNamespaceEntityProjections.clear(); }
 }

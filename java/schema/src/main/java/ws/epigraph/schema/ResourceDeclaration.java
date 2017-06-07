@@ -36,6 +36,8 @@ public class ResourceDeclaration {
   private final @NotNull List<OperationDeclaration> operations;
   private final @NotNull TextLocation location;
 
+  // todo add annotations
+
   public ResourceDeclaration(
       @NotNull String fieldName,
       @NotNull DataTypeApi fieldType,

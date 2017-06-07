@@ -27,6 +27,10 @@ import ws.epigraph.types.TypeApi;
 import java.util.Objects;
 
 /**
+ * Qualified name where every segment is either a string or a type reference.
+ * <p/>
+ * Required for polymorphic tail projections where tail type becomes part of the namespace.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ProjectionReferenceName extends GenQn<ProjectionReferenceName.RefNameSegment, ProjectionReferenceName> {

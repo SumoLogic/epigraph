@@ -84,7 +84,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
       assert shortName != null;
 
       if (!context.inNamespace(name)) {
-        context.addOtherNamespaceVarProjection(p);
+        context.addOtherNamespaceEntityProjection(p);
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else if (visitedVarRefs.contains(shortName)) {

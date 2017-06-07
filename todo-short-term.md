@@ -1,5 +1,5 @@
 - Federator
-  - [ ] support named projections on the top level (not inside service)
+  - [x] support named projections on the top level (not inside service)
   - [ ] add transformers to schema
     - [ ] codegen implementation stubs
   - [ ] operations -> transformers via annotations
@@ -10,7 +10,7 @@
     - [ ] validate at startup that stuff is actually?
     
 # Yegor dependencies
-- [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc
+- [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc. Entity/Model types?
 - [ ] polymorphic builders or projections
   - [ ] update introspection service, see `TypeBuilder`, `DatumTypeBuilder`
 - [ ] add enums
