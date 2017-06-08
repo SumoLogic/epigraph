@@ -42,7 +42,7 @@ public class ReqInputProjectionsPrettyPrinter<E extends Exception>
   }
 
   public ReqInputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override

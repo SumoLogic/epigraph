@@ -19,7 +19,6 @@ package ws.epigraph.projections.req.delete;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
@@ -46,7 +45,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   }
 
   public ReqDeleteProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override

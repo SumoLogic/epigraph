@@ -44,7 +44,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
   protected final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context;
 
-  private final Collection<ProjectionReferenceName.RefNameSegment> visitedVarRefs = new HashSet<>();
+  private final Collection<ProjectionReferenceName.RefNameSegment> visitedEntityRefs = new HashSet<>();
   private final Collection<ProjectionReferenceName.RefNameSegment> visitedModelRefs = new HashSet<>();
 
   protected AbstractProjectionsPrettyPrinter(
@@ -71,7 +71,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
   }
 
   public void addVisitedRefs(@NotNull Collection<ProjectionReferenceName.RefNameSegment> names) {
-    visitedVarRefs.addAll(names);
+    visitedEntityRefs.addAll(names);
   }
 
   public final void printVar(@NotNull VP p, int pathSteps) throws E {
@@ -83,15 +83,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       ProjectionReferenceName.@Nullable RefNameSegment shortName = name.last();
       assert shortName != null;
 
-      if (!context.inNamespace(name)) {
-        context.addOtherNamespaceEntityProjection(p);
-        l.print("$").print(shortName.toString());
-        shouldPrint = false;
-      } else if (visitedVarRefs.contains(shortName)) {
+      context.addEntityProjection(p);
+      if (!context.inNamespace(name) || visitedEntityRefs.contains(shortName)) {
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
-        visitedVarRefs.add(shortName);
+        visitedEntityRefs.add(shortName);
         if (p.type().kind() == TypeKind.ENTITY) { // otherwise label will be printed by model
           l.print("$").print(shortName.toString()); //.print(" = ");
           nbsp();
@@ -213,11 +210,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
       ProjectionReferenceName.RefNameSegment shortName = name.last();
       assert shortName != null;
 
-      if (!context.inNamespace(name)) {
-        context.addOtherNamespaceModelProjection(mp);
-        l.print("$").print(shortName.toString());
-        shouldPrint = false;
-      } else if (visitedModelRefs.contains(shortName)) {
+      context.addModelProjection(mp);
+      if (!context.inNamespace(name) || visitedModelRefs.contains(shortName)) {
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {

@@ -48,7 +48,7 @@ public class ReqUpdateProjectionsPrettyPrinter<E extends Exception>
   }
 
   public ReqUpdateProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override

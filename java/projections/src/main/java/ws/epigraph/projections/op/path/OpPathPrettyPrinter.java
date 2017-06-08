@@ -39,7 +39,7 @@ public class OpPathPrettyPrinter<E extends Exception>
     E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override

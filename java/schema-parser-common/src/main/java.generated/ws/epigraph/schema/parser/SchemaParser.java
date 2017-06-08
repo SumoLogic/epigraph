@@ -6217,7 +6217,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (transformerBodyPart ',')* '}'
+  // '{' (transformerBodyPart ','?)* '}'
   static boolean transformerDefBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerDefBody")) return false;
     if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
@@ -6231,7 +6231,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (transformerBodyPart ',')*
+  // (transformerBodyPart ','?)*
   private static boolean transformerDefBody_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerDefBody_1")) return false;
     int c = current_position_(b);
@@ -6243,15 +6243,22 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // transformerBodyPart ','
+  // transformerBodyPart ','?
   private static boolean transformerDefBody_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerDefBody_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = transformerBodyPart(b, l + 1);
-    r = r && consumeToken(b, S_COMMA);
+    r = r && transformerDefBody_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean transformerDefBody_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "transformerDefBody_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
   }
 
   /* ********************************************************** */

@@ -44,7 +44,7 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
   }
 
   public OpInputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
-    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override

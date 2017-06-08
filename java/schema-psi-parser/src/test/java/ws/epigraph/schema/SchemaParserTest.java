@@ -299,6 +299,88 @@ public class SchemaParserTest {
     }
   }
 
+  @Test
+  public void testParseGlobalProjection() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "outputProjection op: Person = :id",
+            "resource r1: map[String,Person] {" +
+            "  read {",
+            "    outputProjection [] ( $op )",
+            "  }",
+            "}",
+            "resource r2: map[String,Person] {" +
+            "  read {",
+            "    outputProjection [] ( $op )",
+            "  }",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource r1: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( $op )",
+            "  }",
+            "}",
+            "resource r2: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( $op )",
+            "  }",
+            "}",
+            "outputProjection op: ws.epigraph.tests.Person = :id"
+        )
+    );
+  }
+
+  @Test
+  public void testParseTransformer() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "transformer t : Person {" +
+            "  doc = \"test transformer\"",
+            "  inputProjection :id",
+            "  outputProjection :`record`(id,firstName)",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "transformer t: ws.epigraph.tests.Person {",
+            "  doc = \"test transformer\",",
+            "  inputProjection :id,",
+            "  outputProjection :`record` ( id, firstName )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testParseTransformerWithGlobalProjection() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "outputProjection pp : Person = :`record`(id,firstName)",
+            "transformer t : Person {" +
+            "  doc = \"test transformer\"",
+            "  inputProjection :id",
+            "  outputProjection $pp",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "transformer t: ws.epigraph.tests.Person {",
+            "  doc = \"test transformer\",",
+            "  inputProjection :id,",
+            "  outputProjection $pp",
+            "}",
+            "outputProjection pp: ws.epigraph.tests.Person = :`record` ( id, firstName )"
+        )
+    );
+  }
+
   private void testParse(String idlStr, String expected) {
     ResourcesSchema schema = parseSchema(idlStr, resolver);
     assertEquals(expected, printSchema(schema));

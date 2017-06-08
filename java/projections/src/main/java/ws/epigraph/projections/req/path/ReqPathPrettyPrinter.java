@@ -37,7 +37,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   protected @NotNull DataPrinter<E> dataPrinter;
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
-    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY));
+    super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
     dataPrinter = new DataPrinter<>(layouter);
   }
 

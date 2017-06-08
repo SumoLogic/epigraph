@@ -17,11 +17,11 @@
 package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,77 +29,64 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsPrettyPrinterContext<
-    VP extends GenVarProjection<VP, ?, MP>,
-    MP extends GenModelProjection<?, ?, ?, ?>> {
+public class ProjectionsPrettyPrinterContext<EP extends GenVarProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> {
+  private final @NotNull ProjectionReferenceName namespace;
+  private final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent;
+  private final Map<ProjectionReferenceName, EP> entityProjections = new HashMap<>();
+  private final Map<ProjectionReferenceName, MP> modelProjections = new HashMap<>();
 
-  private final @NotNull ProjectionReferenceName projectionsNamespace;
-  private final Map<ProjectionReferenceName, VP> otherNamespaceEntityProjections = new HashMap<>();
-  private final Map<ProjectionReferenceName, MP> otherNamespaceModelProjections = new HashMap<>();
+  public ProjectionsPrettyPrinterContext(
+      final @NotNull ProjectionReferenceName namespace,
+      final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent) {
+    this.namespace = namespace;
+    this.parent = parent;
 
-  public ProjectionsPrettyPrinterContext(final @NotNull ProjectionReferenceName namespace) {
-    projectionsNamespace = namespace;
+//    if (parent !=null && !namespace.startsWith(parent.namespace))
+//      throw new IllegalArgumentException(String.format(
+//          "'%s' context can't be a child of '%s' context",
+//          namespace,
+//          parent.namespace
+//      ));
   }
 
-  /**
-   * Returns all projections matching namespace of this context and adds the rest to the
-   * list of 'other namespace' projection
-   */
-  public @NotNull Collection<VP> filterEntityProjections(@NotNull Collection<VP> entityProjections) {
-    Collection<VP> matching = new ArrayList<>(entityProjections.size());
-    for (final VP ep : entityProjections) {
-      //noinspection unchecked
-      if (inNamespace(ep.referenceName()))
-        matching.add(ep);
-      else
-        addOtherNamespaceEntityProjection(ep);
-    }
-    return matching;
-  }
-
-  /**
-   * Returns all projections matching namespace of this context and adds the rest to the
-   * list of 'other namespace' projection
-   */
-  public @NotNull Collection<MP> filterModelProjections(@NotNull Collection<MP> modelProjections) {
-    Collection<MP> matching = new ArrayList<>(modelProjections.size());
-    for (final MP mp : modelProjections) {
-      //noinspection unchecked
-      if (inNamespace(mp.referenceName()))
-        matching.add(mp);
-      else
-        addOtherNamespaceModelProjection(mp);
-    }
-    return matching;
-  }
+  public @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent() { return parent; }
 
   public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
-    return projectionName.removeLastSegment().equals(projectionsNamespace);
+    return projectionName.removeLastSegment().equals(namespace);
   }
 
-  public void addOtherNamespaceEntityProjection(@NotNull VP projection) {
+  public void addEntityProjection(@NotNull EP projection) {
     @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
-    assert projectionName != null;
-    assert !inNamespace(projectionName);
-    assert !otherNamespaceEntityProjections.containsKey(projectionName) : projectionName.toString();
-
-    otherNamespaceEntityProjections.put(projectionName, projection);
+    if (inNamespace(projectionName))
+      entityProjections.put(projectionName, projection);
+    else if (parent != null)
+      parent.addEntityProjection(projection);
+    else
+      throw new IllegalArgumentException(String.format(
+          "Can't add '%s' projection to '%s' printer context",
+          projectionName,
+          namespace
+      ));
   }
 
-  public void addOtherNamespaceModelProjection(@NotNull MP projection) {
+  public void addModelProjection(@NotNull MP projection) {
     @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
-    assert projectionName != null;
-    assert !inNamespace(projectionName);
-    assert !otherNamespaceModelProjections.containsKey(projectionName) : projectionName.toString();
-
-    otherNamespaceModelProjections.put(projectionName, projection);
+    if (inNamespace(projectionName))
+      modelProjections.put(projectionName, projection);
+    else if (parent != null)
+      parent.addModelProjection(projection);
+    else
+      throw new IllegalArgumentException(String.format(
+          "Can't add '%s' projection to '%s' printer context",
+          projectionName,
+          namespace
+      ));
   }
 
-  public Collection<VP> otherNamespaceVarProjections() { return otherNamespaceEntityProjections.values(); }
+  public @NotNull Collection<EP> entityProjections() { return entityProjections.values(); }
 
-  public Collection<MP> otherNamespaceModelProjections() { return otherNamespaceModelProjections.values(); }
+  public @NotNull Collection<MP> modelProjections() { return modelProjections.values(); }
 
-  public void reset() { otherNamespaceEntityProjections.clear(); }
 }

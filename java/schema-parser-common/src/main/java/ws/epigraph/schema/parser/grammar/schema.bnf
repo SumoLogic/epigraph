@@ -356,7 +356,7 @@ transformerDef ::= 'transformer' transformerName transformerType transformerDefB
 transformerName ::= qid
 transformerType ::= ':' typeRef
 
-private transformerDefBody ::= '{' (transformerBodyPart ',')* '}'
+private transformerDefBody ::= '{' (transformerBodyPart ','?)* '}'
 transformerBodyPart ::= transformerInputProjection | transformerOutputProjection | annotation {
   recoverWhile = transformerBodyRecover
 }

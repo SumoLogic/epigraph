@@ -132,7 +132,8 @@ public class GeneratedClassesTest {
                     OperationKind.DELETE,
                     operationName
                 )
-            )
+            ),
+            null
         )
     );
     printer.printVar(projection, 0);
