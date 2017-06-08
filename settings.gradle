@@ -39,10 +39,11 @@ Map<String, String> modules = [
     'gradle-plugin-common'                  : 'epigraph-gradle-plugin-common',
     'idea-plugin'                           : 'idea-plugin',
 
+    'builtin-services/builtin-services-schema'   : 'epigraph-builtin-services-schema',
+    'builtin-services/builtin-services-service'  : 'epigraph-builtin-services-service',
+
     'compiler'                              : 'epigraph-compiler',
     'java/codegen'                          : 'epigraph-java-codegen',
-    'java/codegen-test/codegen-test-schema' : 'epigraph-java-codegen-test-schema',
-    'java/codegen-test/codegen-test-java'   : 'epigraph-java-codegen-test-java',
     'java/core'                             : 'epigraph-java-core',
     'java/data-processing'                  : 'epigraph-java-data-processing',
     'java/federator'                        : 'epigraph-java-federator',

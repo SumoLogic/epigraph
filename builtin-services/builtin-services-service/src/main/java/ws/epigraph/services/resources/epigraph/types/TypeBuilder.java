@@ -20,8 +20,8 @@ import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.EntityTypeApi;
 import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.UnionTypeApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public final class TypeBuilder {
     // todo: `abstract` and `doc` fields support
 
     if (type.kind() == ws.epigraph.types.TypeKind.ENTITY)
-      return VarTypeBuilder.buildVarType((UnionTypeApi) type, projection.normalizedFor_VarType(), context);
+      return VarTypeBuilder.buildVarType((EntityTypeApi) type, projection.normalizedFor_VarType(), context);
     else
       return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_DatumType(), context);
   }

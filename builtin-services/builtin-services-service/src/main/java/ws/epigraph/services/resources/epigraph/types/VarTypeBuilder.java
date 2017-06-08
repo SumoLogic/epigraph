@@ -25,8 +25,8 @@ import ws.epigraph.services._resources.epigraph.projections.output.typenameproje
 import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.OutputVarTypeProjection;
 import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.supertypes.OutputVarType_ListProjection;
 import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.tags.OutputTag_ListProjection;
+import ws.epigraph.types.EntityTypeApi;
 import ws.epigraph.types.TagApi;
-import ws.epigraph.types.UnionTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,7 +35,7 @@ public final class VarTypeBuilder {
   private VarTypeBuilder() {}
 
   public static @NotNull VarType buildVarType(
-      @NotNull UnionTypeApi type,
+      @NotNull EntityTypeApi type,
       @NotNull OutputVarTypeProjection projection,
       @NotNull TypeBuilder.Context context) {
 
@@ -56,7 +56,7 @@ public final class VarTypeBuilder {
 
       VarType_List.Builder supertypesBuilder = VarType_List.create();
 
-      for (final UnionTypeApi supertype : type.supertypes())
+      for (final EntityTypeApi supertype : type.supertypes())
         supertypesBuilder.add(buildVarType(supertype, supertypeProjection, context));
 
       builder.setSupertypes(supertypesBuilder);
