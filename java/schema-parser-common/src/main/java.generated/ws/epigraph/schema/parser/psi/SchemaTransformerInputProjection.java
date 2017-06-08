@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.names.QualifiedTypeName;
+// This is a generated file. Not intended for manual editing.
+package ws.epigraph.schema.parser.psi;
 
 import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
-/**
- * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
- */
-public interface UnionTypeApi extends TypeApi {
-//  @Override
-//  default @NotNull TypeKind kind() { return TypeKind.UNION;}
+public interface SchemaTransformerInputProjection extends PsiElement {
 
-  @Override
-  @NotNull QualifiedTypeName name();
+  @Nullable
+  SchemaOpInputFieldProjection getOpInputFieldProjection();
 
-  @Override
-  @NotNull List<@NotNull ? extends UnionTypeApi> supertypes();
+  @NotNull
+  PsiElement getInputProjection();
 
-  @NotNull DataTypeApi dataType(@Nullable TagApi defaultTag);
 }

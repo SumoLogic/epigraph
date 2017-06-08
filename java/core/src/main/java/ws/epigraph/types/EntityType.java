@@ -26,12 +26,11 @@ import ws.epigraph.names.QualifiedTypeName;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class UnionType extends TypeImpl implements UnionTypeApi {
-  // todo rename to VarType
+public abstract class EntityType extends TypeImpl implements EntityTypeApi {
 
-  protected UnionType(
+  protected EntityType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends UnionType> immediateSupertypes
+      @NotNull List<@NotNull ? extends EntityType> immediateSupertypes
   ) { super(name, immediateSupertypes); }
 
   @Override
@@ -44,14 +43,14 @@ public abstract class UnionType extends TypeImpl implements UnionTypeApi {
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends UnionType> immediateSupertypes() {
-    return (List<? extends UnionType>) super.immediateSupertypes();
+  public @NotNull List<@NotNull ? extends EntityType> immediateSupertypes() {
+    return (List<? extends EntityType>) super.immediateSupertypes();
   }
 
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull List<@NotNull ? extends UnionType> supertypes() {
-    return (List<? extends UnionType>) super.supertypes();
+  public @NotNull List<@NotNull ? extends EntityType> supertypes() {
+    return (List<? extends EntityType>) super.supertypes();
   }
 
   public @NotNull DataType dataType(@Nullable Tag defaultTag) {
@@ -73,13 +72,13 @@ public abstract class UnionType extends TypeImpl implements UnionTypeApi {
   public abstract static class Static<
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends UnionType implements Type.Static<MyImmData, MyDataBuilder> {
+      > extends EntityType implements Type.Static<MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends UnionType.Static> immediateSupertypes,
+        @NotNull List<@NotNull ? extends EntityType.Static> immediateSupertypes,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);

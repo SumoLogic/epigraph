@@ -17,6 +17,7 @@
 package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
@@ -24,6 +25,9 @@ import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,6 +39,9 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
   private final @NotNull OpInputReferenceContext inputReferenceContext;
   private final @NotNull OpOutputReferenceContext outputReferenceContext;
   private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
+
+  private final @NotNull Map<String, ResourceDeclaration> resources = new LinkedHashMap<>();
+  private final @NotNull Map<String, TransformerDeclaration> transformers = new LinkedHashMap<>();
 
   public SchemaPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
@@ -75,4 +82,18 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
 
   @Override
   public @NotNull OpDeleteReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
+
+  public @Nullable ResourceDeclaration resource(@NotNull String name) { return resources.get(name); }
+
+  public void addResource(@NotNull ResourceDeclaration resource) {
+    assert !resources.containsKey(resource.fieldName()) : resource.fieldName();
+    resources.put(resource.fieldName(), resource);
+  }
+
+  public @Nullable TransformerDeclaration transformer(@NotNull String name) { return transformers.get(name); }
+
+  public void addTransformer(@NotNull TransformerDeclaration transformer) {
+    assert !transformers.containsKey(transformer.name()) : transformer.name();
+    transformers.put(transformer.name(), transformer);
+  }
 }

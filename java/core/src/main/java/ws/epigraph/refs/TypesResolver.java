@@ -47,9 +47,9 @@ public interface TypesResolver {
       if (defaultTag == null) return null;
     }
 
-    if (type instanceof UnionTypeApi) {
-      UnionTypeApi unionTypeApi = (UnionTypeApi) type;
-      return unionTypeApi.dataType(defaultTag);
+    if (type instanceof EntityTypeApi) {
+      EntityTypeApi entityTypeApi = (EntityTypeApi) type;
+      return entityTypeApi.dataType(defaultTag);
     }
 
     if (type instanceof DatumTypeApi) {

@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public final class TransformerDeclaration {
   private final @NotNull String name;
-  private final @NotNull Type type;
+  private final @NotNull TypeApi type;
   private final @NotNull OpInputVarProjection inputProjection;
   private final @NotNull OpOutputVarProjection outputProjection;
   private final @NotNull Annotations annotations;
@@ -39,10 +39,10 @@ public final class TransformerDeclaration {
 
   public TransformerDeclaration(
       @NotNull String name,
-      @NotNull Type type,
+      @NotNull TypeApi type,
+      @NotNull Annotations annotations,
       @NotNull OpInputVarProjection inputProjection,
       @NotNull OpOutputVarProjection outputProjection,
-      @NotNull Annotations annotations,
       @NotNull TextLocation location) {
 
     this.name = name;
@@ -71,7 +71,7 @@ public final class TransformerDeclaration {
   public @NotNull String name() { return name; }
 
   @Contract(pure = true)
-  public @NotNull Type type() { return type; }
+  public @NotNull TypeApi type() { return type; }
 
   @Contract(pure = true)
   public @NotNull OpInputVarProjection inputProjection() { return inputProjection; }

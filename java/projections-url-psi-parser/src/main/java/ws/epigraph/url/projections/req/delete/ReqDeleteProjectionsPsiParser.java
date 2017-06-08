@@ -401,7 +401,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    @NotNull EntityTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
     checkTailType(tailType, dataType, tailTypeRefPsi, context);
     @NotNull OpDeleteVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);

@@ -326,7 +326,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull UnionTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    @NotNull EntityTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
     checkTailType(tailType, dataType, tailTypeRefPsi, context);
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),

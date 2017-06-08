@@ -716,7 +716,15 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitTransformerInputProjection(@NotNull SchemaTransformerInputProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitTransformerName(@NotNull SchemaTransformerName o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTransformerOutputProjection(@NotNull SchemaTransformerOutputProjection o) {
     visitPsiElement(o);
   }
 

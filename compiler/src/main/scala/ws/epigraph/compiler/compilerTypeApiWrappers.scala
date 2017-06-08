@@ -110,13 +110,13 @@ trait CTypeDefApiWrapper extends CTypeApiWrapper {
   override val name: QualifiedTypeName = QualifiedTypeName.fromFqn(cType.name.fqn)
 }
 
-class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper with UnionTypeApi {
+class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
   override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map{ ct => new CTagWrapper(ct) }
 
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
     mapAsJavaMap(cType.effectiveTags.map{ ct => ct.name -> new CTagWrapper(ct) }.toMap)
 
-  override lazy val supertypes: util.List[_ <: UnionTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[UnionTypeApi]}
+  override lazy val supertypes: util.List[_ <: EntityTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[EntityTypeApi]}
 
   override def dataType(defaultTag: TagApi): DataTypeApi =
     new CDataTypeApiWrapper(cType.dataType(Option(defaultTag).map(_.name())))

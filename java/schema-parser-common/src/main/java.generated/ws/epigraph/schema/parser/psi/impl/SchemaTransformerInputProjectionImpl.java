@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaTransformerBodyPartImpl extends ASTWrapperPsiElement implements SchemaTransformerBodyPart {
+public class SchemaTransformerInputProjectionImpl extends ASTWrapperPsiElement implements SchemaTransformerInputProjection {
 
-  public SchemaTransformerBodyPartImpl(ASTNode node) {
+  public SchemaTransformerInputProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitTransformerBodyPart(this);
+    visitor.visitTransformerInputProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,20 +44,14 @@ public class SchemaTransformerBodyPartImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public SchemaAnnotation getAnnotation() {
-    return PsiTreeUtil.getChildOfType(this, SchemaAnnotation.class);
+  public SchemaOpInputFieldProjection getOpInputFieldProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputFieldProjection.class);
   }
 
   @Override
-  @Nullable
-  public SchemaTransformerInputProjection getTransformerInputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaTransformerInputProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaTransformerOutputProjection getTransformerOutputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaTransformerOutputProjection.class);
+  @NotNull
+  public PsiElement getInputProjection() {
+    return notNullChild(findChildByType(S_INPUT_PROJECTION));
   }
 
 }

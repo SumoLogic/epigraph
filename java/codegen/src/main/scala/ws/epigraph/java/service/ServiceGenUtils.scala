@@ -162,7 +162,7 @@ Util.create$mapClass(
 
   def genDataTypeExpr(dt: DataTypeApi, gctx: GenContext): String = dt.`type`() match {
     case a: DatumTypeApi => genTypeExpr(a, gctx) + ".dataType()"
-    case u: UnionTypeApi =>
+    case u: EntityTypeApi =>
       val tagExpr = Option(dt.defaultTag()).map(_.name()) match {
         case Some(tagName) => genTagExpr(u, tagName, gctx)
         case None => "null"

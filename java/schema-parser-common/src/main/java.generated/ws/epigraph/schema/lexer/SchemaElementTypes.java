@@ -205,7 +205,9 @@ public interface SchemaElementTypes {
   IElementType S_TAG_NAME = new SchemaElementType("S_TAG_NAME");
   IElementType S_TRANSFORMER_BODY_PART = new SchemaElementType("S_TRANSFORMER_BODY_PART");
   IElementType S_TRANSFORMER_DEF = new SchemaElementType("S_TRANSFORMER_DEF");
+  IElementType S_TRANSFORMER_INPUT_PROJECTION = new SchemaElementType("S_TRANSFORMER_INPUT_PROJECTION");
   IElementType S_TRANSFORMER_NAME = new SchemaElementType("S_TRANSFORMER_NAME");
+  IElementType S_TRANSFORMER_OUTPUT_PROJECTION = new SchemaElementType("S_TRANSFORMER_OUTPUT_PROJECTION");
   IElementType S_TRANSFORMER_TYPE = new SchemaElementType("S_TRANSFORMER_TYPE");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
@@ -801,8 +803,14 @@ public interface SchemaElementTypes {
       else if (type == S_TRANSFORMER_DEF) {
         return new SchemaTransformerDefImpl(node);
       }
+      else if (type == S_TRANSFORMER_INPUT_PROJECTION) {
+        return new SchemaTransformerInputProjectionImpl(node);
+      }
       else if (type == S_TRANSFORMER_NAME) {
         return new SchemaTransformerNameImpl(node);
+      }
+      else if (type == S_TRANSFORMER_OUTPUT_PROJECTION) {
+        return new SchemaTransformerOutputProjectionImpl(node);
       }
       else if (type == S_TRANSFORMER_TYPE) {
         return new SchemaTransformerTypeImpl(node);

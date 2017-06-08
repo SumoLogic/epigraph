@@ -357,9 +357,12 @@ transformerName ::= qid
 transformerType ::= ':' typeRef
 
 private transformerDefBody ::= '{' (transformerBodyPart ',')* '}'
-transformerBodyPart ::= inputProjectionDef | outputProjectionDef | annotation {
+transformerBodyPart ::= transformerInputProjection | transformerOutputProjection | annotation {
   recoverWhile = transformerBodyRecover
 }
+
+transformerInputProjection ::= 'inputProjection' opInputFieldProjection {pin=1}
+transformerOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
 
 private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=') )
 

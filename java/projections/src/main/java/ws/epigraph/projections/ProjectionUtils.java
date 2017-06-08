@@ -27,7 +27,7 @@ import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.UnionTypeApi;
+import ws.epigraph.types.EntityTypeApi;
 
 import java.util.*;
 import java.util.function.Function;
@@ -61,7 +61,7 @@ public final class ProjectionUtils {
       DatumTypeApi datumType = (DatumTypeApi) type;
       lastDataType = datumType.dataType();
     } else {
-      lastDataType = ((UnionTypeApi) type).dataType(null);
+      lastDataType = ((EntityTypeApi) type).dataType(null);
     }
 
     while (true) {

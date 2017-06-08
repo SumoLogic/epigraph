@@ -161,15 +161,15 @@ public final class ProjectionsParsingUtil {
   }
 
 
-  public static @NotNull UnionTypeApi getUnionType(
+  public static @NotNull EntityTypeApi getUnionType(
       @NotNull TypeRef typeRef,
       @NotNull TypesResolver resolver,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     TypeApi type = getType(typeRef, resolver, location, context);
-    if (type instanceof UnionTypeApi)
-      return (UnionTypeApi) type;
+    if (type instanceof EntityTypeApi)
+      return (EntityTypeApi) type;
 
     throw new PsiProcessingException(
         String.format("Expected '%s' to be a var type, but actual kind is '%s'",
@@ -242,7 +242,7 @@ public final class ProjectionsParsingUtil {
 
   public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getTail(
       @NotNull VP vp,
-      @NotNull UnionTypeApi targetType,
+      @NotNull EntityTypeApi targetType,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext ctx) {
 
@@ -265,7 +265,7 @@ public final class ProjectionsParsingUtil {
   @SuppressWarnings("unchecked")
   public static <VP extends GenVarProjection<VP, ?, ?>> boolean hasTail(
       @NotNull VP vp,
-      @NotNull UnionTypeApi tailType) {
+      @NotNull EntityTypeApi tailType) {
 
     if (vp.tailByType(tailType) != null) return true;
     final List<?> tails = vp.polymorphicTails();
@@ -338,7 +338,7 @@ public final class ProjectionsParsingUtil {
   }
 
   public static void checkTailType(
-      @NotNull UnionTypeApi tailType,
+      @NotNull EntityTypeApi tailType,
       @NotNull DataTypeApi dataType,
       @NotNull PsiElement tailTypeRefPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {

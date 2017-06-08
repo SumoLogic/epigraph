@@ -25,7 +25,7 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.TagApi;
-import ws.epigraph.types.UnionTypeApi;
+import ws.epigraph.types.EntityTypeApi;
 
 import java.util.*;
 
@@ -60,7 +60,7 @@ public abstract class GenGDataValidator<
     if (typeRef == null) {
       normalizedProjection = projection;
     } else {
-      final UnionTypeApi type = typeRef.resolveVarType(typesResolver);
+      final EntityTypeApi type = typeRef.resolveEntityType(typesResolver);
       if (type == null) {
         context.addError("Can't resolve var type '" + typeRef.toString() + "'", data.location());
         return;
