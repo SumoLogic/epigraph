@@ -254,7 +254,6 @@ public interface SchemaElementTypes {
   IElementType S_META = new SchemaElementType("meta");
   IElementType S_METHOD = new SchemaElementType("method");
   IElementType S_NAMESPACE = new SchemaElementType("namespace");
-  IElementType S_NODEFAULT = new SchemaElementType("nodefault");
   IElementType S_NULL = new SchemaElementType("null");
   IElementType S_NUMBER = new SchemaElementType("number");
   IElementType S_OP_CREATE = new SchemaElementType("create");

@@ -34,6 +34,9 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 interface SchemaBlockFactory {
   Map<IElementType, SchemaBlockFactory> factories =
       new ContainerUtil.ImmutableMapBuilder<IElementType, SchemaBlockFactory>()
+          .put(S_RESOURCE_DEF, ResourceBlock::new)
+          .put(S_TRANSFORMER_DEF, TransformerBlock::new)
+
           .put(S_RECORD_TYPE_DEF, TypeDefBlock::new)
           .put(S_ENTITY_TYPE_DEF, TypeDefBlock::new)
           .put(S_ENUM_TYPE_DEF, TypeDefBlock::new)
@@ -79,8 +82,6 @@ interface SchemaBlockFactory {
       Indent indent,
       SpacingBuilder spacingBuilder
   ) {
-    if (node.getElementType() == S_RESOURCE_DEF) return new ResourceBlock(node);
-
     SchemaBlockFactory factory = factories.get(node.getElementType());
     if (factory == null) {
       factory = SchemaBlock::new;

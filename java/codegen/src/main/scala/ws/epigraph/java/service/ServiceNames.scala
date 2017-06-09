@@ -41,4 +41,7 @@ object ServiceNames {
   def clientNamespace(baseNamespace: Qn, resourceFieldName: String): Qn =
     new Namespaces(baseNamespace).clientNamespace(resourceFieldName)
 
+  def transformerNamespace(baseNamespace: Qn, transformerName: String): Qn =
+    new Namespaces(baseNamespace).transformerNamespace(transformerName)
+
 }

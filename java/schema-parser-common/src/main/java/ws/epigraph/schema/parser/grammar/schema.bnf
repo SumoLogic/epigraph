@@ -35,7 +35,6 @@
     IMPORT = 'import'
     MAP = 'map'
     RETRO = 'retro'
-    NODEFAULT = 'nodefault'
     LIST = 'list'
     RECORD = 'record'
     EXTENDS = 'extends'

@@ -66,7 +66,6 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_META,
       S_METHOD,
       S_NAMESPACE,
-      S_NODEFAULT,
       S_NULL, // or is it a LITERAL?
       S_OP_CREATE,
       S_OP_CUSTOM,
@@ -86,6 +85,7 @@ public class SchemaParserDefinition implements ParserDefinition {
       S_STRING_T,
       S_SUPPLEMENT,
       S_SUPPLEMENTS,
+      S_TRANSFORMER,
       S_ENTITY,
       S_WITH
   );

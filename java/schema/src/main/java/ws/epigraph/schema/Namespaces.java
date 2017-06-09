@@ -50,6 +50,14 @@ public class Namespaces {
     return deleteProjectionsNamespace().append(projectionName.toLowerCase());
   }
 
+  // transformers
+
+  public @NotNull Qn transformersNamespace() { return namespace.append("_transformers"); }
+
+  public @NotNull Qn transformerNamespace(@NotNull String transformerName) {
+    return transformersNamespace().append(transformerName);
+  }
+
   // resource stuff
 
   public @NotNull Qn resourcesNamespace() { return namespace.append("_resources"); }

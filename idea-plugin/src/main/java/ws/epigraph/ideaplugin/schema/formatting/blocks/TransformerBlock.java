@@ -18,7 +18,6 @@ package ws.epigraph.ideaplugin.schema.formatting.blocks;
 
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.ideaplugin.schema.formatting.SchemaBlock;
@@ -27,12 +26,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO real formatting for service declarations
+ * TODO real formatting for transformer declarations
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ResourceBlock extends SchemaBlock {
-  public ResourceBlock(
+public class TransformerBlock extends SchemaBlock {
+  public TransformerBlock(
       @NotNull final ASTNode node,
       @Nullable final Wrap wrap,
       @Nullable final Alignment alignment,

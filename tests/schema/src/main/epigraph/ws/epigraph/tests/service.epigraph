@@ -5,6 +5,16 @@ import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
+transformer person: Person {
+  inputProjection :id
+  outputProjection :`record`(id, firstName, lastName)
+}
+
+transformer bestFriend: Person {
+  inputProjection :id,
+  outputProjection :`record`(bestFriend:id)
+}
+
 resource users: PersonMap {
 
   read {

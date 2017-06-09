@@ -43,11 +43,9 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
 
   "import"             { return S_IMPORT; }
   "namespace"          { return S_NAMESPACE; }
-  "default"            { return S_DEFAULT; }
   "retro"              { return S_RETRO; }
   "resource"           { return S_RESOURCE; }
   "transformer"        { return S_TRANSFORMER; }
-  "nodefault"          { return S_NODEFAULT; }
   "map"                { return S_MAP; }
   "list"               { return S_LIST; }
   "record"             { return S_RECORD; }

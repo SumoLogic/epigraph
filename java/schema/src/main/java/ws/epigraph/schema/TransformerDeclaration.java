@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class TransformerDeclaration {
+public class TransformerDeclaration {
   private final @NotNull String name;
   private final @NotNull TypeApi type;
   private final @NotNull OpInputVarProjection inputProjection;
