@@ -45,8 +45,8 @@ super(
   "${td.name()}",
   ${ServiceGenUtils.genTypeExpr(transformerType, ctx.gctx)},
   ${gen(td.annotations(), ctx)},
-  ${gen(td.inputProjection(), ctx)},
-  ${gen(td.outputProjection(), ctx)},
+  ${i(gen(td.inputProjection(), ctx))},
+  ${i(gen(td.outputProjection(), ctx))},
   ${gen(td.location(), ctx)}
 )"""/*@formatter:on*/
 
