@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -28,7 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqInputModelProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -53,7 +53,7 @@ abstract class ReqInputModelProjectionGen(
 
 object ReqInputModelProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
@@ -61,7 +61,7 @@ object ReqInputModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -69,7 +69,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqInputMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -77,7 +77,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqInputListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -85,7 +85,7 @@ object ReqInputModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqInputPrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,

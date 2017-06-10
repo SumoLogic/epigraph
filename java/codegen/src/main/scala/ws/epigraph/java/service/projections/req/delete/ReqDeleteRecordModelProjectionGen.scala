@@ -29,13 +29,13 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteRecordModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpDeleteRecordModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op,
     _baseNamespace,
     _namespaceSuffix,
@@ -49,7 +49,7 @@ class ReqDeleteRecordModelProjectionGen(
       (
         findField(fpe.field().name()),
         new ReqDeleteFieldProjectionGen(
-          operationInfo,
+          baseNamespaceProvider,
           fpe.field().name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
@@ -63,7 +63,7 @@ class ReqDeleteRecordModelProjectionGen(
     op: OpDeleteRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqDeleteRecordModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

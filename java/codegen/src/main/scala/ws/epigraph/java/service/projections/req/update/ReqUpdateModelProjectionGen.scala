@@ -19,8 +19,8 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -29,7 +29,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqUpdateModelProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -64,7 +64,7 @@ abstract class ReqUpdateModelProjectionGen(
 
 object ReqUpdateModelProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
@@ -72,7 +72,7 @@ object ReqUpdateModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -80,7 +80,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqUpdateMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -88,7 +88,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqUpdateListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -96,7 +96,7 @@ object ReqUpdateModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqUpdatePrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,

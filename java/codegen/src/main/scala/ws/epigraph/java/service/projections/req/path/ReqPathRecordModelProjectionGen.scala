@@ -29,11 +29,11 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathRecordModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpRecordModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqPathModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpRecordModelPath
 
@@ -46,7 +46,7 @@ class ReqPathRecordModelProjectionGen(
         (
           findField(fpe.field().name()),
           new ReqPathFieldProjectionGen(
-            operationInfo,
+            baseNamespaceProvider,
             fpe.field().name(),
             fpe.fieldProjection(),
             namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),

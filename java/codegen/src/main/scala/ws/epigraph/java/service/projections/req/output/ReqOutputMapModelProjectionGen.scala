@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.output.OpOutputMapModelProjection
@@ -27,19 +27,19 @@ import ws.epigraph.projections.op.output.OpOutputMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputMapModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpOutputMapModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpOutputMapModelProjection
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
   protected override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
     namespaceSuffix,
@@ -47,7 +47,7 @@ class ReqOutputMapModelProjectionGen(
   )
 
   protected override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op.itemsProjection(),
     baseNamespace,
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -58,7 +58,7 @@ class ReqOutputMapModelProjectionGen(
     op: OpOutputMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqOutputMapModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

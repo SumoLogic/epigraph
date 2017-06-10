@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -28,7 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqPathModelProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpModelPath[_, _, _ <: DatumTypeApi],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqModelProjectionGen {
@@ -49,28 +49,28 @@ abstract class ReqPathModelProjectionGen(
 
 object ReqPathModelProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpModelPath[_, _, _ <: DatumTypeApi],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpRecordModelPath],
         namespaceSuffix,
         ctx
       )
     case TypeKind.MAP =>
       new ReqPathMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpMapModelPath],
         namespaceSuffix,
         ctx
       )
     case TypeKind.PRIMITIVE =>
       new ReqPathPrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpPrimitiveModelPath],
         namespaceSuffix,
         ctx

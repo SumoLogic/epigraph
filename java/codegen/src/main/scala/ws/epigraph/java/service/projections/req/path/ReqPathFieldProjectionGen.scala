@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqFieldProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.OpFieldPath
 
@@ -27,7 +27,7 @@ import ws.epigraph.projections.op.path.OpFieldPath
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathFieldProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   fieldName: String,
   protected val op: OpFieldPath,
   override protected val namespaceSuffix: Qn,
@@ -39,7 +39,7 @@ class ReqPathFieldProjectionGen(
 
   override lazy val dataProjectionGen: ReqPathProjectionGen =
     ReqPathVarProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op.varProjection(),
       namespaceSuffix,
       ctx

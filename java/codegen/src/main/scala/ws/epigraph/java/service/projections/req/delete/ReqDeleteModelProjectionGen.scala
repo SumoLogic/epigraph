@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -28,7 +28,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqDeleteModelProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -53,7 +53,7 @@ abstract class ReqDeleteModelProjectionGen(
 
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
@@ -61,7 +61,7 @@ object ReqDeleteModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpDeleteRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -69,7 +69,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpDeleteMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -77,7 +77,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpDeleteListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -85,7 +85,7 @@ object ReqDeleteModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpDeletePrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,

@@ -29,13 +29,13 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputRecordModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpOutputRecordModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op,
     _baseNamespace,
     _namespaceSuffix,
@@ -49,7 +49,7 @@ class ReqOutputRecordModelProjectionGen(
       (
         findField(fpe.field().name()),
         new ReqOutputFieldProjectionGen(
-          operationInfo,
+          baseNamespaceProvider,
           fpe.field().name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
@@ -63,7 +63,7 @@ class ReqOutputRecordModelProjectionGen(
     op: OpOutputRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqOutputRecordModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

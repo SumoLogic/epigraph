@@ -18,18 +18,18 @@ package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.types.TypeKind
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateVarProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpInputVarProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -46,7 +46,7 @@ class ReqUpdateVarProjectionGen(
 
   override protected def tailGenerator(op: OpInputVarProjection, normalized: Boolean) =
     new ReqUpdateVarProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
@@ -57,7 +57,7 @@ class ReqUpdateVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =
     ReqUpdateModelProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       tpe.projection(),
       baseNamespace,
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -81,17 +81,17 @@ class ReqUpdateVarProjectionGen(
 
 object ReqUpdateVarProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpInputVarProjection,
     baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqUpdateProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqUpdateVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
+      new ReqUpdateVarProjectionGen(baseNamespaceProvider, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqUpdateRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -99,7 +99,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqUpdateMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -107,7 +107,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqUpdateListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -115,7 +115,7 @@ object ReqUpdateVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqUpdatePrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,

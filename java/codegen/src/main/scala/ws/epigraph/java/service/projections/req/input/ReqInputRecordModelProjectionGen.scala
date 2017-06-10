@@ -29,12 +29,12 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputRecordModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpInputRecordModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
 
@@ -43,7 +43,7 @@ class ReqInputRecordModelProjectionGen(
       (
         findField(fpe.field().name()),
         new ReqInputFieldProjectionGen(
-          operationInfo,
+          baseNamespaceProvider,
           fpe.field().name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
@@ -57,7 +57,7 @@ class ReqInputRecordModelProjectionGen(
     op: OpInputRecordModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqInputRecordModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

@@ -20,7 +20,6 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.ServiceNames
 import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.java.{JavaGen, JavaGenNames, JavaGenUtils}
 import ws.epigraph.lang.Qn
@@ -32,13 +31,9 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqProjectionGen extends JavaGen {
-  protected val operationInfo: OperationInfo
+  protected val baseNamespaceProvider: BaseNamespaceProvider
 
-  protected def baseNamespace: Qn = ServiceNames.operationNamespace(
-    operationInfo.resourceNamespace,
-    operationInfo.resourceFieldName,
-    operationInfo.operation
-  )
+  protected def baseNamespace: Qn = baseNamespaceProvider.baseNamespace
 
   protected def namespaceSuffix: Qn = Qn.EMPTY
 

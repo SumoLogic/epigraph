@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.path
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqPrimitiveModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.OpPrimitiveModelPath
 
@@ -25,11 +25,11 @@ import ws.epigraph.projections.op.path.OpPrimitiveModelPath
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathPrimitiveModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpPrimitiveModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqPathModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpPrimitiveModelPath
 

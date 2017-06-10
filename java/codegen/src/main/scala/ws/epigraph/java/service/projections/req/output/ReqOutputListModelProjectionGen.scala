@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqListModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
@@ -25,17 +25,17 @@ import ws.epigraph.projections.op.output.OpOutputListModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputListModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpOutputListModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
   protected val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op.itemsProjection(),
     baseNamespace,
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -46,7 +46,7 @@ class ReqOutputListModelProjectionGen(
     op: OpOutputListModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqOutputListModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

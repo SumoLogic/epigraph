@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, CodeChunk, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.OpMapModelPath
 
@@ -27,16 +27,16 @@ import ws.epigraph.projections.op.path.OpMapModelPath
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathMapModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpMapModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqPathModelProjectionGen(operationInfo, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelPath
 
   protected override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
     namespaceSuffix,
@@ -44,7 +44,7 @@ class ReqPathMapModelProjectionGen(
   )
 
   protected override val elementGen: ReqPathProjectionGen = ReqPathVarProjectionGen.dataProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx

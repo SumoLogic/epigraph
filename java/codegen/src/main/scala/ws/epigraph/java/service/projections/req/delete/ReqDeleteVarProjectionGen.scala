@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.TypeKind
@@ -28,7 +28,7 @@ import ws.epigraph.types.TypeKind
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteVarProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpDeleteVarProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -45,7 +45,7 @@ class ReqDeleteVarProjectionGen(
 
   override protected def tailGenerator(op: OpDeleteVarProjection, normalized: Boolean) =
     new ReqDeleteVarProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),
@@ -56,7 +56,7 @@ class ReqDeleteVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       tpe.projection(),
       baseNamespace,
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
@@ -71,17 +71,17 @@ class ReqDeleteVarProjectionGen(
 
 object ReqDeleteVarProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpDeleteVarProjection,
     baseNamespace: Qn,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqDeleteProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqDeleteVarProjectionGen(operationInfo, op, baseNamespace, namespaceSuffix, ctx)
+      new ReqDeleteVarProjectionGen(baseNamespaceProvider, op, baseNamespace, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -89,7 +89,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqDeleteMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -97,7 +97,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqDeleteListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -105,7 +105,7 @@ object ReqDeleteVarProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqDeletePrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,

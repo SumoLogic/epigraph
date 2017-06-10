@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqProjectionGen, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.TypeKind
@@ -28,7 +28,7 @@ import ws.epigraph.types.TypeKind
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathVarProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpVarPath,
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqVarProjectionGen {
@@ -44,7 +44,7 @@ class ReqPathVarProjectionGen(
 
   override protected def tagGenerator(tpe: OpTagPath): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       tpe.projection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
@@ -58,30 +58,30 @@ class ReqPathVarProjectionGen(
 
 object ReqPathVarProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpVarPath,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqPathVarProjectionGen(operationInfo, op, namespaceSuffix, ctx)
+      new ReqPathVarProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpRecordModelPath],
         namespaceSuffix,
         ctx
       )
     case TypeKind.MAP =>
       new ReqPathMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpMapModelPath],
         namespaceSuffix,
         ctx
       )
     case TypeKind.PRIMITIVE =>
       new ReqPathPrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelPath],
         namespaceSuffix,
         ctx

@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
@@ -27,19 +27,19 @@ import ws.epigraph.projections.op.input.OpInputMapModelProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateMapModelProjectionGen(
-  operationInfo: OperationInfo,
+  baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpInputMapModelProjection,
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(operationInfo, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
   protected override val keyGen: ReqUpdateMapKeyProjectionGen = new ReqUpdateMapKeyProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
     namespaceSuffix,
@@ -47,7 +47,7 @@ class ReqUpdateMapModelProjectionGen(
   )
 
   protected override val elementGen: ReqUpdateProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
-    operationInfo,
+    baseNamespaceProvider,
     op.itemsProjection(),
     baseNamespace,
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -58,7 +58,7 @@ class ReqUpdateMapModelProjectionGen(
     op: OpInputMapModelProjection,
     normalized: Boolean): ReqModelProjectionGen =
     new ReqUpdateMapModelProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op,
       baseNamespace,
       tailNamespaceSuffix(op.`type`(), normalized),

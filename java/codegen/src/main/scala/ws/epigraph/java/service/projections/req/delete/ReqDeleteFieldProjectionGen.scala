@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{OperationInfo, ReqFieldProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
 
@@ -27,7 +27,7 @@ import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteFieldProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   fieldName: String,
   protected val op: OpDeleteFieldProjection,
   baseNamespaceOpt: Option[Qn],
@@ -42,7 +42,7 @@ class ReqDeleteFieldProjectionGen(
 
   override lazy val dataProjectionGen: ReqDeleteProjectionGen =
     ReqDeleteVarProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       op.varProjection(),
       baseNamespace,
       namespaceSuffix,

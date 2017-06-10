@@ -20,7 +20,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{CodeChunk, OperationInfo, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -29,7 +29,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class ReqOutputModelProjectionGen(
-  protected val operationInfo: OperationInfo,
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
   _baseNamespace: Qn,
   _namespaceSuffix: Qn,
@@ -60,7 +60,7 @@ abstract class ReqOutputModelProjectionGen(
 
   override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
-      operationInfo,
+      baseNamespaceProvider,
       metaOp,
       baseNamespace,
       namespaceSuffix.append("meta"),
@@ -70,7 +70,7 @@ abstract class ReqOutputModelProjectionGen(
 
 object ReqOutputModelProjectionGen {
   def dataProjectionGen(
-    operationInfo: OperationInfo,
+    baseNamespaceProvider: BaseNamespaceProvider,
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespace: Qn,
     namespaceSuffix: Qn,
@@ -78,7 +78,7 @@ object ReqOutputModelProjectionGen {
 
     case TypeKind.RECORD =>
       new ReqOutputRecordModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpOutputRecordModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -86,7 +86,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.MAP =>
       new ReqOutputMapModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpOutputMapModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -94,7 +94,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.LIST =>
       new ReqOutputListModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpOutputListModelProjection],
         baseNamespace,
         namespaceSuffix,
@@ -102,7 +102,7 @@ object ReqOutputModelProjectionGen {
       )
     case TypeKind.PRIMITIVE =>
       new ReqOutputPrimitiveModelProjectionGen(
-        operationInfo,
+        baseNamespaceProvider,
         op.asInstanceOf[OpOutputPrimitiveModelProjection],
         baseNamespace,
         namespaceSuffix,
