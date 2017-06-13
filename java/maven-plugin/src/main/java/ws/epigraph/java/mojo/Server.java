@@ -25,8 +25,11 @@ package ws.epigraph.java.mojo;
 public class Server {
   private boolean generate = true;
   private String[] services = null;
+  private String[] transformers = null;
 
   public boolean generate() { return generate; }
 
   public String[] services() { return services; }
+
+  public String[] transformers() { return transformers; }
 }

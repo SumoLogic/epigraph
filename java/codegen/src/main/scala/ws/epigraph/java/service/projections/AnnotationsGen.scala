@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class AnnotationsGen(anns: Annotations) extends ServiceObjectGen[Annotations](an
     if (anns.equals(Annotations.EMPTY)) "Annotations.EMPTY"
     else /*@formatter:off*/sn"""\
 new Annotations(
-  ${i(ServiceGenUtils.genHashMap("String", "Annotation", anns.asMap().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${i(ServiceGenUtils.genHashMap("String", "Annotation", anns.asMap().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))}
 )"""/*@formatter:on*/
 
 }

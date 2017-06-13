@@ -22,7 +22,7 @@ import java.nio.file.{Files, Path}
 import java.util.concurrent._
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.service.{AbstractResourceFactoryGen, ResourceClientGen, ResourceDeclarationGen, TransformerDeclarationGen}
+import ws.epigraph.java.service._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 
@@ -134,6 +134,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     if (serverSettings.generate() || clientSettings.generate()) {
 
       val serverServicesOpt = Option(serverSettings.services())
+      val serverTransformersOpt = Option(serverSettings.transformers())
       val clientServicesOpt = Option(clientSettings.services())
 
       for (entry <- cctx.resourcesSchemas.entrySet) {
@@ -165,7 +166,13 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         for (transformerDeclaration <- rs.transformers.values) {
           generators += new TransformerDeclarationGen(transformerDeclaration, namespace, ctx)
 
-          // todo stub
+          val transformerName = namespace.append(transformerDeclaration.name()).toString
+
+          if (serverSettings.generate()) {
+            if (serverTransformersOpt.isEmpty || serverTransformersOpt.exists(transformers => transformers.contains(transformerName))) {
+              generators += new AbstractTransformerGen(transformerDeclaration, namespace, ctx)
+            }
+          }
         }
       }
 

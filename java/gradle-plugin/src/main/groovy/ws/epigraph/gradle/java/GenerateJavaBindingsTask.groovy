@@ -52,7 +52,8 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
     def settings = new Settings(
         new Settings.ServerSettings(
             server != null && server.generate,
-            server == null ? null : server.services
+            server == null ? null : server.services,
+            server == null ? null : server.transformers
         ),
         new Settings.ClientSettings(
             client != null && client.generate,

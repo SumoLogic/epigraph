@@ -29,10 +29,10 @@ import ws.epigraph.projections.op.output.OpOutputMapModelProjection
 class ReqOutputMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpOutputMapModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpOutputMapModelProjection
 
@@ -49,7 +49,7 @@ class ReqOutputMapModelProjectionGen(
   protected override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
-    baseNamespace,
+    Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -60,7 +60,7 @@ class ReqOutputMapModelProjectionGen(
     new ReqOutputMapModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

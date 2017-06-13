@@ -24,4 +24,5 @@ package ws.epigraph.gradle.java
 class Server {
   boolean generate = true
   List<String> services = null
+  List<String> transformers = null
 }

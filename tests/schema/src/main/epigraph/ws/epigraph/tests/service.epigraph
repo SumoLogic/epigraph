@@ -6,6 +6,7 @@ import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
 transformer person: Person {
+  batching = true
   inputProjection :id
   outputProjection :`record`(id, firstName, lastName)
 }
@@ -13,6 +14,11 @@ transformer person: Person {
 transformer bestFriend: Person {
   inputProjection :id,
   outputProjection :`record`(bestFriend:id)
+}
+
+transformer weird: PersonRecord {
+  inputProjection (firstName)
+  outputProjection (lastName)
 }
 
 resource users: PersonMap {

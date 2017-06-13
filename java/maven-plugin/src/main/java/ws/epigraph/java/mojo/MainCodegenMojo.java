@@ -111,8 +111,9 @@ public class MainCodegenMojo extends BaseCodegenMojo {
     return new Settings(
         new Settings.ServerSettings(
             server != null && server.generate(),
-            server == null || server.services() == null ? null : Arrays.asList(server.services())
-        ), 
+            server == null || server.services() == null ? null : Arrays.asList(server.services()),
+            server == null || server.transformers() == null ? null : Arrays.asList(server.transformers())
+        ),
         new Settings.ClientSettings(
             client != null && client.generate(),
             client == null || client.services() == null ? null : Arrays.asList(client.services())

@@ -64,10 +64,11 @@ class ServiceGenContext(val gctx: GenContext) {
 
     val csi = qn.segments.indexWhere(_.charAt(0).isUpper)
 
-    val ns = if (csi < 0) qn else if (csi == qn.size() - 1) Qn.EMPTY else qn.takeHeadSegments(csi + 1)
+    val ns = if (csi < 0) qn else if (csi == qn.size()) Qn.EMPTY else qn.takeHeadSegments(csi)
     val shortClassName = if (csi < 0) null else if (csi == 0) qn else qn.removeHeadSegments(csi)
+    val nameToImport = if (csi < 0 || csi == qn.size - 1) qn else qn.takeHeadSegments(csi + 1)
 
-    if (!ns.isEmpty && ns != currentNs) addImport(ns)
+    if (!ns.isEmpty && ns != currentNs) addImport(nameToImport)
 
     if (shortClassName == null) null else shortClassName.toString
   }

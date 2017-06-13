@@ -27,10 +27,10 @@ import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 class ReqOutputPrimitiveModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpOutputPrimitiveModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
@@ -41,7 +41,7 @@ class ReqOutputPrimitiveModelProjectionGen(
     new ReqOutputPrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

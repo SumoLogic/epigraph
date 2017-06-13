@@ -71,18 +71,24 @@ public final class Settings {
     private final boolean generate;
 
     private final @Nullable List<String> services; // null means include all
+    private final @Nullable List<String> transformers; // null means include all
 
     public ServerSettings(
         final boolean generate,
-        final @Nullable List<String> services
+        final @Nullable List<String> services,
+        final @Nullable List<String> transformers
     ) {
 
       this.generate = generate;
       this.services = services;
+      this.transformers = transformers;
     }
 
     @Contract(pure = true)
     public boolean generate() { return generate; }
+
+    @Contract(pure = true)
+    public @Nullable List<String> transformers() { return transformers; }
 
     @Contract(pure = true)
     public @Nullable List<String> services() { return services; }

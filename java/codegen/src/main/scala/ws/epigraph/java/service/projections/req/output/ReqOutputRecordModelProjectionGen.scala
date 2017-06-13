@@ -31,13 +31,13 @@ import scala.collection.JavaConversions._
 class ReqOutputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpOutputRecordModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(
     baseNamespaceProvider,
     op,
-    _baseNamespace,
+    baseNamespaceOpt,
     _namespaceSuffix,
     ctx
   ) with ReqRecordModelProjectionGen {
@@ -65,7 +65,7 @@ class ReqOutputRecordModelProjectionGen(
     new ReqOutputRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

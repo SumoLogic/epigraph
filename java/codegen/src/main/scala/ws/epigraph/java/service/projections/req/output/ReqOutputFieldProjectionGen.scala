@@ -44,7 +44,7 @@ class ReqOutputFieldProjectionGen(
     ReqOutputVarProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.varProjection(),
-      baseNamespace,
+      Some(baseNamespace),
       namespaceSuffix,
       ctx
     )

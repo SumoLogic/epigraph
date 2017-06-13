@@ -37,7 +37,7 @@ public abstract class NonBatchingTransformer extends Transformer<Void> {
   /**
    * Runs transformation
    *
-   * @param input            input projection
+   * @param input            input data
    * @param outputProjection output projection
    *
    * @return output data result future

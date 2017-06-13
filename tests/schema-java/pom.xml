@@ -43,6 +43,12 @@
 
     <dependency>
       <groupId>ws.epigraph</groupId>
+      <artifactId>epigraph-java-federator</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-schema</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

@@ -1,7 +1,31 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+  dependencies {
+    classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.9.+"
+  }
+}
+
 plugins {
   id 'nebula.dependency-recommender' version '3.6.3' // '4.2.0' has a bug: https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/43
   id 'nebula.maven-publish' version '5.0.1'
 }
+
+apply plugin: "build-time-tracker"
 
 allprojects {
   apply plugin: 'idea'
@@ -47,22 +71,6 @@ subprojects {
   }
 }
 
-/*
- * Copyright 2017 Sumo Logic
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 // importing gradle project from IDEA is preferred to using 'gradle idea'
 idea {
   project {
@@ -95,5 +103,16 @@ task publishGradlePlugins(dependsOn: [
     ':epigraph-scala-core:publishToMavenLocal'
 ]) {
   description 'Bootstraps gradle build by installing necessary plugins. Usage: \n gradle -c settings-bootstrap.gradle publishGradlePlugins'
+}
+
+buildtimetracker {
+  reporters {
+    summary {
+      ordered false
+      threshold 500
+      shortenTaskNames false
+      barstyle "unicode"
+    }
+  }
 }
 

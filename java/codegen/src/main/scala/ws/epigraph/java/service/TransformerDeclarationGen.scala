@@ -44,7 +44,7 @@ class TransformerDeclarationGen(td: TransformerDeclaration, baseNamespace: Qn, v
 super(
   "${td.name()}",
   ${ServiceGenUtils.genTypeExpr(transformerType, ctx.gctx)},
-  ${gen(td.annotations(), ctx)},
+  ${i(gen(td.annotations(), ctx))},
   ${i(gen(td.inputProjection(), ctx))},
   ${i(gen(td.outputProjection(), ctx))},
   ${gen(td.location(), ctx)}

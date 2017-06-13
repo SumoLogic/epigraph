@@ -43,7 +43,6 @@ import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.TypeKind;
-import ws.epigraph.types.EntityTypeApi;
 
 import java.util.*;
 import java.util.function.Function;
@@ -202,7 +201,7 @@ public final class ResourcesSchemaPsiParser {
 
     SchemaTypeRef typeRefPsi = typePsi.getTypeRef();
     TypeRef typeRef = TypeRefs.fromPsi(typeRefPsi, context);
-    EntityTypeApi transformerType = typeRef.resolveEntityType(resolver);
+    TypeApi transformerType = typeRef.resolve(resolver);
 
     if (transformerType == null)
       throw new PsiProcessingException(
@@ -239,7 +238,7 @@ public final class ResourcesSchemaPsiParser {
             );
           } else {
             inputProjection = OpInputProjectionsPsiParser.parseVarProjection(
-                transformerType.dataType(null),
+                transformerType.dataType(),
                 varProjectionPsi,
                 resolver,
                 new OpInputPsiProcessingContext(context, context.inputReferenceContext())
@@ -271,7 +270,7 @@ public final class ResourcesSchemaPsiParser {
             );
           } else {
             outputProjection = OpOutputProjectionsPsiParser.parseVarProjection(
-                transformerType.dataType(null),
+                transformerType.dataType(),
                 varProjectionPsi,
                 resolver,
                 new OpOutputPsiProcessingContext(

@@ -27,17 +27,17 @@ import ws.epigraph.projections.op.output.OpOutputListModelProjection
 class ReqOutputListModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpOutputListModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
   protected val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
-    baseNamespace,
+    Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -48,7 +48,7 @@ class ReqOutputListModelProjectionGen(
     new ReqOutputListModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

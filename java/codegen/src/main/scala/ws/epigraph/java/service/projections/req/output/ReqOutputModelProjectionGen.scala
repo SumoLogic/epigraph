@@ -31,14 +31,17 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
 abstract class ReqOutputModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+    referenceName,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
+  )
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
@@ -62,7 +65,7 @@ abstract class ReqOutputModelProjectionGen(
     ReqOutputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       metaOp,
-      baseNamespace,
+      Some(baseNamespace),
       namespaceSuffix.append("meta"),
       ctx
     )
@@ -72,7 +75,7 @@ object ReqOutputModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
-    baseNamespace: Qn,
+    baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqOutputModelProjectionGen = op.`type`().kind() match {
 
@@ -80,7 +83,7 @@ object ReqOutputModelProjectionGen {
       new ReqOutputRecordModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpOutputRecordModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -88,7 +91,7 @@ object ReqOutputModelProjectionGen {
       new ReqOutputMapModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpOutputMapModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -96,7 +99,7 @@ object ReqOutputModelProjectionGen {
       new ReqOutputListModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpOutputListModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -104,7 +107,7 @@ object ReqOutputModelProjectionGen {
       new ReqOutputPrimitiveModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpOutputPrimitiveModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )

@@ -24,6 +24,7 @@ dependencies {
   epigraph project(':tests-schema')
 
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-federator')
   compile project(':epigraph-java-schema')
   compile project(':epigraph-java-service')
 
