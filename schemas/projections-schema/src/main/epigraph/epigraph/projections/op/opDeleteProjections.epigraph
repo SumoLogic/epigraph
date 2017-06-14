@@ -22,7 +22,7 @@ record OpDeleteVarProjection {
 
 record OpDeleteTagProjectionEntry {
   tag: Tag
-  projection: OpDeleteModelProjection
+  `projection`: OpDeleteModelProjection
 }
 
 abstract record OpDeleteModelProjection {
@@ -38,7 +38,7 @@ record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
 
 record OpDeleteFieldProjectionEntry {
   field: Field
-  projection: OpDeleteFieldProjection
+  `projection`: OpDeleteFieldProjection
 }
 
 record OpDeleteFieldProjection {

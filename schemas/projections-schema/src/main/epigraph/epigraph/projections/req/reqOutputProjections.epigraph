@@ -43,7 +43,7 @@ record ReqOutputVarProjection {
 
 record ReqOutputTagProjectionEntry {
   tag: Tag
-  projection: ReqOutputModelProjection
+  `projection`: ReqOutputModelProjection
 }
 
 abstract record ReqOutputModelProjection {
@@ -60,7 +60,7 @@ record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
 }
 record ReqOutputFieldProjectionEntry {
   field: Field
-  projection: ReqOutputFieldProjection
+  `projection`: ReqOutputFieldProjection
 }
 
 record ReqOutputFieldProjection {

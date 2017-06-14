@@ -26,7 +26,7 @@ record ReqUpdateVarProjection {
 
 record ReqUpdateTagProjectionEntry {
   tag: Tag
-  projection: ReqUpdateModelProjection
+  `projection`: ReqUpdateModelProjection
 }
 
 abstract record ReqUpdateModelProjection {
@@ -43,7 +43,7 @@ record ReqUpdateRecordModelProjection extends ReqUpdateModelProjection {
 }
 record ReqUpdateFieldProjectionEntry {
   field: Field
-  projection: ReqUpdateFieldProjection
+  `projection`: ReqUpdateFieldProjection
 }
 
 record ReqUpdateFieldProjection {

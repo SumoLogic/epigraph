@@ -23,6 +23,7 @@ import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpKeyPresence;
+import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
@@ -133,6 +134,10 @@ public class OpOutputMapModelProjection
             mergedKeysPresence,
             OpParams.merge(keysParams),
             Annotations.merge(keysAnnotations),
+            OpKeyProjection.mergeProjections(
+                model.keyType(),
+                modelProjections.stream().map(mp -> mp.keyProjection().projection())
+            ),
             TextLocation.UNKNOWN
         ),
         itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),

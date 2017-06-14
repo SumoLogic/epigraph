@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 
 package ws.epigraph.projections.op.output;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.op.input.OpInputModelProjection;
 
 import java.util.Objects;
 
@@ -32,11 +34,13 @@ public class OpOutputKeyProjection extends OpKeyProjection {
   private final @NotNull OpKeyPresence presence;
 
   public @NotNull OpOutputKeyProjection(
-      final @NotNull OpKeyPresence presence,
-      final @NotNull OpParams params,
-      final @NotNull Annotations annotations,
-      final @NotNull TextLocation location) {
-    super(params, annotations, location);
+      @NotNull OpKeyPresence presence,
+      @NotNull OpParams params,
+      @NotNull Annotations annotations,
+      @Nullable OpInputModelProjection<?, ?, ?, ?> projection,
+      @NotNull TextLocation location) {
+
+    super(params, annotations, projection, location);
     this.presence = presence;
   }
 

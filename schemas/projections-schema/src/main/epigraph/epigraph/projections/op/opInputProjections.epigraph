@@ -25,7 +25,7 @@ record OpInputVarProjection {
 
 record OpInputTagProjectionEntry {
   tag: Tag
-  projection: OpInputModelProjection // OpInputTagProjection = opInputModelProjection
+  `projection`: OpInputModelProjection // OpInputTagProjection = opInputModelProjection
 }
 
 abstract record OpInputModelProjection {
@@ -45,7 +45,7 @@ record OpInputRecordModelProjection extends OpInputModelProjection {
 
 record OpInputFieldProjectionEntry {
   field: Field
-  projection: OpInputFieldProjection
+  `projection`: OpInputFieldProjection
 }
 
 record OpInputFieldProjection {

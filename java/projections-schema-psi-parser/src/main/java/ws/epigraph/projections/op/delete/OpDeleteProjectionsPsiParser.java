@@ -23,9 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -38,9 +40,9 @@ import ws.epigraph.types.TypeKind;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionsParsingUtil.checkTailType;
-import static ws.epigraph.projections.ProjectionsParsingUtil.getDatumType;
-import static ws.epigraph.projections.ProjectionsParsingUtil.getUnionType;
+import static ws.epigraph.projections.ProjectionsParsingUtil.*;
+import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
+import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.getTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
 
 /**
@@ -735,6 +737,7 @@ public final class OpDeleteProjectionsPsiParser {
                 OpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
+                null,
                 EpigraphPsiUtil.getLocation(locationPsi)
             );
 
@@ -906,7 +909,7 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull OpDeleteKeyProjection keyProjection =
-        parseKeyProjection(psi.getOpDeleteKeyProjection(), resolver, context);
+        parseKeyProjection(type.keyType(), psi.getOpDeleteKeyProjection(), resolver, context);
 
     @Nullable SchemaOpDeleteVarProjection valueProjectionPsi = psi.getOpDeleteVarProjection();
     @NotNull OpDeleteVarProjection valueProjection =
@@ -931,6 +934,7 @@ public final class OpDeleteProjectionsPsiParser {
   }
 
   private static @NotNull OpDeleteKeyProjection parseKeyProjection(
+      @NotNull DatumTypeApi keyType,
       @NotNull SchemaOpDeleteKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -957,10 +961,20 @@ public final class OpDeleteProjectionsPsiParser {
       annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context);
     }
 
+    OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
+        keyType,
+        keyProjectionPsi.getOpDeleteKeyProjectionPartList()
+            .stream()
+            .map(SchemaOpDeleteKeyProjectionPart::getOpKeyProjection),
+        resolver,
+        context.inputPsiProcessingContext()
+    );
+
     return new OpDeleteKeyProjection(
         presence,
         params == null ? OpParams.EMPTY : new OpParams(params),
         annotationsMap == null ? Annotations.EMPTY : new Annotations(annotationsMap),
+        keyProjection,
         EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }

@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpPathKeyProjectionPartImpl extends ASTWrapperPsiElement implements SchemaOpPathKeyProjectionPart {
+public class SchemaOpKeyProjectionImpl extends ASTWrapperPsiElement implements SchemaOpKeyProjection {
 
-  public SchemaOpPathKeyProjectionPartImpl(ASTNode node) {
+  public SchemaOpKeyProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpPathKeyProjectionPart(this);
+    visitor.visitOpKeyProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,20 +44,14 @@ public class SchemaOpPathKeyProjectionPartImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public SchemaAnnotation getAnnotation() {
-    return PsiTreeUtil.getChildOfType(this, SchemaAnnotation.class);
+  public SchemaOpInputModelProjection getOpInputModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class);
   }
 
   @Override
-  @Nullable
-  public SchemaOpKeyProjection getOpKeyProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpKeyProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpParam getOpParam() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpParam.class);
+  @NotNull
+  public PsiElement getProjection() {
+    return notNullChild(findChildByType(S_PROJECTION));
   }
 
 }

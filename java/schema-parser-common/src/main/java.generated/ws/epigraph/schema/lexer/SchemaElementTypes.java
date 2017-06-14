@@ -142,6 +142,7 @@ public interface SchemaElementTypes {
   IElementType S_OP_INPUT_VAR_PROJECTION = new SchemaElementType("S_OP_INPUT_VAR_PROJECTION");
   IElementType S_OP_INPUT_VAR_PROJECTION_REF = new SchemaElementType("S_OP_INPUT_VAR_PROJECTION_REF");
   IElementType S_OP_INPUT_VAR_SINGLE_TAIL = new SchemaElementType("S_OP_INPUT_VAR_SINGLE_TAIL");
+  IElementType S_OP_KEY_PROJECTION = new SchemaElementType("S_OP_KEY_PROJECTION");
   IElementType S_OP_MAP_MODEL_PATH = new SchemaElementType("S_OP_MAP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH = new SchemaElementType("S_OP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH_PROPERTY = new SchemaElementType("S_OP_MODEL_PATH_PROPERTY");
@@ -269,6 +270,7 @@ public interface SchemaElementTypes {
   IElementType S_PATH = new SchemaElementType("path");
   IElementType S_PLUS = new SchemaElementType("+");
   IElementType S_POST = new SchemaElementType("POST");
+  IElementType S_PROJECTION = new SchemaElementType("projection");
   IElementType S_PUT = new SchemaElementType("PUT");
   IElementType S_RECORD = new SchemaElementType("record");
   IElementType S_REQUIRED = new SchemaElementType("required");
@@ -612,6 +614,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_INPUT_VAR_SINGLE_TAIL) {
         return new SchemaOpInputVarSingleTailImpl(node);
+      }
+      else if (type == S_OP_KEY_PROJECTION) {
+        return new SchemaOpKeyProjectionImpl(node);
       }
       else if (type == S_OP_MAP_MODEL_PATH) {
         return new SchemaOpMapModelPathImpl(node);

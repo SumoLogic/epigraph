@@ -19,7 +19,7 @@ record OpOutputVarProjection {
 
 record OpOutputTagProjectionEntry {
   tag: Tag
-  projection: OpOutputModelProjection
+  `projection`: OpOutputModelProjection
 }
 
 abstract record OpOutputModelProjection {
@@ -36,7 +36,7 @@ record OpOutputRecordModelProjection extends OpOutputModelProjection {
 
 record OpOutputFieldProjectionEntry {
   field: Field
-  projection: OpOutputFieldProjection
+  `projection`: OpOutputFieldProjection
 }
 
 record OpOutputFieldProjection {
@@ -55,6 +55,7 @@ record OpOutputKeyProjection {
   `required`: Boolean { doc = "if `null` - keys are not accepted" }
   params: map[String, OpParam]
   annotations: map[String, Annotation]
+  `projection`: OpOutputModelProjection
 }
 
 record OpOutputListModelProjection extends OpOutputModelProjection {

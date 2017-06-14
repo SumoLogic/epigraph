@@ -24,7 +24,7 @@ record ReqDeleteVarProjection {
 
 record ReqDeleteTagProjectionEntry {
   tag: Tag
-  projection: ReqDeleteModelProjection
+  `projection`: ReqDeleteModelProjection
 }
 
 abstract record ReqDeleteModelProjection {
@@ -39,7 +39,7 @@ record ReqDeleteRecordModelProjection extends ReqDeleteModelProjection {
 }
 record ReqDeleteFieldProjectionEntry {
   field: Field
-  projection: ReqDeleteFieldProjection
+  `projection`: ReqDeleteFieldProjection
 }
 
 record ReqDeleteFieldProjection {

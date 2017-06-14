@@ -68,6 +68,7 @@ public interface Keywords {
             "outputType",
             "override",
             "path",
+            "projection",
             "record",
             "required",
             "resource",

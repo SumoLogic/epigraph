@@ -26,7 +26,7 @@ record ReqInputVarProjection {
 
 record ReqInputTagProjectionEntry {
   tag: Tag
-  projection: ReqInputModelProjection
+  `projection`: ReqInputModelProjection
 }
 
 abstract record ReqInputModelProjection {
@@ -42,7 +42,7 @@ record ReqInputRecordModelProjection extends ReqInputModelProjection {
 }
 record ReqInputFieldProjectionEntry {
   field: Field
-  projection: ReqInputFieldProjection
+  `projection`: ReqInputFieldProjection
 }
 
 record ReqInputFieldProjection {

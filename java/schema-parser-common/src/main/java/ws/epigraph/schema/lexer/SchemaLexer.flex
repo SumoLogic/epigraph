@@ -106,6 +106,7 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "outputProjection"   { return S_OUTPUT_PROJECTION; }
   "deleteProjection"   { return S_DELETE_PROJECTION; }
   "path"               { return S_PATH; }
+  "projection"         { return S_PROJECTION; }
 
   {STRING}             { return S_STRING; }
   {NUMBER}             { return S_NUMBER; }

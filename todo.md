@@ -93,6 +93,7 @@
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
 - [ ] req update projections should support paths (trunk), with trimmed input data on the wire
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
+- [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 
 # Operations
 

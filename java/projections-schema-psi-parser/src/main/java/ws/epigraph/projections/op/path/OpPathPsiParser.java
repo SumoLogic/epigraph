@@ -23,8 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotation;
 import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
+import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -63,7 +65,11 @@ public final class OpPathPsiParser {
 
     if (isModelPathEmpty(modelProjection) && modelParams.isEmpty() && modelAnnotations.isEmpty()) {
       if (psi.getTagName() != null)
-        throw new PsiProcessingException("Path can't end with a tag (path tip type must be a data type)", psi.getTagName(), context);
+        throw new PsiProcessingException(
+            "Path can't end with a tag (path tip type must be a data type)",
+            psi.getTagName(),
+            context
+        );
 
       return new OpVarPath(
           type,
@@ -254,6 +260,7 @@ public final class OpPathPsiParser {
             new OpPathKeyProjection(
                 OpParams.EMPTY,
                 Annotations.EMPTY,
+                null,
                 EpigraphPsiUtil.getLocation(locationPsi)
             );
 
@@ -388,7 +395,8 @@ public final class OpPathPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull OpPathKeyProjection keyProjection = parseKeyProjection(psi.getOpPathKeyProjection(), resolver, context);
+    @NotNull OpPathKeyProjection keyProjection =
+        parseKeyProjection(type.keyType(), psi.getOpPathKeyProjection(), resolver, context);
 
     @Nullable SchemaOpVarPath valueProjectionPsi = psi.getOpVarPath();
 
@@ -408,12 +416,14 @@ public final class OpPathPsiParser {
   }
 
   private static @NotNull OpPathKeyProjection parseKeyProjection(
+      @NotNull DatumTypeApi keyType,
       @NotNull SchemaOpPathKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
       @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
     @Nullable Map<String, Annotation> annotationsMap = null;
+    @Nullable OpInputModelProjection<?, ?, ?, ?> projection = null;
 
     final @Nullable SchemaOpPathKeyProjectionBody body = keyProjectionPsi.getOpPathKeyProjectionBody();
     if (body != null) {
@@ -425,12 +435,21 @@ public final class OpPathPsiParser {
         }
 
         annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context);
+
+        projection = SchemaProjectionPsiParserUtil.parseKeyProjection(
+            keyType,
+            projection,
+            keyPart.getOpKeyProjection(),
+            resolver,
+            context.inputPsiProcessingContext()
+        );
       }
     }
 
     return new OpPathKeyProjection(
         OpParams.fromCollection(params),
         Annotations.fromMap(annotationsMap),
+        projection,
         EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }

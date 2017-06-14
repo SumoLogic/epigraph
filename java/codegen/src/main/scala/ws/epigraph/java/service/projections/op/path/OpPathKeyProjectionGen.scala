@@ -30,6 +30,7 @@ class OpPathKeyProjectionGen(kp: OpPathKeyProjection) extends ServiceObjectGen[O
 new OpPathKeyProjection(
   ${i(gen(kp.params(), ctx))},
   ${i(gen(kp.annotations(), ctx))},
+  ${i(gen(kp.projection(), ctx))},
   ${gen(kp.location(), ctx)}
 )"""/*@formatter:on*/
 }

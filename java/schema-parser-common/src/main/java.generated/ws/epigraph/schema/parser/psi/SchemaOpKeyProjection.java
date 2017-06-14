@@ -21,15 +21,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputKeyProjectionPart extends PsiElement {
+public interface SchemaOpKeyProjection extends PsiElement {
 
   @Nullable
-  SchemaAnnotation getAnnotation();
+  SchemaOpInputModelProjection getOpInputModelProjection();
 
-  @Nullable
-  SchemaOpKeyProjection getOpKeyProjection();
-
-  @Nullable
-  SchemaOpParam getOpParam();
+  @NotNull
+  PsiElement getProjection();
 
 }

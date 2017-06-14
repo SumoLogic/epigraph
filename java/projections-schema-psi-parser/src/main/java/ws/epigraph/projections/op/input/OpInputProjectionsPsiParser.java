@@ -24,6 +24,7 @@ import ws.epigraph.gdata.*;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -976,6 +977,7 @@ public final class OpInputProjectionsPsiParser {
                 OpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
+                null,
                 location
             ),
             valueVarProjection,
@@ -1157,7 +1159,8 @@ public final class OpInputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull OpInputKeyProjection keyProjection = parseKeyProjection(psi.getOpInputKeyProjection(), resolver, context);
+    @NotNull OpInputKeyProjection keyProjection =
+        parseKeyProjection(type.keyType(), psi.getOpInputKeyProjection(), resolver, context);
 
     @Nullable SchemaOpInputVarProjection valueProjectionPsi = psi.getOpInputVarProjection();
     @NotNull OpInputVarProjection valueProjection =
@@ -1180,6 +1183,7 @@ public final class OpInputProjectionsPsiParser {
   }
 
   private static @NotNull OpInputKeyProjection parseKeyProjection(
+      @NotNull DatumTypeApi keyType,
       @NotNull SchemaOpInputKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
@@ -1201,10 +1205,18 @@ public final class OpInputProjectionsPsiParser {
     final @NotNull Annotations keyAnnotations =
         parseAnnotations(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getAnnotation), context);
 
+    OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
+        keyType,
+        keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getOpKeyProjection),
+        resolver,
+        context
+    );
+
     return new OpInputKeyProjection(
         presence,
         keyParams,
         keyAnnotations,
+        keyProjection,
         EpigraphPsiUtil.getLocation(keyProjectionPsi)
     );
   }

@@ -79,6 +79,7 @@
     OUTPUT_PROJECTION = 'outputProjection'
     DELETE_PROJECTION = 'deleteProjection'
     PATH = 'path'
+    PROJECTION = 'projection'
 
     COLON = ':'
     DOT = '.'
@@ -469,6 +470,8 @@ opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection /*opParamDefault?*/ 
 
 private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
+opKeyProjection ::= 'projection' opInputModelProjection { pin=1 }
+
 // op path --------------------------------------------------------
 
 // no tails, no branching, no meta
@@ -496,7 +499,7 @@ opFieldPath ::= /* opFieldPathBody? */ opVarPath // {pin=1}
 opMapModelPath ::= '/' opPathKeyProjection opVarPath {pin=2}
 opPathKeyProjection ::= '.' opPathKeyProjectionBody? {pin=1}
 opPathKeyProjectionBody ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
-opPathKeyProjectionPart ::= opParam | annotation
+opPathKeyProjectionPart ::= opKeyProjection | opParam | annotation
 
 // output --------------------------------------------------------
 
@@ -553,10 +556,10 @@ opOutputListModelProjection ::= '*' ( opOutputBracedVarProjection | opOutputVarP
 opOutputMapModelProjection ::= opOutputKeyProjection ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 }
 opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
 private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
-opOutputKeyProjectionPart ::= opParam | annotation {
+opOutputKeyProjectionPart ::= opKeyProjection | opParam | annotation {
   recoverWhile = opOutputKeyProjectionRecover
 }
-private opOutputKeyProjectionRecover ::= ! ( ']' | ',' )
+private opOutputKeyProjectionRecover ::= ! ( ']' | ',' | ';' | 'projection' )
 
 // input --------------------------------------------------------
 
@@ -627,10 +630,10 @@ opInputListModelProjection ::= '*' ( opInputBracedVarProjection | opInputVarProj
 opInputMapModelProjection ::= opInputKeyProjection ( opInputBracedVarProjection | opInputVarProjection ) { pin=1 }
 opInputKeyProjection ::= '[' opInputKeyProjectionInt ']' {pin=1} // todo add required|forbidden as in delete projection
 private opInputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opInputKeyProjectionPart ','?)*
-opInputKeyProjectionPart ::= opParam | annotation {
+opInputKeyProjectionPart ::= opKeyProjection | opParam | annotation {
   recoverWhile = opInputKeyProjectionRecover
 }
-private opInputKeyProjectionRecover ::= ! ( ']' | ',' )
+private opInputKeyProjectionRecover ::= ! ( ']' | ','  | ';' | 'projection' )
 
 // delete --------------------------------------------------------
 
@@ -693,10 +696,10 @@ opDeleteListModelProjection ::= '*' '+'? ( opDeleteBracedVarProjection | opDelet
 opDeleteMapModelProjection ::= opDeleteKeyProjection '+'? ( opDeleteBracedVarProjection | opDeleteVarProjection ) { pin=1 }
 opDeleteKeyProjection ::= '[' opDeleteKeyProjectionInt ']' {pin=1}
 private opDeleteKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opDeleteKeyProjectionPart ','?)*
-opDeleteKeyProjectionPart ::= opParam | annotation {
+opDeleteKeyProjectionPart ::= opKeyProjection | opParam | annotation {
   recoverWhile = opDeleteKeyProjectionRecover
 }
-private opDeleteKeyProjectionRecover ::= ! ( ']' | ',' )
+private opDeleteKeyProjectionRecover ::= ! ( ']' | ','  | ';' | 'projection' )
 
 // ============= data language =============
 // please keep in sync with data language from url.bnf
