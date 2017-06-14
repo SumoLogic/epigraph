@@ -515,6 +515,17 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseMapWithKeyProjection() throws PsiProcessingException {
+    testParsingVarProjection(
+        lines(
+            ":`record` (",
+            "  personRecToPersonRec [ ;param: epigraph.String, doc = \"bla\", projection ( firstName, lastName ) ]( ( firstName ) )",
+            ")"
+        )
+    );
+  }
+
+  @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
         ":id ~~ws.epigraph.tests.User:`record`(id)",

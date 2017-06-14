@@ -156,6 +156,17 @@ public class OpInputProjectionsTest {
   }
 
   @Test
+  public void testParseMapWithKeyProjection() throws PsiProcessingException {
+    testParsingVarProjection(
+        lines(
+            ":`record` (",
+            "  personRecToPersonRec [ ;param: epigraph.String, doc = \"bla\", projection ( firstName, lastName ) ]( ( firstName ) )",
+            ")"
+        )
+    );
+  }
+
+  @Test
   public void testParseMeta() throws PsiProcessingException {
     String projection = "{ meta: +( start, count ) } [ required ]( :`record` ( id, firstName ) )";
 

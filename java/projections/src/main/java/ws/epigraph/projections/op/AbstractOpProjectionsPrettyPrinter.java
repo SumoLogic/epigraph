@@ -243,6 +243,23 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         first = printAnnotations(keyAnnotations, true, first);
       }
 
+      OpInputModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
+      if (keyModelProjection != null) {
+        if (!first) {
+          l.print(",");
+          brk();
+        }
+
+        l.beginCInd(0);
+        l.print("projection");
+        brk();
+        OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
+        ipp.printModel(keyModelProjection, 0);
+        l.end();
+
+        first = false;
+      }
+
       if (!first) brk(1, -l.getDefaultIndentation());
       l.end().print("]");
     }
@@ -257,7 +274,8 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     printFieldProjection(prefix, "", fieldProjection);
   }
 
-  public void printFieldProjection(@NotNull String prefix, @NotNull String prefix2, @NotNull FP fieldProjection) throws E {
+  public void printFieldProjection(@NotNull String prefix, @NotNull String prefix2, @NotNull FP fieldProjection)
+      throws E {
     if (isPrintoutEmpty(fieldProjection)) {
       l.print(prefix);
     } else {

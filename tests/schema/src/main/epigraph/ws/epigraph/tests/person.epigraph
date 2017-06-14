@@ -22,6 +22,7 @@ record PersonRecord {
   friendRecords: list[PersonRecord]
   friendsMap: map[String, Person]
   friendRecordMap: map[String, PersonRecord]
+  personRecToPersonRec: map[PersonRecord, PersonRecord]
 }
 
 record PaginationInfo {
@@ -29,4 +30,4 @@ record PaginationInfo {
   count: Long
 }
 
-map[PersonId,Person] PersonMap meta PaginationInfo
+map[PersonId, Person] PersonMap meta PaginationInfo
