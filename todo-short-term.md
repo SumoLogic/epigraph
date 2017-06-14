@@ -1,7 +1,11 @@
+- [ ] add projections to op map keys
+  - operation filters must ensure that keys don't contain extra fields beyond what's in projection, both before and after call
+  - should be used by derived transformers as input projections
+  
 - Federator
   - [x] support named projections on the top level (not inside service)
-  - [ ] add transformers to schema
-    - [ ] codegen implementation stubs
+  - [x] add transformers to schema
+    - [x] codegen implementation stubs
   - [ ] operations -> transformers via annotations
   
   - [ ] `toBuilder` on data? Will be tricky because of covariance
