@@ -33,7 +33,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * JSON data reader guided by req output projection
@@ -74,6 +77,16 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
+  protected @Nullable List<? extends OpInputModelProjection<?, ?, ?, ?>>
+  getKeyProjections(@NotNull Collection<OpInputMapModelProjection> projections) {
+    List<? extends OpInputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
+        .map(mp -> mp.keyProjection().projection())
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+    return keyProjections.isEmpty() ? null : keyProjections;
+  }
+
+  @Override
   protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<OpInputMapModelProjection> projections) {
     return null;
   }
@@ -88,7 +101,10 @@ public class OpInputJsonFormatReader extends AbstractJsonFormatReader<
     public @NotNull WireFormat format() { return JsonFormat.INSTANCE; }
 
     @Override
-    public @NotNull OpInputJsonFormatReader newFormatReader(@NotNull InputStream is, @NotNull Charset charset, @NotNull TypesResolver typesResolver)
+    public @NotNull OpInputJsonFormatReader newFormatReader(
+        @NotNull InputStream is,
+        @NotNull Charset charset,
+        @NotNull TypesResolver typesResolver)
         throws IOException {
 
       return new OpInputJsonFormatReader(

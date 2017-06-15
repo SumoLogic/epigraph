@@ -32,8 +32,8 @@ import ws.epigraph.wire.json.JsonFormat;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NotThreadSafe
 public class OpInputJsonFormatWriter extends AbstractJsonFormatWriter<
@@ -69,6 +69,16 @@ public class OpInputJsonFormatWriter extends AbstractJsonFormatWriter<
   protected @Nullable List<OpInputKeyProjection> keyProjections(
       @NotNull Deque<OpInputMapModelProjection> projections // non-empty
   ) { return null; }
+
+  @Override
+  protected @Nullable Deque<? extends OpInputModelProjection<?, ?, ?, ?>>
+  getKeyModelProjections(@NotNull Collection<OpInputMapModelProjection> projections) {
+    Deque<? extends OpInputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
+        .map(mp -> mp.keyProjection().projection())
+        .filter(Objects::nonNull)
+        .collect(Collectors.toCollection(ArrayDeque::new));
+    return keyProjections.isEmpty() ? null : keyProjections;
+  }
 
   @ThreadSafe
   public static final class OpInputJsonFormatWriterFactory

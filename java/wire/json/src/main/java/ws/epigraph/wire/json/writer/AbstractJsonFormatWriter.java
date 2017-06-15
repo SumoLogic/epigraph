@@ -303,6 +303,7 @@ public abstract class AbstractJsonFormatWriter<
     Map<Type, Deque<VP>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     if (keyProjections == null) writeMapEntries(
         datum.type().keyType(),
+        getKeyModelProjections(projections),
         valueProjections,
         polymorphicCache,
         datum._raw().elements().entrySet(),
@@ -311,6 +312,7 @@ public abstract class AbstractJsonFormatWriter<
     );
     else writeMapEntries( // TODO check ReqOutputMapModelProjection::keysRequired() and throw(?) if a key is missing
         datum.type().keyType(),
+        getKeyModelProjections(projections),
         valueProjections,
         polymorphicCache,
         keyProjections,
@@ -327,6 +329,8 @@ public abstract class AbstractJsonFormatWriter<
       @NotNull Deque<MMP> projections // non-empty
   );
 
+  protected @Nullable Deque<? extends MP> getKeyModelProjections(@NotNull Collection<MMP> projections) { return null; }
+
   protected abstract @NotNull Datum keyDatum(@NotNull KP keyProjection);
 
   private <P> @NotNull Deque<VP> subProjections(
@@ -341,6 +345,7 @@ public abstract class AbstractJsonFormatWriter<
 
   private <E> void writeMapEntries(
       @NotNull DatumType keyType,
+      @Nullable Deque<? extends MP> keyModelProjections,
       @NotNull Deque<VP> valueProjections,
       @Nullable Map<Type, Deque<VP>> polymorphicCache,
       @NotNull Iterable<E> entries,
@@ -355,7 +360,10 @@ public abstract class AbstractJsonFormatWriter<
         if (comma) out.write(',');
         else comma = true;
         out.write("{\"" + JsonFormat.MAP_ENTRY_KEY_FIELD + "\":");
-        writeDatum(keyType, key);
+        if (keyModelProjections == null)
+          writeDatum(keyType, key);
+        else
+          writeDatum(keyModelProjections, key);
         out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
         Deque<VP> flatValueProjections = polymorphicCache == null
                                          ? valueProjections

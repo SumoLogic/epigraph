@@ -23,7 +23,11 @@
 - [x] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
 - [x] operations codegen: parameter accessors should be non-null for requried parameters
-- [ ] `OperationFilterChains`: add filters that ensure req<->op validity
+- [ ] `OperationFilterChains`
+  - [ ] add filters that ensure req<->op validity
+  - [ ] add filter that ensures map keys validity w.r.t. op. map key model projection 
+        e.g. `weirdResource: map[UserRecord,UserRecord] ... outputProjection [projection (firstName, +lastName)](..)`
+        should only allow map keys with optional `firstName` and mandatory `lastName` and no other fields, both op. input and output
 - [ ] Feature: Wrap `Data` in Futures to support async operations
 - [ ] Performance: true async support for http
   - [ ] `FormatReader` must use push, not pull style: feed it with data chunks until the whole object is ready

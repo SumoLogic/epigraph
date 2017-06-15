@@ -354,7 +354,7 @@ abstract class AbstractJsonFormatReader<
   private Datum finishReadingDatum(
       final @NotNull DatumType type,
       @Nullable String fieldName,
-      final @NotNull Collection<MP> modelProjections) throws IOException, JsonFormatException {
+      final @NotNull Collection<? extends MP> modelProjections) throws IOException, JsonFormatException {
 
     List<MP> flattened = flatten(new ArrayList<>(), modelProjections, type);
 
@@ -543,6 +543,7 @@ abstract class AbstractJsonFormatReader<
     final @NotNull Type valueType = type.valueType().type();
     final MapDatum.@NotNull Builder datum = type.createBuilder();
     final @Nullable Set<Datum> expectedKeys = getExpectedKeys(projections);
+    final List<? extends MP> keyProjections = getKeyProjections(projections);
     final List<VP> itemProjections = projections.stream().map(MMP::itemsProjection).collect(Collectors.toList());
 
     while (true) {
@@ -550,7 +551,7 @@ abstract class AbstractJsonFormatReader<
       if (token == JsonToken.END_ARRAY) break;
       if (token == JsonToken.START_OBJECT) {
         stepOver(JsonFormat.MAP_ENTRY_KEY_FIELD);
-        final @Nullable Datum keyValue = readDatum(keyType);
+        final @Nullable Datum keyValue = keyProjections == null ? readDatum(keyType) : readDatum(keyProjections);
         if (keyValue == null) throw error("Null map keys are not allowed");
         if (expectedKeys != null && !expectedKeys.contains(keyValue))
           throw error("Key was not requested: '" + keyValue + "'"); // todo pretty print
@@ -568,6 +569,8 @@ abstract class AbstractJsonFormatReader<
 
     return datum;
   }
+
+  protected @Nullable List<? extends MP> getKeyProjections(@NotNull Collection<MMP> projections) { return null; }
 
   protected abstract @Nullable Set<Datum> getExpectedKeys(@NotNull Collection<MMP> projections);
 
@@ -777,6 +780,11 @@ abstract class AbstractJsonFormatReader<
   public @Nullable Datum readDatum(@NotNull MP projection) throws IOException, JsonFormatException {
     String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum((DatumType) projection.type(), firstFieldName, Collections.singleton(projection));
+  }
+
+  protected  @Nullable Datum readDatum(@NotNull List<? extends MP> projections) throws IOException, JsonFormatException {
+    String firstFieldName = nextNonEof() == JsonToken.START_OBJECT ? nextFieldName() : null;
+    return finishReadingDatum((DatumType) projections.get(0).type(), firstFieldName, projections);
   }
 
   @Override
