@@ -720,10 +720,10 @@ mapDatumEntry ::= datum ':' dataValue ','? {pin=2 recoverWhile=dataValueRecover}
 
 listDatum ::= dataTypeSpec? '[' (dataValue ','?)* ']' {pin=2 extends=datum}
 
-primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {extends=datum}
+primitiveDatum ::= (dataTypeSpec '@')? (string | number | boolean) {pin=2 extends=datum}
 
 enumDatum ::= '#' qid {extends=datum pin=1}
 
-nullDatum ::= (dataTypeSpec '@')? 'null' {extends=datum}
+nullDatum ::= (dataTypeSpec '@')? 'null' {pin=2 extends=datum}
 
 private dataValueRecover ::= ! ( '#' | qid | primitiveDatum | '}' | ')' | '>' | ']' | 'abstract' | 'override' | ',' )

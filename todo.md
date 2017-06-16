@@ -37,6 +37,15 @@
 - [ ] remove `requestParams` from requests/URLs?
 - [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
 - [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
+- [ ] better implementation of schema annotations. Get inspiration from Java annotations? e.g.
+    ```
+        string MyAnnotation // taget? default?
+        record SomeRecord {
+          @MyAnnotation "foo"
+        }  
+    ```
+    Figure out injections: how to add annotations to existing types/fields.
+
 
 # Type system
 - [ ] Enums

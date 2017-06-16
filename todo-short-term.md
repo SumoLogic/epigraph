@@ -1,6 +1,8 @@
-- [ ] add projections to op map keys
+- [x] add projections to op map keys
   - operation filters must ensure that keys don't contain extra fields beyond what's in projection, both before and after call
   - should be used by derived transformers as input projections
+
+- [ ] allow paths to end with model types
   
 - Federator
   - [x] support named projections on the top level (not inside service)
