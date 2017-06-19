@@ -59,8 +59,9 @@ public interface DatumType extends Type, DatumTypeApi {
 
   @NotNull Val.Imm createValue(@Nullable ErrorValue errorOrNull);
 
-  interface Raw extends Type.Raw {
+  interface Raw extends DatumType, Type.Raw {
 
+    @Override
     @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull);
 
   }
@@ -72,11 +73,12 @@ public interface DatumType extends Type, DatumTypeApi {
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends Type.Static<MyImmData, MyDataBuilder> {
+      > extends DatumType, Type.Static<MyImmData, MyDataBuilder> {
 
     @Override
     @NotNull MyDataBuilder createDataBuilder();
 
+    @Override
     @NotNull MyImmVal createValue(@Nullable ErrorValue errorOrNull);
 
   }

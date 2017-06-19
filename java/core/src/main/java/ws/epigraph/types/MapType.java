@@ -45,11 +45,11 @@ public interface MapType extends DatumType, MapTypeApi {
 
   @NotNull MapDatum.Builder createBuilder();
 
-  interface Raw extends DatumType.Raw {}
+  interface Raw extends MapType, DatumType.Raw {}
 
   interface Static<
       K extends Datum.Imm.Static,
-      MyImmDatum extends MapDatum.Imm.Static,
+      MyImmDatum extends MapDatum.Imm.Static<K>,
       MyBuilderDatum extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,

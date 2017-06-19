@@ -77,7 +77,7 @@ public abstract class LongType extends PrimitiveType<Long> {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmDatum extends LongDatum.Imm.Static,
       MyDatumBuilder extends LongDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

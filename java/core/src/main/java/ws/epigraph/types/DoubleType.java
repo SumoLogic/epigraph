@@ -77,7 +77,7 @@ public abstract class DoubleType extends PrimitiveType<Double> {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmDatum extends DoubleDatum.Imm.Static,
       MyDatumBuilder extends DoubleDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

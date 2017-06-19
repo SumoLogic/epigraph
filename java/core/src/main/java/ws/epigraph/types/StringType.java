@@ -77,7 +77,7 @@ public abstract class StringType extends PrimitiveType<String> {
   }
 
 
-  public static abstract class Static<
+  public abstract static class Static<
       MyImmDatum extends StringDatum.Imm.Static,
       MyDatumBuilder extends StringDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

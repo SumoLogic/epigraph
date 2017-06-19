@@ -77,7 +77,7 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
   }
 
 
-  public static abstract class Static< // TODO MyType extends Type.Static<MyType>?
+  public abstract static class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends IntegerDatum.Imm.Static,
       MyDatumBuilder extends IntegerDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,

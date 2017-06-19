@@ -89,7 +89,7 @@ public abstract class AnonMapType extends MapTypeImpl {
 
   public abstract static class Static<
       K extends Datum.Imm.Static,
-      MyImmDatum extends MapDatum.Imm.Static,
+      MyImmDatum extends MapDatum.Imm.Static<K>,
       MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
       MyImmVal extends Val.Imm.Static,
       MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,

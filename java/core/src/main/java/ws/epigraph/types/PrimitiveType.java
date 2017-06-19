@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+// TODO split into interface and .Impl?
 public abstract class PrimitiveType<Native> extends DatumTypeImpl implements PrimitiveTypeApi {
 
   protected PrimitiveType(
@@ -58,10 +59,11 @@ public abstract class PrimitiveType<Native> extends DatumTypeImpl implements Pri
   //public abstract @NotNull PrimitiveDatum.Imm<Native> createImmutable(@NotNull Native val);
 
 
-  public interface Raw extends DatumType.Raw {} // TODO parameterize with Native?
+  public interface Raw extends DatumType.Raw {} // TODO parameterize with Native? make PrimitiveType an interface?
 
 
-  public interface Static<Native,
+  public interface Static<
+      Native,
       MyImmDatum extends PrimitiveDatum.Imm.Static<Native>,
       MyDatumBuilder extends PrimitiveDatum.Builder.Static<Native, MyImmDatum>,
       MyImmVal extends Val.Imm.Static,

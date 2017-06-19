@@ -38,7 +38,7 @@ public interface ListType extends DatumType, ListTypeApi {
 
   @NotNull ListDatum.Builder createBuilder();
 
-  interface Raw extends DatumType.Raw {}
+  interface Raw extends ListType, DatumType.Raw {}
 
   interface Static<
       MyImmDatum extends ListDatum.Imm.Static,
