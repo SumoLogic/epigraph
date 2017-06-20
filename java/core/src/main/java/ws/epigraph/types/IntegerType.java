@@ -79,13 +79,13 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
 
   public abstract static class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends IntegerDatum.Imm.Static,
-      MyDatumBuilder extends IntegerDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends IntegerDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends IntegerType implements
-      PrimitiveType.Static<Integer, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<Integer, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<IntegerDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

@@ -50,10 +50,10 @@ public interface MapType extends DatumType, MapTypeApi {
   interface Static<
       K extends Datum.Imm.Static,
       MyImmDatum extends MapDatum.Imm.Static<K>,
-      MyBuilderDatum extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends MapType, DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends MapType, DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {}
 }

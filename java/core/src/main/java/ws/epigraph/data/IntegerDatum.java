@@ -236,13 +236,13 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
 
     public abstract static class Static<
         MyImmDatum extends IntegerDatum.Imm.Static,
-        MyBuilderVal extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static
         > extends IntegerDatum.Builder
         implements IntegerDatum.Static, PrimitiveDatum.Builder.Static<Integer, MyImmDatum> {
 
       private final @NotNull IntegerDatum.Builder.Raw raw;
 
-      private final @NotNull MyBuilderVal value;
+      private final @NotNull MyValBuilder value;
 
       private final @NotNull Function<IntegerDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
 
@@ -250,7 +250,7 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
           @NotNull IntegerType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
           @NotNull IntegerDatum.Builder.Raw raw,
           @NotNull Function<IntegerDatum.Imm.Raw, MyImmDatum> immDatumConstructor,
-          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyBuilderVal> builderValConstructor
+          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> builderValConstructor
       ) {
         super(type);
         // TODO check type equality
@@ -272,7 +272,7 @@ public interface IntegerDatum extends PrimitiveDatum<Integer> {
       public final @NotNull IntegerDatum.Builder.Raw _raw() { return raw; }
 
       @Override
-      public @NotNull MyBuilderVal asValue() { return value; }
+      public @NotNull MyValBuilder asValue() { return value; }
 
       @Override
       public final int hashCode() { return raw.hashCode(); }

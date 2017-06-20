@@ -305,12 +305,12 @@ public interface RecordDatum extends Datum {
     // base for generated mutable record impl classes
     public abstract static class Static<
         MyImmDatum extends RecordDatum.Imm.Static,
-        MyBuilderVal extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static
         > extends RecordDatum.Builder implements RecordDatum.Static, Datum.Builder.Static<MyImmDatum> {
 
       private final RecordDatum.Builder.Raw raw;
 
-      private final @NotNull MyBuilderVal value;
+      private final @NotNull MyValBuilder value;
 
       private final @NotNull Function<RecordDatum.Imm.@NotNull Raw, @NotNull MyImmDatum> immDatumConstructor;
 
@@ -318,7 +318,7 @@ public interface RecordDatum extends Datum {
           @NotNull RecordType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
           @NotNull RecordDatum.Builder.Raw raw,
           @NotNull Function<RecordDatum.Imm.@NotNull Raw, @NotNull MyImmDatum> immDatumConstructor,
-          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyBuilderVal> builderValConstructor
+          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> builderValConstructor
       ) {
         super(type);
         if (raw.type() != type) throw new IllegalArgumentException("Raw type doesn't match static type (TODO details)");
@@ -334,7 +334,7 @@ public interface RecordDatum extends Datum {
       public final @NotNull RecordDatum.Builder.Raw _raw() { return raw; }
 
       @Override
-      public @NotNull MyBuilderVal asValue() { return value; }
+      public @NotNull MyValBuilder asValue() { return value; }
 
       @Override
       public final int hashCode() { return raw.hashCode(); }

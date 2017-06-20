@@ -238,13 +238,13 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
 
     public abstract static class Static<
         MyImmDatum extends BooleanDatum.Imm.Static,
-        MyBuilderVal extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static
         > extends BooleanDatum.Builder
         implements BooleanDatum.Static, PrimitiveDatum.Builder.Static<Boolean, MyImmDatum> {
 
       private final @NotNull BooleanDatum.Builder.Raw raw;
 
-      private final @NotNull MyBuilderVal value;
+      private final @NotNull MyValBuilder value;
 
       private final @NotNull Function<BooleanDatum.Imm.Raw, MyImmDatum> immDatumConstructor;
 
@@ -252,7 +252,7 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
           @NotNull BooleanType.Static<MyImmDatum, ?, ?, ?, ?, ?> type,
           @NotNull BooleanDatum.Builder.Raw raw,
           @NotNull Function<BooleanDatum.Imm.Raw, MyImmDatum> immDatumConstructor,
-          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyBuilderVal> builderValConstructor
+          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> builderValConstructor
       ) {
         super(type);
         // TODO check type equality
@@ -274,7 +274,7 @@ public interface BooleanDatum extends PrimitiveDatum<Boolean> {
       public final @NotNull BooleanDatum.Builder.Raw _raw() { return raw; }
 
       @Override
-      public @NotNull MyBuilderVal asValue() { return value; }
+      public @NotNull MyValBuilder asValue() { return value; }
 
       @Override
       public final int hashCode() { return raw.hashCode(); }

@@ -79,13 +79,13 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
 
   public abstract static class Static< // TODO MyType extends Type.Static<MyType>?
       MyImmDatum extends BooleanDatum.Imm.Static,
-      MyDatumBuilder extends BooleanDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends BooleanDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends BooleanType implements
-      PrimitiveType.Static<Boolean, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<Boolean, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<BooleanDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

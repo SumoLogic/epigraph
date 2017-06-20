@@ -79,13 +79,13 @@ public abstract class DoubleType extends PrimitiveType<Double> {
 
   public abstract static class Static<
       MyImmDatum extends DoubleDatum.Imm.Static,
-      MyDatumBuilder extends DoubleDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends DoubleDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends DoubleType implements
-      PrimitiveType.Static<Double, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<Double, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<DoubleDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

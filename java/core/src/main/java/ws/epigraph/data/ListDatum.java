@@ -278,12 +278,12 @@ public interface ListDatum extends Datum {
 
     public abstract static class Static<
         MyImmDatum extends ListDatum.Imm.Static,
-        MyBuilderVal extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static
         > extends ListDatum.Builder implements ListDatum.Static, Datum.Builder.Static<MyImmDatum> {
 
       private final @NotNull ListDatum.Builder.Raw raw;
 
-      private final @NotNull MyBuilderVal value;
+      private final @NotNull MyValBuilder value;
 
       private final @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor;
 
@@ -291,7 +291,7 @@ public interface ListDatum extends Datum {
           @NotNull ListType type,
           @NotNull ListDatum.Builder.Raw raw,
           @NotNull Function<ListDatum.Imm.Raw, MyImmDatum> immutableConstructor,
-          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyBuilderVal> builderValConstructor
+          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> builderValConstructor
       ) {
         super(type); // TODO take static type separately?
         if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
@@ -313,7 +313,7 @@ public interface ListDatum extends Datum {
       public final @NotNull ListDatum.Builder.Raw _raw() { return raw; }
 
       @Override
-      public @NotNull MyBuilderVal asValue() { return value; }
+      public @NotNull MyValBuilder asValue() { return value; }
 
       @Override
       public final int hashCode() { return raw.hashCode(); }

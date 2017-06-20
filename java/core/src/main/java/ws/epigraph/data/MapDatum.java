@@ -280,12 +280,12 @@ public interface MapDatum extends Datum {
     public abstract static class Static<
         K extends Datum.Imm,
         MyImmDatum extends MapDatum.Imm.Static,
-        MyBuilderVal extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static
         > extends MapDatum.Builder implements MapDatum.Static<K>, Datum.Builder.Static<MyImmDatum> {
 
       private final @NotNull MapDatum.Builder.Raw raw;
 
-      private final @NotNull MyBuilderVal value;
+      private final @NotNull MyValBuilder value;
 
       private final @NotNull Function<MapDatum.Imm.Raw, MyImmDatum> immutableConstructor;
 
@@ -293,7 +293,7 @@ public interface MapDatum extends Datum {
           @NotNull MapType type,
           @NotNull MapDatum.Builder.Raw raw,
           @NotNull Function<MapDatum.Imm.Raw, MyImmDatum> immutableConstructor,
-          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyBuilderVal> builderValConstructor
+          @NotNull Function<Val.Builder.@NotNull Raw, @NotNull MyValBuilder> builderValConstructor
       ) {
         super(type); // TODO take static type separately?
         if (raw.type() != type) // TODO shared assertEqual(Type, Type): Type method
@@ -315,7 +315,7 @@ public interface MapDatum extends Datum {
       public final @NotNull MapDatum.Builder.Raw _raw() { return raw; }
 
       @Override
-      public @NotNull MyBuilderVal asValue() { return value; }
+      public @NotNull MyValBuilder asValue() { return value; }
 
       @Override
       public final int hashCode() { return raw.hashCode(); }

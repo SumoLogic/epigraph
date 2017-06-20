@@ -42,11 +42,11 @@ public interface ListType extends DatumType, ListTypeApi {
 
   interface Static<
       MyImmDatum extends ListDatum.Imm.Static,
-      MyBuilderDatum extends ListDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends ListDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyBuilderDatum>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends ListType, DatumType.Static<MyImmDatum, MyBuilderDatum, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {}
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends ListType, DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {}
 
 }

@@ -144,13 +144,13 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
 
   public abstract static class Static<
       MyImmDatum extends RecordDatum.Imm.Static,
-      MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends RecordDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends RecordType
-      implements DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      implements DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

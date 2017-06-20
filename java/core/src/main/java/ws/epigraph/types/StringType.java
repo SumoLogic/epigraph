@@ -79,13 +79,13 @@ public abstract class StringType extends PrimitiveType<String> {
 
   public abstract static class Static<
       MyImmDatum extends StringDatum.Imm.Static,
-      MyDatumBuilder extends StringDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends StringDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends StringType implements
-      PrimitiveType.Static<String, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<String, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<StringDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

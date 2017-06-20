@@ -79,13 +79,13 @@ public abstract class LongType extends PrimitiveType<Long> {
 
   public abstract static class Static<
       MyImmDatum extends LongDatum.Imm.Static,
-      MyDatumBuilder extends LongDatum.Builder.Static<MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends LongDatum.Builder.Static<MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
       > extends LongType implements
-      PrimitiveType.Static<Long, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+      PrimitiveType.Static<Long, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<LongDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 

@@ -67,10 +67,10 @@ public abstract class PrimitiveType<Native> extends DatumTypeImpl implements Pri
       MyImmDatum extends PrimitiveDatum.Imm.Static<Native>,
       MyDatumBuilder extends PrimitiveDatum.Builder.Static<Native, MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
-      MyBuilderData extends Data.Builder.Static<MyImmData>
-      > extends DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyBuilderData> {
+      MyDataBuilder extends Data.Builder.Static<MyImmData>
+      > extends DatumType.Static<MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     @NotNull MyDatumBuilder createBuilder(@NotNull Native val);
 
