@@ -107,13 +107,13 @@ public abstract class AnonMapType extends MapTypeImpl {
     protected Static(
         @NotNull List<@NotNull ? extends AnonMapType.Static<
             K,
-            ?,// super MyImmDatum,
-            ?,// extends MapDatum.Mut.Static<? super MyImmDatum>,
-            ?,// super MyImmVal,
-            ?,// extends Val.Mut.Static<? super MyImmVal, ? extends MapDatum.Mut.Static<? super MyImmDatum>>,
-            ?,// super MyImmData,
-            ? // extends Data.Mut.Static<? super MyImmData>
-            >> immediateSupertypes,
+            ? super MyImmDatum,
+            ? extends MapDatum.Builder.Static<K, ? super MyImmDatum, ?>,
+            ? super MyImmVal,
+            ? extends Val.Builder.Static<? super MyImmVal, ?>,
+            ? super MyImmData,
+            ? extends Data.Builder.Static<? super MyImmData>
+        >> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull DatumType/*.Static<K, ?, ?, ?, ?, ?>*/ keyType,
         @NotNull DataType valueType,

@@ -26,6 +26,7 @@ import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.names.QualifiedTypeName;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -85,29 +86,45 @@ public abstract class NamedListType extends ListTypeImpl {
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
+    @SafeVarargs
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends ListType.Static
-            <
-                ?,// super MyImmDatum,
-                ?,// extends ListDatum.Mut.Static<? super MyImmDatum>,
-                ?,// super MyImmVal,
-                ?,// extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
-                ?,// super MyImmData,
-                ? // extends Data.Mut.Static<? super MyImmData>
-                >
-            > immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull DataType elementDataType,
         @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
-        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull ListType.Static<
+            ? super MyImmDatum,
+            ? extends ListDatum.Builder.Static<? super MyImmDatum, ?>,
+            ? super MyImmVal,
+            ? extends Val.Builder.Static<? super MyImmVal, ?>,
+            ? super MyImmData,
+            ? extends Data.Builder.Static<? super MyImmData>
+        >... immediateSupertypes
     ) {
-      super(name, immediateSupertypes, declaredMetaType, elementDataType);
+      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, elementDataType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
     }
+
+    @SafeVarargs
+    protected static <MyImmDatum, MyImmVal, MyImmData> @NotNull List<@NotNull ? extends ListType.Static<
+        ? super MyImmDatum,
+        ? extends ListDatum.Builder.Static<? super MyImmDatum, ?>,
+        ? super MyImmVal,
+        ? extends Val.Builder.Static<? super MyImmVal, ?>,
+        ? super MyImmData,
+        ? extends Data.Builder.Static<? super MyImmData>
+    >> parents(ListType.Static<
+        ? super MyImmDatum,
+        ? extends ListDatum.Builder.Static<? super MyImmDatum, ?>,
+        ? super MyImmVal,
+        ? extends Val.Builder.Static<? super MyImmVal, ?>,
+        ? super MyImmData,
+        ? extends Data.Builder.Static<? super MyImmData>
+    >... supertypes) { return Arrays.asList(supertypes); }
 
     @Override
     public final @NotNull MyDatumBuilder createBuilder() {

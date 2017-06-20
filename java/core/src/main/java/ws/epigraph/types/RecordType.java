@@ -160,7 +160,14 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends RecordType.Static> immediateSupertypes,
+        @NotNull List<@NotNull ? extends RecordType.Static<
+            ? super MyImmDatum,
+            ? extends RecordDatum.Builder.Static<? super MyImmDatum, ?>,
+            ? super MyImmVal,
+            ? extends Val.Builder.Static<? super MyImmVal, ?>,
+            ? super MyImmData,
+            ? extends Data.Builder.Static<? super MyImmData>
+        >> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,

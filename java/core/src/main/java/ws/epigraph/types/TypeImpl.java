@@ -42,7 +42,7 @@ abstract class TypeImpl implements Type {
 
   TypeImpl(@NotNull TypeName name, @NotNull List<@NotNull ? extends Type> immediateSupertypes) {
     this.name = name;
-    this.immediateSupertypes = Unmodifiable.list(immediateSupertypes);
+    this.immediateSupertypes = Unmodifiable.list(immediateSupertypes); // TODO defensive copy?
 
     // assert none of the immediate supertypes is a supertype of another one
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))

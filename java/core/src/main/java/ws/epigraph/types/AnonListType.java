@@ -93,13 +93,13 @@ public abstract class AnonListType extends ListTypeImpl {
 
     protected Static(
         @NotNull List<@NotNull ? extends AnonListType.Static<
-            ?,// super MyImmDatum,
-            ?,// extends ListDatum.Mut.Static<? super MyImmDatum>,
-            ?,// super MyImmVal,
-            ?,// extends Val.Mut.Static<? super MyImmVal, ? extends ListDatum.Mut.Static<? super MyImmDatum>>,
-            ?,// super MyImmData,
-            ? // extends Data.Mut.Static<? super MyImmData>
-            >> immediateSupertypes,
+            ? super MyImmDatum,
+            ? extends ListDatum.Builder.Static<? super MyImmDatum, ?>,
+            ? super MyImmVal,
+            ? extends Val.Builder.Static<? super MyImmVal, ?>,
+            ? super MyImmData,
+            ? extends Data.Builder.Static<? super MyImmData>
+        >> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull DataType elementDataType,
         @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,

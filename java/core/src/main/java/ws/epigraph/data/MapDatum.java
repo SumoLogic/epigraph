@@ -70,7 +70,7 @@ public interface MapDatum extends Datum {
   interface Static<K extends Datum.Imm> extends MapDatum, Datum.Static {
 
     @Override
-    @NotNull MapDatum.Imm.Static toImmutable();
+    @NotNull MapDatum.Imm.Static<K> toImmutable();
 
   }
 
@@ -147,8 +147,9 @@ public interface MapDatum extends Datum {
 
 
       // TODO additional sub-classes for Union and Datum value type based maps?
-      abstract class Impl<K extends Datum.Imm, MyImmDatum extends MapDatum.Imm.Static, MyImmVal extends Val.Imm.Static>
-          extends MapDatum.Impl implements MapDatum.Imm.Static<K> {
+      abstract class Impl<
+          K extends Datum.Imm, MyImmDatum extends MapDatum.Imm.Static<K>, MyImmVal extends Val.Imm.Static
+        > extends MapDatum.Impl implements MapDatum.Imm.Static<K> {
 
         private final @NotNull MapDatum.Imm.Raw raw;
 

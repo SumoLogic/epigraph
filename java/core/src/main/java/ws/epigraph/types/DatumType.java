@@ -70,10 +70,10 @@ public interface DatumType extends Type, DatumTypeApi {
       MyImmDatum extends Datum.Imm.Static,
       MyDatumBuilder extends Datum.Builder.Static<MyImmDatum>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends DatumType, Type.Static<MyImmData, MyDataBuilder> {
+  > extends DatumType, Type.Static<MyImmData, MyDataBuilder> {
 
     @Override
     @NotNull MyDataBuilder createDataBuilder();

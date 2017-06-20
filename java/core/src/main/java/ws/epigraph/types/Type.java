@@ -67,10 +67,12 @@ public interface Type extends TypeApi {
   /** Ensures specified type is a subtype of this type. */
   <T extends Type> T checkAssignable(@NotNull T type) throws IllegalArgumentException;
 
-  interface Raw {}
+  interface Raw extends Type {}
 
-  interface Static<MyImmData extends Data.Imm.Static, MyDataBuilder extends Data.Builder.Static<MyImmData>> {
+  interface Static<MyImmData extends Data.Imm.Static, MyDataBuilder extends Data.Builder.Static<MyImmData>>
+      extends Type {
 
+    @Override
     @NotNull MyDataBuilder createDataBuilder();
 
   }

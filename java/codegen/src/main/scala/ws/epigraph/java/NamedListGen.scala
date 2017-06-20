@@ -38,12 +38,12 @@ $typeInstance\
     private Type() {
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.<ws.epigraph.types.ListType.Static<?, ?, ?, ?, ?, ?>>asList(${ parents(".Type.instance()") }),
-          ${ t.meta.map { mt => lqn(mt, t, _ + ".type") }.getOrElse("null") },
-          ${ dataTypeExpr(ev, t) },
+          ${t.meta.map { mt => lqn(mt, t, _ + ".type") }.getOrElse("null")},
+          ${dataTypeExpr(ev, t)},
           $ln.Builder::new,
           $ln.Value.Imm.Impl::new,
-          $ln.Data.Builder::new
+          $ln.Data.Builder::new,
+          ${parents(".Type.instance()")}
       );
     }
 

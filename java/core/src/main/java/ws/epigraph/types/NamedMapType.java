@@ -25,12 +25,11 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public abstract class NamedMapType extends MapTypeImpl {
 
@@ -85,13 +84,13 @@ public abstract class NamedMapType extends MapTypeImpl {
   public abstract static class Static<
       K extends Datum.Imm.Static,
       MyImmDatum extends MapDatum.Imm.Static<K>,
-      MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyBuilderVal>,
+      MyDatumBuilder extends MapDatum.Builder.Static<K, MyImmDatum, MyValBuilder>,
       MyImmVal extends Val.Imm.Static,
-      MyBuilderVal extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
+      MyValBuilder extends Val.Builder.Static<MyImmVal, MyDatumBuilder>,
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends NamedMapType
-      implements MapType.Static<K, MyImmDatum, MyDatumBuilder, MyImmVal, MyBuilderVal, MyImmData, MyDataBuilder> {
+  > extends NamedMapType
+      implements MapType.Static<K, MyImmDatum, MyDatumBuilder, MyImmVal, MyValBuilder, MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor;
 
@@ -99,25 +98,26 @@ public abstract class NamedMapType extends MapTypeImpl {
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
+    @SafeVarargs
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends MapType.Static<
-            K,
-            ?,// super MyImmDatum,
-            ?,// extends MapDatum.Mut.Static<? super MyImmDatum>,
-            ?,// super MyImmVal,
-            ?,// extends Val.Mut.Static<? super MyImmVal, ? extends MapDatum.Mut.Static<? super MyImmDatum>>,
-            ?,// super MyImmData,
-            ? // extends Data.Mut.Static<? super MyImmData>
-            >> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull DatumType/*.Static<K, ?, ?, ?, ?, ?>*/ keyType,
         @NotNull DataType valueType,
         @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
-        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull MapType.Static<
+            K,
+            ? super MyImmDatum,
+            ? extends MapDatum.Builder.Static<K, ? super MyImmDatum, ?>,
+            ? super MyImmVal,
+            ? extends Val.Builder.Static<? super MyImmVal, ?>,
+            ? super MyImmData,
+            ? extends Data.Builder.Static<? super MyImmData>
+        >... immediateSupertypes
     ) {
-      super(name, immediateSupertypes, declaredMetaType, keyType, valueType);
+      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, keyType, valueType);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
