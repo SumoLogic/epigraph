@@ -43,7 +43,7 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    * <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
    */
   @Parameter
-  private String[] includes = new String[]{"**/*.epigraph"};
+  private String[] includes = {"**/*.epigraph"};
 
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from
@@ -51,7 +51,7 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    * excluded.
    */
   @Parameter
-  private String[] excludes = new String[]{};
+  private String[] excludes = {};
 
   @Override
   protected File getSourceDirectory() {

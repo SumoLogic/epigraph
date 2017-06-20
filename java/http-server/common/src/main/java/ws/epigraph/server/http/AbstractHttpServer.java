@@ -141,21 +141,27 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         }
       }
 
-      if (requestMethod == HttpMethod.GET)
-        handleReadRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-      else if (requestMethod == HttpMethod.POST)
-        handleCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-      else if (requestMethod == HttpMethod.PUT)
-        handleUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-      else if (requestMethod == HttpMethod.DELETE)
-        handleDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext);
-      else {
-        writeGenericErrorAndClose(
-            String.format("Unsupported HTTP method '%s'", requestMethod),
-            HttpStatusCode.BAD_REQUEST,
-            context,
-            operationInvocationContext
-        );
+      switch (requestMethod) {
+        case GET:
+          handleReadRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+          break;
+        case POST:
+          handleCreateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+          break;
+        case PUT:
+          handleUpdateRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+          break;
+        case DELETE:
+          handleDeleteRequest(resource, operationName, decodedUri, context, operationInvocationContext);
+          break;
+        default:
+          writeGenericErrorAndClose(
+              String.format("Unsupported HTTP method '%s'", requestMethod),
+              HttpStatusCode.BAD_REQUEST,
+              context,
+              operationInvocationContext
+          );
+          break;
       }
     } catch (RuntimeException e) {
       writeGenericErrorAndClose(
@@ -211,7 +217,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     // pre-check; custom operation can be called with wrong HTTP method and Url parsing error will be confusing
     if (operationName != null &&
-        !operationName.equals(ReadOperationDeclaration.DEFAULT_NAME) &&
+        !ReadOperationDeclaration.DEFAULT_NAME.equals(operationName) &&
         resource.namedReadOperation(operationName) == null)
       return CompletableFuture.completedFuture(
           InvocationResult.failure(

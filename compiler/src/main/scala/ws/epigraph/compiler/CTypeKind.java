@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.compiler;/* Created by yegor on 6/9/16. */
+package ws.epigraph.compiler;
 
-import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
+/* Created by yegor on 6/9/16. */
 public enum CTypeKind {
 
   ENTITY("entity"),
@@ -35,7 +36,7 @@ public enum CTypeKind {
   DOUBLE("double"),
   BOOLEAN("boolean");
 
-  private static final Map<String, CTypeKind> map = new HashMap<>();
+  private static final @NotNull Map<String, CTypeKind> map = new HashMap<>();
 
   public final String keyword;
 
@@ -43,10 +44,6 @@ public enum CTypeKind {
 
   static { for (CTypeKind value : values()) map.put(value.keyword, value); }
 
-  /**
-   * @param keyword
-   * @throws IllegalArgumentException
-   */
   public static CTypeKind forKeyword(@NotNull String keyword) throws IllegalArgumentException {
     CTypeKind value = map.get(keyword);
     if (value == null) throw new IllegalArgumentException(keyword);
@@ -55,7 +52,16 @@ public enum CTypeKind {
 
   @Contract(pure = true)
   public boolean isPrimitive() {
-    return this == STRING || this == INTEGER || this == LONG || this == DOUBLE || this == BOOLEAN;
+    switch (this) {
+      case STRING:
+      case INTEGER:
+      case LONG:
+      case DOUBLE:
+      case BOOLEAN:
+        return true;
+      default:
+        return false;
+    }
   }
 
 }

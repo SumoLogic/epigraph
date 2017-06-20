@@ -24,7 +24,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class DefaultImports {
-  public static final Qn[] DEFAULT_IMPORTS = {
+  private static final Qn[] DEFAULT_IMPORTS = {
       new Qn("epigraph", "String"),
       new Qn("epigraph", "Integer"),
       new Qn("epigraph", "Long"),

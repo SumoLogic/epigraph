@@ -81,7 +81,7 @@ public final class Unmodifiable {
   }
 
   @Contract(pure = true) // TODO rename to arrayListSupplier()?
-  public static @NotNull <E> Supplier<ArrayList<E>> arrayList(int size) { return () -> new ArrayList<E>(size); }
+  public static @NotNull <E> Supplier<ArrayList<E>> arrayList(int size) { return () -> new ArrayList<>(size); }
 
   @Contract(pure = true)
   public static @NotNull <K, V> Map<K, ? extends V> map(@NotNull Map<K, ? extends V> map) {

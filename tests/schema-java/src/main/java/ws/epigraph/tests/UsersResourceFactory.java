@@ -163,9 +163,10 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
 
       // keys check
       final List<OutputPersonMapKeyProjection> keys = mapProjection.keys();
-      if (keys != null) {
-        LOG.debug("Requested keys: " +
-                  keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
+      if (keys != null && LOG.isDebugEnabled()) {
+        LOG.debug(
+            "Requested keys: {}",
+            keys.stream().map(k -> k.value().getVal().toString()).collect(Collectors.joining(", "))
         );
       }
 

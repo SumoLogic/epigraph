@@ -487,7 +487,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return root(b, l + 1);
   }
 
-  public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
+  private static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(U_REQ_OUTPUT_COMA_MODEL_PROJECTION, U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION),
     create_token_set_(U_ANON_LIST, U_ANON_MAP, U_QN_TYPE_REF, U_TYPE_REF),
     create_token_set_(U_CREATE_URL, U_CUSTOM_URL, U_DELETE_URL, U_READ_URL,

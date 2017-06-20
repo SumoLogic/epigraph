@@ -595,7 +595,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return root(b, l + 1);
   }
 
-  public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
+  private static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(S_ANON_LIST, S_ANON_MAP, S_QN_TYPE_REF, S_TYPE_REF),
     create_token_set_(S_DATUM, S_ENUM_DATUM, S_LIST_DATUM, S_MAP_DATUM,
       S_NULL_DATUM, S_PRIMITIVE_DATUM, S_RECORD_DATUM),

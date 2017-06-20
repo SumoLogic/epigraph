@@ -69,7 +69,7 @@ public class MainCompileMojo extends BaseCompileMojo {
    * excluded.
    */
   @Parameter
-  private String[] excludes = new String[]{};
+  private String[] excludes = {};
 
   @Override
   protected Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException {

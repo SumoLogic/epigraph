@@ -164,7 +164,7 @@ public class DataPrinter<Exc extends Exception> {
     }
   }
 
-  public void print(@NotNull PrimitiveDatum datum) throws Exc {
+  public void print(@NotNull PrimitiveDatum<?> datum) throws Exc {
     if (withTypes && !datum.type().immediateSupertypes().isEmpty())
       lo.print("@");
     if (datum instanceof StringDatum) {
@@ -183,8 +183,8 @@ public class DataPrinter<Exc extends Exception> {
       for (Field field : datum.type().fields()) {
         @Nullable Data data = raw.getData(field);
         if (data != null) {
-          if (!first) lo.print(",").end();
-          else first = false;
+          if (first) first = false;
+          else lo.print(",").end();
           brk(1).beginI(0).print("").print(field.name).print(": ");
           print(data);
         }

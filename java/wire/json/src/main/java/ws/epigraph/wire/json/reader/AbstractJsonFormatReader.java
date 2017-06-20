@@ -127,6 +127,8 @@ abstract class AbstractJsonFormatReader<
 
   protected static final @NotNull JsonFactory JSON_FACTORY = new JsonFactory();
 
+  private static final @NotNull JsonToken[] NO_JSON_TOKENS = new JsonToken[0];
+
   private final @NotNull JsonParser in;
   private final @NotNull TypesResolver typesResolver;
   private final @NotNull LinkedList<VisitedDataEntry> dataByLevel = new LinkedList<>();
@@ -1010,7 +1012,7 @@ abstract class AbstractJsonFormatReader<
 
   private void ensureCurr(@Nullable JsonToken expected, @NotNull String expectedText)
       throws IOException, JsonFormatException {
-    ensure(currentToken(), expectedText, null, expected == null ? new JsonToken[0] : new JsonToken[]{expected});
+    ensure(currentToken(), expectedText, null, expected == null ? NO_JSON_TOKENS : new JsonToken[]{expected});
   }
 
 
