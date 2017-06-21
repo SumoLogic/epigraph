@@ -279,7 +279,7 @@ public interface MapDatum extends Datum {
 
     public abstract static class Static<
         K extends Datum.Imm,
-        MyImmDatum extends MapDatum.Imm.Static,
+        MyImmDatum extends MapDatum.Imm.Static<K>,
         MyValBuilder extends Val.Builder.Static
         > extends MapDatum.Builder implements MapDatum.Static<K>, Datum.Builder.Static<MyImmDatum> {
 

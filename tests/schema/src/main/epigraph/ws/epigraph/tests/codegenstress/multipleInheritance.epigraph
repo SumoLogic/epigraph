@@ -1,0 +1,15 @@
+namespace ws.epigraph.tests.codegenstress
+
+integer PersonId
+integer CompanyId
+integer SelfEmployedId extends PersonId, CompanyId
+
+entity VT0 { /* foo: Integer // FIXME plain primitives generate incompatible getters */ }
+entity VT1 extends VT0 { foo: PersonId }
+entity VT2 extends VT0 { foo: CompanyId }
+entity VT3 extends VT1, VT2 { foo: SelfEmployedId }
+entity VT4 extends VT1, VT3, VT2, VT3
+
+record R {
+  anonListWithMultipleParents: list[SelfEmployedId]
+}

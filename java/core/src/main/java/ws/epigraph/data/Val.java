@@ -285,8 +285,7 @@ public interface Val { // TODO rename to TagEntry?
 
 
     abstract class Static<MyImmVal extends Val.Imm.Static, MyDatumBuilder extends Datum.Builder.Static>
-        extends Val.Static.Impl<Val.Builder.Raw, MyImmVal, MyDatumBuilder>
-        implements Val.Builder, Val.Static {
+        extends Val.Static.Impl<Val.Builder.Raw, MyImmVal, MyDatumBuilder> implements Val.Builder {
 
       private final @NotNull Function<Val.Imm.Raw, MyImmVal> immutableConstructor;
 

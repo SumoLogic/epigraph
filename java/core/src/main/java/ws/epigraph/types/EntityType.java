@@ -72,13 +72,15 @@ public abstract class EntityType extends TypeImpl implements EntityTypeApi {
   public abstract static class Static<
       MyImmData extends Data.Imm.Static,
       MyDataBuilder extends Data.Builder.Static<MyImmData>
-      > extends EntityType implements Type.Static<MyImmData, MyDataBuilder> {
+  > extends EntityType implements Type.Static<MyImmData, MyDataBuilder> {
 
     private final @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor;
 
     protected Static(
         @NotNull QualifiedTypeName name,
-        @NotNull List<@NotNull ? extends EntityType.Static> immediateSupertypes,
+        @NotNull List<@NotNull ? extends EntityType.Static<
+            ? super MyImmData, ? extends Data.Builder.Static<? super MyImmData>
+        >> immediateSupertypes,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
     ) {
       super(name, immediateSupertypes);

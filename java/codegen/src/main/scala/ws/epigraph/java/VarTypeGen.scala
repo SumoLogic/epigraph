@@ -21,7 +21,7 @@ package ws.epigraph.java
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{lqrn, pn, qnameArgs, tcn}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-
+// TODO rename to EntityTypeGen
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
   protected def generate: String = /*@formatter:off*/sn"""\
@@ -67,7 +67,9 @@ $typeInstance\
     private Type() {
       super(
           new ws.epigraph.names.QualifiedTypeName(${qnameArgs(t.name.fqn).mkString("\"", "\", \"", "\"")}),
-          java.util.Arrays.asList(${parents(".Type.instance()")}),
+          java.util.Arrays./*<ws.epigraph.types.EntityType.Static<
+            ? super $ln.Imm, ? extends ws.epigraph.data.Data.Builder.Static<? super $ln.Imm>
+          >>*/asList(${parents(".Type.instance()")}),
           $ln.Builder::new
       );
     }

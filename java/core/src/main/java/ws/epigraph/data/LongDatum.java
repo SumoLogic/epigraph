@@ -239,8 +239,7 @@ public interface LongDatum extends PrimitiveDatum<Long> {
     public abstract static class Static<
         MyImmDatum extends LongDatum.Imm.Static,
         MyValBuilder extends Val.Builder.Static
-        > extends LongDatum.Builder
-        implements LongDatum.Static, PrimitiveDatum.Builder.Static<Long, MyImmDatum> {
+    > extends LongDatum.Builder implements LongDatum.Static, PrimitiveDatum.Builder.Static<Long, MyImmDatum> {
 
       private final @NotNull LongDatum.Builder.Raw raw;
 

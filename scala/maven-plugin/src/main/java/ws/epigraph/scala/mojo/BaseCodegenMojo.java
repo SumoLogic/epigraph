@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Base for Epigraph Codegen Mojos.
@@ -119,34 +120,17 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
     return sources;
   }
 
-  private List<Artifact> typedArtifacts(Set set, String type) {
-    List<Artifact> artifacts = new ArrayList<>();
-    for (Object object : set) {
-      if (object instanceof Artifact) {
-        Artifact artifact = (Artifact) object;
-        if (type == null || type.equals(artifact.getType())) artifacts.add(artifact);
-      }
-    }
-    return artifacts;
+  private static List<Artifact> typedArtifacts(Set<Artifact> artifacts, String type) {
+    return type == null
+        ? new ArrayList<>(artifacts)
+        : artifacts.stream().filter(artifact -> type.equals(artifact.getType())).collect(Collectors.toList());
   }
 
-//  private List<Artifact> classifiedArtifacts(Set set, String classifier) {
-//    List<Artifact> artifacts = new ArrayList<>();
-//    for (Object object : set) {
-//      if (object instanceof Artifact) {
-//        Artifact artifact = (Artifact) object;
-//        if (classifier.equals(artifact.getClassifier())) {
-//          artifacts.add(artifact);
-//        }
-//      }
-//    }
-//    return artifacts;
-//  }
-
   private void addSourcesFromJar(File file, Collection<Source> sources) throws IOException {
-    final JarFile jarFile = new JarFile(file);
-    // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
-    JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
+    try (JarFile jarFile = new JarFile(file)) {
+      // TODO? source encoding like: compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
+      JarSource.allFiles(jarFile, SCHEMA_FILENAME_PATTERN, StandardCharsets.UTF_8).forEachRemaining(sources::add);
+    }
   }
 
   private String[] getIncludedFiles(String absPath, String[] excludes, String[] includes) {

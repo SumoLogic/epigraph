@@ -23,7 +23,7 @@ import ws.epigraph.service.operations.Operation;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OperationNotFound<O extends Operation<?, ?, ?>> implements OperationSearchResult<O> {
-  private static final OperationNotFound<?> INSTANCE = new OperationNotFound();
+  private static final OperationNotFound<?> INSTANCE = new OperationNotFound<>();
 
   private OperationNotFound() {}
 

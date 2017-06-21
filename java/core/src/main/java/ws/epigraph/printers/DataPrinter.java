@@ -148,13 +148,12 @@ public class DataPrinter<Exc extends Exception> {
       if (withTypes && !datum.type().immediateSupertypes().isEmpty())
         lo.print(datum.type().name().toString());
 
-      if (datum instanceof PrimitiveDatum) print((PrimitiveDatum) datum);
+      if (datum instanceof PrimitiveDatum) print((PrimitiveDatum<?>) datum);
       else if (datum instanceof RecordDatum) print((RecordDatum) datum);
       else if (datum instanceof ListDatum) print((ListDatum) datum);
       else if (datum instanceof MapDatum) print((MapDatum) datum);
 //    else if (datum instanceof EnumDatum) print((EnumDatum) datum);
-      else if (datum instanceof Datum) lo.print(datum.type().name().toString());
-      else throw new UnsupportedOperationException(datum.type().name().toString());
+      else lo.print(datum.type().name().toString());
 
       Datum meta = datum._raw().meta();
       if (meta != null) {

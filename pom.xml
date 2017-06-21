@@ -64,8 +64,8 @@
       </activation>
       <modules>
         <module>builtin-services</module>
-        <module>jar-mavenizer-plugin</module>
-        <module>light-psi</module>
+        <module>jar-mavenizer-plugin</module><!-- TODO move to a separate profile -->
+        <module>light-psi</module><!-- TODO move to the separate profile -->
         <module>compiler</module>
         <module>examples</module>
         <module>java</module>

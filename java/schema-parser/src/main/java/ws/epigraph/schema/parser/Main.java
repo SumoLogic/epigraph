@@ -71,7 +71,7 @@ public class Main {
         PsiDirectory.class,
     };
 
-    String[] extraClasses = new String[]{
+    String[] extraClasses = {
         "com.intellij.lang.parser.GeneratedParserUtilBase$CompletionState",
         "com.intellij.lang.parser.GeneratedParserUtilBase$Hooks",
         "com.intellij.lang.parser.GeneratedParserUtilBase$DummyBlock",
