@@ -36,7 +36,7 @@ apply plugin: 'org.jetbrains.intellij'
 intellij {
   version ideaVersion
   type ideaType
-  pluginName 'Epigraph'
+  pluginName 'epigraph-idea-plugin'
   downloadSources Boolean.valueOf(sources)
   sameSinceUntilBuild Boolean.valueOf(isEAP)
   plugins = [ 'uml' ]
