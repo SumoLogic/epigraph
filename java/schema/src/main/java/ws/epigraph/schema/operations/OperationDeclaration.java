@@ -18,8 +18,9 @@ package ws.epigraph.schema.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotated;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
@@ -37,7 +38,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OperationDeclaration {
+public abstract class OperationDeclaration implements Annotated {
   public static final String DEFAULT_NAME = "_default";
 
   protected final @NotNull OperationKind type;
@@ -81,6 +82,7 @@ public abstract class OperationDeclaration {
 
   public boolean isDefault() { return name == null; }
 
+  @Override
   public @NotNull Annotations annotations() { return annotations; }
 
   public @Nullable OpFieldPath path() { return path; }

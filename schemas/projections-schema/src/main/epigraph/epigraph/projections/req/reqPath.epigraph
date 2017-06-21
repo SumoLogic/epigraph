@@ -1,6 +1,5 @@
 namespace epigraph.projections.req
 
-import epigraph.projections.Annotation
 import epigraph.schema.DatumType
 import epigraph.schema.Field
 import epigraph.schema.Tag
@@ -22,7 +21,7 @@ record ReqTagPath {
 record ReqModelPath {
   model: DatumType
   params: list[ReqParam]
-  annotations: list[Annotation]
+  directives: list[Directive]
 }
 
 record ReqRecordModelPath extends ReqModelPath {
@@ -50,7 +49,7 @@ record ReqMapModelPath extends ReqModelPath {
 record ReqPathKeyProjection {
   // path keys are always requried
   params: list[ReqParam]
-  annotations: list[Annotation]
+  directives: list[Directive]
 }
 
 record ReqListModelPath extends ReqModelPath { // lists are terminals: we don't support indices

@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqKeyProjection;
@@ -50,12 +50,12 @@ public class ReqDeleteMapModelProjection
   public ReqDeleteMapModelProjection(
       @NotNull MapTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeleteKeyProjection> keys,
       @NotNull ReqDeleteVarProjection valuesProjection,
       @Nullable List<ReqDeleteMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, tails, location);
+    super(model, params, directives, tails, location);
     this.keys = keys;
     this.valuesProjection = valuesProjection;
   }
@@ -82,7 +82,7 @@ public class ReqDeleteMapModelProjection
       final @NotNull MapTypeApi model,
       final @NotNull List<ReqDeleteMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqDeleteMapModelProjection> mergedTails) {
 
@@ -110,7 +110,7 @@ public class ReqDeleteMapModelProjection
     return new ReqDeleteMapModelProjection(
         model,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedKeys,
         mergedItemsVarType,
         mergedTails,
@@ -126,7 +126,7 @@ public class ReqDeleteMapModelProjection
     return new ReqDeleteMapModelProjection(
         n.type(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.keys(),
         n.itemsProjection().normalizedForType(targetMapType.valueType().type()),
         n.polymorphicTails(),

@@ -65,6 +65,9 @@ public class SchemaFormattingModelBuilder implements FormattingModelBuilder {
     TokenSet enumMember = TokenSet.create(S_ENUM_MEMBER_DECL, S_ANNOTATION);
     spacingBuilder.between(enumMember, enumMember).spaces(1);
 
+    // todo doesn't work
+    spacingBuilder.between(S_QN_TYPE_REF, S_DATUM).spaces(1); // annotation
+
     spacingBuilder.between(S_QID, S_CURLY_LEFT).spaces(1);
 
     spacingBuilder.before(S_COLON).spaces(0);

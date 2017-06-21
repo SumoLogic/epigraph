@@ -20,8 +20,8 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.printers.DataPrinter;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directive;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -52,7 +52,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
   @Override
   protected boolean printModelParams(final @NotNull ReqModelPath<?, ?, ?> projection) throws E {
     ReqParams params = projection.params();
-    Annotations annotations = projection.annotations();
+    Directives directives = projection.directives();
 
     l.beginIInd(0);
     boolean empty = true;
@@ -62,8 +62,8 @@ public class ReqPathPrettyPrinter<E extends Exception>
       empty = false;
     }
 
-    if (!annotations.isEmpty()) {
-      printAnnotations(annotations);
+    if (!directives.isEmpty()) {
+      printAnnotations(directives);
       empty = false;
     }
 
@@ -151,7 +151,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
 
   @Override
   public boolean modelParamsEmpty(final @NotNull ReqModelPath<?, ?, ?> path) {
-    return super.modelParamsEmpty(path) && path.params().isEmpty();
+    return super.modelParamsEmpty(path) && path.directives().isEmpty() && path.params().isEmpty();
   }
 
   @Override
@@ -160,18 +160,18 @@ public class ReqPathPrettyPrinter<E extends Exception>
     if (varPath.tagProjections().isEmpty()) return true;
     if (!super.isPrintoutEmpty(varPath)) return false;
     //noinspection ConstantConditions
-    return varPath.singleTagProjection().projection().params().isEmpty();
+    ReqModelPath<?, ?, ?> modelPath = varPath.singleTagProjection().projection();
+    return modelPath.params().isEmpty() && modelPath.directives().isEmpty();
   }
 
-  @Override
-  public void printAnnotations(@NotNull Annotations annotations) throws E {
-    if (!annotations.isEmpty()) {
-      for (Annotation annotation : annotations.asMap().values()) {
+  public void printAnnotations(@NotNull Directives directives) throws E {
+    if (!directives.isEmpty()) {
+      for (Directive directive : directives.asMap().values()) {
         l.beginIInd();
-        l.print("!").print(annotation.name());
+        l.print("!").print(directive.name());
         brk().print("=");
         brk();
-        gdataPrettyPrinter.print(annotation.value());
+        gdataPrettyPrinter.print(directive.value());
         l.end();
       }
     }

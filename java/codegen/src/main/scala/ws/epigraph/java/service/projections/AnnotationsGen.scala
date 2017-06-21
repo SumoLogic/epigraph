@@ -16,10 +16,10 @@
 
 package ws.epigraph.java.service.projections
 
+import ws.epigraph.annotations.Annotations
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
 import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
-import ws.epigraph.projections.Annotations
 
 import scala.collection.JavaConversions._
 
@@ -30,9 +30,15 @@ class AnnotationsGen(anns: Annotations) extends ServiceObjectGen[Annotations](an
 
   override protected def generateObject(ctx: ServiceGenContext): String =
     if (anns.equals(Annotations.EMPTY)) "Annotations.EMPTY"
-    else /*@formatter:off*/sn"""\
+    else {
+      ctx.addImport("ws.epigraph.types.DatumTypeApi")
+      ctx.addImport("ws.epigraph.annotations.Annotation")
+      /*@formatter:off*/sn"""\
 new Annotations(
-  ${i(ServiceGenUtils.genHashMap("String", "Annotation", anns.asMap().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))}
+  ${i(ServiceGenUtils.genHashMap("DatumTypeApi", "Annotation", anns.asMap().entrySet().map{e =>
+        (ServiceGenUtils.genTypeExpr(e.getKey, ctx.gctx), gen(e.getValue, ctx))}, ctx))
+   }
 )"""/*@formatter:on*/
+    }
 
 }

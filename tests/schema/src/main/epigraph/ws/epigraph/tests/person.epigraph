@@ -8,9 +8,9 @@ entity Person {
 integer PersonId
 
 record PersonRecord {
-  avroType = "Person"
-  dbTable = "T_PERSONS"
-  id: PersonId { avroField = "personId", dbColumn = "ID", dbType = "BIGINT" }
+  //avroType = "Person"
+  //dbTable = "T_PERSONS"
+  id: PersonId { /*avroField = "personId", dbColumn = "ID", dbType = "BIGINT"*/ }
   firstName: String
   lastName: String
   middleName: String

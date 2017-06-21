@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -55,11 +55,11 @@ public class ReqDeleteRecordModelProjection
   public ReqDeleteRecordModelProjection(
       @NotNull RecordTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull Map<String, ReqDeleteFieldProjectionEntry> fieldProjections,
       @Nullable List<ReqDeleteRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, tails, location);
+    super(model, params, directives, tails, location);
     this.fieldProjections = fieldProjections;
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
@@ -86,7 +86,7 @@ public class ReqDeleteRecordModelProjection
       final @NotNull RecordTypeApi model,
       final @NotNull List<ReqDeleteRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqDeleteRecordModelProjection> mergedTails) {
 
@@ -108,7 +108,7 @@ public class ReqDeleteRecordModelProjection
     return new ReqDeleteRecordModelProjection(
         model,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedFieldEntries,
         mergedTails,
         TextLocation.UNKNOWN
@@ -133,7 +133,7 @@ public class ReqDeleteRecordModelProjection
     return new ReqDeleteRecordModelProjection(
         n.type(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         normalizedFieldEntries,
         n.polymorphicTails(),
         TextLocation.UNKNOWN

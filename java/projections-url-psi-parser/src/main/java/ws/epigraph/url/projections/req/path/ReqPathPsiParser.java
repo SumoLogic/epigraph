@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.path.*;
 import ws.epigraph.projections.req.ReqParams;
@@ -121,7 +121,7 @@ public final class ReqPathPsiParser {
       @NotNull OpModelPath<?, ?, ?> op,
       @NotNull DatumTypeApi type,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqPathPsiProcessingContext context)
@@ -138,7 +138,7 @@ public final class ReqPathPsiParser {
             (OpRecordModelPath) op,
             (RecordTypeApi) type,
             params,
-            annotations,
+            directives,
             recordModelProjectionPsi,
             typesResolver,
             context
@@ -154,7 +154,7 @@ public final class ReqPathPsiParser {
             (OpMapModelPath) op,
             (MapTypeApi) type,
             params,
-            annotations,
+            directives,
             mapModelProjectionPsi,
             typesResolver,
             context
@@ -167,7 +167,7 @@ public final class ReqPathPsiParser {
         return parsePrimitiveModelPath(
             (PrimitiveTypeApi) type,
             params,
-            annotations,
+            directives,
             psi
         );
       case ENTITY:
@@ -200,7 +200,7 @@ public final class ReqPathPsiParser {
       @NotNull OpRecordModelPath op,
       @NotNull RecordTypeApi type,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqRecordModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqPathPsiProcessingContext context) throws PsiProcessingException {
@@ -239,7 +239,7 @@ public final class ReqPathPsiParser {
     return new ReqRecordModelPath(
         type,
         params,
-        annotations,
+        directives,
         fieldProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
@@ -278,7 +278,7 @@ public final class ReqPathPsiParser {
       @NotNull OpMapModelPath op,
       @NotNull MapTypeApi type,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqMapModelPath psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqPathPsiProcessingContext context)
@@ -303,7 +303,7 @@ public final class ReqPathPsiParser {
     return new ReqMapModelPath(
         type,
         params,
-        annotations,
+        directives,
         keyProjection,
         valueProjection,
         EpigraphPsiUtil.getLocation(psi)
@@ -319,7 +319,7 @@ public final class ReqPathPsiParser {
 
     final @NotNull ReqParams reqParams =
         parseReqParams(mapPathPsi.getReqParamList(), op.params(), resolver, mapPathPsi, context);
-    final @NotNull Annotations annotations = parseAnnotations(mapPathPsi.getReqAnnotationList(), context);
+    final @NotNull Directives directives = parseAnnotations(mapPathPsi.getReqAnnotationList(), context);
 
     final @Nullable Datum keyValue =
         getDatum(mapPathPsi.getDatum(), keyType, resolver, "Error processing map key: ", context);
@@ -330,7 +330,7 @@ public final class ReqPathPsiParser {
     return new ReqPathKeyProjection(
         keyValue,
         reqParams,
-        annotations,
+        directives,
         EpigraphPsiUtil.getLocation(mapPathPsi)
     );
   }
@@ -338,13 +338,13 @@ public final class ReqPathPsiParser {
   public static @NotNull ReqPrimitiveModelPath parsePrimitiveModelPath(
       @NotNull PrimitiveTypeApi type,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull PsiElement locationPsi) {
 
     return new ReqPrimitiveModelPath(
         type,
         params,
-        annotations,
+        directives,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

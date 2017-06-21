@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -60,8 +60,9 @@ public class OpOutputRecordModelProjection
       @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
       @Nullable List<OpOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
+
     super(model, params, annotations, metaProjection, tails, location);
-    this.fieldProjections = fieldProjections;
+    this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
@@ -82,7 +83,7 @@ public class OpOutputRecordModelProjection
       final @NotNull RecordTypeApi model,
       final @NotNull List<OpOutputRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputRecordModelProjection> mergedTails) {
 
@@ -139,7 +140,9 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpOutputRecordModelProjection value) {
+  public void resolve(
+      final @Nullable ProjectionReferenceName name,
+      final @NotNull OpOutputRecordModelProjection value) {
     super.resolve(name, value);
     this.fieldProjections = value.fieldProjections();
   }

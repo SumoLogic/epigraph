@@ -200,11 +200,12 @@ supplementsDecl ::= 'supplements' qnTypeRef (',' qnTypeRef)* {pin=1}
 
 // TODO Fix: entityTagRef doesn't resolve
 retroDecl ::= 'retro' entityTagRef
-annotation ::= qid '=' dataValue {
-  name="custom annotation"
-  implements="com.intellij.psi.PsiNamedElement"
-  methods = [getName setName getNameIdentifier]
-  pin = 2
+
+annotation ::= '@' qnTypeRef datum? {
+  name="annotation"
+//  implements="com.intellij.psi.PsiNamedElement"
+//  methods = [getName setName getNameIdentifier]
+  pin = 1
 }
 
 metaDecl ::= 'meta' qnTypeRef { pin=1 } // we don't allow anonList or anonMap as meta
@@ -339,7 +340,7 @@ private defRecover ::= ! ('import' | 'namespace' | 'abstract' | 'record' | ',' |
                            'transformer' |
                            'outputProjection' | 'inputProjection' | 'deleteProjection' )
 
-private partRecover ::= ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
+private partRecover ::= ! ('}' | '@' | qid ':' | 'abstract' | 'override' | ',' )
 //private partRecover ::= ! ('}' | qid | 'abstract' | 'override' | ',' )
 
 // ============= idl language =============
@@ -364,7 +365,7 @@ transformerBodyPart ::= transformerInputProjection | transformerOutputProjection
 transformerInputProjection ::= 'inputProjection' opInputFieldProjection {pin=1}
 transformerOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
 
-private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=') )
+private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | '@' )
 
 //                                                                                                              resource
 
@@ -401,12 +402,12 @@ operationDef ::= createOperationDef | readOperationDef | updateOperationDef | de
   recoverWhile = resourceDefBodyRecover
 }
 
-private resourceDefBodyRecover ::= ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
+private resourceDefBodyRecover ::= ! ( '}' | ',' | '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
   ( ('inputProjection' | 'outputProjection' | 'deleteProjection') qid ) )
 
 private operationBodyRecover ::= ! ( '}' | ',' |
   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom' )
+  '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
 
 
 createOperationDef ::= 'create' operationName? createOperationBody {pin=1}
@@ -608,7 +609,7 @@ private opInputModelProjectionProperties ::= '{' (opInputModelProperty ','?)* '}
 opInputModelProperty ::= opInputDefaultValue | opParam | annotation | opInputModelMeta {
   recoverWhile = opInputModelPropertyRecover
 }
-private opInputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | (qid '=') | 'meta' )
+private opInputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
 opInputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection

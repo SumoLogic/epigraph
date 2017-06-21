@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
@@ -50,7 +50,7 @@ public abstract class OpModelPath<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
     throw new RuntimeException("path polymorphic tails not supported");

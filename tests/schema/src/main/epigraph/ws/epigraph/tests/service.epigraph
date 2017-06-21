@@ -1,12 +1,13 @@
 namespace ws.epigraph.tests
 
+import epigraph.annotations.Batching
 import ws.epigraph.tests.Person
 import ws.epigraph.tests.PersonId
 import ws.epigraph.tests.PersonRecord
 import ws.epigraph.tests.User
 
 transformer person: Person {
-  batching = true
+  @Batching
   inputProjection :id
   outputProjection :`record`(id, firstName, lastName)
 }

@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -49,11 +49,11 @@ public class ReqUpdateListModelProjection
       @NotNull ListTypeApi model,
       boolean replace,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull ReqUpdateVarProjection itemsProjection,
       @Nullable List<ReqUpdateListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, replace, params, annotations, tails, location);
+    super(model, replace, params, directives, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -74,7 +74,7 @@ public class ReqUpdateListModelProjection
       final boolean mergedUpdate,
       final @NotNull List<ReqUpdateListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqUpdateModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqUpdateListModelProjection> mergedTails) {
 
@@ -90,7 +90,7 @@ public class ReqUpdateListModelProjection
         model,
         mergedUpdate,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedItemsVarType,
         mergedTails,
         TextLocation.UNKNOWN
@@ -106,7 +106,7 @@ public class ReqUpdateListModelProjection
         n.type(),
         n.replace(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN

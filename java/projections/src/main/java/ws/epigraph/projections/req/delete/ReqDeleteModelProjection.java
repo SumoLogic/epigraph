@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
@@ -39,10 +39,10 @@ public abstract class ReqDeleteModelProjection<
   protected ReqDeleteModelProjection(
       @NotNull M model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location) {
-    super(model, params, null, annotations, tails, location);
+    super(model, params, null, directives, tails, location);
   }
 
   protected ReqDeleteModelProjection(final @NotNull M model, final @NotNull TextLocation location) {

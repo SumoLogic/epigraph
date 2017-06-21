@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;

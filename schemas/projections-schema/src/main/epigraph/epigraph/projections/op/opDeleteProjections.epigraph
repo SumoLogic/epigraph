@@ -1,5 +1,6 @@
 namespace epigraph.projections.op
 
+import epigraph.annotations.Doc
 import epigraph.schema.DatumType
 import epigraph.schema.Field
 import epigraph.schema.ListType
@@ -9,7 +10,7 @@ import epigraph.schema.Tag
 import epigraph.schema.Type
 import epigraph.schema.EnumType
 import epigraph.schema.PrimitiveType
-import epigraph.projections.Annotation
+import epigraph.schema.QualifiedTypeName
 
 // OpOutputProjections with canDelete on vars (we can only delete entities) and no `meta` on models
 
@@ -28,7 +29,7 @@ record OpDeleteTagProjectionEntry {
 abstract record OpDeleteModelProjection {
   model: DatumType
   params: map[String, OpParam]
-  annotations: map[String, Annotation]
+  annotations: map[QualifiedTypeName, Annotation]
 }
 
 record OpDeleteRecordModelProjection extends OpDeleteModelProjection {
@@ -59,9 +60,9 @@ record OpDeleteMapModelProjection extends OpDeleteModelProjection {
 }
 
 record OpDeleteKeyProjection {
-  `required`: Boolean { doc = "if `null` - keys are not accepted" }
+  `required`: Boolean { @Doc "if `null` - keys are not accepted" }
   params: map[String, OpParam]
-  annotations: map[String, Annotation]
+  annotations: map[QualifiedTypeName, Annotation]
 }
 
 record OpDeleteEnumModelProjection extends OpDeleteModelProjection {

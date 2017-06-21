@@ -18,6 +18,7 @@ package ws.epigraph.ideaplugin.schema.formatter;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 

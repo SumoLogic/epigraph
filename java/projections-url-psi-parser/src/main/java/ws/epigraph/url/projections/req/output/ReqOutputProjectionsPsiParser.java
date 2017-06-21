@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
@@ -306,7 +306,7 @@ public final class ReqOutputProjectionsPsiParser {
                   false,
                   opModelProjection,
                   ReqParams.EMPTY,
-                  Annotations.EMPTY,
+                  Directives.EMPTY,
                   locationPsi,
                   context
               ),
@@ -694,7 +694,7 @@ public final class ReqOutputProjectionsPsiParser {
         metaOp,
         modelMetaPsi.getPlus() != null,
         ReqParams.EMPTY,
-        Annotations.EMPTY,
+        Directives.EMPTY,
         null,
         modelMetaPsi.getReqOutputComaModelProjection(),
         addTypeNamespace(metaOp.type(), resolver),
@@ -752,7 +752,7 @@ public final class ReqOutputProjectionsPsiParser {
                     required,
                     opOutputTagProjection.projection(),
                     ReqParams.EMPTY,
-                    Annotations.EMPTY,
+                    Directives.EMPTY,
                     locationPsi,
                     context
                 ),
@@ -800,7 +800,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -811,7 +811,7 @@ public final class ReqOutputProjectionsPsiParser {
         op,
         required,
         params,
-        annotations,
+        directives,
         metaProjection,
         psi,
         typesResolver,
@@ -826,7 +826,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -849,7 +849,7 @@ public final class ReqOutputProjectionsPsiParser {
               (OpOutputRecordModelProjection) op,
               required,
               params,
-              annotations,
+              directives,
               metaProjection,
               parseModelTails(
                   ReqOutputRecordModelProjection.class,
@@ -877,7 +877,7 @@ public final class ReqOutputProjectionsPsiParser {
               (OpOutputMapModelProjection) op,
               required,
               params,
-              annotations,
+              directives,
               metaProjection,
               parseModelTails(
                   ReqOutputMapModelProjection.class,
@@ -902,7 +902,7 @@ public final class ReqOutputProjectionsPsiParser {
                 op,
                 required,
                 params,
-                annotations,
+                directives,
                 metaProjection,
                 psi,
                 subResolver,
@@ -938,7 +938,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -959,14 +959,14 @@ public final class ReqOutputProjectionsPsiParser {
 
         if (recordModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);
-          return (MP) createDefaultModelProjection(model, required, opRecord, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, required, opRecord, params, directives, psi, context);
         }
 
         return (MP) parseComaRecordModelProjection(
             opRecord,
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             parseModelTails(
                 ReqOutputRecordModelProjection.class,
@@ -989,14 +989,14 @@ public final class ReqOutputProjectionsPsiParser {
 
         if (mapModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.MAP, context);
-          return (MP) createDefaultModelProjection(model, required, opMap, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, required, opMap, params, directives, psi, context);
         }
 
         return (MP) parseComaMapModelProjection(
             opMap,
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             parseModelTails(
                 ReqOutputMapModelProjection.class,
@@ -1020,14 +1020,14 @@ public final class ReqOutputProjectionsPsiParser {
 
         if (listModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.LIST, context);
-          return (MP) createDefaultModelProjection(model, required, opList, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, required, opList, params, directives, psi, context);
         }
 
         return (MP) parseListModelProjection(
             opList,
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             parseModelTails(
                 ReqOutputListModelProjection.class,
@@ -1050,7 +1050,7 @@ public final class ReqOutputProjectionsPsiParser {
             (PrimitiveTypeApi) model,
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             parseModelTails(
                 ReqOutputPrimitiveModelProjection.class,
@@ -1198,7 +1198,7 @@ public final class ReqOutputProjectionsPsiParser {
       boolean required,
       @NotNull OpOutputModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull PsiElement locationPsi,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
@@ -1252,7 +1252,7 @@ public final class ReqOutputProjectionsPsiParser {
             (RecordTypeApi) type,
             required,
             params,
-            annotations,
+            directives,
             null,
             fields,
             null,
@@ -1281,7 +1281,7 @@ public final class ReqOutputProjectionsPsiParser {
             mapType,
             required,
             params,
-            annotations,
+            directives,
             null,
             null,
             false,
@@ -1305,7 +1305,7 @@ public final class ReqOutputProjectionsPsiParser {
             listType,
             required,
             params,
-            annotations,
+            directives,
             null,
             itemVarProjection,
             null,
@@ -1325,7 +1325,7 @@ public final class ReqOutputProjectionsPsiParser {
             (PrimitiveTypeApi) type,
             required,
             params,
-            annotations,
+            directives,
             null,
             null,
             location
@@ -1339,7 +1339,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
@@ -1442,7 +1442,7 @@ public final class ReqOutputProjectionsPsiParser {
             op.type(),
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             fieldProjections,
             tails,
@@ -1501,7 +1501,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
@@ -1605,7 +1605,7 @@ public final class ReqOutputProjectionsPsiParser {
         op.type(),
         required,
         params,
-        annotations,
+        directives,
         metaProjection,
         fieldProjections,
         tails,
@@ -1617,7 +1617,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
@@ -1662,7 +1662,7 @@ public final class ReqOutputProjectionsPsiParser {
             op.type(),
             required,
             params,
-            annotations,
+            directives,
             metaProjection,
             Collections.singletonList(keyProjection),
             true,
@@ -1677,7 +1677,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull UrlReqOutputComaMapModelProjection psi,
@@ -1761,7 +1761,7 @@ public final class ReqOutputProjectionsPsiParser {
         op.type(),
         required,
         params,
-        annotations,
+        directives,
         metaProjection,
         keyProjections,
         psi.getPlus() != null,
@@ -1775,7 +1775,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputListModelProjection op,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputListModelProjection> tails,
       @NotNull UrlReqOutputComaListModelProjection psi,
@@ -1802,7 +1802,7 @@ public final class ReqOutputProjectionsPsiParser {
         op.type(),
         required,
         params,
-        annotations,
+        directives,
         metaProjection,
         itemsProjection,
         tails,
@@ -1814,7 +1814,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull PrimitiveTypeApi type,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputPrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
@@ -1823,7 +1823,7 @@ public final class ReqOutputProjectionsPsiParser {
         type,
         required,
         params,
-        annotations,
+        directives,
         metaProjection,
         tails,
         EpigraphPsiUtil.getLocation(locationPsi)

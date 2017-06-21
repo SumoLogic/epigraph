@@ -29,8 +29,8 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directive;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
@@ -150,8 +150,8 @@ public final class UrlProjectionsPsiParserUtil {
     return tagName == null ? null : tagName.getQid().getCanonicalName();
   }
 
-  public static @Nullable Map<String, Annotation> parseAnnotation(
-      @Nullable Map<String, Annotation> annotationsMap,
+  public static @Nullable Map<String, Directive> parseAnnotation(
+      @Nullable Map<String, Directive> annotationsMap,
       @Nullable UrlAnnotation annotationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -163,7 +163,7 @@ public final class UrlProjectionsPsiParserUtil {
         @NotNull GDataValue annotationValue = UrlGDataPsiParser.parseValue(annotationValuePsi, context);
         annotationsMap.put(
             annotationName,
-            new Annotation(
+            new Directive(
                 annotationName,
                 annotationValue,
                 EpigraphPsiUtil.getLocation(annotationPsi)
@@ -277,10 +277,10 @@ public final class UrlProjectionsPsiParserUtil {
     return requestParams;
   }
 
-  public static @NotNull Annotations parseAnnotations(
+  public static @NotNull Directives parseAnnotations(
       @NotNull List<UrlReqAnnotation> annotationsPsi,
       @NotNull PsiProcessingContext context) {
-    Map<String, Annotation> paramMap = null;
+    Map<String, Directive> paramMap = null;
 
     for (UrlReqAnnotation annotation : annotationsPsi) {
       try {
@@ -290,7 +290,7 @@ public final class UrlProjectionsPsiParserUtil {
       }
     }
 
-    return Annotations.fromMap(paramMap);
+    return Directives.fromMap(paramMap);
   }
 
   public static @NotNull ReqParams parseReqParams(

@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.annotations.Annotation;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
@@ -304,11 +304,13 @@ public final class OpDeleteProjectionsPsiParser {
 
   private static @NotNull Annotations parseModelAnnotations(
       @NotNull Collection<SchemaOpDeleteModelProperty> modelProperties,
-      @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpDeletePsiProcessingContext context,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     return parseAnnotations(
         modelProperties.stream().map(SchemaOpDeleteModelProperty::getAnnotation),
-        context
+        context,
+        resolver
     );
   }
 
@@ -528,7 +530,7 @@ public final class OpDeleteProjectionsPsiParser {
     final Collection<SchemaOpDeleteModelProperty> modelProperties = psi.getOpDeleteModelPropertyList();
 
     final OpParams params = parseModelParams(modelProperties, typesResolver, context);
-    final Annotations annotations = parseModelAnnotations(modelProperties, context);
+    final Annotations annotations = parseModelAnnotations(modelProperties, context, typesResolver);
 
     switch (type.kind()) {
       case RECORD:
@@ -949,7 +951,7 @@ public final class OpDeleteProjectionsPsiParser {
       presence = OpKeyPresence.OPTIONAL;
 
     List<OpParam> params = null;
-    @Nullable Map<String, Annotation> annotationsMap = null;
+    @Nullable Map<DatumTypeApi, Annotation> annotationsMap = null;
 
     for (SchemaOpDeleteKeyProjectionPart keyPart : keyProjectionPsi.getOpDeleteKeyProjectionPartList()) {
       @Nullable SchemaOpParam paramPsi = keyPart.getOpParam();
@@ -958,7 +960,7 @@ public final class OpDeleteProjectionsPsiParser {
         params.add(parseParameter(paramPsi, resolver, context.inputPsiProcessingContext()));
       }
 
-      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context);
+      annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context, resolver);
     }
 
     OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(

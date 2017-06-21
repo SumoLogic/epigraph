@@ -26,7 +26,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 public class SchemaVisitor extends PsiElementVisitor {
 
   public void visitAnnotation(@NotNull SchemaAnnotation o) {
-    visitPsiNamedElement(o);
+    visitPsiElement(o);
   }
 
   public void visitAnonList(@NotNull SchemaAnonList o) {
@@ -761,10 +761,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
-    visitElement(o);
-  }
-
-  public void visitPsiNamedElement(@NotNull PsiNamedElement o) {
     visitElement(o);
   }
 

@@ -50,6 +50,9 @@ public abstract class StringType extends PrimitiveType<String> {
   }
 
   @Override
+  public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.STRING; }
+
+  @Override
   public abstract @NotNull StringDatum.Builder createBuilder(@NotNull String val);
 
 

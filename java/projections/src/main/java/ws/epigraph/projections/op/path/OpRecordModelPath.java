@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.op.OpParams;
@@ -44,7 +44,7 @@ public class OpRecordModelPath
     > {
 
   private final @NotNull Map<String, OpFieldPathEntry> fieldProjections;
-  private @Nullable OpFieldPathEntry fieldPathEntry;
+  private final @Nullable OpFieldPathEntry fieldPathEntry;
 
   public OpRecordModelPath(
       @NotNull RecordTypeApi model,

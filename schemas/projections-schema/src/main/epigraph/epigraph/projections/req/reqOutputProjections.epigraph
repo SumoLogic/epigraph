@@ -18,7 +18,6 @@ namespace epigraph.projections.req
 // /folders/123/items(id, name, ...)
 // /folders/123/items::record(id, name, ...)
 
-import epigraph.projections.Annotation
 import epigraph.schema.DatumType
 import epigraph.schema.EnumType
 import epigraph.schema.Field
@@ -29,6 +28,7 @@ import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
 import epigraph.data.Datum
+import epigraph.annotations.Doc
 
 // req projections also have a notion of path = number of steps without branching, e.g.
 // /foo/bar(baz1, baz2) vs /foo(bar(baz1, baz2), qux)   or
@@ -50,7 +50,7 @@ abstract record ReqOutputModelProjection {
   model: DatumType
   `required`: Boolean
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
   `meta`: ReqOutputModelProjection
 }
 
@@ -78,7 +78,7 @@ record ReqOutputListModelProjection extends ReqOutputModelProjection {
 record ReqOutputMapModelProjection extends ReqOutputModelProjection {
   override model: MapType
   keysRequired: Boolean // one for all keys
-  keysProjection: ReqOutputKeysProjection { doc = "if `null` - all keys" }
+  keysProjection: ReqOutputKeysProjection { @Doc "if `null` - all keys" }
   varProjection: ReqOutputVarProjection
 }
 
@@ -87,9 +87,9 @@ record ReqOutputKeysProjection {
 }
 
 record ReqOutputKeyProjection {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  value: Datum { @Doc "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
 }
 
 record ReqOutputEnumModelProjection extends ReqOutputModelProjection {

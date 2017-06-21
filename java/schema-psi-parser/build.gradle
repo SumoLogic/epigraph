@@ -19,7 +19,6 @@ apply plugin: 'java'
 dependencies {
   // update compiler/build.gradle if adding dependencies here
   compile project(':epigraph-java-core')
-  compile project(':epigraph-java-gdata')
   compile project(':epigraph-java-lang-common')
   compile project(':epigraph-java-projections')
   compile project(':epigraph-java-projections-schema-psi-parser')

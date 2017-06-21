@@ -20,25 +20,16 @@ package ws.epigraph.schema.parser.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 
-public interface SchemaAnnotation extends PsiNamedElement {
-
-  @Nullable
-  SchemaDataValue getDataValue();
-
-  @NotNull
-  SchemaQid getQid();
-
-  @NotNull
-  PsiElement getEq();
+public interface SchemaAnnotation extends PsiElement {
 
   @Nullable
-  String getName();
+  SchemaDatum getDatum();
 
-  PsiElement setName(String name);
+  @Nullable
+  SchemaQnTypeRef getQnTypeRef();
 
   @NotNull
-  PsiElement getNameIdentifier();
+  PsiElement getAt();
 
 }

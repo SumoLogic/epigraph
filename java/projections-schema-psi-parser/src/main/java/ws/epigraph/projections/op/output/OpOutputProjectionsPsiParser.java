@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
@@ -274,11 +274,13 @@ public final class OpOutputProjectionsPsiParser {
 
   private static @NotNull Annotations parseModelAnnotations(
       @NotNull List<SchemaOpOutputModelProperty> modelProperties,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpOutputPsiProcessingContext context,
+      @NotNull TypesResolver resolver) throws PsiProcessingException {
 
     return parseAnnotations(
         modelProperties.stream().map(SchemaOpOutputModelProperty::getAnnotation),
-        context
+        context,
+        resolver
     );
   }
 
@@ -542,7 +544,7 @@ public final class OpOutputProjectionsPsiParser {
     final List<SchemaOpOutputModelProperty> modelProperties = psi.getOpOutputModelPropertyList();
 
     final OpParams params = parseModelParams(modelProperties, typesResolver, context);
-    final Annotations annotations = parseModelAnnotations(modelProperties, context);
+    final Annotations annotations = parseModelAnnotations(modelProperties, context, typesResolver);
     final OpOutputModelProjection<?, ?, ?> metaProjection =
         parseModelMetaProjection(type, modelProperties, typesResolver, context);
 
@@ -1004,7 +1006,7 @@ public final class OpOutputProjectionsPsiParser {
             context.inputPsiProcessingContext()
         );
     final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), context);
+        parseAnnotations(keyPartsPsi.stream().map(SchemaOpOutputKeyProjectionPart::getAnnotation), context, resolver);
 
     OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
         keyType,

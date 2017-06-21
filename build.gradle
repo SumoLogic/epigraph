@@ -88,7 +88,6 @@ task publishGradlePlugins(dependsOn: [
     ':epigraph-java-core:publishToMavenLocal',
     ':epigraph-java-codegen:publishToMavenLocal',
     ':epigraph-java-data-processing:publishToMavenLocal',
-    ':epigraph-java-gdata:publishToMavenLocal',
     ':epigraph-java-gradle-plugin:publishToMavenLocal',
     ':epigraph-java-lang-common:publishToMavenLocal',
     ':epigraph-java-projections:publishToMavenLocal',

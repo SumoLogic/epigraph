@@ -43,11 +43,6 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-gdata</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-gdata-schema-psi-parser</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

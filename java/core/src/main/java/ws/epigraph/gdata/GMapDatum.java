@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,46 +28,41 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GData extends GDataValue {
-  private final @Nullable TypeRef typeRef;
-  private final @NotNull LinkedHashMap<String, GDatum> tags;
+public class GMapDatum extends GDatum {
+  private final @NotNull LinkedHashMap<GDatum, GDataValue> entries;
 
-  public GData(
-      @Nullable TypeRef typeRef,
-      @NotNull LinkedHashMap<String, GDatum> tags,
-      @NotNull TextLocation location) {
+  public GMapDatum(@Nullable TypeRef typeRef,
+                   @NotNull LinkedHashMap<GDatum, GDataValue> entries,
+                   @NotNull TextLocation location) {
 
-    super(location);
-    this.typeRef = typeRef;
-    this.tags = tags;
+    super(typeRef, location);
+    this.entries = entries;
   }
 
-  public @Nullable TypeRef typeRef() { return typeRef; }
-
-  public @NotNull LinkedHashMap<String, GDatum> tags() { return tags; }
+  public @NotNull LinkedHashMap<GDatum, GDataValue> entries() { return entries; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GData gData = (GData) o;
-    return Objects.equals(typeRef, gData.typeRef) &&
-           Objects.equals(tags, gData.tags);
+    if (!super.equals(o)) return false;
+    GMapDatum gMapDatum = (GMapDatum) o;
+    return Objects.equals(entries, gMapDatum.entries);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(typeRef, tags); }
+  public int hashCode() { return Objects.hash(super.hashCode(), entries); }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     if (typeRef() != null) sb.append(typeRef());
-    sb.append('<');
-    sb.append(tags.entrySet()
-        .stream()
-        .map(e -> e.getKey() + ": " + e.getValue())
-        .collect(Collectors.joining(", ")));
-    sb.append('>');
+    sb.append('(');
+    sb.append(entries.entrySet()
+                     .stream()
+                     .map(e -> e.getKey() + ": " + e.getValue())
+                     .collect(Collectors.joining(", ")));
+    sb.append(')');
     return sb.toString();
   }
 }

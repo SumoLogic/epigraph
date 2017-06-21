@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpParams;
@@ -74,7 +74,7 @@ public class OpOutputListModelProjection
       final @NotNull ListTypeApi model,
       final @NotNull List<OpOutputListModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputListModelProjection> mergedTails) {
 

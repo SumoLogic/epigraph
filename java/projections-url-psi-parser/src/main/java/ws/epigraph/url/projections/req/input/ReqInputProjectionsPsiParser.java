@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.input.*;
@@ -411,7 +411,7 @@ public final class ReqInputProjectionsPsiParser {
   public static @NotNull ReqInputModelProjection<?, ?, ?> parseModelProjection(
       @NotNull OpInputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqInputModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqInputPsiProcessingContext context) throws PsiProcessingException {
@@ -420,7 +420,7 @@ public final class ReqInputProjectionsPsiParser {
         ReqInputModelProjection.class,
         op,
         params,
-        annotations,
+        directives,
         psi,
         resolver,
         context
@@ -434,7 +434,7 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull Class<MP> modelClass,
       @NotNull OpInputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqInputModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqInputPsiProcessingContext context) throws PsiProcessingException {
@@ -456,13 +456,13 @@ public final class ReqInputProjectionsPsiParser {
           if (op.required())
             context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.RECORD, context);
-          return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opRecord, params, directives, psi, context);
         }
 
         return (MP) parseRecordModelProjection(
             opRecord,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqInputRecordModelProjection.class,
                 op,
@@ -486,13 +486,13 @@ public final class ReqInputProjectionsPsiParser {
           if (op.required())
             context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.MAP, context);
-          return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opMap, params, directives, psi, context);
         }
 
         return (MP) parseMapModelProjection(
             opMap,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqInputMapModelProjection.class,
                 op,
@@ -517,13 +517,13 @@ public final class ReqInputProjectionsPsiParser {
           if (op.required())
             context.addError(String.format("'%s' projection is required", model.name()), psi);
           checkModelPsi(psi, TypeKind.LIST, context);
-          return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opList, params, directives, psi, context);
         }
 
         return (MP) parseListModelProjection(
             opList,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqInputListModelProjection.class,
                 op,
@@ -545,7 +545,7 @@ public final class ReqInputProjectionsPsiParser {
         return (MP) parsePrimitiveModelProjection(
             (OpInputPrimitiveModelProjection) op,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqInputPrimitiveModelProjection.class,
                 op,
@@ -674,7 +674,7 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull DatumTypeApi type,
       @NotNull OpInputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull PsiElement locationPsi,
       @NotNull ReqInputPsiProcessingContext context) throws PsiProcessingException {
 
@@ -692,7 +692,7 @@ public final class ReqInputProjectionsPsiParser {
         return new ReqInputRecordModelProjection(
             (RecordTypeApi) type,
             params,
-            annotations,
+            directives,
             fields,
             null,
             location
@@ -718,7 +718,7 @@ public final class ReqInputProjectionsPsiParser {
         return new ReqInputMapModelProjection(
             mapType,
             params,
-            annotations,
+            directives,
             Collections.emptyList(),
             valueVarProjection,
             null,
@@ -738,7 +738,7 @@ public final class ReqInputProjectionsPsiParser {
         return new ReqInputListModelProjection(
             listType,
             params,
-            annotations,
+            directives,
             itemVarProjection,
             null,
             location
@@ -756,7 +756,7 @@ public final class ReqInputProjectionsPsiParser {
         return new ReqInputPrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,
-            annotations,
+            directives,
             null,
             location
         );
@@ -810,7 +810,7 @@ public final class ReqInputProjectionsPsiParser {
                     tag.type(),
                     opInputTagProjection.projection(),
                     ReqParams.EMPTY,
-                    Annotations.EMPTY,
+                    Directives.EMPTY,
                     locationPsi,
                     context
                 ),
@@ -839,7 +839,7 @@ public final class ReqInputProjectionsPsiParser {
   public static @NotNull ReqInputRecordModelProjection parseRecordModelProjection(
       @NotNull OpInputRecordModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqInputRecordModelProjection> tails,
       @NotNull UrlReqInputRecordModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -899,7 +899,7 @@ public final class ReqInputProjectionsPsiParser {
     return new ReqInputRecordModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         fieldProjections,
         tails,
         EpigraphPsiUtil.getLocation(psi)
@@ -940,7 +940,7 @@ public final class ReqInputProjectionsPsiParser {
   public static @NotNull ReqInputMapModelProjection parseMapModelProjection(
       @NotNull OpInputMapModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqInputMapModelProjection> tails,
       @NotNull UrlReqInputMapModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -1019,7 +1019,7 @@ public final class ReqInputProjectionsPsiParser {
     return new ReqInputMapModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         keyProjections,
         elementsVarProjection,
         tails,
@@ -1030,7 +1030,7 @@ public final class ReqInputProjectionsPsiParser {
   public static @NotNull ReqInputListModelProjection parseListModelProjection(
       @NotNull OpInputListModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqInputListModelProjection> tails,
       @NotNull UrlReqInputListModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -1055,7 +1055,7 @@ public final class ReqInputProjectionsPsiParser {
     return new ReqInputListModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         elementsVarProjection,
         tails,
         EpigraphPsiUtil.getLocation(psi)
@@ -1065,14 +1065,14 @@ public final class ReqInputProjectionsPsiParser {
   public static @NotNull ReqInputPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull OpInputPrimitiveModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqInputPrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new ReqInputPrimitiveModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );

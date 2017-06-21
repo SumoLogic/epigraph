@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
@@ -44,11 +44,11 @@ public abstract class ReqOutputModelProjection<
       @NotNull M model,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable MP metaProjection,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location) {
-    super(model, params, metaProjection, annotations, tails, location);
+    super(model, params, metaProjection, directives, tails, location);
     this.required = required;
   }
 
@@ -85,7 +85,7 @@ public abstract class ReqOutputModelProjection<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
@@ -94,7 +94,7 @@ public abstract class ReqOutputModelProjection<
         modelProjections.stream().anyMatch(ReqOutputModelProjection::required),
         modelProjections,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedTails
     );
@@ -105,7 +105,7 @@ public abstract class ReqOutputModelProjection<
       boolean mergedRequired,
       @NotNull List<SMP> modelProjections,
       @NotNull ReqParams mergedParams,
-      @NotNull Annotations mergedAnnotations,
+      @NotNull Directives mergedDirectives,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails);
 

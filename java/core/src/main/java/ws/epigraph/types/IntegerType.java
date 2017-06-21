@@ -50,6 +50,9 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
   }
 
   @Override
+  public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.INTEGER; }
+
+  @Override
   public abstract @NotNull IntegerDatum.Builder createBuilder(@NotNull Integer val);
 
 

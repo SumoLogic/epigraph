@@ -59,7 +59,7 @@ public class OpOutputProjectionsTest {
         "  id,",
         "  `record` (",
         "    id {",
-        "      ; +param1 : epigraph.String { doc = \"some doc\", default : \"hello world\" },",
+        "      ; +param1 : epigraph.String { @epigraph.annotations.Doc \"some doc\", default : \"hello world\" },",
         "    },",
         "    bestFriend :`record` (",
         "      id,",
@@ -85,7 +85,7 @@ public class OpOutputProjectionsTest {
         ":(",
         "  id,",
         "  `record` (",
-        "    id { ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
+        "    id { ;+param1: epigraph.String { @epigraph.annotations.Doc \"some doc\", default: \"hello world\" } },",
         "    bestFriend :`record` ( id, bestFriend :id ),",
         "    friends *( :id )",
         "  ) ~ws.epigraph.tests.UserRecord ( profile )",
@@ -110,7 +110,7 @@ public class OpOutputProjectionsTest {
             "  `record` (",
             "    worstEnemy ( id ),",
             "    profile,",
-            "    id { ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
+            "    id { ;+param1: epigraph.String { @epigraph.annotations.Doc \"some doc\", default: \"hello world\" } },",
             "    bestFriend :`record` ( id, bestFriend :id ),",
             "    friends *( :id )",
             "  ),",
@@ -136,7 +136,7 @@ public class OpOutputProjectionsTest {
         lines(
             ":id {",
             "  ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
-            "    { deprecated = true default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
+            "    { @epigraph.annotations.Deprecated, default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
             "}"
         )
     );
@@ -475,7 +475,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { deprecated = true }");
+    testParsingVarProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
@@ -490,7 +490,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` { deprecated = true } ( id ) )");
+    testParsingVarProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
   }
 
   @Test
@@ -511,7 +511,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseMap() throws PsiProcessingException {
     testParsingVarProjection(
-        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]( :id ) )");
+        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, @epigraph.annotations.Doc \"no keys\" ]( :id ) )");
   }
 
   @Test
@@ -519,7 +519,8 @@ public class OpOutputProjectionsTest {
     testParsingVarProjection(
         lines(
             ":`record` (",
-            "  personRecToPersonRec [ ;param: epigraph.String, doc = \"bla\", projection ( firstName, lastName ) ]( ( firstName ) )",
+            "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection ( firstName, lastName ) ](",
+            "    ( firstName ) )",
             ")"
         )
     );
@@ -561,9 +562,9 @@ public class OpOutputProjectionsTest {
 
     // annotations merging
     testTailsNormalization(
-        ":`record`(id,firstName{doc=\"doc1\"})~~ws.epigraph.tests.User :`record`(firstName{doc=\"doc2\"})",
+        ":`record`(id,firstName{@epigraph.annotations.Doc \"doc1\"})~~ws.epigraph.tests.User :`record`(firstName{@epigraph.annotations.Doc \"doc2\"})",
         User.type,
-        ":`record` ( firstName { doc = \"doc2\" }, id )"
+        ":`record` ( firstName { @epigraph.annotations.Doc \"doc2\" }, id )"
     );
 
     testTailsNormalization(
@@ -823,7 +824,9 @@ public class OpOutputProjectionsTest {
           PersonMap.type,
           PaginationInfo.type,
           epigraph.String.type,
-          epigraph.Integer.type
+          epigraph.Integer.type,
+          epigraph.annotations.Deprecated.type,
+          epigraph.annotations.Doc.type
       );
     }
 

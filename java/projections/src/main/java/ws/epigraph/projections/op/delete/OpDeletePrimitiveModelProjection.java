@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -51,7 +51,7 @@ public class OpDeletePrimitiveModelProjection
       final @NotNull PrimitiveTypeApi model,
       final @NotNull List<OpDeletePrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpDeletePrimitiveModelProjection> mergedTails) {
 

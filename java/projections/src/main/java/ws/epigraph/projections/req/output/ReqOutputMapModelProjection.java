@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqKeyProjection;
@@ -27,6 +27,7 @@ import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -52,15 +53,16 @@ public class ReqOutputMapModelProjection
       @NotNull MapTypeApi model,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputKeyProjection> keys,
       boolean keysRequired,
       @NotNull ReqOutputVarProjection valuesProjection,
       @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, tails, location);
-    this.keys = keys;
+
+    super(model, required, params, directives, metaProjection, tails, location);
+    this.keys = keys == null ? null : Collections.unmodifiableList(keys);
     this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;
   }
@@ -91,7 +93,7 @@ public class ReqOutputMapModelProjection
       final boolean mergedRequired,
       final @NotNull List<ReqOutputMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqOutputMapModelProjection> mergedTails) {
 
@@ -121,7 +123,7 @@ public class ReqOutputMapModelProjection
         model,
         mergedRequired,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedKeys,
         modelProjections.stream().anyMatch(ReqOutputMapModelProjection::keysRequired),
@@ -141,7 +143,7 @@ public class ReqOutputMapModelProjection
         n.type(),
         n.required(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.metaProjection(),
         n.keys(),
         n.keysRequired(),

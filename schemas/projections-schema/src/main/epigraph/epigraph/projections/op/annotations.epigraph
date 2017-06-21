@@ -1,0 +1,10 @@
+namespace epigraph.projections.op
+
+import epigraph.data.Datum
+import epigraph.schema.DatumType
+import epigraph.schema.Documented
+
+record Annotation extends Documented {
+  type: DatumType
+  value: Datum
+}

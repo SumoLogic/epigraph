@@ -16,7 +16,6 @@
 
 package ws.epigraph.projections.gen;
 
-import ws.epigraph.projections.Annotations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.DatumTypeApi;
@@ -86,6 +85,4 @@ public interface GenModelProjection<
 //    toMerge.add(other);
 //    return merge(type(), toMerge, );
 //  }
-
-  @NotNull Annotations annotations();
 }

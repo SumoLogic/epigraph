@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,25 +26,36 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class GDatum extends GDataValue {
-  private final @Nullable TypeRef typeRef;
+public class GPrimitiveDatum extends GDatum {
+  private final @NotNull Object value;
 
-  protected GDatum(@Nullable TypeRef typeRef, @NotNull TextLocation location) {
-    super(location);
-    this.typeRef = typeRef;
+  public GPrimitiveDatum(@Nullable TypeRef typeRef, @NotNull Object value, @NotNull TextLocation location) {
+    super(typeRef, location);
+    this.value = value;
   }
 
-  public @Nullable TypeRef typeRef() { return typeRef; }
+  public @NotNull Object value() { return value; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    GDatum that = (GDatum) o;
-    return Objects.equals(typeRef, that.typeRef);
+    if (!super.equals(o)) return false;
+    GPrimitiveDatum that = (GPrimitiveDatum) o;
+    return Objects.equals(value, that.value);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(typeRef); }
-}
+  public int hashCode() { return Objects.hash(super.hashCode(), value); }
 
+  @Override
+  public String toString() {
+    String valueString;
+
+    if (value instanceof String) valueString = "\"" + value + '"';
+    else valueString = value.toString();
+
+    if (typeRef() == null) return valueString;
+    else return typeRef() + "@" + valueString;
+  }
+}

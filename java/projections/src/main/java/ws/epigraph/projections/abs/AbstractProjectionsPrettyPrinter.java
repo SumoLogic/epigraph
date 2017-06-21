@@ -20,8 +20,6 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.TypeKind;
@@ -293,28 +291,28 @@ public abstract class AbstractProjectionsPrettyPrinter<
     return "";
   }
 
-  public void printAnnotations(@NotNull Annotations cp) throws E {
-    printAnnotations(cp, false, true);
-  }
-
-  public boolean printAnnotations(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
-    for (Map.Entry<String, Annotation> entry : cp.asMap().entrySet()) {
-      if (first) {
-        first = false;
-      } else {
-        if (needCommas) l.print(",");
-        brk();
-      }
-      l.beginCInd(0);
-      l.print(entry.getKey());
-      brk().print("=");
-      brk();
-      gdataPrettyPrinter.print(entry.getValue().value());
-      l.end();
-    }
-
-    return first;
-  }
+//  public void printDirectives(@NotNull Directives cp) throws E {
+//    printDirectives(cp, false, true);
+//  }
+//
+//  public boolean printDirectives(@NotNull Directives cp, boolean needCommas, boolean first) throws E {
+//    for (Map.Entry<String, Directive> entry : cp.asMap().entrySet()) {
+//      if (first) {
+//        first = false;
+//      } else {
+//        if (needCommas) l.print(",");
+//        brk();
+//      }
+//      l.beginCInd(0);
+//      l.print(entry.getKey());
+//      brk().print("=");
+//      brk();
+//      gdataPrettyPrinter.print(entry.getValue().value());
+//      l.end();
+//    }
+//
+//    return first;
+//  }
 
   protected boolean isPrintoutEmpty(@NotNull VP vp) {
 
@@ -325,9 +323,9 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
     for (TP tagProjection : vp.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();
+      if (!isPrintoutEmpty(modelProjection)) return false;
       if (!modelParamsEmpty(modelProjection)) return false;
       if (!isPrintoutNoParamsEmpty(modelProjection)) return false;
-      if (!modelProjection.annotations().isEmpty()) return false;
     }
 
     return true;
@@ -352,12 +350,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  public boolean modelParamsEmpty(@NotNull MP mp) {
-    GenModelProjection<?, ?, ?, ?> metaProjection = mp.metaProjection();
-    Annotations annotations = mp.annotations();
-
-    return metaProjection == null && annotations.isEmpty();
-  }
+  public boolean modelParamsEmpty(@NotNull MP mp) { return mp.metaProjection() == null ; }
 
   protected int decSteps(int pathSteps) {
     return pathSteps == 0 ? 0 : pathSteps - 1;

@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.gen.GenModelProjection;
@@ -215,7 +215,8 @@ public final class ResourcesSchemaPsiParser {
             .stream()
             .map(SchemaTransformerBodyPart::getAnnotation)
             .filter(Objects::nonNull),
-        context
+        context,
+        resolver
     );
 
     OpInputVarProjection inputProjection = null;

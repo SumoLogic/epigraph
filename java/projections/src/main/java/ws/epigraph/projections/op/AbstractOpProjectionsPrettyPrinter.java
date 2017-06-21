@@ -19,8 +19,11 @@ package ws.epigraph.projections.op;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotation;
+import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.*;
 import ws.epigraph.lang.Keywords;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
@@ -29,6 +32,7 @@ import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
 
@@ -44,10 +48,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     FP extends AbstractOpFieldProjection<VP, TP, MP, FP>,
     E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
 
+  protected final @NotNull DataPrinter<E> dataPrinter;
+
   protected AbstractOpProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
       final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
+    dataPrinter = new DataPrinter<>(layouter);
   }
 
   @Override
@@ -302,6 +309,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     for (TP tagProjection : vp.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();
       if (!modelProjection.params().isEmpty()) return false;
+      if (!modelProjection.annotations().isEmpty()) return false;
     }
 
     return true;
@@ -309,7 +317,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   @Override
   public boolean modelParamsEmpty(final @NotNull MP mp) {
-    return super.modelParamsEmpty(mp) && mp.params().isEmpty();
+    return super.modelParamsEmpty(mp) && mp.params().isEmpty() && mp.annotations.isEmpty();
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
@@ -323,5 +331,50 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
+
+  public void printAnnotations(@NotNull Annotations cp) throws E {
+    printAnnotations(cp, false, true);
+  }
+
+  public boolean printAnnotations(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
+    for (Map.Entry<DatumTypeApi, Annotation> entry : cp.asMap().entrySet()) {
+      if (first) {
+        first = false;
+      } else {
+        if (needCommas) l.print(",");
+        brk();
+      }
+      l.beginCInd(0);
+      l.print("@");
+      DatumTypeApi type = entry.getKey();
+      l.print(type.name().toString());
+      GDatum gDatum = entry.getValue().gDatum();
+      if (!isDefaultAnnotationValue(gDatum)) {
+        brk();
+        gdataPrettyPrinter.print(gDatum); // should take type into account
+      }
+      l.end();
+    }
+
+    return first;
+  }
+
+  private boolean isDefaultAnnotationValue(@NotNull GDatum datum) {
+    if (datum instanceof GPrimitiveDatum) {
+      GPrimitiveDatum primitiveDatum = (GPrimitiveDatum) datum;
+      // we only collapse booleans here
+      return Boolean.TRUE.equals(primitiveDatum.value());
+    } else if (datum instanceof GRecordDatum) {
+      GRecordDatum recordDatum = (GRecordDatum) datum;
+      return recordDatum.fields().isEmpty();
+    } else if (datum instanceof GMapDatum) {
+      GMapDatum mapDatum = (GMapDatum) datum;
+      return mapDatum.entries().isEmpty();
+    } else if (datum instanceof GListDatum) {
+      GListDatum listDatum = (GListDatum) datum;
+      return listDatum.values().isEmpty();
+    }
+    return false;
+  }
 
 }

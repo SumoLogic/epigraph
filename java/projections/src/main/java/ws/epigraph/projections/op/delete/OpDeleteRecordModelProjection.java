@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -81,7 +81,7 @@ public class OpDeleteRecordModelProjection
       final @NotNull RecordTypeApi model,
       final @NotNull List<OpDeleteRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable OpDeleteModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpDeleteRecordModelProjection> mergedTails) {
 

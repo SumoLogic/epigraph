@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.req.ReqParams;
@@ -48,10 +48,10 @@ public class ReqRecordModelPath
   public ReqRecordModelPath(
       @NotNull RecordTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull ReqFieldPathEntry fieldProjection,
       @NotNull TextLocation location) {
-    super(model, params, annotations, location);
+    super(model, params, directives, location);
     this.fieldProjections = Collections.singletonMap(fieldProjection.field().name(), fieldProjection);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);

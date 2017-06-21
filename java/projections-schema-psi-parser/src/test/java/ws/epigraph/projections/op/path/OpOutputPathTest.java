@@ -18,7 +18,6 @@ package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
@@ -53,13 +52,13 @@ public class OpOutputPathTest {
   @Test
   public void testParseParam() throws PsiProcessingException {
     testVarPathParsing(
-        ":`record` { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { deprecated = true, default : ( \"foo\": < id: 123 > ) } []( :id ) }"
+        ":`record` { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { @epigraph.annotations.Deprecated, default : ( \"foo\": < id: 123 > ) } []( :id ) }"
         ,
         lines(
             ":`record` { ;foo: epigraph.String } /",
             "  id {",
             "    ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
-            "      { deprecated = true default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
+            "      { @epigraph.annotations.Deprecated, default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
             "  }"
         )
     );
@@ -73,7 +72,7 @@ public class OpOutputPathTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testVarPathParsing(":`record` / bestFriend :`record` { deprecated = true } / id");
+    testVarPathParsing(":`record` / bestFriend :`record` { @epigraph.annotations.Deprecated } / id");
   }
 
   @Test
@@ -132,7 +131,8 @@ public class OpOutputPathTest {
         UserId.type,
         UserRecord.type,
         String_Person_Map.type,
-        epigraph.String.type
+        epigraph.String.type,
+        epigraph.annotations.Deprecated.type
     );
 
     return parseOpVarPath(varDataType, projectionString, false, resolver);

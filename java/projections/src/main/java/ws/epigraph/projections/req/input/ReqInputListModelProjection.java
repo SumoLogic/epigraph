@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -48,11 +48,11 @@ public class ReqInputListModelProjection
   public ReqInputListModelProjection(
       @NotNull ListTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull ReqInputVarProjection itemsProjection,
       @Nullable List<ReqInputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, tails, location);
+    super(model, params, directives, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -73,7 +73,7 @@ public class ReqInputListModelProjection
       final @NotNull ListTypeApi model,
       final @NotNull List<ReqInputListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqInputListModelProjection> mergedTails) {
 
@@ -88,7 +88,7 @@ public class ReqInputListModelProjection
     return new ReqInputListModelProjection(
         model,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedItemsVarType,
         mergedTails,
         TextLocation.UNKNOWN
@@ -103,7 +103,7 @@ public class ReqInputListModelProjection
     return new ReqInputListModelProjection(
         n.type(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),
         TextLocation.UNKNOWN

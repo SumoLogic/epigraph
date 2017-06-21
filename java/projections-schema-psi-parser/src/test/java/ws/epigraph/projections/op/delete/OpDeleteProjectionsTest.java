@@ -45,7 +45,7 @@ public class OpDeleteProjectionsTest {
         "  id,",
         "  `record` (",
         "    id {",
-        "      ; +param1 : epigraph.String { doc = \"some doc\", default : \"hello world\" },",
+        "      ; +param1 : epigraph.String { @epigraph.annotations.Doc \"some doc\", default : \"hello world\" },",
         "    },",
         "    +bestFriend :`record` (",
         "      id,",
@@ -62,7 +62,7 @@ public class OpDeleteProjectionsTest {
         ":(",
         "  id,",
         "  `record` (",
-        "    +id { ;+param1: epigraph.String { doc = \"some doc\" default: \"hello world\" } },",
+        "    +id { ;+param1: epigraph.String { @epigraph.annotations.Doc \"some doc\", default: \"hello world\" } },",
         "    +bestFriend :`record` ( +id, +bestFriend :id ),",
         "    friends *+( :id )",
         "  )",
@@ -102,7 +102,7 @@ public class OpDeleteProjectionsTest {
         lines(
             ":id {",
             "  ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
-            "    { deprecated = true default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
+            "    { @epigraph.annotations.Deprecated, default: ( \"foo\": < id: 123 > ) } [ ]( :id )",
             "}"
         )
     );
@@ -165,7 +165,7 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { deprecated = true }");
+    testParsingVarProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
@@ -180,7 +180,7 @@ public class OpDeleteProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( +id, bestFriend :`record` { deprecated = true } ( +id ) )");
+    testParsingVarProjection(":`record` ( +id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( +id ) )");
   }
 
   @Test
@@ -191,7 +191,7 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseMap() throws PsiProcessingException {
     testParsingVarProjection(
-        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, doc = \"no keys\" ]+( :id ) )");
+        ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, @epigraph.annotations.Doc \"no keys\" ]+( :id ) )");
   }
 
   private void testParsingVarProjection(String str) {
@@ -227,7 +227,9 @@ public class OpDeleteProjectionsTest {
         UserId.type,
         UserRecord.type,
         String_Person_Map.type,
-        epigraph.String.type
+        epigraph.String.type,
+        epigraph.annotations.Doc.type,
+        epigraph.annotations.Deprecated.type
     );
 
     return parseOpDeleteVarProjection(varDataType, projectionString, resolver);

@@ -16,16 +16,16 @@
 
 package ws.epigraph.schema.operations;
 
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.schema.ResourceDeclarationError;
-import ws.epigraph.schema.ResourceDeclaration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.types.TypeApi;
 
 import java.util.List;

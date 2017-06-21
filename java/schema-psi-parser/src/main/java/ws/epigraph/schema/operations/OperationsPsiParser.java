@@ -20,6 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotation;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
@@ -34,8 +36,6 @@ import ws.epigraph.schema.Namespaces;
 import ws.epigraph.schema.ResourcePsiProcessingContext;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -87,7 +87,7 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
-    Map<String, Annotation> annotations = null;
+    Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationOutputProjection outputProjectionPsi = null;
@@ -95,7 +95,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context);
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       outputProjectionPsi =
@@ -149,7 +149,7 @@ public final class OperationsPsiParser {
 
     final String operationName = parseOperationName(psi.getOperationName());
 
-    Map<String, Annotation> annotations = null;
+    Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
@@ -158,7 +158,7 @@ public final class OperationsPsiParser {
     SchemaOperationOutputProjection outputProjectionPsi = null;
 
     for (SchemaCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context);
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
@@ -226,7 +226,7 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
-    Map<String, Annotation> annotations = null;
+    Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
@@ -237,7 +237,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context);
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
@@ -306,7 +306,7 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
-    Map<String, Annotation> annotations = null;
+    Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationDeleteProjection deleteProjectionPsi = null;
@@ -316,7 +316,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context);
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       deleteProjectionPsi =
@@ -400,7 +400,7 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
-    Map<String, Annotation> annotations = null;
+    Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationMethod methodPsi = null;
     SchemaOperationPath pathPsi = null;
@@ -414,7 +414,7 @@ public final class OperationsPsiParser {
       throw new PsiProcessingException("Custom operation must have a name", psi, context);
 
     for (SchemaCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context);
+      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", context);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);

@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.ReqParams;
@@ -49,12 +49,12 @@ public class ReqOutputListModelProjection
       @NotNull ListTypeApi model,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull ReqOutputVarProjection itemsProjection,
       @Nullable List<ReqOutputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, tails, location);
+    super(model, required, params, directives, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -76,7 +76,7 @@ public class ReqOutputListModelProjection
       final boolean mergedRequired,
       final @NotNull List<ReqOutputListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqOutputListModelProjection> mergedTails) {
 
@@ -92,7 +92,7 @@ public class ReqOutputListModelProjection
         model,
         mergedRequired,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedItemsVarType,
         mergedTails,
@@ -109,7 +109,7 @@ public class ReqOutputListModelProjection
         n.type(),
         n.required(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.metaProjection(),
         n.itemsProjection().normalizedForType(targetListType.elementType().type()),
         n.polymorphicTails(),

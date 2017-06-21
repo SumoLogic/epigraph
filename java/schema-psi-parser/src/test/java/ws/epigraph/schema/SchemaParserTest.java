@@ -45,7 +45,8 @@ public class SchemaParserTest {
       UserRecord.type,
       String_Person_Map.type,
       epigraph.String.type,
-      epigraph.Boolean.type
+      epigraph.Boolean.type,
+      epigraph.annotations.Doc.type
   );
 
   @Test
@@ -80,12 +81,13 @@ public class SchemaParserTest {
             "namespace test",
             "import ws.epigraph.tests.Person",
             "import ws.epigraph.tests.UserRecord",
+            "import epigraph.annotations.Doc",
             "resource users : map[String,Person] {",
             "  outputProjection defaultOutput : map[String,Person] = [forbidden](:id)",
             "  read {",
-            "    doc = \"dome doc string\"",
+            "    @Doc \"dome doc string\"",
             "    outputProjection {",
-            "      ;superUser: UserRecord { default : { id : 1337 }, doc = \"super user account\" } (id)",
+            "      ;superUser: UserRecord { default : { id : 1337 }, @Doc \"super user account\" } (id)",
             "    } [required]( :`record` (id, firstName) )",
             "  }",
             "  read readWithPath {",
@@ -98,12 +100,12 @@ public class SchemaParserTest {
             "    outputProjection", // empty projection
             "  }",
             "  update {",
-            "    doc = \"dome doc string\"",
+            "    @Doc \"dome doc string\"",
             "    inputProjection []( :`record` ( firstName, lastName) )",
             "    outputProjection $defaultOutput",
             "  }",
             "  update customUpdate {",
-            "    doc = \"dome doc string\"",
+            "    @Doc \"dome doc string\"",
             "    inputProjection []( :`record` ( firstName, lastName) )",
             "    outputProjection $defaultOutput",
             "  }",
@@ -113,7 +115,7 @@ public class SchemaParserTest {
             "  }",
             "  custom customOp {",
             "    method POST",
-            "    doc = \"dome doc string\"",
+            "    @Doc \"dome doc string\"",
             "    path / . :`record` / bestFriend",
             "    inputType map[String,Person]",
             "    inputProjection []( :`record` ( firstName, lastName) )",
@@ -127,11 +129,13 @@ public class SchemaParserTest {
             "namespace test",
             "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
             "  read {",
-            "    doc = \"dome doc string\",",
+            "    @epigraph.annotations.Doc \"dome doc string\",",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    outputProjection {",
             "      ;superUser: ws.epigraph.tests.UserRecord",
-            "        { doc = \"super user account\" default: { id: 1337 } } ( id )",
+            "        { @epigraph.annotations.Doc \"super user account\", default: { id: 1337 } } (",
+            "          id",
+            "        )",
             "    } [ required ]( :`record` ( id, firstName ) )",
             "  }",
             "  read readWithPath {",
@@ -145,14 +149,14 @@ public class SchemaParserTest {
             "    outputType epigraph.Boolean",
             "  }",
             "  update {",
-            "    doc = \"dome doc string\",",
+            "    @epigraph.annotations.Doc \"dome doc string\",",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection [ ]( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    outputProjection $defaultOutput",
             "  }",
             "  update customUpdate {",
-            "    doc = \"dome doc string\",",
+            "    @epigraph.annotations.Doc \"dome doc string\",",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection [ ]( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
@@ -164,7 +168,7 @@ public class SchemaParserTest {
             "  }",
             "  custom customOp {",
             "    method POST,",
-            "    doc = \"dome doc string\",",
+            "    @epigraph.annotations.Doc \"dome doc string\",",
             "    path / . :`record` / bestFriend,",
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection [ ]( :`record` ( firstName, lastName ) ),",
@@ -340,8 +344,9 @@ public class SchemaParserTest {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
+            "import epigraph.annotations.Doc",
             "transformer t : Person {" +
-            "  doc = \"test transformer\"",
+            "  @Doc \"test transformer\"",
             "  inputProjection :id",
             "  outputProjection :`record`(id,firstName)",
             "}"
@@ -349,7 +354,7 @@ public class SchemaParserTest {
         lines(
             "namespace ws.epigraph.tests",
             "transformer t: ws.epigraph.tests.Person {",
-            "  doc = \"test transformer\",",
+            "  @epigraph.annotations.Doc \"test transformer\",",
             "  inputProjection :id,",
             "  outputProjection :`record` ( id, firstName )",
             "}"
@@ -362,9 +367,10 @@ public class SchemaParserTest {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
+            "import epigraph.annotations.Doc",
             "outputProjection pp : Person = :`record`(id,firstName)",
             "transformer t : Person {" +
-            "  doc = \"test transformer\"",
+            "  @Doc \"test transformer\"",
             "  inputProjection :id",
             "  outputProjection $pp",
             "}"
@@ -372,7 +378,7 @@ public class SchemaParserTest {
         lines(
             "namespace ws.epigraph.tests",
             "transformer t: ws.epigraph.tests.Person {",
-            "  doc = \"test transformer\",",
+            "  @epigraph.annotations.Doc \"test transformer\",",
             "  inputProjection :id,",
             "  outputProjection $pp",
             "}",

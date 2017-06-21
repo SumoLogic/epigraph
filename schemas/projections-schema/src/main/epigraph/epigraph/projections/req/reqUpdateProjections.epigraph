@@ -6,7 +6,6 @@ namespace epigraph.projections.req
  * parameters and which parts must be updated versus patched
  */
 
-import epigraph.projections.Annotation
 import epigraph.schema.DatumType
 import epigraph.schema.EnumType
 import epigraph.schema.Field
@@ -17,6 +16,7 @@ import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
 import epigraph.data.Datum
+import epigraph.annotations.Doc
 
 record ReqUpdateVarProjection {
   type: Type
@@ -33,7 +33,7 @@ abstract record ReqUpdateModelProjection {
   model: DatumType
   `replace`: Boolean // replace (update) or patch?
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
 //  `meta`: ReqUpdateModelProjection
 }
 
@@ -71,9 +71,9 @@ record ReqUpdateKeysProjection {
 }
 
 record ReqUpdateKeyProjection {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  value: Datum { @Doc "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
 }
 
 record ReqUpdateEnumModelProjection extends ReqUpdateModelProjection {

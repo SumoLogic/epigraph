@@ -18,8 +18,9 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotated;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.types.DatumTypeApi;
 
@@ -31,7 +32,7 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpKeyProjection {
+public class OpKeyProjection implements Annotated {
   private final @NotNull OpParams params;
   private final @NotNull Annotations annotations;
   private final @Nullable OpInputModelProjection<?, ?, ?, ?> projection;
@@ -51,6 +52,7 @@ public class OpKeyProjection {
 
   public @NotNull OpParams params() { return params; }
 
+  @Override
   public @NotNull Annotations annotations() { return annotations; }
 
   public @Nullable OpInputModelProjection<?, ?, ?, ?> projection() { return projection; }

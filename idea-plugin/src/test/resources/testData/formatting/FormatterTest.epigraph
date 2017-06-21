@@ -3,9 +3,10 @@ namespace   some
 import   foo
 
 record  R{
-attr= #value
-attr1=#value
-attr2  =  (#a:#b, #c  :  <  d  :   #e  > #z:#x)
+  // todo fix spacing between annotation and value
+  @Attr #value
+  @Attr1 #value
+  @Attr2 (#a:#b, #c  :  <  d  :   #e  > #z:#x)
 f:map[Q,list [ W ]]
   }
 
@@ -14,6 +15,6 @@ f:map[Q,list [ W ]]
  abstract  record  E
 
  enum [ String ]  E{
-A="foo"   B   :  "bar"
+@A "foo"   B   :  "bar"
     C :"baz"
  }

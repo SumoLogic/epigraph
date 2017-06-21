@@ -282,14 +282,16 @@ class EpigraphCompiler(
       handlePsiErrors(ctx.schemaFiles.toMap, context.errors())
   }
 
-  private def handlePsiErrors(csf: CSchemaFile, psiErrors: Traversable[PsiProcessingError]): Unit = {
+  private def handlePsiErrors(csf: CSchemaFile, psiErrors: java.util.List[PsiProcessingError]): Unit = {
     lazy val reporter = ErrorReporter.reporter(csf)
     psiErrors.foreach{ e => reporter.error(e.message(), e.location()) }
+    psiErrors.clear()
   }
 
-  private def handlePsiErrors(csfs: Map[String, CSchemaFile], psiErrors: Traversable[PsiProcessingError]): Unit = {
+  private def handlePsiErrors(csfs: Map[String, CSchemaFile], psiErrors: java.util.List[PsiProcessingError]): Unit = {
     lazy val reporter = ErrorReporter.reporter(csfs)
     psiErrors.foreach { e => reporter.error(e.message(), e.location()) }
+    psiErrors.clear()
   }
 
   @throws[EpigraphCompilerException]

@@ -50,6 +50,9 @@ public abstract class DoubleType extends PrimitiveType<Double> {
   }
 
   @Override
+  public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.DOUBLE; }
+
+  @Override
   public abstract @NotNull DoubleDatum.Builder createBuilder(@NotNull Double val);
 
 

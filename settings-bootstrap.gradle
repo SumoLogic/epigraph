@@ -32,7 +32,6 @@ Map<String, String> modules = [
     'java/codegen'                       : 'epigraph-java-codegen',
     'java/core'                          : 'epigraph-java-core',
     'java/data-processing'               : 'epigraph-java-data-processing',
-    'java/gdata'                         : 'epigraph-java-gdata',                                // (x)
     'java/gradle-plugin'                 : 'epigraph-java-gradle-plugin',
     'java/lang-common'                   : 'epigraph-java-lang-common',
     'java/projections'                   : 'epigraph-java-projections',                          // (x)

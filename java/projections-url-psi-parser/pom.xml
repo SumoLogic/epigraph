@@ -41,11 +41,6 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-gdata</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-lang-common</artifactId>
       <version>${project.parent.version}</version>
     </dependency>

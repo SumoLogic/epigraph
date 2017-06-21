@@ -19,12 +19,6 @@ package ws.epigraph.server.http.routing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.gdata.GDataValue;
-import ws.epigraph.gdata.GPrimitiveDatum;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.CreateOperationDeclaration;
-import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
@@ -33,6 +27,10 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.operations.CreateOperationDeclaration;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.CreateOperation;
@@ -76,31 +74,31 @@ public class CreateOperationRouterTest {
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
       "  create {",
-      "    id = \"pathless.1\"",
+      "    @String \"pathless.1\"",
       "    inputProjection []( :`record` (id, firstName) )",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  create pathless2 {",
-      "    id = \"pathless.2\"",
+      "    @String \"pathless.2\"",
       "    inputProjection []( :`record` (id, firstName, lastName) )",
       "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  create path1 {",
-      "    id = \"path.1\"",
+      "    @String \"path.1\"",
       "    path /.",
       "    inputType UserRecord",
       "    inputProjection (id, firstName )",
       "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  create path2 {",
-      "    id = \"path.2\"",
+      "    @String \"path.2\"",
       "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
       "    inputProjection (id, +firstName )",
       "    outputProjection :`record` (id, firstName)",
       "  }",
       "  create path3 {",
-      "    id = \"path.3\"",
+      "    @String \"path.3\"",
       "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
       "    inputProjection (id, firstName )",
@@ -300,10 +298,8 @@ public class CreateOperationRouterTest {
     }
 
     @Nullable String getId() {
-      final @Nullable GDataValue value = declaration().annotations().get("id");
-      if (value instanceof GPrimitiveDatum)
-        return ((GPrimitiveDatum) value).value().toString();
-      return null;
+      epigraph.String.Imm id = declaration().annotations().get(epigraph.String.type);
+      return id == null ? null : id.getVal();
     }
 
     @Override

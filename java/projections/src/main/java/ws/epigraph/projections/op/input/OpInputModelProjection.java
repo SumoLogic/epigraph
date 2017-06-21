@@ -18,9 +18,9 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
@@ -73,7 +73,7 @@ public abstract class OpInputModelProjection<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull OpParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 

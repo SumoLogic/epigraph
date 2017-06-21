@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -36,10 +36,10 @@ public class ReqDeletePrimitiveModelProjection
   public ReqDeletePrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeletePrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, tails, location);
+    super(model, params, directives, tails, location);
   }
 
   public ReqDeletePrimitiveModelProjection( final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
@@ -51,14 +51,14 @@ public class ReqDeletePrimitiveModelProjection
       final @NotNull PrimitiveTypeApi model,
       final @NotNull List<ReqDeletePrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqDeleteModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqDeletePrimitiveModelProjection> mergedTails) {
 
     return new ReqDeletePrimitiveModelProjection(
         model,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedTails,
         TextLocation.UNKNOWN
     );

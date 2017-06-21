@@ -123,22 +123,28 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
             }
 
             // check if it hides an import
-            List<Qn> importsBySuffix = ImportsManager.findImportsBySuffix((SchemaFile) typeDef.getContainingFile(),
-                                                                          shortTypeQn
+            List<Qn> importsBySuffix = ImportsManager.findImportsBySuffix(
+                (SchemaFile) typeDef.getContainingFile(),
+                shortTypeQn
             );
             if (!importsBySuffix.isEmpty()) {
               Qn importQn = importsBySuffix.iterator().next();
               boolean isImplicit = DEFAULT_IMPORTS_LIST.contains(importQn);
-              holder.createWarningAnnotation(id,
+              holder.createWarningAnnotation(
+                  id,
                   SchemaBundle.message(isImplicit ?
-                          "annotator.type.shadowed.by.implicit.import" :
-                          "annotator.type.shadowed.by.import",
-                                       typeName, importQn
-                  ));
+                                       "annotator.type.shadowed.by.implicit.import" :
+                                       "annotator.type.shadowed.by.import",
+                      typeName, importQn
+                  )
+              );
             }
 
             // check if's already defined
-            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(), new Qn[]{fullTypeNameQn}, SchemaSearchScopeUtil.getSearchScope(typeDef));
+            List<SchemaTypeDef> typeDefs = SchemaIndexUtil.findTypeDefs(element.getProject(),
+                new Qn[]{fullTypeNameQn},
+                SchemaSearchScopeUtil.getSearchScope(typeDef)
+            );
             if (typeDefs.size() > 1) {
               holder.createErrorAnnotation(id, SchemaBundle.message("annotator.type.already.defined", fullTypeNameQn));
             }
@@ -195,7 +201,9 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
 
       @Override
       public void visitAnnotation(@NotNull SchemaAnnotation annotation) {
-        setHighlighting(annotation.getQid(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
+        SchemaQnTypeRef typeRef = annotation.getQnTypeRef();
+        if (typeRef != null)
+          setHighlighting(typeRef, holder, SchemaSyntaxHighlighter.PARAM_NAME);
       }
 
       @Override
@@ -226,7 +234,7 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }
-      
+
       @Override
       public void visitOpOutputVarProjectionRef(@NotNull final SchemaOpOutputVarProjectionRef o) {
         final SchemaQid qid = o.getQid();
@@ -253,8 +261,9 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
 //    // TODO
 //  }
 
-  private void highlightQn(@Nullable SchemaQn schemaQn, @NotNull AnnotationHolder holder,
-                            @Nullable IntentionAction unresolvedTypeRefFix) {
+  private void highlightQn(
+      @Nullable SchemaQn schemaQn, @NotNull AnnotationHolder holder,
+      @Nullable IntentionAction unresolvedTypeRefFix) {
     if (schemaQn != null) {
 //      setHighlighting(schemaQn.getLastChild(), holder, SchemaSyntaxHighlighter.TYPE_REF);
 
@@ -270,14 +279,20 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       if (resolveResults.length == 0) {
-        Annotation annotation = holder.createErrorAnnotation(schemaQn.getNode(),
-                                                             SchemaBundle.message("annotator.unresolved.reference"));
+        Annotation annotation = holder.createErrorAnnotation(
+            schemaQn.getNode(),
+            SchemaBundle.message("annotator.unresolved.reference")
+        );
 
         if (unresolvedTypeRefFix != null)
           annotation.registerFix(unresolvedTypeRefFix);
       } else if (typeDefQns.size() > 1) {
-        Annotation annotation = holder.createErrorAnnotation(schemaQn.getNode(), SchemaBundle.message("annotator.ambiguous.type.reference"));
-        StringBuilder tooltipText = new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
+        Annotation annotation = holder.createErrorAnnotation(
+            schemaQn.getNode(),
+            SchemaBundle.message("annotator.ambiguous.type.reference")
+        );
+        StringBuilder tooltipText =
+            new StringBuilder(SchemaBundle.message("annotator.ambiguous.type.reference.candidates"));
         for (String typeDefQn : typeDefQns) {
           tooltipText.append('\n');
           tooltipText.append("''").append(typeDefQn).append("''");

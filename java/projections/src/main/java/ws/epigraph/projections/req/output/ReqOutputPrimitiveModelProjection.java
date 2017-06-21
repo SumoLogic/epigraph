@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
@@ -37,11 +37,11 @@ public class ReqOutputPrimitiveModelProjection
       @NotNull PrimitiveTypeApi model,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, tails, location);
+    super(model, required, params, directives, metaProjection, tails, location);
   }
 
   public ReqOutputPrimitiveModelProjection(
@@ -57,7 +57,7 @@ public class ReqOutputPrimitiveModelProjection
       final boolean mergedRequired,
       final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqOutputPrimitiveModelProjection> mergedTails) {
 
@@ -65,7 +65,7 @@ public class ReqOutputPrimitiveModelProjection
         model,
         mergedRequired,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedTails,
         TextLocation.UNKNOWN

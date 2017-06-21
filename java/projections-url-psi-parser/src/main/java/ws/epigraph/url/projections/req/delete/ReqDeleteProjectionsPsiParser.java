@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.delete.*;
 import ws.epigraph.projections.req.ReqParams;
@@ -418,7 +418,7 @@ public final class ReqDeleteProjectionsPsiParser {
   public static @NotNull ReqDeleteModelProjection<?, ?, ?> parseModelProjection(
       @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqDeleteModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -427,7 +427,7 @@ public final class ReqDeleteProjectionsPsiParser {
         ReqDeleteModelProjection.class,
         op,
         params,
-        annotations,
+        directives,
         psi,
         resolver,
         context
@@ -440,7 +440,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull Class<MP> modelClass,
       @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull UrlReqDeleteModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
@@ -460,13 +460,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
         if (recordModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);
-          return (MP) createDefaultModelProjection(model, opRecord, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opRecord, params, directives, psi, context);
         }
 
         return (MP) parseRecordModelProjection(
             opRecord,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqDeleteRecordModelProjection.class,
                 op,
@@ -488,13 +488,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
         if (mapModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.MAP, context);
-          return (MP) createDefaultModelProjection(model, opMap, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opMap, params, directives, psi, context);
         }
 
         return (MP) parseMapModelProjection(
             opMap,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqDeleteMapModelProjection.class,
                 op,
@@ -517,13 +517,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
         if (listModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.LIST, context);
-          return (MP) createDefaultModelProjection(model, opList, params, annotations, psi, context);
+          return (MP) createDefaultModelProjection(model, opList, params, directives, psi, context);
         }
 
         return (MP) parseListModelProjection(
             opList,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqDeleteListModelProjection.class,
                 op,
@@ -544,7 +544,7 @@ public final class ReqDeleteProjectionsPsiParser {
         return (MP) parsePrimitiveModelProjection(
             (OpDeletePrimitiveModelProjection) op,
             params,
-            annotations,
+            directives,
             parseModelTails(
                 ReqDeletePrimitiveModelProjection.class,
                 op,
@@ -673,7 +673,7 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull DatumTypeApi type,
       @NotNull OpDeleteModelProjection<?, ?, ?> op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull PsiElement locationPsi,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -691,7 +691,7 @@ public final class ReqDeleteProjectionsPsiParser {
         return new ReqDeleteRecordModelProjection(
             (RecordTypeApi) type,
             params,
-            annotations,
+            directives,
             fields,
             null,
             location
@@ -710,7 +710,7 @@ public final class ReqDeleteProjectionsPsiParser {
         return new ReqDeleteMapModelProjection(
             mapType,
             params,
-            annotations,
+            directives,
             null,
             valueVarProjection,
             null,
@@ -730,7 +730,7 @@ public final class ReqDeleteProjectionsPsiParser {
         return new ReqDeleteListModelProjection(
             listType,
             params,
-            annotations,
+            directives,
             itemVarProjection,
             null,
             location
@@ -748,7 +748,7 @@ public final class ReqDeleteProjectionsPsiParser {
         return new ReqDeletePrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,
-            annotations,
+            directives,
             null,
             location
         );
@@ -802,7 +802,7 @@ public final class ReqDeleteProjectionsPsiParser {
                     tag.type(),
                     opDeleteTagProjection.projection(),
                     ReqParams.EMPTY,
-                    Annotations.EMPTY,
+                    Directives.EMPTY,
                     locationPsi,
                     context
                 ),
@@ -831,7 +831,7 @@ public final class ReqDeleteProjectionsPsiParser {
   public static @NotNull ReqDeleteRecordModelProjection parseRecordModelProjection(
       @NotNull OpDeleteRecordModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeleteRecordModelProjection> tails,
       @NotNull UrlReqDeleteRecordModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -884,7 +884,7 @@ public final class ReqDeleteProjectionsPsiParser {
     return new ReqDeleteRecordModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         fieldProjections,
         tails,
         EpigraphPsiUtil.getLocation(psi)
@@ -925,7 +925,7 @@ public final class ReqDeleteProjectionsPsiParser {
   public static @NotNull ReqDeleteMapModelProjection parseMapModelProjection(
       @NotNull OpDeleteMapModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeleteMapModelProjection> tails,
       @NotNull UrlReqDeleteMapModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -986,7 +986,7 @@ public final class ReqDeleteProjectionsPsiParser {
     return new ReqDeleteMapModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         keyProjections,
         elementsVarProjection,
         tails,
@@ -997,7 +997,7 @@ public final class ReqDeleteProjectionsPsiParser {
   public static @NotNull ReqDeleteListModelProjection parseListModelProjection(
       @NotNull OpDeleteListModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeleteListModelProjection> tails,
       @NotNull UrlReqDeleteListModelProjection psi,
       @NotNull TypesResolver resolver,
@@ -1022,7 +1022,7 @@ public final class ReqDeleteProjectionsPsiParser {
     return new ReqDeleteListModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         elementsVarProjection,
         tails,
         EpigraphPsiUtil.getLocation(psi)
@@ -1032,14 +1032,14 @@ public final class ReqDeleteProjectionsPsiParser {
   public static @NotNull ReqDeletePrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull OpDeletePrimitiveModelProjection op,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<ReqDeletePrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
     return new ReqDeletePrimitiveModelProjection(
         op.type(),
         params,
-        annotations,
+        directives,
         tails,
         EpigraphPsiUtil.getLocation(locationPsi)
     );

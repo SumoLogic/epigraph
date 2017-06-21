@@ -16,6 +16,7 @@
 
 package ws.epigraph.java.service
 
+import ws.epigraph.annotations.{Annotation, Annotations}
 import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.service.gdata.{GDataGen, GDatumGen}
 import ws.epigraph.java.service.projections.op.delete._
@@ -31,7 +32,6 @@ import ws.epigraph.projections.op.input._
 import ws.epigraph.projections.op.output._
 import ws.epigraph.projections.op.path._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
-import ws.epigraph.projections.{Annotation, Annotations}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
 import ws.epigraph.schema.operations._
 

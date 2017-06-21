@@ -266,6 +266,16 @@ class CPrimitiveTypeDefApiWrapper(val cType: CPrimitiveTypeDef)
 
   override lazy val supertypes: util.List[_ <: PrimitiveTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[PrimitiveTypeApi]}
 
+
+  override def primitiveKind(): PrimitiveTypeApi.PrimitiveKind = cType.kind match {
+    case CTypeKind.STRING => PrimitiveTypeApi.PrimitiveKind.STRING
+    case CTypeKind.INTEGER => PrimitiveTypeApi.PrimitiveKind.INTEGER
+    case CTypeKind.LONG => PrimitiveTypeApi.PrimitiveKind.LONG
+    case CTypeKind.DOUBLE => PrimitiveTypeApi.PrimitiveKind.DOUBLE
+    case CTypeKind.BOOLEAN => PrimitiveTypeApi.PrimitiveKind.BOOLEAN
+    case _ => throw new RuntimeException("Unknown primitive kind: " + cType.kind)
+  }
+
   def canEqual(other: Any): Boolean = other.isInstanceOf[CPrimitiveTypeDefApiWrapper]
 
   override def equals(other: Any): Boolean = other match {

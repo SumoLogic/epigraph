@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
@@ -39,7 +39,7 @@ public abstract class ReqInputModelProjection<
   protected ReqInputModelProjection(
       @NotNull M model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives annotations,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {

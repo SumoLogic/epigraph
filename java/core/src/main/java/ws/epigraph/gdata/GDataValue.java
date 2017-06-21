@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,17 @@
 package ws.epigraph.gdata;
 
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GNullDatum extends GDatum {
-  public GNullDatum(@Nullable TypeRef typeRef, @NotNull TextLocation location) { super(typeRef, location); }
+public abstract class GDataValue {
+  private final @NotNull TextLocation location;
 
-  @Override
-  public String toString() {
-    if (typeRef() == null) return "null";
-    else return typeRef() + "@null";
+  protected GDataValue(@NotNull TextLocation location) {this.location = location;}
+
+  public @NotNull TextLocation location() {
+    return location;
   }
 }

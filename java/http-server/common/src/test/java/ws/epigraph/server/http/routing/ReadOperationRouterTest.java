@@ -19,12 +19,6 @@ package ws.epigraph.server.http.routing;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.gdata.GDataValue;
-import ws.epigraph.gdata.GPrimitiveDatum;
-import ws.epigraph.schema.ResourcesSchema;
-import ws.epigraph.schema.ResourceDeclaration;
-import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
@@ -32,6 +26,10 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.ResourceDeclaration;
+import ws.epigraph.schema.ResourcesSchema;
+import ws.epigraph.schema.operations.OperationDeclaration;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.ServiceInitializationException;
 import ws.epigraph.service.operations.ReadOperation;
@@ -74,20 +72,20 @@ public class ReadOperationRouterTest {
       "import ws.epigraph.tests.UserRecord",
       "resource users : map[String,Person] {",
       "  read {",
-      "    id = \"pathless.1\"",
+      "    @String \"pathless.1\"",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "  read pathless2 {",
-      "    id = \"pathless.2\"",
+      "    @String \"pathless.2\"",
       "    outputProjection [required]( :`record` (id, firstName, lastName) )",
       "  }",
       "  read path1 {",
-      "    id = \"path.1\"",
+      "    @String \"path.1\"",
       "    path /.",
       "    outputProjection :`record` (id, firstName, bestFriend :`record` (id, firstName) )",
       "  }",
       "  read path2 {",
-      "    id = \"path.2\"",
+      "    @String \"path.2\"",
       "    path /.:`record`/bestFriend",
       "    outputProjection :`record` (id, firstName)",
       "  }",
@@ -197,10 +195,8 @@ public class ReadOperationRouterTest {
     }
 
     @Nullable String getId() {
-      final @Nullable GDataValue value = declaration().annotations().get("id");
-      if (value instanceof GPrimitiveDatum)
-        return ((GPrimitiveDatum) value).value().toString();
-      return null;
+      epigraph.String.Imm id = declaration().annotations().get(epigraph.String.type);
+      return id == null ? null : id.getVal();
     }
 
     @Override

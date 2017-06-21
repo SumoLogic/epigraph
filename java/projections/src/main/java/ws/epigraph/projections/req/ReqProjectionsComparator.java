@@ -17,7 +17,6 @@
 package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.gen.*;
 
 import java.util.Collection;
@@ -57,8 +56,8 @@ public class ReqProjectionsComparator<
       final @NotNull Collection<@NotNull MP> mps2) {
 
     if (compareAnnotations()) {
-      final List<Annotations> as1 = mps1.stream().map(MP::annotations).collect(Collectors.toList());
-      final List<Annotations> as2 = mps2.stream().map(MP::annotations).collect(Collectors.toList());
+      final List<Directives> as1 = mps1.stream().map(MP::directives).collect(Collectors.toList());
+      final List<Directives> as2 = mps2.stream().map(MP::directives).collect(Collectors.toList());
       if (!annotationsEqual(as1, as2))
         return false;
     }
@@ -74,13 +73,13 @@ public class ReqProjectionsComparator<
   }
 
   protected boolean annotationsEqual(
-      @NotNull Collection<@NotNull Annotations> as1,
-      @NotNull Collection<@NotNull Annotations> as2) {
+      @NotNull Collection<@NotNull Directives> as1,
+      @NotNull Collection<@NotNull Directives> as2) {
 
     if (as1.isEmpty())
       return as2.isEmpty();
 
-    return Annotations.merge(as1).equals(Annotations.merge(as2));
+    return Directives.merge(as1).equals(Directives.merge(as2));
   }
 
   protected boolean paramsEqual(

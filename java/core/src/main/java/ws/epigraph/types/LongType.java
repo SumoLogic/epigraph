@@ -50,6 +50,9 @@ public abstract class LongType extends PrimitiveType<Long> {
   }
 
   @Override
+  public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.LONG; }
+
+  @Override
   public abstract @NotNull LongDatum.Builder createBuilder(@NotNull Long val);
 
 

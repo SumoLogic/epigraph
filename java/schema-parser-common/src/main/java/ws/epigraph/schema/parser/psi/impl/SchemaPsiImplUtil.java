@@ -421,20 +421,20 @@ public class SchemaPsiImplUtil {
 
   // annotation
 
-  @Contract(pure = true)
-  public static @Nullable String getName(SchemaAnnotation annotation) {
-    return getNameIdentifier(annotation).getText();
-  }
-
-  public static PsiElement setName(SchemaAnnotation annotation, String name) {
-    annotation.getQid().setName(name);
-    return annotation;
-  }
-
-  @Contract(pure = true)
-  public static @NotNull PsiElement getNameIdentifier(SchemaAnnotation annotation) {
-    return annotation.getQid().getId();
-  }
+//  @Contract(pure = true)
+//  public static @Nullable String getName(SchemaAnnotation annotation) {
+//    return getNameIdentifier(annotation).getText();
+//  }
+//
+//  public static PsiElement setName(SchemaAnnotation annotation, String name) {
+//    annotation.getQid().setName(name);
+//    return annotation;
+//  }
+//
+//  @Contract(pure = true)
+//  public static @NotNull PsiElement getNameIdentifier(SchemaAnnotation annotation) {
+//    return annotation.getQid().getId();
+//  }
 
   // common toNullableString for all stub-based elements --------------------------------------------
 

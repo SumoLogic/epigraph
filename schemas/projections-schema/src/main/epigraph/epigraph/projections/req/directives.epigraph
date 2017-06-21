@@ -1,11 +1,11 @@
-namespace epigraph.projections
+namespace epigraph.projections.req
 
 import epigraph.data.Datum
 import epigraph.schema.Documented
 import epigraph.schema.Named
+import epigraph.projections.ParamName
 
-record Annotation extends Named, Documented {
-  `required`: Boolean
+record Directive extends Named, Documented {
   override name: ParamName
   value: Datum
 }

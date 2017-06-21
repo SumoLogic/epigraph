@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -30,17 +29,17 @@ import java.util.stream.Stream;
 public class ReqKeyProjection {
   private final @NotNull Datum value;
   private final @NotNull ReqParams params;
-  private final @NotNull Annotations annotations;
+  private final @NotNull Directives directives;
   private final @NotNull TextLocation location;
 
   public ReqKeyProjection(
       @NotNull Datum value,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull TextLocation location) {
     this.value = value;
     this.params = params;
-    this.annotations = annotations;
+    this.directives = directives;
     this.location = location;
   }
 
@@ -48,7 +47,7 @@ public class ReqKeyProjection {
 
   public @NotNull ReqParams params() { return params; }
 
-  public @NotNull Annotations annotations() { return annotations; }
+  public @NotNull Directives directives() { return directives; }
 
   public @NotNull TextLocation location() { return location; }
 
@@ -59,11 +58,11 @@ public class ReqKeyProjection {
     ReqKeyProjection that = (ReqKeyProjection) o;
     return Objects.equals(value, that.value) &&
            Objects.equals(params, that.params) &&
-           Objects.equals(annotations, that.annotations);
+           Objects.equals(directives, that.directives);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(value, params, annotations); }
+  public int hashCode() { return Objects.hash(value, params, directives); }
 
   public static <RKP extends ReqKeyProjection> List<RKP> merge(
       @NotNull Stream<RKP> keysToMerge,
@@ -74,8 +73,7 @@ public class ReqKeyProjection {
     Map<Datum, List<RKP>> groupedKeysToMerge = new LinkedHashMap<>();
     keysToMerge.forEach(key -> {
       final @NotNull Datum keyValue = key.value();
-      List<RKP> group = groupedKeysToMerge.computeIfAbsent(keyValue, k -> new ArrayList<>());
-
+      Collection<RKP> group = groupedKeysToMerge.computeIfAbsent(keyValue, k -> new ArrayList<>());
       group.add(key);
     });
 
@@ -88,7 +86,7 @@ public class ReqKeyProjection {
               group,
               keyValue,
               ReqParams.merge(group.stream().map(ReqKeyProjection::params)),
-              Annotations.merge(group.stream().map(ReqKeyProjection::annotations))
+              Directives.merge(group.stream().map(ReqKeyProjection::directives))
           )
       );
     }
@@ -101,6 +99,6 @@ public class ReqKeyProjection {
         @NotNull List<RKP> keysToMerge,
         @NotNull Datum value,
         @NotNull ReqParams mergedParams,
-        @NotNull Annotations mergedAnnotations);
+        @NotNull Directives mergedDirectives);
   }
 }

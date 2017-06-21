@@ -602,18 +602,25 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   };
 
   /* ********************************************************** */
-  // qid '=' dataValue
+  // '@' qnTypeRef datum?
   public static boolean annotation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "annotation")) return false;
-    if (!nextTokenIs(b, S_ID)) return false;
+    if (!nextTokenIs(b, S_AT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_ANNOTATION, "<custom annotation>");
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
-    p = r; // pin = 2
-    r = r && dataValue(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, S_ANNOTATION, "<annotation>");
+    r = consumeToken(b, S_AT);
+    p = r; // pin = 1
+    r = r && report_error_(b, qnTypeRef(b, l + 1));
+    r = p && annotation_2(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // datum?
+  private static boolean annotation_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "annotation_2")) return false;
+    datum(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2605,7 +2612,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // opParam | annotation
   public static boolean opDeleteModelProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteModelProperty")) return false;
-    if (!nextTokenIs(b, "<op delete model property>", S_SEMICOLON, S_ID)) return false;
+    if (!nextTokenIs(b, "<op delete model property>", S_SEMICOLON, S_AT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_MODEL_PROPERTY, "<op delete model property>");
     r = opParam(b, l + 1);
@@ -3511,7 +3518,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' | 'default' | ';' | (qid '=') | 'meta' )
+  // ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
   static boolean opInputModelPropertyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelPropertyRecover")) return false;
     boolean r;
@@ -3521,7 +3528,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ',' | 'default' | ';' | (qid '=') | 'meta'
+  // '}' | ',' | 'default' | ';' | '@' | 'meta'
   private static boolean opInputModelPropertyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputModelPropertyRecover_0")) return false;
     boolean r;
@@ -3530,19 +3537,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_COMMA);
     if (!r) r = consumeToken(b, S_DEFAULT);
     if (!r) r = consumeToken(b, S_SEMICOLON);
-    if (!r) r = opInputModelPropertyRecover_0_4(b, l + 1);
+    if (!r) r = consumeToken(b, S_AT);
     if (!r) r = consumeToken(b, S_META);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid '='
-  private static boolean opInputModelPropertyRecover_0_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opInputModelPropertyRecover_0_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4057,7 +4053,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // opParam | annotation
   public static boolean opModelPathProperty(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opModelPathProperty")) return false;
-    if (!nextTokenIs(b, "<op model path property>", S_SEMICOLON, S_ID)) return false;
+    if (!nextTokenIs(b, "<op model path property>", S_SEMICOLON, S_AT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_MODEL_PATH_PROPERTY, "<op model path property>");
     r = opParam(b, l + 1);
@@ -5110,7 +5106,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // ! ( '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom' )
+  //   '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
   static boolean operationBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover")) return false;
     boolean r;
@@ -5122,7 +5118,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   // '}' | ',' |
   //   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
-  //   (qid '=') | 'read' | 'create' | 'update' | 'delete' | 'custom'
+  //   '@' | 'read' | 'create' | 'update' | 'delete' | 'custom'
   private static boolean operationBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationBodyRecover_0")) return false;
     boolean r;
@@ -5136,23 +5132,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
     if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
     if (!r) r = consumeToken(b, S_PATH);
-    if (!r) r = operationBodyRecover_0_9(b, l + 1);
+    if (!r) r = consumeToken(b, S_AT);
     if (!r) r = consumeToken(b, S_OP_READ);
     if (!r) r = consumeToken(b, S_OP_CREATE);
     if (!r) r = consumeToken(b, S_OP_UPDATE);
     if (!r) r = consumeToken(b, S_OP_DELETE);
     if (!r) r = consumeToken(b, S_OP_CUSTOM);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid '='
-  private static boolean operationBodyRecover_0_9(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationBodyRecover_0_9")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5323,7 +5308,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ('}' | qid '=' | qid ':' | 'abstract' | 'override' | ',' )
+  // ! ('}' | '@' | qid ':' | 'abstract' | 'override' | ',' )
   static boolean partRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover")) return false;
     boolean r;
@@ -5333,28 +5318,17 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | qid '=' | qid ':' | 'abstract' | 'override' | ','
+  // '}' | '@' | qid ':' | 'abstract' | 'override' | ','
   private static boolean partRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partRecover_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, S_CURLY_RIGHT);
-    if (!r) r = partRecover_0_1(b, l + 1);
+    if (!r) r = consumeToken(b, S_AT);
     if (!r) r = partRecover_0_2(b, l + 1);
     if (!r) r = consumeToken(b, S_ABSTRACT);
     if (!r) r = consumeToken(b, S_OVERRIDE);
     if (!r) r = consumeToken(b, S_COMMA);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid '='
-  private static boolean partRecover_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "partRecover_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5971,7 +5945,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
+  // ! ( '}' | ',' | '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
   //   ( ('inputProjection' | 'outputProjection' | 'deleteProjection') qid ) )
   static boolean resourceDefBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDefBodyRecover")) return false;
@@ -5982,7 +5956,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ',' | qid '=' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
+  // '}' | ',' | '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' |
   //   ( ('inputProjection' | 'outputProjection' | 'deleteProjection') qid )
   private static boolean resourceDefBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "resourceDefBodyRecover_0")) return false;
@@ -5990,24 +5964,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, S_CURLY_RIGHT);
     if (!r) r = consumeToken(b, S_COMMA);
-    if (!r) r = resourceDefBodyRecover_0_2(b, l + 1);
+    if (!r) r = consumeToken(b, S_AT);
     if (!r) r = consumeToken(b, S_OP_READ);
     if (!r) r = consumeToken(b, S_OP_CREATE);
     if (!r) r = consumeToken(b, S_OP_UPDATE);
     if (!r) r = consumeToken(b, S_OP_DELETE);
     if (!r) r = consumeToken(b, S_OP_CUSTOM);
     if (!r) r = resourceDefBodyRecover_0_8(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid '='
-  private static boolean resourceDefBodyRecover_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "resourceDefBodyRecover_0_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -6192,7 +6155,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=') )
+  // ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | '@' )
   static boolean transformerBodyRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerBodyRecover")) return false;
     boolean r;
@@ -6202,7 +6165,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // '}' | ',' | 'inputProjection' | 'outputProjection' | (qid '=')
+  // '}' | ',' | 'inputProjection' | 'outputProjection' | '@'
   private static boolean transformerBodyRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerBodyRecover_0")) return false;
     boolean r;
@@ -6211,18 +6174,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_COMMA);
     if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
     if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
-    if (!r) r = transformerBodyRecover_0_4(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // qid '='
-  private static boolean transformerBodyRecover_0_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "transformerBodyRecover_0_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && consumeToken(b, S_EQ);
+    if (!r) r = consumeToken(b, S_AT);
     exit_section_(b, m, null, r);
     return r;
   }

@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
@@ -44,11 +44,11 @@ public abstract class ReqUpdateModelProjection<
       @NotNull M model,
       boolean replace,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, params, null, annotations, tails, location);
+    super(model, params, null, directives, tails, location);
     this.replace = replace;
   }
 
@@ -89,7 +89,7 @@ public abstract class ReqUpdateModelProjection<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
@@ -98,7 +98,7 @@ public abstract class ReqUpdateModelProjection<
         modelProjections.stream().anyMatch(ReqUpdateModelProjection::replace),
         modelProjections,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedTails
     );
@@ -109,7 +109,7 @@ public abstract class ReqUpdateModelProjection<
       boolean mergedUpdate,
       @NotNull List<SMP> modelProjections,
       @NotNull ReqParams mergedParams,
-      @NotNull Annotations mergedAnnotations,
+      @NotNull Directives mergedDirectives,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails);
 

@@ -44,34 +44,20 @@ public class SchemaAnnotationImpl extends ASTWrapperPsiElement implements Schema
 
   @Override
   @Nullable
-  public SchemaDataValue getDataValue() {
-    return PsiTreeUtil.getChildOfType(this, SchemaDataValue.class);
+  public SchemaDatum getDatum() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDatum.class);
   }
 
   @Override
-  @NotNull
-  public SchemaQid getQid() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getEq() {
-    return notNullChild(findChildByType(S_EQ));
-  }
-
   @Nullable
-  public String getName() {
-    return SchemaPsiImplUtil.getName(this);
+  public SchemaQnTypeRef getQnTypeRef() {
+    return PsiTreeUtil.getChildOfType(this, SchemaQnTypeRef.class);
   }
 
-  public PsiElement setName(String name) {
-    return SchemaPsiImplUtil.setName(this, name);
-  }
-
+  @Override
   @NotNull
-  public PsiElement getNameIdentifier() {
-    return SchemaPsiImplUtil.getNameIdentifier(this);
+  public PsiElement getAt() {
+    return notNullChild(findChildByType(S_AT));
   }
 
 }

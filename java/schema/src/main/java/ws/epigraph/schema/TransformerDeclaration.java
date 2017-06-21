@@ -18,8 +18,9 @@ package ws.epigraph.schema;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotated;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.types.TypeApi;
@@ -29,7 +30,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TransformerDeclaration {
+public class TransformerDeclaration implements Annotated {
   private final @NotNull String name;
   private final @NotNull TypeApi type;
   private final @NotNull OpInputVarProjection inputProjection;
@@ -79,6 +80,7 @@ public class TransformerDeclaration {
   @Contract(pure = true)
   public @NotNull OpOutputVarProjection outputProjection() { return outputProjection; }
 
+  @Override
   @Contract(pure = true)
   public @NotNull Annotations annotations() { return annotations; }
 

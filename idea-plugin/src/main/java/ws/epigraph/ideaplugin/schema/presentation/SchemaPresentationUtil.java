@@ -154,8 +154,11 @@ public final class SchemaPresentationUtil {
       return id == null ? "" : id.getText();
     }
 
-    if (element instanceof SchemaAnnotation)
-      return ((SchemaAnnotation) element).getQid().getName();
+    if (element instanceof SchemaAnnotation) {
+      SchemaQnTypeRef typeRef = ((SchemaAnnotation) element).getQnTypeRef();
+      if (typeRef == null) return "???";
+      return typeRef.getQn().getQn().toString();
+    }
 
     if (element instanceof SchemaFieldDecl) {
       SchemaFieldDecl schemaFieldDecl = (SchemaFieldDecl) element;

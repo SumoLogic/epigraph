@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.delete;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.req.ReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
 
@@ -30,8 +30,8 @@ public class ReqDeleteKeyProjection extends ReqKeyProjection{
   public ReqDeleteKeyProjection(
       final @NotNull Datum value,
       final @NotNull ReqParams params,
-      final @NotNull Annotations annotations,
+      final @NotNull Directives directives,
       final @NotNull TextLocation location) {
-    super(value, params, annotations, location);
+    super(value, params, directives, location);
   }
 }

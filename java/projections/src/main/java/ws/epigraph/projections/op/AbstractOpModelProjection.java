@@ -18,15 +18,13 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotated;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
-import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,8 +35,9 @@ public abstract class AbstractOpModelProjection<
     MP extends AbstractOpModelProjection</*MP*/?, /*SMP*/?, ?>,
     SMP extends AbstractOpModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
-    extends AbstractModelProjection<MP, SMP, M> {
+    extends AbstractModelProjection<MP, SMP, M> implements Annotated {
 
+  protected /*final*/ @NotNull Annotations annotations;
   protected /*final*/ @NotNull OpParams params;
 
   protected AbstractOpModelProjection(
@@ -48,14 +47,19 @@ public abstract class AbstractOpModelProjection<
       final @NotNull Annotations annotations,
       final @Nullable List<SMP> tails,
       final @NotNull TextLocation location) {
-    super(model, metaProjection, annotations, tails, location);
+    super(model, metaProjection, tails, location);
+    this.annotations = annotations;
     this.params = params;
   }
 
   protected AbstractOpModelProjection(@NotNull M model, @NotNull TextLocation location) {
     super(model, location);
+    annotations = Annotations.EMPTY;
     params = OpParams.EMPTY;
   }
+
+  @Override
+  public @NotNull Annotations annotations() { return annotations; }
 
   public @NotNull OpParams params() { return params; }
 
@@ -63,24 +67,16 @@ public abstract class AbstractOpModelProjection<
   protected SMP merge(
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
-      final @NotNull Annotations mergedAnnotations,
       final MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
     if (modelProjections.isEmpty()) return null;
 
-    Collection<OpParams> paramsList = new ArrayList<>();
-
-    for (final GenModelProjection<?, ?, ?, ?> projection : modelProjections) {
-      AbstractOpModelProjection<?, ?, ?> mp = (AbstractOpModelProjection<?, ?, ?>) projection;
-      paramsList.add(mp.params());
-    }
-
     return merge(
         model,
         modelProjections,
-        OpParams.merge(paramsList),
-        mergedAnnotations,
+        OpParams.merge(modelProjections.stream().map(AbstractOpModelProjection::params)),
+        Annotations.merge(modelProjections.stream().map(AbstractOpModelProjection::annotations)),
         mergedMetaProjection,
         mergedTails
     );
@@ -91,7 +87,7 @@ public abstract class AbstractOpModelProjection<
       @NotNull M model,
       @NotNull List<SMP> modelProjections,
       @NotNull OpParams mergedParams,
-      @NotNull Annotations mergedAnnotations,
+      Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails);
 
@@ -99,6 +95,7 @@ public abstract class AbstractOpModelProjection<
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     this.params = value.params();
+    this.annotations = value.annotations();
   }
 
   @Override
@@ -107,11 +104,9 @@ public abstract class AbstractOpModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final AbstractOpModelProjection<?, ?, ?> that = (AbstractOpModelProjection<?, ?, ?>) o;
-    return Objects.equals(params, that.params);
+    return Objects.equals(params, that.params) && Objects.equals(annotations, that.annotations);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), params);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), params, annotations); }
 }

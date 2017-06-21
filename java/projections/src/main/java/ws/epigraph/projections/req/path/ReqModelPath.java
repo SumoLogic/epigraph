@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.path;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.req.AbstractReqModelProjection;
 import ws.epigraph.projections.req.ReqParams;
@@ -39,9 +39,9 @@ public abstract class ReqModelPath<
   protected ReqModelPath(
       @NotNull M model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull TextLocation location) {
-    super(model, params, null, annotations, null, location);
+    super(model, params, null, directives, null, location);
   }
 
   @Override
@@ -54,7 +54,7 @@ public abstract class ReqModelPath<
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
     throw new RuntimeException("Path normalization not supported");

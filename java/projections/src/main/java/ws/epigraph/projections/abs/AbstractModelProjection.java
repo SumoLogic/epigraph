@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
@@ -47,7 +46,6 @@ public abstract class AbstractModelProjection<
   protected final @NotNull M model;
   private /*final*/ @Nullable ProjectionReferenceName name;
   protected /*final*/ @Nullable MP metaProjection;
-  protected /*final*/ @NotNull Annotations annotations;
   protected /*final*/ @Nullable List<SMP> polymorphicTails;
 
   private final @NotNull TextLocation location;
@@ -62,13 +60,11 @@ public abstract class AbstractModelProjection<
   protected AbstractModelProjection(
       @NotNull M model,
       @Nullable MP metaProjection,
-      @NotNull Annotations annotations,
       @Nullable List<SMP> polymorphicTails,
       @NotNull TextLocation location
   ) {
     this.model = model;
     this.metaProjection = metaProjection;
-    this.annotations = annotations;
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
@@ -81,7 +77,6 @@ public abstract class AbstractModelProjection<
   protected AbstractModelProjection(@NotNull M model, @NotNull TextLocation location) {
     this.model = model;
     metaProjection = null;
-    annotations = Annotations.EMPTY;
     this.location = location;
 
     isReference = true;
@@ -93,9 +88,6 @@ public abstract class AbstractModelProjection<
 
   @Override
   public @Nullable MP metaProjection() { return metaProjection; }
-
-  @Override
-  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
   public @Nullable List<SMP> polymorphicTails() { return polymorphicTails; }
@@ -235,12 +227,10 @@ public abstract class AbstractModelProjection<
 
     if (modelProjections.isEmpty()) return null;
 
-    List<Annotations> annotationsList = new ArrayList<>();
     List<MP> metaProjectionsList = new ArrayList<>();
 
     for (final GenModelProjection<?, ?, ?, ?> p : modelProjections) {
       AbstractModelProjection<MP, SMP, ?> mp = (AbstractModelProjection<MP, SMP, ?>) p;
-      annotationsList.add(mp.annotations());
       final @Nullable MP meta = mp.metaProjection();
       if (meta != null) metaProjectionsList.add(meta);
     }
@@ -260,7 +250,6 @@ public abstract class AbstractModelProjection<
     SMP res = merge(
         effectiveType,
         modelProjections,
-        Annotations.merge(annotationsList),
         mergedMetaProjection,
         mergedTails
     );
@@ -301,15 +290,11 @@ public abstract class AbstractModelProjection<
     return mergedTails;
   }
 
-  protected SMP merge(
+  protected abstract SMP merge(
       @NotNull M model,
       @NotNull List<SMP> modelProjections,
-      @NotNull Annotations mergedAnnotations,
       @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails) {
-
-    throw new RuntimeException("unimplemented"); // todo
-  }
+      @Nullable List<SMP> mergedTails);
 
   @SuppressWarnings("unchecked")
   private @NotNull SMP self() { return (SMP) this; }
@@ -366,7 +351,6 @@ public abstract class AbstractModelProjection<
     this.isResolved = true;
     this.name = name;
     this.metaProjection = (MP) value.metaProjection();
-    this.annotations = value.annotations();
     this.polymorphicTails = value.polymorphicTails();
 
     for (final Runnable callback : onResolvedCallbacks) callback.run();
@@ -399,12 +383,11 @@ public abstract class AbstractModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     AbstractModelProjection<?, ?, ?> that = (AbstractModelProjection<?, ?, ?>) o;
     return Objects.equals(model, that.model) &&
-           Objects.equals(metaProjection, that.metaProjection) &&
-           Objects.equals(annotations, that.annotations);
+           Objects.equals(metaProjection, that.metaProjection);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(model, metaProjection, annotations);
+    return Objects.hash(model, metaProjection);
   }
 }

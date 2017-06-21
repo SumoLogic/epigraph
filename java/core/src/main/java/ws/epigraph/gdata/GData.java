@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,53 +21,53 @@ import ws.epigraph.refs.TypeRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GListDatum extends GDatum {
-  private final @NotNull List<GDataValue> values;
+public class GData extends GDataValue {
+  private final @Nullable TypeRef typeRef;
+  private final @NotNull LinkedHashMap<String, GDatum> tags;
 
-  public GListDatum(@Nullable TypeRef typeRef, @NotNull List<GDataValue> values, @NotNull TextLocation location) {
-    super(typeRef, location);
-    this.values = values;
+  public GData(
+      @Nullable TypeRef typeRef,
+      @NotNull LinkedHashMap<String, GDatum> tags,
+      @NotNull TextLocation location) {
+
+    super(location);
+    this.typeRef = typeRef;
+    this.tags = tags;
   }
 
-  public @NotNull List<GDataValue> values() { return values; }
+  public @Nullable TypeRef typeRef() { return typeRef; }
+
+  public @NotNull LinkedHashMap<String, GDatum> tags() { return tags; }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    GListDatum gListDatum = (GListDatum) o;
-    return Objects.equals(values, gListDatum.values);
-  }
-
-  void foo() {
-    LinkedHashMap<String, Long> map =
-        Stream.<AbstractMap.Entry<String, Long>>of(
-            new AbstractMap.SimpleEntry<>("", 1L),
-            new AbstractMap.SimpleEntry<>("", 1L)
-        ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
-
+    GData gData = (GData) o;
+    return Objects.equals(typeRef, gData.typeRef) &&
+           Objects.equals(tags, gData.tags);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), values); }
+  public int hashCode() { return Objects.hash(typeRef, tags); }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     if (typeRef() != null) sb.append(typeRef());
-    sb.append('[');
-    sb.append(values.stream().map(Object::toString).collect(Collectors.joining(", ")));
-    sb.append(']');
+    sb.append('<');
+    sb.append(tags.entrySet()
+        .stream()
+        .map(e -> e.getKey() + ": " + e.getValue())
+        .collect(Collectors.joining(", ")));
+    sb.append('>');
     return sb.toString();
   }
 }

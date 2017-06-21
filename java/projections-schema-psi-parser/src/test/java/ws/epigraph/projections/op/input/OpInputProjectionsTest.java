@@ -127,7 +127,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { deprecated = true }");
+    testParsingVarProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
@@ -142,7 +142,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` { deprecated = true } ( id ) )");
+    testParsingVarProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
   }
 
   @Test
@@ -152,7 +152,7 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friendsMap [ ;param: epigraph.String, doc = \"bla\" ]( :id ) )");
+    testParsingVarProjection(":`record` ( friendsMap [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\" ]( :id ) )");
   }
 
   @Test
@@ -160,7 +160,8 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(
         lines(
             ":`record` (",
-            "  personRecToPersonRec [ ;param: epigraph.String, doc = \"bla\", projection ( firstName, lastName ) ]( ( firstName ) )",
+            "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection ( firstName, lastName ) ](",
+            "    ( firstName ) )",
             ")"
         )
     );
@@ -207,7 +208,9 @@ public class OpInputProjectionsTest {
         UserRecord.type,
         PaginationInfo.type,
         PersonMap.type,
-        epigraph.String.type
+        epigraph.String.type,
+        epigraph.annotations.Deprecated.type,
+        epigraph.annotations.Doc.type
     );
 
     final OpInputVarProjection varProjection = parseOpInputVarProjection(

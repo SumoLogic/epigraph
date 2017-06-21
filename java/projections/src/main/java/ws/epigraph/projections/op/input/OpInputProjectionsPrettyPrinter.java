@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.input;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
@@ -64,8 +64,10 @@ public class OpInputProjectionsPrettyPrinter<E extends Exception> extends Abstra
     if (defaultValue != null) {
       if (first)
         first = false;
-      else
+      else {
+        l.print(",");
         brk();
+      }
       l.beginIInd(0).print("default:");
       brk();
       gdataPrettyPrinter.print(defaultValue);

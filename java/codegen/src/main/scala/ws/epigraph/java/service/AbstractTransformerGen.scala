@@ -19,7 +19,6 @@ package ws.epigraph.java.service
 import java.nio.file.Path
 
 import ws.epigraph.compiler.CTypeKind
-import ws.epigraph.gdata.GPrimitiveDatum
 import ws.epigraph.java.JavaGenNames.{lqdrn2, lqn2}
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
@@ -59,13 +58,8 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
     sctx.addImport("ws.epigraph.data.Data")
     sctx.addImport(outputProjectionGen.fullClassName)
 
-    val batching: Boolean = Option(td.annotations().asMap().get("batching")).exists { ann =>
-      ann.value() match {
-        case pd: GPrimitiveDatum => //noinspection ComparingUnrelatedTypes
-          java.lang.Boolean.TRUE.equals(pd.value())
-        case _ => false
-      }
-    }
+    // todo maxBatchSize
+    val batching: Boolean = td.annotations().annotation(Qn.fromDotSeparated("ws.epigraph.annotations.Batching")) != null
 
     val cType = JavaGenUtils.toCType(td.`type`())
     val shortDataType = sctx.addImport(lqdrn2(cType, namespace.toString), namespace)

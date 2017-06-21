@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -56,13 +56,14 @@ public class ReqOutputRecordModelProjection
       @NotNull RecordTypeApi model,
       boolean required,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
       @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, annotations, metaProjection, tails, location);
-    this.fieldProjections = fieldProjections;
+
+    super(model, required, params, directives, metaProjection, tails, location);
+    this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
@@ -89,7 +90,7 @@ public class ReqOutputRecordModelProjection
       final boolean mergedRequired,
       final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqOutputRecordModelProjection> mergedTails) {
 
@@ -112,7 +113,7 @@ public class ReqOutputRecordModelProjection
         model,
         mergedRequired,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedMetaProjection,
         mergedFieldEntries,
         mergedTails,
@@ -139,7 +140,7 @@ public class ReqOutputRecordModelProjection
         n.type(),
         n.required(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         n.metaProjection(),
         normalizedFieldEntries,
         n.polymorphicTails(),

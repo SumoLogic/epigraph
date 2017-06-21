@@ -19,7 +19,6 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
@@ -36,24 +35,29 @@ public abstract class AbstractReqModelProjection<
     M extends DatumTypeApi>
     extends AbstractModelProjection<MP, SMP, M> {
 
+  protected /*final*/ @NotNull Directives directives;
   protected /*final*/ @NotNull ReqParams params;
 
   protected AbstractReqModelProjection(
       final @NotNull M model,
       final @NotNull ReqParams params,
       final @Nullable MP metaProjection,
-      final @NotNull Annotations annotations,
+      final @NotNull Directives directives,
       final @Nullable List<SMP> tails,
       final @NotNull TextLocation location
   ) {
-    super(model, metaProjection, annotations, tails, location);
+    super(model, metaProjection, tails, location);
+    this.directives = directives;
     this.params = params;
   }
 
   protected AbstractReqModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
     params = ReqParams.EMPTY;
+    directives = Directives.EMPTY;
   }
+
+  public @NotNull Directives directives() { return directives; }
 
   public @NotNull ReqParams params() { return params; }
 
@@ -61,15 +65,15 @@ public abstract class AbstractReqModelProjection<
   protected SMP merge(
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
-      final @NotNull Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
+
 
     return merge(
         model,
         modelProjections,
         ReqParams.merge(modelProjections.stream().map(AbstractReqModelProjection::params)),
-        mergedAnnotations,
+        Directives.merge(modelProjections.stream().map(AbstractReqModelProjection::directives)),
         mergedMetaProjection,
         mergedTails
     );
@@ -79,7 +83,7 @@ public abstract class AbstractReqModelProjection<
       @NotNull M model,
       @NotNull List<SMP> modelProjections,
       @NotNull ReqParams mergedParams,
-      @NotNull Annotations mergedAnnotations,
+      @NotNull Directives mergedDirectives,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails);
 
@@ -87,6 +91,7 @@ public abstract class AbstractReqModelProjection<
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     super.resolve(name, value);
     params = value.params();
+    directives = value.directives();
   }
 
   @Override
@@ -95,11 +100,9 @@ public abstract class AbstractReqModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final AbstractReqModelProjection<?, ?, ?> that = (AbstractReqModelProjection<?, ?, ?>) o;
-    return Objects.equals(params, that.params);
+    return Objects.equals(params, that.params) && Objects.equals(directives, that.directives);
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), params);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), params, directives); }
 }

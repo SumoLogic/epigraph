@@ -20,8 +20,6 @@ import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.printers.DataPrinter;
-import ws.epigraph.projections.Annotation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.*;
@@ -49,7 +47,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
 
-    dataPrinter = new DataPrinter<E>(layouter, false);
+    dataPrinter = new DataPrinter<>(layouter, false);
 
     paramsDataPrinter = new DataPrinter<E>(layouter, true) {
       @Override
@@ -63,7 +61,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   @Override
   protected boolean printModelParams(final @NotNull MP projection) throws E {
     ReqParams params = projection.params();
-    Annotations annotations = projection.annotations();
+    Directives directives = projection.directives();
 
     l.beginIInd(0);
     boolean empty = true;
@@ -73,8 +71,8 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       empty = false;
     }
 
-    if (!annotations.isEmpty()) {
-      printAnnotations(annotations);
+    if (!directives.isEmpty()) {
+      printDirectives(directives);
       empty = false;
     }
 
@@ -104,16 +102,15 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.end();
   }
 
-  @Override
-  public void printAnnotations(@NotNull Annotations annotations) throws E {
+  public void printDirectives(@NotNull Directives directives) throws E {
     l.beginCInd();
-    if (!annotations.isEmpty()) {
-      for (Annotation annotation : annotations.asMap().values()) {
+    if (!directives.isEmpty()) {
+      for (Directive directive : directives.asMap().values()) {
         l.beginIInd();
-        l.print("!").print(annotation.name());
+        l.print("!").print(directive.name());
         brk().print("=");
         brk();
-        gdataPrettyPrinter.print(annotation.value());
+        gdataPrettyPrinter.print(directive.value());
         l.end();
       }
     }
@@ -188,6 +185,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     for (TP tagProjection : vp.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();
       if (!modelProjection.params().isEmpty()) return false;
+      if (!modelProjection.directives().isEmpty()) return false;
     }
 
     return true;
@@ -195,13 +193,13 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
   @Override
   public boolean modelParamsEmpty(final @NotNull MP mp) {
-    return super.modelParamsEmpty(mp) && mp.params().isEmpty();
+    return super.modelParamsEmpty(mp) && mp.directives().isEmpty() && mp.params().isEmpty();
   }
 
   protected void printReqKey(final ReqKeyProjection key) throws E {
     dataPrinter.print(null, key.value());
     printParams(key.params());
-    printAnnotations(key.annotations());
+    printDirectives(key.directives());
   }
 
   protected void printMapModelProjection(@Nullable List<? extends ReqKeyProjection> keys, @NotNull VP itemsProjection)

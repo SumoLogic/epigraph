@@ -4,17 +4,17 @@ namespace epigraph.schema
 // this allows more clean `supertypes` type, but makes the model twice more complex
 
 abstract record Type extends Named {
-  doc = "Common interface for data type and entity records"
+  @Doc "Common interface for data type and entity records"
 
   override name: TypeName
 
   abstract supertypes: list[Type]
 
-  `abstract`: Boolean { doc = "Abstract types cannot be instantiated (?)" }
+  `abstract`: Boolean { @Doc "Abstract types cannot be instantiated (?)" }
 }
 
 record VarType extends Type {
-  doc = "Vartype declaration"
+  @Doc "Vartype declaration"
 
   override name: QualifiedTypeName
 
@@ -30,7 +30,7 @@ record DataType {
 }
 
 record Tag extends Named {
-  doc = "Vartype member declaration"
+  @Doc "Vartype member declaration"
 
   override name: TagName
 
@@ -38,7 +38,7 @@ record Tag extends Named {
 }
 
 record DatumType extends Type {
-  doc = "Model type"
+  @Doc "Model type"
 
   override supertypes: list[DatumType]
 

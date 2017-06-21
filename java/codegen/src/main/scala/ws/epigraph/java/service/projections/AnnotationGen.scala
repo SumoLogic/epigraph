@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package ws.epigraph.java.service.projections
 
+import ws.epigraph.annotations.Annotation
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
-import ws.epigraph.projections.Annotation
+import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,8 +29,9 @@ class AnnotationGen(ann: Annotation) extends ServiceObjectGen[Annotation](ann) {
   override protected def generateObject(ctx: ServiceGenContext): String =
   /*@formatter:off*/sn"""\
 new Annotation(
-  "${ann.name()}",
-  ${i(gen(ann.value(), ctx))},
-  ${gen(ann.location(), ctx)}
+  ${ServiceGenUtils.genTypeExpr(ann.`type`(), ctx.gctx)},
+  ${i(gen(ann.gDatum(), ctx))},
+  ${gen(ann.location(), ctx)},
+  ws.epigraph.refs.IndexBasedTypesResolver.INSTANCE
 )"""/*@formatter:on*/
 }

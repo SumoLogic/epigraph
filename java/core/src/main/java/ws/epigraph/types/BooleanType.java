@@ -50,6 +50,9 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
   }
 
   @Override
+  public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.BOOLEAN; }
+
+  @Override
   public abstract @NotNull BooleanDatum.Builder createBuilder(@NotNull Boolean val);
 
 

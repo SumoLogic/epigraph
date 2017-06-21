@@ -19,7 +19,7 @@ package ws.epigraph.projections.req.input;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -55,12 +55,13 @@ public class ReqInputRecordModelProjection
   public ReqInputRecordModelProjection(
       @NotNull RecordTypeApi model,
       @NotNull ReqParams params,
-      @NotNull Annotations annotations,
+      @NotNull Directives directives,
       @NotNull Map<String, ReqInputFieldProjectionEntry> fieldProjections,
       @Nullable List<ReqInputRecordModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, tails, location);
-    this.fieldProjections = fieldProjections;
+
+    super(model, params, directives, tails, location);
+    this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
@@ -86,7 +87,7 @@ public class ReqInputRecordModelProjection
       final @NotNull RecordTypeApi model,
       final @NotNull List<ReqInputRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
-      final @NotNull Annotations mergedAnnotations,
+      final @NotNull Directives mergedDirectives,
       final @Nullable ReqInputModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqInputRecordModelProjection> mergedTails) {
 
@@ -108,7 +109,7 @@ public class ReqInputRecordModelProjection
     return new ReqInputRecordModelProjection(
         model,
         mergedParams,
-        mergedAnnotations,
+        mergedDirectives,
         mergedFieldEntries,
         mergedTails,
         TextLocation.UNKNOWN
@@ -133,7 +134,7 @@ public class ReqInputRecordModelProjection
     return new ReqInputRecordModelProjection(
         n.type(),
         n.params(),
-        n.annotations(),
+        n.directives(),
         normalizedFieldEntries,
         n.polymorphicTails(),
         TextLocation.UNKNOWN

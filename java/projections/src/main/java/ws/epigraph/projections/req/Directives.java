@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections;
+package ws.epigraph.projections.req;
 
 import ws.epigraph.gdata.GDataValue;
 import org.jetbrains.annotations.NotNull;
@@ -28,56 +28,56 @@ import java.util.stream.Stream;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class Annotations {
-  public static final Annotations EMPTY = new Annotations(Collections.emptyMap());
+public class Directives {
+  public static final Directives EMPTY = new Directives(Collections.emptyMap());
 
-  private final @NotNull Map<String, Annotation> entries;
+  private final @NotNull Map<String, Directive> entries;
 
-  public static @NotNull Annotations fromMap(@Nullable Map<String, Annotation> entries) {
-    return entries == null ? EMPTY : new Annotations(entries);
+  public static @NotNull Directives fromMap(@Nullable Map<String, Directive> entries) {
+    return entries == null ? EMPTY : new Directives(entries);
   }
 
-  public Annotations(@NotNull Map<String, Annotation> entries) {this.entries = entries;}
+  public Directives(@NotNull Map<String, Directive> entries) {this.entries = entries;}
 
-  public Annotations(@NotNull Collection<Annotation> annotations) {
-    this(annotations.stream().collect(Collectors.toMap(Annotation::name, Function.identity())));
+  public Directives(@NotNull Collection<Directive> directives) {
+    this(directives.stream().collect(Collectors.toMap(Directive::name, Function.identity())));
   }
 
   public boolean isEmpty() { return entries.isEmpty(); }
 
   public @Nullable GDataValue get(@NotNull String key) {
-    Annotation annotation = entries.get(key);
-    return annotation == null ? null : annotation.value();
+    Directive directive = entries.get(key);
+    return directive == null ? null : directive.value();
   }
 
-  public @NotNull Map<String, Annotation> asMap() { return entries; }
+  public @NotNull Map<String, Directive> asMap() { return entries; }
 
-  public static @NotNull Annotations merge(@NotNull Stream<Annotations> annotationsToMerge) {
-    Map<String, Annotation> entries = new HashMap<>();
+  public static @NotNull Directives merge(@NotNull Stream<Directives> directivessToMerge) {
+    Map<String, Directive> entries = new HashMap<>();
 
-    annotationsToMerge.forEach(annotations -> {
-      for (final Map.Entry<String, Annotation> entry : annotations.asMap().entrySet()) {
+    directivessToMerge.forEach(directives -> {
+      for (final Map.Entry<String, Directive> entry : directives.asMap().entrySet()) {
         String key = entry.getKey();
         if (!entries.containsKey(key))
           entries.put(key, entry.getValue());
       }
     });
 
-    return new Annotations(entries);
+    return new Directives(entries);
   }
 
-  public static @NotNull Annotations merge(@NotNull Collection<Annotations> annotationsToMerge) {
-    if (annotationsToMerge.isEmpty()) return EMPTY;
-    if (annotationsToMerge.size() == 1) return annotationsToMerge.iterator().next();
+  public static @NotNull Directives merge(@NotNull Collection<Directives> directivesToMerge) {
+    if (directivesToMerge.isEmpty()) return EMPTY;
+    if (directivesToMerge.size() == 1) return directivesToMerge.iterator().next();
 
-    return merge(annotationsToMerge.stream());
+    return merge(directivesToMerge.stream());
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Annotations opParams = (Annotations) o;
+    Directives opParams = (Directives) o;
     return Objects.equals(entries, opParams.entries);
   }
 

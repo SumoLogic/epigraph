@@ -1,5 +1,6 @@
 namespace ws.epigraph.services
 
+import epigraph.annotations.Doc
 import epigraph.schema.Type
 import epigraph.schema.TypeName
 import epigraph.schema.QualifiedTypeName
@@ -18,7 +19,7 @@ import epigraph.schema.NameString
 import epigraph.schema.PrimitiveType
 
 record EpigraphResource {
-  doc = "Epigraph built-in services resource root type"
+  @Doc "Epigraph built-in services resource root type"
 
   types: map[NameString, Type]
 }

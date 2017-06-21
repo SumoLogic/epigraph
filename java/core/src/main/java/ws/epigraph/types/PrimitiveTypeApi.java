@@ -25,6 +25,8 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface PrimitiveTypeApi extends DatumTypeApi {
+  enum PrimitiveKind { BOOLEAN, DOUBLE, INTEGER, LONG, STRING }
+
 //  @Override
 //  default @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }
 
@@ -33,4 +35,6 @@ public interface PrimitiveTypeApi extends DatumTypeApi {
 
   @Override
   @NotNull List<@NotNull ? extends PrimitiveTypeApi> supertypes();
+
+  @NotNull PrimitiveKind primitiveKind();
 }

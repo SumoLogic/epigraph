@@ -6,7 +6,6 @@ namespace epigraph.projections.req
  * parameters and annotations
  */
 
-import epigraph.projections.Annotation
 import epigraph.schema.DatumType
 import epigraph.schema.EnumType
 import epigraph.schema.Field
@@ -17,6 +16,7 @@ import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
 import epigraph.data.Datum
+import epigraph.annotations.Doc
 
 record ReqInputVarProjection {
   type: Type
@@ -32,7 +32,7 @@ record ReqInputTagProjectionEntry {
 abstract record ReqInputModelProjection {
   model: DatumType
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
 //  `meta`: ReqInputModelProjection
 }
 
@@ -68,9 +68,9 @@ record ReqInputKeysProjection {
 }
 
 record ReqInputKeyProjection {
-  value: Datum { doc = "of appropriate (enclosing map key) type"}
+  value: Datum { @Doc "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
-  annotations: map[String, Annotation]
+  directives: map[String, Directive]
 }
 
 record ReqInputEnumModelProjection extends ReqInputModelProjection {

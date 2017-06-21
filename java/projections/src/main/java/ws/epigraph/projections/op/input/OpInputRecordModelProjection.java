@@ -18,9 +18,9 @@ package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GRecordDatum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -62,7 +62,7 @@ public class OpInputRecordModelProjection
       @NotNull TextLocation location) {
 
     super(model, required, defaultValue, params, annotations, metaProjection, tails, location);
-    this.fieldProjections = fieldProjections;
+    this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }

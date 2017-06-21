@@ -1,6 +1,8 @@
 namespace epigraph.schema
 
+import epigraph.annotations.Doc
+
 record Documented supplements Type, Tag, Field, EnumValue {
-  doc = "Interface that provides `doc` field"
-  doc: String { doc = "Documentation snippet" }
+  @Doc "Interface that provides `doc` field"
+  doc: String { @Doc "Documentation snippet" }
 }

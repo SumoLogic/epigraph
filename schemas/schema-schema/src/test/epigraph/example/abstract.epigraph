@@ -35,7 +35,7 @@ entity User extends Person {
 }
 
 record UserRec extends PersonRec {
-  doc = { firstName: "vasya", lastName: "bob" }
+  // doc = { firstName: "vasya", lastName: "bob" }
 }
 
 // NB: self-entity is not mutable!

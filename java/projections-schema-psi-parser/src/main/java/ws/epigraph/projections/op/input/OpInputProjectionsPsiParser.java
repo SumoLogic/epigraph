@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.*;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpKeyPresence;
@@ -333,11 +333,13 @@ public final class OpInputProjectionsPsiParser {
 
   private static @NotNull Annotations parseModelAnnotations(
       @NotNull List<SchemaOpInputModelProperty> modelProperties,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpInputPsiProcessingContext context,
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     return parseAnnotations(
         modelProperties.stream().map(SchemaOpInputModelProperty::getAnnotation),
-        context
+        context,
+        typesResolver
     );
   }
 
@@ -637,7 +639,7 @@ public final class OpInputProjectionsPsiParser {
 
     final GDatum defaultValue = getModelDefaultValue(modelProperties, context);
     final OpParams params = parseModelParams(modelProperties, typesResolver, context);
-    final Annotations annotations = parseModelAnnotations(modelProperties, context);
+    final Annotations annotations = parseModelAnnotations(modelProperties, context, typesResolver);
     final OpInputModelProjection<?, ?, ?, ?> metaProjection =
         parseModelMetaProjection(type, modelProperties, typesResolver, context);
 
@@ -1203,7 +1205,7 @@ public final class OpInputProjectionsPsiParser {
     final @NotNull OpParams keyParams =
         parseParams(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getOpParam), resolver, context);
     final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getAnnotation), context);
+        parseAnnotations(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getAnnotation), context, resolver);
 
     OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
         keyType,
