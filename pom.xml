@@ -54,35 +54,49 @@
 
   </developers>
 
-  <!-- first-time build bootstrap sequence: mvn clean install -->
+  <!-- first-time build bootstrap:
+      mvn clean install -Plight-psi,main
+  -->
+  <!-- IDEA project set-up:
+    - Run: mvn clean install -Plight-psi,main
+    - File > Open... > Select project root folder
+    - File > Project Structure... > Modules > epigraph-java-schema-parser
+      - Add Content Root > java/schema-parser-common/src/main/java and java/schema-parser-common/src/main/java.generated
+      - Note: last step has to be done every time main profile modules are removed and re-imported :(
+      - TODO: try splitting java/schema-parser-common into two maven modules with linked src folders
+  -->
 
   <profiles>
+
     <profile>
       <id>main</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <modules>
+      <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
         <module>builtin-services</module>
-        <module>jar-mavenizer-plugin</module><!-- TODO move to a separate profile -->
-        <module>light-psi</module><!-- TODO move to the separate profile -->
         <module>compiler</module>
         <module>examples</module>
         <module>java</module>
-        <module>maven-plugin-common</module>
         <module>maven-plugin</module>
-        <module>scala/codegen-test</module>
+        <module>maven-plugin-common</module>
         <module>scala</module>
+        <module>scala/codegen-test</module>
         <module>schemas</module>
         <module>tests</module>
       </modules>
     </profile>
 
     <profile>
+      <id>light-psi</id>
+      <modules>
+        <module>jar-mavenizer-plugin</module>
+        <module>light-psi</module>
+      </modules>
+    </profile>
+
+    <profile>
       <id>idea-plugin</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
       <modules>
         <module>idea-plugin</module>
         <module>java/lang-common</module>

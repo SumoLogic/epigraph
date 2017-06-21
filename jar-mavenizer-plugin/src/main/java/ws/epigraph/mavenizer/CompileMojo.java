@@ -16,6 +16,9 @@ import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 
 import java.io.File;
 
+/**
+ * "Compiles" a JAR file by extracting its contents to project target classes directory.
+ */
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresProject = true, threadSafe = true)
 public class CompileMojo extends AbstractMojo {
 
