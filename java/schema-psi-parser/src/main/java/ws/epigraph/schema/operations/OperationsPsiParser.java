@@ -22,32 +22,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
+import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
 import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.schema.Namespaces;
-import ws.epigraph.schema.ResourcePsiProcessingContext;
-import ws.epigraph.schema.TypeRefs;
-import ws.epigraph.schema.parser.psi.*;
-import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
+import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.refs.ValueTypeRef;
-import ws.epigraph.types.*;
+import ws.epigraph.schema.Namespaces;
+import ws.epigraph.schema.ResourcePsiProcessingContext;
+import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.parser.SchemaPsiParserUtil;
+import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.types.DatumType;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Map;
 
@@ -95,7 +98,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaReadOperationBodyPart part : psi.getReadOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
+      annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       outputProjectionPsi =
@@ -158,7 +161,7 @@ public final class OperationsPsiParser {
     SchemaOperationOutputProjection outputProjectionPsi = null;
 
     for (SchemaCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
+      annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
@@ -237,7 +240,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaUpdateOperationBodyPart part : psi.getUpdateOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
+      annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
@@ -316,7 +319,7 @@ public final class OperationsPsiParser {
     final String operationName = parseOperationName(psi.getOperationName());
 
     for (SchemaDeleteOperationBodyPart part : psi.getDeleteOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
+      annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       deleteProjectionPsi =
@@ -414,7 +417,7 @@ public final class OperationsPsiParser {
       throw new PsiProcessingException("Custom operation must have a name", psi, context);
 
     for (SchemaCustomOperationBodyPart part : psi.getCustomOperationBodyPartList()) {
-      annotations = SchemaProjectionPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
+      annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
 
       methodPsi = getPsiPart(methodPsi, part.getOperationMethod(), "HTTP method", context);
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);

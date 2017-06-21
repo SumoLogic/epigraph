@@ -25,7 +25,6 @@ dependencies {
 
   testCompile project(':epigraph-java-core')
   testCompile project(':epigraph-java-data-processing')
-  testCompile project(':epigraph-java-gdata-schema-psi-parser')
   testCompile project(':epigraph-java-http-client')
   testCompile project(':epigraph-java-http-server-jetty-handler')
   testCompile project(':epigraph-java-http-server-servlet')
@@ -35,6 +34,7 @@ dependencies {
   testCompile project(':epigraph-java-projections-schema-psi-parser')
   testCompile project(':epigraph-java-projections-url-psi-parser')
   testCompile project(':epigraph-java-request-url-parser')
+  testCompile project(':epigraph-java-schema-psi-parser-common')
   testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
 

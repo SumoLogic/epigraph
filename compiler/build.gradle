@@ -23,9 +23,6 @@ sourceSets.main.java.srcDirs += file('../java/schema-psi-parser/src/main/java')
 
 //idea.module.generatedSourceDirs += file('../java/schema-psi-parser/src/main/java')
 
-sourceSets.main.java.srcDirs += file('../java/gdata-schema-psi-parser/src/main/java')
-//idea.module.generatedSourceDirs += file('../java/gdata-schema-psi-parser/src/main/java')
-
 sourceSets.main.java.srcDirs += file('../java/projections-schema-psi-parser/src/main/java')
 //idea.module.generatedSourceDirs += file('../java/projections-schema-psi-parser/src/main/java')
 

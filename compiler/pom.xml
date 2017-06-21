@@ -138,7 +138,6 @@
             <configuration>
               <sources>
                 <source>../java/schema-psi-parser/src/main/java</source>
-                <source>../java/gdata-schema-psi-parser/src/main/java</source>
                 <source>../java/projections-schema-psi-parser/src/main/java</source>
               </sources>
             </configuration>

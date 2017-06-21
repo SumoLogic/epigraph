@@ -210,7 +210,7 @@ public final class ResourcesSchemaPsiParser {
           context
       );
 
-    final Annotations annotations = SchemaProjectionPsiParserUtil.parseAnnotations(
+    final Annotations annotations = SchemaPsiParserUtil.parseAnnotations(
         psi.getTransformerBodyPartList()
             .stream()
             .map(SchemaTransformerBodyPart::getAnnotation)

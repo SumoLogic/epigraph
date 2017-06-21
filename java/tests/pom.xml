@@ -89,13 +89,6 @@
 
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-gdata-schema-psi-parser</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-projections</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
@@ -118,6 +111,13 @@
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-request-url-parser</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-schema-psi-parser-common</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>

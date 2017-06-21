@@ -24,7 +24,6 @@ dependencies {
 
   // tests are in java/tests
   
-//  testCompile project(':epigraph-java-gdata-schema-psi-parser')
 //  testCompile project(':epigraph-java-projections-schema-psi-parser')
 //  testCompile project(':epigraph-java-projections-url-psi-parser')
 //  testCompile project(':epigraph-java-request-url-parser')

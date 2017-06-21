@@ -18,11 +18,15 @@
 
 package ws.epigraph.compiler
 
+import java.util
 import java.util.concurrent.ConcurrentLinkedQueue
 
 import com.intellij.psi.PsiElement
-import ws.epigraph.schema.parser.psi._
 import org.jetbrains.annotations.Nullable
+import ws.epigraph.annotations.Annotations
+import ws.epigraph.psi.DefaultPsiProcessingContext
+import ws.epigraph.schema.parser.SchemaPsiParserUtil
+import ws.epigraph.schema.parser.psi._
 
 import scala.annotation.meta.getter
 import scala.collection.JavaConversions._
@@ -164,6 +168,22 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 //    case _ => false
 //  }
 
+  def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
+
+  private lazy val _computedAnnotations: Annotations = annotationsPsiOpt.map{ annotationsPsi =>
+    val ppc = new DefaultPsiProcessingContext
+    val res = SchemaPsiParserUtil.parseAnnotations(
+      annotationsPsi,
+      ppc,
+      new CTypesResolver(csf)
+    )
+    lazy val reporter = ErrorReporter.reporter(csf)
+    ppc.errors().foreach{ e => reporter.error(e.message(), e.location()) }
+    res
+  }.getOrElse(Annotations.EMPTY)
+
+  protected def annotationsPsiOpt: Option[java.util.List[SchemaAnnotation]] = None
+
 }
 
 object CTypeDef {
@@ -265,6 +285,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(impli
     if (effectiveTags.exists { et => defaultTagName.contains(et.name) }) defaultTagName else None
   )
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getEntityTypeBody).map(_.getAnnotationList)
 }
 
 class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nullable val psi: PsiElement) {
@@ -434,6 +455,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
     }
   }
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getRecordTypeBody).map(_.getAnnotationList)
 }
 
 class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTypeDef)(implicit val ctx: CContext) {
@@ -626,6 +648,7 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
   /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
   override def parents: Seq[CMapType] = ctx.getOrCreateAnonMapOf(keyTypeRef, valueDataType) +: super.parents
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getMapTypeBody).map(_.getAnnotationList)
 }
 
 
@@ -747,6 +770,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
   /** Sanitized declared parents of this type in order of increasing priority. After [[CPhase.RESOLVE_TYPEREFS]]. */
   override def parents: Seq[CListType] = ctx.getOrCreateAnonListOf(elementDataType) +: super.parents
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getListTypeBody).map(_.getAnnotationList)
 }
 
 
@@ -763,6 +787,7 @@ class CEnumTypeDef(csf: CSchemaFile, psi: SchemaEnumTypeDef)(implicit ctx: CCont
     if (body == null) Nil else body.getEnumMemberDeclList.map(new CEnumValue(csf, _)).toList
   }
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getEnumTypeBody).map(_.getAnnotationList)
 }
 
 class CEnumValue(csf: CSchemaFile, psi: SchemaEnumMemberDecl)(implicit val ctx: CContext) {
@@ -781,6 +806,7 @@ class CPrimitiveTypeDef(csf: CSchemaFile, override val psi: SchemaPrimitiveTypeD
 
   override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
 
+  override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getPrimitiveTypeBody).map(_.getAnnotationList)
 }
 
 

@@ -17,6 +17,8 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotated;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.names.TypeName;
 
 import java.util.Collection;
@@ -26,7 +28,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface TypeApi {
+public interface TypeApi extends Annotated {
   @NotNull TypeKind kind();
 
   @NotNull
@@ -47,4 +49,7 @@ public interface TypeApi {
 
   /** Create data type without default tag */
   @NotNull DataTypeApi dataType();
+
+  @Override
+  default @NotNull Annotations annotations() { return Annotations.EMPTY; }
 }

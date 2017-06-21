@@ -33,6 +33,7 @@ import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
+import ws.epigraph.schema.parser.SchemaPsiParserUtil;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
@@ -336,7 +337,7 @@ public final class OpInputProjectionsPsiParser {
       @NotNull OpInputPsiProcessingContext context,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    return parseAnnotations(
+    return SchemaPsiParserUtil.parseAnnotations(
         modelProperties.stream().map(SchemaOpInputModelProperty::getAnnotation),
         context,
         typesResolver
@@ -1205,7 +1206,11 @@ public final class OpInputProjectionsPsiParser {
     final @NotNull OpParams keyParams =
         parseParams(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getOpParam), resolver, context);
     final @NotNull Annotations keyAnnotations =
-        parseAnnotations(keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getAnnotation), context, resolver);
+        SchemaPsiParserUtil.parseAnnotations(
+            keyPartsPsi.stream().map(SchemaOpInputKeyProjectionPart::getAnnotation),
+            context,
+            resolver
+        );
 
     OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
         keyType,

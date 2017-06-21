@@ -34,7 +34,6 @@
     <module>core</module>
     <module>data-processing</module>
     <module>federator</module>
-    <module>gdata-schema-psi-parser</module>
     <module>http-client</module>
     <module>http-common</module>
     <module>http-server</module>

@@ -30,6 +30,7 @@ import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.parser.SchemaPsiParserUtil;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
@@ -40,6 +41,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
+import static ws.epigraph.schema.parser.SchemaPsiParserUtil.parseAnnotation;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -128,7 +130,7 @@ public final class OpPathPsiParser {
       @NotNull OpPathPsiProcessingContext context,
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
-    return parseAnnotations(
+    return SchemaPsiParserUtil.parseAnnotations(
         modelProperties.stream().map(SchemaOpModelPathProperty::getAnnotation),
         context,
         typesResolver

@@ -19,6 +19,7 @@ package ws.epigraph.compiler
 import java.util
 import java.util.Collections
 
+import ws.epigraph.annotations.Annotations
 import ws.epigraph.names._
 import ws.epigraph.types._
 
@@ -83,7 +84,7 @@ class CDataTypeApiWrapper(private val dataType: CDataType) extends DataTypeApi {
 
   override def hashCode(): Int = {
     val state = Seq(dataType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -101,13 +102,14 @@ class CTagWrapper(private val cTag: CTag) extends TagApi {
 
   override def hashCode(): Int = {
     val state = Seq(cTag)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
 trait CTypeDefApiWrapper extends CTypeApiWrapper {
   override val cType: CTypeDef
   override val name: QualifiedTypeName = QualifiedTypeName.fromFqn(cType.name.fqn)
+  override def annotations(): Annotations = cType.annotations
 }
 
 class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
@@ -131,7 +133,7 @@ class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper w
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -164,7 +166,7 @@ class CFieldApiWrapper(private val cField: CField) extends FieldApi {
 
   override def hashCode(): Int = {
     val state = Seq(cField)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -190,7 +192,7 @@ class CRecordTypeDefApiWrapper(val cType: CRecordTypeDef)
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -216,7 +218,7 @@ class CAnonMapTypeApiWrapper(val cType: CAnonMapType) extends CMapTypeApiWrapper
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -242,7 +244,7 @@ class CAnonListTypeApiWrapper(val cType: CAnonListType) extends CListTypeApiWrap
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -257,7 +259,7 @@ class CListTypeDefApiWrapper(val cType: CListTypeDef) extends CListTypeApiWrappe
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }
 
@@ -285,6 +287,6 @@ class CPrimitiveTypeDefApiWrapper(val cType: CPrimitiveTypeDef)
 
   override def hashCode(): Int = {
     val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
   }
 }

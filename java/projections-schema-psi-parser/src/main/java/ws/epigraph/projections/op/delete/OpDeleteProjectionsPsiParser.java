@@ -33,6 +33,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.TypeRefs;
+import ws.epigraph.schema.parser.SchemaPsiParserUtil;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
@@ -44,6 +45,7 @@ import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.getTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
+import static ws.epigraph.schema.parser.SchemaPsiParserUtil.parseAnnotation;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -307,7 +309,7 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull OpDeletePsiProcessingContext context,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    return parseAnnotations(
+    return SchemaPsiParserUtil.parseAnnotations(
         modelProperties.stream().map(SchemaOpDeleteModelProperty::getAnnotation),
         context,
         resolver
