@@ -17,18 +17,18 @@
 package ws.epigraph.java.service.projections.op.path
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genTagExpr, genTypeExpr}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils.{genTagExpr, genTypeExpr}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.path.{OpTagPath, OpVarPath}
 import ws.epigraph.types.TypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpVarPathGen(p: OpVarPath) extends ServiceObjectGen[OpVarPath](p) {
+class OpVarPathGen(p: OpVarPath) extends ObjectGen[OpVarPath](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
 
     /*@formatter:off*/sn"""\
 new OpVarPath(
@@ -39,11 +39,10 @@ new OpVarPath(
 
   }
 
-
   private def genTagPath(
     t: TypeApi,
     tp: OpTagPath,
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     if (tp == null) "null"
     else {

@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenNames.lqn
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class AnonMapGen(from: CAnonMapType, ctx: GenContext) extends MapGen[CAnonMapType](from, ctx) with DatumTypeJavaGen {
-  override protected def genTypeClass: String = sn"""\
+  override protected def genTypeClass(ogc: ObjectGenContext): String = sn"""\
   final class Type extends ws.epigraph.types.AnonMapType.Static<
       ${lqn(kt, t)}.Imm,
       $ln.Imm,

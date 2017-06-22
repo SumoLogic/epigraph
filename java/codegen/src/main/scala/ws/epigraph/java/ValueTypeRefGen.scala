@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
-import ws.epigraph.lang.Qn
-import scala.collection.JavaConversions._
+import ws.epigraph.java.ObjectGenerators.gen
+import ws.epigraph.refs.ValueTypeRef
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class QnGen(private val qn: Qn) extends ServiceObjectGen[Qn](qn) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
-    s"""new Qn(${qn.segments.mkString("\"", "\", \"", "\"")})"""
+class ValueTypeRefGen(ref: ValueTypeRef) extends ObjectGen[ValueTypeRef](ref) {
+
+  override protected def generateObject(ctx: ObjectGenContext): String = {
+    val o = ref.defaultOverride()
+    val os = if (o == null) "null" else "\"$o\""
+    s"new ValueTypeRef(${gen(ref.typeRef(), ctx)}, $os)"
+  }
+
 }

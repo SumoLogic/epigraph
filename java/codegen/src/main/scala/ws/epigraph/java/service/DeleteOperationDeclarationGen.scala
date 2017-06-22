@@ -17,16 +17,17 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.schema.operations.DeleteOperationDeclaration
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class DeleteOperationDeclarationGen(od: DeleteOperationDeclaration)
-  extends ServiceObjectGen[DeleteOperationDeclaration](od) {
+  extends ObjectGen[DeleteOperationDeclaration](od) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new DeleteOperationDeclaration(
   ${gen(od.name(), ctx)},

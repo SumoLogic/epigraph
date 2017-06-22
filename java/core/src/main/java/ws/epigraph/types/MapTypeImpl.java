@@ -19,6 +19,7 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.names.TypeName;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,9 +35,10 @@ abstract class MapTypeImpl extends DatumTypeImpl implements MapType {
       @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
       @NotNull DatumType keyType,
       @NotNull DataType valueType,
-      @Nullable DatumType declaredMetaType
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
   ) {
-    super(name, immediateSupertypes, declaredMetaType);
+    super(name, immediateSupertypes, declaredMetaType, annotations);
     this.keyType = keyType;
     this.valueType = valueType;
     if (keyType.metaType() != null) throw new IllegalArgumentException(

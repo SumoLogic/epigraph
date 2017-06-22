@@ -25,12 +25,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Nullable
 import ws.epigraph.annotations.Annotations
 import ws.epigraph.psi.DefaultPsiProcessingContext
+import ws.epigraph.refs.ImportAwareTypesResolver
 import ws.epigraph.schema.parser.SchemaPsiParserUtil
 import ws.epigraph.schema.parser.psi._
 
 import scala.annotation.meta.getter
 import scala.collection.JavaConversions._
-import scala.collection.mutable
+import scala.collection.{JavaConverters, mutable}
 
 
 abstract class CType(implicit val ctx: CContext) {self =>
@@ -171,11 +172,17 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
   def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
 
   private lazy val _computedAnnotations: Annotations = annotationsPsiOpt.map{ annotationsPsi =>
+    import JavaConverters._
+
     val ppc = new DefaultPsiProcessingContext
     val res = SchemaPsiParserUtil.parseAnnotations(
       annotationsPsi,
       ppc,
-      new CTypesResolver(csf)
+      new ImportAwareTypesResolver(
+        csf.namespace.fqn,
+        csf.imports.values.map(i => i.fqn).toList.asJava,
+        new CTypesResolver(csf)
+      )
     )
     lazy val reporter = ErrorReporter.reporter(csf)
     ppc.errors().foreach{ e => reporter.error(e.message(), e.location()) }

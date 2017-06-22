@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.path
-
-import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGenerators.gen
-import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.path.OpPathKeyProjection
+package ws.epigraph.java
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpPathKeyProjectionGen(kp: OpPathKeyProjection) extends ObjectGen[OpPathKeyProjection](kp) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
-  /*@formatter:off*/sn"""\
-new OpPathKeyProjection(
-  ${i(gen(kp.params(), ctx))},
-  ${i(gen(kp.annotations(), ctx))},
-  ${i(gen(kp.projection(), ctx))},
-  ${gen(kp.location(), ctx)}
-)"""/*@formatter:on*/
+abstract class ObjectGen[T](val obj: T) extends AbstractObjectGen {
+
+  /** Generates an expression yielding an object of some type */
+  override def generate(ctx: ObjectGenContext): String = {
+    if (obj == null) "null"
+    else {
+      ctx.addImport(obj.getClass.getCanonicalName)
+      generateObject(ctx)
+    }
+  }
+
+  protected def generateObject(ctx: ObjectGenContext): String
 }

@@ -16,6 +16,7 @@
 
 package ws.epigraph.refs;
 
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.PrimitiveDatum;
 import ws.epigraph.data.Val;
@@ -187,7 +188,8 @@ public class ImportAwareTypesResolverTest {
     return new PrimitiveType<String>(
         new QualifiedTypeName(localName, namespaceNames),
         Collections.emptyList(),
-        null
+        null,
+        Annotations.EMPTY
     ) {
       @Override
       public @NotNull Data.Builder createDataBuilder() { return null; }

@@ -24,7 +24,7 @@ import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.BaseNamespaceProvider
 import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.TransformerDeclaration
 
@@ -49,7 +49,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(outputProjectionGen)
 
   override protected def generate: String = {
-    val sctx = new ServiceGenContext(ctx)
+    val sctx = new ObjectGenContext(ctx)
 
     sctx.addImport("org.jetbrains.annotations.NotNull")
     sctx.addImport("java.util.concurrent.CompletableFuture")
@@ -70,7 +70,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
     val thenFunc = if (cType.kind == CTypeKind.ENTITY) "InvocationResult::success" else
       s"d -> InvocationResult.success($shortType.type.createDataBuilder().set(d))"
 
-    def generateBatching(sctx: ServiceGenContext): String = {
+    def generateBatching(sctx: ObjectGenContext): String = {
       sctx.addImport("ws.epigraph.federator.transformers.Transformer")
 
       /*@formatter:off*/sn"""\
@@ -106,7 +106,7 @@ public abstract class $shortClassName<B> extends Transformer<B> {
 }"""/*@formatter:on*/
     }
 
-    def generateNonBatching(sctx: ServiceGenContext): String ={
+    def generateNonBatching(sctx: ObjectGenContext): String ={
       sctx.addImport("ws.epigraph.federator.transformers.NonBatchingTransformer")
 
       /*@formatter:off*/sn"""\
@@ -145,7 +145,7 @@ public abstract class $shortClassName<B> extends NonBatchingTransformer {
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sctx)}
+${ObjectGenUtils.genImports(sctx)}
 /**
  * Abstract base class for {@code ${td.name()}} transformer
  */

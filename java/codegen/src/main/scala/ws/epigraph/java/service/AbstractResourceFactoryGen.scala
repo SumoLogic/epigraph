@@ -21,10 +21,11 @@ import java.nio.file.Path
 import ws.epigraph.compiler.CompilerException
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i, sp}
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
+
 import scala.collection.JavaConversions._
 
 /**
@@ -50,7 +51,7 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
   override def children: Iterable[JavaGen] = super.children ++ abstractOperationGens.values
 
   override def generate: String = {
-    val sgctx = new ServiceGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx)
     val className = AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd)
 
     sgctx.addImport("org.jetbrains.annotations.NotNull")
@@ -63,23 +64,23 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sgctx)}
+${ObjectGenUtils.genImports(sgctx)}
 /**
  * Abstract factory for constructing {@code ${rd.fieldName()}} resource implementation
  */
 public abstract class $className {
-  ${i(ServiceGenUtils.genFields(sgctx))}
+  ${i(ObjectGenUtils.genFields(sgctx))}
   public final @NotNull Resource ${AbstractResourceFactoryGen.factoryMethodName(rd)}() throws ServiceInitializationException {
-    return ${sp(ServiceGenUtils.INDENT * 2, resourceConstructor)}
+    return ${sp(ObjectGenUtils.INDENT * 2, resourceConstructor)}
   }
 
-  ${i(ServiceGenUtils.genMethods(sgctx))}
+  ${i(ObjectGenUtils.genMethods(sgctx))}
 }
 """/*@formatter:on*/
 
   }
 
-  private def generateResourceConstructor(ctx: ServiceGenContext): String = {
+  private def generateResourceConstructor(ctx: ObjectGenContext): String = {
 
     val resourceDeclarationClassName = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 
@@ -202,12 +203,12 @@ new Resource(
     o: OperationDeclaration,
     resourceDeclarationClassName: String,
     operationConstructorMethodName: String,
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     val kind = ServiceNames.operationKinds(o.kind())
     val ukind = up(kind)
     val declarationType = ukind + "OperationDeclaration"
-    val methodType: String = s"${ ukind }Operation<${ ServiceGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
+    val methodType: String = s"${ ukind }Operation<${ ObjectGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
 
     ctx.addImport("ws.epigraph.schema.operations." + declarationType)
 
@@ -232,7 +233,7 @@ protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull
 
   }
 
-  private def genCollection(calls: List[String], ctx: ServiceGenContext): String = calls.length match {
+  private def genCollection(calls: List[String], ctx: ObjectGenContext): String = calls.length match {
     case 0 =>
       ctx.addImport(classOf[java.util.Collections].getCanonicalName)
       "Collections.emptyList()"
@@ -243,7 +244,7 @@ protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull
       ctx.addImport(classOf[java.util.Arrays].getCanonicalName)
       calls
         .reverse
-        .map { c => JavaGenUtils.indent(c, ServiceGenUtils.INDENT) }
+        .map { c => JavaGenUtils.indent(c, ObjectGenUtils.INDENT) }
         .mkString("Arrays.asList(\n", ",\n", "\n)")
   }
 

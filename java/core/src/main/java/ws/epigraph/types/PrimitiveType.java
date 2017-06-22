@@ -19,6 +19,7 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.PrimitiveDatum;
 import ws.epigraph.data.Val;
@@ -33,8 +34,9 @@ public abstract class PrimitiveType<Native> extends DatumTypeImpl implements Pri
   protected PrimitiveType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends PrimitiveType<Native>> immediateSupertypes,
-      @Nullable DatumType declaredMetaType
-  ) { super(name, immediateSupertypes, declaredMetaType); }
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
+  ) { super(name, immediateSupertypes, declaredMetaType, annotations); }
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.PRIMITIVE; }

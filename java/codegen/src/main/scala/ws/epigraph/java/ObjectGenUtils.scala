@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
 import ws.epigraph.compiler.{CDatumType, CTypeApiWrapper}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.CodeChunk
-import ws.epigraph.java.{GenContext, JavaGenNames, JavaGenUtils}
 import ws.epigraph.types._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-object ServiceGenUtils {
+object ObjectGenUtils {
   val INDENT = 2
   // default indent
   val INDENT_SPACES: String = JavaGenUtils.spaces(INDENT)
 
-  def genList(items: Seq[String], ctx: ServiceGenContext): String = {
+  def genList(items: Seq[String], ctx: ObjectGenContext): String = {
     if (items.isEmpty) {
       ctx.addImport("java.util.Collections")
       "Collections.emptyList()"
@@ -44,7 +43,7 @@ object ServiceGenUtils {
     }
   }
 
-  def genVararg(items: Iterable[String], insertNewlines: Boolean, ctx: ServiceGenContext): String = {
+  def genVararg(items: Iterable[String], insertNewlines: Boolean, ctx: ObjectGenContext): String = {
     val separator = if (insertNewlines) ",\n" else ", "
     items.mkString(separator)
   }
@@ -53,20 +52,20 @@ object ServiceGenUtils {
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
-    ctx: ServiceGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
+    ctx: ObjectGenContext): String = genMap("LinkedHashMap", keyType, valueType, entries, ctx)
 
   def genHashMap(
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
-    ctx: ServiceGenContext): String = genMap("HashMap", keyType, valueType, entries, ctx)
+    ctx: ObjectGenContext): String = genMap("HashMap", keyType, valueType, entries, ctx)
 
   def genMap(
     mapClass: String,
     keyType: String,
     valueType: String,
     entries: Iterable[(String, String)],
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     ctx.addImport("java.util." + mapClass)
 
@@ -124,15 +123,15 @@ Util.create$mapClass(
 //    }
 //  }
 
-  def genImports(ctx: ServiceGenContext): String = {
+  def genImports(ctx: ObjectGenContext): String = {
     ctx.imports.map{ i => s"import $i;" }.mkString("", "\n", "\n")
   }
 
-  def genFields(ctx: ServiceGenContext): String = ctx.fields.toList.sorted.mkString("", "\n", "\n")
+  def genFields(ctx: ObjectGenContext): String = ctx.fields.toList.sorted.mkString("", "\n", "\n")
 
-  def genMethods(ctx: ServiceGenContext): String = ctx.methods.foldLeft(CodeChunk.empty)(_ + _).code
+  def genMethods(ctx: ObjectGenContext): String = ctx.methods.foldLeft(CodeChunk.empty)(_ + _).code
 
-  def genStatic(ctx: ServiceGenContext): String = ctx.static.foldLeft(CodeChunk.empty)(_ + _).code
+  def genStatic(ctx: ObjectGenContext): String = ctx.static.foldLeft(CodeChunk.empty)(_ + _).code
 
   def genTypeClassRef(t: TypeApi, ctx: GenContext): String = {
     val w: CTypeApiWrapper = t.asInstanceOf[CTypeApiWrapper]
@@ -170,7 +169,7 @@ Util.create$mapClass(
       genTypeExpr(dt.`type`(), gctx) + ".dataType(" + tagExpr + ")"
   }
 
-  def normalizeTagName(tagName: String, ctx: ServiceGenContext): String =
+  def normalizeTagName(tagName: String, ctx: ObjectGenContext): String =
     if (tagName == CDatumType.ImpliedDefaultTagName) {
       ctx.addImport(classOf[DatumTypeApi].getName)
       "DatumTypeApi.MONO_TAG_NAME"

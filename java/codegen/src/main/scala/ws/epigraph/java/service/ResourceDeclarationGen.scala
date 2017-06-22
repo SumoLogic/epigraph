@@ -20,9 +20,9 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler.CompilerException
 import ws.epigraph.java.JavaGenUtils.up
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java._
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i, sp}
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
@@ -31,14 +31,14 @@ import ws.epigraph.types.DataTypeApi
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ResourceDeclarationGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: GenContext) extends ServiceObjectGen[ResourceDeclaration](rd) with JavaGen {
+class ResourceDeclarationGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: GenContext) extends ObjectGen[ResourceDeclaration](rd) with JavaGen {
   protected val namespace: Qn = ResourceDeclarationGen.resourceDeclarationNamespace(baseNamespace, rd)
   protected val resourceDeclarationClassName: String = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 
   override protected def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(ResourceDeclarationGen.resourceDeclarationClassName(rd) + ".java")
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     val fieldType: DataTypeApi = rd.fieldType()
 
     import scala.collection.JavaConversions._
@@ -62,36 +62,36 @@ private static ${od.getClass.getSimpleName} $operationConstructorName() {
     /*@formatter:off*/sn"""\
 super(
   "${rd.fieldName()}",
-  ${ServiceGenUtils.genDataTypeExpr(rd.fieldType(), ctx.gctx)},
-  ${i(ServiceGenUtils.genList(operationFieldNames, ctx))},
+  ${ObjectGenUtils.genDataTypeExpr(rd.fieldType(), ctx.gctx)},
+  ${i(ObjectGenUtils.genList(operationFieldNames, ctx))},
   ${gen(rd.location(), ctx)}
 )"""/*@formatter:on*/
 
   }
 
   override def generate: String = {
-    val sgctx = new ServiceGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx)
     val superCall = generate(sgctx) // do not inline!
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sgctx)}
+${ObjectGenUtils.genImports(sgctx)}
 @javax.annotation.Generated("${getClass.getCanonicalName}")
 public final class $resourceDeclarationClassName extends ResourceDeclaration {
   public static final $resourceDeclarationClassName INSTANCE = new $resourceDeclarationClassName();
 
-  ${i(ServiceGenUtils.genFields(sgctx))}
+  ${i(ObjectGenUtils.genFields(sgctx))}
 
   static {
-    ${i(ServiceGenUtils.genStatic(sgctx))}
+    ${i(ObjectGenUtils.genStatic(sgctx))}
   }
 
   private $resourceDeclarationClassName() {
     ${i(superCall)};
   }
 
-  ${i(ServiceGenUtils.genMethods(sgctx))}
+  ${i(ObjectGenUtils.genMethods(sgctx))}
 }
 """/*@formatter:on*/
 

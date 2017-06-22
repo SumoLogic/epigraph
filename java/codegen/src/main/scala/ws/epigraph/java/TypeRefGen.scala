@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.ObjectGenerators.gen
 import ws.epigraph.refs.{AnonListRef, AnonMapRef, QnTypeRef, TypeRef}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class TypeRefGen(ref: TypeRef) extends ServiceObjectGen[TypeRef](ref) {
+class TypeRefGen(ref: TypeRef) extends ObjectGen[TypeRef](ref) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = ref match {
+  override protected def generateObject(ctx: ObjectGenContext): String = ref match {
     case qr: QnTypeRef =>
       s"new QnTypeRef(${gen(qr.qn(), ctx)})"
 

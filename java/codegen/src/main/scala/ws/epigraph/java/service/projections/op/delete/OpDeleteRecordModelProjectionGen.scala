@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op.delete
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.delete.{OpDeleteFieldProjectionEntry, OpDeleteRecordModelProjection}
 import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 
@@ -29,9 +29,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class OpDeleteRecordModelProjectionGen(p: OpDeleteRecordModelProjection)
-  extends ServiceObjectGen[OpDeleteRecordModelProjection](p) {
+  extends ObjectGen[OpDeleteRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
     ctx.addImport(classOf[OpDeleteFieldProjectionEntry].getName)
 
@@ -50,7 +50,7 @@ new OpDeleteRecordModelProjection(
   private def genFieldProjectionEntry(
     t: RecordTypeApi,
     fpe: OpDeleteFieldProjectionEntry,
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     ctx.addImport(classOf[OpDeleteFieldProjectionEntry].getName)
 

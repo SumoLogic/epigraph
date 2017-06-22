@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
@@ -38,14 +39,16 @@ public abstract class NamedMapType extends MapTypeImpl {
       @NotNull List<@NotNull ? extends MapType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
       @NotNull DatumType keyType,
-      @NotNull DataType valueType
+      @NotNull DataType valueType,
+      @NotNull Annotations annotations
   ) {
     super(
         name,
         immediateSupertypes,
         keyType,
         valueType,
-        declaredMetaType
+        declaredMetaType,
+        annotations
     );
   }
 
@@ -60,8 +63,9 @@ public abstract class NamedMapType extends MapTypeImpl {
         @NotNull List<? extends MapType> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
         @NotNull DatumType keyType,
-        @NotNull DataType valueType
-    ) { super(name, immediateSupertypes, declaredMetaType, keyType, valueType); }
+        @NotNull DataType valueType,
+        @NotNull Annotations annotations
+    ) { super(name, immediateSupertypes, declaredMetaType, keyType, valueType, annotations); }
 
     private static @Nullable Tag defaultTag(Type type, @Nullable Tag tag) {
       return tag == null ? null : type.tagsMap().get(tag.name);
@@ -107,6 +111,7 @@ public abstract class NamedMapType extends MapTypeImpl {
         @NotNull Function<MapDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull Annotations annotations,
         @NotNull MapType.Static<
             K,
             ? super MyImmDatum,
@@ -117,7 +122,7 @@ public abstract class NamedMapType extends MapTypeImpl {
             ? extends Data.Builder.Static<? super MyImmData>
         >... immediateSupertypes
     ) {
-      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, keyType, valueType);
+      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, keyType, valueType, annotations);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

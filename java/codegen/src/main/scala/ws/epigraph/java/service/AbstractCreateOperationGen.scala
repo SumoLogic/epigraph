@@ -20,7 +20,7 @@ import ws.epigraph.java.JavaGenNames.{lqbct, lqbrn, lqdrn2, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.OperationInfoBaseNamespaceProvider
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils, ObjectGenContext}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations.CreateOperationDeclaration
@@ -47,7 +47,7 @@ class AbstractCreateOperationGen(
   override def children: Iterable[JavaGen] = super.children ++ Iterable(inputFieldProjectionGen)
 
   override protected def generate: String = {
-    val sctx = new ServiceGenContext(ctx)
+    val sctx = new ObjectGenContext(ctx)
 
     val outputType = JavaGenUtils.toCType(op.outputType())
     val nsString = namespace.toString

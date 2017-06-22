@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,24 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler.{CPrimitiveTypeDef, CTypeKind}
-import ws.epigraph.java.JavaGenNames.{lqn, pn, javaQName, qnameArgs}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.JavaGenNames.{lqn, pn, qnameArgs}
+import ws.epigraph.java.NewlineStringInterpolator.{i, NewlineHelper}
 
 class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
     with DatumTypeJavaGen {
 
-  protected override def generate: String = /*@formatter:off*/sn"""\
+  protected override def generate: String = {
+    val ogc = new ObjectGenContext(ctx)
+    ogc.addImport("org.jetbrains.annotations.NotNull")
+    ogc.addImport("org.jetbrains.annotations.Nullable")
+
+    val annotations = new AnnotationsGen(from.annotations).generate(ogc)
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+${ObjectGenUtils.genImports(ogc)}\
 
 /**
  * Base interface for `${t.name.name}` datum.
@@ -72,7 +78,8 @@ $typeInstance\
           ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           $ln.Builder::new,
           $ln.Value.Imm.Impl::new,
-          $ln.Data.Builder::new
+          $ln.Data.Builder::new,
+          ${i(annotations)}
       );
     }
 
@@ -159,6 +166,7 @@ $datumData\
 
 }
 """/*@formatter:on*/
+  }
 
   private def kind(t: CPrimitiveTypeDef): String =
     PrimitiveGen.Kinds.getOrElse(t.kind, throw new UnsupportedOperationException(t.kind.name))

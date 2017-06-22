@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils._
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils._
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.input.{OpInputTagProjectionEntry, OpInputVarProjection}
 import ws.epigraph.types.TypeApi
 
@@ -28,10 +28,9 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpInputVarProjectionGen(p: OpInputVarProjection)
-  extends ServiceObjectGen[OpInputVarProjection](p) {
+class OpInputVarProjectionGen(p: OpInputVarProjection) extends ObjectGen[OpInputVarProjection](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
 
     val opName = p.referenceName()
     if (opName != null) {
@@ -97,7 +96,7 @@ new OpInputVarProjection(
   private def genTagProjectionEntry(
     t: TypeApi,
     tpe: OpInputTagProjectionEntry,
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     ctx.addImport(classOf[OpInputTagProjectionEntry].getName)
 

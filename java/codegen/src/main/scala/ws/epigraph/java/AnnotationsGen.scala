@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections
+package ws.epigraph.java
 
 import ws.epigraph.annotations.Annotations
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenerators.gen
 
 import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class AnnotationsGen(anns: Annotations) extends ServiceObjectGen[Annotations](anns) {
+class AnnotationsGen(anns: Annotations) extends ObjectGen[Annotations](anns) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
+  override protected def generateObject(ctx: ObjectGenContext): String =
     if (anns.equals(Annotations.EMPTY)) "Annotations.EMPTY"
     else {
       ctx.addImport("ws.epigraph.types.DatumTypeApi")
       ctx.addImport("ws.epigraph.annotations.Annotation")
       /*@formatter:off*/sn"""\
 new Annotations(
-  ${i(ServiceGenUtils.genHashMap("DatumTypeApi", "Annotation", anns.asMap().entrySet().map{e =>
-        (ServiceGenUtils.genTypeExpr(e.getKey, ctx.gctx), gen(e.getValue, ctx))}, ctx))
+  ${i(ObjectGenUtils.genHashMap("DatumTypeApi", "Annotation", anns.asMap().entrySet().map{e =>
+        (ObjectGenUtils.genTypeExpr(e.getKey, ctx.gctx), gen(e.getValue, ctx))}, ctx))
    }
 )"""/*@formatter:on*/
     }

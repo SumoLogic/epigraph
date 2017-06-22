@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.names.TypeName;
 
 import java.util.List;
@@ -32,9 +33,10 @@ abstract class ListTypeImpl extends DatumTypeImpl implements ListType {
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
       @NotNull DataType elementDataType,
-      @Nullable DatumType declaredMetaType
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
   ) {
-    super(name, immediateSupertypes, declaredMetaType);
+    super(name, immediateSupertypes, declaredMetaType, annotations);
     this.elementType = elementDataType;
   }
 

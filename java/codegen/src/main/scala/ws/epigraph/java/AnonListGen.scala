@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenNames.lqn
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 class AnonListGen(from: CAnonListType, ctx: GenContext) extends ListGen[CAnonListType](from, ctx) {
-  override protected def genTypeClass: String = sn"""\
+  override protected def genTypeClass(ogc: ObjectGenContext): String = sn"""\
   final class Type extends ws.epigraph.types.AnonListType.Static<
       $ln.Imm,
       $ln.Builder,

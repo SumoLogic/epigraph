@@ -17,15 +17,15 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.input.OpInputKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpInputKeyProjectionGen(kp: OpInputKeyProjection) extends ServiceObjectGen[OpInputKeyProjection](kp) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class OpInputKeyProjectionGen(kp: OpInputKeyProjection) extends ObjectGen[OpInputKeyProjection](kp) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new OpInputKeyProjection(
   ${gen(kp.presence(), ctx)},

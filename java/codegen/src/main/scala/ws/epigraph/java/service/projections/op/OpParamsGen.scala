@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext, ObjectGenUtils}
 import ws.epigraph.projections.op.OpParams
 
 import scala.collection.JavaConversions._
@@ -26,13 +26,13 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpParamsGen(params: OpParams) extends ServiceObjectGen[OpParams](params) {
+class OpParamsGen(params: OpParams) extends ObjectGen[OpParams](params) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
+  override protected def generateObject(ctx: ObjectGenContext): String =
     if (params.equals(OpParams.EMPTY)) "OpParams.EMPTY"
     else sn"""\
 new OpParams(
-  ${i(ServiceGenUtils.genVararg(params.asMap().values().map{p => gen(p, ctx)}, insertNewlines = true, ctx))}
+  ${i(ObjectGenUtils.genVararg(params.asMap().values().map{p => gen(p, ctx)}, insertNewlines = true, ctx))}
 )"""/*@formatter:on*/
 
 }

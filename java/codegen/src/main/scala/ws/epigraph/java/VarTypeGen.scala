@@ -20,18 +20,24 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{lqrn, pn, qnameArgs, tcn}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper,i}
 // TODO rename to EntityTypeGen
 class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
 
-  protected def generate: String = /*@formatter:off*/sn"""\
+  protected def generate: String = {
+    val ogc = new ObjectGenContext(ctx)
+    ogc.addImport("org.jetbrains.annotations.NotNull")
+    ogc.addImport("org.jetbrains.annotations.Nullable")
+
+    val annotations = new AnnotationsGen(from.annotations).generate(ogc)
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
 import ws.epigraph.types.Tag;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+${ObjectGenUtils.genImports(ogc)}\
 
 /**
  * Base (read) interface for `${t.name.name}` data.
@@ -70,7 +76,8 @@ $typeInstance\
           java.util.Arrays./*<ws.epigraph.types.EntityType.Static<
             ? super $ln.Imm, ? extends ws.epigraph.data.Data.Builder.Static<? super $ln.Imm>
           >>*/asList(${parents(".Type.instance()")}),
-          $ln.Builder::new
+          $ln.Builder::new,
+          ${i(annotations)}
       );
     }
 
@@ -171,5 +178,6 @@ ${t.effectiveTags.map { tag => // for each effective tag
 
 }
 """/*@formatter:on*/
+  }
 
 }

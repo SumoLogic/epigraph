@@ -20,19 +20,25 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{fcn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.NewlineStringInterpolator.{i, NewlineHelper}
 
 class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
   with DatumTypeJavaGen {
 
-  protected def generate: String = /*@formatter:off*/sn"""\
+  protected def generate: String = {
+    val ogc = new ObjectGenContext(ctx)
+    ogc.addImport("org.jetbrains.annotations.NotNull")
+    ogc.addImport("org.jetbrains.annotations.Nullable")
+
+    val annotations = new AnnotationsGen(from.annotations).generate(ogc)
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
 import ws.epigraph.types.Field;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+${ObjectGenUtils.genImports(ogc)}\
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -137,7 +143,8 @@ $typeInstance\
           ${t.meta.map{mt => lqn(mt, t, _ + ".type")}.getOrElse("null")},
           $ln.Builder::new,
           $ln.Value.Imm.Impl::new,
-          $ln.Data.Builder::new
+          $ln.Data.Builder::new,
+          ${i(annotations)}
       );
     }
 
@@ -499,6 +506,7 @@ $datumData\
 
 }
 """/*@formatter:on*/
+  }
 
     def superSetters(f: CField): String = {
         val superfields = invariantSuperfields(f)

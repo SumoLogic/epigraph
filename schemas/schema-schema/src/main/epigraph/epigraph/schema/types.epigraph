@@ -1,5 +1,7 @@
 namespace epigraph.schema
 
+import epigraph.annotations.Doc
+
 // alternatively this could be designed as two parallel hierarchies of entitys + records
 // this allows more clean `supertypes` type, but makes the model twice more complex
 

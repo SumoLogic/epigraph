@@ -34,14 +34,20 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
   /** element type */
   protected val et: etr.Type = etr.resolved
 
-  protected def genTypeClass:String
+  protected def genTypeClass(ogc: ObjectGenContext):String
 
-  override def generate: String = /*@formatter:off*/sn"""\
+  override def generate: String = {
+    val ogc = new ObjectGenContext(ctx)
+    ogc.addImport("org.jetbrains.annotations.NotNull")
+    ogc.addImport("org.jetbrains.annotations.Nullable")
+
+    val typeClass = genTypeClass(ogc)
+
+    /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+${ObjectGenUtils.genImports(ogc)}\
 
 /**
  * Base (read) interface for `${t.name.name}` datum.
@@ -112,7 +118,7 @@ ${t.meta match {
   /**
    * Class for `${t.name.name}` type.
    */
-  $genTypeClass\
+  $typeClass\
 
   /**
    * Builder for `${t.name.name}` datum.
@@ -432,5 +438,6 @@ $datumData\
 
 }
 """/*@formatter:on*/
+  }
 
 }

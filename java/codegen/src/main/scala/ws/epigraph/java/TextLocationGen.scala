@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
 import ws.epigraph.lang.TextLocation
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class TextLocationGen(loc: TextLocation) extends ServiceObjectGen[TextLocation](loc) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class TextLocationGen(loc: TextLocation) extends ObjectGen[TextLocation](loc) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
     if (loc.equals(TextLocation.UNKNOWN) || !ctx.generateTextLocations)
       "TextLocation.UNKNOWN"
     else

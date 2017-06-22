@@ -18,6 +18,7 @@
 
 package ws.epigraph.types;
 
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
@@ -40,8 +41,9 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
   protected RecordType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
-      @Nullable DatumType declaredMetaType
-  ) { super(name, immediateSupertypes, declaredMetaType); }
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
+  ) { super(name, immediateSupertypes, declaredMetaType, annotations); }
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.RECORD; }
@@ -125,8 +127,9 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
     protected Raw(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends RecordType> immediateSupertypes,
-        @Nullable DatumType declaredMetaType
-    ) { super(name, immediateSupertypes, declaredMetaType); }
+        @Nullable DatumType declaredMetaType,
+        @NotNull Annotations annotations
+    ) { super(name, immediateSupertypes, declaredMetaType, annotations); }
 
     @Override
     public @NotNull RecordDatum.Builder createBuilder() { return new RecordDatum.Builder.Raw(this); }
@@ -171,9 +174,10 @@ public abstract class RecordType extends DatumTypeImpl implements RecordTypeApi 
         @Nullable DatumType declaredMetaType,
         @NotNull Function<RecordDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
-        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull Annotations annotations
     ) {
-      super(name, immediateSupertypes, declaredMetaType);
+      super(name, immediateSupertypes, declaredMetaType, annotations);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

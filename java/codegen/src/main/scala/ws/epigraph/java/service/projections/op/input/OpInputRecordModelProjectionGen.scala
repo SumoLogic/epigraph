@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op.input
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genLinkedMap, genTypeExpr, genList}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
 import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 
@@ -29,9 +29,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
-  extends ServiceObjectGen[OpInputRecordModelProjection](p) {
+  extends ObjectGen[OpInputRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
     ctx.addImport(classOf[OpInputFieldProjectionEntry].getName)
 
@@ -53,7 +53,7 @@ new OpInputRecordModelProjection(
   private def genFieldProjectionEntry(
     t: RecordTypeApi,
     fpe: OpInputFieldProjectionEntry,
-    ctx: ServiceGenContext): String = {
+    ctx: ObjectGenContext): String = {
 
     ctx.addImport(classOf[OpInputFieldProjectionEntry].getName)
 

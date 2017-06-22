@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.names.QualifiedTypeName;
 
@@ -30,8 +31,9 @@ public abstract class EntityType extends TypeImpl implements EntityTypeApi {
 
   protected EntityType(
       @NotNull QualifiedTypeName name,
-      @NotNull List<@NotNull ? extends EntityType> immediateSupertypes
-  ) { super(name, immediateSupertypes); }
+      @NotNull List<@NotNull ? extends EntityType> immediateSupertypes,
+      @NotNull Annotations annotations
+  ) { super(name, immediateSupertypes, annotations); }
 
   @Override
   public final @NotNull TypeKind kind() { return TypeKind.ENTITY; }
@@ -81,9 +83,10 @@ public abstract class EntityType extends TypeImpl implements EntityTypeApi {
         @NotNull List<@NotNull ? extends EntityType.Static<
             ? super MyImmData, ? extends Data.Builder.Static<? super MyImmData>
         >> immediateSupertypes,
-        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull Annotations annotations
     ) {
-      super(name, immediateSupertypes);
+      super(name, immediateSupertypes, annotations);
       this.dataBuilderConstructor = dataBuilderConstructor;
     }
 

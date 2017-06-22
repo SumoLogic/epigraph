@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
 import ws.epigraph.data.Val;
@@ -36,7 +37,7 @@ public abstract class AnonListType extends ListTypeImpl {
       @NotNull List<@NotNull ? extends AnonListType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
       @NotNull DataType elementDataType
-  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType, declaredMetaType); }
+  ) { super(new AnonListTypeName(elementDataType.name), immediateSupertypes, elementDataType, declaredMetaType, Annotations.EMPTY); }
 
   @Override
   public @NotNull AnonListTypeName name() { return (AnonListTypeName) super.name(); }

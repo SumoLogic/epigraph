@@ -16,15 +16,16 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ProjectionReferenceName_StringSegmentGen(private val s: ProjectionReferenceName.StringRefNameSegment)
-  extends ServiceObjectGen[ProjectionReferenceName.StringRefNameSegment](s) {
+  extends ObjectGen[ProjectionReferenceName.StringRefNameSegment](s) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
+  override protected def generateObject(ctx: ObjectGenContext): String =
     s"""new ProjectionReferenceName.StringRefNameSegment("${ s.string }")"""
 }

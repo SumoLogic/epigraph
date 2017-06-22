@@ -18,13 +18,14 @@ package ws.epigraph.java.service
 
 import ws.epigraph.schema.operations.ReadOperationDeclaration
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReadOperationDeclarationGen(od: ReadOperationDeclaration) extends ServiceObjectGen[ReadOperationDeclaration](od) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class ReadOperationDeclarationGen(od: ReadOperationDeclaration) extends ObjectGen[ReadOperationDeclaration](od) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new ReadOperationDeclaration(
   ${gen(od.name(), ctx)},

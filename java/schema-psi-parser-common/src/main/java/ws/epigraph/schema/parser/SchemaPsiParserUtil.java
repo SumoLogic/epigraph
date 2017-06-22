@@ -65,7 +65,7 @@ public final class SchemaPsiParserUtil {
         TypeRef typeRef = TypeRefs.fromPsi(typeRefPsi, context);
         DatumTypeApi datumType = typeRef.resolveDatumType(typeResolver);
         if (datumType == null)
-          context.addError(String.format("Can't resolve annotation type '%s'", typeRef.toString()), annotationPsi);
+          context.addError(String.format("Can't resolve annotation type '%s'", typeRef.toString()), typeRefPsi);
         else {
           annotationsMap.put(
               datumType,

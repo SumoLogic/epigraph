@@ -20,10 +20,10 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.CMapTypeDef
 import ws.epigraph.java.JavaGenNames.{lqn, qnameArgs}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.NewlineStringInterpolator.{i,NewlineHelper}
 
 class NamedMapGen(from: CMapTypeDef, ctx: GenContext) extends MapGen[CMapTypeDef](from, ctx) with DatumTypeJavaGen {
-  override protected def genTypeClass: String = sn"""\
+  override protected def genTypeClass(ogc: ObjectGenContext): String = sn"""\
   final class Type extends ws.epigraph.types.NamedMapType.Static<
       ${lqn(kt, t)}.Imm,
       $ln.Imm,
@@ -45,6 +45,7 @@ $typeInstance\
           $ln.Builder::new,
           $ln.Value.Imm.Impl::new,
           $ln.Data.Builder::new,
+          ${i(new AnnotationsGen(from.annotations).generate(ogc))},
           ${parents(".Type.instance()")}
       );
     }

@@ -20,10 +20,10 @@ package ws.epigraph.java
 
 import ws.epigraph.compiler.CListTypeDef
 import ws.epigraph.java.JavaGenNames.{lqn, qnameArgs}
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.NewlineStringInterpolator.{i,NewlineHelper}
 
 class NamedListGen(from: CListTypeDef, ctx: GenContext) extends ListGen[CListTypeDef](from, ctx) with DatumTypeJavaGen {
-  override protected def genTypeClass: String = sn"""\
+  override protected def genTypeClass(ogc: ObjectGenContext): String = sn"""\
   final class Type extends ws.epigraph.types.NamedListType.Static<
       $ln.Imm,
       $ln.Builder,
@@ -43,6 +43,7 @@ $typeInstance\
           $ln.Builder::new,
           $ln.Value.Imm.Impl::new,
           $ln.Data.Builder::new,
+          ${i(new AnnotationsGen(from.annotations).generate(ogc))},
           ${parents(".Type.instance()")}
       );
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
+
+import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class NativePrimitiveGen(obj: Any) extends AbstractServiceGen {
-  override def generate(ctx: ServiceGenContext): String = obj match {
-    case s: java.lang.String => s"""$s"""
-    case i: java.lang.Integer => s"Integer.valueOf($i)"
-    case l: java.lang.Long => s"Long.valueOf($l)"
-    case f: java.lang.Float => s"Float.valueOf(d)"
-    case d: java.lang.Double => s"Double.valueOf(d)"
-    case _ => throw new IllegalArgumentException("Unsupported native primitive kind: " + obj.getClass.getName)
-  }
+class QnGen(private val qn: Qn) extends ObjectGen[Qn](qn) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
+    s"""new Qn(${qn.segments.mkString("\"", "\", \"", "\"")})"""
 }

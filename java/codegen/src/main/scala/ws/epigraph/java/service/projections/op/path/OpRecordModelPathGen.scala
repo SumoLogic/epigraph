@@ -17,18 +17,18 @@
 package ws.epigraph.java.service.projections.op.path
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genFieldExpr, genTypeExpr}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genTypeExpr}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath}
 import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpRecordModelPathGen(p: OpRecordModelPath) extends ServiceObjectGen[OpRecordModelPath](p) {
+class OpRecordModelPathGen(p: OpRecordModelPath) extends ObjectGen[OpRecordModelPath](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     ctx.addImport(classOf[RecordType].getName)
     ctx.addImport(classOf[OpFieldPathEntry].getName)
 
@@ -45,7 +45,7 @@ new OpRecordModelPath(
 
   }
 
-  private def genFieldPathEntry(t: RecordTypeApi, fpe: OpFieldPathEntry, ctx: ServiceGenContext): String = {
+  private def genFieldPathEntry(t: RecordTypeApi, fpe: OpFieldPathEntry, ctx: ObjectGenContext): String = {
 
     if (fpe == null) "null"
     else {

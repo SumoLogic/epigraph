@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Datum;
 import ws.epigraph.names.TypeName;
 
@@ -40,9 +41,10 @@ abstract class DatumTypeImpl extends TypeImpl implements DatumType {
   protected DatumTypeImpl(
       @NotNull TypeName name,
       @NotNull List<@NotNull ? extends DatumType> immediateSupertypes,
-      @Nullable DatumType declaredMetaType
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
   ) {
-    super(name, immediateSupertypes);
+    super(name, immediateSupertypes, annotations);
     this.declaredMetaType = declaredMetaType;
     metaType = calculateMetaType(name.toString(), declaredMetaType, immediateSupertypes);
   }

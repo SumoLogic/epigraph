@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
 package ws.epigraph.java.service.projections.op.delete
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpDeleteFieldProjectionGen(fp: OpDeleteFieldProjection) extends ServiceObjectGen[OpDeleteFieldProjection](fp) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class OpDeleteFieldProjectionGen(fp: OpDeleteFieldProjection) extends ObjectGen[OpDeleteFieldProjection](fp) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new OpDeleteFieldProjection(
   ${i(gen(fp.varProjection(), ctx))},

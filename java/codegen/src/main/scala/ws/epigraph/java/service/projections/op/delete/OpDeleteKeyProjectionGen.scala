@@ -17,15 +17,15 @@
 package ws.epigraph.java.service.projections.op.delete
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.delete.OpDeleteKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpDeleteKeyProjectionGen(kp: OpDeleteKeyProjection) extends ServiceObjectGen[OpDeleteKeyProjection](kp) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class OpDeleteKeyProjectionGen(kp: OpDeleteKeyProjection) extends ObjectGen[OpDeleteKeyProjection](kp) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new OpDeleteKeyProjection(
   ${gen(kp.presence(), ctx)},

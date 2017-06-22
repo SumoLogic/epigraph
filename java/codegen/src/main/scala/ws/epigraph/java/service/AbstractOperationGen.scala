@@ -25,7 +25,7 @@ import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.{OperationInfo, OperationInfoBaseNamespaceProvider}
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
 import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenNames, JavaGenUtils}
+import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations.OperationDeclaration
@@ -71,7 +71,7 @@ trait AbstractOperationGen extends JavaGen {
                                              Iterable(outputFieldProjectionGen) ++
                                              pathProjectionGenOpt.toIterable
 
-  protected def generate(sctx: ServiceGenContext): String = {
+  protected def generate(sctx: ObjectGenContext): String = {
     val operationKindLower = ServiceNames.operationKinds(op.kind())
     val operationKindUpper = up(operationKindLower)
 
@@ -91,7 +91,7 @@ trait AbstractOperationGen extends JavaGen {
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sctx)}
+${ObjectGenUtils.genImports(sctx)}
 /**
  * Abstract base class for ${rd.fieldName()} ${Option(op.name()).map(_ + " ").getOrElse("")}$operationKindLower operation
  */
@@ -100,8 +100,8 @@ public abstract class $shortClassName extends ${operationKindUpper}Operation<$sh
   protected $shortClassName(@NotNull ${operationKindUpper}OperationDeclaration declaration) {
     super(declaration);
   }
-  ${i(ServiceGenUtils.genMethods(sctx))}\
-  ${i(ServiceGenUtils.genStatic(sctx))}
+  ${i(ObjectGenUtils.genMethods(sctx))}\
+  ${i(ObjectGenUtils.genStatic(sctx))}
 }
 """/*@formatter:on*/
   }

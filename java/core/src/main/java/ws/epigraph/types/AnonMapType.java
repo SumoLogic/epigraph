@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.MapDatum;
@@ -44,7 +45,8 @@ public abstract class AnonMapType extends MapTypeImpl {
         immediateSupertypes,
         keyType,
         valueType,
-        declaredMetaType
+        declaredMetaType,
+        Annotations.EMPTY
     );
   }
 

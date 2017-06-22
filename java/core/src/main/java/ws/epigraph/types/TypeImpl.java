@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.util.Unmodifiable;
@@ -40,9 +41,12 @@ abstract class TypeImpl implements Type {
 
   private @Nullable Map<@NotNull String, @NotNull ? extends Tag> tagsMap = null;
 
-  TypeImpl(@NotNull TypeName name, @NotNull List<@NotNull ? extends Type> immediateSupertypes) {
+  private final @NotNull Annotations annotations;
+
+  TypeImpl(@NotNull TypeName name, @NotNull List<@NotNull ? extends Type> immediateSupertypes, @NotNull Annotations annotations) {
     this.name = name;
     this.immediateSupertypes = Unmodifiable.list(immediateSupertypes); // TODO defensive copy?
+    this.annotations = annotations;
 
     // assert none of the immediate supertypes is a supertype of another one
     if (immediateSupertypes.stream().anyMatch(is -> is.supertypes().stream().anyMatch(immediateSupertypes::contains)))
@@ -106,6 +110,9 @@ abstract class TypeImpl implements Type {
 
   @Override
   public @NotNull DataTypeApi dataType() { return new DataType(this, null); }
+
+  @Override
+  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
   public <D extends Data> @NotNull D checkAssignable(@NotNull D data)

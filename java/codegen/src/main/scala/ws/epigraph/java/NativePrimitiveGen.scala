@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
-
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.refs.ValueTypeRef
+package ws.epigraph.java
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ValueTypeRefGen(ref: ValueTypeRef) extends ServiceObjectGen[ValueTypeRef](ref) {
-
-  override protected def generateObject(ctx: ServiceGenContext): String = {
-    val o = ref.defaultOverride()
-    val os = if (o == null) "null" else "\"$o\""
-    s"new ValueTypeRef(${gen(ref.typeRef(), ctx)}, $os)"
+class NativePrimitiveGen(obj: Any) extends AbstractObjectGen {
+  override def generate(ctx: ObjectGenContext): String = obj match {
+    case s: java.lang.String => s"""$s"""
+    case i: java.lang.Integer => s"Integer.valueOf($i)"
+    case l: java.lang.Long => s"Long.valueOf($l)"
+    case f: java.lang.Float => s"Float.valueOf(d)"
+    case d: java.lang.Double => s"Double.valueOf(d)"
+    case _ => throw new IllegalArgumentException("Unsupported native primitive kind: " + obj.getClass.getName)
   }
-
 }

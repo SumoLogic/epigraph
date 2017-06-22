@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.gdata
+package ws.epigraph.java
 
-import ws.epigraph.gdata.GData
+import ws.epigraph.annotations.Annotation
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
-
-import scala.collection.JavaConversions._
+import ws.epigraph.java.ObjectGenerators.gen
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class GDataGen(data: GData) extends ServiceObjectGen[GData](data) {
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class AnnotationGen(ann: Annotation) extends ObjectGen[Annotation](ann) {
+
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new GData(
-  ${gen(data.typeRef(), ctx)},
-  ${i(ServiceGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
-  ${gen(data.location(), ctx)}
+new Annotation(
+  ${ObjectGenUtils.genTypeExpr(ann.`type`(), ctx.gctx)},
+  ${i(gen(ann.gDatum(), ctx))},
+  ${gen(ann.location(), ctx)},
+  ws.epigraph.refs.IndexBasedTypesResolver.INSTANCE
 )"""/*@formatter:on*/
 }

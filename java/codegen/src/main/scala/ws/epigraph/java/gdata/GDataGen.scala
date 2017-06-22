@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections
+package ws.epigraph.java.gdata
 
-import ws.epigraph.annotations.Annotation
+import ws.epigraph.gdata.GData
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceGenUtils, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext, ObjectGenUtils}
+
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class AnnotationGen(ann: Annotation) extends ServiceObjectGen[Annotation](ann) {
-
-  override protected def generateObject(ctx: ServiceGenContext): String =
+class GDataGen(data: GData) extends ObjectGen[GData](data) {
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new Annotation(
-  ${ServiceGenUtils.genTypeExpr(ann.`type`(), ctx.gctx)},
-  ${i(gen(ann.gDatum(), ctx))},
-  ${gen(ann.location(), ctx)},
-  ws.epigraph.refs.IndexBasedTypesResolver.INSTANCE
+new GData(
+  ${gen(data.typeRef(), ctx)},
+  ${i(ObjectGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${gen(data.location(), ctx)}
 )"""/*@formatter:on*/
 }

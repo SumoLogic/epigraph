@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op.output
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceGenUtils.{genList, genTypeExpr}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.service.{ServiceGenContext, ServiceObjectGen}
+import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 import ws.epigraph.types.{PrimitiveType, TypeApi}
 
@@ -29,9 +29,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class OpOutputPrimitiveModelProjectionGen(p: OpOutputPrimitiveModelProjection)
-  extends ServiceObjectGen[OpOutputPrimitiveModelProjection](p) {
+  extends ObjectGen[OpOutputPrimitiveModelProjection](p) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     ctx.addImport(classOf[PrimitiveType[_]].getName)
 
     /*@formatter:off*/sn"""\

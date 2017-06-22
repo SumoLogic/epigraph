@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenNames._
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.CodeChunk
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations._
@@ -44,7 +44,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
 
 
   override def generate: String = {
-    val sgctx = new ServiceGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx)
 
     val clientsParts: Seq[OpClientParts] = rd.operations().asScala.map(op => genOpClient(op, sgctx))
 
@@ -77,7 +77,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sgctx)}
+${ObjectGenUtils.genImports(sgctx)}
 
 /**
  * {@code ${rd.fieldName()}} resource client
@@ -88,7 +88,7 @@ public class $className {
   private final TypesResolver typesResolver;
   private final OperationFilterChains<Data> filterChains;
 
-  ${i(ServiceGenUtils.genFields(sgctx))}
+  ${i(ObjectGenUtils.genFields(sgctx))}
 
   /**
    * Creates new client
@@ -169,7 +169,7 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
 """/*@formatter:on*/
   }
 
-  private def genOpClient(op: OperationDeclaration, sgctx: ServiceGenContext): OpClientParts = {
+  private def genOpClient(op: OperationDeclaration, sgctx: ObjectGenContext): OpClientParts = {
     val kind = op.kind().toString.toLowerCase()
     val name = op.name()
 

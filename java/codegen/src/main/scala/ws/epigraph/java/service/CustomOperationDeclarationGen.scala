@@ -17,16 +17,17 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
+import ws.epigraph.java.{ObjectGen, ObjectGenContext}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.schema.operations.{CustomOperationDeclaration, HttpMethod}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class CustomOperationDeclarationGen(od: CustomOperationDeclaration)
-  extends ServiceObjectGen[CustomOperationDeclaration](od) {
+  extends ObjectGen[CustomOperationDeclaration](od) {
 
-  override protected def generateObject(ctx: ServiceGenContext): String =
+  override protected def generateObject(ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new CustomOperationDeclaration(
   ${generateHttpMethod(od.method(), ctx)},
@@ -38,7 +39,7 @@ new CustomOperationDeclaration(
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
 
-  private def generateHttpMethod(m: HttpMethod, ctx: ServiceGenContext): String = {
+  private def generateHttpMethod(m: HttpMethod, ctx: ObjectGenContext): String = {
     ctx.addImport(classOf[HttpMethod].getName)
     m match {
       case HttpMethod.GET => "HttpMethod.GET"

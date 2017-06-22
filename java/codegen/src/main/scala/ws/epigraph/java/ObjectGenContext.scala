@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service
+package ws.epigraph.java
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.CodeChunk
 import ws.epigraph.lang.Qn
 
 import scala.collection.mutable
 
 /**
- * Service class generation context. Contains elements to be added to the class: imports,
+ * Object generation context. Contains elements to be added to the class: imports,
  * fields, methods.
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ServiceGenContext(val gctx: GenContext) {
+class ObjectGenContext(val gctx: GenContext) {
   private val _imports = new mutable.HashSet[String]()
   private val _fields = new mutable.HashSet[String]()
   private val _methods = new mutable.MutableList[CodeChunk]()

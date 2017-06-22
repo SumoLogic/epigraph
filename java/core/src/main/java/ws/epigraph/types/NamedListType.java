@@ -20,6 +20,7 @@ package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.ListDatum;
 import ws.epigraph.data.Val;
@@ -36,8 +37,9 @@ public abstract class NamedListType extends ListTypeImpl {
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends ListType> immediateSupertypes,
       @Nullable DatumType declaredMetaType,
-      @NotNull DataType elementDataType
-  ) { super(name, immediateSupertypes, elementDataType, declaredMetaType); }
+      @NotNull DataType elementDataType,
+      @NotNull Annotations annotations
+  ) { super(name, immediateSupertypes, elementDataType, declaredMetaType, annotations); }
 
   @Override
   public @NotNull QualifiedTypeName name() { return (QualifiedTypeName) super.name(); }
@@ -49,8 +51,9 @@ public abstract class NamedListType extends ListTypeImpl {
         @NotNull QualifiedTypeName name,
         @NotNull List<? extends ListType> immediateSupertypes,
         @Nullable DatumType declaredMetaType,
-        @NotNull DataType elementDataType
-    ) { super(name, immediateSupertypes, declaredMetaType, elementDataType); }
+        @NotNull DataType elementDataType,
+        @NotNull Annotations annotations
+    ) { super(name, immediateSupertypes, declaredMetaType, elementDataType, annotations); }
 
     private static @Nullable Tag defaultTag(Type type, @Nullable Tag tag) {
       return tag == null ? null : type.tagsMap().get(tag.name);
@@ -94,6 +97,7 @@ public abstract class NamedListType extends ListTypeImpl {
         @NotNull Function<ListDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
         @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull Annotations annotations,
         @NotNull ListType.Static<
             ? super MyImmDatum,
             ? extends ListDatum.Builder.Static<? super MyImmDatum, ?>,
@@ -103,7 +107,7 @@ public abstract class NamedListType extends ListTypeImpl {
             ? extends Data.Builder.Static<? super MyImmData>
         >... immediateSupertypes
     ) {
-      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, elementDataType);
+      super(name, Arrays.asList(immediateSupertypes), declaredMetaType, elementDataType, annotations);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;

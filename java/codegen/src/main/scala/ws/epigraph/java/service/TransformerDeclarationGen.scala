@@ -20,8 +20,8 @@ import java.nio.file.Path
 
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.ServiceObjectGen.gen
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java.service.ServiceObjectGenerators.gen
+import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.TransformerDeclaration
 import ws.epigraph.types.TypeApi
@@ -29,21 +29,21 @@ import ws.epigraph.types.TypeApi
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class TransformerDeclarationGen(td: TransformerDeclaration, baseNamespace: Qn, val ctx: GenContext) extends ServiceObjectGen[TransformerDeclaration](td) with JavaGen {
+class TransformerDeclarationGen(td: TransformerDeclaration, baseNamespace: Qn, val ctx: GenContext) extends ObjectGen[TransformerDeclaration](td) with JavaGen {
   protected val namespace: Qn = TransformerDeclarationGen.transformerDeclarationNamespace(baseNamespace, td)
   protected val transformerDeclarationClassName: String = TransformerDeclarationGen.transformerDeclarationClassName(td)
 
   override protected def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(TransformerDeclarationGen.transformerDeclarationClassName(td) + ".java")
 
-  override protected def generateObject(ctx: ServiceGenContext): String = {
+  override protected def generateObject(ctx: ObjectGenContext): String = {
     val transformerType: TypeApi = td.`type`()
 
     // see JavaTypeGen.dataTypeExpr, typeExpression
     /*@formatter:off*/sn"""\
 super(
   "${td.name()}",
-  ${ServiceGenUtils.genTypeExpr(transformerType, ctx.gctx)},
+  ${ObjectGenUtils.genTypeExpr(transformerType, ctx.gctx)},
   ${i(gen(td.annotations(), ctx))},
   ${i(gen(td.inputProjection(), ctx))},
   ${i(gen(td.outputProjection(), ctx))},
@@ -53,13 +53,13 @@ super(
   }
 
   override def generate: String = {
-    val sgctx = new ServiceGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx)
     val superCall = generate(sgctx) // do not inline!
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ServiceGenUtils.genImports(sgctx)}
+${ObjectGenUtils.genImports(sgctx)}
 @javax.annotation.Generated("${getClass.getCanonicalName}")
 public final class $transformerDeclarationClassName extends TransformerDeclaration {
   public static final $transformerDeclarationClassName INSTANCE = new $transformerDeclarationClassName();

@@ -18,6 +18,7 @@
 
 package ws.epigraph.types;
 
+import ws.epigraph.annotations.Annotations;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.IntegerDatum;
 import ws.epigraph.data.Val;
@@ -34,8 +35,9 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
   protected IntegerType(
       @NotNull QualifiedTypeName name,
       @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes,
-      @Nullable DatumType declaredMetaType
-  ) { super(name, immediateSupertypes, declaredMetaType); }
+      @Nullable DatumType declaredMetaType,
+      @NotNull Annotations annotations
+  ) { super(name, immediateSupertypes, declaredMetaType, annotations); }
 
   @Override
   @SuppressWarnings("unchecked")
@@ -61,8 +63,9 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     protected Raw(
         @NotNull QualifiedTypeName name,
         @NotNull List<@NotNull ? extends IntegerType> immediateSupertypes,
-        @Nullable DatumType declaredMetaType
-    ) { super(name, immediateSupertypes, declaredMetaType); }
+        @Nullable DatumType declaredMetaType,
+        @NotNull Annotations annotations
+    ) { super(name, immediateSupertypes, declaredMetaType, annotations); }
 
     @Override
     public @NotNull IntegerDatum.Builder.Raw createBuilder(@NotNull Integer val) {
@@ -102,9 +105,10 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
         @Nullable DatumType declaredMetaType,
         @NotNull Function<IntegerDatum.Builder.@NotNull Raw, @NotNull MyDatumBuilder> datumBuilderConstructor,
         @NotNull Function<Val.Imm.@NotNull Raw, @NotNull MyImmVal> immValConstructor,
-        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor
+        @NotNull Function<Data.Builder.@NotNull Raw, @NotNull MyDataBuilder> dataBuilderConstructor,
+        @NotNull Annotations annotations
     ) {
-      super(name, immediateSupertypes, declaredMetaType);
+      super(name, immediateSupertypes, declaredMetaType, annotations);
       this.datumBuilderConstructor = datumBuilderConstructor;
       this.immValConstructor = immValConstructor;
       this.dataBuilderConstructor = dataBuilderConstructor;
