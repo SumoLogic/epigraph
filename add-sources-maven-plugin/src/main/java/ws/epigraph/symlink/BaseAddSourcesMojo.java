@@ -29,6 +29,7 @@ public abstract class BaseAddSourcesMojo extends AbstractMojo {
       Files.createDirectories(sourcesHome);
       for (Source source : sources()) {
         addToProject(project, link(sourcesHome, source).toString());
+        getLog().info(String.format("Source directory: %s added.", source.location));
       }
     } catch (IOException e) {
       throw new MojoExecutionException(String.format("Error adding sources: %s", e.toString()), e);
@@ -54,5 +55,18 @@ public abstract class BaseAddSourcesMojo extends AbstractMojo {
   protected abstract @NotNull Source[] sources();
 
   protected abstract void addToProject(MavenProject project, String path);
+
+
+  /** Structure that holds name for and location of a source directory to add to the project. */
+  public static class Source {
+
+    /** Name for the added sources directory */
+    String name;
+
+    /** Path (from project base directory) to the imported sources directory */
+    File location;
+
+  }
+
 
 }

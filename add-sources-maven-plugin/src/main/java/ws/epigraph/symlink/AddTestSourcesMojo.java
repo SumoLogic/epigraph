@@ -20,6 +20,7 @@ public class AddTestSourcesMojo extends BaseAddSourcesMojo {
   @Parameter(defaultValue = "${project.build.directory}/generated-test-sources", required = true, readonly = true)
   private File sourcesHome;
 
+  /** A list of <test-source><name>name</name><location>path</location></test-source> test source directories to add. */
   @Parameter(name = "test-sources", required = true)
   private Source[] testSources;
 

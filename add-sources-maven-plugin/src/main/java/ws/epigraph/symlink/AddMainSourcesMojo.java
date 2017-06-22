@@ -20,6 +20,7 @@ public class AddMainSourcesMojo extends BaseAddSourcesMojo {
   @Parameter(defaultValue = "${project.build.directory}/generated-sources", required = true, readonly = true)
   private File sourcesHome;
 
+  /** A list of <source><name>name</name><location>path</location></source> source directories to add. */
   @Parameter(required = true)
   private Source[] sources;
 
