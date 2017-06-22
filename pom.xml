@@ -74,6 +74,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
+        <module>add-sources-maven-plugin</module><!-- TODO move to a separate profile -->
         <module>builtin-services</module>
         <module>compiler</module>
         <module>examples</module>

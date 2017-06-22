@@ -54,23 +54,48 @@
     <plugins>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>add-sources-maven-plugin</artifactId>
+        <version>0.0.0-SNAPSHOT</version>
         <executions>
           <execution>
-            <phase>process-sources</phase>
             <goals>
-              <goal>add-source</goal>
+              <goal>add-sources</goal>
             </goals>
-            <configuration>
-              <sources>
-                <source>../schema-parser-common/src/main/java</source>
-                <source>../schema-parser-common/src/main/java.generated</source>
-              </sources>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <sources>
+            <source>
+              <name>schema-parser-common~src~main~java</name>
+              <location>../schema-parser-common/src/main/java</location>
+            </source>
+            <source>
+              <name>schema-parser-common~src~main~java.generated</name>
+              <location>../schema-parser-common/src/main/java.generated</location>
+            </source>
+          </sources>
+        </configuration>
       </plugin>
+
+      <!--<plugin>-->
+        <!--<groupId>org.codehaus.mojo</groupId>-->
+        <!--<artifactId>build-helper-maven-plugin</artifactId>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<phase>process-sources</phase>-->
+            <!--<goals>-->
+              <!--<goal>add-source</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<sources>-->
+                <!--<source>../schema-parser-common/src/main/java</source>-->
+                <!--<source>../schema-parser-common/src/main/java.generated</source>-->
+              <!--</sources>-->
+            <!--</configuration>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
 
     </plugins>
 

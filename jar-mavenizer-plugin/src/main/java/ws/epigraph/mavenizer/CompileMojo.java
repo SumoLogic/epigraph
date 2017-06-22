@@ -19,7 +19,7 @@ import java.io.File;
 /**
  * "Compiles" a JAR file by extracting its contents to project target classes directory.
  */
-@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresProject = true, threadSafe = true)
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class CompileMojo extends AbstractMojo {
 
   @Parameter(required = true)
@@ -33,12 +33,6 @@ public class CompileMojo extends AbstractMojo {
 
   @Component(role = UnArchiver.class, hint = "jar") // TODO get it from archive manager instead?
   private ZipUnArchiver jarUnArchiver;
-
-  /**
-   * The {@link MavenSession}.
-   */
-  @Parameter(defaultValue = "${session}", readonly = true, required = true)
-  private MavenSession session;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
