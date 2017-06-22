@@ -18,7 +18,7 @@ package ws.epigraph.java.service
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CDatumType, CType, CVarTypeDef}
+import ws.epigraph.compiler.{CDatumType, CType, CEntityTypeDef}
 import ws.epigraph.java.JavaGenNames.lqdrn2
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
@@ -117,7 +117,7 @@ object AbstractOperationGen {
   def dataExpr(dataType: CType, namespace: String, rawDataExpr: String): String = {
     val typeExpr = JavaGenNames.lqn2(dataType, namespace)
     dataType match {
-      case t: CVarTypeDef => s"($typeExpr) $rawDataExpr" // todo double check
+      case t: CEntityTypeDef => s"($typeExpr) $rawDataExpr" // todo double check
       case t: CDatumType => s"($typeExpr) $rawDataExpr._raw().getDatum($typeExpr.type.self())"
       case other => throw new IllegalArgumentException("Unknown type kind: " + other.getClass.getName)
     }

@@ -57,7 +57,7 @@ trait CTypeApiWrapper extends TypeApi {
 
 object CTypeApiWrapper {
   def wrap(cType: CType): TypeApi = cType match {
-    case t: CVarTypeDef => new CVarTypeDefApiWrapper(t)
+    case t: CEntityTypeDef => new CVarTypeDefApiWrapper(t)
     case t: CRecordTypeDef => new CRecordTypeDefApiWrapper(t)
     case t: CMapTypeDef => new CMapTypeDefApiWrapper(t)
     case t: CAnonMapType => new CAnonMapTypeApiWrapper(t)
@@ -93,6 +93,8 @@ class CTagWrapper(private val cTag: CTag) extends TagApi {
 
   override val `type`: DatumTypeApi = CTypeApiWrapper.wrap(cTag.typeRef.resolved).asInstanceOf[DatumTypeApi]
 
+  override def annotations(): Annotations = cTag.annotations
+
   def canEqual(other: Any): Boolean = other.isInstanceOf[CTagWrapper]
 
   override def equals(other: Any): Boolean = other match {
@@ -112,7 +114,7 @@ trait CTypeDefApiWrapper extends CTypeApiWrapper {
   override def annotations(): Annotations = cType.annotations
 }
 
-class CVarTypeDefApiWrapper(val cType: CVarTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
+class CVarTypeDefApiWrapper(val cType: CEntityTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
   override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map{ ct => new CTagWrapper(ct) }
 
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
@@ -156,6 +158,9 @@ class CFieldApiWrapper(private val cField: CField) extends FieldApi {
   override def name(): String = cField.name
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cField.valueDataType)
+
+
+  override def annotations(): Annotations = cField.annotations
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[CFieldApiWrapper]
 

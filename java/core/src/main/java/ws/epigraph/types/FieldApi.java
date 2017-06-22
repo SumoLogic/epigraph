@@ -17,11 +17,12 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotated;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface FieldApi {
+public interface FieldApi extends Annotated {
   @NotNull String name();
 
   @NotNull DataTypeApi dataType();

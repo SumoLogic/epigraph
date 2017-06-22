@@ -19,7 +19,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CDataType, CMapType, CTypeRef, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CMapType, CTypeRef, CEntityTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
@@ -85,7 +85,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
   }
 }\
 ${vt match { // element tags views (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
   ${"/**"}
    * Returns map view of element data.
@@ -201,7 +201,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
   }
 }\
 ${vt match { // data view (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
     ${"/**"} Returns modifiable map view of element data builders. */
     @Override
@@ -303,7 +303,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
   }
 }\
 ${vt match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
     ${"/**"}
      * Returns immutable map view of elements data.
@@ -374,7 +374,7 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
   }
 }\
 ${vt match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
       ${"/**"}
        * Returns immutable map view of elements data.

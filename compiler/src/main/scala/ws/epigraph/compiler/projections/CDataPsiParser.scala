@@ -53,7 +53,7 @@ object CDataPsiParser {
       try {
         val expectedType: Option[CDatumType] = typeOpt.map{ t =>
           t.typeRef.resolved match {
-            case vt: CVarTypeDef =>
+            case vt: CEntityTypeDef =>
               val tag: CTag = vt.effectiveTags.find(_.name == tagName).getOrElse{
                 ErrorReporter.reporter(csf).error(s"Tags '$tagName' doesn't exist in type '${vt.name.name}'",
                   entry.getQid)

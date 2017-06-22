@@ -19,6 +19,7 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotations;
 
 import java.util.Objects;
 
@@ -28,9 +29,12 @@ public class Tag implements TagApi {
 
   public final @NotNull DatumType type;
 
-  public Tag(@NotNull String name, @NotNull DatumType type) {
+  private final @NotNull Annotations annotations;
+
+  public Tag(@NotNull String name, @NotNull DatumType type, @NotNull Annotations annotations) {
     this.name = name;
     this.type = type;
+    this.annotations = annotations;
   }
 
   @Override
@@ -40,14 +44,18 @@ public class Tag implements TagApi {
   public @NotNull DatumTypeApi type() { return type; }
 
   @Override
+  public @NotNull Annotations annotations() { return annotations; }
+
+  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Tag that = (Tag) o;
-    return Objects.equals(name, that.name) && Objects.equals(type, that.type);
+    return Objects.equals(name, that.name) && Objects.equals(type, that.type) &&
+           Objects.equals(annotations, that.annotations);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(name, type); }
+  public int hashCode() { return Objects.hash(name, type, annotations); }
 
 }

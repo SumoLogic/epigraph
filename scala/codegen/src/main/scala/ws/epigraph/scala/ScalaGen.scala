@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,13 +61,13 @@ abstract class ScalaGen[From >: Null <: AnyRef](protected val from: From) {
   }
 
   def alln(t: CAnonListType): String = t.elementDataType.typeRef.resolved match {
-    case et: CVarTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+    case et: CEntityTypeDef => ln(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
     case et: CDatumType => ln(et) + "_List"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   def amln(t: CAnonMapType): String = t.valueDataType.typeRef.resolved match {
-    case vt: CVarTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+    case vt: CEntityTypeDef => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
     case vt: CDatumType => ln(t.keyTypeRef.resolved) + "_" + ln(vt) + "_Map"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }

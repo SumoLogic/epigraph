@@ -36,7 +36,7 @@ object COpInputProjections extends CGenProjections {
   override type FP = CGenFieldProjection
 
   class COpInputVarProjection(
-    val `type`: CVarTypeDef,
+    val `type`: CEntityTypeDef,
     val tagProjections: Map[String, TP],
     val parenthesized: Boolean,
     val polymorphicTails: Option[List[VP]],

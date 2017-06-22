@@ -201,9 +201,12 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
 
       @Override
       public void visitAnnotation(@NotNull SchemaAnnotation annotation) {
+        setHighlighting(annotation.getAt(), holder, SchemaSyntaxHighlighter.PARAM_NAME);
+
         SchemaQnTypeRef typeRef = annotation.getQnTypeRef();
-        if (typeRef != null)
+        if (typeRef != null) {
           setHighlighting(typeRef, holder, SchemaSyntaxHighlighter.PARAM_NAME);
+        }
       }
 
       @Override

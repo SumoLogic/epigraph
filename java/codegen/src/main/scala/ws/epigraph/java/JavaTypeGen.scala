@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package ws.epigraph.java
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CDataType, CType, CTypeRef, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CType, CTypeRef, CEntityTypeDef}
 import ws.epigraph.java.JavaGenNames.{dttr, getNamedTypeComponent, lqn, lqrn, pn}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
@@ -70,12 +70,12 @@ abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, protect
     s"new ws.epigraph.types.DataType(${lqrn(dt.typeRef, lt)}.Type.instance(), ${dt.effectiveDefaultTagName.map(dttr(dt, _, t)).getOrElse("null")})"
 
   protected def vt(t: CType, yes: => String, no: => String): String = t match {
-    case _: CVarTypeDef => yes
+    case _: CEntityTypeDef => yes
     case _ => no
   }
 
   protected def vt(tr: CTypeRef, yes: => String, no: => String): String = tr.resolved match {
-    case _: CVarTypeDef => yes
+    case _: CEntityTypeDef => yes
     case _ => no
   }
 

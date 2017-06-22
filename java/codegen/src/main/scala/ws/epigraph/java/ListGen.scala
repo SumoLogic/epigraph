@@ -18,7 +18,7 @@
 
 package ws.epigraph.java
 
-import ws.epigraph.compiler.{CDataType, CListType, CTypeRef, CVarTypeDef}
+import ws.epigraph.compiler.{CDataType, CListType, CTypeRef, CEntityTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
@@ -78,7 +78,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
   }
 }\
 ${et match { // element tags views (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
   ${"/**"}
    * Returns list view of element data.
@@ -196,7 +196,7 @@ $add\
   }
 }\
 ${et match { // data view (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
     ${"/**"} Returns modifiable list view of element data builders. */
     @Override
@@ -298,7 +298,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
   }
 }\
 ${et match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
     ${"/**"}
      * Returns immutable list view of elements data.
@@ -369,7 +369,7 @@ ${t.effectiveDefaultElementTagName match { // default element tag (if defined) v
   }
 }\
 ${et match { // element tags (for vartypes)
-    case evt: CVarTypeDef => sn"""\
+    case evt: CEntityTypeDef => sn"""\
 
       ${"/**"}
        * Returns immutable list view of elements data.

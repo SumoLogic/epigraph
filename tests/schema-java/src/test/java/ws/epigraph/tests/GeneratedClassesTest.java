@@ -19,6 +19,7 @@ package ws.epigraph.tests;
 import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
+import epigraph.annotations.Doc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -42,6 +43,7 @@ import ws.epigraph.types.ListType;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -113,6 +115,27 @@ public class GeneratedClassesTest {
       updatePersonRecordProjection.lastName();
       updatePersonRecordProjection.replace();
     } catch (NullPointerException ignored) { }
+  }
+
+  @Test
+  public void testTypeAnnotation() {
+    AvroType.Imm avroType = PersonRecord.type.annotations().get(AvroType.type);
+    assertNotNull(avroType);
+    assertEquals("Person", avroType.getVal());
+  }
+
+  @Test
+  public void testTagAnnotation() {
+    Doc.Imm doc = Person.id.annotations().get(Doc.type);
+    assertNotNull(doc);
+    assertEquals("Person ID model", doc.getVal());
+  }
+
+  @Test
+  public void testFieldAnnotation() {
+    AvroField.Imm avroField = PersonRecord.id.annotations().get(AvroField.type);
+    assertNotNull(avroField);
+    assertEquals("personId", avroField.getVal());
   }
 
   public static @NotNull String printOpDeleteVarProjection(

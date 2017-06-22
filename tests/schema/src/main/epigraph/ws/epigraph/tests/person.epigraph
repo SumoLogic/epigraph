@@ -1,16 +1,31 @@
 namespace ws.epigraph.tests
 
+import epigraph.annotations.Doc
+
 entity Person {
-  id: PersonId
+  id: PersonId { @Doc "Person ID model" }
   `record`: PersonRecord
 }
 
 integer PersonId
 
+string AvroType
+string AvroField
+
+string DBTableMapping
+record DBFieldMapping {
+  dbColumn: String
+  dbType: String
+}
+
 record PersonRecord {
-  //avroType = "Person"
-  //dbTable = "T_PERSONS"
-  id: PersonId { /*avroField = "personId", dbColumn = "ID", dbType = "BIGINT"*/ }
+  @AvroType "Person"
+  @DBTableMapping "T_PEOPLE"
+
+  id: PersonId {
+    @AvroField "personId"
+    @DBFieldMapping { dbColumn: "ID", dbType: "BIGINT" }
+  }
   firstName: String
   lastName: String
   middleName: String

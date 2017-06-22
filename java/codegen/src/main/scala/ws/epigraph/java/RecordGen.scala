@@ -29,8 +29,19 @@ class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CR
     val ogc = new ObjectGenContext(ctx)
     ogc.addImport("org.jetbrains.annotations.NotNull")
     ogc.addImport("org.jetbrains.annotations.Nullable")
+    ogc.addImport("ws.epigraph.annotations.Annotations")
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
+
+    val fields = t.effectiveFields.map { f => /*@formatter:off*/sn"""\
+  ${"/**"} Field `${f.name}`. */
+  @NotNull Field ${fcn(f)} = new Field(${if (f.annotations.isEmpty) s""""${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}), Annotations.EMPTY);""" else sn"""
+    "${f.name}",
+     ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}),
+     ${i(new AnnotationsGen(f.annotations).generate(ogc))}
+  );"""}
+"""/*@formatter:on*/
+    }
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
@@ -52,13 +63,8 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Reco
 
   @Override
   @NotNull $ln.Imm toImmutable();
-${t.effectiveFields.map { f => sn"""\
 
-  ${"/**"} Field `${f.name}`. */
-  @NotNull Field ${fcn(f)} = new Field("${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}));
-"""
-  }.mkString
-}\
+${fields.mkString}\
 ${t.effectiveFields.map { f =>
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     val getterOverride = if (f.host == t && f.superfields.isEmpty) "" else sn"""\
@@ -66,7 +72,7 @@ ${t.effectiveFields.map { f =>
 """
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
-      case vartype: CVarTypeDef => sn"""\
+      case vartype: CEntityTypeDef => sn"""\
 
   /** Returns `${f.name}` field data. */
 $getterOverride\
@@ -170,7 +176,7 @@ ${t.effectiveFields.map { f => // for each effective field
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
-      case vartype: CVarTypeDef => sn"""\
+      case vartype: CEntityTypeDef => sn"""\
 
     /** Returns `${f.name}` field data. */
     @Override
@@ -308,7 +314,7 @@ ${t.effectiveFields.map { f =>
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
-      case vartype: CVarTypeDef => sn"""\
+      case vartype: CEntityTypeDef => sn"""\
 
     /** Returns immutable `${f.name}` field data. */
     @Override
@@ -372,7 +378,7 @@ ${t.effectiveFields.map { f =>
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     sn"""\
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
-      case vartype: CVarTypeDef => sn"""\
+      case vartype: CEntityTypeDef => sn"""\
 
         /** Returns immutable `${f.name}` field data. */
         @Override
@@ -453,7 +459,7 @@ ${t.effectiveFields.map { f => // for each effective field
 
   interface Set${up(f.name)} ${superSetters(f)}{
 ${  f.valueDataType.typeRef.resolved match { // data accessors (for union typed fields)
-      case vartype: CVarTypeDef => sn"""\
+      case vartype: CEntityTypeDef => sn"""\
 
     /** Sets `${f.name}` field data. */
 $setterOverride\

@@ -19,6 +19,7 @@
 package ws.epigraph.types;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotations;
 
 import java.util.Objects;
 
@@ -28,9 +29,15 @@ public class Field implements FieldApi {
 
   public final @NotNull DataType dataType;
 
-  public Field(@NotNull String name, @NotNull DataType dataType) { // TODO capture overridden super-fields?
+  private final @NotNull Annotations annotations;
+
+  public Field(
+      @NotNull String name,
+      @NotNull DataType dataType,
+      @NotNull Annotations annotations) { // TODO capture overridden super-fields?
     this.name = name;
     this.dataType = dataType;
+    this.annotations = annotations;
   }
 
   @Override
@@ -40,14 +47,18 @@ public class Field implements FieldApi {
   public @NotNull DataType dataType() { return dataType; }
 
   @Override
+  public @NotNull Annotations annotations() { return annotations; }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Field that = (Field) o;
-    return Objects.equals(name, that.name) && Objects.equals(dataType, that.dataType);
+    return Objects.equals(name, that.name) && Objects.equals(dataType, that.dataType) &&
+           Objects.equals(annotations, that.annotations);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(name, dataType); }
+  public int hashCode() { return Objects.hash(name, dataType, annotations); }
 
 }

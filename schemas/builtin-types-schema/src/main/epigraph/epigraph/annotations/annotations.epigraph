@@ -2,7 +2,11 @@ namespace epigraph.annotations
 
 string Doc
 
-boolean Deprecated // change to record with since, description, etc?
+record Deprecated {
+  message: String
+  since: String // date? version?
+  replaceWith: String
+}
 
 record Batching {
   @Doc "for derived transformers"

@@ -41,7 +41,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
   def defaultTag: Option[CTag] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _defaultTag)
 
   private lazy val _defaultTag: Option[CTag] = typeRef.resolved match {
-    case t: CVarTypeDef => defaultTagNameDecl match {
+    case t: CEntityTypeDef => defaultTagNameDecl match {
       case Some(tagName) =>
         val tagOpt = t.effectiveTags.find(_.name == tagName)
         if (tagOpt.isEmpty) ctx.errors.add(

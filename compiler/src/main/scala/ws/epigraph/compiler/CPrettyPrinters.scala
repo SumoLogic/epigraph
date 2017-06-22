@@ -112,7 +112,7 @@ object CPrettyPrinters {
   implicit object CTypeDefPrinter extends PPrinter[CTypeDef] {
 
     override def render0(td: CTypeDef, c: Config): Iterator[String] = td match {
-      case typeDef: CVarTypeDef => CVarTypePrinter.render(typeDef, c)
+      case typeDef: CEntityTypeDef => CVarTypePrinter.render(typeDef, c)
       case typeDef: CRecordTypeDef => CRecordTypePrinter.render(typeDef, c)
       case typeDef: CMapTypeDef => CMapTypePrinter.render(typeDef, c)
       case typeDef: CListTypeDef => CListTypePrinter.render(typeDef, c)
@@ -168,9 +168,9 @@ object CPrettyPrinters {
   }
 
 
-  implicit object CVarTypePrinter extends PPrinter[CVarTypeDef] {
+  implicit object CVarTypePrinter extends PPrinter[CEntityTypeDef] {
 
-    override def render0(@NotNull t: CVarTypeDef, c: Config): Iterator[String] = {
+    override def render0(@NotNull t: CEntityTypeDef, c: Config): Iterator[String] = {
       def body = (c: Config) => CTypeDefPrinter.typeDefParts(t, c) ++ Iterator(
         collection("declaredTags", t.declaredTags, c),
         collection("effectiveTags", t.effectiveTags, c)
@@ -180,7 +180,7 @@ object CPrettyPrinters {
 
   }
 
-  implicit val CVarTypePrint: PPrint[CVarTypeDef] = PPrint(CVarTypePrinter)
+  implicit val CVarTypePrint: PPrint[CEntityTypeDef] = PPrint(CVarTypePrinter)
 
   implicit object CTagPrinter extends PPrinter[CTag] {
 

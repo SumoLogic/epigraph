@@ -30,7 +30,7 @@ import java.util.List;
 
 abstract class DatumTypeImpl extends TypeImpl implements DatumType {
 
-  private final @NotNull Tag self = new Tag(MONO_TAG_NAME, this); // TODO rename to tag?
+  private final @NotNull Tag self = new Tag(MONO_TAG_NAME, this, Annotations.EMPTY); // TODO rename to tag?
 
   private final @NotNull Collection<@NotNull ? extends Tag> immediateTags = Collections.singleton(self);
 

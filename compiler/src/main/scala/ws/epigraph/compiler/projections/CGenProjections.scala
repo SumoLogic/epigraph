@@ -36,7 +36,7 @@ class CGenProjections {
   type FP <: CGenFieldProjection
 
   trait CGenVarProjection {
-    def `type`: CVarTypeDef
+    def `type`: CEntityTypeDef
     def tagProjections: Map[String, TP]
     def parenthesized: Boolean
     def polymorphicTails: Option[List[VP]]

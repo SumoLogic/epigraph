@@ -59,8 +59,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
           typeDef.kind match {
 
             case CTypeKind.ENTITY =>
-              val varTypeDef: CVarTypeDef = typeDef.asInstanceOf[CVarTypeDef]
-              generators += new VarTypeGen(varTypeDef, ctx)
+              val varTypeDef: CEntityTypeDef = typeDef.asInstanceOf[CEntityTypeDef]
+              generators += new EntityTypeGen(varTypeDef, ctx)
 
             case CTypeKind.RECORD =>
               val recordTypeDef: CRecordTypeDef = typeDef.asInstanceOf[CRecordTypeDef]

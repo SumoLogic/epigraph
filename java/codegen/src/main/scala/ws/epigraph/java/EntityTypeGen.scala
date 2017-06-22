@@ -21,15 +21,31 @@ package ws.epigraph.java
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{lqrn, pn, qnameArgs, tcn}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper,i}
-// TODO rename to EntityTypeGen
-class VarTypeGen(from: CVarTypeDef, ctx: GenContext) extends JavaTypeDefGen[CVarTypeDef](from, ctx) {
+class EntityTypeGen(from: CEntityTypeDef, ctx: GenContext) extends JavaTypeDefGen[CEntityTypeDef](from, ctx) {
 
   protected def generate: String = {
     val ogc = new ObjectGenContext(ctx)
     ogc.addImport("org.jetbrains.annotations.NotNull")
     ogc.addImport("org.jetbrains.annotations.Nullable")
+    ogc.addImport("ws.epigraph.annotations.Annotations")
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
+
+    val tags = t.effectiveTags.map { tag => /*@formatter:off*/sn"""\
+  ${"/**"} Tag `${tag.name}`. */
+  @NotNull Tag ${tcn(tag)} = new Tag(${if (tag.annotations.isEmpty) s""""${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance(), Annotations.EMPTY);""" else sn"""
+    "${tag.name}",
+     ${lqrn(tag.typeRef, t)}.Type.instance(),
+     ${i(new AnnotationsGen(tag.annotations).generate(ogc))}
+  );"""}
+
+  ${"/**"} Returns `${tag.name}` tag datum. */
+  @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
+
+  ${"/**"} Returns `${tag.name}` tag value. */
+  @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}_();
+"""/*@formatter:on*/
+    }
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
@@ -49,19 +65,8 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Data
 
   /** Returns new builder for `${t.name.name}` data. */
   static @NotNull $ln.Builder create() { return $ln.Type.instance().createDataBuilder(); }
-${t.effectiveTags.map { tag => sn"""\
 
-  ${"/**"} Tag `${tag.name}`. */
-  @NotNull Tag ${tcn(tag)} = new Tag("${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance());
-
-  ${"/**"} Returns `${tag.name}` tag datum. */
-  @Nullable ${lqrn(tag.typeRef, t)} get${up(tag.name)}();
-
-  ${"/**"} Returns `${tag.name}` tag value. */
-  @Nullable ${lqrn(tag.typeRef, t)}.Value get${up(tag.name)}_();
-"""
-  }.mkString
-}\
+${tags.mkString}\
 
   ${"/**"}
    * Class for `${t.name.name}` type.

@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CTag, CVarTypeDef}
+import ws.epigraph.compiler.{CTag, CEntityTypeDef}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
@@ -44,7 +44,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   override lazy val children: Iterable[ReqProjectionGen] =
     tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
 
-  override protected val cType: CVarTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CVarTypeDef]
+  override protected val cType: CEntityTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
   protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map { tpe => findTag(tpe.tag().name()) -> tagGenerator(tpe) }.toMap

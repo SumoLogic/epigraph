@@ -171,23 +171,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
 
-  private lazy val _computedAnnotations: Annotations = annotationsPsiOpt.map{ annotationsPsi =>
-    import JavaConverters._
-
-    val ppc = new DefaultPsiProcessingContext
-    val res = SchemaPsiParserUtil.parseAnnotations(
-      annotationsPsi,
-      ppc,
-      new ImportAwareTypesResolver(
-        csf.namespace.fqn,
-        csf.imports.values.map(i => i.fqn).toList.asJava,
-        new CTypesResolver(csf)
-      )
-    )
-    lazy val reporter = ErrorReporter.reporter(csf)
-    ppc.errors().foreach{ e => reporter.error(e.message(), e.location()) }
-    res
-  }.getOrElse(Annotations.EMPTY)
+  private lazy val _computedAnnotations: Annotations = CTypeUtil.buildAnnotations(csf, annotationsPsiOpt)
 
   protected def annotationsPsiOpt: Option[java.util.List[SchemaAnnotation]] = None
 
@@ -196,7 +180,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 object CTypeDef {
 
   def apply(csf: CSchemaFile, stdw: SchemaTypeDefWrapper)(implicit ctx: CContext): CTypeDef = stdw.getElement match {
-    case typeDef: SchemaEntityTypeDef => new CVarTypeDef(csf, typeDef)
+    case typeDef: SchemaEntityTypeDef => new CEntityTypeDef(csf, typeDef)
     case typeDef: SchemaRecordTypeDef => new CRecordTypeDef(csf, typeDef)
     case typeDef: SchemaMapTypeDef => new CMapTypeDef(csf, typeDef)
     case typeDef: SchemaListTypeDef => new CListTypeDef(csf, typeDef)
@@ -221,11 +205,11 @@ object CTypeDef {
 }
 
 
-class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(implicit ctx: CContext) extends CTypeDef(
+class CEntityTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(implicit ctx: CContext) extends CTypeDef(
   csf, psi, CTypeKind.ENTITY
 ) {
 
-  final override type Super = CVarTypeDef
+  final override type Super = CEntityTypeDef
 
   val declaredTags: Seq[CTag] = {
     @Nullable val body = psi.getEntityTypeBody
@@ -258,7 +242,7 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(impli
           if (!dt.compatibleWith(st)) {
             ctx.errors.add(
               CError(
-                csf.filename, csf.position(dt.psi),
+                csf.filename, csf.position(dt.locationPsi),
                 s"Type `${
                   dt.typeRef.resolved.name.name
                 }` of tag `${dt.name}` is not a subtype of its parent tag type `${
@@ -295,16 +279,27 @@ class CVarTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(impli
   override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getEntityTypeBody).map(_.getAnnotationList)
 }
 
-class CTag(val csf: CSchemaFile, val name: String, val typeRef: CTypeRef, @Nullable val psi: PsiElement) {
+class CTag(
+  val csf: CSchemaFile,
+  val name: String,
+  val typeRef: CTypeRef,
+  val declPsiOpt: Option[SchemaEntityTagDecl],
+  val locationPsi: PsiElement)
+  (implicit val ctx: CContext) {
 
   def this(csf: CSchemaFile, psi: SchemaEntityTagDecl)(implicit ctx: CContext) =
-    this(csf, psi.getQid.getCanonicalName, CTypeRef(csf, psi.getTypeRef), psi)
+    this(csf, psi.getQid.getCanonicalName, CTypeRef(csf, psi.getTypeRef), Some(psi), psi)(ctx)
 
   def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)
+
+  def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
+
+  private lazy val _computedAnnotations: Annotations = CTypeUtil.buildAnnotations(csf, declPsiOpt.map(_.getAnnotationList))
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[CTag]
 
   override def equals(other: Any): Boolean = other match {
+    // should we take annotations into account here too? they may be unavailable at this point
     case that: CTag => (that canEqual this) && name == that.name && typeRef == that.typeRef
     case _ => false
   }
@@ -324,7 +319,7 @@ trait CDatumType extends CType {self =>
   @(Nullable@getter)
   @Nullable protected val psi: PsiElement
 
-  val impliedTag: CTag = new CTag(csf, CDatumType.ImpliedDefaultTagName, selfRef, psi)
+  val impliedTag: CTag = new CTag(csf, CDatumType.ImpliedDefaultTagName, selfRef, None, psi)
 
   override def dataType: CDataType = new CDataType(csf, selfRef, None)
 
@@ -525,6 +520,9 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 //    }
 //  }
 
+  def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
+
+  private lazy val _computedAnnotations: Annotations = CTypeUtil.buildAnnotations(csf, Option(psi.getAnnotationList))
 }
 
 
@@ -580,7 +578,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
   private lazy val _parents: Seq[CAnonMapType] = valueDataType.typeRef.resolved match {
 
-    case vt: CVarTypeDef => valueDataType.effectiveDefaultTagName match {
+    case vt: CEntityTypeDef => valueDataType.effectiveDefaultTagName match {
       case Some(tagName) => Seq(ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(None))) ++ vt.parents.map(
         etp => ctx.getOrCreateAnonMapOf(
           keyTypeRef, etp.dataType(etp.effectiveTags.find(_.name == tagName).map(_.name))
@@ -600,7 +598,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
 
   private lazy val _linearizedParents: Seq[CAnonMapType] = {
     val parents = valueDataType.typeRef.resolved match {
-      case vt: CVarTypeDef => valueDataType.effectiveDefaultTagName.map { tagName =>
+      case vt: CEntityTypeDef => valueDataType.effectiveDefaultTagName.map { tagName =>
         if (!vt.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
           CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${vt.name.name}`")
         )
@@ -703,7 +701,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   private lazy val _parents: Seq[CAnonListType] = elementDataType.typeRef.resolved match {
 
-    case et: CVarTypeDef =>
+    case et: CEntityTypeDef =>
       et.computeSupertypes(mutable.Stack())
       elementDataType.effectiveDefaultTagName match {
         case Some(tagName) => Seq(ctx.getOrCreateAnonListOf(et.dataType(None))) ++ et.parents.map(
@@ -723,7 +721,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
 
   private lazy val _linearizedParents: Seq[CAnonListType] = {
     val linParents = elementDataType.typeRef.resolved match {
-      case et: CVarTypeDef => elementDataType.effectiveDefaultTagName.map { tagName =>
+      case et: CEntityTypeDef => elementDataType.effectiveDefaultTagName.map { tagName =>
         if (!et.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
           CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
         )
@@ -823,4 +821,24 @@ class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val c
 
   val targetRefs: Seq[CTypeDefRef] = psi.supplementedRefs().map(CTypeRef(csf, _))
 
+}
+
+private [compiler] object CTypeUtil {
+  def buildAnnotations(csf: CSchemaFile, psiOption: Option[java.util.List[SchemaAnnotation]])(implicit ctx: CContext): Annotations = psiOption.map {psi =>
+    import JavaConverters._
+
+    val ppc = new DefaultPsiProcessingContext
+    val res = SchemaPsiParserUtil.parseAnnotations(
+      psi,
+      ppc,
+      new ImportAwareTypesResolver(
+        csf.namespace.fqn,
+        csf.imports.values.map(i => i.fqn).toList.asJava,
+        new CTypesResolver(csf)
+      )
+    )
+    lazy val reporter = ErrorReporter.reporter(csf)
+    ppc.errors().foreach{ e => reporter.error(e.message(), e.location()) }
+    res
+  }.getOrElse(Annotations.EMPTY)
 }

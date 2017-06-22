@@ -73,12 +73,12 @@ object JavaGenNames {
   private def ln0(t: CType): String = t match {
     case t: CTypeDef => t.name.local
     case t: CAnonListType => t.elementDataType.typeRef.resolved match {
-      case et: CVarTypeDef => ln0(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
+      case et: CEntityTypeDef => ln0(et) + varTagPart(t.elementDataType.effectiveDefaultTagName) + "_List"
       case et: CDatumType => ln0(et) + "_List"
       case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
     case t: CAnonMapType => t.valueDataType.typeRef.resolved match {
-      case vt: CVarTypeDef => ln0(t.keyTypeRef.resolved) + "_" + ln0(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
+      case vt: CEntityTypeDef => ln0(t.keyTypeRef.resolved) + "_" + ln0(vt) + varTagPart(t.valueDataType.effectiveDefaultTagName) + "_Map"
       case vt: CDatumType => ln0(t.keyTypeRef.resolved) + "_" + ln0(vt) + "_Map"
       case unknown => throw new UnsupportedOperationException(unknown.toString)
     }
@@ -89,35 +89,35 @@ object JavaGenNames {
 
   /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */
   def lqdrn(tr: CTypeRef, lt: CType): String = tr.resolved match {
-    case t: CVarTypeDef => lqn(t, lt)
+    case t: CEntityTypeDef => lqn(t, lt)
     case t: CDatumType => lqn(t, lt) + ".Data"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   /** locally qualified name for type's Data type (e.g. `PersonRecord.Data` or `Person`) */
   def lqdrn2(t: CType, namespace: String): String = t match {
-    case t: CVarTypeDef => lqn2(t, namespace)
+    case t: CEntityTypeDef => lqn2(t, namespace)
     case t: CDatumType => lqn2(t, namespace) + ".Data"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   /** locally qualified name for type's Data Builder type (e.g. `PersonRecord.Data.Builder` or `Person.Builder`) */
   def lqbrn(t: CType, namespace: String): String = t match {
-    case t: CVarTypeDef => lqn2(t, namespace) + ".Builder"
+    case t: CEntityTypeDef => lqn2(t, namespace) + ".Builder"
     case t: CDatumType => lqn2(t, namespace) + ".Data.Builder"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   /** locally qualified constructor call for type's Data Builder type (e.g. `PersonRecord.type.createDataBuilder()` or `Person.create()`) */
   def lqbct(t: CType, namespace: String): String = t match {
-    case t: CVarTypeDef => lqn2(t, namespace) + ".create()"
+    case t: CEntityTypeDef => lqn2(t, namespace) + ".create()"
     case t: CDatumType => lqn2(t, namespace) + ".type.createDataBuilder()"
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
 
   /** tag type for given typeref and tag name */
   def tt(tr: CTypeRef, tn: String): CType = tr.resolved match {
-    case tt: CVarTypeDef => tt.effectiveTags.find(_.name == tn).get.typeRef.resolved
+    case tt: CEntityTypeDef => tt.effectiveTags.find(_.name == tn).get.typeRef.resolved
     case tt: CDatumType => tt
     case unknown => throw new UnsupportedOperationException(unknown.toString)
   }
@@ -127,7 +127,7 @@ object JavaGenNames {
 
   /** tag constant reference for given type and its tag name */
   def ttr(t: CType, tn: String, namespace: String): String = t match {
-    case t: CVarTypeDef => lqn2(t, namespace) + "." + jn(tn)
+    case t: CEntityTypeDef => lqn2(t, namespace) + "." + jn(tn)
     case t: CDatumType => lqn2(t, namespace) + ".Type.instance().self()"
     case unknown => throw new UnsupportedOperationException(unknown.name.name)
   }

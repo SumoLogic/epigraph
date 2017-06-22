@@ -36,36 +36,34 @@ public final class IndexBasedTypesResolver implements TypesResolver {
 
   public static final String INDEX_CLASS_NAME = Constants.TypesIndex.namespace + '.' + Constants.TypesIndex.className;
 
-  private static final Map<@NotNull String, @NotNull ? extends Type> index;
+  private static /*final*/ Map<@NotNull String, @NotNull ? extends Type> index = null; // have to init it lazily
 
-  static {
-    try {
-      Class<?> indexClass = Class.forName(INDEX_CLASS_NAME);
-      Object inst = indexClass.getField("INSTANCE").get(null);
-      index = (Map<String, ? extends Type>) AbstractTypesIndex.class.getField("types").get(inst);
-    } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-      throw new RuntimeException(e);
+  private static synchronized void initIndex() {
+    if (index == null) {
+      try {
+        Class<?> indexClass = Class.forName(INDEX_CLASS_NAME);
+        Object inst = indexClass.getField("INSTANCE").get(null);
+        index = (Map<String, ? extends Type>) AbstractTypesIndex.class.getField("types").get(inst);
+      } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
   private IndexBasedTypesResolver() {}
 
-  public @NotNull Map<String, ? extends Type> index() { return index; }
+  public @NotNull Map<String, ? extends Type> index() { if (index == null) initIndex(); return index; }
 
   @Override
   public @Nullable TypeApi resolve(final @NotNull QnTypeRef reference) {
-    return index.get(name(reference));
+    return index().get(name(reference));
   }
 
   @Override
-  public @Nullable TypeApi resolve(final @NotNull AnonListRef reference) {
-    return index.get(name(reference));
-  }
+  public @Nullable TypeApi resolve(final @NotNull AnonListRef reference) { return index().get(name(reference)); }
 
   @Override
-  public @Nullable TypeApi resolve(final @NotNull AnonMapRef reference) {
-    return index.get(name(reference));
-  }
+  public @Nullable TypeApi resolve(final @NotNull AnonMapRef reference) { return index().get(name(reference)); }
 
   private @NotNull String name(@NotNull TypeRef ref) {
     // this code reverses the logic of CType.toString (including subclasses)

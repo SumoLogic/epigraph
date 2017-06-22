@@ -192,14 +192,14 @@ class EpigraphCompiler(
   }
 
     private def validateVarTypeTags(): Unit = ctx.typeDefs.values().foreach{
-      case vt: CVarTypeDef =>
+      case vt: CEntityTypeDef =>
         vt.declaredTags.foreach {tag =>
           tag.typeRef.resolved match {
             case dt: CDatumType =>
             case t => ctx.errors.add(
               CError(
                 vt.csf.filename,
-                tag.csf.position(tag.psi),
+                tag.csf.position(tag.locationPsi),
                 s"Type `${t.name.name}` of tag `${tag.name}` in type `${vt.name.name}` is not a datum type"
               )
             )
