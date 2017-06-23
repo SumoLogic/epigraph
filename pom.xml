@@ -74,7 +74,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
-        <module>add-sources-maven-plugin</module><!-- TODO move to a separate profile -->
+        <!--<module>add-sources-maven-plugin</module>&lt;!&ndash; TODO move to a separate profile &ndash;&gt;-->
         <module>builtin-services</module>
         <module>compiler</module>
         <module>examples</module>
@@ -361,6 +361,12 @@
     <pluginManagement>
 
       <plugins>
+
+        <!--<plugin>-->
+          <!--<groupId>ws.epigraph</groupId>-->
+          <!--<artifactId>add-sources-maven-plugin</artifactId>-->
+          <!--<version>0.0.0-SNAPSHOT</version>-->
+        <!--</plugin>-->
 
         <plugin>
           <groupId>ws.epigraph</groupId>

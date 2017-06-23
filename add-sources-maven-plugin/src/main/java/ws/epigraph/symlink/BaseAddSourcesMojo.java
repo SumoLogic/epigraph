@@ -61,7 +61,7 @@ public abstract class BaseAddSourcesMojo extends AbstractMojo {
   public static class Source {
 
     /** Name for the added sources directory */
-    String name;
+    String name; // TODO alias? label?
 
     /** Path (from project base directory) to the imported sources directory */
     File location;
