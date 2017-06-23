@@ -1,0 +1,16 @@
+namespace epigraph.schema
+
+import epigraph.annotations.Doc
+import epigraph.data.Datum
+
+record Annotation {
+  type: DatumType
+  value: Datum
+}
+
+map[QualifiedName, Annotation] Annotations
+
+record Annotated supplements Type, Tag, Field, EnumValue {
+  @Doc "Interface that provides `annotations` field"
+  annotations: Annotations
+}

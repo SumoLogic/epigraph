@@ -19,23 +19,20 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames.{fcn, pn, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
+import ws.epigraph.java.JavaGenNames.{fcn, pn, pnq2, lqn, lqrn, lqdrn, tt, dttr, tcr, qnameArgs}
 import ws.epigraph.java.NewlineStringInterpolator.{i, NewlineHelper}
 
 class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CRecordTypeDef](from, ctx)
   with DatumTypeJavaGen {
 
   protected def generate: String = {
-    val ogc = new ObjectGenContext(ctx)
-    ogc.addImport("org.jetbrains.annotations.NotNull")
-    ogc.addImport("org.jetbrains.annotations.Nullable")
-    ogc.addImport("ws.epigraph.annotations.Annotations")
+    val ogc = new ObjectGenContext(ctx, pnq2(t), true) // use qualified names to avoid clashes
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
 
     val fields = t.effectiveFields.map { f => /*@formatter:off*/sn"""\
   ${"/**"} Field `${f.name}`. */
-  @NotNull Field ${fcn(f)} = new Field(${if (f.annotations.isEmpty) s""""${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}), Annotations.EMPTY);""" else sn"""
+  @NotNull Field ${fcn(f)} = new Field(${if (f.annotations.isEmpty) s""""${f.name}", ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}), ${ogc.use("ws.epigraph.annotations.Annotations")}.EMPTY);""" else sn"""
     "${f.name}",
      ${lqrn(f.typeRef, t)}.Type.instance().dataType(${vt(f.typeRef, tcr(f.valueDataType, t), "")}),
      ${i(new AnnotationsGen(f.annotations).generate(ogc))}
@@ -47,8 +44,9 @@ class RecordGen(from: CRecordTypeDef, ctx: GenContext) extends JavaTypeDefGen[CR
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.Field;
-
 ${ObjectGenUtils.genImports(ogc)}\
 
 /**
@@ -64,7 +62,7 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.Reco
   @Override
   @NotNull $ln.Imm toImmutable();
 
-${fields.mkString}\
+${fields.mkString("\n")}
 ${t.effectiveFields.map { f =>
     val d = retro(f) // append '$' to getters/setters if retro tag is present
     val getterOverride = if (f.host == t && f.superfields.isEmpty) "" else sn"""\

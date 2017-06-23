@@ -32,7 +32,7 @@ class OpDeleteListModelProjectionGen(p: OpDeleteListModelProjection)
   extends ObjectGen[OpDeleteListModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[ListType].getName)
+    ctx.use(classOf[ListType].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteListModelProjection(

@@ -27,7 +27,7 @@ record EpigraphResource {
 resource epigraph: EpigraphResource {
 
   outputProjection typeNameProjection: TypeName = :`string` ~~ (
-    QualifiedTypeName :segments,
+    QualifiedTypeName :name,
     AnonListTypeName :elementTypeName $dataTypeNameProjection,
     AnonMapTypeName :`record`(
       keyTypeName $typeNameProjection,

@@ -27,14 +27,14 @@ import scala.collection.JavaConversions._
  */
 class AnnotationsGen(anns: Annotations) extends ObjectGen[Annotations](anns) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String =
-    if (anns.equals(Annotations.EMPTY)) "Annotations.EMPTY"
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
+    if (anns.equals(Annotations.EMPTY)) o + ".EMPTY"
     else {
-      ctx.addImport("ws.epigraph.types.DatumTypeApi")
-      ctx.addImport("ws.epigraph.annotations.Annotation")
+      val dt = ctx.use("ws.epigraph.types.DatumTypeApi")
+      val a = ctx.use("ws.epigraph.annotations.Annotation")
       /*@formatter:off*/sn"""\
-new Annotations(
-  ${i(ObjectGenUtils.genHashMap("DatumTypeApi", "Annotation", anns.asMap().entrySet().map{e =>
+new $o(
+  ${i(ObjectGenUtils.genHashMap(dt, a, anns.asMap().entrySet().map{e =>
         (ObjectGenUtils.genTypeExpr(e.getKey, ctx.gctx), gen(e.getValue, ctx))}, ctx))
    }
 )"""/*@formatter:on*/

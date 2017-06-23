@@ -65,16 +65,16 @@ public final class TypeNameBuilder {
     if (projection.string() != null)
       builder.setString(NameString.create(typeName.toString()));
 
-    if (projection.segments() != null) {
-      final NameString_List.Builder segmentsBuilder = NameString_List.create();
+    if (projection.name() != null) {
+      QualifiedName.Builder nameBuilder = QualifiedName.create();
 
       final Qn qn = typeName.toFqn();
 
       for (int i = 0; i < qn.size(); i++) {
-        segmentsBuilder.add(NameString.create(qn.segments[i]));
+        nameBuilder.add(NameString.create(qn.segments[i]));
       }
 
-      builder.setSegments(segmentsBuilder);
+      builder.setName(nameBuilder);
     }
 
     return builder;

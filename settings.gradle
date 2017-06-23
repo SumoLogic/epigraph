@@ -84,7 +84,6 @@ Map<String, String> modules = [
     'scala/maven-plugin'                    : 'epigraph-scala-maven-plugin',
 
     'schemas/builtin-types-schema'          : 'epigraph-builtin-types-schema',
-    'schemas/data-schema'                   : 'epigraph-data-schema',
     'schemas/operations-schema'             : 'epigraph-operations-schema',
     'schemas/projections-schema'            : 'epigraph-projections-schema',
     'schemas/schema-schema'                 : 'epigraph-schema-schema',

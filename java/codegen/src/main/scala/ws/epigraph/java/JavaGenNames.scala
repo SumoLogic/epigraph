@@ -58,13 +58,15 @@ object JavaGenNames {
   def lqn(prefix: String, t: CType, lt: CType): String = lqn(t, lt, prefix + _)
 
   /** java package name for given type */
-  def pn(t: CType): String = pn(getNamedTypeComponent(t).name.fqn.removeLastSegment())
+  def pn(t: CType): String = pn(pnq2(t))
 
   def pn(qn: Qn): String = qn.segments.map(jn).mkString(".").toLowerCase
 
   def pnq(qn: Qn): Qn = qn.map(new Function[String, String] {
     override def apply(t: String): String = jn(t).toLowerCase
   })
+
+  def pnq2(t: CType):Qn = getNamedTypeComponent(t).name.fqn.removeLastSegment()
 
   /** escaped (in case it conflicts with reserved) local (short) java name for given epigraph type */
   def ln(t: CType): String = javaTypeName(ln0(t))

@@ -53,7 +53,7 @@ super(
   }
 
   override def generate: String = {
-    val sgctx = new ObjectGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx, namespace)
     val superCall = generate(sgctx) // do not inline!
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}

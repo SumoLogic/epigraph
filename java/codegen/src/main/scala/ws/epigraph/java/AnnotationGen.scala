@@ -25,12 +25,12 @@ import ws.epigraph.java.ObjectGenerators.gen
  */
 class AnnotationGen(ann: Annotation) extends ObjectGen[Annotation](ann) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new Annotation(
+new $o(
   ${ObjectGenUtils.genTypeExpr(ann.`type`(), ctx.gctx)},
   ${i(gen(ann.gDatum(), ctx))},
   ${gen(ann.location(), ctx)},
-  ws.epigraph.refs.IndexBasedTypesResolver.INSTANCE
+  ${ctx.use("ws.epigraph.refs.IndexBasedTypesResolver")}.INSTANCE
 )"""/*@formatter:on*/
 }

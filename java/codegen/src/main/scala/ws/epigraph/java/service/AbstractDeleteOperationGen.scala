@@ -47,28 +47,34 @@ class AbstractDeleteOperationGen(
   override def children: Iterable[JavaGen] = super.children ++ Iterable(deleteFieldProjectionGen)
 
   override protected def generate: String = {
-    val sctx = new ObjectGenContext(ctx)
+    val sctx = new ObjectGenContext(ctx, namespace)
 
     val outputType = JavaGenUtils.toCType(op.outputType())
     val nsString = namespace.toString
     val resultBuilderCtor = lqbct(outputType, nsString)
 
-    sctx.addImport(deleteFieldProjectionGen.fullClassName)
-    val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
-    val shortBuilderType = sctx.addImport(lqbrn(outputType, nsString), namespace)
+    val dreq = sctx.use("ws.epigraph.service.operations.DeleteOperationRequest")
+    val rresp = sctx.use("ws.epigraph.service.operations.ReadOperationResponse")
+    val cfut = sctx.use("java.util.concurrent.CompletableFuture")
+    val nullable = sctx.use("org.jetbrains.annotations.Nullable")
+    val notnull = sctx.use("org.jetbrains.annotations.NotNull")
+    val deleteShortName = sctx.use(deleteFieldProjectionGen.fullClassName)
+    val outputShortName = sctx.use(outputFieldProjectionGen.fullClassName)
+    val shortDataType = sctx.use(lqdrn2(outputType, nsString))
+    val shortBuilderType = sctx.use(lqbrn(outputType, nsString))
 
     pathProjectionGenOpt match {
 
       case Some(pathProjectionGen) =>
-        sctx.addImport(pathProjectionGen.fullClassName)
+        val pathShortName = sctx.use(pathProjectionGen.fullClassName)
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull DeleteOperationRequest request) {
+public @$notnull $cfut<$rresp<$shortDataType>> process(@$notnull $dreq request) {
   $shortBuilderType builder = $resultBuilderCtor;
-  ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
-  ${deleteFieldProjectionGen.shortClassName} deleteProjection = new ${deleteFieldProjectionGen.shortClassName}(request.deleteProjection());
-  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, path, deleteProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  $pathShortName path = new $pathShortName(request.path());
+  $deleteShortName deleteProjection = new $deleteShortName(request.deleteProjection());
+  $outputShortName outputProjection = new $outputShortName(request.outputProjection());
+  return process(builder, path, deleteProjection, outputProjection).thenApply($rresp::new);
 }
 """/*@formatter:off*/
         )
@@ -84,11 +90,11 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType resultBuilder,
-  @NotNull ${pathProjectionGen.shortClassName} path,
-  @NotNull ${deleteFieldProjectionGen.shortClassName} deleteProjection,
-  @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
+protected abstract @$notnull $cfut<$shortDataType> process(
+  @$notnull $shortBuilderType resultBuilder,
+  @$notnull $pathShortName path,
+  @$notnull $deleteShortName deleteProjection,
+  @$notnull $outputShortName outputProjection
 );
 """/*@formatter:off*/
         )
@@ -96,11 +102,11 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
       case None =>
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull DeleteOperationRequest request) {
+public @$notnull $cfut<$rresp<$shortDataType>> process(@$notnull $dreq request) {
   $shortBuilderType builder = $resultBuilderCtor;
-  ${deleteFieldProjectionGen.shortClassName} deleteProjection = new ${deleteFieldProjectionGen.shortClassName}(request.deleteProjection());
-  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, deleteProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  $deleteShortName deleteProjection = new $deleteShortName(request.deleteProjection());
+  $outputShortName outputProjection = new $outputShortName(request.outputProjection());
+  return process(builder, deleteProjection, outputProjection).thenApply($rresp::new);
 }
 """/*@formatter:off*/
         )
@@ -115,10 +121,10 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType resultBuilder,
-  @NotNull ${deleteFieldProjectionGen.shortClassName} deleteProjection,
-  @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
+protected abstract @$notnull $cfut<$shortDataType> process(
+  @$notnull $shortBuilderType resultBuilder,
+  @$notnull $deleteShortName deleteProjection,
+  @$notnull $outputShortName outputProjection
 );
 """/*@formatter:off*/
         )

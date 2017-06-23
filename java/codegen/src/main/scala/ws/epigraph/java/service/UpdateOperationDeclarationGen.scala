@@ -27,9 +27,9 @@ import ws.epigraph.schema.operations.UpdateOperationDeclaration
 class UpdateOperationDeclarationGen(od: UpdateOperationDeclaration) 
   extends ObjectGen[UpdateOperationDeclaration](od) {
   
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new UpdateOperationDeclaration(
+new $o(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
   ${i(gen(od.path(), ctx))},

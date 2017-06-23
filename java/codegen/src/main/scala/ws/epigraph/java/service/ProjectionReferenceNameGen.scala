@@ -26,7 +26,7 @@ import ws.epigraph.java.service.ServiceObjectGenerators.gen
 class ProjectionReferenceNameGen(private val rn: ProjectionReferenceName)
   extends ObjectGen[ProjectionReferenceName](rn) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   // todo: make it shorter? introduce constructor taking String varargs and use it here
-    s"""new ProjectionReferenceName(${ rn.segments.map(s => gen(s, ctx)).mkString(", ") })"""
+    s"""new $o(${ rn.segments.map(s => gen(s, ctx)).mkString(", ") })"""
 }

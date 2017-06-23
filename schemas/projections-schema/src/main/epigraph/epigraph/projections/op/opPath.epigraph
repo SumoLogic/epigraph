@@ -1,12 +1,12 @@
 namespace epigraph.projections.op
 
+import epigraph.schema.Annotated
 import epigraph.schema.DatumType
 import epigraph.schema.Field
 import epigraph.schema.MapType
 import epigraph.schema.PrimitiveType
 import epigraph.schema.RecordType
 import epigraph.schema.Tag
-import epigraph.schema.QualifiedTypeName
 
 record OpVarPath {
   tag: OpTagPath
@@ -17,10 +17,9 @@ record OpTagPath {
   modelPath: OpModelPath
 }
 
-record OpModelPath {
+record OpModelPath extends Annotated {
   model: DatumType
   params: list[OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
 }
 
 record OpRecordModelPath extends OpModelPath {
@@ -35,7 +34,7 @@ record OpFieldPathEntry {
 
 record OpFieldPath {
   params: list[OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
+//  annotations: map[QualifiedTypeName, Annotation]
   varPath: OpVarPath
 }
 
@@ -45,10 +44,9 @@ record OpMapModelPath extends OpModelPath {
   varPath: OpVarPath
 }
 
-record OpPathKeyProjection {
+record OpPathKeyProjection extends Annotated {
   // path keys are always requried
   params: list[OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
 }
 
 //record OpListModelPath extends OpModelPath { // lists are terminals: we don't support indices

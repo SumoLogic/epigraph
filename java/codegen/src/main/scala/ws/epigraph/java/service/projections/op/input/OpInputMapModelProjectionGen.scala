@@ -32,7 +32,7 @@ class OpInputMapModelProjectionGen(p: OpInputMapModelProjection)
   extends ObjectGen[OpInputMapModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[MapType].getName)
+    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
 new OpInputMapModelProjection(

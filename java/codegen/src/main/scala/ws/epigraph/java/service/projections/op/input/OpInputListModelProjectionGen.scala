@@ -32,7 +32,7 @@ class OpInputListModelProjectionGen(p: OpInputListModelProjection)
   extends ObjectGen[OpInputListModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[ListType].getName)
+    ctx.use(classOf[ListType].getName)
 
     /*@formatter:off*/sn"""\
 new OpInputListModelProjection(

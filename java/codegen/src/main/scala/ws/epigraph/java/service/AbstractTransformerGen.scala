@@ -49,32 +49,31 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(outputProjectionGen)
 
   override protected def generate: String = {
-    val sctx = new ObjectGenContext(ctx)
+    val sctx = new ObjectGenContext(ctx, namespace)
 
-    sctx.addImport("org.jetbrains.annotations.NotNull")
-    sctx.addImport("java.util.concurrent.CompletableFuture")
-    sctx.addImport("ws.epigraph.invocation.InvocationResult")
-    sctx.addImport("ws.epigraph.projections.req.output.ReqOutputVarProjection")
-    sctx.addImport("ws.epigraph.data.Data")
-    sctx.addImport(outputProjectionGen.fullClassName)
+    val notnull = sctx.use("org.jetbrains.annotations.NotNull")
+    val cfut = sctx.use("java.util.concurrent.CompletableFuture")
+    val ires = sctx.use("ws.epigraph.invocation.InvocationResult")
+    val rovp = sctx.use("ws.epigraph.projections.req.output.ReqOutputVarProjection")
+    val data = sctx.use("ws.epigraph.data.Data")
+    val proj = sctx.use(outputProjectionGen.fullClassName)
 
     // todo maxBatchSize
     val batching: Boolean = td.annotations().annotation(Qn.fromDotSeparated("ws.epigraph.annotations.Batching")) != null
 
     val cType = JavaGenUtils.toCType(td.`type`())
-    val shortDataType = sctx.addImport(lqdrn2(cType, namespace.toString), namespace)
-    val shortType = sctx.addImport(lqn2(cType, namespace.toString), namespace)
+    val shortDataType = sctx.use(lqdrn2(cType, namespace.toString))
+    val shortType = sctx.use(lqn2(cType, namespace.toString))
 
     val inputArg = if (cType.kind == CTypeKind.ENTITY) s"($shortType)input" else s"(($shortDataType)input).get()"
     val outputProjectionArg = if (cType.kind == CTypeKind.ENTITY) "outputProjection" else "outputProjection.singleTagProjection().projection()"
-    val thenFunc = if (cType.kind == CTypeKind.ENTITY) "InvocationResult::success" else
-      s"d -> InvocationResult.success($shortType.type.createDataBuilder().set(d))"
+    val thenFunc = if (cType.kind == CTypeKind.ENTITY) s"$ires::success" else s"d -> $ires.success($shortType.type.createDataBuilder().set(d))"
 
     def generateBatching(sctx: ObjectGenContext): String = {
-      sctx.addImport("ws.epigraph.federator.transformers.Transformer")
+      val trans = sctx.use("ws.epigraph.federator.transformers.Transformer")
 
       /*@formatter:off*/sn"""\
-public abstract class $shortClassName<B> extends Transformer<B> {
+public abstract class $shortClassName<B> extends $trans<B> {
   protected $shortClassName() {
     super(${TransformerDeclarationGen.transformerDeclarationNamespace(baseNamespace, td)}.${TransformerDeclarationGen.transformerDeclarationClassName(td)}.INSTANCE);
   }
@@ -88,29 +87,29 @@ public abstract class $shortClassName<B> extends Transformer<B> {
    *
    * @return output data result future
    */
-  protected abstract @NotNull CompletableFuture<$shortType> transform(
-      @NotNull $shortType input,
-      @NotNull ${outputProjectionGen.shortClassName} outputProjection,
-      @NotNull B batch);
+  protected abstract @$notnull CompletableFuture<$shortType> transform(
+      @$notnull $shortType input,
+      @$notnull $proj outputProjection,
+      @$notnull B batch);
 
 
   @Override
-  public @NotNull CompletableFuture<InvocationResult<Data>> transform(
-      @NotNull Data input,
-      @NotNull ReqOutputVarProjection outputProjection,
-      @NotNull B batch) {
+  public @$notnull $cfut<$ires<$data>> transform(
+      @$notnull $data input,
+      @$notnull $rovp outputProjection,
+      @$notnull B batch) {
 
-    return transform($inputArg, new ${outputProjectionGen.shortClassName}($outputProjectionArg), batch)
+    return transform($inputArg, new $proj($outputProjectionArg), batch)
         .thenApply($thenFunc);
   }
 }"""/*@formatter:on*/
     }
 
     def generateNonBatching(sctx: ObjectGenContext): String ={
-      sctx.addImport("ws.epigraph.federator.transformers.NonBatchingTransformer")
+      val trans = sctx.use("ws.epigraph.federator.transformers.NonBatchingTransformer")
 
       /*@formatter:off*/sn"""\
-public abstract class $shortClassName<B> extends NonBatchingTransformer {
+public abstract class $shortClassName<B> extends $trans {
   protected $shortClassName() {
     super(${TransformerDeclarationGen.transformerDeclarationNamespace(baseNamespace, td)}.${TransformerDeclarationGen.transformerDeclarationClassName(td)}.INSTANCE);
   }
@@ -123,17 +122,17 @@ public abstract class $shortClassName<B> extends NonBatchingTransformer {
    *
    * @return output data result future
    */
-  protected abstract @NotNull CompletableFuture<$shortType> transform(
-      @NotNull $shortType input,
-      @NotNull ${outputProjectionGen.shortClassName} outputProjection);
+  protected abstract @$notnull $cfut<$shortType> transform(
+      @$notnull $shortType input,
+      @$notnull $proj outputProjection);
 
 
   @Override
-  public @NotNull CompletableFuture<InvocationResult<Data>> transform(
-      @NotNull Data input,
-      @NotNull ReqOutputVarProjection outputProjection) {
+  public @$notnull $cfut<$ires<$data>> transform(
+      @$notnull $data input,
+      @$notnull $rovp outputProjection) {
 
-    return transform($inputArg, new ${outputProjectionGen.shortClassName}($outputProjectionArg))
+    return transform($inputArg, new $proj($outputProjectionArg))
         .thenApply($thenFunc);
   }
 }"""/*@formatter:on*/

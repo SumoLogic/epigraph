@@ -32,8 +32,8 @@ class OpOutputRecordModelProjectionGen(p: OpOutputRecordModelProjection)
   extends ObjectGen[OpOutputRecordModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[RecordType].getName)
-    ctx.addImport(classOf[OpOutputFieldProjectionEntry].getName)
+    ctx.use(classOf[RecordType].getName)
+    ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpOutputRecordModelProjection(
@@ -54,7 +54,7 @@ new OpOutputRecordModelProjection(
     fpe: OpOutputFieldProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.addImport(classOf[OpOutputFieldProjectionEntry].getName)
+    ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpOutputFieldProjectionEntry(

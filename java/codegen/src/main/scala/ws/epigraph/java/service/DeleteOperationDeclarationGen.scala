@@ -27,9 +27,9 @@ import ws.epigraph.schema.operations.DeleteOperationDeclaration
 class DeleteOperationDeclarationGen(od: DeleteOperationDeclaration)
   extends ObjectGen[DeleteOperationDeclaration](od) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new DeleteOperationDeclaration(
+new $o(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
   ${i(gen(od.path(), ctx))},

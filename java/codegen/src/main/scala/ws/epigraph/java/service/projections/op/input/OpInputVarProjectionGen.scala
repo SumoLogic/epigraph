@@ -42,8 +42,8 @@ class OpInputVarProjectionGen(p: OpInputVarProjection) extends ObjectGen[OpInput
       if (!ctx.visited(visitedKey)) {
 
         ctx.addVisited(visitedKey)
-        ctx.addImport("java.util.Map")
-        ctx.addImport("java.util.HashMap")
+        ctx.use("java.util.Map")
+        ctx.use("java.util.HashMap")
 
         if (ctx.addField("private static Map<String, OpInputVarProjection> inputProjectionRefs = new HashMap<>();"))
           ctx.addStatic("inputProjectionRefs = null;")
@@ -98,7 +98,7 @@ new OpInputVarProjection(
     tpe: OpInputTagProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.addImport(classOf[OpInputTagProjectionEntry].getName)
+    ctx.use(classOf[OpInputTagProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpInputTagProjectionEntry(

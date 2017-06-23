@@ -42,8 +42,8 @@ class OpDeleteVarProjectionGen(p: OpDeleteVarProjection) extends ObjectGen[OpDel
       if (!ctx.visited(visitedKey)) {
 
         ctx.addVisited(visitedKey)
-        ctx.addImport("java.util.Map")
-        ctx.addImport("java.util.HashMap")
+        ctx.use("java.util.Map")
+        ctx.use("java.util.HashMap")
 
         if (ctx.addField("private static Map<String, OpDeleteVarProjection> deleteProjectionRefs = new HashMap<>();"))
            ctx.addStatic("deleteProjectionRefs = null;")
@@ -100,7 +100,7 @@ new OpDeleteVarProjection(
     tpe: OpDeleteTagProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.addImport(classOf[OpDeleteTagProjectionEntry].getName)
+    ctx.use(classOf[OpDeleteTagProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteTagProjectionEntry(

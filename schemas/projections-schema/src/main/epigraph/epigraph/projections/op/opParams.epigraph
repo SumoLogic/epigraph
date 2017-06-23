@@ -3,10 +3,9 @@ namespace epigraph.projections.op
 import epigraph.data.Data
 import epigraph.data.Datum
 import epigraph.projections.ParamName
-import epigraph.schema.Documented
 import epigraph.schema.Named
 
-record OpParam extends Named, Documented {
+record OpParam extends Named /*, Annotated */ {
   `required`: Boolean
   override name: ParamName
   modelProjection: OpInputModelProjection

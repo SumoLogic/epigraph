@@ -51,12 +51,12 @@ class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val
   override def children: Iterable[JavaGen] = super.children ++ abstractOperationGens.values
 
   override def generate: String = {
-    val sgctx = new ObjectGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx, namespace)
     val className = AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd)
 
-    sgctx.addImport("org.jetbrains.annotations.NotNull")
-    sgctx.addImport("ws.epigraph.service.Resource")
-    sgctx.addImport("ws.epigraph.service.ServiceInitializationException")
+    val notnull = sgctx.use("org.jetbrains.annotations.NotNull")
+    val resource = sgctx.use("ws.epigraph.service.Resource")
+    val siexc = sgctx.use("ws.epigraph.service.ServiceInitializationException")
 
     val resourceConstructor = generateResourceConstructor(sgctx)
 
@@ -70,7 +70,7 @@ ${ObjectGenUtils.genImports(sgctx)}
  */
 public abstract class $className {
   ${i(ObjectGenUtils.genFields(sgctx))}
-  public final @NotNull Resource ${AbstractResourceFactoryGen.factoryMethodName(rd)}() throws ServiceInitializationException {
+  public final @$notnull $resource ${AbstractResourceFactoryGen.factoryMethodName(rd)}() throws $siexc {
     return ${sp(ObjectGenUtils.INDENT * 2, resourceConstructor)}
   }
 
@@ -97,8 +97,6 @@ public abstract class $className {
       od match {
 
         case o: ReadOperationDeclaration =>
-          ctx.addImport("ws.epigraph.service.operations.ReadOperation")
-
           val operationConstructorMethodName =
             if (o.name() != null) s"construct${ up(od.name()) }ReadOperation"
             else s"constructReadOperation"
@@ -115,8 +113,6 @@ public abstract class $className {
           readOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
         case o: CreateOperationDeclaration =>
-          ctx.addImport("ws.epigraph.service.operations.CreateOperation")
-
           val operationConstructorMethodName =
             if (o.name() != null) s"construct${ up(od.name()) }CreateOperation"
             else "constructCreateOperation"
@@ -133,8 +129,6 @@ public abstract class $className {
           createOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
         case o: UpdateOperationDeclaration =>
-          ctx.addImport("ws.epigraph.service.operations.UpdateOperation")
-
           val operationConstructorMethodName =
             if (o.name() != null) s"construct${ up(od.name()) }UpdateOperation"
             else "constructUpdateOperation"
@@ -151,8 +145,6 @@ public abstract class $className {
           updateOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
         case o: DeleteOperationDeclaration =>
-          ctx.addImport("ws.epigraph.service.operations.DeleteOperation")
-
           val operationConstructorMethodName =
             if (o.name() != null) s"construct${ up(od.name()) }DeleteOperation"
             else "constructDeleteOperation"
@@ -169,8 +161,6 @@ public abstract class $className {
           deleteOperationConstructorCalls ::= s"$operationConstructorMethodName($declarationField)"
 
         case o: CustomOperationDeclaration =>
-          ctx.addImport("ws.epigraph.service.operations.CustomOperation")
-
           val operationConstructorMethodName = s"construct${ up(od.name()) }CustomOperation"
 
           ctx.addMethod(
@@ -189,7 +179,7 @@ public abstract class $className {
     }
 
     /*@formatter:off*/sn"""\
-new Resource(
+new ${ctx.use("ws.epigraph.service.Resource")}(
   $resourceDeclarationClassName.INSTANCE,
   ${i(genCollection(readOperationConstructorCalls, ctx))},
   ${i(genCollection(createOperationConstructorCalls, ctx))},
@@ -207,10 +197,12 @@ new Resource(
 
     val kind = ServiceNames.operationKinds(o.kind())
     val ukind = up(kind)
-    val declarationType = ukind + "OperationDeclaration"
-    val methodType: String = s"${ ukind }Operation<${ ObjectGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
+    val operation: String = ctx.use(s"ws.epigraph.service.operations.${ ukind }Operation")
+    val methodType: String = s"$operation<${ ObjectGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
 
-    ctx.addImport("ws.epigraph.schema.operations." + declarationType)
+    val notnull = ctx.use("org.jetbrains.annotations.NotNull")
+    val declarationType = ctx.use("ws.epigraph.schema.operations." + ukind + "OperationDeclaration")
+    val siexc = ctx.use("ws.epigraph.service.ServiceInitializationException")
 
     val abstractOpGen: AbstractOperationGen = abstractOperationGens(o)
 
@@ -224,28 +216,26 @@ new Resource(
  *
  * @return operation implementation
  *
- * @throws ServiceInitializationException in case of operation initialization error
+ * @throws $siexc in case of operation initialization error
  *
  * @see ${abstractOpGen.namespace}.${abstractOpGen.shortClassName} ${abstractOpGen.shortClassName}
  */
-protected abstract @NotNull $methodType $operationConstructorMethodName(@NotNull $declarationType operationDeclaration) throws ServiceInitializationException;\
+protected abstract @$notnull $methodType $operationConstructorMethodName(@$notnull $declarationType operationDeclaration) throws $siexc;\
 """/*@formatter:on*/
 
   }
 
   private def genCollection(calls: List[String], ctx: ObjectGenContext): String = calls.length match {
     case 0 =>
-      ctx.addImport(classOf[java.util.Collections].getCanonicalName)
-      "Collections.emptyList()"
+      ctx.use(classOf[java.util.Collections].getCanonicalName) + ".emptyList()"
     case 1 =>
-      ctx.addImport(classOf[java.util.Collections].getCanonicalName)
-      "Collections.singletonList(" + calls.head + ")"
+      ctx.use(classOf[java.util.Collections].getCanonicalName) + ".singletonList(" + calls.head + ")"
     case _ =>
-      ctx.addImport(classOf[java.util.Arrays].getCanonicalName)
+      val arr = ctx.use(classOf[java.util.Arrays].getCanonicalName)
       calls
         .reverse
         .map { c => JavaGenUtils.indent(c, ObjectGenUtils.INDENT) }
-        .mkString("Arrays.asList(\n", ",\n", "\n)")
+        .mkString(s"$arr.asList(\n", ",\n", "\n)")
   }
 
 }

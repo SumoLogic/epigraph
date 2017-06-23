@@ -1,6 +1,8 @@
-- [x] add projections to op map keys
-  - operation filters must ensure that keys don't contain extra fields beyond what's in projection, both before and after call
-  - should be used by derived transformers as input projections
+- [ ] new annotations
+  - [ ] add to op params
+  - [ ] add to op entit y projections
+  - [ ] add (delegating) annotations to fields and tags
+  - [ ] update reflection service
 
 - [ ] allow paths to end with model types
   

@@ -32,7 +32,7 @@ class OpInputPrimitiveModelProjectionGen(p: OpInputPrimitiveModelProjection)
   extends ObjectGen[OpInputPrimitiveModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[PrimitiveType[_]].getName)
+    ctx.use(classOf[PrimitiveType[_]].getName)
 
     /*@formatter:off*/sn"""\
 new OpInputPrimitiveModelProjection(

@@ -2,6 +2,8 @@ namespace epigraph.schema
 
 string NameString
 
+list[NameString] QualifiedName
+
 abstract entity Name {
   `string`: NameString // or 'name' ?
 }
@@ -9,7 +11,7 @@ abstract entity Name {
 abstract entity TypeName extends Name { }
 
 entity QualifiedTypeName extends TypeName {
-  segments: list[NameString]
+  name: QualifiedName
 }
 
 entity AnonListTypeName extends TypeName {

@@ -55,7 +55,7 @@ record ListDatum extends Datum {
 
 record EnumDatum extends Datum {
   override type: EnumType
-  value: String // TODO how do we mode this?
+  value: String // TODO how do we model this?
 }
 
 abstract record PrimitiveDatum extends Datum {

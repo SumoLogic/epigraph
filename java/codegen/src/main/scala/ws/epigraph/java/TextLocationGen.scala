@@ -22,14 +22,14 @@ import ws.epigraph.lang.TextLocation
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class TextLocationGen(loc: TextLocation) extends ObjectGen[TextLocation](loc) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
     if (loc.equals(TextLocation.UNKNOWN) || !ctx.generateTextLocations)
-      "TextLocation.UNKNOWN"
+      s"$o.UNKNOWN"
     else
-      s"new TextLocation(${normalize(loc.startOffset())}, ${normalize(loc.startLine())}, ${normalize(loc.endOffset())}, ${normalize(loc.endLine())}, ${normalize(loc.fileName())})"
+      s"new $o(${normalize(o, loc.startOffset())}, ${normalize(o, loc.startLine())}, ${normalize(o, loc.endOffset())}, ${normalize(o, loc.endLine())}, ${normalize(loc.fileName())})"
 
-  private def normalize(pos: Int): String =
-    if (pos == TextLocation.UNKNOWN_POSITION) "TextLocation.UNKNOWN_POSITION" else pos.toString
+  private def normalize(o: String, pos: Int): String =
+    if (pos == TextLocation.UNKNOWN_POSITION) s"$o.UNKNOWN_POSITION" else pos.toString
 
   private def normalize(filename: String): String =
     if (filename == null) null

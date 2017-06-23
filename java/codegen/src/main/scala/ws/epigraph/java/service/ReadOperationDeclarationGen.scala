@@ -25,9 +25,9 @@ import ws.epigraph.java.service.ServiceObjectGenerators.gen
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReadOperationDeclarationGen(od: ReadOperationDeclaration) extends ObjectGen[ReadOperationDeclaration](od) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new ReadOperationDeclaration(
+new $o(
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
   ${i(gen(od.path(), ctx))},

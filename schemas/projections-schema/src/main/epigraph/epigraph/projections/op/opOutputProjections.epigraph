@@ -1,5 +1,7 @@
 namespace epigraph.projections.op
 
+import epigraph.annotations.Doc
+import epigraph.schema.Annotated
 import epigraph.schema.DatumType
 import epigraph.schema.EnumType
 import epigraph.schema.Field
@@ -9,8 +11,6 @@ import epigraph.schema.PrimitiveType
 import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
-import epigraph.annotations.Doc
-import epigraph.schema.QualifiedTypeName
 
 record OpOutputVarProjection {
   type: Type
@@ -23,10 +23,9 @@ record OpOutputTagProjectionEntry {
   `projection`: OpOutputModelProjection
 }
 
-abstract record OpOutputModelProjection {
+abstract record OpOutputModelProjection extends Annotated {
   model: DatumType
   params: map[String, OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
   `meta`: OpOutputModelProjection
 }
 
@@ -52,10 +51,9 @@ record OpOutputMapModelProjection extends OpOutputModelProjection {
   varProjection: OpOutputVarProjection
 }
 
-record OpOutputKeyProjection {
+record OpOutputKeyProjection extends Annotated {
   `required`: Boolean { @Doc "if `null` - keys are not accepted" }
   params: map[String, OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
   `projection`: OpOutputModelProjection
 }
 

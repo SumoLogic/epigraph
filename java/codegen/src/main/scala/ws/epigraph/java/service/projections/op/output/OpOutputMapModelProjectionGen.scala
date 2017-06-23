@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
 class OpOutputMapModelProjectionGen(p: OpOutputMapModelProjection) extends ObjectGen[OpOutputMapModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[MapType].getName)
+    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
 new OpOutputMapModelProjection(

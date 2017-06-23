@@ -19,7 +19,7 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler.{CDataType, CListType, CTypeRef, CEntityTypeDef}
-import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, tt}
+import ws.epigraph.java.JavaGenNames.{jn, lqn, pn, pnq2, tt}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 
 abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) extends JavaTypeGen[Type](from, ctx)
@@ -37,9 +37,7 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
   protected def genTypeClass(ogc: ObjectGenContext):String
 
   override def generate: String = {
-    val ogc = new ObjectGenContext(ctx)
-    ogc.addImport("org.jetbrains.annotations.NotNull")
-    ogc.addImport("org.jetbrains.annotations.Nullable")
+    val ogc = new ObjectGenContext(ctx, pnq2(t), true)
 
     val typeClass = genTypeClass(ogc)
 
@@ -47,6 +45,8 @@ abstract class ListGen[Type >: Null <: CListType](from: Type, ctx: GenContext) e
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 ${ObjectGenUtils.genImports(ogc)}\
 
 /**

@@ -19,21 +19,21 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames.{lqrn, pn, qnameArgs, tcn}
-import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper,i}
+import ws.epigraph.java.JavaGenNames.{lqrn, pn, pnq2, qnameArgs, tcn}
+import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.lang.Qn
 class EntityTypeGen(from: CEntityTypeDef, ctx: GenContext) extends JavaTypeDefGen[CEntityTypeDef](from, ctx) {
 
   protected def generate: String = {
-    val ogc = new ObjectGenContext(ctx)
-    ogc.addImport("org.jetbrains.annotations.NotNull")
-    ogc.addImport("org.jetbrains.annotations.Nullable")
-    ogc.addImport("ws.epigraph.annotations.Annotations")
+    val namespace: Qn = pnq2(t)
+    val ogc = new ObjectGenContext(ctx, namespace, true)
+    val ann = ogc.use("ws.epigraph.annotations.Annotations")
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
 
     val tags = t.effectiveTags.map { tag => /*@formatter:off*/sn"""\
   ${"/**"} Tag `${tag.name}`. */
-  @NotNull Tag ${tcn(tag)} = new Tag(${if (tag.annotations.isEmpty) s""""${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance(), Annotations.EMPTY);""" else sn"""
+  @NotNull Tag ${tcn(tag)} = new Tag(${if (tag.annotations.isEmpty) s""""${tag.name}", ${lqrn(tag.typeRef, t)}.Type.instance(), $ann.EMPTY);""" else sn"""
     "${tag.name}",
      ${lqrn(tag.typeRef, t)}.Type.instance(),
      ${i(new AnnotationsGen(tag.annotations).generate(ogc))}
@@ -51,8 +51,9 @@ class EntityTypeGen(from: CEntityTypeDef, ctx: GenContext) extends JavaTypeDefGe
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.Tag;
-
 ${ObjectGenUtils.genImports(ogc)}\
 
 /**

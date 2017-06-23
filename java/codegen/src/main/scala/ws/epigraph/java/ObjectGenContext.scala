@@ -29,7 +29,7 @@ import scala.collection.mutable
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ObjectGenContext(val gctx: GenContext) {
+class ObjectGenContext(val gctx: GenContext, val namespace: Qn, val useQualifiedNames: Boolean = false) {
   private val _imports = new mutable.HashSet[String]()
   private val _fields = new mutable.HashSet[String]()
   private val _methods = new mutable.MutableList[CodeChunk]()
@@ -45,20 +45,18 @@ class ObjectGenContext(val gctx: GenContext) {
 
   //
 
-  def addImport(i: String) {
+  def use(i: String): String = {
     if (i == null || i.isEmpty) throw new IllegalArgumentException
-    _imports.add(i)
+    addImport(i, namespace) // todo make private
   }
-
-  def addImport(qn: Qn) { addImport(qn.toString) }
 
   /**
    * Try to split `name` into namespace and class name by finding first segment starting with an upper case
    * add namespace if it doesn't equal `currentNs`
    *
-   * @return short class name or `null` if class name not found
+   * @return class name to use
    */
-  def addImport(name: String, currentNs: Qn): String = {
+  private def addImport(name: String, currentNs: Qn): String = if (useQualifiedNames) name else {
     val qn = Qn.fromDotSeparated(name)
 
     val csi = qn.segments.indexWhere(_.charAt(0).isUpper)
@@ -67,9 +65,9 @@ class ObjectGenContext(val gctx: GenContext) {
     val shortClassName = if (csi < 0) null else if (csi == 0) qn else qn.removeHeadSegments(csi)
     val nameToImport = if (csi < 0 || csi == qn.size - 1) qn else qn.takeHeadSegments(csi + 1)
 
-    if (!ns.isEmpty && ns != currentNs) addImport(nameToImport)
+    if (!ns.isEmpty && ns != currentNs) _imports.add(nameToImport.toString)
 
-    if (shortClassName == null) null else shortClassName.toString
+    if (shortClassName == null) qn.toString else shortClassName.toString
   }
 
   def imports: List[String] = (_imports ++ _methods.flatMap(_.imports)).toList.sorted

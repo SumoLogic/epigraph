@@ -47,16 +47,21 @@ class AbstractUpdateOperationGen(
   override def children: Iterable[JavaGen] = super.children ++ Iterable(updateFieldProjectionGen)
 
   override protected def generate: String = {
-    val sctx = new ObjectGenContext(ctx)
+    val sctx = new ObjectGenContext(ctx, namespace)
 
     val outputType = JavaGenUtils.toCType(op.outputType())
     val nsString = namespace.toString
     val resultBuilderCtor = lqbct(outputType, nsString)
 
-    sctx.addImport("org.jetbrains.annotations.Nullable")
-    sctx.addImport(updateFieldProjectionGen.fullClassName)
-    val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
-    val shortBuilderType = sctx.addImport(lqbrn(outputType, nsString), namespace)
+    val notnull = sctx.use("org.jetbrains.annotations.NotNull")
+    val nullable = sctx.use("org.jetbrains.annotations.Nullable")
+    val ureq = sctx.use("ws.epigraph.service.operations.UpdateOperationRequest")
+    val rresp = sctx.use("ws.epigraph.service.operations.ReadOperationResponse")
+    val cfut = sctx.use("java.util.concurrent.CompletableFuture")
+    val uproj = sctx.use(updateFieldProjectionGen.fullClassName)
+    val oproj = sctx.use(outputFieldProjectionGen.fullClassName)
+    val shortDataType = sctx.use(lqdrn2(outputType, nsString))
+    val shortBuilderType = sctx.use(lqbrn(outputType, nsString))
 
     val inputType = JavaGenUtils.toCType(op.inputType())
     val inputTypeClass = lqn2(inputType, nsString)
@@ -64,16 +69,16 @@ class AbstractUpdateOperationGen(
     pathProjectionGenOpt match {
 
       case Some(pathProjectionGen) =>
-        sctx.addImport(pathProjectionGen.fullClassName)
+        val path = sctx.use(pathProjectionGen.fullClassName)
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull UpdateOperationRequest request) {
+public @$notnull $cfut<$rresp<$shortDataType>> process(@$notnull $ureq request) {
   $shortBuilderType builder = $resultBuilderCtor;
   ${pathProjectionGen.shortClassName} path = new ${pathProjectionGen.shortClassName}(request.path());
   $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
-  ${updateFieldProjectionGen.shortClassName} updateProjection = request.updateProjection() == null ? null : new ${updateFieldProjectionGen.shortClassName}(request.updateProjection());
-  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, data, path, updateProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  $uproj updateProjection = request.updateProjection() == null ? null : new $uproj(request.updateProjection());
+  $oproj outputProjection = new $oproj(request.outputProjection());
+  return process(builder, data, path, updateProjection, outputProjection).thenApply($rresp::new);
 }
 """/*@formatter:off*/
         )
@@ -90,12 +95,12 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType resultBuilder,
-  @NotNull $inputTypeClass updateData,
-  @NotNull ${pathProjectionGen.shortClassName} path,
-  @Nullable ${updateFieldProjectionGen.shortClassName} updateProjection,
-  @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
+protected abstract @$notnull $cfut<$shortDataType> process(
+  @$notnull $shortBuilderType resultBuilder,
+  @$notnull $inputTypeClass updateData,
+  @$notnull $path path,
+  @$nullable $uproj updateProjection,
+  @$notnull $oproj outputProjection
 );
 """/*@formatter:off*/
         )
@@ -103,12 +108,12 @@ protected abstract @NotNull CompletableFuture<$shortDataType> process(
       case None =>
         sctx.addMethod(/*@formatter:off*/sn"""\
 @Override
-public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process(@NotNull UpdateOperationRequest request) {
+public @$notnull $cfut<$rresp<$shortDataType>> process(@$notnull $ureq request) {
   $shortBuilderType builder = $resultBuilderCtor;
   $inputTypeClass data = ${AbstractOperationGen.dataExpr(inputType, nsString, "request.data()")};
-  ${updateFieldProjectionGen.shortClassName} updateProjection = request.updateProjection() == null ? null : new ${updateFieldProjectionGen.shortClassName}(request.updateProjection());
-  ${outputFieldProjectionGen.shortClassName} outputProjection = new ${outputFieldProjectionGen.shortClassName}(request.outputProjection());
-  return process(builder, data, updateProjection, outputProjection).thenApply(ReadOperationResponse::new);
+  $uproj updateProjection = request.updateProjection() == null ? null : new $uproj(request.updateProjection());
+  $oproj outputProjection = new $oproj(request.outputProjection());
+  return process(builder, data, updateProjection, outputProjection).thenApply($rresp::new);
 }
 """/*@formatter:off*/
         )
@@ -124,11 +129,11 @@ public @NotNull CompletableFuture<ReadOperationResponse<$shortDataType>> process
  *
  * @return future of the result
  */
-protected abstract @NotNull CompletableFuture<$shortDataType> process(
-  @NotNull $shortBuilderType resultBuilder,
-  @NotNull $inputTypeClass updateData,
-  @Nullable ${updateFieldProjectionGen.shortClassName} updateProjection,
-  @NotNull ${outputFieldProjectionGen.shortClassName} outputProjection
+protected abstract @$notnull $cfut<$shortDataType> process(
+  @$notnull $shortBuilderType resultBuilder,
+  @$notnull $inputTypeClass updateData,
+  @$nullable $uproj updateProjection,
+  @$notnull $oproj outputProjection
 );
 """/*@formatter:off*/
         )

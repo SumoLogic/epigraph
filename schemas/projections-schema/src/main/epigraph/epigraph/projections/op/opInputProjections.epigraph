@@ -7,6 +7,7 @@ import epigraph.data.ListDatum
 import epigraph.data.MapDatum
 import epigraph.data.PrimitiveDatum
 import epigraph.data.RecordDatum
+import epigraph.schema.Annotated
 import epigraph.schema.DatumType
 import epigraph.schema.EnumType
 import epigraph.schema.Field
@@ -16,7 +17,6 @@ import epigraph.schema.PrimitiveType
 import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
-import epigraph.schema.QualifiedTypeName
 
 record OpInputVarProjection {
   type: Type
@@ -29,12 +29,11 @@ record OpInputTagProjectionEntry {
   `projection`: OpInputModelProjection // OpInputTagProjection = opInputModelProjection
 }
 
-abstract record OpInputModelProjection {
+abstract record OpInputModelProjection extends Annotated {
   model: DatumType
   `required`: Boolean
   defaultValue: Datum
   params: map[String, OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
   // `meta`: OpInputModelProjection
 }
 
@@ -69,10 +68,9 @@ record OpInputMapModelProjection extends OpInputModelProjection {
   varProjection: OpInputVarProjection
 }
 
-record OpInputKeyProjection {
+record OpInputKeyProjection extends Annotated {
   `required`: Boolean { @Doc "if `null` - keys are not accepted" }
   params: map[String, OpParam]
-  annotations: map[QualifiedTypeName, Annotation]
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {

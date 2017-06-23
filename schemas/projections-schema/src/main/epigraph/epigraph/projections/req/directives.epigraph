@@ -1,11 +1,10 @@
 namespace epigraph.projections.req
 
 import epigraph.data.Datum
-import epigraph.schema.Documented
 import epigraph.schema.Named
 import epigraph.projections.ParamName
 
-record Directive extends Named, Documented {
+record Directive extends Named {
   override name: ParamName
   value: Datum
 }

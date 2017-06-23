@@ -44,10 +44,11 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
 
 
   override def generate: String = {
-    val sgctx = new ObjectGenContext(ctx)
+    val sgctx = new ObjectGenContext(ctx, namespace)
 
     val clientsParts: Seq[OpClientParts] = rd.operations().asScala.map(op => genOpClient(op, sgctx))
 
+    // todo rework to use imported (short) class names
     List(
       "org.apache.http.HttpHost",
       "org.apache.http.nio.client.HttpAsyncClient",
@@ -69,7 +70,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
       "java.nio.charset.Charset",
       "java.nio.charset.StandardCharsets",
       "java.util.concurrent.CompletableFuture"
-    ).foreach(i => sgctx.addImport(i))
+    ).foreach(i => sgctx.use(i))
 
     clientsParts.foreach { ocp => sgctx.addField(s"private final ${ ocp.invFieldType } ${ ocp.invFieldName };") }
 
@@ -212,9 +213,9 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
 
     op.kind() match {
       case OperationKind.READ => //                                                                                 READ
-        sgctx.addImport("ws.epigraph.client.http.RemoteReadOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.ReadOperationRequest")
-        sgctx.addImport("ws.epigraph.service.operations.ReadOperationResponse")
+        sgctx.use("ws.epigraph.client.http.RemoteReadOperationInvocation")
+        sgctx.use("ws.epigraph.service.operations.ReadOperationRequest")
+        sgctx.use("ws.epigraph.service.operations.ReadOperationResponse")
 
         val fieldType = "RemoteReadOperationInvocation"
         val fieldInit = fieldInitExpr("Read")
@@ -249,8 +250,8 @@ ${clientsParts.map(cp=>cp.method).foldLeft(CodeChunk.empty)(_+_).code}
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
 
       case OperationKind.CREATE => //                                                                             CREATE
-        sgctx.addImport("ws.epigraph.client.http.RemoteCreateOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.CreateOperationRequest")
+        sgctx.use("ws.epigraph.client.http.RemoteCreateOperationInvocation")
+        sgctx.use("ws.epigraph.service.operations.CreateOperationRequest")
 
         // one less space for better formatting
         val pathJavadoc = if (op.path() == null) "" else "   * @param path             path expression\n"
@@ -296,8 +297,8 @@ $pathParam      @Nullable String inputProjection,
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
 
       case OperationKind.UPDATE => //                                                                             UPDATE
-        sgctx.addImport("ws.epigraph.client.http.RemoteUpdateOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.UpdateOperationRequest")
+        sgctx.use("ws.epigraph.client.http.RemoteUpdateOperationInvocation")
+        sgctx.use("ws.epigraph.service.operations.UpdateOperationRequest")
 
         val fieldType = "RemoteUpdateOperationInvocation"
         val fieldInit = fieldInitExpr("Update")
@@ -341,8 +342,8 @@ $pathParam      @Nullable String updateProjection,
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
 
       case OperationKind.DELETE => //                                                                             DELETE
-        sgctx.addImport("ws.epigraph.client.http.RemoteDeleteOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.DeleteOperationRequest")
+        sgctx.use("ws.epigraph.client.http.RemoteDeleteOperationInvocation")
+        sgctx.use("ws.epigraph.service.operations.DeleteOperationRequest")
 
         val fieldType = "RemoteDeleteOperationInvocation"
         val fieldInit = fieldInitExpr("Delete")
@@ -385,8 +386,8 @@ $pathParam      @NotNull String deleteProjection,
         OpClientParts(fieldType, fieldName, CodeChunk(fieldInit), CodeChunk(method))
 
       case OperationKind.CUSTOM => //                                                                             CUSTOM
-        sgctx.addImport("ws.epigraph.client.http.RemoteCustomOperationInvocation")
-        sgctx.addImport("ws.epigraph.service.operations.CustomOperationRequest")
+        sgctx.use("ws.epigraph.client.http.RemoteCustomOperationInvocation")
+        sgctx.use("ws.epigraph.service.operations.CustomOperationRequest")
 
         // one less space for better formatting
         val pathJavadoc = if (op.path() == null) "" else "   * @param path             path expression\n"

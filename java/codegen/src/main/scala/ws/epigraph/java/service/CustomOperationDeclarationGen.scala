@@ -27,9 +27,9 @@ import ws.epigraph.schema.operations.{CustomOperationDeclaration, HttpMethod}
 class CustomOperationDeclarationGen(od: CustomOperationDeclaration)
   extends ObjectGen[CustomOperationDeclaration](od) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new CustomOperationDeclaration(
+new $o(
   ${generateHttpMethod(od.method(), ctx)},
   ${gen(od.name(), ctx)},
   ${i(gen(od.annotations(), ctx))},
@@ -39,13 +39,12 @@ new CustomOperationDeclaration(
   ${gen(od.location(), ctx)}
 )"""/*@formatter:on*/
 
-  private def generateHttpMethod(m: HttpMethod, ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[HttpMethod].getName)
-    m match {
-      case HttpMethod.GET => "HttpMethod.GET"
-      case HttpMethod.POST => "HttpMethod.POST"
-      case HttpMethod.PUT => "HttpMethod.PUT"
-      case HttpMethod.DELETE => "HttpMethod.DELETE"
-    }
-  }
+  private def generateHttpMethod(m: HttpMethod, ctx: ObjectGenContext): String =
+    ctx.use(classOf[HttpMethod].getName) + "." +
+    (m match {
+      case HttpMethod.GET => "GET"
+      case HttpMethod.POST => "POST"
+      case HttpMethod.PUT => "PUT"
+      case HttpMethod.DELETE => "DELETE"
+    })
 }

@@ -21,5 +21,4 @@ plugins {
 dependencies {
   compile project(':epigraph-builtin-types-schema')
   compile project(':epigraph-schema-schema')
-  compile project(':epigraph-data-schema')
 }

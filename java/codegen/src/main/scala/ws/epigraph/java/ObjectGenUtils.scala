@@ -31,13 +31,13 @@ object ObjectGenUtils {
 
   def genList(items: Seq[String], ctx: ObjectGenContext): String = {
     if (items.isEmpty) {
-      ctx.addImport("java.util.Collections")
+      ctx.use("java.util.Collections")
       "Collections.emptyList()"
     } else if (items.size == 1) {
-      ctx.addImport("java.util.Collections")
+      ctx.use("java.util.Collections")
       s"Collections.singletonList(${ items.head })"
     } else {
-      ctx.addImport("java.util.Arrays")
+      ctx.use("java.util.Arrays")
       val indentedItems = items.map(JavaGenUtils.indent(_, INDENT))
       indentedItems.mkString("Arrays.asList(\n", ",\n", "\n)")
     }
@@ -67,19 +67,19 @@ object ObjectGenUtils {
     entries: Iterable[(String, String)],
     ctx: ObjectGenContext): String = {
 
-    ctx.addImport("java.util." + mapClass)
+    val map = ctx.use("java.util." + mapClass)
 
-    if (entries.isEmpty) s"new $mapClass<$keyType, $valueType>(0)"
+    if (entries.isEmpty) s"new $map<$keyType, $valueType>(0)"
     else if (entries.size == 1) {
-      ctx.addImport("ws.epigraph.util.Util")
+      val util = ctx.use("ws.epigraph.util.Util")
       val (key, value) = entries.head
       /*@formatter:off*/sn"""\
-Util.createSingleton$mapClass(
+$util.createSingleton$mapClass(
   $key,
   ${i(value)}
 )"""/*@formatter:on*/
     } else {
-      ctx.addImport("ws.epigraph.util.Util")
+      val util = ctx.use("ws.epigraph.util.Util")
 
       val entriesSeq = entries.toSeq // to allow iterating twice
 
@@ -89,7 +89,7 @@ Util.createSingleton$mapClass(
         .mkString(s"new $valueType[]{\n", ",\n", "\n}")
 
       /*@formatter:off*/sn"""\
-Util.create$mapClass(
+$util.create$mapClass(
   $keys,
   ${i(values)}
 )"""/*@formatter:on*/
@@ -171,7 +171,7 @@ Util.create$mapClass(
 
   def normalizeTagName(tagName: String, ctx: ObjectGenContext): String =
     if (tagName == CDatumType.ImpliedDefaultTagName) {
-      ctx.addImport(classOf[DatumTypeApi].getName)
+      ctx.use(classOf[DatumTypeApi].getName)
       "DatumTypeApi.MONO_TAG_NAME"
     } else "\"" + tagName + "\""
 }

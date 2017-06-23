@@ -78,14 +78,13 @@ trait AbstractOperationGen extends JavaGen {
     val outputType = JavaGenUtils.toCType(op.outputType())
     val nsString = namespace.toString
 
-    sctx.addImport("org.jetbrains.annotations.NotNull")
-    sctx.addImport(s"ws.epigraph.service.operations.${ operationKindUpper }Operation")
-    sctx.addImport(s"ws.epigraph.service.operations.${ operationKindUpper }OperationRequest")
-    sctx.addImport(s"ws.epigraph.service.operations.ReadOperationResponse")  // response is always 'read'
-    sctx.addImport(s"ws.epigraph.schema.operations.${ operationKindUpper }OperationDeclaration")
-    sctx.addImport("java.util.concurrent.CompletableFuture")
-    sctx.addImport(outputFieldProjectionGen.fullClassName)
-    val shortDataType = sctx.addImport(lqdrn2(outputType, nsString), namespace)
+    val notnull = sctx.use("org.jetbrains.annotations.NotNull")
+    val operation = sctx.use(s"ws.epigraph.service.operations.${ operationKindUpper }Operation")
+//    val opreq = sctx.use(s"ws.epigraph.service.operations.${ operationKindUpper }OperationRequest")
+    val opdecl = sctx.use(s"ws.epigraph.schema.operations.${ operationKindUpper }OperationDeclaration")
+//    sctx.use("java.util.concurrent.CompletableFuture")
+//    sctx.use(outputFieldProjectionGen.fullClassName)
+    val shortDataType = sctx.use(lqdrn2(outputType, nsString))
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -95,11 +94,12 @@ ${ObjectGenUtils.genImports(sctx)}
 /**
  * Abstract base class for ${rd.fieldName()} ${Option(op.name()).map(_ + " ").getOrElse("")}$operationKindLower operation
  */
-public abstract class $shortClassName extends ${operationKindUpper}Operation<$shortDataType> {
+public abstract class $shortClassName extends $operation<$shortDataType> {
 
-  protected $shortClassName(@NotNull ${operationKindUpper}OperationDeclaration declaration) {
+  protected $shortClassName(@$notnull $opdecl declaration) {
     super(declaration);
   }
+
   ${i(ObjectGenUtils.genMethods(sctx))}\
   ${i(ObjectGenUtils.genStatic(sctx))}
 }

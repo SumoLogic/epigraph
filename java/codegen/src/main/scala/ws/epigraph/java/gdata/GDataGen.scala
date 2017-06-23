@@ -27,9 +27,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class GDataGen(data: GData) extends ObjectGen[GData](data) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new GData(
+new $o(
   ${gen(data.typeRef(), ctx)},
   ${i(ObjectGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(data.location(), ctx)}

@@ -19,16 +19,14 @@
 package ws.epigraph.java
 
 import ws.epigraph.compiler.{CPrimitiveTypeDef, CTypeKind}
-import ws.epigraph.java.JavaGenNames.{lqn, pn, qnameArgs}
+import ws.epigraph.java.JavaGenNames.{lqn, pn, pnq2, qnameArgs}
 import ws.epigraph.java.NewlineStringInterpolator.{i, NewlineHelper}
 
 class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDefGen[CPrimitiveTypeDef](from, ctx)
     with DatumTypeJavaGen {
 
   protected override def generate: String = {
-    val ogc = new ObjectGenContext(ctx)
-    ogc.addImport("org.jetbrains.annotations.NotNull")
-    ogc.addImport("org.jetbrains.annotations.Nullable")
+    val ogc = new ObjectGenContext(ctx, pnq2(t), true)
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
 
@@ -36,6 +34,8 @@ class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDef
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 ${ObjectGenUtils.genImports(ogc)}\
 
 /**

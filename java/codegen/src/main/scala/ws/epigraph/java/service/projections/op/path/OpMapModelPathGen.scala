@@ -29,7 +29,7 @@ import ws.epigraph.types.{MapType, TypeApi}
 class OpMapModelPathGen(p: OpMapModelPath) extends ObjectGen[OpMapModelPath](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[MapType].getName)
+    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
 new OpMapModelPath(

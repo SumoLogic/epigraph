@@ -25,10 +25,12 @@ abstract class ObjectGen[T](val obj: T) extends AbstractObjectGen {
   override def generate(ctx: ObjectGenContext): String = {
     if (obj == null) "null"
     else {
-      ctx.addImport(obj.getClass.getCanonicalName)
-      generateObject(ctx)
+      val objExpr = ctx.use(obj.getClass.getCanonicalName)
+      generateObject(objExpr, ctx)
     }
   }
 
-  protected def generateObject(ctx: ObjectGenContext): String
+  protected def generateObject(ctx: ObjectGenContext): String = ??? // todo remove
+
+  protected def generateObject(objExpr: String, ctx: ObjectGenContext): String = generateObject(ctx)
 }

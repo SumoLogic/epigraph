@@ -32,8 +32,8 @@ class OpDeleteRecordModelProjectionGen(p: OpDeleteRecordModelProjection)
   extends ObjectGen[OpDeleteRecordModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[RecordType].getName)
-    ctx.addImport(classOf[OpDeleteFieldProjectionEntry].getName)
+    ctx.use(classOf[RecordType].getName)
+    ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteRecordModelProjection(
@@ -52,7 +52,7 @@ new OpDeleteRecordModelProjection(
     fpe: OpDeleteFieldProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.addImport(classOf[OpDeleteFieldProjectionEntry].getName)
+    ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteFieldProjectionEntry(

@@ -29,8 +29,8 @@ import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
 class OpRecordModelPathGen(p: OpRecordModelPath) extends ObjectGen[OpRecordModelPath](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[RecordType].getName)
-    ctx.addImport(classOf[OpFieldPathEntry].getName)
+    ctx.use(classOf[RecordType].getName)
+    ctx.use(classOf[OpFieldPathEntry].getName)
 
     val fieldPathEntry = p.fieldPathEntry
 
@@ -49,7 +49,7 @@ new OpRecordModelPath(
 
     if (fpe == null) "null"
     else {
-      ctx.addImport(classOf[OpFieldPathEntry].getName)
+      ctx.use(classOf[OpFieldPathEntry].getName)
 
       /*@formatter:off*/sn"""\
 new OpFieldPathEntry(

@@ -32,7 +32,7 @@ class OpDeleteMapModelProjectionGen(p: OpDeleteMapModelProjection)
   extends ObjectGen[OpDeleteMapModelProjection](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[MapType].getName)
+    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
 new OpDeleteMapModelProjection(

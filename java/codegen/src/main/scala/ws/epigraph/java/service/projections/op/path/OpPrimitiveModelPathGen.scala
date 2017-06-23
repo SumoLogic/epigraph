@@ -29,7 +29,7 @@ import ws.epigraph.types.{PrimitiveType, TypeApi}
 class OpPrimitiveModelPathGen(p: OpPrimitiveModelPath) extends ObjectGen[OpPrimitiveModelPath](p) {
 
   override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.addImport(classOf[PrimitiveType[_]].getName)
+    ctx.use(classOf[PrimitiveType[_]].getName)
 
     /*@formatter:off*/sn"""\
 new OpInputPrimitiveModelProjection(

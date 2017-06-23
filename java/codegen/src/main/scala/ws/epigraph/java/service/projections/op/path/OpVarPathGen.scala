@@ -46,7 +46,7 @@ new OpVarPath(
 
     if (tp == null) "null"
     else {
-      ctx.addImport(classOf[OpTagPath].getName)
+      ctx.use(classOf[OpTagPath].getName)
 
       /*@formatter:off*/sn"""\
 new OpTagPath(
