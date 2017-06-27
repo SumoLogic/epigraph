@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,31 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class PsiProcessingError {
+public class PsiProcessingMessage {
+  private final @NotNull Level level;
   private final @NotNull String message;
   private final @NotNull TextLocation location;
 
-  public PsiProcessingError(@NotNull String message, @NotNull TextLocation location) {
+
+  public static @NotNull PsiProcessingMessage error(@NotNull String message, @NotNull TextLocation location) {
+    return new PsiProcessingMessage(Level.ERROR, message, location);
+  }
+
+  public static @NotNull PsiProcessingMessage warning(@NotNull String message, @NotNull TextLocation location) {
+    return new PsiProcessingMessage(Level.WARNING, message, location);
+  }
+
+  public PsiProcessingMessage(@NotNull Level level, @NotNull String message, @NotNull TextLocation location) {
+    this.level = level;
     this.message = message;
     this.location = location;
   }
 
-  public PsiProcessingError(@NotNull String message, @NotNull PsiElement psi) {
-    this(message, EpigraphPsiUtil.getLocation(psi));
+  public PsiProcessingMessage(@NotNull Level level, @NotNull String message, @NotNull PsiElement psi) {
+    this(level, message, EpigraphPsiUtil.getLocation(psi));
   }
+
+  public @NotNull Level level() { return level; }
 
   public @NotNull String message() { return message; }
 
@@ -42,6 +55,8 @@ public class PsiProcessingError {
 
   @Override
   public String toString() {
-    return message() + " at " + location();
+    return String.format("[%s] %s at %s", level(), message(), location());
   }
+
+  public enum Level {ERROR, WARNING}
 }

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class OpPathPsiProcessingContext extends DelegatingPsiProcessingContext {
 
   @NotNull
   @Override
-  public List<PsiProcessingError> errors() { return inputPsiProcessingContext.errors(); }
+  public List<PsiProcessingMessage> messages() { return inputPsiProcessingContext.messages(); }
 
   @NotNull
   public OpInputPsiProcessingContext inputPsiProcessingContext() { return inputPsiProcessingContext; }

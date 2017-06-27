@@ -40,7 +40,7 @@ public final class TypeRefs {
     if (psi instanceof SchemaAnonList) {
       SchemaAnonList anonListPsi = (SchemaAnonList) psi;
       @Nullable SchemaValueTypeRef valueTypeRefPsi = anonListPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, context.errors());
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("List item type not specified", psi, context.messages());
       return new AnonListRef(fromPsi(valueTypeRefPsi, context));
     }
 
@@ -48,17 +48,17 @@ public final class TypeRefs {
       SchemaAnonMap anonMapPsi = (SchemaAnonMap) psi;
 
       @Nullable SchemaTypeRef keyTypeRefPsi = anonMapPsi.getTypeRef();
-      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, context.errors());
+      if (keyTypeRefPsi == null) throw new PsiProcessingException("Map key type not specified", psi, context.messages());
       TypeRef keyTypeRef = fromPsi(keyTypeRefPsi, context);
 
       @Nullable SchemaValueTypeRef valueTypeRefPsi = anonMapPsi.getValueTypeRef();
-      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, context.errors());
+      if (valueTypeRefPsi == null) throw new PsiProcessingException("Map value type not specified", psi, context.messages());
       ValueTypeRef valueTypeRef = fromPsi(valueTypeRefPsi, context);
 
       return new AnonMapRef(keyTypeRef, valueTypeRef);
     }
 
-    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, context.errors());
+    throw new PsiProcessingException("Unknown reference type: " + psi.getClass().getName(), psi, context.messages());
   }
 
   public static @NotNull ValueTypeRef fromPsi(@NotNull SchemaValueTypeRef psi, @NotNull PsiProcessingContext context)

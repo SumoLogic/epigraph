@@ -24,14 +24,19 @@ import ws.epigraph.psi.EpigraphPsiUtil
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ErrorReporter {
-  def error(message: String, location: TextLocation)
+  def message(message: String, location: TextLocation, level: CMessageLevel)
+
+  def error(message: String, location: TextLocation): Unit = this.message(message, location, CMessageLevel.Error)
   def error(message: String, psi: PsiElement): Unit = error(message, EpigraphPsiUtil.getLocation(psi))
+
+  def warning(message: String, location: TextLocation): Unit = this.message(message, location, CMessageLevel.Warning)
+  def warning(message: String, psi: PsiElement): Unit = warning(message, EpigraphPsiUtil.getLocation(psi))
 }
 
 object ErrorReporter {
-  private def cErrorPosition(csf: CSchemaFile, location: TextLocation): CErrorPosition =
+  private def cErrorPosition(csf: CSchemaFile, location: TextLocation): CMessagePosition =
     if (location == TextLocation.UNKNOWN)
-      CErrorPosition.NA
+      CMessagePosition.NA
     else if (location.startLine() == location.endLine())
       csf.lnu.pos(location.startOffset(), location.endOffset() - location.startOffset())
     else
@@ -39,25 +44,23 @@ object ErrorReporter {
 
   def reporter(csf: CSchemaFile)(implicit ctx: CContext): ErrorReporter =
     new ErrorReporter {
-      override def error(message: String, location: TextLocation): Unit = {
-
+      override def message(msg: String, location: TextLocation, level: CMessageLevel): Unit = {
         val errorPosition = cErrorPosition(csf, location)
-        ctx.errors.add(CError(location.fileName(), errorPosition, message))
-
+        ctx.errors.add(new CMessage(location.fileName(), errorPosition, msg, level))
       }
     }
 
   def reporter(csfm: Map[String, CSchemaFile])(implicit ctx: CContext): ErrorReporter =
     new ErrorReporter {
-      override def error(message: String, location: TextLocation): Unit = {
+      override def message(msg: String, location: TextLocation, level: CMessageLevel): Unit = {
 
-        val errorPosition: CErrorPosition =
+        val errorPosition: CMessagePosition =
           if (location == TextLocation.UNKNOWN)
-            CErrorPosition.NA
+            CMessagePosition.NA
           else
-            csfm.get(location.fileName()).map(csf => cErrorPosition(csf, location)).getOrElse(CErrorPosition.NA)
+            csfm.get(location.fileName()).map(csf => cErrorPosition(csf, location)).getOrElse(CMessagePosition.NA)
 
-        ctx.errors.add(CError(location.fileName(), errorPosition, message))
+        ctx.errors.add(new CMessage(location.fileName(), errorPosition, msg, level))
 
       }
     }

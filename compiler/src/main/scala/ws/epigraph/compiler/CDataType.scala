@@ -45,14 +45,14 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
       case Some(tagName) =>
         val tagOpt = t.effectiveTags.find(_.name == tagName)
         if (tagOpt.isEmpty) ctx.errors.add(
-          CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${t.name.name}`")
+          CMessage.error(csf.filename, CMessagePosition.NA, s"Tag `$tagName` is not defined for union type `${t.name.name}`")
         )
         tagOpt
       case None => None
     }
     case t: CDatumType =>
       if (defaultTagNameDecl.nonEmpty) ctx.errors.add(
-        CError(csf.filename, CErrorPosition.NA, s"Invalid default tag `${defaultTagNameDecl.get}` for datum type `${t.name.name}`")
+        CMessage.error(csf.filename, CMessagePosition.NA, s"Invalid default tag `${defaultTagNameDecl.get}` for datum type `${t.name.name}`")
       )
       Some(t.impliedTag)
     case unknown => throw new UnsupportedOperationException(unknown.toString)

@@ -54,15 +54,15 @@ class LineNumberUtil(text: String, tabWidth: Int = 2) {
       lines += Line(lineNumber, lineStartOffset, offset, line.toString)
   }
 
-  def pos(@Nullable psi: PsiElement): CErrorPosition =
-    if (psi eq null) CErrorPosition.NA else pos(psi.getTextRange.getStartOffset, psi.getTextRange.getLength)
+  def pos(@Nullable psi: PsiElement): CMessagePosition =
+    if (psi eq null) CMessagePosition.NA else pos(psi.getTextRange.getStartOffset, psi.getTextRange.getLength)
 
-  def pos(offset: Int): CErrorPosition = pos(offset, 1)
+  def pos(offset: Int): CMessagePosition = pos(offset, 1)
 
-  def pos(offset: Int, len: Int): CErrorPosition = {
+  def pos(offset: Int, len: Int): CMessagePosition = {
     lines.find(_.endOffset >= offset) match {
-      case Some(line) => CErrorPosition(line.number, column(line, offset), len, Some(line.text))
-      case None => CErrorPosition.NA
+      case Some(line) => CMessagePosition(line.number, column(line, offset), len, Some(line.text))
+      case None => CMessagePosition.NA
     }
   }
 

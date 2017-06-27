@@ -18,7 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 
 import java.util.List;
 
@@ -29,13 +29,13 @@ public abstract class PsiProcessingInvocationError {
   protected static @NotNull String psiParsingErrorsReport(
       @NotNull StringBuilder sb,
       @NotNull String text,
-      @NotNull List<PsiProcessingError> errors,
+      @NotNull List<PsiProcessingMessage> errors,
       boolean isHtml) {
 
     if (isHtml) appendHtmlErrorHeader(sb);
 
     boolean first = true;
-    for (final PsiProcessingError error : errors) {
+    for (final PsiProcessingMessage error : errors) {
       if (first) first = false;
       else nl(sb, 2, isHtml);
 
@@ -49,7 +49,7 @@ public abstract class PsiProcessingInvocationError {
 
   private static void addPsiProcessingError(
       @NotNull String text,
-      @NotNull PsiProcessingError error,
+      @NotNull PsiProcessingMessage error,
       boolean isHtml,
       @NotNull StringBuilder sb) {
 

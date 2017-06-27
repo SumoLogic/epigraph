@@ -25,15 +25,15 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DefaultPsiProcessingContext implements PsiProcessingContext {
-  private List<PsiProcessingError> errors = new ArrayList<>();
+  private List<PsiProcessingMessage> errors = new ArrayList<>();
 
   @Override
-  public @NotNull List<PsiProcessingError> errors() {
+  public @NotNull List<PsiProcessingMessage> messages() {
     return errors;
   }
 
   @Override
-  public void setErrors(final @NotNull List<PsiProcessingError> errors) {
-    this.errors = new ArrayList<>(errors);
+  public void setErrors(final @NotNull List<PsiProcessingMessage> messages) {
+    this.errors = new ArrayList<>(messages);
   }
 }

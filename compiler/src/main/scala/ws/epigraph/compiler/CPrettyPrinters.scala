@@ -29,26 +29,37 @@ import scala.language.higherKinds
 
 object CPrettyPrinters {
 
-  implicit object CErrorPrinter extends PPrinter[CError] {
+  implicit object CErrorPrinter extends PPrinter[CMessage] {
 
-    override def render0(t: CError, c: Config): Iterator[String] =
-    if (t.position == CErrorPosition.NA)
-      Iterator(
-        fansi.Color.Red("Error").render, ": ", t.message, "\n"
-      )
-    else
-      Iterator(
-        fansi.Color.Blue(t.filename + ":" + t.position.line.toString + ":" + t.position.column.toString + " " + intellijLink(t)).render,
-        fansi.Color.Red("\nError").render, ": ", t.message, "\n"
-      ) ++ t.position.lineText.iterator ++ Iterator("\n", " " * (t.position.column - 1), "^" * t.position.tokenLength)
+    override def render0(m: CMessage, c: Config): Iterator[String] = {
+      val (color, lvl) = m.level match {
+        case CMessageLevel.Warning => (fansi.Color.Yellow, "Warning")
+        case CMessageLevel.Error => (fansi.Color.Red, "Error")
+        case _ => (fansi.Color.White, "Message")
+      }
 
-    private def intellijLink(t: CError): String = { // relies on '.' already rendered (as part of canonical path
+      if (m.position == CMessagePosition.NA)
+        Iterator(
+          color(lvl).render, ": ", m.message, "\n"
+        )
+      else
+        Iterator(
+          fansi.Color.Blue(
+            m.filename + ":" + m.position.line.toString + ":" + m.position.column.toString + " " + intellijLink(
+              m
+            )
+          ).render,
+          color(s"\n$lvl").render, ": ", m.message, "\n"
+        ) ++ m.position.lineText.iterator ++ Iterator("\n", " " * (m.position.column - 1), "^" * m.position.tokenLength)
+    }
+
+    private def intellijLink(t: CMessage): String = { // relies on '.' already rendered (as part of canonical path
       "(" + new File(t.filename).getName + ":" + t.position.line + ")"
     }
 
   }
 
-  implicit val CErrorPrint: PPrint[CError] = PPrint(CErrorPrinter)
+  implicit val CErrorPrint: PPrint[CMessage] = PPrint(CErrorPrinter)
 
 
   implicit object CSchemaFilePrinter extends PPrinter[CSchemaFile] {

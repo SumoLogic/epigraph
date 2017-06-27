@@ -28,8 +28,8 @@ class CContext(val tabWidth: Int = 2) {
 
   private var _phase: CPhase = CPhase.PARSE
 
-  /** Accumulated compile errors */
-  val errors: ConcurrentLinkedQueue[CError] = new java.util.concurrent.ConcurrentLinkedQueue
+  /** Accumulated compile messages */
+  val errors: ConcurrentLinkedQueue[CMessage] = new java.util.concurrent.ConcurrentLinkedQueue
 
   /** Schema files being processed by compiler */
   val schemaFiles: ConcurrentHashMap[String, CSchemaFile] = new java.util.concurrent.ConcurrentHashMap
@@ -80,14 +80,29 @@ class CContext(val tabWidth: Int = 2) {
 
 }
 
-case class CError(filename: String, position: CErrorPosition, message: String)
+case class CMessage(filename: String, position: CMessagePosition, message: String, level: CMessageLevel)
 
-case class CErrorPosition(line: Int, column: Int, tokenLength: Int, lineText: Option[String])
+object CMessage {
+  def error(filename: String, position: CMessagePosition, message: String) =
+    new CMessage(filename, position, message, CMessageLevel.Error)
 
-object CErrorPosition {
+  def warning(filename: String, position: CMessagePosition, message: String) =
+    new CMessage(filename, position, message, CMessageLevel.Warning)
+}
 
-  val NA: CErrorPosition = CErrorPosition(0, 0, 0, None)
+case class CMessagePosition(line: Int, column: Int, tokenLength: Int, lineText: Option[String])
 
-  def apply(line: Int, column: Int, lineText: Option[String]):CErrorPosition = CErrorPosition(line, column, 1, lineText)
+sealed trait CMessageLevel
+
+object CMessageLevel {
+  object Warning extends CMessageLevel
+  object Error extends CMessageLevel
+}
+
+object CMessagePosition {
+
+  val NA: CMessagePosition = CMessagePosition(0, 0, 0, None)
+
+  def apply(line: Int, column: Int, lineText: Option[String]):CMessagePosition = CMessagePosition(line, column, 1, lineText)
 
 }

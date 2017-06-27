@@ -247,13 +247,13 @@ public abstract class AbstractModelProjection<
           .normalizedForType(metaModel);
     }
 
+    final ProjectionReferenceName mergedRefName = findUniqueName(modelProjections, modelProjections.get(0).location());
     SMP res = merge(
         effectiveType,
         modelProjections,
         mergedMetaProjection,
         mergedTails
     );
-    final ProjectionReferenceName mergedRefName = findUniqueName(modelProjections);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
     return res;
   }

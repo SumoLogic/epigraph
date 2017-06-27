@@ -18,7 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.server.http.routing.OperationSearchFailure;
 import ws.epigraph.service.operations.Operation;
@@ -61,14 +61,14 @@ public class SearchFailureInvocationError extends PsiProcessingInvocationError
 
   private @NotNull String message(boolean isHtml) {
     StringBuilder sb = new StringBuilder();
-    final Map<? extends Operation<?, ?, ?>, List<PsiProcessingError>> failedOperations = failure.errors();
+    final Map<? extends Operation<?, ?, ?>, List<PsiProcessingMessage>> failedOperations = failure.errors();
 
     if (failedOperations.size() == 1) {
-      final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingError>> entry =
+      final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingMessage>> entry =
           failedOperations.entrySet().iterator().next();
 
       final Operation<?, ?, ?> operation = entry.getKey();
-      final List<PsiProcessingError> operationErrors = entry.getValue();
+      final List<PsiProcessingMessage> operationErrors = entry.getValue();
       final OperationDeclaration operationDeclaration = operation.declaration();
       final RequestParsingInvocationError parsingInvocationError = new RequestParsingInvocationError(
           resourceName,
@@ -85,12 +85,12 @@ public class SearchFailureInvocationError extends PsiProcessingInvocationError
       nl(sb, 2, isHtml);
 
       boolean first = true;
-      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingError>> e : failedOperations.entrySet()) {
+      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingMessage>> e : failedOperations.entrySet()) {
         if (first) first = false;
         else sep(sb, isHtml);
 
         final Operation<?, ?, ?> operation = e.getKey();
-        final List<PsiProcessingError> errors = e.getValue();
+        final List<PsiProcessingMessage> errors = e.getValue();
 
         final OperationDeclaration operationDeclaration = operation.declaration();
         final String operationName = operationDeclaration.name();

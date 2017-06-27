@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.http.CommonHttpUtil;
 import ws.epigraph.http.Headers;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.service.Service;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
@@ -63,8 +63,11 @@ public final class Util {
     return DebugUtil.psiToString(url, true, false);
   }
 
-  static @NotNull List<PsiProcessingError> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
-    return errors.stream().map(e -> new PsiProcessingError(e.getErrorDescription(), e)).collect(Collectors.toList());
+  // copies server.http.Util.psiErrorsToPsiProcessingErrors
+  static @NotNull List<PsiProcessingMessage> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
+    return errors.stream()
+        .map(e -> new PsiProcessingMessage(PsiProcessingMessage.Level.ERROR, e.getErrorDescription(), e))
+        .collect(Collectors.toList());
   }
 
   static @NotNull String listSupportedResources(@NotNull Service service) {

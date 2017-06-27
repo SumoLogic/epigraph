@@ -66,7 +66,7 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition",
             psi,
-            context.errors()
+            context.messages()
         );
 
       return parseUnnamedOrRefVarProjection(
@@ -88,7 +88,7 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Incomplete var projection '%s' definition", projectionName),
             psi,
-            context.errors()
+            context.messages()
         );
 
       final ReqUpdateVarProjection reference = context.varReferenceContext()
@@ -139,7 +139,7 @@ public final class ReqUpdateProjectionsPsiParser {
       // usual var projection
       final UrlReqUpdateUnnamedVarProjection unnamedVarProjection = psi.getReqUpdateUnnamedVarProjection();
       if (unnamedVarProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
       else {
         return parseUnnamedVarProjection(
             dataType,
@@ -157,7 +157,7 @@ public final class ReqUpdateProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String referenceName = varProjectionRefPsi.getCanonicalName();

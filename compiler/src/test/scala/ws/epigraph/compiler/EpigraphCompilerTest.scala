@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
     val compiler = new EpigraphCompiler(
       Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/incompatibleFields.epigraph"))
     )
-    val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).messages
     errors.size() shouldBe 1
     errors.iterator().next().toString should include("is not a subtype")
   }
@@ -41,7 +41,7 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
     val compiler = new EpigraphCompiler(
       Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/badTagType.epigraph"))
     )
-    val errors = intercept[EpigraphCompilerException](compiler.compile()).errors
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).messages
     errors.size() shouldBe 1
     errors.iterator().next().toString should include("is not a datum type")
   }

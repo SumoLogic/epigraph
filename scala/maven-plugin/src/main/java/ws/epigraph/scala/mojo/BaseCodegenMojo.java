@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,6 +160,7 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
     }
   }
 
+  // todo duplicates code from AbstractCompilingMojo
   private CContext doCompile(File outputDirectory, Collection<Source> sources, Collection<Source> dependencySources)
       throws IOException, MojoFailureException {
     // TODO catch and sort compiler exceptions into MojoExecutionException (abnormal) and MojoFailureException (normal failure)
@@ -168,14 +169,24 @@ public abstract class BaseCodegenMojo extends AbstractMojo {
       return compiler.compile();
     } catch (EpigraphCompilerException failure) {
       StringBuilder sb = new StringBuilder();
-      for (CError err : compiler.ctx().errors()) {
-        final CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
+      for (CMessage err : compiler.ctx().errors()) {
+        CMessagePosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
         sb.append(err.filename()).append(':').append(pos.line()).append(':').append(pos.column()).append('\n');
-        sb.append("Error: ").append(err.message()).append('\n');
-        final Option<String> errText = pos.lineText();
+
+
+        if (err.level().equals(CMessageLevel.Error$.MODULE$)) {
+          sb.append("Error");
+        } else if (err.level().equals(CMessageLevel.Warning$.MODULE$)) {
+          sb.append("Warning");
+        } else {
+          sb.append("Message");
+        }
+
+        sb.append(": ").append(err.message()).append('\n');
+        Option<String> errText = pos.lineText();
         if (errText.nonEmpty()) {
-          sb.append(errText.get()).append('\n');
-          sb.append(String.format("%" + (pos.column()) + "s", "^").replace(" ", ".")).append('\n');
+          sb.append('\177').append(errText.get()).append('\n');
+          sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
         }
       }
       throw new MojoFailureException(this, "Schema compilation failed", sb.toString());

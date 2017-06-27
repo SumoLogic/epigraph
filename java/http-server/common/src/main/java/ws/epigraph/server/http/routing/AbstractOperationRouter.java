@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.Resource;
@@ -63,7 +63,7 @@ public abstract class AbstractOperationRouter<
     final @NotNull DataTypeApi resourceFieldType = resource.declaration().fieldType();
 
     if (operationName == null) {
-      final Map<O, List<PsiProcessingError>> matchingErrors = new HashMap<>();
+      final Map<O, List<PsiProcessingMessage>> matchingErrors = new HashMap<>();
 
       for (final O operation : operations(resource)) {
         @NotNull OperationSearchResult<O> matchingResult =
@@ -117,10 +117,10 @@ public abstract class AbstractOperationRouter<
             context
         );
       } catch (PsiProcessingException e) {
-        context.setErrors(e.errors());
+        context.setErrors(e.messages());
       }
 
-      if (context.errors().isEmpty()) {
+      if (context.messages().isEmpty()) {
         assert request != null;
         return new OperationSearchSuccess<>(
             operation,
@@ -128,7 +128,7 @@ public abstract class AbstractOperationRouter<
         );
       } else
         return new OperationSearchFailure<>(
-            Collections.singletonMap(operation, context.errors())
+            Collections.singletonMap(operation, context.messages())
         );
     }
   }

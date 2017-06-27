@@ -192,10 +192,10 @@ public final class RequestFactory {
           reqFieldProjection
       );
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   /**
@@ -519,10 +519,10 @@ public final class RequestFactory {
           new ReqPathPsiProcessingContext(context)
       );
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   private static @NotNull UrlReqVarPath getReqPathPsi(@NotNull String projectionString)
@@ -566,16 +566,16 @@ public final class RequestFactory {
       );
 
       referenceContext.ensureAllReferencesResolved();
-      throwErrors(context.errors());
+      throwErrors(context.messages());
 
       return res;
 
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   private static @NotNull UrlReqOutputTrunkVarProjection getReqOutputProjectionPsi(@NotNull String projection)
@@ -617,15 +617,15 @@ public final class RequestFactory {
       );
 
       referenceContext.ensureAllReferencesResolved();
-      throwErrors(context.errors());
+      throwErrors(context.messages());
 
       return res;
 
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   private static @NotNull UrlReqInputVarProjection getReqInputProjectionPsi(@NotNull String projection)
@@ -669,15 +669,15 @@ public final class RequestFactory {
       );
 
       referenceContext.ensureAllReferencesResolved();
-      throwErrors(context.errors());
+      throwErrors(context.messages());
 
       return res;
 
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   private static @NotNull UrlReqUpdateVarProjection getReqUpdateProjectionPsi(@NotNull String projection)
@@ -719,15 +719,15 @@ public final class RequestFactory {
       );
 
       referenceContext.ensureAllReferencesResolved();
-      throwErrors(context.errors());
+      throwErrors(context.messages());
 
       return res;
 
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    throw new IllegalArgumentException(dumpErrors(context.errors()));
+    throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
   private static @NotNull UrlReqDeleteVarProjection getReqDeleteProjectionPsi(@NotNull String projection)
@@ -768,16 +768,16 @@ public final class RequestFactory {
     return "\n" + psi.getText() + "\n\n" + errorsDump + "\nPSI Dump:\n\n" + psiDump;
   }
 
-  private static void throwErrors(@NotNull List<PsiProcessingError> errors) {
+  private static void throwErrors(@NotNull List<PsiProcessingMessage> errors) {
     String dump = dumpErrors(errors);
     if (dump != null)
       throw new IllegalArgumentException(dump);
   }
 
-  private static @Nullable String dumpErrors(final List<PsiProcessingError> errors) {
+  private static @Nullable String dumpErrors(final List<PsiProcessingMessage> errors) {
     if (!errors.isEmpty()) {
       StringBuilder sb = new StringBuilder();
-      for (final PsiProcessingError error : errors)
+      for (final PsiProcessingMessage error : errors)
         sb.append(error.location()).append(": ").append(error.message()).append("\n");
 
       return sb.toString();
@@ -786,7 +786,9 @@ public final class RequestFactory {
     return null;
   }
 
-  private static @NotNull List<PsiProcessingError> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
-    return errors.stream().map(e -> new PsiProcessingError(e.getErrorDescription(), e)).collect(Collectors.toList());
+  private static @NotNull List<PsiProcessingMessage> psiErrorsToPsiProcessingErrors(@NotNull List<PsiErrorElement> errors) {
+    return errors.stream()
+        .map(e -> new PsiProcessingMessage(PsiProcessingMessage.Level.ERROR, e.getErrorDescription(), e))
+        .collect(Collectors.toList());
   }
 }

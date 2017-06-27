@@ -18,7 +18,7 @@ package ws.epigraph.server.http;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -34,14 +34,14 @@ public class RequestParsingInvocationError extends PsiProcessingInvocationError
   private final @NotNull OperationKind operationKind;
   private final @Nullable String operationName;
   private final @NotNull String request;
-  private final @NotNull List<PsiProcessingError> errors;
+  private final @NotNull List<PsiProcessingMessage> errors;
 
   public RequestParsingInvocationError(
       @NotNull String resourceName,
       @NotNull OperationKind operationKind,
       @Nullable String operationName,
       @NotNull String request,
-      @NotNull List<PsiProcessingError> errors) {
+      @NotNull List<PsiProcessingMessage> errors) {
 
     this.resourceName = resourceName;
     this.operationKind = operationKind;

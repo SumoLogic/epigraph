@@ -119,7 +119,7 @@ public class UpdateRequestUrlPsiParserTest {
         context
     );
 
-    failIfHasErrors(context.errors());
+    failIfHasErrors(context.messages());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 

@@ -41,7 +41,7 @@ public final class SchemaGDataPsiParser {
       throws PsiProcessingException {
     if (psi.getData() != null) return parseData(psi.getData(), context);
     else if (psi.getDatum() != null) return parseDatum(psi.getDatum(), context);
-    else throw new PsiProcessingException("Neither data nor datum is set", psi, context.errors());
+    else throw new PsiProcessingException("Neither data nor datum is set", psi, context.messages());
   }
 
   public static @NotNull GData parseData(@NotNull SchemaData psi, @NotNull PsiProcessingContext context)
@@ -52,7 +52,7 @@ public final class SchemaGDataPsiParser {
     for (SchemaDataEntry entry : psi.getDataEntryList()) {
       @Nullable SchemaDatum value = entry.getDatum();
       if (value == null) throw new PsiProcessingException(
-          String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, context.errors()
+          String.format("Got 'null' value for tag '%s'", entry.getQid().getCanonicalName()), psi, context.messages()
       );
       else tags.put(entry.getQid().getCanonicalName(), parseDatum(value, context));
     }
@@ -75,7 +75,7 @@ public final class SchemaGDataPsiParser {
       return parsePrimitive((SchemaPrimitiveDatum) psi, context);
     else if (psi instanceof SchemaNullDatum)
       return parseNull((SchemaNullDatum) psi, context);
-    else throw new PsiProcessingException("Unknown value element", psi, context.errors());
+    else throw new PsiProcessingException("Unknown value element", psi, context.messages());
   }
 
   public static @NotNull GRecordDatum parseRecord(@NotNull SchemaRecordDatum psi, @NotNull PsiProcessingContext context)
@@ -91,7 +91,7 @@ public final class SchemaGDataPsiParser {
         );
         else fields.put(entry.getQid().getCanonicalName(), parseValue(value, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.errors());
+        context.setErrors(e.messages());
       }
     }
 
@@ -111,7 +111,7 @@ public final class SchemaGDataPsiParser {
         );
         else map.put(parseDatum(entry.getDatum(), context), parseValue(dataValue, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.errors());
+        context.setErrors(e.messages());
       }
     }
 
@@ -129,7 +129,7 @@ public final class SchemaGDataPsiParser {
       try {
         items.add(parseValue(value, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.errors());
+        context.setErrors(e.messages());
       }
 
     return new GListDatum(getTypeRef(typeRef, context), items, EpigraphPsiUtil.getLocation(psi));
@@ -161,7 +161,7 @@ public final class SchemaGDataPsiParser {
       throw new PsiProcessingException(
           String.format("Don't know how to handle primitive '%s'", psi.getText()),
           psi,
-          context.errors()
+          context.messages()
       );
 
     return new GPrimitiveDatum(getTypeRef(typeRef, context), value, EpigraphPsiUtil.getLocation(psi));

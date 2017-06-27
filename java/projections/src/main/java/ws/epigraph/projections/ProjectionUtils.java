@@ -19,6 +19,7 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.AnonListTypeName;
 import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
@@ -324,7 +325,8 @@ public final class ProjectionUtils {
   }
 
   public static @Nullable ProjectionReferenceName findUniqueName(
-      @NotNull Collection<? extends GenProjectionReference<?>> elements) {
+      @NotNull Collection<? extends GenProjectionReference<?>> elements,
+      @NotNull TextLocation location) {
 
     ProjectionReferenceName res = null;
 
@@ -334,8 +336,8 @@ public final class ProjectionUtils {
         if (res == null) res = rn;
         else throw new IllegalArgumentException(
             String.format(
-                "Merging multiple projection references is not yet supported. '%s' conflicts with '%s'",
-                rn.toString(), res.toString()
+                "Merging multiple projection references is not yet supported. '%s' conflicts with '%s' (at %s)",
+                rn.toString(), res.toString(), location
             )
         );
       }

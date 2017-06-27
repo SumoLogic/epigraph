@@ -21,7 +21,7 @@ import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemasPsiProcessingContext;
 import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
@@ -62,7 +62,7 @@ public final class RoutingTestUtil {
           schemasPsiProcessingContext
       );
       schemasPsiProcessingContext.ensureAllReferencesResolved();
-      context.setErrors(schemasPsiProcessingContext.errors());
+      context.setErrors(schemasPsiProcessingContext.messages());
       return schema;
     });
   }
@@ -73,11 +73,11 @@ public final class RoutingTestUtil {
 
       OperationSearchFailure<? extends Operation<?, ?, ?>> failure =
           (OperationSearchFailure<? extends Operation<?, ?, ?>>) oss;
-      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingError>> entry : failure.errors()
+      for (final Map.Entry<? extends Operation<?, ?, ?>, List<PsiProcessingMessage>> entry : failure.errors()
           .entrySet()) {
         final Operation<?, ?, ?> op = entry.getKey();
         msg.append("\nOperation defined at ").append(op.declaration().location()).append(" errors:\n");
-        for (final PsiProcessingError error : entry.getValue()) {
+        for (final PsiProcessingMessage error : entry.getValue()) {
           msg.append(error).append("\n");
         }
       }

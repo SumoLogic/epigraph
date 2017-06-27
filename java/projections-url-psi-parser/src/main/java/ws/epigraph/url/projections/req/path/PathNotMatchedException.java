@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package ws.epigraph.url.projections.req.path;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.psi.PsiProcessingException;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class PathNotMatchedException extends PsiProcessingException {
   public PathNotMatchedException(
       final @NotNull String message,
       final @NotNull PsiElement psi,
-      final @NotNull List<PsiProcessingError> precedingErrors) {
+      final @NotNull List<PsiProcessingMessage> precedingErrors) {
     super(message, psi, precedingErrors);
   }
 

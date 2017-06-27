@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,6 +158,7 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
     while (jarSources.hasNext()) sources.add(jarSources.next());
   }
 
+  // todo duplicates code from BaseCodegenMojo
   private @NotNull CContext compile(
       Collection<? extends FileSource> sources,
       Collection<? extends Source> dependencySources
@@ -168,16 +169,27 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
       return compiler.compile();
     } catch (EpigraphCompilerException failure) {
       StringBuilder sb = new StringBuilder();
-      for (CError err : compiler.ctx().errors()) {
-        CErrorPosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
+      for (CMessage err : compiler.ctx().errors()) {
+        CMessagePosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
         sb.append(err.filename()).append(':').append(pos.line()).append(':').append(pos.column()).append('\n');
-        sb.append("Error: ").append(err.message()).append('\n');
+
+
+        if (err.level().equals(CMessageLevel.Error$.MODULE$)) {
+          sb.append("Error");
+        } else if (err.level().equals(CMessageLevel.Warning$.MODULE$)) {
+          sb.append("Warning");
+        } else {
+          sb.append("Message");
+        }
+
+        sb.append(": ").append(err.message()).append('\n');
         Option<String> errText = pos.lineText();
         if (errText.nonEmpty()) {
           sb.append('\177').append(errText.get()).append('\n');
           sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
         }
       }
+
       throw new MojoFailureException(this, "Schema compilation failed", sb.toString());
     }
 

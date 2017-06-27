@@ -1,8 +1,3 @@
-apply plugin: 'java'
-apply plugin: 'application'
-
-mainClassName = 'ws.epigraph.schema.parser.Main'
-
 /*
  * Copyright 2017 Sumo Logic
  *
@@ -18,6 +13,11 @@ mainClassName = 'ws.epigraph.schema.parser.Main'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'ws.epigraph.schema.parser.Main'
 
 //sourceSets.main.java.srcDirs += file('src/main~schema-parser-common/java')
 //sourceSets.main.java.srcDirs += file('src/main~schema-parser-common/java.generated')

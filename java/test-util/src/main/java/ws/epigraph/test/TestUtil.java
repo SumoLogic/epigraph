@@ -413,10 +413,10 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static void failIfHasErrors(final List<PsiProcessingError> errors) {
+  public static void failIfHasErrors(final List<PsiProcessingMessage> errors) {
     if (!errors.isEmpty()) {
       StringBuilder sb = new StringBuilder("\n");
-      for (final PsiProcessingError error : errors)
+      for (final PsiProcessingMessage error : errors)
         sb.append(error.location()).append(": ").append(error.message()).append("\n");
 
       fail(sb.toString());
@@ -444,10 +444,10 @@ public final class TestUtil {
     try {
       r = closure.runParser(context);
     } catch (PsiProcessingException e) {
-      context.setErrors(e.errors());
+      context.setErrors(e.messages());
     }
 
-    failIfHasErrors(context.errors());
+    failIfHasErrors(context.messages());
 
     assert r != null;
     return r;
@@ -459,7 +459,7 @@ public final class TestUtil {
 
     R r = closure.runParser(context);
 
-    final List<PsiProcessingError> errors = context.errors();
+    final List<PsiProcessingMessage> errors = context.messages();
     if (!errors.isEmpty()) throw new PsiProcessingException("got parsing errors", PsiUtil.NULL_PSI_ELEMENT, errors);
 
     assert r != null;

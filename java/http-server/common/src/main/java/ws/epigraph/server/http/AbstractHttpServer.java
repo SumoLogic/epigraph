@@ -866,10 +866,10 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           psiProcessingContext
       );
     } catch (PsiProcessingException e) {
-      psiProcessingContext.setErrors(e.errors());
+      psiProcessingContext.setErrors(e.messages());
     }
 
-    if (!psiProcessingContext.errors().isEmpty()) {
+    if (!psiProcessingContext.messages().isEmpty()) {
       return CompletableFuture.completedFuture(
           InvocationResult.failure(
               new RequestParsingInvocationError(
@@ -877,7 +877,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                   OperationKind.CUSTOM,
                   operationName,
                   decodedUri,
-                  psiProcessingContext.errors()
+                  psiProcessingContext.messages()
               )
           )
       );
@@ -1084,7 +1084,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
                   OperationKind.READ,
                   operationName,
                   requestText,
-                  e.errors()
+                  e.messages()
               )
           )
       );

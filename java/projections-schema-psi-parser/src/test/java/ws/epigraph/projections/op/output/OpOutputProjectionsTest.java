@@ -324,7 +324,7 @@ public class OpOutputProjectionsTest {
     referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", personProjection, TextLocation.UNKNOWN);
-    failIfHasErrors(ppc.errors());
+    failIfHasErrors(ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -369,7 +369,7 @@ public class OpOutputProjectionsTest {
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
 //    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
-    failIfHasErrors(ppc.errors());
+    failIfHasErrors(ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -405,7 +405,7 @@ public class OpOutputProjectionsTest {
     referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", paginationProjection, TextLocation.UNKNOWN);
-    failIfHasErrors(ppc.errors());
+    failIfHasErrors(ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -684,6 +684,35 @@ public class OpOutputProjectionsTest {
         projection,
         projection
     );
+  }
+
+  @Test
+  public void testSameTypeTails() throws PsiProcessingException {
+    //noinspection ErrorNotRethrown
+    try {
+      testTailsNormalization(
+          ":`record`(id)~~(ws.epigraph.tests.User:`record`(firstName),ws.epigraph.tests.User:`record`(lastName))",
+          User.type,
+          ""
+      );
+    } catch (AssertionError e) {
+      assertTrue(e.getMessage().contains("Polymorphic tail for type 'ws.epigraph.tests.User' is already defined at"));
+    }
+  }
+
+  @Test
+  public void testSameTypeModelTails() throws PsiProcessingException {
+    //noinspection ErrorNotRethrown
+    try {
+      testModelTailsNormalization(
+          ":`record`(id)~(ws.epigraph.tests.UserRecord $p=(firstName),ws.epigraph.tests.UserRecord $p)",
+          UserRecord.type,
+          ""
+      );
+    } catch (AssertionError error) {
+      assertTrue(error.getMessage()
+          .contains("Polymorphic tail for type 'ws.epigraph.tests.UserRecord' is already defined at"));
+    }
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {

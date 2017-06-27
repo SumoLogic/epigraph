@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,9 @@ abstract class CTypeRef protected(val csf: CSchemaFile)(implicit val ctx: CConte
   @throws[CompilerException]("If typeref hasn't been resolved")
   def resolved: Type = typeOptVar.getOrElse {
     ctx.errors.add(
-      CError(
+      CMessage.error(
         csf.filename,
-        CErrorPosition.NA,
+        CMessagePosition.NA,
         s"Type '${name.name}' has not been resolved"
 //        s"Type '${name.name}' has not been resolved. Created at:\n\t"+createdAt.toSeq.map(x => x.getFileName+" : "+x.getLineNumber).mkString("\n\t")
       )

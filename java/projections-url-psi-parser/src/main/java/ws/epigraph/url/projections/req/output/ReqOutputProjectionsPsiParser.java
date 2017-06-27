@@ -152,7 +152,7 @@ public final class ReqOutputProjectionsPsiParser {
       // usual var projection
       final UrlReqOutputUnnamedTrunkVarProjection unnamedVarProjection = psi.getReqOutputUnnamedTrunkVarProjection();
       if (unnamedVarProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
       else {
         return parseUnnamedTrunkVarProjection(
             dataType,
@@ -414,7 +414,7 @@ public final class ReqOutputProjectionsPsiParser {
       // usual var projection
       final UrlReqOutputUnnamedComaVarProjection unnamedVarProjection = psi.getReqOutputUnnamedComaVarProjection();
       if (unnamedVarProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
       else {
         return parseUnnamedComaVarProjection(
             dataType,
@@ -432,7 +432,7 @@ public final class ReqOutputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String referenceName = varProjectionRefPsi.getCanonicalName();

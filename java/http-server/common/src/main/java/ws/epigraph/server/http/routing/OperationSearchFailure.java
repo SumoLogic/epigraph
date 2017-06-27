@@ -18,7 +18,7 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.psi.PsiProcessingError;
+import ws.epigraph.psi.PsiProcessingMessage;
 import ws.epigraph.service.operations.Operation;
 
 import java.util.List;
@@ -28,10 +28,10 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OperationSearchFailure<O extends Operation<?, ?, ?>> implements OperationSearchResult<O> {
-  private final @NotNull Map<O, List<PsiProcessingError>> errors;
+  private final @NotNull Map<O, List<PsiProcessingMessage>> errors;
 
-  public OperationSearchFailure(final @NotNull Map<O, List<PsiProcessingError>> errors) { this.errors = errors; }
+  public OperationSearchFailure(final @NotNull Map<O, List<PsiProcessingMessage>> errors) { this.errors = errors; }
 
   @Contract(pure = true)
-  public @NotNull Map<O, List<PsiProcessingError>> errors() { return errors; }
+  public @NotNull Map<O, List<PsiProcessingMessage>> errors() { return errors; }
 }

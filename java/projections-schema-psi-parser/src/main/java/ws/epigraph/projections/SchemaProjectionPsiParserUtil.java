@@ -20,6 +20,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.names.TypeName;
+import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
@@ -36,8 +39,7 @@ import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -138,7 +140,7 @@ public final class SchemaProjectionPsiParserUtil {
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaQid qid = paramPsi.getQid();
-    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, context.errors());
+    if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, context.messages());
     @NotNull String paramName = qid.getCanonicalName();
 
     @Nullable SchemaTypeRef typeRef = paramPsi.getTypeRef();
@@ -146,7 +148,7 @@ public final class SchemaProjectionPsiParserUtil {
       throw new PsiProcessingException(
           String.format("Parameter '%s' type not specified", paramName),
           paramPsi,
-          context.errors()
+          context.messages()
       );
     @NotNull TypeRef paramTypeRef = TypeRefs.fromPsi(typeRef, context);
     @Nullable DatumTypeApi paramType = paramTypeRef.resolveDatumType(resolver);
@@ -155,7 +157,7 @@ public final class SchemaProjectionPsiParserUtil {
       throw new PsiProcessingException(
           String.format("Can't resolve parameter '%s' data type '%s'", paramName, paramTypeRef),
           paramPsi,
-          context.errors()
+          context.messages()
       );
 
     @Nullable SchemaOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
@@ -218,6 +220,76 @@ public final class SchemaProjectionPsiParserUtil {
         (kp1, kp2) -> kp1 == null ? kp2 : kp1
     );
 
+  }
+
+  public static void checkDuplicatingEntityTails(
+      @NotNull List<? extends GenVarProjection<?, ?, ?>> tails,
+      @NotNull PsiProcessingContext context) {
+
+    Set<TypeName> reportedTypes = new HashSet<>();
+
+    for (int i = 0; i < tails.size(); i++) {
+      GenVarProjection<?, ?, ?> tail = tails.get(i);
+      TypeApi type = tail.type();
+      TypeName typeName = type.name();
+
+      if (!reportedTypes.contains(typeName)) {
+
+        for (int j = i + 1; j < tails.size(); j++) {
+          GenVarProjection<?, ?, ?> tail2 = tails.get(j);
+          TypeApi type2 = tail2.type();
+          TypeName typeName2 = type2.name();
+
+          if (typeName.equals(typeName2)) {
+            reportedTypes.add(typeName);
+            context.addWarning(
+                String.format(
+                    "Polymorphic tail for type '%s' is already defined at %s",
+                    typeName,
+                    tail.location()
+                ),
+                tail2.location()
+            );
+          }
+
+        }
+      }
+    }
+  }
+
+  public static void checkDuplicatingModelTails(
+      @NotNull List<? extends GenModelProjection<?, ?, ?, ?>> tails,
+      @NotNull PsiProcessingContext context) {
+
+    Set<TypeName> reportedTypes = new HashSet<>();
+
+    for (int i = 0; i < tails.size(); i++) {
+      GenModelProjection<?, ?, ?, ?> tail = tails.get(i);
+      DatumTypeApi type = tail.type();
+      TypeName typeName = type.name();
+
+      if (!reportedTypes.contains(typeName)) {
+
+        for (int j = i + 1; j < tails.size(); j++) {
+          GenModelProjection<?, ?, ?, ?> tail2 = tails.get(j);
+          DatumTypeApi type2 = tail2.type();
+          TypeName typeName2 = type2.name();
+
+          if (typeName.equals(typeName2)) {
+            reportedTypes.add(typeName);
+            context.addWarning(
+                String.format(
+                    "Polymorphic tail for type '%s' is already defined at %s",
+                    typeName,
+                    tail.location()
+                ),
+                tail2.location()
+            );
+          }
+
+        }
+      }
+    }
   }
 
 }

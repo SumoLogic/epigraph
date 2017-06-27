@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 import org.slf4s.Logging
-import ws.epigraph.psi.{PsiProcessingError, PsiProcessingException}
+import ws.epigraph.psi.{PsiProcessingMessage, PsiProcessingException}
 import ws.epigraph.schema.SchemasPsiProcessingContext
 import ws.epigraph.schema.parser.psi._
 import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
@@ -43,9 +43,9 @@ class EpigraphCompiler(
   {
     val files = if (sources.size == 1) "file" else "files"
     val deps = if (dependencies.size == 1) "dependency" else "dependencies"
-    log.info(s"Compiling ${sources.size} Epigraph source $files and ${dependencies.size} $deps")
-    sources foreach { s => log.debug(s"Source: ${s.name}") }
-    dependencies foreach { s => log.debug(s"Dependency: ${s.name}") }
+    log.info(s"Compiling ${ sources.size } Epigraph source $files and ${ dependencies.size } $deps")
+    sources foreach { s => log.debug(s"Source: ${ s.name }") }
+    dependencies foreach { s => log.debug(s"Dependency: ${ s.name }") }
   }
 
   private val spd = new SchemaParserDefinition
@@ -135,23 +135,23 @@ class EpigraphCompiler(
 
   private def parseSourceFiles(sources: util.Collection[_ <: Source]): Seq[SchemaFile] = {
 
-    val schemaFiles: Seq[SchemaFile] = sources.par.flatMap{ source =>
+    val schemaFiles: Seq[SchemaFile] = sources.par.flatMap { source =>
       try {
         parseFile(source, spd) match {
           case sf: SchemaFile =>
             Seq(sf)
           case _ =>
-            ctx.errors.add(CError(source.name, CErrorPosition.NA, "Couldn't parse"))
+            ctx.errors.add(CMessage.error(source.name, CMessagePosition.NA, "Couldn't parse"))
             Nil
         }
       } catch {
         case ioe: IOException =>
-          ctx.errors.add(CError(source.name, CErrorPosition.NA, "Couldn't read"))
+          ctx.errors.add(CMessage.error(source.name, CMessagePosition.NA, "Couldn't read"))
           Nil
       }
     }(collection.breakOut)
 
-    schemaFiles.foreach{ sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
+    schemaFiles.foreach { sf => ctx.errors.addAll(ParseErrorsDumper.collectParseErrors(sf)) }
 
     schemaFiles
   }
@@ -165,10 +165,10 @@ class EpigraphCompiler(
       csf.typeDefs foreach { ct =>
         val old: CTypeDef = ctx.typeDefs.putIfAbsent(ct.name, ct)
         if (old != null) ctx.errors.add(
-          CError(
+          CMessage.error(
             csf.filename,
             csf.position(ct.name.psi),
-            s"Type '${ct.name.name}' already defined at '${old.csf.location(old.psi.getQid)}'"
+            s"Type '${ ct.name.name }' already defined at '${ old.csf.location(old.psi.getQid) }'"
           )
         )
       }
@@ -180,7 +180,13 @@ class EpigraphCompiler(
       case ctr: CTypeDefRef =>
         @Nullable val refType = ctx.typeDefs.get(ctr.name)
         if (refType == null) {
-          ctx.errors.add(CError(csf.filename, csf.position(ctr.name.psi), s"Not found: type '${ctr.name.name}'"))
+          ctx.errors.add(
+            CMessage.error(
+              csf.filename,
+              csf.position(ctr.name.psi),
+              s"Not found: type '${ ctr.name.name }'"
+            )
+          )
         } else {
           ctr.resolveTo(refType)
         }
@@ -191,40 +197,40 @@ class EpigraphCompiler(
     }
   }
 
-    private def validateVarTypeTags(): Unit = ctx.typeDefs.values().foreach{
-      case vt: CEntityTypeDef =>
-        vt.declaredTags.foreach {tag =>
-          tag.typeRef.resolved match {
-            case dt: CDatumType =>
-            case t => ctx.errors.add(
-              CError(
-                vt.csf.filename,
-                tag.csf.position(tag.locationPsi),
-                s"Type `${t.name.name}` of tag `${tag.name}` in type `${vt.name.name}` is not a datum type"
-              )
+  private def validateVarTypeTags(): Unit = ctx.typeDefs.values().foreach {
+    case vt: CEntityTypeDef =>
+      vt.declaredTags.foreach { tag =>
+        tag.typeRef.resolved match {
+          case dt: CDatumType =>
+          case t => ctx.errors.add(
+            CMessage.error(
+              vt.csf.filename,
+              tag.csf.position(tag.locationPsi),
+              s"Type `${ t.name.name }` of tag `${ tag.name }` in type `${ vt.name.name }` is not a datum type"
             )
-          }
+          )
         }
-      case _ =>
-    }
+      }
+    case _ =>
+  }
 
-    private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach{
+  private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach {
     case md: CMapTypeDef =>
       md.keyTypeRef.resolved match {
         case kdt: CDatumType =>
           if (kdt.meta.isDefined)
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 md.csf.filename,
                 md.csf.position(md.psi),
-                s"Map type '${md.name.name}' key type '${kdt.name.name}' should not have a meta-type"
+                s"Map type '${ md.name.name }' key type '${ kdt.name.name }' should not have a meta-type"
               )
             )
         case kt => ctx.errors.add(
-          CError(
+          CMessage.error(
             md.csf.filename,
             md.csf.position(md.psi),
-            s"Map type '${md.name.name}' key type '${kt.name.name}' is not a datum type"
+            s"Map type '${ md.name.name }' key type '${ kt.name.name }' is not a datum type"
           )
         )
       }
@@ -270,34 +276,46 @@ class EpigraphCompiler(
 
       try {
         val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, context)
-        handlePsiErrors(csf, context.errors())
+        handlePsiMessages(csf, context.messages())
         ctx.resourcesSchemas.put(csf, resourcesSchema)
       } catch {
-        case e: PsiProcessingException => handlePsiErrors(csf, e.errors())
+        case e: PsiProcessingException => handlePsiMessages(csf, e.messages())
       }
     }
 
     context.ensureAllReferencesResolved()
-    if (context.errors().nonEmpty)
-      handlePsiErrors(ctx.schemaFiles.toMap, context.errors())
+    if (context.messages().nonEmpty)
+      handlePsiMessages(ctx.schemaFiles.toMap, context.messages())
   }
 
-  private def handlePsiErrors(csf: CSchemaFile, psiErrors: java.util.List[PsiProcessingError]): Unit = {
-    lazy val reporter = ErrorReporter.reporter(csf)
-    psiErrors.foreach{ e => reporter.error(e.message(), e.location()) }
-    psiErrors.clear()
+  private def handlePsiMessages(csf: CSchemaFile, psiMessages: java.util.List[PsiProcessingMessage]): Unit = {
+    handlePsiMessages(ErrorReporter.reporter(csf), psiMessages)
   }
 
-  private def handlePsiErrors(csfs: Map[String, CSchemaFile], psiErrors: java.util.List[PsiProcessingError]): Unit = {
-    lazy val reporter = ErrorReporter.reporter(csfs)
-    psiErrors.foreach { e => reporter.error(e.message(), e.location()) }
-    psiErrors.clear()
+  private def handlePsiMessages(csfs: Map[String, CSchemaFile], psiMessages: java.util.List[PsiProcessingMessage]): Unit = {
+    handlePsiMessages(ErrorReporter.reporter(csfs), psiMessages)
+  }
+
+  private def handlePsiMessages(reporter: ErrorReporter, psiMessages: util.List[PsiProcessingMessage]) = {
+    psiMessages.foreach { e =>
+      reporter.message(
+        e.message(), e.location(), e.level() match {
+          case PsiProcessingMessage.Level.ERROR => CMessageLevel.Error
+          case PsiProcessingMessage.Level.WARNING => CMessageLevel.Warning
+        }
+      )
+    }
+    psiMessages.clear()
   }
 
   @throws[EpigraphCompilerException]
   private def handleErrors(exitCode: Int): Unit = if (ctx.errors.nonEmpty) {
     EpigraphCompiler.renderErrors(ctx)
-    throw new EpigraphCompilerException(exitCode.toString, ctx.errors, null)
+
+    if (ctx.errors.exists(m => m.level == CMessageLevel.Error))
+      throw new EpigraphCompilerException(exitCode.toString, ctx.errors, null)
+
+    ctx.errors.clear()
   }
 
   private def printSchemaFiles(schemaFiles: GenTraversableOnce[CSchemaFile]): Unit = schemaFiles foreach {
@@ -324,6 +342,6 @@ object EpigraphCompiler extends Logging {
 
 class EpigraphCompilerException(
   message: String,
-  val errors: util.Collection[CError],
+  val messages: util.Collection[CMessage],
   cause: Throwable = null
 ) extends RuntimeException(message, cause)

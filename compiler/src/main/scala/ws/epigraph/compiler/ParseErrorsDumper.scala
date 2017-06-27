@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +43,14 @@ object ParseErrorsDumper {
     file.accept(visitor)
   }
 
-  def collectParseErrors(sf: SchemaFile, tabWidth: Int = 2): Seq[CError] = {
-    val errors = mutable.Buffer[CError]()
+  def collectParseErrors(sf: SchemaFile, tabWidth: Int = 2): Seq[CMessage] = {
+    val errors = mutable.Buffer[CMessage]()
     val fileName = sf.getName
     lazy val lineNumberUtil = new LineNumberUtil(sf.getText, tabWidth)
 
     val visitor = new PsiRecursiveElementWalkingVisitor() {
       override def visitErrorElement(element: PsiErrorElement): Unit = {
-        errors += CError(fileName, lineNumberUtil.pos(element), element.getErrorDescription)
+        errors += CMessage.error(fileName, lineNumberUtil.pos(element), element.getErrorDescription)
       }
     }
     sf.accept(visitor)

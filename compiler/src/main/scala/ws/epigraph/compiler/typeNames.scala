@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ class CTypeFqn (csf: CSchemaFile, val fqn: Qn, val psi: PsiElement)(implicit ctx
 
   private def validate(local: String)(implicit ctx: CContext): String = {
     if (!CTypeFqn.LocalTypeNamePattern.matcher(local).matches) ctx.errors.add(
-      CError(csf.filename, csf.position(psi), s"Invalid type name '$local'")
+      CMessage.error(csf.filename, csf.position(psi), s"Invalid type name '$local'")
     )
     local
   }

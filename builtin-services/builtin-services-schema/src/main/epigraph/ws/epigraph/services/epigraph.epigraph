@@ -56,14 +56,13 @@ resource epigraph: EpigraphResource {
     tags [] ($dataProjection)
   )
 
-  // todo uncommenting this code breaks codegen: fix merging recursive projections
-  outputProjection datumProjection: Datum = ( type $typeProjection ) /* ~ (
-    RecordDatum $recordDatumProjection,
-    MapDatum $mapDatumProjection,
-    ListDatum $listDatumProjection,
-    RecordDatum $recordDatumProjection,
-    PrimitiveDatum $primitiveDatumProjection
-  ) */
+  outputProjection datumProjection: Datum = ( type $typeProjection )  ~ (
+  // todo fixme
+//    RecordDatum $recordDatumProjection,
+//    MapDatum $mapDatumProjection,
+//    ListDatum $listDatumProjection,
+//    PrimitiveDatum $primitiveDatumProjection
+  )
 
   outputProjection recordDatumProjection: RecordDatum = ( fields [] ( $valueProjection ) )
 

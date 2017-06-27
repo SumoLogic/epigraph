@@ -131,7 +131,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
         bad foreach { st =>
           val stSource = if (injectedTypes.contains(st)) "injected" else "declared"
           ctx.errors.add(
-            CError(
+            CMessage.error(
               csf.filename, csf.position(psi.getQid), // TODO use injection source/position for injection failures
               s"Type ${name.name} (of '${kind.keyword}' kind) is not compatible with $stSource supertype ${st.name.name} (of `${st.kind.keyword}` kind)"
             )
@@ -141,7 +141,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
         _computedSupertypes = Some(good.asInstanceOf[Seq[Super]].flatMap { st => st.supertypes :+ st }.distinct)
       } else {
         ctx.errors.add(
-          CError(
+          CMessage.error(
             csf.filename, csf.position(psi.getQid),
             s"Cyclic inheritance: type ${visited.view(0, thisIdx + 2).reverseIterator.map(_.name.name).mkString(" < ")}"
           )
@@ -241,7 +241,7 @@ class CEntityTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(im
         supertags foreach { st =>
           if (!dt.compatibleWith(st)) {
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 csf.filename, csf.position(dt.locationPsi),
                 s"Type `${
                   dt.typeRef.resolved.name.name
@@ -259,7 +259,7 @@ class CEntityTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(im
             narrowest
           case None =>
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 csf.filename, csf.position(psi.getQid), s"Multiple inherited tags `${supertags.head.name}` of types ${
                   supertags.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
@@ -336,7 +336,7 @@ trait CDatumType extends CType {self =>
           else if (p.isAssignableFrom(m)) msm
           else {
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 csf.filename,
                 csf.position(psi),
                 "Parent meta-types are not compatible" // TODO better explanation
@@ -355,7 +355,7 @@ trait CDatumType extends CType {self =>
         case t: CDatumType => Some(t)
         case x =>
           ctx.errors.add(
-            CError(
+            CMessage.error(
               csf.filename,
               csf.position(metaDeclPsi.get),
               s"Declared meta-type '${x.name.toString}' is not a datum type"
@@ -371,7 +371,7 @@ trait CDatumType extends CType {self =>
         else if (p.isAssignableFrom(m)) _declaredMeta
         else {
           ctx.errors.add(
-            CError(
+            CMessage.error(
               csf.filename,
               csf.position(metaDeclPsi.get),
               "Parent meta-types are not compatible with current meta-type" // TODO better explanation
@@ -428,7 +428,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
         superfields foreach { sf =>
           if (!df.compatibleWith(sf)) {
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 csf.filename, csf.position(df.psi),
                 s"Type `${
                   df.typeRef.resolved.name.name
@@ -446,7 +446,7 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
             narrowest // TODO check the narrowest field is default-tag-compatible with the rest
           case None =>
             ctx.errors.add(
-              CError(
+              CMessage.error(
                 csf.filename, csf.position(psi.getQid), s"Multiple inherited `${superfields.head.name}` fields of types ${
                   superfields.map(_.typeRef.resolved.name.name).mkString("`", "`, `", "`")
                 } must be overridden with common subtype"
@@ -600,7 +600,7 @@ class CAnonMapType(override val name: CAnonMapTypeName)(implicit ctx: CContext) 
     val parents = valueDataType.typeRef.resolved match {
       case vt: CEntityTypeDef => valueDataType.effectiveDefaultTagName.map { tagName =>
         if (!vt.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
-          CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${vt.name.name}`")
+          CMessage.error(csf.filename, CMessagePosition.NA, s"Tag `$tagName` is not defined for union type `${vt.name.name}`")
         )
         ctx.getOrCreateAnonMapOf(keyTypeRef, vt.dataType(None))
       }.toSeq ++ vt.linearizedParents.map { vst =>
@@ -640,7 +640,7 @@ class CMapTypeDef(csf: CSchemaFile, override val psi: SchemaMapTypeDef)(implicit
   private lazy val _effectiveDefaultElementTagName: Option[String] = {
     linearizedParents.foreach { st =>
       if (!valueDataType.compatibleWith(st.valueDataType)) ctx.errors.add(
-        CError(
+        CMessage.error(
           csf.filename,
           csf.position(psi.getAnonMap),
           s"Type `$name` inherits from map type `${st.name.name}` with different default value tag `${st.valueDataType.effectiveDefaultTagName.get}`"
@@ -723,7 +723,7 @@ class CAnonListType(override val name: CAnonListTypeName)(implicit ctx: CContext
     val linParents = elementDataType.typeRef.resolved match {
       case et: CEntityTypeDef => elementDataType.effectiveDefaultTagName.map { tagName =>
         if (!et.effectiveTags.exists(_.name == tagName)) ctx.errors.add(
-          CError(csf.filename, CErrorPosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
+          CMessage.error(csf.filename, CMessagePosition.NA, s"Tag `$tagName` is not defined for union type `${et.name.name}`")
         )
         ctx.getOrCreateAnonListOf(et.dataType(None))
       }.toSeq ++ et.linearizedParents.map { est => /* FIXME parent might not have the tag */
@@ -762,7 +762,7 @@ class CListTypeDef(csf: CSchemaFile, override val psi: SchemaListTypeDef)(implic
   private lazy val _effectiveDefaultElementTagName: Option[String] = {
     linearizedParents.foreach { st =>
       if (!elementDataType.compatibleWith(st.elementDataType)) ctx.errors.add(
-        CError(
+        CMessage.error(
           csf.filename,
           csf.position(psi.getAnonList),
           s"Type `$name` inherits from list type `${st.name.name}` with different default element tag `${st.elementDataType.effectiveDefaultTagName.get}`"
@@ -838,7 +838,7 @@ private [compiler] object CTypeUtil {
       )
     )
     lazy val reporter = ErrorReporter.reporter(csf)
-    ppc.errors().foreach{ e => reporter.error(e.message(), e.location()) }
+    ppc.messages().foreach{ e => reporter.error(e.message(), e.location()) }
     res
   }.getOrElse(Annotations.EMPTY)
 }

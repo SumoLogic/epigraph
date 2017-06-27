@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ class CSchemaFile(val psi: SchemaFile, val isDependency: Boolean)(implicit val c
     new CTypeFqn(this, parentNamespace, sftr)
   }
 
-  def position(psi: PsiElement): CErrorPosition = {
+  def position(psi: PsiElement): CMessagePosition = {
     // TODO check element is ours?
     lnu.pos(psi)
   }
@@ -96,7 +96,7 @@ class CNamespace(val csf: CSchemaFile, val psi: SchemaNamespaceDecl)(implicit va
 
   private def validate(local: String)(implicit ctx: CContext): String = {
     if (!CNamespace.LocalNamespaceNamePattern.matcher(local).matches) ctx.errors.add(
-      CError(csf.filename, csf.position(psi), s"Invalid namespace name '$local'")
+      CMessage.error(csf.filename, csf.position(psi), s"Invalid namespace name '$local'")
     )
     local
   }

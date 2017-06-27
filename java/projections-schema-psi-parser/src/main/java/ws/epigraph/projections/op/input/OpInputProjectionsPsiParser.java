@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.*;
+import ws.epigraph.gdata.validation.OpInputGDataValidator;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
@@ -37,10 +38,12 @@ import ws.epigraph.schema.parser.SchemaPsiParserUtil;
 import ws.epigraph.schema.parser.psi.*;
 import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
-import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
@@ -69,7 +72,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition",
             psi,
-            context.errors()
+            context.messages()
         );
 
       return parseUnnamedOrRefVarProjection(
@@ -89,7 +92,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Incomplete var projection '%s' definition", projectionName),
             psi,
-            context.errors()
+            context.messages()
         );
 
       final OpInputVarProjection reference = context.referenceContext()
@@ -121,7 +124,7 @@ public final class OpInputProjectionsPsiParser {
       // usual var projection
       final SchemaOpInputUnnamedVarProjection unnamedVarProjection = psi.getOpInputUnnamedVarProjection();
       if (unnamedVarProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
       else return parseUnnamedVarProjection(
           dataType,
           unnamedVarProjection,
@@ -135,7 +138,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String projectionName = varProjectionRefPsi.getCanonicalName();
@@ -294,6 +297,7 @@ public final class OpInputProjectionsPsiParser {
         tails.add(tailProjection);
       }
 
+      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
     }
 
     return tails;
@@ -529,7 +533,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete model projection definition",
             psi,
-            context.errors()
+            context.messages()
         );
 
       return parseUnnamedOrRefModelProjection(
@@ -551,7 +555,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Incomplete model projection '%s' definition", projectionName),
             psi,
-            context.errors()
+            context.messages()
         );
 
       final MP reference = (MP) context.referenceContext()
@@ -595,7 +599,7 @@ public final class OpInputProjectionsPsiParser {
       // usual model projection
       final SchemaOpInputUnnamedModelProjection unnamedModelProjection = psi.getOpInputUnnamedModelProjection();
       if (unnamedModelProjection == null)
-        throw new PsiProcessingException("Incomplete model projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete model projection definition", psi, context.messages());
       else return parseUnnamedModelProjection(
           modelClass,
           type,
@@ -611,7 +615,7 @@ public final class OpInputProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete model projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String projectionName = modelProjectionRefPsi.getCanonicalName();
@@ -875,6 +879,9 @@ public final class OpInputProjectionsPsiParser {
             )
         );
       }
+
+      SchemaProjectionPsiParserUtil.checkDuplicatingModelTails(tails, context);
+
       return tails;
     }
   }
@@ -1098,7 +1105,7 @@ public final class OpInputProjectionsPsiParser {
           );
         }
       } catch (PsiProcessingException e) {
-        context.errors().add(e.toError());
+        context.messages().add(e.toMessage());
       }
     }
 

@@ -27,12 +27,12 @@ import java.util.List;
  */
 public interface PsiProcessingContext {
   @NotNull
-  List<PsiProcessingError> errors();
+  List<PsiProcessingMessage> messages();
 
-  default void setErrors(@NotNull List<PsiProcessingError> errors) {
-    if (errors() != errors) {
-      errors().clear();
-      errors().addAll(errors);
+  default void setErrors(@NotNull List<PsiProcessingMessage> messages) {
+    if (messages() != messages) {
+      messages().clear();
+      messages().addAll(messages);
     }
   }
 
@@ -41,16 +41,24 @@ public interface PsiProcessingContext {
   // todo PsiProcessingException should also hold additional context information (see first todo)
 
   default void addError(@NotNull String message, @NotNull TextLocation location) {
-    errors().add(new PsiProcessingError(message, location));
+    messages().add(PsiProcessingMessage.error(message, location));
   }
 
   default void addError(@NotNull String message, @NotNull PsiElement psi) {
-    errors().add(new PsiProcessingError(message, psi));
+    messages().add(new PsiProcessingMessage(PsiProcessingMessage.Level.ERROR, message, psi));
+  }
+
+  default void addWarning(@NotNull String message, @NotNull TextLocation location) {
+    messages().add(PsiProcessingMessage.warning(message, location));
+  }
+
+  default void addWarning(@NotNull String message, @NotNull PsiElement psi) {
+    messages().add(new PsiProcessingMessage(PsiProcessingMessage.Level.WARNING, message, psi));
   }
 
   default void addException(@NotNull PsiProcessingException ex) {
 //    final PsiProcessingError error = ex.toError();
 //    addError(error.message(), error.location());
-    errors().add(ex.toError());
+    messages().add(ex.toMessage());
   }
 }

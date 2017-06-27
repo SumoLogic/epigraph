@@ -70,7 +70,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition",
             psi,
-            context.errors()
+            context.messages()
         );
 
       return parseUnnamedOrRefVarProjection(
@@ -91,7 +91,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Incomplete var projection '%s' definition", projectionName),
             psi,
-            context.errors()
+            context.messages()
         );
 
       final OpDeleteVarProjection reference = context.referenceContext()
@@ -125,7 +125,7 @@ public final class OpDeleteProjectionsPsiParser {
       // usual var projection
       final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection = psi.getOpDeleteUnnamedVarProjection();
       if (unnamedVarProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
       else return parseUnnamedVarProjection(
           dataType,
           canDelete,
@@ -140,7 +140,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String projectionName = varProjectionRefPsi.getCanonicalName();
@@ -251,6 +251,7 @@ public final class OpDeleteProjectionsPsiParser {
         tails.add(tailProjection);
       }
 
+      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
     }
 
     try {
@@ -263,7 +264,7 @@ public final class OpDeleteProjectionsPsiParser {
           EpigraphPsiUtil.getLocation(psi)
       );
     } catch (IllegalArgumentException e) {
-      throw new PsiProcessingException(e, psi, context.errors());
+      throw new PsiProcessingException(e, psi, context.messages());
     }
   }
 
@@ -427,7 +428,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete model projection definition",
             psi,
-            context.errors()
+            context.messages()
         );
 
       return parseUnnamedOrRefModelProjection(
@@ -448,7 +449,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             String.format("Incomplete model projection '%s' definition", projectionName),
             psi,
-            context.errors()
+            context.messages()
         );
 
       final MP reference = (MP) context.referenceContext()
@@ -490,7 +491,7 @@ public final class OpDeleteProjectionsPsiParser {
       // usual model projection
       final SchemaOpDeleteUnnamedModelProjection unnamedModelProjection = psi.getOpDeleteUnnamedModelProjection();
       if (unnamedModelProjection == null)
-        throw new PsiProcessingException("Incomplete model projection definition", psi, context.errors());
+        throw new PsiProcessingException("Incomplete model projection definition", psi, context.messages());
       else return parseUnnamedModelProjection(
           modelClass,
           type,
@@ -505,7 +506,7 @@ public final class OpDeleteProjectionsPsiParser {
         throw new PsiProcessingException(
             "Incomplete model projection definition: name not specified",
             psi,
-            context.errors()
+            context.messages()
         );
 
       final String projectionName = modelProjectionRefPsi.getCanonicalName();
@@ -668,6 +669,9 @@ public final class OpDeleteProjectionsPsiParser {
             )
         );
       }
+
+      SchemaProjectionPsiParserUtil.checkDuplicatingModelTails(tails, context);
+
       return tails;
     }
   }

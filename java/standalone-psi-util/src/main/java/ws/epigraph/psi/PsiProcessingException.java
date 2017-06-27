@@ -31,33 +31,33 @@ import java.util.List;
  */
 public class PsiProcessingException extends Exception {
   private final @NotNull TextLocation location;
-  private final @NotNull List<PsiProcessingError> errors; // last item = this exception
+  private final @NotNull List<PsiProcessingMessage> messages; // last item = this exception
 
   public PsiProcessingException(
       @NotNull String message,
       @NotNull TextLocation location,
-      @NotNull List<PsiProcessingError> precedingErrors) {
+      @NotNull List<PsiProcessingMessage> precedingMessages) {
 
     super(message);
     this.location = location;
 
-    if (precedingErrors.isEmpty())
-      errors = Collections.singletonList(new PsiProcessingError(message, location));
+    if (precedingMessages.isEmpty())
+      messages = Collections.singletonList(PsiProcessingMessage.error(message, location));
     else {
-      this.errors = new ArrayList<>(precedingErrors);
-      errors.add(new PsiProcessingError(message, location));
+      this.messages = new ArrayList<>(precedingMessages);
+      messages.add(PsiProcessingMessage.error(message, location));
     }
   }
 
   public PsiProcessingException(
       @NotNull String message,
       @NotNull PsiElement psi,
-      @NotNull List<PsiProcessingError> precedingErrors) {
+      @NotNull List<PsiProcessingMessage> precedingMessages) {
 
     this(
         message,
         EpigraphPsiUtil.getLocation(psi),
-        precedingErrors
+        precedingMessages
     );
   }
 
@@ -66,7 +66,7 @@ public class PsiProcessingException extends Exception {
       @NotNull PsiElement psi,
       @NotNull PsiProcessingContext context) {
 
-    this(message, psi, context.errors());
+    this(message, psi, context.messages());
   }
 
   public PsiProcessingException(
@@ -74,23 +74,23 @@ public class PsiProcessingException extends Exception {
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) {
 
-    this(message, location, context.errors());
+    this(message, location, context.messages());
   }
 
   public PsiProcessingException(
       @NotNull Exception cause,
       @NotNull PsiElement psi,
-      @NotNull List<PsiProcessingError> precedingErrors) {
+      @NotNull List<PsiProcessingMessage> precedingMessages) {
 
     super(cause);
     this.location = EpigraphPsiUtil.getLocation(psi);
     final String message = cause.getMessage();
 
-    if (precedingErrors.isEmpty())
-      errors = Collections.singletonList(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
+    if (precedingMessages.isEmpty())
+      messages = Collections.singletonList(PsiProcessingMessage.error(message, EpigraphPsiUtil.getLocation(psi)));
     else {
-      this.errors = new ArrayList<>(precedingErrors);
-      errors.add(new PsiProcessingError(message, EpigraphPsiUtil.getLocation(psi)));
+      this.messages = new ArrayList<>(precedingMessages);
+      messages.add(PsiProcessingMessage.error(message, EpigraphPsiUtil.getLocation(psi)));
     }
   }
 
@@ -99,23 +99,21 @@ public class PsiProcessingException extends Exception {
       @NotNull PsiElement psi,
       @NotNull PsiProcessingContext context) {
 
-    this(cause, psi, context.errors());
+    this(cause, psi, context.messages());
   }
 
   /**
-   * @return list of errors, including this one (will be the last item)
+   * @return list of messages, including this error (will be the last item)
    */
-  public @NotNull List<PsiProcessingError> errors() { return errors; }
+  public @NotNull List<PsiProcessingMessage> messages() { return messages; }
 
   /**
    * @return this exception converted to an error
    */
-  public @NotNull PsiProcessingError toError() { return errors.get(errors.size() - 1); }
+  public @NotNull PsiProcessingMessage toMessage() { return messages.get(messages.size() - 1); }
 
   public @NotNull TextLocation location() { return location; }
 
   @Override
-  public String toString() {
-    return super.toString() + " at " + location();
-  }
+  public String toString() { return super.toString() + " at " + location(); }
 }

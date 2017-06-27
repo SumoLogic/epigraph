@@ -195,7 +195,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         sw.toString
       } else e.toString
 
-      cctx.errors.add(CError(null, CErrorPosition.NA, msg))
+      cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
     }
 
     if (ctx.settings.debug) {

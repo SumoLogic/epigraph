@@ -31,11 +31,11 @@ public class DelegatingPsiProcessingContext implements PsiProcessingContext {
   public DelegatingPsiProcessingContext(final @NotNull PsiProcessingContext delegate) {this.delegate = delegate;}
 
   @Override
-  public @NotNull List<PsiProcessingError> errors() { return delegate.errors(); }
+  public @NotNull List<PsiProcessingMessage> messages() { return delegate.messages(); }
 
   @Override
-  public void setErrors(final @NotNull List<PsiProcessingError> errors) {
-    delegate.setErrors(errors);
+  public void setErrors(final @NotNull List<PsiProcessingMessage> messages) {
+    delegate.setErrors(messages);
   }
 
   @Override
