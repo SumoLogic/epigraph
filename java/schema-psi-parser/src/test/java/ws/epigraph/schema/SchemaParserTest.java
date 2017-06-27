@@ -40,6 +40,7 @@ public class SchemaParserTest {
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
+      PersonRecord.type,
       User.type,
       UserId.type,
       UserRecord.type,
@@ -301,6 +302,137 @@ public class SchemaParserTest {
       assertTrue(e.getMessage(), e.getMessage().contains("Projection 'person1' is not defined"));
       assertTrue(e.getMessage(), e.getMessage().contains("Projection 'person2' is not defined"));
     }
+  }
+
+  @Test
+  public void testDoublePreReference() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[String,Person] {",
+            "  outputProjection prec1: PersonRecord = (firstName, worstEnemy $prec3)",
+            "  outputProjection prec2: PersonRecord = (lastName, worstEnemy $prec3)",
+            "  outputProjection prec3: PersonRecord = (firstName, lastName)",
+            "  read {",
+            "    outputProjection [] ( :`record` $prec1 )",
+            "  }",
+            "  read z {",
+            "    outputProjection [] ( :`record` $prec2 )",
+            "  }",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec1 )",
+            "  }",
+            "  read z {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec2 )",
+            "  }",
+            "  outputProjection prec1: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, worstEnemy $prec3 )",
+            "  outputProjection prec2: ws.epigraph.tests.PersonRecord =",
+            "    ( lastName, worstEnemy $prec3 )",
+            "  outputProjection prec3: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, lastName )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testDoublePostReference() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[String,Person] {",
+            "  read {",
+            "    outputProjection [] ( :`record` $prec1 )",
+            "  }",
+            "  read z {",
+            "    outputProjection [] ( :`record` $prec2 )",
+            "  }",
+            "  outputProjection prec1: PersonRecord = (firstName, worstEnemy $prec3)",
+            "  outputProjection prec2: PersonRecord = (lastName, worstEnemy $prec3)",
+            "  outputProjection prec3: PersonRecord = (firstName, lastName)",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec1 )",
+            "  }",
+            "  read z {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec2 )",
+            "  }",
+            "  outputProjection prec1: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, worstEnemy $prec3 )",
+            "  outputProjection prec2: ws.epigraph.tests.PersonRecord =",
+            "    ( lastName, worstEnemy $prec3 )",
+            "  outputProjection prec3: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, lastName )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testDoubleIntraReference() throws IOException {
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[String,Person] {",
+            "  outputProjection prec1: PersonRecord = (firstName, worstEnemy $prec3)",
+            "  read {",
+            "    outputProjection [] ( :`record` $prec1 )",
+            "  }",
+            "  outputProjection prec2: PersonRecord = (lastName, worstEnemy $prec3)",
+            "  read z {",
+            "    outputProjection [] ( :`record` $prec2 )",
+            "  }",
+            "  outputProjection prec3: PersonRecord = (firstName, lastName)",
+            "}"
+        ),
+        lines(
+            "namespace ws.epigraph.tests",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec1 )",
+            "  }",
+            "  read z {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ ]( :`record` $prec2 )",
+            "  }",
+            "  outputProjection prec1: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, worstEnemy $prec3 )",
+            "  outputProjection prec2: ws.epigraph.tests.PersonRecord =",
+            "    ( lastName, worstEnemy $prec3 )",
+            "  outputProjection prec3: ws.epigraph.tests.PersonRecord =",
+            "    ( firstName, lastName )",
+            "}"
+        )
+    );
+  }
+
+  @Test
+  public void testVarModelBackRef() throws IOException {
+    // test case for parser failing with "Internal error: different references to projection 'p3'"
+    testParse(
+        lines(
+            "namespace ws.epigraph.tests",
+            "outputProjection p1: UserRecord = (worstEnemy $p3)",
+            "outputProjection p2: PersonRecord = () ~ (UserRecord $p3)",
+            "outputProjection p3: UserRecord = ()"
+        ),
+        "namespace ws.epigraph.tests"
+    );
   }
 
   @Test

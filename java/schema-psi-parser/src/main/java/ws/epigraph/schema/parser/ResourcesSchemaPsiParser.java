@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ReferenceContext;
-import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -591,7 +590,7 @@ public final class ResourcesSchemaPsiParser {
             );
             innerReferenceContext.ensureAllReferencesResolved();
 
-            referenceContext.resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi), context);
+            referenceContext.resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedPsi));
           }
         }
       }

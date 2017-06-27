@@ -26,48 +26,50 @@ import ws.epigraph.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class ReferenceContext<
-    VP extends GenVarProjection<VP, ?, MP>,
+    EP extends GenVarProjection<EP, ?, MP>,
     MP extends GenModelProjection<?, ?, ?, ?>
     > {
 
   @NotNull
   private final ProjectionReferenceName referencesNamespace;
   @NotNull
-  private final PsiProcessingContext psiProcessingContext;
+  private final PsiProcessingContext context;
 
   @Nullable
-  private final ReferenceContext<VP, MP> parent;
-  private final Map<String, GenProjectionReference<?>> references = new HashMap<>();
+  private final ReferenceContext<EP, MP> parent;
+  private final Map<String, EP> entityReferences = new HashMap<>();
+  private final Map<String, MP> modelReferences = new HashMap<>();
   private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
   protected ReferenceContext(
       @NotNull final ProjectionReferenceName referencesNamespace,
-      @Nullable final ReferenceContext<VP, MP> parent,
+      @Nullable final ReferenceContext<EP, MP> parent,
       @NotNull PsiProcessingContext context) {
 
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;
-    psiProcessingContext = context;
+    this.context = context;
   }
 
   @NotNull
-  public VP varReference(
+  public EP varReference(
       @NotNull TypeApi type,
       @NotNull String name,
       boolean useParent,
       @NotNull TextLocation location) {
 
-    VP ref = lookupVarReference(name, useParent);
+    EP ref = lookupEntityReference(name, useParent);
 
     if (ref == null) {
       ref = newVarReference(type, location);
-      references.put(name, ref);
+      entityReferences.put(name, ref);
       return ref;
     } else return ref;
 
@@ -80,94 +82,116 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    MP ref = lookupModelReference(name, useParent, location);
+    MP ref = lookupModelReference(name, useParent);
 
     if (ref == null) {
       ref = newModelReference(type, location);
-      references.put(name, ref);
+      modelReferences.put(name, ref);
       return ref;
     } else return ref;
 
   }
 
   public boolean isResolved(@NotNull String name) {
-    final GenProjectionReference<?> reference = lookupReference(name, true);
-    return reference != null && reference.isResolved();
+    final GenProjectionReference<?> entityReference = lookupEntityReference(name, true);
+    final GenProjectionReference<?> modelReference = lookupModelReference(name, true);
+    return (entityReference != null && entityReference.isResolved()) ||
+           (modelReference != null && modelReference.isResolved());
   }
 
   @Nullable
-  private VP lookupVarReference(@NotNull String name, boolean useParent) {
-    final GenProjectionReference<?> reference = lookupReference(name, useParent);
+  private EP lookupEntityReference(@NotNull String name, boolean useParent) {
+    EP eref = entityReferences.get(name);
 
-    if (reference == null)
-      return null;
-
-    else if (reference instanceof GenVarProjection)
-      return (VP) reference;
-
-    else if (reference instanceof GenModelProjection)
-      return toSelfVar((MP) reference);
-
-    throw new RuntimeException(String.format("Unreachable: '%s'", name));
-  }
-
-  @Nullable
-  private MP lookupModelReference(@NotNull String name, boolean useParent, @NotNull TextLocation location)
-      throws PsiProcessingException {
-    final GenProjectionReference<?> reference = lookupReference(name, useParent);
-
-    if (reference == null)
-      return null;
-
-    else if (reference instanceof GenVarProjection) {
-      VP varRef = (VP) reference;
-      final TypeApi varType = varRef.type();
-
-      if (varType.kind() == TypeKind.ENTITY)
-        throw new PsiProcessingException(
-            String.format(
-                "Expected reference '%s' to be a model reference, got var reference instead",
-                name
-            ),
-            location, psiProcessingContext
-        );
-      else {
-        final TagApi selfTag = ((DatumTypeApi) varType).self();
-        if (!varRef.isResolved()) return null;
-        final GenTagProjectionEntry<?, MP> tpe = varRef.tagProjections().get(selfTag.name());
-        if (tpe == null) return null;
-        else return tpe.projection();
+    if (eref == null) {
+      MP mref = modelReferences.get(name);
+      if (mref == null) {
+        if (useParent && parent != null) { eref = parent.lookupEntityReference(name, true); }
+      } else if (mref.isResolved()) {
+        eref = toSelfVar(mref);
       }
 
-    } else if (reference instanceof GenModelProjection)
-      return (MP) reference;
+    }
 
-    throw new RuntimeException(String.format("Unreachable: '%s'", name));
+    return eref;
   }
 
   @Nullable
-  private GenProjectionReference<?> lookupReference(@NotNull String name, boolean useParent) {
-    GenProjectionReference<?> ref = references.get(name);
+  private MP lookupModelReference(@NotNull String name, boolean useParent) {
 
-    if (ref != null) return ref;
-    if (!useParent || parent == null) return null;
-    else return parent.lookupReference(name, true);
+    MP mref = modelReferences.get(name);
+
+    if (mref == null) {
+      EP eref = entityReferences.get(name);
+      if (eref == null) {
+        if (useParent && parent != null) { mref = parent.lookupModelReference(name, true); }
+      } else if (eref.isResolved()) {
+        mref = fromSelfVar(eref);
+      }
+    }
+
+    return mref;
   }
 
-  public <R extends GenProjectionReference<R>> void resolve(
-      @NotNull final String name,
-      @NotNull final R value,
-      @NotNull final TextLocation location,
-      @NotNull final PsiProcessingContext context) {
+  protected boolean hasReference(@NotNull String name) {
+    return modelReferences.containsKey(name) || entityReferences.containsKey(name) ||
+           (parent != null && parent.hasReference(name));
+  }
 
-    // R should also be super of VP & MP but Java can't express this
+  public <R extends GenProjectionReference<R>> void resolveEntityRef(
+      @NotNull String name,
+      @NotNull EP value,
+      @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
-      R ref = (R) references.get(name);
+      ProjectionReferenceName referenceName =
+          referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
 
-      if (ref == null) {
+      EP eref = entityReferences.get(name);
+      MP mref = modelReferences.get(name);
 
-        if (parent != null && parent.lookupReference(name, true) != null) {
+      if (eref != null) {
+        if (eref.isResolved()) {
+          context.addError(
+              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
+          );
+        } else {
+          if (eref.type().isAssignableFrom(value.type())) {
+            EP _normalized = value.normalizedForType(eref.type());
+            eref.resolve(referenceName, _normalized);
+            resolvedAt.put(name, location);
+
+          } else {
+            addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
+          }
+        }
+      }
+
+      if (mref != null) {
+        if (mref.isResolved()) {
+          context.addError(
+              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
+          );
+        } else {
+
+          if (mref.type().isAssignableFrom(value.type())) { // type correct?
+            EP _normalized = value.normalizedForType(mref.type());
+            if (_normalized.type().kind() == TypeKind.ENTITY) // type still correct after normalization?
+              throw new RuntimeException(
+                  String.format("Broken isAssignableFrom between %s and %s", mref.type().name(), value.type().name())
+              );
+            else {
+              ((GenProjectionReference<R>) mref).resolve(referenceName, (R) (fromSelfVar(_normalized)));
+              resolvedAt.put(name, location);
+            }
+          } else
+            addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
+
+        }
+      }
+
+      if (eref == null && mref == null) {
+        if (parent != null && parent.hasReference(name)) {
 
           // a = c
           //    b = a
@@ -176,87 +200,159 @@ public abstract class ReferenceContext<
 
           context.addError(String.format("Can't override projection '%s' from parent context", name), location);
 
-        } else
-          context.addError(String.format("Projection '%s' reference not found", name), location);
-
-      } else if (ref.isResolved()) {
-        context.addError(
-            String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-        );
-      } else {
-
-        if (ref.type().isAssignableFrom(value.type())) {
-          final R normalized;
-
-          // resolve model ref from var projection
-          if (value instanceof GenVarProjection<?, ?, ?>) {
-            VP varValue = (VP) value;
-            VP _normalized = varValue.normalizedForType(ref.type());
-
-            if (ref instanceof GenModelProjection<?, ?, ?, ?>) {
-              if (_normalized.type().kind() == TypeKind.ENTITY)
-                throw new RuntimeException(
-                    String.format("Broken isAssignableFrom between %s and %s", ref.type().name(), value.type().name())
-                );
-              else {
-                final GenTagProjectionEntry<?, MP> tpe = _normalized.singleTagProjection();
-                assert tpe != null;
-                normalized = (R) tpe.projection();
-              }
-            } else
-              normalized = (R) _normalized;
-
-          } else if (value instanceof GenModelProjection<?, ?, ?, ?>) {
-            MP modelValue = (MP) value;
-            normalized = (R) modelValue.normalizedForType((DatumTypeApi) ref.type());
-          } else
-            throw new RuntimeException(String.format("Unreachable: '%s'", name));
-
-          resolvedAt.put(name, location);
-          ref.resolve(referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)), normalized);
-
         } else {
-          context.addError(
-              String.format(
-                  "Projection '%s' type '%s' is not compatible with reference type '%s'",
-                  name,
-                  value.type().name(),
-                  ref.type().name()
-              ),
-              location
-          );
+          context.addError(String.format("Projection '%s' reference not found", name), location);
         }
+      }
+    });
+  }
 
+  public <R extends GenProjectionReference<R>> void resolveModelRef(
+      @NotNull String name,
+      @NotNull MP value,
+      @NotNull TextLocation location) {
+
+    value.runOnResolved(() -> {
+      ProjectionReferenceName referenceName =
+          referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
+
+      EP eref = entityReferences.get(name);
+      MP mref = modelReferences.get(name);
+
+      if (mref != null) {
+        if (mref.isResolved()) {
+          context.addError(
+              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
+          );
+        } else {
+          if (mref.type().isAssignableFrom(value.type())) {
+            MP _normalized = (MP) value.normalizedForType(mref.type());
+            ((GenProjectionReference<R>) mref).resolve(referenceName, (R) _normalized);
+            resolvedAt.put(name, location);
+          } else {
+            addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
+          }
+        }
       }
 
+      if (eref != null) {
+        if (eref.isResolved()) {
+          context.addError(
+              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
+          );
+        } else {
+
+          if (eref.type().isAssignableFrom(value.type())) {
+            EP evalue = toSelfVar(value);
+            eref.resolve(referenceName, evalue);
+            resolvedAt.put(name, location);
+          } else
+            addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
+
+        }
+      }
+
+      if (eref == null && mref == null) {
+        if (parent != null && parent.hasReference(name)) {
+
+          // a = c
+          //    b = a
+          //    a = 2         <-- prohibited
+          // c = 1
+
+          context.addError(String.format("Can't override projection '%s' from parent context", name), location);
+
+        } else {
+          context.addError(String.format("Projection '%s' reference not found", name), location);
+        }
+      }
     });
 
   }
 
-  public void ensureAllReferencesResolved() {
-    for (final Map.Entry<String, GenProjectionReference<?>> entry : references.entrySet()) {
-      String name = entry.getKey();
-      assert name != null;
-      final GenProjectionReference<?> ref = entry.getValue();
+  private void addIncompatibleProjectionTypeError(
+      @NotNull String projectionName,
+      @NotNull TypeApi projectionType,
+      @NotNull TypeApi refType,
+      @NotNull TextLocation location) {
 
-      if (!ref.isResolved()) {
+    context.addError(
+        String.format(
+            "Projection '%s' type '%s' is not compatible with reference type '%s'",
+            projectionName,
+            projectionType.name(),
+            refType.name()
+        ),
+        location
+    );
+  }
+
+  public <R extends GenProjectionReference<R>> void ensureAllReferencesResolved() {
+    for (Map.Entry<String, EP> entry : entityReferences.entrySet())
+      ensureReferenceResolved(
+          entry.getKey(),
+          entry.getValue(),
+          () -> {
+            MP mref = modelReferences.get(entry.getKey());
+            if (mref != null && mref.isResolved()) {
+              resolveEntityRef(entry.getKey(), toSelfVar(mref), mref.location());
+              return true;
+            } else
+              return false;
+          },
+          parent == null ? null : parent.entityReferences
+      );
+
+    for (final Map.Entry<String, MP> entry : modelReferences.entrySet()) {
+      ensureReferenceResolved(
+          entry.getKey(),
+          (R) entry.getValue(),
+          () -> {
+            EP eref = entityReferences.get(entry.getKey());
+            if (eref != null && eref.isResolved()) {
+              resolveModelRef(entry.getKey(), fromSelfVar(eref), eref.location());
+              return true;
+            } else
+              return false;
+          },
+          parent == null ? null : (Map<String, R>) parent.modelReferences
+      );
+    }
+
+//    if (parent != null)
+//      parent.ensureAllReferencesResolved();
+  }
+
+  private <R extends GenProjectionReference<R>> void ensureReferenceResolved(
+      @NotNull String name,
+      @NotNull R ref,
+      @NotNull Supplier<Boolean> backupResolver,
+      @Nullable Map<String, R> parentReferences) {
+
+    if (!ref.isResolved()) {
+      // check if backup resolver can handle it (resolve entity ref from model ref or v.v.)
+
+      if (!backupResolver.get()) {
+
         // delegate it to parent if possible:
         //
         //    b = a
         // a = 1
 
-        if (parent == null) {
-          psiProcessingContext.addError(String.format("Projection '%s' is not defined", name), ref.location());
+        if (parentReferences == null) {
+          context.addError(String.format("Projection '%s' is not defined", name), ref.location());
         } else {
-          final GenProjectionReference<?> parentRef = parent.references.get(name);
+          assert parent != null;
+          R parentRef = parentReferences.get(name);
           if (parentRef == null) {
-            parent.references.put(name, ref);
+            parentReferences.put(name, ref);
           } else if (parentRef != ref) {
-            //?? can't happen
-            psiProcessingContext.addError(
+            context.addError(
                 String.format(
-                    "Internal error: different references to projection '%s' in this and parent context",
-                    name
+                    "Internal error: different references to projection '%s' in this ('%s') and parent ('%s') context",
+                    name,
+                    referencesNamespace,
+                    parent.referencesNamespace
                 ),
                 ref.location()
             );
@@ -264,6 +360,7 @@ public abstract class ReferenceContext<
         }
       }
     }
+
   }
 
   @NotNull
@@ -277,7 +374,7 @@ public abstract class ReferenceContext<
         else throw new PsiProcessingException(String.format(
             "Can't create record model projection for type '%s'",
             type.name()
-        ), location, psiProcessingContext);
+        ), location, context);
 
       case MAP:
         if (type instanceof MapTypeApi)
@@ -285,7 +382,7 @@ public abstract class ReferenceContext<
         else throw new PsiProcessingException(String.format(
             "Can't create map model projection for type '%s'",
             type.name()
-        ), location, psiProcessingContext);
+        ), location, context);
 
       case LIST:
         if (type instanceof ListTypeApi)
@@ -293,7 +390,7 @@ public abstract class ReferenceContext<
         else throw new PsiProcessingException(String.format(
             "Can't create list model projection for type '%s'",
             type.name()
-        ), location, psiProcessingContext);
+        ), location, context);
 
       case PRIMITIVE:
         if (type instanceof PrimitiveTypeApi)
@@ -301,18 +398,18 @@ public abstract class ReferenceContext<
         else throw new PsiProcessingException(String.format(
             "Can't create primitive model projection for type '%s'",
             type.name()
-        ), location, psiProcessingContext);
+        ), location, context);
 
       default:
         throw new PsiProcessingException(String.format(
             "Can't create model projection for type '%s'",
             type.name()
-        ), location, psiProcessingContext);
+        ), location, context);
     }
   }
 
   @NotNull
-  protected abstract VP newVarReference(@NotNull TypeApi type, @NotNull TextLocation location);
+  protected abstract EP newVarReference(@NotNull TypeApi type, @NotNull TextLocation location);
 
   protected abstract MP newRecordModelReference(@NotNull RecordTypeApi type, @NotNull TextLocation location);
 
@@ -322,6 +419,13 @@ public abstract class ReferenceContext<
 
   protected abstract MP newPrimitiveModelReference(@NotNull PrimitiveTypeApi type, @NotNull TextLocation location);
 
-  protected abstract @NotNull VP toSelfVar(@NotNull MP mRef);
+  protected abstract @NotNull EP toSelfVar(@NotNull MP mRef);
+
+  protected @NotNull MP fromSelfVar(@NotNull EP eRef) {
+    assert eRef.type().kind() != TypeKind.ENTITY;
+    GenTagProjectionEntry<?, MP> tpe = eRef.singleTagProjection();
+    assert tpe != null;
+    return tpe.projection();
+  }
 
 }

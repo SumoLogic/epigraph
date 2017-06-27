@@ -1,6 +1,6 @@
 - [ ] new annotations
   - [ ] add to op params
-  - [ ] add to op entit y projections
+  - [ ] add to op entity projections
   - [ ] add (delegating) annotations to fields and tags
   - [ ] update reflection service
 

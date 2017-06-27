@@ -323,7 +323,7 @@ public class OpOutputProjectionsTest {
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
-    referenceContext.resolve("ref", personProjection, TextLocation.UNKNOWN, ppc);
+    referenceContext.resolveEntityRef("ref", personProjection, TextLocation.UNKNOWN);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {
@@ -389,7 +389,7 @@ public class OpOutputProjectionsTest {
 //    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` $ref = ( id )");
 
     // should not result in class cast
-    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
+    referenceContext.resolveEntityRef("ref", personRecordVarProjection, TextLocation.UNKNOWN);
   }
 
   @Test
@@ -404,7 +404,7 @@ public class OpOutputProjectionsTest {
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
-    referenceContext.resolve("ref", paginationProjection, TextLocation.UNKNOWN, ppc);
+    referenceContext.resolveEntityRef("ref", paginationProjection, TextLocation.UNKNOWN);
     failIfHasErrors(ppc.errors());
 
     TestConfig testConfig = new TestConfig() {

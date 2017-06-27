@@ -16,6 +16,7 @@ import epigraph.schema.BooleanType
 
 record Error {
   statusCode: Integer
+  message: String
   exception: String // should be Exception
 }
 
@@ -29,7 +30,7 @@ abstract record Data {
   abstract type: Type
 }
 
-record VarData extends Data {
+record EntityData extends Data {
   override type: VarType
   tags: map[String, Data]
 }

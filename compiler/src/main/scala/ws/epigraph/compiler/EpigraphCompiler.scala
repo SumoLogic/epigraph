@@ -316,7 +316,7 @@ object EpigraphCompiler extends Logging {
   def renderErrors(ctx: CContext): Unit = {
     // bring pretty printers into scope
     import CPrettyPrinters._
-    ctx.errors foreach {err => log.error(pprint.stringify(err)) }
+    log.error(ctx.errors.map(pprint.stringify).mkString("\n", "\n\n", ""))
   }
 
 }

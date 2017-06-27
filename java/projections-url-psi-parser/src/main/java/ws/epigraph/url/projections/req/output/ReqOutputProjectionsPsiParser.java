@@ -110,11 +110,10 @@ public final class ReqOutputProjectionsPsiParser {
           );
 
       context.varReferenceContext()
-          .resolve(
+          .resolveEntityRef(
               projectionName,
               stepsAndProjection.projection(),
-              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
-              context
+              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection)
           );
 
       final Queue<OpOutputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
@@ -373,11 +372,10 @@ public final class ReqOutputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(
+          .resolveEntityRef(
               projectionName,
               stepsAndProjection.projection(),
-              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection),
-              context
+              EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection)
           );
 
       final Queue<OpOutputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);

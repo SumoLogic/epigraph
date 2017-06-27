@@ -106,7 +106,7 @@ public final class OpDeleteProjectionsPsiParser {
       );
 
       context.referenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
       return reference;
     }
@@ -150,7 +150,7 @@ public final class OpDeleteProjectionsPsiParser {
     }
   }
 
-  public static OpDeleteVarProjection parseUnnamedVarProjection(
+  public static @NotNull OpDeleteVarProjection parseUnnamedVarProjection(
       @NotNull DataTypeApi dataType,
       boolean canDelete,
       @NotNull SchemaOpDeleteUnnamedVarProjection psi,
@@ -463,11 +463,10 @@ public final class OpDeleteProjectionsPsiParser {
       );
 
       //noinspection rawtypes
-      context.referenceContext().<OpDeleteModelProjection>resolve(
+      context.referenceContext().<OpDeleteModelProjection>resolveModelRef(
           projectionName,
           value,
-          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection),
-          context
+          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection)
       );
 
       return reference;

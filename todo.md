@@ -72,6 +72,7 @@
   - [ ] Remove ctypes -> types API bridge
   - [ ] Remove types API?
   - [ ] Revert gradle/maven build changes added to avoid circular dependencies (see `compiler` build files)
+- [ ] Check that anonymous map keys are datum (not data) type
 
 # Maven plugin
 - [ ] use slf4j for logging

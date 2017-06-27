@@ -101,7 +101,7 @@ public final class ReqDeleteProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
       final Queue<OpDeleteVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
       while (unverifiedOps != null && !unverifiedOps.isEmpty()) {

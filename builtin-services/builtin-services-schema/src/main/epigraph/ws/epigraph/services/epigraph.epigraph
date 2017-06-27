@@ -17,6 +17,20 @@ import epigraph.schema.ListType
 import epigraph.schema.Field
 import epigraph.schema.NameString
 import epigraph.schema.PrimitiveType
+import epigraph.schema.Annotations
+import epigraph.data.Value
+import epigraph.data.Data
+import epigraph.data.EntityData
+import epigraph.data.Datum
+import epigraph.data.RecordDatum
+import epigraph.data.MapDatum
+import epigraph.data.ListDatum
+import epigraph.data.PrimitiveDatum
+import epigraph.data.StringDatum
+import epigraph.data.IntegerDatum
+import epigraph.data.LongDatum
+import epigraph.data.DoubleDatum
+import epigraph.data.BooleanDatum
 
 record EpigraphResource {
   @Doc "Epigraph built-in services resource root type"
@@ -25,6 +39,56 @@ record EpigraphResource {
 }
 
 resource epigraph: EpigraphResource {
+
+  // data
+
+  outputProjection valueProjection: Value = (
+    data $datumProjection,
+    error (statusCode, message, exception)
+  )
+
+  outputProjection dataProjection: Data = ( type $typeProjection ) ~ (
+    EntityData $entityDataProjection,
+    Datum $datumProjection
+  )
+
+  outputProjection entityDataProjection: EntityData = (
+    tags [] ($dataProjection)
+  )
+
+  // todo uncommenting this code breaks codegen: fix merging recursive projections
+  outputProjection datumProjection: Datum = ( type $typeProjection ) /* ~ (
+    RecordDatum $recordDatumProjection,
+    MapDatum $mapDatumProjection,
+    ListDatum $listDatumProjection,
+    RecordDatum $recordDatumProjection,
+    PrimitiveDatum $primitiveDatumProjection
+  ) */
+
+  outputProjection recordDatumProjection: RecordDatum = ( fields [] ( $valueProjection ) )
+
+  outputProjection mapDatumProjection: MapDatum = ( entries [] ( $valueProjection ) )
+
+  outputProjection listDatumProjection: ListDatum = ( entries * ( $valueProjection ) )
+
+  outputProjection primitiveDatumProjection: PrimitiveDatum = () ~ (
+    StringDatum (value),
+    IntegerDatum (value),
+    LongDatum (value),
+    DoubleDatum (value),
+    BooleanDatum (value)
+  )
+
+  // todo enum
+
+  // annotations
+
+  outputProjection annotationsProjection: Annotations = [] (
+    type $typeProjection,
+    value $datumProjection
+  )
+
+  // types
 
   outputProjection typeNameProjection: TypeName = :`string` ~~ (
     QualifiedTypeName :name,
@@ -43,7 +107,8 @@ resource epigraph: EpigraphResource {
   outputProjection typeProjection: Type = (
     name $typeNameProjection,
     supertypes * $typeProjection,
-    `abstract`
+    `abstract`,
+    annotations $annotationsProjection
   ) ~ (
     VarType ( tags * $tagProjection ),
     DatumType (
@@ -66,18 +131,22 @@ resource epigraph: EpigraphResource {
 
   outputProjection tagProjection: Tag = (
     name :`string`,
-    type $typeProjection
+    type $typeProjection,
+    annotations $annotationsProjection
   )
 
   outputProjection fieldProjection: Field = (
     name :`string`,
-    valueType $dataTypeProjection
+    valueType $dataTypeProjection,
+    annotations $annotationsProjection
   )
 
   outputProjection dataTypeProjection : DataType = (
     type $typeProjection,
     `retro` $tagProjection
   )
+
+  // operations
 
   read types { // todo remove name
     path /types

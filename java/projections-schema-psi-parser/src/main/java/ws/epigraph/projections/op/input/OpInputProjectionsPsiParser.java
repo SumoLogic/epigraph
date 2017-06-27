@@ -103,7 +103,7 @@ public final class OpInputProjectionsPsiParser {
       );
 
       context.referenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
       return reference;
     }
@@ -145,7 +145,7 @@ public final class OpInputProjectionsPsiParser {
     }
   }
 
-  public static OpInputVarProjection parseUnnamedVarProjection(
+  public static @NotNull OpInputVarProjection parseUnnamedVarProjection(
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpInputUnnamedVarProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -567,11 +567,10 @@ public final class OpInputProjectionsPsiParser {
       );
 
       //noinspection rawtypes
-      context.referenceContext().<OpInputModelProjection>resolve(
+      context.referenceContext().<OpInputModelProjection>resolveModelRef(
           projectionName,
           value,
-          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection),
-          context
+          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection)
       );
 
       return reference;

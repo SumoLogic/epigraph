@@ -102,7 +102,7 @@ public final class ReqInputProjectionsPsiParser {
       );
 
       context.varReferenceContext()
-          .resolve(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection), context);
+          .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
       final Queue<OpInputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
       while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
