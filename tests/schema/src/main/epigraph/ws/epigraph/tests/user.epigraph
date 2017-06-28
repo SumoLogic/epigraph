@@ -12,6 +12,7 @@ record UserRecord extends PersonRecord {
   profile: Url
   bestFriend4: User
   override worstEnemy: UserRecord
+  override friendRecords: list[UserRecord]
 }
 
 string Url

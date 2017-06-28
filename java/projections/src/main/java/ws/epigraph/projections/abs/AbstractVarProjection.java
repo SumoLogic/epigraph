@@ -51,7 +51,7 @@ public abstract class AbstractVarProjection<
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
 
-  private final @NotNull TextLocation location;
+  private /*final*/ @NotNull TextLocation location;
 
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
@@ -210,7 +210,7 @@ public abstract class AbstractVarProjection<
           VP ref;
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
-            ref = context.newReference(effectiveType);
+            ref = context.newReference(effectiveType, self());
             normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
             ref = context.visited().get(name);
@@ -218,7 +218,7 @@ public abstract class AbstractVarProjection<
             if (ref != null)
               return ref;
 
-            ref = context.newReference(effectiveType);
+            ref = context.newReference(effectiveType, self());
             context.visited().put(name, ref);
 
             normalizedRefName = ProjectionUtils.normalizedTailNamespace(
@@ -296,21 +296,23 @@ public abstract class AbstractVarProjection<
   private @NotNull LinkedHashMap<String, TP> mergeTags(
       TypeApi effectiveType,
       boolean normalizeTags,
-      final @NotNull Map<String, TagApi> tags,
-      final @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+      @NotNull Map<String, TagApi> tags,
+      @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
-    for (final TagApi tag : tags.values()) {
+    for (TagApi tag : tags.values()) {
       List<TP> tagProjections = new ArrayList<>();
-      for (final AbstractVarProjection<VP, TP, MP> projection : sources) {
-        final @Nullable TP tagProjection = projection.tagProjection(tag.name());
+      for (AbstractVarProjection<VP, TP, MP> projection : sources) {
+        @Nullable TP tagProjection = projection.tagProjection(tag.name());
         if (tagProjection != null) {
           if (normalizeTags) {
-            final DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
-            final DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type(), tag.type());
-            final MP normalizedModel =
-                (MP) tagProjection.projection().normalizedForType(minModelType);
+            DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
+            DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type(), tag.type());
+
+            MP mp = tagProjection.projection();
+            MP normalizedModel = (MP) mp.normalizedForType(minModelType);
+
             tagProjections.add(tagProjection.setModelProjection(normalizedModel));
           } else {
             tagProjections.add(tagProjection);
@@ -330,6 +332,7 @@ public abstract class AbstractVarProjection<
           } else {
             // todo: handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`
             // have to dereference and postpone merging?
+            // see also OpOutputProjectionsTest::testNormalizeRecursiveList2
             final Optional<TP> recTp = tagProjections.stream().filter(tp -> !tp.projection().isResolved()).findFirst();
             if (recTp.isPresent())
               throw new IllegalArgumentException(
@@ -360,7 +363,32 @@ public abstract class AbstractVarProjection<
 
   @Override
   public @NotNull VP merge(final @NotNull List<VP> varProjections) {
-    return merge(type(), false, mergeTails(varProjections), varProjections);
+    assert !varProjections.isEmpty();
+
+    if (varProjections.size() == 1) {
+      return varProjections.get(0);
+    } else {
+      Optional<VP> unresolvedOpt = varProjections.stream().filter(p -> !p.isResolved()).findFirst();
+      if (unresolvedOpt.isPresent()) {
+        String message = VarNormalizationContext.withContext(
+            this::newNormalizationContext,
+            context -> {
+              VP origin = context.origin(unresolvedOpt.get());
+
+              TextLocation loc = context.visited().entrySet().isEmpty() ? TextLocation.UNKNOWN :
+                                 context.visited().entrySet().iterator().next().getValue().location();
+
+              return String.format(
+                  "Can't merge recursive projection '%s' with other projection at %s",
+                  origin == null ? "<unknown>" : origin.referenceName(), loc
+              );
+            }
+        );
+
+        throw new IllegalArgumentException(message);
+      } else
+        return merge(type(), false, mergeTails(varProjections), varProjections);
+    }
   }
 
   protected @NotNull VP merge(
@@ -452,6 +480,7 @@ public abstract class AbstractVarProjection<
     this.tagProjections = value.tagProjections();
     this.parenthesized = value.parenthesized();
     this.polymorphicTails = value.polymorphicTails();
+    this.location = value.location();
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks) callback.run();

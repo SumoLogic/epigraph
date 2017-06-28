@@ -656,13 +656,13 @@ public class OpOutputProjectionsTest {
     testModelTailsNormalization(
         ":`record`(id, lastName)~ws.epigraph.tests.UserRecord(firstName)~ws.epigraph.tests.UserRecord2(worstEnemy)",
         UserRecord.type,
-        ":`record` ( firstName, id, lastName )"
+        "( firstName, id, lastName )"
     );
 
     testModelTailsNormalization(
         ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
         UserRecord.type,
-        ":`record` ( worstEnemy ( firstName, id ) )"
+        "( worstEnemy ( firstName, id ) )"
     );
   }
 
@@ -671,7 +671,7 @@ public class OpOutputProjectionsTest {
     testModelTailsNormalization(
         ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
         UserRecord3.type,
-        ":`record` ( firstName, id )"
+        "( firstName, id )"
     );
   }
 
@@ -719,24 +719,25 @@ public class OpOutputProjectionsTest {
   public void testWrongTailType() {
     //noinspection ErrorNotRethrown
     try {
-    testModelTailsNormalization(
-        ":`record` $rp=(firstName) ~ws.epigraph.tests.UserRecord $rp",
-        UserRecord.type,
-        ""
-    );
+      testModelTailsNormalization(
+          ":`record` $rp=(firstName) ~ws.epigraph.tests.UserRecord $rp",
+          UserRecord.type,
+          ""
+      );
     } catch (AssertionError error) {
       assertTrue(error.getMessage()
-          .contains("Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of 'ws.epigraph.tests.UserRecord'"));
+          .contains(
+              "Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of 'ws.epigraph.tests.UserRecord'"));
     }
   }
 
   @Test
   public void testMergeRefs() {
-      testModelTailsNormalization(
-          ":`record` ( worstEnemy $we1 = ( firstName ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName ) )",
-          UserRecord.type,
-          ":`record` ( worstEnemy ( lastName, firstName ) )"
-      );
+    testModelTailsNormalization(
+        ":`record` ( worstEnemy $we1 = ( firstName ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName ) )",
+        UserRecord.type,
+        "( worstEnemy ( lastName, firstName ) )"
+    );
   }
 
   @Test
@@ -747,8 +748,36 @@ public class OpOutputProjectionsTest {
 
         ":`record` ( worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName ) )",
         UserRecord.type,
-        ":`record` ( worstEnemy ( lastName, firstName, worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) )"
+        "( worstEnemy ( lastName, firstName, worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) )"
     );
+  }
+
+  @Test
+  public void testNormalizeRecursiveList() {
+    testModelTailsNormalization(
+        ":`record` $p = ( friendRecords * $p ) ~ws.epigraph.tests.UserRecord ( firstName ) ",
+        UserRecord.type,
+        "$UserRecord = ( firstName, friendRecords *( $UserRecord ) )"
+    );
+  }
+
+  @Test
+  public void testNormalizeRecursiveList2() {
+    try {
+      // todo any way to handle it better?
+      // see also a comment in AbstractVarProjection::mergeTags
+      testModelTailsNormalization(
+          ":`record` $p = ( friendRecords * $p ) ~ws.epigraph.tests.UserRecord ( friendRecords * ( firstName) ) ",
+
+          // dereferencing won't help here though, unfolding once gives this which still can't be merged:
+          // ":`record` $p = ( friendRecords * ( friendRecords * $p ) ~ws.epigraph.tests.UserRecord ( friendRecords * ( firstName) ) ) ~ws.epigraph.tests.UserRecord ( friendRecords * ( firstName) ) ",
+
+          UserRecord.type,
+          ""
+      );
+    } catch (IllegalArgumentException e) {
+      assertTrue(e.getMessage().contains("Can't merge recursive projection 'p' with other projection at <unknown> line 1"));
+    }
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {
@@ -765,21 +794,24 @@ public class OpOutputProjectionsTest {
     final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
-    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
-    final OpOutputVarProjection normalizedVar = new OpOutputVarProjection(
-        varProjection.type(),
+//    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    final OpOutputVarProjection selfVar = new OpOutputVarProjection(
+        modelProjection.type(),
         ProjectionUtils.singletonLinkedHashMap(
-            tagProjectionEntry.tag().name(),
+            modelProjection.type().self().name(),
             new OpOutputTagProjectionEntry(
-                tagProjectionEntry.tag(),
-                normalized,
-                TextLocation.UNKNOWN
+                modelProjection.type().self(),
+                modelProjection,
+                modelProjection.location()
             )
         ),
         varProjection.parenthesized(),
         null,
-        TextLocation.UNKNOWN
+        modelProjection.location()
     );
+
+    OpOutputVarProjection normalizedVar = selfVar.normalizedForType(type);
+
     String actual = printOpOutputVarProjection(normalizedVar);
     assertEquals(expected, actual);
   }

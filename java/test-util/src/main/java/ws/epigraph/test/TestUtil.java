@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
@@ -370,7 +372,19 @@ public final class TestUtil {
   public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
+
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>(
+            ProjectionReferenceName.EMPTY,
+            null
+        ) {
+          @Override
+          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+            return true;
+          }
+        };
+
+    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter, pctx);
     printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();

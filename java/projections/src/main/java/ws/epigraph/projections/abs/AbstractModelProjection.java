@@ -48,7 +48,7 @@ public abstract class AbstractModelProjection<
   protected /*final*/ @Nullable MP metaProjection;
   protected /*final*/ @Nullable List<SMP> polymorphicTails;
 
-  private final @NotNull TextLocation location;
+  private /*final*/ @NotNull TextLocation location;
 
   protected boolean isReference;
   protected boolean isResolved;
@@ -128,7 +128,7 @@ public abstract class AbstractModelProjection<
           SMP ref;
           ProjectionReferenceName normalizedRefName = null;
           if (name == null) {
-            ref = context.newReference((M) effectiveType);
+            ref = context.newReference((M) effectiveType, self());
             normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
             ref = context.visited().get(name);
@@ -136,7 +136,7 @@ public abstract class AbstractModelProjection<
             if (ref != null)
               return ref;
 
-            ref = context.newReference((M) effectiveType);
+            ref = context.newReference((M) effectiveType, self());
             context.visited().put(name, ref);
             normalizedRefName = ProjectionUtils.normalizedTailNamespace(
                 this.name,
@@ -213,9 +213,33 @@ public abstract class AbstractModelProjection<
   @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections) {
+    
+    assert !modelProjections.isEmpty();
 
-    final List<SMP> mergedTails = mergeTails(modelProjections);
-    return merge(model, mergedTails, modelProjections);
+    if (modelProjections.size() == 1) {
+      return modelProjections.get(0);
+    } else {
+      Optional<SMP> unresolvedOpt = modelProjections.stream().filter(p -> !p.isResolved()).findFirst();
+      if (unresolvedOpt.isPresent()) {
+        String message = ModelNormalizationContext.withContext(
+            this::newNormalizationContext,
+            context -> {
+              SMP origin = context.origin(unresolvedOpt.get());
+
+              TextLocation loc = context.visited().entrySet().isEmpty() ? TextLocation.UNKNOWN :
+                                 context.visited().entrySet().iterator().next().getValue().location();
+
+              return String.format(
+                  "Can't merge recursive projection '%s' with other projection at %s",
+                  origin == null ? "<unknown>" : origin.referenceName(), loc
+              );
+            }
+        );
+
+        throw new IllegalArgumentException(message);
+      } else
+        return merge(model, mergeTails(modelProjections), modelProjections);
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -352,6 +376,7 @@ public abstract class AbstractModelProjection<
     this.name = name;
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
+    this.location = value.location();
 
     for (final Runnable callback : onResolvedCallbacks) callback.run();
     onResolvedCallbacks.clear();

@@ -18,12 +18,13 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -42,7 +43,8 @@ import java.util.function.Supplier;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class NormalizationContext<T extends TypeApi, R extends GenProjectionReference<?>> {
-  private final @NotNull Map<ProjectionReferenceName, R> visited = new HashMap<>();
+  private final @NotNull LinkedHashMap<ProjectionReferenceName, R> visited = new LinkedHashMap<>();
+  private final @NotNull IdentityHashMap<R, R> refToOrigin = new IdentityHashMap<>();
   private final @NotNull Function<T, R> referenceFactory;
 
   public NormalizationContext(final @NotNull Function<T, R> referenceFactory) {
@@ -50,9 +52,15 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
   }
 
   @Contract(pure = true)
-  public @NotNull Map<ProjectionReferenceName, R> visited() { return visited; }
+  public @NotNull LinkedHashMap<ProjectionReferenceName, R> visited() { return visited; }
 
-  public @NotNull R newReference(@NotNull T type) { return referenceFactory.apply(type); }
+  public @NotNull R newReference(@NotNull T type, @NotNull  R origin) {
+    R ref = referenceFactory.apply(type);
+    refToOrigin.put(ref, origin);
+    return ref;
+  }
+
+  public @Nullable R origin(@NotNull R ref) { return refToOrigin.get(ref); }
 
   protected static <
       T extends TypeApi,
