@@ -395,14 +395,19 @@ public final class OpInputProjectionsPsiParser {
       @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull EntityTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
-    checkTailType(tailType, dataType, tailTypeRefPsi, context);
-    return parseVarProjection(
+    @NotNull EntityTypeApi tailType = getEntityType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
+
+    OpInputVarProjection ep = parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
         psiTailProjection,
         typesResolver,
         context
     );
+
+    checkEntityTailType(tailType, ep, psiTailProjection, context);
+
+    return ep;
   }
 
   private static @NotNull OpInputVarProjection createDefaultVarProjection(
@@ -897,7 +902,7 @@ public final class OpInputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    return parseModelProjection(
+    MP mp = parseModelProjection(
         modelClass,
         tailType,
         false,
@@ -905,6 +910,10 @@ public final class OpInputProjectionsPsiParser {
         typesResolver,
         context
     );
+
+    checkModelTailType(tailType, mp, modelProjectionPsi, context);
+
+    return mp;
   }
 
   private static void ensureModelKind(

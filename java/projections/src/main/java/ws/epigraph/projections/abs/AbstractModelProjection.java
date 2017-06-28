@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
+import static ws.epigraph.projections.ProjectionUtils.buildReferenceName;
 import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
 
 /**
@@ -247,7 +247,7 @@ public abstract class AbstractModelProjection<
           .normalizedForType(metaModel);
     }
 
-    final ProjectionReferenceName mergedRefName = findUniqueName(modelProjections, modelProjections.get(0).location());
+    final ProjectionReferenceName mergedRefName = buildReferenceName(modelProjections, modelProjections.get(0).location());
     SMP res = merge(
         effectiveType,
         modelProjections,

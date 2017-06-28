@@ -161,7 +161,7 @@ public final class ProjectionsParsingUtil {
   }
 
 
-  public static @NotNull EntityTypeApi getUnionType(
+  public static @NotNull EntityTypeApi getEntityType(
       @NotNull TypeRef typeRef,
       @NotNull TypesResolver resolver,
       @NotNull PsiElement location,
@@ -337,7 +337,7 @@ public final class ProjectionsParsingUtil {
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }
 
-  public static void checkTailType(
+  public static void checkEntityTailType(
       @NotNull EntityTypeApi tailType,
       @NotNull DataTypeApi dataType,
       @NotNull PsiElement tailTypeRefPsi,
@@ -350,6 +350,38 @@ public final class ProjectionsParsingUtil {
               tailType.name(), dataType.type().name()
           ),
           tailTypeRefPsi,
+          context
+      );
+  }
+
+  public static void checkEntityTailType(
+      @NotNull EntityTypeApi tailType,
+      @NotNull GenVarProjection<?, ?, ?> ep,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    if (!tailType.isAssignableFrom(ep.type()))
+      throw new PsiProcessingException(
+          String.format(
+              "Tail projection type '%s' is not a subtype of '%s'", ep.type().name(), tailType.name()
+          ),
+          location,
+          context
+      );
+  }
+
+  public static void checkModelTailType(
+      @NotNull DatumTypeApi tailType,
+      @NotNull GenModelProjection<?, ?, ?, ?> mp,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    if (!tailType.isAssignableFrom(mp.type()))
+      throw new PsiProcessingException(
+          String.format(
+              "Tail projection type '%s' is not a subtype of '%s'", mp.type().name(), tailType.name()
+          ),
+          location,
           context
       );
   }

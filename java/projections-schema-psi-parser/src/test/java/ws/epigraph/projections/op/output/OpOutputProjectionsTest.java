@@ -715,6 +715,42 @@ public class OpOutputProjectionsTest {
     }
   }
 
+  @Test
+  public void testWrongTailType() {
+    //noinspection ErrorNotRethrown
+    try {
+    testModelTailsNormalization(
+        ":`record` $rp=(firstName) ~ws.epigraph.tests.UserRecord $rp",
+        UserRecord.type,
+        ""
+    );
+    } catch (AssertionError error) {
+      assertTrue(error.getMessage()
+          .contains("Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of 'ws.epigraph.tests.UserRecord'"));
+    }
+  }
+
+  @Test
+  public void testMergeRefs() {
+      testModelTailsNormalization(
+          ":`record` ( worstEnemy $we1 = ( firstName ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName ) )",
+          UserRecord.type,
+          ":`record` ( worstEnemy ( lastName, firstName ) )"
+      );
+  }
+
+  @Test
+  public void testMergeRecursiveRefs() {
+    testModelTailsNormalization(
+        // todo this cases StackOverflow. Possible fix: combine we1 and we2 references into "we1+we2" reference, see ProjectionUtils.buildReferenceName
+//        ":`record` ( worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName, worstEnemy $we2 ) )",
+
+        ":`record` ( worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) ~ws.epigraph.tests.UserRecord ( worstEnemy $we2 = ( lastName ) )",
+        UserRecord.type,
+        ":`record` ( worstEnemy ( lastName, firstName, worstEnemy $we1 = ( firstName, worstEnemy $we1 ) ) )"
+    );
+  }
+
   private void testTailsNormalization(String str, Type type, String expected) {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
     final @NotNull OpOutputVarProjection normalized = varProjection.normalizedForType(type);

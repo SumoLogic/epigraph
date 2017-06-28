@@ -394,9 +394,9 @@ public final class ReqInputProjectionsPsiParser {
       @NotNull ReqInputPsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull EntityTypeApi tailType = getUnionType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    @NotNull EntityTypeApi tailType = getEntityType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    checkTailType(tailType, dataType, tailTypeRefPsi, context);
+    checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
     @NotNull OpInputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseVarProjection(

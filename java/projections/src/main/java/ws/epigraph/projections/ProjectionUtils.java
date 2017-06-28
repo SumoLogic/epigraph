@@ -324,7 +324,7 @@ public final class ProjectionUtils {
     throw new RuntimeException("unreachable");
   }
 
-  public static @Nullable ProjectionReferenceName findUniqueName(
+  public static @Nullable ProjectionReferenceName buildReferenceName(
       @NotNull Collection<? extends GenProjectionReference<?>> elements,
       @NotNull TextLocation location) {
 
@@ -334,12 +334,14 @@ public final class ProjectionUtils {
       final ProjectionReferenceName rn = element.referenceName();
       if (rn != null) {
         if (res == null) res = rn;
-        else throw new IllegalArgumentException(
-            String.format(
-                "Merging multiple projection references is not yet supported. '%s' conflicts with '%s' (at %s)",
-                rn.toString(), res.toString(), location
-            )
-        );
+        else
+//          throw new IllegalArgumentException(
+//              String.format(
+//                  "Merging multiple projection references is not yet supported. '%s' conflicts with '%s' (at %s)",
+//                  rn.toString(), res.toString(), location
+//              )
+//          );
+        return null;
       }
     }
 

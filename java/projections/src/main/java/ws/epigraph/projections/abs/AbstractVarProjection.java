@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.projections.ProjectionUtils.findUniqueName;
+import static ws.epigraph.projections.ProjectionUtils.buildReferenceName;
 import static ws.epigraph.projections.ProjectionUtils.linearizeVarTails;
 
 /**
@@ -375,7 +375,7 @@ public abstract class AbstractVarProjection<
 
     final @NotNull Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
-    final ProjectionReferenceName mergedRefName = findUniqueName(varProjections, varProjections.get(0).location());
+    final ProjectionReferenceName mergedRefName = buildReferenceName(varProjections, varProjections.get(0).location());
     VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
     return res;
