@@ -55,7 +55,7 @@ public class SchemaRetroTagLinePainter extends EditorLinePainter {
 
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
     final Document doc = FileDocumentManager.getInstance().getDocument(file);
-    if (doc != null) {
+    if (doc != null && lineNumber < doc.getLineCount()) {
       PsiFile psiFile = psiDocumentManager.getPsiFile(doc);
       if (psiFile != null) {
         int offset = doc.getLineStartOffset(lineNumber);
