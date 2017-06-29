@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjectionReference;
@@ -131,13 +132,14 @@ public abstract class AbstractModelProjection<
             ref = context.newReference((M) effectiveType, self());
             normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
-            ref = context.visited().get(name);
+            NormalizationContext.VisitedKey visitedKey = new NormalizationContext.VisitedKey(name, effectiveType.name());
+            ref = context.visited().get(visitedKey);
 
             if (ref != null)
               return ref;
 
             ref = context.newReference((M) effectiveType, self());
-            context.visited().put(name, ref);
+            context.visited().put(visitedKey, ref);
             normalizedRefName = ProjectionUtils.normalizedTailNamespace(
                 this.name,
                 effectiveType,

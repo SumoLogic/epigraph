@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.gen.*;
@@ -213,13 +214,14 @@ public abstract class AbstractVarProjection<
             ref = context.newReference(effectiveType, self());
             normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
           } else {
-            ref = context.visited().get(name);
+            NormalizationContext.VisitedKey visitedKey = new NormalizationContext.VisitedKey(name, effectiveType.name());
+            ref = context.visited().get(visitedKey);
 
             if (ref != null)
               return ref;
 
             ref = context.newReference(effectiveType, self());
-            context.visited().put(name, ref);
+            context.visited().put(visitedKey, ref);
 
             normalizedRefName = ProjectionUtils.normalizedTailNamespace(
                 name,

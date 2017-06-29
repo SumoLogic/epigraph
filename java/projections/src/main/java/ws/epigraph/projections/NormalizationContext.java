@@ -19,12 +19,14 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -43,7 +45,7 @@ import java.util.function.Supplier;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class NormalizationContext<T extends TypeApi, R extends GenProjectionReference<?>> {
-  private final @NotNull LinkedHashMap<ProjectionReferenceName, R> visited = new LinkedHashMap<>();
+  private final @NotNull LinkedHashMap<VisitedKey, R> visited = new LinkedHashMap<>();
   private final @NotNull IdentityHashMap<R, R> refToOrigin = new IdentityHashMap<>();
   private final @NotNull Function<T, R> referenceFactory;
 
@@ -52,9 +54,9 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
   }
 
   @Contract(pure = true)
-  public @NotNull LinkedHashMap<ProjectionReferenceName, R> visited() { return visited; }
+  public @NotNull LinkedHashMap<VisitedKey, R> visited() { return visited; }
 
-  public @NotNull R newReference(@NotNull T type, @NotNull  R origin) {
+  public @NotNull R newReference(@NotNull T type, @NotNull R origin) {
     R ref = referenceFactory.apply(type);
     refToOrigin.put(ref, origin);
     return ref;
@@ -85,6 +87,32 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
     } finally {
       if (created)
         threadLocal.remove();
+    }
+  }
+
+  public static class VisitedKey {
+    public final @NotNull ProjectionReferenceName referenceName;
+    public final @NotNull TypeName targetTypeName;
+
+    public VisitedKey(
+        final @NotNull ProjectionReferenceName referenceName,
+        final @NotNull TypeName name) {
+      this.referenceName = referenceName;
+      targetTypeName = name;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      final VisitedKey key = (VisitedKey) o;
+      return Objects.equals(referenceName, key.referenceName) &&
+             Objects.equals(targetTypeName, key.targetTypeName);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(referenceName, targetTypeName);
     }
   }
 }

@@ -58,10 +58,9 @@ resource epigraph: EpigraphResource {
 
   outputProjection datumProjection: Datum = ( type $typeProjection )  ~ (
     RecordDatum $recordDatumProjection,
-    // todo
-//    MapDatum $mapDatumProjection,
-//    ListDatum $listDatumProjection,
-//    PrimitiveDatum $primitiveDatumProjection
+    MapDatum $mapDatumProjection,
+    ListDatum $listDatumProjection,
+    PrimitiveDatum $primitiveDatumProjection
   )
 
   outputProjection recordDatumProjection: RecordDatum = ( fields [] ( $valueProjection ) )
