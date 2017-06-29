@@ -54,7 +54,7 @@ ${ReqProjectionGen.generateImports(imports)}
 /**
  * Request projection for {@code $fieldName} field
  */
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName {
   private final @NotNull ${reqFieldProjectionFqn.last()} raw;
 

@@ -45,7 +45,7 @@ import ws.epigraph.util.Unmodifiable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public final class $IndexClassName extends AbstractTypesIndex {
   public static final @NotNull $IndexClassName INSTANCE = new $IndexClassName();
 

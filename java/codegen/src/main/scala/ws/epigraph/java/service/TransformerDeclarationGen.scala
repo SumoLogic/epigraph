@@ -60,7 +60,7 @@ ${JavaGenUtils.topLevelComment}
 package $namespace;
 
 ${ObjectGenUtils.genImports(sgctx)}
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public final class $transformerDeclarationClassName extends TransformerDeclaration {
   public static final $transformerDeclarationClassName INSTANCE = new $transformerDeclarationClassName();
 

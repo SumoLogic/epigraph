@@ -137,4 +137,6 @@ object JavaGenUtils {
 
 //  def ?[A >: Null <: AnyRef, B](arg: A, ifNotNull: => B, ifNull: => B): B = if (arg ne null) ifNotNull else ifNull
 
+  def generatedAnnotation(generator: Any): String =
+    s"@javax.annotation.Generated(${Option(generator.getClass.getCanonicalName).getOrElse(generator.getClass.getName)})"
 }

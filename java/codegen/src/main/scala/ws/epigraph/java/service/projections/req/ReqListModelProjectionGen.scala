@@ -53,7 +53,7 @@ $packageStatement
 ${ReqProjectionGen.generateImports(imports)}
 
 $classJavadoc\
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName {
   private final @NotNull ${reqListModelProjectionFqn.last()} raw;
 

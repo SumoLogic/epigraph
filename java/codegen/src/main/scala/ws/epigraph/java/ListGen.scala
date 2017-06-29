@@ -52,7 +52,7 @@ ${ObjectGenUtils.genImports(ogc)}\
 /**
  * Base (read) interface for `${t.name.name}` datum.
  */
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.ListDatum.Static {
 
   $ln.Type type = $ln.Type.instance();

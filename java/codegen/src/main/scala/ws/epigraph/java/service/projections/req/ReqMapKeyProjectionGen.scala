@@ -75,7 +75,7 @@ ${ReqProjectionGen.generateImports(imports)}
 /**
  * Request projection for {@code $mapTypeShortName} keys
  */
-@javax.annotation.Generated("${getClass.getCanonicalName}")
+${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName {
   private final @NotNull ${reqKeyProjectionFqn.last()} raw;
 
