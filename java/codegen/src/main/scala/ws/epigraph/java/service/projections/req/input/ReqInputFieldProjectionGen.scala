@@ -44,7 +44,7 @@ class ReqInputFieldProjectionGen(
     ReqInputVarProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.varProjection(),
-      baseNamespace,
+      baseNamespaceOpt,
       namespaceSuffix,
       ctx
     )

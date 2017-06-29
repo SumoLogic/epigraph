@@ -27,10 +27,10 @@ import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
 class ReqInputPrimitiveModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpInputPrimitiveModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpInputPrimitiveModelProjection
 
@@ -40,7 +40,7 @@ class ReqInputPrimitiveModelProjectionGen(
     new ReqInputPrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

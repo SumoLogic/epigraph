@@ -31,16 +31,16 @@ import scala.collection.JavaConversions._
 class OpDeleteRecordModelProjectionGen(p: OpDeleteRecordModelProjection)
   extends ObjectGen[OpDeleteRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[RecordType].getName)
-    ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[RecordType].getName)
+    val fpe = ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpDeleteRecordModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
-  ${i(genLinkedMap("String", "OpDeleteFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
+  ${i(genLinkedMap("java.lang.String", fpe, p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
@@ -52,10 +52,10 @@ new OpDeleteRecordModelProjection(
     fpe: OpDeleteFieldProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
+    val fpes = ctx.use(classOf[OpDeleteFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpDeleteFieldProjectionEntry(
+new $fpes(
   ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
   ${i(gen(fpe.fieldProjection(), ctx))},
   ${gen(fpe.location(), ctx)}

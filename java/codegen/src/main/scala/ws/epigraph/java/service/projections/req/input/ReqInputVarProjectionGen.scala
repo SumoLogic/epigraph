@@ -30,14 +30,17 @@ import ws.epigraph.types.TypeKind
 class ReqInputVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpInputVarProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqInputProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+    referenceName,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
+  )
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
@@ -47,7 +50,7 @@ class ReqInputVarProjectionGen(
     new ReqInputVarProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
@@ -58,7 +61,7 @@ class ReqInputVarProjectionGen(
     ReqInputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
-      baseNamespace,
+      Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -73,17 +76,17 @@ object ReqInputVarProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpInputVarProjection,
-    baseNamespace: Qn,
+    baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqInputProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqInputVarProjectionGen(baseNamespaceProvider, op, baseNamespace, namespaceSuffix, ctx)
+      new ReqInputVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqInputRecordModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -91,7 +94,7 @@ object ReqInputVarProjectionGen {
       new ReqInputMapModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -99,7 +102,7 @@ object ReqInputVarProjectionGen {
       new ReqInputListModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -107,7 +110,7 @@ object ReqInputVarProjectionGen {
       new ReqInputPrimitiveModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )

@@ -57,8 +57,8 @@ resource epigraph: EpigraphResource {
   )
 
   outputProjection datumProjection: Datum = ( type $typeProjection )  ~ (
-  // todo fixme
-//    RecordDatum $recordDatumProjection,
+    RecordDatum $recordDatumProjection,
+    // todo
 //    MapDatum $mapDatumProjection,
 //    ListDatum $listDatumProjection,
 //    PrimitiveDatum $primitiveDatumProjection
@@ -110,22 +110,24 @@ resource epigraph: EpigraphResource {
     annotations $annotationsProjection
   ) ~ (
     VarType ( tags * $tagProjection ),
-    DatumType (
-      metaType $typeProjection,
-    ) ~ (
-      RecordType (
-        declaredFields * $fieldProjection
-        // add `computed` fields too?
-      ),
-      MapType (
-        keyType $typeProjection
-        valueType $dataTypeProjection
-      ),
-      ListType (
-        valueType $dataTypeProjection
-      ),
-      PrimitiveType // empty, but gives us properly typed `name` and `supertypes` projections
-    )
+    DatumType $datumTypeProjection
+  )
+
+  outputProjection datumTypeProjection: DatumType = (
+    metaType $datumTypeProjection,
+  ) ~ (
+    RecordType (
+      declaredFields * $fieldProjection
+      // add `computed` fields too?
+    ),
+    MapType (
+      keyType $typeProjection
+      valueType $dataTypeProjection
+    ),
+    ListType (
+      valueType $dataTypeProjection
+    ),
+    PrimitiveType // empty, but gives us properly typed `name` and `supertypes` projections
   )
 
   outputProjection tagProjection: Tag = (

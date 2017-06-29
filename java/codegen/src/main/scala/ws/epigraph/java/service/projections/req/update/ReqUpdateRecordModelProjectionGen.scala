@@ -31,10 +31,10 @@ import scala.collection.JavaConversions._
 class ReqUpdateRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpInputRecordModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
 
@@ -59,7 +59,7 @@ class ReqUpdateRecordModelProjectionGen(
     new ReqUpdateRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

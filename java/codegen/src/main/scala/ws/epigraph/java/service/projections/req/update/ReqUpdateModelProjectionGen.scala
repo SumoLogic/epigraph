@@ -31,13 +31,16 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
 abstract class ReqUpdateModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+    referenceName,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
+  )
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
@@ -66,7 +69,7 @@ object ReqUpdateModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
-    baseNamespace: Qn,
+    baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqUpdateModelProjectionGen = op.`type`().kind() match {
 
@@ -74,7 +77,7 @@ object ReqUpdateModelProjectionGen {
       new ReqUpdateRecordModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpInputRecordModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -82,7 +85,7 @@ object ReqUpdateModelProjectionGen {
       new ReqUpdateMapModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpInputMapModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -90,7 +93,7 @@ object ReqUpdateModelProjectionGen {
       new ReqUpdateListModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpInputListModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -98,7 +101,7 @@ object ReqUpdateModelProjectionGen {
       new ReqUpdatePrimitiveModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpInputPrimitiveModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )

@@ -30,11 +30,11 @@ import scala.collection.JavaConversions._
  */
 class OpOutputMapModelProjectionGen(p: OpOutputMapModelProjection) extends ObjectGen[OpOutputMapModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[MapType].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputMapModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},

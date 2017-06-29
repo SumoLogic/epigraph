@@ -31,18 +31,18 @@ import scala.collection.JavaConversions._
 class OpOutputRecordModelProjectionGen(p: OpOutputRecordModelProjection)
   extends ObjectGen[OpOutputRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[RecordType].getName)
-    ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[RecordType].getName)
+    val fpe = ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputRecordModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
 
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("String", "OpOutputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
+  ${i(genLinkedMap("java.lang.String", fpe, p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
@@ -54,10 +54,10 @@ new OpOutputRecordModelProjection(
     fpe: OpOutputFieldProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
+    val fpes = ctx.use(classOf[OpOutputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputFieldProjectionEntry(
+new $fpes(
   ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
   ${i(gen(fpe.fieldProjection(), ctx))},
   ${gen(fpe.location(), ctx)}

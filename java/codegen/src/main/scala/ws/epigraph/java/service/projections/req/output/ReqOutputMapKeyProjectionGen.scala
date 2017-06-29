@@ -30,10 +30,13 @@ class ReqOutputMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
   protected val op: OpOutputKeyProjection,
+  baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpOutputKeyProjection
+
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 

@@ -29,13 +29,13 @@ import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
 class ReqDeleteMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpDeleteMapModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
-    _baseNamespace,
+    baseNamespaceOpt,
     _namespaceSuffix,
     ctx
   ) with ReqMapModelProjectionGen {
@@ -48,6 +48,7 @@ class ReqDeleteMapModelProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
+    Some(baseNamespace),
     namespaceSuffix,
     ctx
   )
@@ -55,7 +56,7 @@ class ReqDeleteMapModelProjectionGen(
   protected override val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
-    baseNamespace,
+    Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -66,7 +67,7 @@ class ReqDeleteMapModelProjectionGen(
     new ReqDeleteMapModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

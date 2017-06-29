@@ -188,9 +188,29 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
   }
 
   private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
-    def exceptionHandler(e: Exception) = {
+    val genParents: mutable.Map[JavaGen, JavaGen] = new mutable.HashMap[JavaGen, JavaGen]()
+
+    def addChildrenDebugInfo(parent: JavaGen): Unit = {
+      if (ctx.settings.debug()) {
+        val children = parent.children
+        children.foreach(c => genParents.put(c, parent))
+      }
+    }
+
+    def exceptionHandler(g: JavaGen, e: Exception) = {
       def msg = if (ctx.settings.debug) {
         val sw = new StringWriter
+
+        var sp = ""
+        var gen = g
+        while (gen != null) {
+          sw.append(sp)
+          sw.append(gen.description)
+          sw.append("\n")
+          sp = sp + "  "
+          gen = genParents.getOrElse(gen, null)
+        }
+
         e.printStackTrace(new PrintWriter(sw))
         sw.toString
       } else e.toString
@@ -204,10 +224,11 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         val generator: JavaGen = generators.dequeue()
         if (generator.shouldRun) {
           try {
+            addChildrenDebugInfo(generator)
             generators ++= generator.children
             runner.apply(generator)
           } catch {
-            case e: Exception => exceptionHandler(e)
+            case e: Exception => exceptionHandler(generator, e)
           }
         }
       }
@@ -223,10 +244,11 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
             new Runnable {
               override def run(): Unit = {
                 try {
+                  addChildrenDebugInfo(generator)
                   generator.children.foreach(submit)
                   runner.apply(generator)
                 } catch {
-                  case e: Exception => exceptionHandler(e)
+                  case e: Exception => exceptionHandler(generator, e)
                 } finally {
                   phaser.arriveAndDeregister()
                 }

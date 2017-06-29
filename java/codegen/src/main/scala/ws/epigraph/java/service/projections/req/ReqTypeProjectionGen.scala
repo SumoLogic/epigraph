@@ -68,6 +68,7 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
     jn(lqn(JavaGenUtils.toCType(_type), cType).replace('.', '_')).toLowerCase
 
   def typeNameToMethodName(_type: CType): String = jn(lqn(_type, cType).replace('.', '_'))
+  override def description = s"${super.description} (${cType.name.name}) @ $referenceName"
 }
 
 object ReqTypeProjectionGen {

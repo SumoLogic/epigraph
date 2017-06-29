@@ -50,6 +50,8 @@ trait ReqProjectionGen extends JavaGen {
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   protected val packageStatement: String = s"package $namespace;"
+
+  override def description: String = s"${super.description} $namespace::$shortClassName"
 }
 
 object ReqProjectionGen {

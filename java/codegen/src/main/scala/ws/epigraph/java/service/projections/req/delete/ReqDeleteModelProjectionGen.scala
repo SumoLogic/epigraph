@@ -30,13 +30,16 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
 abstract class ReqDeleteModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+    referenceName,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
+  )
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
@@ -55,7 +58,7 @@ object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
-    baseNamespace: Qn,
+    baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqDeleteModelProjectionGen = op.`type`().kind() match {
 
@@ -63,7 +66,7 @@ object ReqDeleteModelProjectionGen {
       new ReqDeleteRecordModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpDeleteRecordModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -71,7 +74,7 @@ object ReqDeleteModelProjectionGen {
       new ReqDeleteMapModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpDeleteMapModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -79,7 +82,7 @@ object ReqDeleteModelProjectionGen {
       new ReqDeleteListModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpDeleteListModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -87,7 +90,7 @@ object ReqDeleteModelProjectionGen {
       new ReqDeletePrimitiveModelProjectionGen(
         baseNamespaceProvider,
         op.asInstanceOf[OpDeletePrimitiveModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )

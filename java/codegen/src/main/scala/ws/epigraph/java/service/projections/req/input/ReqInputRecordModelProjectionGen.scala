@@ -31,10 +31,10 @@ import scala.collection.JavaConversions._
 class ReqInputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpInputRecordModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
 
@@ -59,10 +59,9 @@ class ReqInputRecordModelProjectionGen(
     new ReqInputRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
-      ctx
-    ) {
+      ctx) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
     }

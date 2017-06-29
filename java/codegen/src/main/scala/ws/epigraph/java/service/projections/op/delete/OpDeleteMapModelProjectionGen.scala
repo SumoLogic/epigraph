@@ -31,11 +31,11 @@ import scala.collection.JavaConversions._
 class OpDeleteMapModelProjectionGen(p: OpDeleteMapModelProjection)
   extends ObjectGen[OpDeleteMapModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
     ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
-new OpDeleteMapModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},

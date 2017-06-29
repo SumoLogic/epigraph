@@ -30,14 +30,17 @@ import ws.epigraph.types.TypeKind
 class ReqDeleteVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpDeleteVarProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(referenceName, _baseNamespace)
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+    referenceName,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
+  )
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
 
@@ -47,7 +50,7 @@ class ReqDeleteVarProjectionGen(
     new ReqDeleteVarProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
@@ -58,7 +61,7 @@ class ReqDeleteVarProjectionGen(
     ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
-      baseNamespace,
+      Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -73,17 +76,17 @@ object ReqDeleteVarProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpDeleteVarProjection,
-    baseNamespace: Qn,
+    baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqDeleteProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqDeleteVarProjectionGen(baseNamespaceProvider, op, baseNamespace, namespaceSuffix, ctx)
+      new ReqDeleteVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqDeleteRecordModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -91,7 +94,7 @@ object ReqDeleteVarProjectionGen {
       new ReqDeleteMapModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -99,7 +102,7 @@ object ReqDeleteVarProjectionGen {
       new ReqDeleteListModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )
@@ -107,7 +110,7 @@ object ReqDeleteVarProjectionGen {
       new ReqDeletePrimitiveModelProjectionGen(
         baseNamespaceProvider,
         op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
-        baseNamespace,
+        baseNamespaceOpt,
         namespaceSuffix,
         ctx
       )

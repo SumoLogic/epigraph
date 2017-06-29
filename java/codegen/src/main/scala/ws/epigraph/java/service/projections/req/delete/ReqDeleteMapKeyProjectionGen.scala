@@ -30,10 +30,13 @@ class ReqDeleteMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
   protected val op: OpDeleteKeyProjection,
+  baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpDeleteKeyProjection
+
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 

@@ -44,7 +44,7 @@ class ReqUpdateFieldProjectionGen(
     ReqUpdateVarProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.varProjection(),
-      baseNamespace,
+      baseNamespaceOpt,
       namespaceSuffix,
       ctx
     )

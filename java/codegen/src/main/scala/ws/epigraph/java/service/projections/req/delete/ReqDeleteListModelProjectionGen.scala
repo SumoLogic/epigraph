@@ -27,13 +27,13 @@ import ws.epigraph.projections.op.delete.OpDeleteListModelProjection
 class ReqDeleteListModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpDeleteListModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
-    _baseNamespace,
+    baseNamespaceOpt,
     _namespaceSuffix,
     ctx
   ) with ReqListModelProjectionGen {
@@ -43,7 +43,7 @@ class ReqDeleteListModelProjectionGen(
   protected val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
-    baseNamespace,
+    Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -54,7 +54,7 @@ class ReqDeleteListModelProjectionGen(
     new ReqDeleteListModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

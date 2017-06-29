@@ -44,7 +44,7 @@ class ReqDeleteFieldProjectionGen(
     ReqDeleteVarProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.varProjection(),
-      baseNamespace,
+      baseNamespaceOpt,
       namespaceSuffix,
       ctx
     )

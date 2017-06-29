@@ -29,10 +29,10 @@ import ws.epigraph.projections.op.input.OpInputMapModelProjection
 class ReqUpdateMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   override protected val op: OpInputMapModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 
@@ -42,6 +42,7 @@ class ReqUpdateMapModelProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
+    Some(baseNamespace),
     namespaceSuffix,
     ctx
   )
@@ -49,7 +50,7 @@ class ReqUpdateMapModelProjectionGen(
   protected override val elementGen: ReqUpdateProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
-    baseNamespace,
+    Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
     ctx
   )
@@ -60,7 +61,7 @@ class ReqUpdateMapModelProjectionGen(
     new ReqUpdateMapModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

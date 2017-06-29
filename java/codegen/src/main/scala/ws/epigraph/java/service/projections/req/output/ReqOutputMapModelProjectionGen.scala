@@ -42,6 +42,7 @@ class ReqOutputMapModelProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
+    Some(baseNamespace),
     namespaceSuffix,
     ctx
   )

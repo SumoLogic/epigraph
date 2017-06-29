@@ -39,6 +39,7 @@ class ReqPathMapModelProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
+    Some(baseNamespace),
     namespaceSuffix,
     ctx
   )

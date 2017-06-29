@@ -27,10 +27,10 @@ import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
 class ReqDeletePrimitiveModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpDeletePrimitiveModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(baseNamespaceProvider, op, _baseNamespace, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
@@ -40,7 +40,7 @@ class ReqDeletePrimitiveModelProjectionGen(
     new ReqDeletePrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {

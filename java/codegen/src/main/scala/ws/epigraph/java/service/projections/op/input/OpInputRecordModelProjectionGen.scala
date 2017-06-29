@@ -31,19 +31,19 @@ import scala.collection.JavaConversions._
 class OpInputRecordModelProjectionGen(p: OpInputRecordModelProjection)
   extends ObjectGen[OpInputRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[RecordType].getName)
-    ctx.use(classOf[OpInputFieldProjectionEntry].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[RecordType].getName)
+    val fpe = ctx.use(classOf[OpInputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpInputRecordModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.required().toString},
   ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("String", "OpInputFieldProjectionEntry", p.fieldProjections().entrySet().map{e =>
+  ${i(genLinkedMap("java.lang.String", fpe, p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
@@ -55,10 +55,10 @@ new OpInputRecordModelProjection(
     fpe: OpInputFieldProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.use(classOf[OpInputFieldProjectionEntry].getName)
+    val fpes = ctx.use(classOf[OpInputFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpInputFieldProjectionEntry(
+new $fpes(
   ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
   ${i(gen(fpe.fieldProjection(), ctx))},
   ${gen(fpe.location(), ctx)}

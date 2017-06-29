@@ -31,13 +31,13 @@ import scala.collection.JavaConversions._
 class ReqDeleteRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
   protected val op: OpDeleteRecordModelProjection,
-  _baseNamespace: Qn,
+  baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
-    _baseNamespace,
+    baseNamespaceOpt,
     _namespaceSuffix,
     ctx
   ) with ReqRecordModelProjectionGen {
@@ -65,7 +65,7 @@ class ReqDeleteRecordModelProjectionGen(
     new ReqDeleteRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
-      baseNamespace,
+      Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
