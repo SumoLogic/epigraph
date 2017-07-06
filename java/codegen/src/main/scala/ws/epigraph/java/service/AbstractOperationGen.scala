@@ -64,6 +64,7 @@ trait AbstractOperationGen extends JavaGen {
     op.outputProjection,
     None,
     Qn.EMPTY,
+    None,
     ctx
   )
 

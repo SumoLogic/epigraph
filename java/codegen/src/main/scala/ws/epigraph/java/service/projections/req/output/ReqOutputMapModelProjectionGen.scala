@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.output.OpOutputMapModelProjection
@@ -31,8 +31,9 @@ class ReqOutputMapModelProjectionGen(
   override protected val op: OpOutputMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqProjectionGen],
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpOutputMapModelProjection
 
@@ -52,17 +53,17 @@ class ReqOutputMapModelProjectionGen(
     op.itemsProjection(),
     Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
+    None, // todo should extend parent element projection?
     ctx
   )
 
-  override protected def tailGenerator(
-    op: OpOutputMapModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpOutputMapModelProjection, normalized: Boolean) =
     new ReqOutputMapModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized

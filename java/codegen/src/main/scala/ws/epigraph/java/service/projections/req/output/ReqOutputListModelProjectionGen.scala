@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
@@ -29,8 +29,9 @@ class ReqOutputListModelProjectionGen(
   val op: OpOutputListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqProjectionGen],
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
@@ -39,17 +40,17 @@ class ReqOutputListModelProjectionGen(
     op.itemsProjection(),
     Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
+    None, // todo should extend parent's projection?
     ctx
   )
 
-  override protected def tailGenerator(
-    op: OpOutputListModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpOutputListModelProjection, normalized: Boolean) =
     new ReqOutputListModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized

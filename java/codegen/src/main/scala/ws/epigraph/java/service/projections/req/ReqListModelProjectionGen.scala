@@ -54,11 +54,11 @@ ${ReqProjectionGen.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqListModelProjectionFqn.last()} raw;
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqListModelProjectionFqn.last()} raw;\n" else ""}\
 
   public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
-    this.raw = (${reqListModelProjectionFqn.last()}) raw;
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqListModelProjectionFqn.last()}) raw" else "super(raw)"};
   }
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
@@ -72,8 +72,7 @@ public class $shortClassName {
     return new $elementProjectionClass(raw.itemsProjection());
   }\
 \s${(extra + params + meta + tails + normalizedTails).code}\
-
-  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; }
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
 }

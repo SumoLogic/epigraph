@@ -37,18 +37,31 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
 
   protected val cRecordType: CRecordTypeDef = cType.asInstanceOf[CRecordTypeDef]
 
-  override lazy val children: Iterable[JavaGen] = super.children ++ (
+  override lazy val children: Iterable[JavaGen] = super.children ++ {
+    // exclude fields taken from parent generator
+    val fgs = fieldGenerators.filterKeys { f =>
+      parentClassGenOpt match {
+        case Some(g: ReqRecordModelProjectionGen) => !g.fieldGenerators.contains(f)
+        case _ => true
+      }
+    }
+//    System.out.println(s"""$fullClassName -> [${ fgs.keys.map(k => k.name).mkString(",") }]""")
     if (ReqFieldProjectionGen.generateFieldProjections)
-      fieldGenerators.values
+      fgs.values
     else
-      fieldGenerators.values.flatMap(_.children)
-    )
-
-  protected def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse{
-    throw new RuntimeException(s"Can't find field '$name' in type '${cType.name.toString}'")
+      fgs.values.flatMap(_.children)
   }
 
-  protected def generate(reqRecordModelProjectionFqn: Qn, reqFieldProjectionEntryFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+
+  protected def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse {
+    throw new RuntimeException(s"Can't find field '$name' in type '${ cType.name.toString }'")
+  }
+
+  protected def generate(
+    reqRecordModelProjectionFqn: Qn,
+    reqFieldProjectionEntryFqn: Qn,
+    extra: CodeChunk = CodeChunk.empty): String = {
+
     def genField(field: CField, fieldGenerator: ReqFieldProjectionGen): CodeChunk = {
 
       lazy val fieldProjection = /*@formatter:off*/sn"""\
@@ -75,7 +88,8 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
       if (ReqFieldProjectionGen.generateFieldProjections)
         CodeChunk(
           fieldProjection ++ modelProjection,
-          Set(fieldGenerator.fullClassName,
+          Set(
+            fieldGenerator.fullClassName,
             "org.jetbrains.annotations.Nullable",
             reqFieldProjectionEntryFqn.toString
           )
@@ -90,7 +104,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
         )
     }
 
-    val fields = fieldGenerators.map{ case (field, gen) => genField(field, gen) }.foldLeft(CodeChunk.empty)(_ + _)
+    val fields = fieldGenerators.map { case (field, gen) => genField(field, gen) }.foldLeft(CodeChunk.empty)(_ + _)
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
@@ -107,19 +121,18 @@ ${ReqProjectionGen.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqRecordModelProjectionFqn.last()} raw;
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqRecordModelProjectionFqn.last()} raw;\n" else ""}\
 
   public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
-    this.raw = (${reqRecordModelProjectionFqn.last()} ) raw;
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqRecordModelProjectionFqn.last()}) raw" else "super(raw)"};
   }
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
 \s${(extra + fields + params + meta + tails + normalizedTails).code}\
-
-  public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; }
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
 }

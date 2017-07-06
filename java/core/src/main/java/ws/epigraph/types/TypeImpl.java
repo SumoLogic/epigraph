@@ -43,7 +43,10 @@ abstract class TypeImpl implements Type {
 
   private final @NotNull Annotations annotations;
 
-  TypeImpl(@NotNull TypeName name, @NotNull List<@NotNull ? extends Type> immediateSupertypes, @NotNull Annotations annotations) {
+  TypeImpl(
+      @NotNull TypeName name,
+      @NotNull List<@NotNull ? extends Type> immediateSupertypes,
+      @NotNull Annotations annotations) {
     this.name = name;
     this.immediateSupertypes = Unmodifiable.list(immediateSupertypes); // TODO defensive copy?
     this.annotations = annotations;
@@ -136,5 +139,17 @@ abstract class TypeImpl implements Type {
       );
     return type;
   }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj instanceof TypeImpl) {
+      TypeImpl other = (TypeImpl) obj;
+      return name().equals(other.name());
+    } else
+      return false;
+  }
+
+  @Override
+  public int hashCode() { return name().hashCode(); }
 
 }

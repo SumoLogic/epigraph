@@ -55,9 +55,7 @@ class ReqUpdateMapModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(
-    op: OpInputMapModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputMapModelProjection, normalized: Boolean) =
     new ReqUpdateMapModelProjectionGen(
       baseNamespaceProvider,
       op,
@@ -67,6 +65,7 @@ class ReqUpdateMapModelProjectionGen(
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
+      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

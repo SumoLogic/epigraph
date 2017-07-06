@@ -43,6 +43,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
     td.outputProjection(),
     None,
     Qn.EMPTY,
+    None,
     ctx
   )
 

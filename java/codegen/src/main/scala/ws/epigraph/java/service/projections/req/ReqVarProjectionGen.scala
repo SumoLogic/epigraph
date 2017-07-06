@@ -41,8 +41,15 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
-  override lazy val children: Iterable[ReqProjectionGen] =
-    tagGenerators.values ++ tailGenerators.values ++ normalizedTailGenerators.values
+  override lazy val children: Iterable[ReqProjectionGen] = tailGenerators.values ++ normalizedTailGenerators.values ++ {
+    // exclude tags taken from parent generator
+    tagGenerators.filterKeys { t =>
+      parentClassGenOpt match {
+        case Some(g: ReqVarProjectionGen) => !g.tagGenerators.contains(t)
+        case _ => true
+      }
+    }.values
+  }
 
   override protected val cType: CEntityTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
@@ -74,7 +81,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\
   /**
-   * @return {@code ${tag.name}} projection
+   * @return {@code ${tag.name}} tag projection
    */
   public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
     ${reqTagProjectionEntryFqn.last()} tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
@@ -145,13 +152,12 @@ ${ReqProjectionGen.generateImports(imports)}
  * Request projection for {@code ${ln(cType)}} type
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqVarProjectionFqn.last()} raw;
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqVarProjectionFqn.last()} raw;\n" else ""}\
 
-  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { this.raw = raw; }\
+  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { ${if (parentClassGenOpt.isEmpty) "this.raw = raw" else "super(raw)" }; }\
 \s${(tags + tails + normalizedTails + extra).code}\
-
-  public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; }
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
 }

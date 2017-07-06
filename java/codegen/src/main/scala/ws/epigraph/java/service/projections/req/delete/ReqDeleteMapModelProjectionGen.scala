@@ -61,9 +61,7 @@ class ReqDeleteMapModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(
-    op: OpDeleteMapModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpDeleteMapModelProjection, normalized: Boolean) =
     new ReqDeleteMapModelProjectionGen(
       baseNamespaceProvider,
       op,
@@ -73,6 +71,7 @@ class ReqDeleteMapModelProjectionGen(
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
+      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

@@ -53,9 +53,7 @@ class ReqInputRecordModelProjectionGen(
       )
     }.toMap
 
-  override protected def tailGenerator(
-    op: OpInputRecordModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputRecordModelProjection, normalized: Boolean) =
     new ReqInputRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
@@ -64,6 +62,7 @@ class ReqInputRecordModelProjectionGen(
       ctx) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
+      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

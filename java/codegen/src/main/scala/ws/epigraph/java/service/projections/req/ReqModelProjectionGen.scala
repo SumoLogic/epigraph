@@ -45,7 +45,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
     throw new RuntimeException("meta projections not supported")
 
-  protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqModelProjectionGen =
+  protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpProjectionType, normalized: Boolean): ReqModelProjectionGen =
     throw new RuntimeException("tail projections not supported")
 
   // -----------
@@ -88,13 +88,13 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected lazy val tailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]] // can't set SMP to OpProjectionType, Scala doesn't allow cyclic types
-        .map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
+        .map { t: OpProjectionType => t -> tailGenerator(this, t, normalized = false) }.toMap
     ).getOrElse(Map())
 
   protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
-        t -> tailGenerator(op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
+        t -> tailGenerator(this, op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
       }.toMap
     ).getOrElse(Map())
 

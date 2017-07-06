@@ -33,6 +33,7 @@ abstract class ReqOutputModelProjectionGen(
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqProjectionGen],
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
@@ -56,9 +57,7 @@ abstract class ReqOutputModelProjectionGen(
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 
   protected lazy val required: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
-  public boolean requried() {
-    return raw.required();
-  }
+  public boolean requried() { return raw.required(); }
 """/*@formatter:on*/)
 
   override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
@@ -67,6 +66,7 @@ abstract class ReqOutputModelProjectionGen(
       metaOp,
       Some(baseNamespace),
       namespaceSuffix.append("meta"),
+      None, // todo should extend parent projection's meta?
       ctx
     )
 }
@@ -77,6 +77,7 @@ object ReqOutputModelProjectionGen {
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
+    parentClassGenOpt: Option[ReqProjectionGen],
     ctx: GenContext): ReqOutputModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
@@ -85,6 +86,7 @@ object ReqOutputModelProjectionGen {
         op.asInstanceOf[OpOutputRecordModelProjection],
         baseNamespaceOpt,
         namespaceSuffix,
+        parentClassGenOpt,
         ctx
       )
     case TypeKind.MAP =>
@@ -93,6 +95,7 @@ object ReqOutputModelProjectionGen {
         op.asInstanceOf[OpOutputMapModelProjection],
         baseNamespaceOpt,
         namespaceSuffix,
+        parentClassGenOpt,
         ctx
       )
     case TypeKind.LIST =>
@@ -101,6 +104,7 @@ object ReqOutputModelProjectionGen {
         op.asInstanceOf[OpOutputListModelProjection],
         baseNamespaceOpt,
         namespaceSuffix,
+        parentClassGenOpt,
         ctx
       )
     case TypeKind.PRIMITIVE =>
@@ -109,6 +113,7 @@ object ReqOutputModelProjectionGen {
         op.asInstanceOf[OpOutputPrimitiveModelProjection],
         baseNamespaceOpt,
         namespaceSuffix,
+        parentClassGenOpt,
         ctx
       )
     case x => throw new RuntimeException(s"Unsupported projection kind: $x")

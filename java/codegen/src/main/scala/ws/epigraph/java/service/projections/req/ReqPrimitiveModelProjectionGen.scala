@@ -45,19 +45,18 @@ ${ReqProjectionGen.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;\n" else ""}\
 
   public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
-    this.raw = (${reqPrimitiveModelProjectionFqn.last()}) raw;
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqPrimitiveModelProjectionFqn.last()}) raw" else "super(raw)"};
   }
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
 \s${(extra + params + meta + tails + normalizedTails).code}\
-
-  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; }
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
 }

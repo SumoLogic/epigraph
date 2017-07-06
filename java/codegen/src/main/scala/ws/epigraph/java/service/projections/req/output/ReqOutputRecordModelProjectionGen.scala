@@ -33,12 +33,14 @@ class ReqOutputRecordModelProjectionGen(
   protected val op: OpOutputRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqProjectionGen],
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(
     baseNamespaceProvider,
     op,
     baseNamespaceOpt,
     _namespaceSuffix,
+    parentClassGenOpt,
     ctx
   ) with ReqRecordModelProjectionGen {
 
@@ -46,27 +48,51 @@ class ReqOutputRecordModelProjectionGen(
 
   override protected lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
     op.fieldProjections().values().map { fpe =>
-      (
-        findField(fpe.field().name()),
+      val field = fpe.field()
+      val cField = findField(field.name())
+
+      def fieldGen(parentFieldGenOpt: Option[ReqProjectionGen]) =
         new ReqOutputFieldProjectionGen(
           baseNamespaceProvider,
-          fpe.field().name(),
+          field.name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
-          namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
+          namespaceSuffix.append(jn(field.name()).toLowerCase),
+          parentFieldGenOpt,
           ctx
         )
+
+      (
+        cField,
+
+        // 3 options here:
+
+        // 1: parent projection exists and field is inherited -> use parent projection's field projection
+        // 2: parent projection exists and field is overriden -> create new field projection extending parent field projection
+        // 3: no parent projection -> use simple field projection
+
+        (parentClassGenOpt match {
+          case Some(g: ReqOutputRecordModelProjectionGen) => g.fieldGenerators.get(cField).orElse { // (1)
+            g.fieldGenerators.find(_._1.name == field.name()).map(_._2).map { parentFieldGen =>
+              fieldGen(Some(parentFieldGen.dataProjectionGen)) // (2)
+            }
+          }
+          case _ => None
+        }).getOrElse(fieldGen(None)) // (3)
+
       )
     }.toMap
 
   override protected def tailGenerator(
+    parentGen: ReqModelProjectionGen,
     op: OpOutputRecordModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+    normalized: Boolean) =
     new ReqOutputRecordModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized

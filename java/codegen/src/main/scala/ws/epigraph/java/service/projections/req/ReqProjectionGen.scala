@@ -47,11 +47,15 @@ trait ReqProjectionGen extends JavaGen {
 
   def fullClassName: String = namespace.append(shortClassName).toString
 
+  protected def parentClassGenOpt: Option[ReqProjectionGen] = None
+
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   protected val packageStatement: String = s"package $namespace;"
 
   override def description: String = s"${super.description} $namespace::$shortClassName"
+
+  def extendsClause: String = parentClassGenOpt.map(p => s"extends ${ p.fullClassName } ").getOrElse("")
 }
 
 object ReqProjectionGen {

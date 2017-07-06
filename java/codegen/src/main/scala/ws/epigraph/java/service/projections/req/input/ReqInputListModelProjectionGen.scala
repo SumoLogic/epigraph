@@ -42,9 +42,7 @@ class ReqInputListModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(
-    op: OpInputListModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputListModelProjection, normalized: Boolean) =
     new ReqInputListModelProjectionGen(
       baseNamespaceProvider,
       op,
@@ -54,6 +52,7 @@ class ReqInputListModelProjectionGen(
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
+      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

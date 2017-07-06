@@ -34,9 +34,7 @@ class ReqDeletePrimitiveModelProjectionGen(
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
-  override protected def tailGenerator(
-    op: OpDeletePrimitiveModelProjection,
-    normalized: Boolean): ReqModelProjectionGen =
+  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpDeletePrimitiveModelProjection, normalized: Boolean) =
     new ReqDeletePrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
@@ -46,6 +44,7 @@ class ReqDeletePrimitiveModelProjectionGen(
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
+      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(
