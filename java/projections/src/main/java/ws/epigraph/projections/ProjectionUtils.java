@@ -285,7 +285,7 @@ public final class ProjectionUtils {
     // todo find some common place
 
     return baseProjectionName
-        .append(new ProjectionReferenceName.StringRefNameSegment("_normalized"))
+        .append(new ProjectionReferenceName.StringRefNameSegment("_nt"))
         .append(new ProjectionReferenceName.TypeRefNameSegment(tailType, sameNamespace));
   }
 

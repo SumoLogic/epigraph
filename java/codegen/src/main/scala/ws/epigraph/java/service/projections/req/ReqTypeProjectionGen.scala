@@ -22,6 +22,7 @@ import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenProjectionReference, ProjectionReferenceName}
+import ws.epigraph.schema.Namespaces
 import ws.epigraph.types.TypeApi
 
 /**
@@ -61,13 +62,14 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
 
   protected def tailNamespaceSuffix(tailType: TypeApi, normalized: Boolean): Qn =
     namespaceSuffix
-      .append(if (normalized) "_normalized" else "_tail")
+      .append(if (normalized) Namespaces.NORMALIZED_TAILS_SEGMENT else Namespaces.TAILS_SEGMENT)
       .append(typeNameToPackageName(tailType))
 
   def typeNameToPackageName(_type: TypeApi): String =
     jn(lqn(JavaGenUtils.toCType(_type), cType).replace('.', '_')).toLowerCase
 
   def typeNameToMethodName(_type: CType): String = jn(lqn(_type, cType).replace('.', '_'))
+
   override def description = s"${super.description} (${cType.name.name}) @ $referenceName"
 }
 

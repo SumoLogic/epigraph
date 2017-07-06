@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.OutputDataTypeNameProjection;
 import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.anonlisttypename.OutputAnonListTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.anonmaptypename.OutputAnonMapTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.anonmaptypename.record.OutputAnonMapTypeNameRecordProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.qualifiedtypename.OutputQualifiedTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonlisttypename.OutputAnonListTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.OutputAnonMapTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.record.OutputAnonMapTypeNameRecordProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.OutputQualifiedTypeNameProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

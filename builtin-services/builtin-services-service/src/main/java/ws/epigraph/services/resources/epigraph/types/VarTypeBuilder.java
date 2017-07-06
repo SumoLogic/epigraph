@@ -21,10 +21,10 @@ import epigraph.schema.VarType;
 import epigraph.schema.VarType_List;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services._resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.qualifiedtypename.OutputQualifiedTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.OutputVarTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.supertypes.OutputVarType_ListProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.vartype.tags.OutputTag_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.OutputQualifiedTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.OutputVarTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.supertypes.OutputVarType_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.tags.OutputTag_ListProjection;
 import ws.epigraph.types.EntityTypeApi;
 import ws.epigraph.types.TagApi;
 

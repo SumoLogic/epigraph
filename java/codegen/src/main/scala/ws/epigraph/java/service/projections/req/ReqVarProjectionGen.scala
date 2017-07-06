@@ -16,9 +16,10 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CTag, CEntityTypeDef}
+import ws.epigraph.compiler.{CEntityTypeDef, CTag}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
 import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
 import ws.epigraph.lang.Qn
@@ -51,7 +52,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     }.values
   }
 
-  override protected val cType: CEntityTypeDef = JavaGenUtils.toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
+  override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
   protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map { tpe => findTag(tpe.tag().name()) -> tagGenerator(tpe) }.toMap
@@ -96,7 +97,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     )
 
     def genTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = JavaGenUtils.toCType(tail.`type`())
+      val tailCtype = toCType(tail.`type`())
       CodeChunk(
         /*@formatter:off*/sn"""\
   /**
@@ -114,7 +115,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     }
 
     def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = JavaGenUtils.toCType(tail.`type`())
+      val tailCtype = toCType(tail.`type`())
       val tailTypeExpr = lqn2(tailCtype, namespace.toString)
       CodeChunk(
         /*@formatter:off*/sn"""\
@@ -137,10 +138,55 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
       .map { case (tail, gen) => genNormalizedTail(tail, gen) }
       .foldLeft(CodeChunk.empty)(_ + _)
 
+    //                                                                                                   dispatcher code
+    val dispatcher = if (normalizedTailGenerators.isEmpty) CodeChunk.empty else new CodeChunk(
+      /*@formatter:off*/sn"""\
+  public static @NotNull Dispatcher dispatcher() { return Dispatcher.INSTANCE; }
+
+  public static final class Dispatcher {
+    static final Dispatcher INSTANCE = new Dispatcher();
+
+    private Dispatcher() {}
+
+    public <T> T dispatch(
+      @NotNull $shortClassName projection,
+      @NotNull Type actualType,
+${normalizedTailGenerators.map{
+  case (t,g) => s"      @NotNull Function<${g.fullClassName}, T> ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer,"
+}.mkString("\n")}
+      @NotNull Supplier<T> _default) {
+
+${normalizedTailGenerators.map{ case (t,g) =>
+  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
+  s"        return ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer.apply(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
+}.mkString("      ","\n      else ","")}
+      else
+        return _default.get();
+    }
+
+    public void dispatch(
+      @NotNull $shortClassName projection,
+      @NotNull Type actualType,
+${normalizedTailGenerators.map{
+  case (t,g) => s"      @NotNull Consumer<${g.fullClassName}> ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer,"
+}.mkString("\n")}
+      @NotNull Runnable _default) {
+
+${normalizedTailGenerators.map{ case (t,g) =>
+  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
+  s"        ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer.accept(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
+}.mkString("      ","\n      else ", "")}
+      else
+        _default.run();
+    }
+  }\n"""/*@formatter:on*/ ,
+      Set("ws.epigraph.types.Type", "java.util.function.Function", "java.util.function.Supplier", "java.util.function.Consumer")
+    )
+
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       reqVarProjectionFqn.toString
-    ) ++ tags.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
+    ) ++ tags.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -156,7 +202,7 @@ public class $shortClassName $extendsClause{
 ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqVarProjectionFqn.last()} raw;\n" else ""}\
 
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} raw) { ${if (parentClassGenOpt.isEmpty) "this.raw = raw" else "super(raw)" }; }\
-\s${(tags + tails + normalizedTails + extra).code}\
+\s${(tags + tails + normalizedTails + extra + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqVarProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }

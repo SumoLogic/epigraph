@@ -21,9 +21,9 @@ import epigraph.schema.MapType_List;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
 import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype.OutputDatumTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.maptype.OutputMapTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.maptype.supertypes.OutputMapType_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype.OutputDatumTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.maptype.OutputMapTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.maptype.supertypes.OutputMapType_ListProjection;
 import ws.epigraph.types.MapTypeApi;
 
 /**

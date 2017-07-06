@@ -20,9 +20,9 @@ import epigraph.schema.PrimitiveType;
 import epigraph.schema.PrimitiveType_List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.qualifiedtypename.OutputQualifiedTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.primitivetype.OutputPrimitiveTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.primitivetype.supertypes.OutputPrimitiveType_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.OutputQualifiedTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.primitivetype.OutputPrimitiveTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.primitivetype.supertypes.OutputPrimitiveType_ListProjection;
 import ws.epigraph.types.PrimitiveTypeApi;
 
 /**

@@ -22,10 +22,10 @@ import epigraph.schema.RecordType_List;
 import epigraph.schema.Type_;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.OutputField_Projection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._normalized.qualifiedtypename.OutputQualifiedTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.recordtype.OutputRecordTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.recordtype.declaredfields.OutputField_ListProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._normalized.datumtype._normalized.recordtype.supertypes.OutputRecordType_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.OutputQualifiedTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.recordtype.OutputRecordTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.recordtype.declaredfields.OutputField_ListProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.recordtype.supertypes.OutputRecordType_ListProjection;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 

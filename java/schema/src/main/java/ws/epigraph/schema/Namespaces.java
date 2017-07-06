@@ -24,6 +24,9 @@ import ws.epigraph.schema.operations.OperationKind;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class Namespaces {
+  public static final String TAILS_SEGMENT = "_t";
+  public static final String NORMALIZED_TAILS_SEGMENT = "_nt";
+
   private final @NotNull Qn namespace;
 
   public Namespaces(final @NotNull Qn namespace) {this.namespace = namespace;}
