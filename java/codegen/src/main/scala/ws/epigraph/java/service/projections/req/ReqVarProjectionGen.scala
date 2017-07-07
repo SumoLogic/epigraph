@@ -141,7 +141,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     //                                                                                                   dispatcher code
     val dispatcher = if (normalizedTailGenerators.isEmpty) CodeChunk.empty else new CodeChunk(
       /*@formatter:off*/sn"""\
-  public static @NotNull Dispatcher dispatcher() { return Dispatcher.INSTANCE; }
+  public static final @NotNull Dispatcher dispatcher = Dispatcher.INSTANCE;
 
   public static final class Dispatcher {
     static final Dispatcher INSTANCE = new Dispatcher();
@@ -192,7 +192,7 @@ ${normalizedTailGenerators.map{ case (t,g) =>
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 /**
  * Request projection for {@code ${ln(cType)}} type

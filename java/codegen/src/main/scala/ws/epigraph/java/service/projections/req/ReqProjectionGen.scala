@@ -127,6 +127,4 @@ object ReqProjectionGen {
     }.foldLeft(CodeChunk.empty)(_ + _)
   }
 
-  def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
-
 }

@@ -37,7 +37,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
 
   protected val cRecordType: CRecordTypeDef = cType.asInstanceOf[CRecordTypeDef]
 
-  override lazy val children: Iterable[JavaGen] = super.children ++ {
+  override def children: Iterable[JavaGen] = super.children ++ {
     // exclude fields taken from parent generator
     val fgs = fieldGenerators.filterKeys { f =>
       parentClassGenOpt match {
@@ -111,13 +111,13 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
       reqVarProjectionFqn.toString,
       reqModelProjectionFqn.toString,
       reqRecordModelProjectionFqn.toString
-    ) ++ fields.imports ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
+    ) ++ fields.imports ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
@@ -131,7 +131,7 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqRecordModelPr
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
-\s${(extra + fields + params + meta + tails + normalizedTails).code}\
+\s${(extra + fields + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }

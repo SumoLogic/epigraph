@@ -28,7 +28,7 @@ import ws.epigraph.projections.op.output.OpOutputMapModelProjection
  */
 class ReqOutputMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override protected val op: OpOutputMapModelProjection,
+  override val op: OpOutputMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqProjectionGen],

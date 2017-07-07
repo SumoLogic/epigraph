@@ -30,7 +30,7 @@ import ws.epigraph.types.TypeKind
  */
 class ReqUpdateVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpInputVarProjection,
+  val op: OpInputVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqVarProjectionGen {

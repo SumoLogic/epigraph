@@ -30,7 +30,7 @@ import scala.collection.JavaConversions._
  */
 class ReqPathRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpRecordModelPath,
+  val op: OpRecordModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {

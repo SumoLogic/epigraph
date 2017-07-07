@@ -30,7 +30,7 @@ import scala.collection.JavaConversions._
  */
 class ReqInputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpInputRecordModelProjection,
+  val op: OpInputRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)

@@ -30,7 +30,7 @@ import scala.collection.JavaConversions._
  */
 class ReqDeleteRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpDeleteRecordModelProjection,
+  val op: OpDeleteRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)

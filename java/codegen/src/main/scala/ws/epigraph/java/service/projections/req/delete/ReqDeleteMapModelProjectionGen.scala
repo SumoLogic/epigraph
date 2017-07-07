@@ -28,7 +28,7 @@ import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
  */
 class ReqDeleteMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override protected val op: OpDeleteMapModelProjection,
+  override val op: OpDeleteMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)

@@ -28,7 +28,7 @@ import ws.epigraph.projections.op.input.OpInputMapModelProjection
  */
 class ReqInputMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override protected val op: OpInputMapModelProjection,
+  override val op: OpInputMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   ctx: GenContext)

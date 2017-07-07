@@ -49,7 +49,7 @@ trait ReqFieldProjectionGen extends ReqProjectionGen {
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 /**
  * Request projection for {@code $fieldName} field

@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
  */
 class ReqOutputVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpOutputVarProjection,
+  val op: OpOutputVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqProjectionGen],

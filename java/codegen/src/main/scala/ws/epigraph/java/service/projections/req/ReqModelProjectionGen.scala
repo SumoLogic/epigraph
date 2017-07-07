@@ -21,6 +21,7 @@ import ws.epigraph.java.JavaGenNames.lqn2
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
@@ -91,7 +92,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
         .map { t: OpProjectionType => t -> tailGenerator(this, t, normalized = false) }.toMap
     ).getOrElse(Map())
 
-  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
+  lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
         t -> tailGenerator(this, op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
@@ -133,6 +134,52 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
       Set()
     )
   }
+
+
+  //                                                                                                   dispatcher code
+  protected lazy val dispatcher: CodeChunk = if (normalizedTailGenerators.isEmpty) CodeChunk.empty else new CodeChunk(
+    /*@formatter:off*/sn"""\
+  public static final @NotNull Dispatcher dispatcher = Dispatcher.INSTANCE;
+
+  public static final class Dispatcher {
+    static final Dispatcher INSTANCE = new Dispatcher();
+
+    private Dispatcher() {}
+
+    public <T> T dispatch(
+      @NotNull $shortClassName projection,
+      @NotNull Type actualType,
+${normalizedTailGenerators.map{
+  case (t,g) => s"      @NotNull Function<${g.fullClassName}, T> ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer,"
+}.mkString("\n")}
+      @NotNull Supplier<T> _default) {
+
+${normalizedTailGenerators.map{ case (t,g) =>
+  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
+  s"        return ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer.apply(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
+}.mkString("      ","\n      else ","")}
+      else
+        return _default.get();
+    }
+
+    public void dispatch(
+      @NotNull $shortClassName projection,
+      @NotNull Type actualType,
+${normalizedTailGenerators.map{
+  case (t,g) => s"      @NotNull Consumer<${g.fullClassName}> ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer,"
+}.mkString("\n")}
+      @NotNull Runnable _default) {
+
+${normalizedTailGenerators.map{ case (t,g) =>
+  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
+  s"        ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer.accept(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
+}.mkString("      ","\n      else ", "")}
+      else
+        _default.run();
+    }
+  }\n"""/*@formatter:on*/ ,
+    Set("ws.epigraph.types.Type", "java.util.function.Function", "java.util.function.Supplier", "java.util.function.Consumer")
+  )
 
   protected def classJavadoc =/*@formatter:off*/sn"""\
 /**

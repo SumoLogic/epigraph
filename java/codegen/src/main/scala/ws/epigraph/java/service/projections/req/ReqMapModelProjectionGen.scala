@@ -84,13 +84,13 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
       reqMapModelProjectionFqn.toString,
       elementGen.fullClassName,
       keyGen.fullClassName
-    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports ++ tails.imports ++ normalizedTails.imports
+    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
@@ -113,7 +113,7 @@ ${keys.code}\
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }\
-\s${(extra + params + meta + tails + normalizedTails).code}\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqMapModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }

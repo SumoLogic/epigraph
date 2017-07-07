@@ -139,4 +139,6 @@ object JavaGenUtils {
 
   def generatedAnnotation(generator: Any): String =
     s"""@javax.annotation.Generated("${ Option(generator.getClass.getCanonicalName).getOrElse(generator.getClass.getName) }")"""
+
+  def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
 }

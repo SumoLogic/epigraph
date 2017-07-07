@@ -29,7 +29,7 @@ import ws.epigraph.types.TypeKind
  */
 class ReqDeleteVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpDeleteVarProjection,
+  val op: OpDeleteVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqVarProjectionGen {

@@ -17,8 +17,9 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CField
-import ws.epigraph.java.GenContext
+import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.service.builders.RecordBuilderGen
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
@@ -30,7 +31,7 @@ import scala.collection.JavaConversions._
  */
 class ReqOutputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpOutputRecordModelProjection,
+  val op: OpOutputRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqProjectionGen],
@@ -46,7 +47,7 @@ class ReqOutputRecordModelProjectionGen(
 
   override type OpProjectionType = OpOutputRecordModelProjection
 
-  override protected lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
+  override lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
     op.fieldProjections().values().map { fpe =>
       val field = fpe.field()
       val cField = findField(field.name())
@@ -98,6 +99,11 @@ class ReqOutputRecordModelProjectionGen(
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
     }
+
+
+  override lazy val children: Iterable[JavaGen] =
+    if (fieldGenerators.isEmpty) super.children
+    else super.children ++ Iterable(new RecordBuilderGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"),

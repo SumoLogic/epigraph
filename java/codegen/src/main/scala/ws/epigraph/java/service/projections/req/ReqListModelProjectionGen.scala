@@ -44,13 +44,13 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
       reqModelProjectionFqn.toString,
       reqListModelProjectionFqn.toString,
       elementGen.fullClassName
-    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
@@ -71,7 +71,7 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqListModelProj
   public @NotNull $elementProjectionClass itemsProjection() {
     return new $elementProjectionClass(raw.itemsProjection());
   }\
-\s${(extra + params + meta + tails + normalizedTails).code}\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }

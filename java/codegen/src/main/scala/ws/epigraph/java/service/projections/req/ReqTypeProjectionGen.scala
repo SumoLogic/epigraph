@@ -31,7 +31,7 @@ import ws.epigraph.types.TypeApi
 trait ReqTypeProjectionGen extends ReqProjectionGen {
   type OpProjectionType <: GenProjectionReference[_]
 
-  protected def op: OpProjectionType
+  def op: OpProjectionType
 
   protected def generatedProjections: java.util.Set[ProjectionReferenceName]
 

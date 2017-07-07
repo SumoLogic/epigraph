@@ -29,7 +29,7 @@ import ws.epigraph.types.TypeKind
  */
 class ReqInputVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpInputVarProjection,
+  val op: OpInputVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqInputProjectionGen with ReqVarProjectionGen {

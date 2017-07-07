@@ -20,9 +20,12 @@ package ws.epigraph.errors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.util.HttpStatusCode;
 
 // TODO implement Valuable (shared with Datum)?
 public class ErrorValue { // TODO rename to DatumError (to avoid clash with java.lang.Error)?
+
+  public static final @NotNull ErrorValue NULL = new ErrorValue(HttpStatusCode.NOT_FOUND, "data is null"); // should use another code?
 
   public final @NotNull Integer statusCode;
 

@@ -70,7 +70,7 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
 ${JavaGenUtils.topLevelComment}
 $packageStatement
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 /**
  * Request projection for {@code $mapTypeShortName} keys

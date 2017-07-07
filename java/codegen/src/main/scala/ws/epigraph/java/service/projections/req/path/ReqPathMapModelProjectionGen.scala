@@ -28,7 +28,7 @@ import ws.epigraph.projections.op.path.OpMapModelPath
  */
 class ReqPathMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override protected val op: OpMapModelPath,
+  override val op: OpMapModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {

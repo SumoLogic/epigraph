@@ -35,13 +35,13 @@ trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
       reqVarProjectionFqn.toString,
       reqModelProjectionFqn.toString,
       reqPrimitiveModelProjectionFqn.toString
-    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ extra.imports
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package $namespace;
 
-${ReqProjectionGen.generateImports(imports)}
+${JavaGenUtils.generateImports(imports)}
 
 $classJavadoc\
 ${JavaGenUtils.generatedAnnotation(this)}
@@ -55,7 +55,7 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqPrimitiveMode
   public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
     this(selfVar.singleTagProjection().projection());
   }\
-\s${(extra + params + meta + tails + normalizedTails).code}\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }

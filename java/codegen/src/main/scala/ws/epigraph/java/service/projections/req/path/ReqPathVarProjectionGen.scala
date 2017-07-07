@@ -29,7 +29,7 @@ import ws.epigraph.types.TypeKind
  */
 class ReqPathVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  protected val op: OpVarPath,
+  val op: OpVarPath,
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqVarProjectionGen {
 
