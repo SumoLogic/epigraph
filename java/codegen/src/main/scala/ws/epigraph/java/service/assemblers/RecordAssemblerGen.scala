@@ -46,7 +46,12 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def isEntity: Boolean = fieldType.kind == CTypeKind.ENTITY
 
-      def fieldBuilderType: String = s"BiFunction<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${lqn2(fieldType, g.namespace.toString)}${if (isEntity) "" else ".Value"}>"
+      def fieldBuilderType: String = s"Assembler<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
+        lqn2(
+          fieldType,
+          g.namespace.toString
+        )
+      }${ if (isEntity) "" else ".Value" }>"
 
       def fbf: String = field.name + "Builder"
 
@@ -54,13 +59,13 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def setter: String = "set" + JavaGenUtils.up(field.name) + (if (isEntity) "" else "_")
 
-      def dispatchFieldInit: String = s"if (p.$getter != null) b.$setter($fbf.apply(dto, p.$getter));"
+      def dispatchFieldInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
 
       def javadoc: String = s"$fbf {@code $fieldName} field builder"
     }
 
     val fps: Seq[FieldParts] = g.fieldGenerators.map { case (f, fg) =>
-      FieldParts( f, fg.dataProjectionGen )
+      FieldParts(f, fg.dataProjectionGen)
     }.toSeq
 
     case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
@@ -70,9 +75,9 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def fbf: String = JavaGenUtils.lo(ln(tt)) + "Builder"
 
-      def fbft: String = s"BiFunction<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts.Value>"
+      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts.Value>"
 
-      def javadoc: String = s"$fbf {@code ${ln(tt)}} value builder"
+      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value builder"
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
@@ -80,9 +85,16 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
     }.toSeq
 
     val defaultBuild: String = /*@formatter:off*/sn"""\
-$t.Builder b = $t.create();
-${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.apply(dto, p.${fp.getter}));" }.mkString("\n")}
-return b.asValue();
+AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
+Object visited = ctx.visited.get(key);
+if (visited != null)
+  return ($t.Value) visited;
+else {
+  $t.Builder b = $t.create();
+  ctx.visited.put(key, b.asValue());
+  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
+  return b.asValue();
+}
 """/*@formatter:on*/
 
     lazy val nonTailsBuild: String = /*@formatter:off*/sn"""{
@@ -93,7 +105,7 @@ return b.asValue();
       return ${g.shortClassName}.dispatcher.dispatch(
           p,
           ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
-${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.apply(dto, tp)" }.mkString("          ",",\n          ",",\n") else ""}\
+${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.mkString("          ",",\n          ",",\n") else ""}\
           () -> {
             ${i(defaultBuild)}
           }
@@ -102,8 +114,9 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.apply(dto, tp)" }.mkString
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "org.jetbrains.annotations.Nullable",
-      "java.util.function.BiFunction",
       "java.util.function.Function",
+      "ws.epigraph.assembly.Assembler",
+      "ws.epigraph.assembly.AssemblerContext",
       "ws.epigraph.types.Type"
     )
 
@@ -117,7 +130,7 @@ ${JavaGenUtils.generateImports(imports)}
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements BiFunction<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
+public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   //field builders
 ${fps.map { fp => s"  private final @NotNull ${fp.fieldBuilderType} ${fp.fbf};"}.mkString("\n") }\
@@ -145,11 +158,12 @@ ${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n
    *
    * @param dto data transfer object
    * @param p   request projection
+   * @param ctx assembly context
    *
    * @return {@code $t} value object
    */
   @Override
-  public @NotNull $t.Value apply(@NotNull D dto, @NotNull ${g.shortClassName} p) {
+  public @NotNull $t.Value assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
     if (dto == null)
       return $t.type.createValue(ws.epigraph.errors.ErrorValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}

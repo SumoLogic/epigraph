@@ -44,7 +44,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def tagType: CType = tag.typeRef.resolved
 
-      def tagBuilderType: String = s"BiFunction<? super D, ? super ${ tagGen.fullClassName }, ? extends ${lqn2(tagType, g.namespace.toString)}.Value>"
+      def tagBuilderType: String = s"Assembler<? super D, ? super ${ tagGen.fullClassName }, ? extends ${lqn2(tagType, g.namespace.toString)}.Value>"
 
       def fbf: String = tag.name + "Builder"
 
@@ -52,7 +52,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def setter: String = s"set${ JavaGenUtils.up(tag.name) }_"
 
-      def dispatchTagInit: String = s"if (p.$getter != null) b.$setter($fbf.apply(dto, p.$getter));"
+      def dispatchTagInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
 
       def javadoc: String = s"$fbf {@code $tagName} tag builder"
     }
@@ -68,7 +68,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def fbf: String = JavaGenUtils.lo(ln(tt)) + "Builder"
 
-      def fbft: String = s"BiFunction<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts>"
+      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts>"
 
       def javadoc: String = s"$fbf {@code ${ln(tt)}} value builder"
     }
@@ -78,9 +78,16 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
     }.toSeq
 
     val defaultBuild: String = /*@formatter:off*/sn"""\
-$t.Builder b = $t.create();
-${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.apply(dto, p.${fp.getter}));" }.mkString("\n")}
-return b;
+AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
+Object visited = ctx.visited.get(key);
+if (visited != null)
+  return ($t) visited;
+else {
+  $t.Builder b = $t.create();
+  ctx.visited.put(key, b);
+  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
+  return b;
+}
 """/*@formatter:on*/
 
     lazy val nonTailsBuild: String = /*@formatter:off*/sn"""{
@@ -91,7 +98,7 @@ return b;
       return ${g.shortClassName}.dispatcher.dispatch(
           p,
           ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
-${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.apply(dto, tp)" }.mkString("          ",",\n          ",",\n") else ""}\
+${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.mkString("          ",",\n          ",",\n") else ""}\
           () -> {
             ${i(defaultBuild)}
           }
@@ -100,8 +107,9 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.apply(dto, tp)" }.mkString
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
       "org.jetbrains.annotations.Nullable",
-      "java.util.function.BiFunction",
       "java.util.function.Function",
+      "ws.epigraph.assembly.Assembler",
+      "ws.epigraph.assembly.AssemblerContext",
       "ws.epigraph.types.Type"
     )
 
@@ -115,7 +123,7 @@ ${JavaGenUtils.generateImports(imports)}
  * Assembler for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements BiFunction<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t> {
+public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   //tag builders
 ${fps.map { fp => s"  private final @NotNull ${fp.tagBuilderType} ${fp.fbf};"}.mkString("\n") }\
@@ -143,11 +151,12 @@ ${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n
    *
    * @param dto data transfer object
    * @param p   request projection
+   * @param ctx assembly context
    *
    * @return {@code $t} object
    */
   @Override
-  public @NotNull $t apply(@NotNull D dto, @NotNull ${g.shortClassName} p) {
+  public @NotNull $t assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
     if (dto == null) {
       $t.Builder b = $t.create();
 ${fps.map { fp => s"      if (p.${fp.getter} != null) b.${fp.setter}Error(ws.epigraph.errors.ErrorValue.NULL);" }.mkString("", "\n", "\n")}\
