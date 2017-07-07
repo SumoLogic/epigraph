@@ -100,7 +100,6 @@ class ReqOutputRecordModelProjectionGen(
       override protected val buildNormalizedTails: Boolean = normalized
     }
 
-
   override lazy val children: Iterable[JavaGen] =
     if (fieldGenerators.isEmpty) super.children
     else super.children ++ Iterable(new RecordBuilderGen(this, ctx))

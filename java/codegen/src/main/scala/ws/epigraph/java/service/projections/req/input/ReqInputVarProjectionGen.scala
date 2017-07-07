@@ -54,7 +54,7 @@ class ReqInputVarProjectionGen(
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =

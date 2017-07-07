@@ -54,7 +54,7 @@ class ReqDeleteVarProjectionGen(
       tailNamespaceSuffix(op.`type`(), normalized),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =

@@ -17,13 +17,15 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CTag
-import ws.epigraph.java.GenContext
+import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.service.builders.EntityBuilderGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
 import ws.epigraph.types.TypeKind
+
 import scala.collection.JavaConversions._
 
 /**
@@ -58,7 +60,7 @@ class ReqOutputVarProjectionGen(
       Some(this),
       ctx
     ) {
-      override protected lazy val normalizedTailGenerators: Map[OpOutputVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpOutputVarProjection, ReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(tpe: OpOutputTagProjectionEntry): ReqProjectionGen = tagGenerator(tpe, None)
@@ -75,7 +77,7 @@ class ReqOutputVarProjectionGen(
       ctx
     )
 
-  override protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
+  override lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map { tpe =>
       val tag = tpe.tag()
       val cTag = findTag(tag.name())
@@ -100,6 +102,10 @@ class ReqOutputVarProjectionGen(
 
       )
     }.toMap
+
+  override lazy val children: Iterable[JavaGen] =
+    if (tagGenerators.isEmpty) super.children
+    else super.children ++ Iterable(new EntityBuilderGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection"),

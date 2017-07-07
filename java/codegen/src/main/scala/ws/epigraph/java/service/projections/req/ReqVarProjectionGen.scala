@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CEntityTypeDef, CTag}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
-import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
@@ -42,7 +42,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
-  override lazy val children: Iterable[ReqProjectionGen] = tailGenerators.values ++ normalizedTailGenerators.values ++ {
+  override def children: Iterable[JavaGen] = tailGenerators.values ++ normalizedTailGenerators.values ++ {
     // exclude tags taken from parent generator
     tagGenerators.filterKeys { t =>
       parentClassGenOpt match {
@@ -54,7 +54,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
-  protected lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
+  def tagGenerators: Map[CTag, ReqProjectionGen] =
     op.tagProjections().values().map { tpe => findTag(tpe.tag().name()) -> tagGenerator(tpe) }.toMap
 
   protected def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse {
@@ -66,7 +66,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
       _.map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
     ).getOrElse(Map())
 
-  protected lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] =
+  lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.map { t: OpProjectionType =>
         t -> tailGenerator(op.normalizedForType(t.`type`()), normalized = true)
