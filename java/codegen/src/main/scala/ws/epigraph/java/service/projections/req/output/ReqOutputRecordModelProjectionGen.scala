@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.service.builders.RecordBuilderGen
+import ws.epigraph.java.service.assemblers.RecordAssemblerGen
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
@@ -102,7 +102,7 @@ class ReqOutputRecordModelProjectionGen(
 
   override lazy val children: Iterable[JavaGen] =
     if (fieldGenerators.isEmpty) super.children
-    else super.children ++ Iterable(new RecordBuilderGen(this, ctx))
+    else super.children ++ Iterable(new RecordAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"),

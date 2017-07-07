@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.compiler.CTag
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.service.builders.EntityBuilderGen
+import ws.epigraph.java.service.assemblers.EntityAssemblerGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
@@ -105,7 +105,7 @@ class ReqOutputVarProjectionGen(
 
   override lazy val children: Iterable[JavaGen] =
     if (tagGenerators.isEmpty) super.children
-    else super.children ++ Iterable(new EntityBuilderGen(this, ctx))
+    else super.children ++ Iterable(new EntityAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection"),

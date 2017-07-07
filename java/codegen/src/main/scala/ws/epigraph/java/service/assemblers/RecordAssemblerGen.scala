@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.builders
+package ws.epigraph.java.service.assemblers
 
 import java.nio.file.Path
 
@@ -27,10 +27,10 @@ import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class RecordBuilderGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenContext) extends JavaGen {
+class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenContext) extends JavaGen {
   val cType: CDatumType = JavaGenUtils.toCType(g.op.`type`())
 
-  val shortClassName: String = ln(cType) + "Builder"
+  val shortClassName: String = ln(cType) + "Assembler"
 
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
 
@@ -92,7 +92,7 @@ return b.asValue();
     lazy val tailsBuild: String = /*@formatter:off*/sn"""
       return ${g.shortClassName}.dispatcher.dispatch(
           p,
-          typeExtractor.apply(dto),
+          ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
 ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.apply(dto, tp)" }.mkString("          ",",\n          ",",\n") else ""}\
           () -> {
             ${i(defaultBuild)}
@@ -114,37 +114,34 @@ package ${g.namespace};
 ${JavaGenUtils.generateImports(imports)}
 
 /**
- * Value builder for {@code ${ln(cType)}} type, driven by request output projection
+ * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D> implements BiFunction<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
-  private final @NotNull Function<? super D, Type> typeExtractor;
+${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   //field builders
 ${fps.map { fp => s"  private final @NotNull ${fp.fieldBuilderType} ${fp.fbf};"}.mkString("\n") }\
 ${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail builders\n","\n","") else "" }
 
   /**
-   * Builder constructor
+   * Assembler constructor
    *
-   * @param typeExtractor data type extractor, used to determine DTO type
-   *
+${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
 ${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n   *\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
    */
   public $shortClassName(
-    @NotNull Function<? super D, Type> typeExtractor,
-
+${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
 ${fps.map { fp => s"    @NotNull ${fp.fieldBuilderType} ${fp.fbf}"}.mkString(",\n") }\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n\n", ",\n", "") else ""}
+${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
-    this.typeExtractor = typeExtractor;
-
+${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
 ${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n\n","\n","") else ""}
+${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n","\n","") else ""}
   }
 
   /**
-   * Builds {@code $t} value from DTO
+   * Assembles {@code $t} value from DTO
    *
    * @param dto data transfer object
    * @param p   request projection
