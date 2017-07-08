@@ -34,7 +34,7 @@ class ReqInputListModelProjectionGen(
 
   override type OpProjectionType = OpInputListModelProjection
 
-  protected val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

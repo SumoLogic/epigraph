@@ -40,7 +40,7 @@ class ReqDeleteListModelProjectionGen(
 
   override type OpProjectionType = OpDeleteListModelProjection
 
-  protected val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

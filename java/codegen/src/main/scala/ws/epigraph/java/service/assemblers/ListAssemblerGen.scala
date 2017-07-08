@@ -18,17 +18,22 @@ package ws.epigraph.java.service.assemblers
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler._
-import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
+import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
+import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
+import ws.epigraph.java.service.projections.req.output._
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends JavaGen {
-  val cType: CType = JavaGenUtils.toCType(g.op.`type`())
+class ListAssemblerGen(g: ReqOutputListModelProjectionGen, val ctx: GenContext) extends JavaGen {
+  val cType: CDatumType = JavaGenUtils.toCType(g.op.`type`())
+
+  val itemCType: CType = JavaGenUtils.toCType(g.elementGen match {
+    case eg: ReqOutputVarProjectionGen => eg.op.`type`()
+    case mg: ReqOutputModelProjectionGen => mg.op.`type`()
+  })
 
   val shortClassName: String = ln(cType) + "Assembler"
 
@@ -37,56 +42,43 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
   private val hasTails = g.normalizedTailGenerators.nonEmpty
 
   override protected def generate: String = {
-    val t = lqn2(cType, g.namespace.toString)
+    val nsString = g.namespace.toString
 
-    case class TagParts(tag: CTag, tagGen: ReqOutputProjectionGen) {
-      def tagName: String = jn(tag.name)
+    val t = lqn2(cType, nsString)
+    val it = lqn2(itemCType, nsString)
 
-      def tagType: CType = tag.typeRef.resolved
+    val isEntity = itemCType.kind == CTypeKind.ENTITY
 
-      def tagAssemblerType: String = s"Assembler<? super D, ? super ${ tagGen.fullClassName }, ? extends ${lqn2(tagType, g.namespace.toString)}.Value>"
+    case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
+      def tt: CDatumType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
 
-      def fbf: String = tag.name + "Assembler"
-
-      def getter: String = tagName + "()"
-
-      def setter: String = s"set${ JavaGenUtils.up(tag.name) }_"
-
-      def dispatchTagInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
-
-      def javadoc: String = s"$fbf {@code $tagName} tag assembler"
-    }
-
-    val fps: Seq[TagParts] = g.tagGenerators.map { case (f, fg) =>
-      TagParts( f, fg.asInstanceOf[ReqOutputProjectionGen] )
-    }.toSeq
-
-    case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) {
-      def tt: CType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
-
-      def tts: String = lqn2(tt, g.namespace.toString)
+      def tts: String = lqn2(tt, nsString)
 
       def fbf: String = JavaGenUtils.lo(ln(tt)) + "Assembler"
 
-      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts>"
+      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts.Value>"
 
-      def javadoc: String = s"$fbf {@code ${ln(tt)}} value assembler"
+      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-      TailParts(tg.asInstanceOf[ReqOutputVarProjectionGen])
+      TailParts(tg.asInstanceOf[ReqOutputModelProjectionGen])
     }.toSeq
 
     val defaultBuild: String = /*@formatter:off*/sn"""\
 AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
 Object visited = ctx.visited.get(key);
 if (visited != null)
-  return ($t) visited;
+  return ($t.Value) visited;
 else {
   $t.Builder b = $t.create();
-  ctx.visited.put(key, b);
-  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
-  return b;
+  ctx.visited.put(key, b.asValue());
+  ${g.elementGen.fullClassName} itemsProjection = p.itemsProjection();
+  Iterable<I> items = itemsExtractor.apply(dto);
+  for (I item: items) {
+    b.add${if (isEntity) "" else "_"}(itemAssembler.assemble(item, itemsProjection, ctx));
+  }
+  return b.asValue();
 }
 """/*@formatter:on*/
 
@@ -113,6 +105,8 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.
       "ws.epigraph.types.Type"
     )
 
+    val itemAssemblerType = s"Assembler<I, ${g.elementGen.fullClassName}, /*@NotNull*/ $it${if (isEntity) "" else ".Value"}>"
+
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package ${g.namespace};
@@ -120,48 +114,49 @@ package ${g.namespace};
 ${JavaGenUtils.generateImports(imports)}
 
 /**
- * Assembler for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
+ * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t> {
+public class $shortClassName<D, I> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
-  //tag assemblers
-${fps.map { fp => s"  private final @NotNull ${fp.tagAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+  private final @NotNull Function<D, Iterable<I>> itemsExtractor;
+  private final @NotNull $itemAssemblerType itemAssembler;
 ${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Assembler constructor
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
-${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
+   * @param itemsExtractor items extractor
+   * @param itemAssembler items assembler\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
    */
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    @NotNull ${fp.tagAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
+    @NotNull Function<D, Iterable<I>> itemsExtractor,
+    @NotNull $itemAssemblerType itemAssembler\
 ${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
-${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
+    this.itemsExtractor = itemsExtractor;
+    this.itemAssembler = itemAssembler;\
 ${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n","\n","") else ""}
   }
 
   /**
-   * Assembles {@code $t} instance from DTO
+   * Assembles {@code $t} value from DTO
    *
-   * @param dto data transfer object
+   * @param dto data transfer objects
    * @param p   request projection
    * @param ctx assembly context
    *
-   * @return {@code $t} object
+   * @return {@code $t} value object
    */
   @Override
-  public @NotNull $t assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
-    if (dto == null) {
-      $t.Builder b = $t.create();
-${fps.map { fp => s"      if (p.${fp.getter} != null) b.${fp.setter}Error(ws.epigraph.errors.ErrorValue.NULL);" }.mkString("", "\n", "\n")}\
-      return b;
-    } else ${if (hasTails) tailsBuild else nonTailsBuild}
+  public @NotNull $t.Value assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
+    if (dto == null)
+      return $t.type.createValue(ws.epigraph.errors.ErrorValue.NULL);
+    else ${if (hasTails) tailsBuild else nonTailsBuild}
   }
 }"""/*@formatter:on*/
   }

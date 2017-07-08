@@ -16,7 +16,8 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.assemblers.ListAssemblerGen
+import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputListModelProjection
@@ -35,7 +36,7 @@ class ReqOutputListModelProjectionGen(
 
   override type OpProjectionType = OpOutputListModelProjection
 
-  protected val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),
@@ -56,6 +57,9 @@ class ReqOutputListModelProjectionGen(
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
     }
+
+
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputListModelProjection"),

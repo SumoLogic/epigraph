@@ -46,14 +46,14 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def isEntity: Boolean = fieldType.kind == CTypeKind.ENTITY
 
-      def fieldBuilderType: String = s"Assembler<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
+      def fieldAssemblerType: String = s"Assembler<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
         lqn2(
           fieldType,
           g.namespace.toString
         )
       }${ if (isEntity) "" else ".Value" }>"
 
-      def fbf: String = field.name + "Builder"
+      def fbf: String = field.name + "Assembler"
 
       def getter: String = fieldName + "()"
 
@@ -61,7 +61,7 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def dispatchFieldInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
 
-      def javadoc: String = s"$fbf {@code $fieldName} field builder"
+      def javadoc: String = s"$fbf {@code $fieldName} field assembler"
     }
 
     val fps: Seq[FieldParts] = g.fieldGenerators.map { case (f, fg) =>
@@ -73,11 +73,11 @@ class RecordAssemblerGen(g: ReqOutputRecordModelProjectionGen, val ctx: GenConte
 
       def tts: String = lqn2(tt, g.namespace.toString)
 
-      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Builder"
+      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Assembler"
 
       def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts.Value>"
 
-      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value builder"
+      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
@@ -132,9 +132,9 @@ ${JavaGenUtils.generateImports(imports)}
 ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
-  //field builders
-${fps.map { fp => s"  private final @NotNull ${fp.fieldBuilderType} ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail builders\n","\n","") else "" }
+  //field assemblers
+${fps.map { fp => s"  private final @NotNull ${fp.fieldAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Assembler constructor
@@ -145,7 +145,7 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
    */
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    @NotNull ${fp.fieldBuilderType} ${fp.fbf}"}.mkString(",\n") }\
+${fps.map { fp => s"    @NotNull ${fp.fieldAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
 ${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
