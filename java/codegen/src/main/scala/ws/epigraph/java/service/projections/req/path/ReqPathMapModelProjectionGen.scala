@@ -35,7 +35,7 @@ class ReqPathMapModelProjectionGen(
 
   override type OpProjectionType = OpMapModelPath
 
-  protected override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
+  override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
@@ -44,7 +44,7 @@ class ReqPathMapModelProjectionGen(
     ctx
   )
 
-  protected override val elementGen: ReqPathProjectionGen = ReqPathVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqPathProjectionGen = ReqPathVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),

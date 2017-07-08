@@ -31,9 +31,9 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   protected val elementsNamespaceSuffix = "elements"
 
-  protected def keyGen: ReqMapKeyProjectionGen
+  def keyGen: ReqMapKeyProjectionGen
 
-  protected def elementGen: ReqProjectionGen
+  def elementGen: ReqProjectionGen
 
   protected def keysNullable: Boolean = true
 

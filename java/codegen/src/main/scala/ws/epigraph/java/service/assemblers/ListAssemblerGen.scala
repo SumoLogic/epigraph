@@ -16,56 +16,31 @@
 
 package ws.epigraph.java.service.assemblers
 
-import java.nio.file.Path
-
-import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
+import ws.epigraph.compiler.{CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
-import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output._
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ListAssemblerGen(g: ReqOutputListModelProjectionGen, val ctx: GenContext) extends JavaGen {
-  val cType: CDatumType = JavaGenUtils.toCType(g.op.`type`())
+class ListAssemblerGen(
+  override protected val g: ReqOutputListModelProjectionGen,
+  val ctx: GenContext) extends JavaGen with ModelAssemblerGen {
 
-  val itemCType: CType = JavaGenUtils.toCType(g.elementGen match {
-    case eg: ReqOutputVarProjectionGen => eg.op.`type`()
-    case mg: ReqOutputModelProjectionGen => mg.op.`type`()
-  })
+  override protected type G = ReqOutputListModelProjectionGen
 
-  val shortClassName: String = ln(cType) + "Assembler"
-
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
-
-  private val hasTails = g.normalizedTailGenerators.nonEmpty
-
-  override protected def generate: String = {
-    val nsString = g.namespace.toString
-
-    val t = lqn2(cType, nsString)
-    val it = lqn2(itemCType, nsString)
-
-    val isEntity = itemCType.kind == CTypeKind.ENTITY
-
-    case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
-      def tt: CDatumType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
-
-      def tts: String = lqn2(tt, nsString)
-
-      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Assembler"
-
-      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts.Value>"
-
-      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
+  val itemCType: CType = JavaGenUtils.toCType(
+    g.elementGen match {
+      case eg: ReqOutputVarProjectionGen => eg.op.`type`()
+      case mg: ReqOutputModelProjectionGen => mg.op.`type`()
     }
+  )
 
-    val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-      TailParts(tg.asInstanceOf[ReqOutputModelProjectionGen])
-    }.toSeq
+  private val isEntity = itemCType.kind == CTypeKind.ENTITY
 
-    val defaultBuild: String = /*@formatter:off*/sn"""\
+  override protected val defaultBuild: String = /*@formatter:off*/sn"""\
 AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
 Object visited = ctx.visited.get(key);
 if (visited != null)
@@ -82,19 +57,8 @@ else {
 }
 """/*@formatter:on*/
 
-    lazy val nonTailsBuild: String = /*@formatter:off*/sn"""{
-      ${i(defaultBuild)}
-    }"""/*@formatter:on*/
-
-    lazy val tailsBuild: String = /*@formatter:off*/sn"""
-      return ${g.shortClassName}.dispatcher.dispatch(
-          p,
-          ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
-${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.mkString("          ",",\n          ",",\n") else ""}\
-          () -> {
-            ${i(defaultBuild)}
-          }
-      );"""/*@formatter:on*/
+  override protected def generate: String = {
+    val it = lqn2(itemCType, nsString)
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
@@ -105,7 +69,7 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.
       "ws.epigraph.types.Type"
     )
 
-    val itemAssemblerType = s"Assembler<I, ${g.elementGen.fullClassName}, /*@NotNull*/ $it${if (isEntity) "" else ".Value"}>"
+    val itemAssemblerType = s"Assembler<I, ${ g.elementGen.fullClassName }, /*@NotNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -121,7 +85,7 @@ public class $shortClassName<D, I> implements Assembler<@Nullable D, @NotNull ${
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   private final @NotNull Function<D, Iterable<I>> itemsExtractor;
   private final @NotNull $itemAssemblerType itemAssembler;
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Assembler constructor
@@ -135,12 +99,12 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
     @NotNull Function<D, Iterable<I>> itemsExtractor,
     @NotNull $itemAssemblerType itemAssembler\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
+${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.itemsExtractor = itemsExtractor;
     this.itemAssembler = itemAssembler;\
-${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n","\n","") else ""}
+${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}
   }
 
   /**

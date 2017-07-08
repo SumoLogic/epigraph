@@ -58,7 +58,6 @@ class ReqOutputListModelProjectionGen(
       override protected val buildNormalizedTails: Boolean = normalized
     }
 
-
   override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(

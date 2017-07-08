@@ -17,7 +17,8 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
-import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.assemblers.MapAssemblerGen
+import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
@@ -39,7 +40,7 @@ class ReqOutputMapModelProjectionGen(
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
-  protected override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
+  override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
@@ -48,7 +49,7 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  protected override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),
@@ -69,6 +70,9 @@ class ReqOutputMapModelProjectionGen(
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
     }
+
+
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(new MapAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),

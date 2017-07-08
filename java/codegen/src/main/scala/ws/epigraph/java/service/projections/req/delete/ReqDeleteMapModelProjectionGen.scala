@@ -44,7 +44,7 @@ class ReqDeleteMapModelProjectionGen(
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
-  protected override val keyGen: ReqDeleteMapKeyProjectionGen = new ReqDeleteMapKeyProjectionGen(
+  override val keyGen: ReqDeleteMapKeyProjectionGen = new ReqDeleteMapKeyProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
@@ -53,7 +53,7 @@ class ReqDeleteMapModelProjectionGen(
     ctx
   )
 
-  protected override val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqDeleteProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

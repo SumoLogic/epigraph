@@ -29,7 +29,7 @@ import ws.epigraph.projections.op.output.OpOutputKeyProjection
 class ReqOutputMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
-  protected val op: OpOutputKeyProjection,
+  val op: OpOutputKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqMapKeyProjectionGen {

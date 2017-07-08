@@ -16,53 +16,36 @@
 
 package ws.epigraph.java.service.assemblers
 
-import java.nio.file.Path
-
-import ws.epigraph.compiler.{CField, CType, CTypeKind}
-import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
+import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
+import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output._
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class RecordAssemblerGen(
-  override protected val g: ReqOutputRecordModelProjectionGen,
+class MapAssemblerGen(
+  override protected val g: ReqOutputMapModelProjectionGen,
   val ctx: GenContext) extends JavaGen with ModelAssemblerGen {
 
-  override protected type G = ReqOutputRecordModelProjectionGen
+  override protected type G = ReqOutputMapModelProjectionGen
 
-  case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) {
-    def fieldName: String = jn(field.name)
+  val keyCType: CDatumType = JavaGenUtils.toCType(g.op.`type`().keyType())
 
-    def fieldType: CType = field.typeRef.resolved
+  val itemCType: CType = JavaGenUtils.toCType(
+    g.elementGen match {
+      case eg: ReqOutputVarProjectionGen => eg.op.`type`()
+      case mg: ReqOutputModelProjectionGen => mg.op.`type`()
+    }
+  )
 
-    def isEntity: Boolean = fieldType.kind == CTypeKind.ENTITY
+  private val isEntity = itemCType.kind == CTypeKind.ENTITY
 
-    def fieldAssemblerType: String = s"Assembler<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
-      lqn2(
-        fieldType,
-        g.namespace.toString
-      )
-    }${ if (isEntity) "" else ".Value" }>"
+  private val kt = lqn2(keyCType, nsString)
+  private val it = lqn2(itemCType, nsString)
 
-    def fbf: String = field.name + "Assembler"
-
-    def getter: String = fieldName + "()"
-
-    def setter: String = "set" + JavaGenUtils.up(field.name) + (if (isEntity) "" else "_")
-
-    def dispatchFieldInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
-
-    def javadoc: String = s"$fbf {@code $fieldName} field assembler"
-  }
-
-  private val fps: Seq[FieldParts] = g.fieldGenerators.map { case (f, fg) =>
-    FieldParts(f, fg.dataProjectionGen)
-  }.toSeq
-
-  protected override val defaultBuild: String = /*@formatter:off*/sn"""\
+  val defaultBuild: String = /*@formatter:off*/sn"""\
 AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
 Object visited = ctx.visited.get(key);
 if (visited != null)
@@ -70,7 +53,12 @@ if (visited != null)
 else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
-  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
+  ${g.elementGen.fullClassName} itemsProjection = p.itemsProjection();
+  Map<K, I> map = itemsExtractor.apply(dto);
+  for (Map.Entry<K, I> entry: map.entrySet()) {
+    $kt k = keyConverter.apply(entry.getKey());
+    b.put${if (isEntity) "$" else "_"}(k, itemAssembler.assemble(entry.getValue(), itemsProjection, ctx));
+  }
   return b.asValue();
 }
 """/*@formatter:on*/
@@ -80,10 +68,14 @@ else {
       "org.jetbrains.annotations.NotNull",
       "org.jetbrains.annotations.Nullable",
       "java.util.function.Function",
+      "java.util.Map",
       "ws.epigraph.assembly.Assembler",
       "ws.epigraph.assembly.AssemblerContext",
       "ws.epigraph.types.Type"
     )
+
+    val keysConverterType = s"Function<K, $kt>"
+    val itemAssemblerType = s"Assembler<I, ${ g.elementGen.fullClassName }, /*@NotNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -95,33 +87,40 @@ ${JavaGenUtils.generateImports(imports)}
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
+public class $shortClassName<K, D, I> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
-  //field assemblers
-${fps.map { fp => s"  private final @NotNull ${fp.fieldAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+  private final @NotNull $keysConverterType keyConverter;
+  private final @NotNull Function<D, Map<K, I>> itemsExtractor;
+  private final @NotNull $itemAssemblerType itemAssembler;
 ${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Assembler constructor
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
-${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
+   * @param keyConverter key converter
+   * @param itemsExtractor items extractor
+   * @param itemAssembler items assembler\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
    */
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    @NotNull ${fp.fieldAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
+    @NotNull $keysConverterType keyConverter,
+    @NotNull Function<D, Map<K, I>> itemsExtractor,
+    @NotNull $itemAssemblerType itemAssembler\
 ${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
-${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
+    this.keyConverter = keyConverter;
+    this.itemsExtractor = itemsExtractor;
+    this.itemAssembler = itemAssembler;\
 ${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}
   }
 
   /**
    * Assembles {@code $t} value from DTO
    *
-   * @param dto data transfer object
+   * @param dto data transfer objects
    * @param p   request projection
    * @param ctx assembly context
    *

@@ -38,7 +38,7 @@ class ReqUpdateMapModelProjectionGen(
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
-  protected override val keyGen: ReqUpdateMapKeyProjectionGen = new ReqUpdateMapKeyProjectionGen(
+  override val keyGen: ReqUpdateMapKeyProjectionGen = new ReqUpdateMapKeyProjectionGen(
     baseNamespaceProvider,
     cType.asInstanceOf[CMapType],
     op.keyProjection(),
@@ -47,7 +47,7 @@ class ReqUpdateMapModelProjectionGen(
     ctx
   )
 
-  protected override val elementGen: ReqUpdateProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqUpdateProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),
