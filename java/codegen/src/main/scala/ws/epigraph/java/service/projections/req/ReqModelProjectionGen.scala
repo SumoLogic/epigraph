@@ -43,7 +43,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   protected def reqModelProjectionParams: String
 
-  protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
+  protected def metaGenerator(metaOp: OpMetaProjectionType): ReqModelProjectionGen =
     throw new RuntimeException("meta projections not supported")
 
   protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpProjectionType, normalized: Boolean): ReqModelProjectionGen =
@@ -59,7 +59,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected lazy val params: CodeChunk =
     ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
-  protected lazy val metaGeneratorOpt: Option[ReqProjectionGen] = {
+  lazy val metaGeneratorOpt: Option[ReqModelProjectionGen] = {
     val metaOp: OpMetaProjectionType = op.metaProjection().asInstanceOf[OpMetaProjectionType]
     Option(metaOp).map(metaGenerator)
   }

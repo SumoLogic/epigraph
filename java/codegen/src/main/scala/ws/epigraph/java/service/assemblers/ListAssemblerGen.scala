@@ -53,6 +53,7 @@ else {
   for (I item: items) {
     b.add${if (isEntity) "" else "_"}(itemAssembler.assemble(item, itemsProjection, ctx));
   }
+${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" else ""}\
   return b.asValue();
 }
 """/*@formatter:on*/
@@ -85,7 +86,8 @@ public class $shortClassName<D, I> implements Assembler<@Nullable D, @NotNull ${
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   private final @NotNull Function<D, Iterable<I>> itemsExtractor;
   private final @NotNull $itemAssemblerType itemAssembler;
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
+${if (hasMeta) s"  //meta assembler\n  private final @NotNull $metaAssemblerType metaAssembler;" else ""}
 
   /**
    * Assembler constructor
@@ -93,18 +95,21 @@ ${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} $
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
    * @param itemsExtractor items extractor
    * @param itemAssembler items assembler\
-${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }\
+${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
    */
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
     @NotNull Function<D, Iterable<I>> itemsExtractor,
     @NotNull $itemAssemblerType itemAssembler\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}
+${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
+${if (hasMeta) s",\n    @NotNull $metaAssemblerType metaAssembler" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.itemsExtractor = itemsExtractor;
     this.itemAssembler = itemAssembler;\
-${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}
+${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
+${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}
   }
 
   /**

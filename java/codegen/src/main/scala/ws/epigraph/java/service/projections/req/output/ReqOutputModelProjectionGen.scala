@@ -60,7 +60,7 @@ abstract class ReqOutputModelProjectionGen(
   public boolean requried() { return raw.required(); }
 """/*@formatter:on*/)
 
-  override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqProjectionGen =
+  override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqOutputModelProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       metaOp,

@@ -19,11 +19,13 @@ package ws.epigraph.java.service.assemblers
 import java.nio.file.Path
 
 import ws.epigraph.compiler.CDatumType
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
-import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
-import ws.epigraph.lang.Qn
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.lang.Qn
+import ws.epigraph.projections.op.output.OpOutputModelProjection
+import ws.epigraph.types.DatumTypeApi
 
 /**
  * Base trait for model assembler generators
@@ -80,4 +82,14 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
             ${i(defaultBuild)}
           }
       );"""/*@formatter:on*/
+
+  // meta stuff
+
+  protected lazy val metaProjection: OpOutputModelProjection[_, _, _] = g.op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _]]
+
+  protected lazy val hasMeta: Boolean = g.metaGeneratorOpt.isDefined
+
+  protected lazy val metaCType: CDatumType = JavaGenUtils.toCType(metaProjection.`type`().asInstanceOf[DatumTypeApi])
+
+  protected lazy val metaAssemblerType: String = s"Assembler<? super D, ? super ${ g.metaGeneratorOpt.get.fullClassName }, ? extends ${ lqn2(metaCType, g.namespace.toString) }>"
 }

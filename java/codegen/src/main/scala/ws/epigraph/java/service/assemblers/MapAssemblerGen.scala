@@ -59,6 +59,7 @@ else {
     $kt k = keyConverter.apply(entry.getKey());
     b.put${if (isEntity) "$" else "_"}(k, itemAssembler.assemble(entry.getValue(), itemsProjection, ctx));
   }
+${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" else ""}\
   return b.asValue();
 }
 """/*@formatter:on*/
@@ -92,7 +93,8 @@ ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtracto
   private final @NotNull $keysConverterType keyConverter;
   private final @NotNull Function<D, Map<K, I>> itemsExtractor;
   private final @NotNull $itemAssemblerType itemAssembler;
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
+${if (hasMeta) s"  //meta assembler\n  private final @NotNull $metaAssemblerType metaAssembler;" else ""}
 
   /**
    * Assembler constructor
@@ -101,20 +103,23 @@ ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determi
    * @param keyConverter key converter
    * @param itemsExtractor items extractor
    * @param itemAssembler items assembler\
-${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
+${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }\
+${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
    */
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
     @NotNull $keysConverterType keyConverter,
     @NotNull Function<D, Map<K, I>> itemsExtractor,
     @NotNull $itemAssemblerType itemAssembler\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}
+${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
+${if (hasMeta) s",\n    @NotNull $metaAssemblerType metaAssembler" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.keyConverter = keyConverter;
     this.itemsExtractor = itemsExtractor;
     this.itemAssembler = itemAssembler;\
-${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}
+${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
+${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}
   }
 
   /**
