@@ -51,26 +51,19 @@
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-schema-psi-parser</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>epigraph-java-projections-schema-psi-parser</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-light-psi</artifactId>
       <version>0.0.0</version>
     </dependency>
-    <!-- dependencies for the copied code -->
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-data-processing</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-projections-psi-parser-util</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-schema-psi-parser-common</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-    <!-- -->
 
     <dependency>
       <groupId>net.jcip</groupId>
@@ -124,25 +117,6 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>../java/schema-psi-parser/src/main/java</source>
-                <source>../java/projections-schema-psi-parser/src/main/java</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
     </plugins>

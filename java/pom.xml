@@ -42,6 +42,7 @@
     <module>maven-plugin</module>
     <module>projections-psi-parser-util</module>
     <module>projections-schema-psi-parser</module>
+    <module>projections-schema-psi-parser/tests</module>
     <module>projections-url-psi-parser</module>
     <module>projections</module>
     <module>request-url-parser</module>
@@ -50,6 +51,7 @@
     <module>schema-parser</module>
     <module>schema-psi-parser-common</module>
     <module>schema-psi-parser</module>
+    <module>schema-psi-parser/tests</module>
     <module>schema</module>
     <module>service</module>
     <module>standalone-psi-util</module>

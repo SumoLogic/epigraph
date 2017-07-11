@@ -46,7 +46,7 @@ Map<String, String> modules = [
     'scala/core'                         : 'epigraph-scala-core'
 ]
 
-// todo: modules marked with (x) must be removed from here and form build.gradle : publishGradlePlugin
+// todo: modules marked with (x) must be removed from here and from build.gradle : publishGradlePlugin
 // once schema resources compilation is ported to scala (see 'Schema compiler' section in todo.md)
 // also remove all of noTestModules and **/build-notest.gradle
 

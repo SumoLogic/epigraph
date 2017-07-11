@@ -214,7 +214,7 @@ class EpigraphCompiler(
     case _ =>
   }
 
-  private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach {
+  private def validateMapKeyTypes(): Unit = ctx.typeDefs.values().foreach { // TODO iterate over anon types, too
     case md: CMapTypeDef =>
       md.keyTypeRef.resolved match {
         case kdt: CDatumType =>

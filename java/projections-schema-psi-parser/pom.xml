@@ -29,8 +29,6 @@
 
   <dependencies>
 
-    <!-- update compiler/build.gradle if adding dependencies here -->
-
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
       <artifactId>epigraph-java-core</artifactId>
@@ -77,52 +75,10 @@
       <version>0.0.0</version>
     </dependency>
 
-
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-    </dependency>
-
-    <!-- test dependencies -->
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-core</artifactId>
-      <version>${project.parent.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-test-util</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>ws.epigraph.tests</groupId>
-      <artifactId>tests-schema-java</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.io7m.jpplib</groupId>
-      <artifactId>io7m-jpplib-core</artifactId>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
