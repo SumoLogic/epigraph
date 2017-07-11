@@ -20,31 +20,24 @@ plugins {
 
 apply plugin: 'scala'
 
-sourceSets.main.java.srcDirs += file('../java/schema-psi-parser/src/main/java')
 //idea.module.generatedSourceDirs += file('../java/schema-psi-parser/src/main/java')
 
-sourceSets.main.java.srcDirs += file('../java/projections-schema-psi-parser/src/main/java')
 //idea.module.generatedSourceDirs += file('../java/projections-schema-psi-parser/src/main/java')
 
 dependencies {
+
   compile project(':epigraph-java-core')
+  compile project(':epigraph-java-projections-schema-psi-parser')
   compile project(':epigraph-java-schema')
   compile project(':epigraph-java-schema-parser')
+  compile project(':epigraph-java-schema-psi-parser')
   compile project(':epigraph-java-lang-common')
 
   compile "org.slf4s:slf4s-api_$scalaVersionMajorMinor"
-
-  // dependencies for the copied code
-  compile project(':epigraph-java-projections-psi-parser-util')
-  compile project(':epigraph-java-data-processing')
-  compile project(':epigraph-java-schema-psi-parser-common')
-
-  compile 'org.scala-lang:scala-library'
-  compile 'org.scala-lang:scala-reflect'
-  compile "com.lihaoyi:pprint_$scalaVersionMajorMinor"
 
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
   testCompile 'org.slf4j:slf4j-nop'
   testCompile 'junit:junit'
   testRuntime 'org.pegdown:pegdown'
+
 }
