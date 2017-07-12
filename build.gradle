@@ -80,7 +80,7 @@ idea {
   }
 }
 
-// bootstrap: gradle -c settings-bootstrap.gradle publishGradlePlugins
+// bootstrap: ./gradlew -c settings-bootstrap.gradle publishGradlePlugins
 task publishGradlePlugins(dependsOn: [
     ':epigraph-compiler:publishToMavenLocal',
     ':epigraph-gradle-plugin:publishToMavenLocal',
@@ -92,16 +92,18 @@ task publishGradlePlugins(dependsOn: [
     ':epigraph-java-lang-common:publishToMavenLocal',
     ':epigraph-java-projections:publishToMavenLocal',
     ':epigraph-java-projections-psi-parser-util:publishToMavenLocal',
+    ':epigraph-java-projections-schema-psi-parser:publishToMavenLocal',
     ':epigraph-java-standalone-psi-util:publishToMavenLocal',
     ':epigraph-java-schema:publishToMavenLocal',
     ':epigraph-java-schema-parser:publishToMavenLocal',
+    ':epigraph-java-schema-psi-parser:publishToMavenLocal',
     ':epigraph-java-schema-psi-parser-common:publishToMavenLocal',
     ':epigraph-java-test-util:publishToMavenLocal',
     ':epigraph-java-util:publishToMavenLocal',
     ':epigraph-light-psi:publishToMavenLocal',
     ':epigraph-scala-core:publishToMavenLocal'
 ]) {
-  description 'Bootstraps gradle build by installing necessary plugins. Usage: \n gradle -c settings-bootstrap.gradle publishGradlePlugins'
+  description 'Bootstraps gradle build by installing necessary plugins. Usage: \n ./gradlew -c settings-bootstrap.gradle publishGradlePlugins'
 }
 
 buildtimetracker {

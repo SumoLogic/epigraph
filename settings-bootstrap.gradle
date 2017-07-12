@@ -36,8 +36,10 @@ Map<String, String> modules = [
     'java/lang-common'                   : 'epigraph-java-lang-common',
     'java/projections'                   : 'epigraph-java-projections',                          // (x)
     'java/projections-psi-parser-util'   : 'epigraph-java-projections-psi-parser-util',          // (x)
+    'java/projections-schema-psi-parser' : 'epigraph-java-projections-schema-psi-parser',        // (?)
     'java/schema'                        : 'epigraph-java-schema',                               // (x)
     'java/schema-parser'                 : 'epigraph-java-schema-parser',
+    'java/schema-psi-parser'             : 'epigraph-java-schema-psi-parser',                    // (?)
     'java/schema-psi-parser-common'      : 'epigraph-java-schema-psi-parser-common',             // (x)
     'java/standalone-psi-util'           : 'epigraph-java-standalone-psi-util',
     'java/test-util'                     : 'epigraph-java-test-util',                            // (x)
