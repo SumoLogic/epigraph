@@ -55,15 +55,11 @@
   </developers>
 
   <!-- first-time build bootstrap:
-      mvn clean install -Plight-psi,main
+      ./mvnw clean install -Plight-psi,main
   -->
   <!-- IDEA project set-up:
-    - Run: mvn clean install -Plight-psi,main
+    - Run: ./mvnw clean install -Plight-psi,main
     - File > Open... > Select project root folder
-    - File > Project Structure... > Modules > epigraph-java-schema-parser
-      - Add Content Root > java/schema-parser-common/src/main/java and java/schema-parser-common/src/main/java.generated
-      - Note: last step has to be done every time main profile modules are removed and re-imported :(
-      - TODO: try splitting java/schema-parser-common into two maven modules with linked src folders
   -->
 
   <profiles>
