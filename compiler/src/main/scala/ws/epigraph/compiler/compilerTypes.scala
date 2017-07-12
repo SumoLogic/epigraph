@@ -33,6 +33,7 @@ import ws.epigraph.types.DatumTypeApi
 import scala.annotation.meta.getter
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConverters, mutable}
+import scala.util.matching.Regex
 
 
 abstract class CType(implicit val ctx: CContext) {self =>
@@ -473,7 +474,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 
   // TODO fields with override modifier should check they have superfield(s)
 
-  val name: String = psi.getQid.getCanonicalName
+  val name: String = validateFieldName(psi.getQid.getCanonicalName, csf, psi)
 
   val isAbstract: Boolean = psi.getAbstract ne null
 
@@ -484,6 +485,14 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
   def superfields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _superfields)
 
   private lazy val _superfields = host.linearizedParents.flatMap(_.effectiveFields.find(_.name == name))
+
+  private def validateFieldName(name: String, csf: CSchemaFile, psi: SchemaFieldDecl)(implicit ctx: CContext): String = {
+    name match {
+      case NamePatterns.FieldName() =>
+      case _ => ctx.errors.add(CMessage.error(csf.filename, csf.position(psi.getQid), s"Invalid field name `$name`"))
+    }
+    name
+  }
 
   def compatibleWith(superField: CField): Boolean = superField.typeRef.resolved.isAssignableFrom(typeRef.resolved) && (
       superField.effectiveDefaultTagName match {
@@ -833,6 +842,7 @@ class CSupplement(csf: CSchemaFile, val psi: SchemaSupplementDef)(implicit val c
 }
 
 private [compiler] object CTypeUtil {
+
   def buildAnnotations(csf: CSchemaFile, psiOption: Option[java.util.List[SchemaAnnotation]])(implicit ctx: CContext): Annotations = psiOption.map {psi =>
     import JavaConverters._
 
@@ -850,4 +860,15 @@ private [compiler] object CTypeUtil {
     ppc.messages().foreach{ e => reporter.error(e.message(), e.location()) }
     res
   }.getOrElse(Annotations.EMPTY)
+
+}
+
+object NamePatterns {
+
+  val FieldName: Regex = """\p{javaLowerCase}(?:\p{IsAlphabetic}|\p{Digit})*""".r
+
+  val TagName: Regex = FieldName
+
+  val TypeName: Regex = """\p{javaUpperCase}(?:\p{IsAlphabetic}|\p{Digit})*""".r
+
 }
