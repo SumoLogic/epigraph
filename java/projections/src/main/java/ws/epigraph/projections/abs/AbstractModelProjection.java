@@ -213,10 +213,12 @@ public abstract class AbstractModelProjection<
 
   @Override
   @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
-      final @NotNull M model,
-      final @NotNull List<SMP> modelProjections) {
+      @NotNull M model,
+      @NotNull List<SMP> modelProjections) {
     
     assert !modelProjections.isEmpty();
+
+    modelProjections = new ArrayList<>(new LinkedHashSet<>(modelProjections));
 
     if (modelProjections.size() == 1) {
       return modelProjections.get(0);
@@ -416,5 +418,11 @@ public abstract class AbstractModelProjection<
   @Override
   public int hashCode() {
     return Objects.hash(model, metaProjection);
+  }
+
+  @Override
+  public String toString() {
+    ProjectionReferenceName referenceName = referenceName();
+    return referenceName == null ? String.format("<unnamed '%s' projection>", type().name()) : referenceName.toString();
   }
 }

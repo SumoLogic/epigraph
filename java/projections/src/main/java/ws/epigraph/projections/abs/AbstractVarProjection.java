@@ -336,13 +336,15 @@ public abstract class AbstractVarProjection<
             // have to dereference and postpone merging?
             // see also OpOutputProjectionsTest::testNormalizeRecursiveList2
             final Optional<TP> recTp = tagProjections.stream().filter(tp -> !tp.projection().isResolved()).findFirst();
-            if (recTp.isPresent())
+            recTp.map(tp -> {
               throw new IllegalArgumentException(
                   String.format(
-                      "Can't merge recursive and non-recursive projections [%s]",
-                      recTp.get().projection().referenceName()
+                      "Can't merge recursive projection [%s] with other projections (%s)",
+                      tp.projection().referenceName(),
+                      tagProjections.stream().map(x -> x.tag().name()+":"+x.projection().toString()).collect(Collectors.joining(", "))
                   )
               );
+            });
           }
         }
 
@@ -364,8 +366,10 @@ public abstract class AbstractVarProjection<
   }
 
   @Override
-  public @NotNull VP merge(final @NotNull List<VP> varProjections) {
+  public @NotNull VP merge(@NotNull List<VP> varProjections) {
     assert !varProjections.isEmpty();
+
+    varProjections = new ArrayList<>(new LinkedHashSet<>(varProjections)); // dedup
 
     if (varProjections.size() == 1) {
       return varProjections.get(0);
@@ -542,5 +546,11 @@ public abstract class AbstractVarProjection<
   public int hashCode() {
     if (name != null) return name.hashCode();
     return Objects.hash(type, tagProjections, polymorphicTails);
+  }
+
+  @Override
+  public String toString() {
+    ProjectionReferenceName referenceName = referenceName();
+    return referenceName == null ? String.format("<unnamed '%s' projection>", type().name()) : referenceName.toString();
   }
 }
