@@ -21,9 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputRecordModelProjection
-
-import scala.collection.JavaConversions._
+import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,9 +35,10 @@ class ReqInputRecordModelProjectionGen(
   extends ReqInputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
+  override type OpFieldProjectionType = OpInputFieldProjectionEntry
 
-  override protected lazy val fieldGenerators: Map[CField, ReqInputFieldProjectionGen] =
-    op.fieldProjections().values().map { fpe =>
+  override lazy val fieldGenerators: Map[CField, ReqInputFieldProjectionGen] =
+    fieldProjections.values.map { case (fgo, fpe) => // todo
       (
         findField(fpe.field().name()),
         new ReqInputFieldProjectionGen(
@@ -53,7 +52,7 @@ class ReqInputRecordModelProjectionGen(
       )
     }.toMap
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputRecordModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqInputModelProjectionGen, op: OpInputRecordModelProjection, normalized: Boolean) =
     new ReqInputRecordModelProjectionGen(
       baseNamespaceProvider,
       op,

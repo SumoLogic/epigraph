@@ -17,14 +17,12 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CField
-import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.assemblers.RecordAssemblerGen
 import ws.epigraph.java.service.projections.req._
+import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputRecordModelProjection
-
-import scala.collection.JavaConversions._
+import ws.epigraph.projections.op.output.{OpOutputFieldProjectionEntry, OpOutputRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +32,7 @@ class ReqOutputRecordModelProjectionGen(
   val op: OpOutputRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqProjectionGen],
+  override val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(
     baseNamespaceProvider,
@@ -47,12 +45,15 @@ class ReqOutputRecordModelProjectionGen(
 
   override type OpProjectionType = OpOutputRecordModelProjection
 
+  override type OpFieldProjectionType = OpOutputFieldProjectionEntry
+
   override lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
-    op.fieldProjections().values().map { fpe =>
+    fieldProjections.values.map { case (fgo, fpe) =>
       val field = fpe.field()
       val cField = findField(field.name())
 
-      def fieldGen(parentFieldGenOpt: Option[ReqProjectionGen]) =
+      def fieldGen(parentFieldGenOpt: Option[ReqOutputProjectionGen]) = {
+        //System.out.println(s"$fullClassName :: ${ field.name() } extends ${ parentFieldGenOpt.map(_.fullClassName) } ~ ${fgo.map(_.fullClassName)}")
         new ReqOutputFieldProjectionGen(
           baseNamespaceProvider,
           field.name(),
@@ -62,30 +63,15 @@ class ReqOutputRecordModelProjectionGen(
           parentFieldGenOpt,
           ctx
         )
+      }
 
-      (
-        cField,
+        cField ->
+        fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputProjectionGen])))
 
-        // 3 options here:
-
-        // 1: parent projection exists and field is inherited -> use parent projection's field projection
-        // 2: parent projection exists and field is overriden -> create new field projection extending parent field projection
-        // 3: no parent projection -> use simple field projection
-
-        (parentClassGenOpt match {
-          case Some(g: ReqOutputRecordModelProjectionGen) => g.fieldGenerators.get(cField).orElse { // (1)
-            g.fieldGenerators.find(_._1.name == field.name()).map(_._2).map { parentFieldGen =>
-              fieldGen(Some(parentFieldGen.dataProjectionGen)) // (2)
-            }
-          }
-          case _ => None
-        }).getOrElse(fieldGen(None)) // (3)
-
-      )
     }.toMap
 
   override protected def tailGenerator(
-    parentGen: ReqModelProjectionGen,
+    parentGen: ReqOutputModelProjectionGen,
     op: OpOutputRecordModelProjection,
     normalized: Boolean) =
     new ReqOutputRecordModelProjectionGen(
@@ -101,7 +87,7 @@ class ReqOutputRecordModelProjectionGen(
     }
 
   override lazy val children: Iterable[JavaGen] =
-    if (fieldGenerators.isEmpty) super.children
+    if (fieldGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/) super.children
     else super.children ++ Iterable(new RecordAssemblerGen(this, ctx))
 
   override protected def generate: String = generate(

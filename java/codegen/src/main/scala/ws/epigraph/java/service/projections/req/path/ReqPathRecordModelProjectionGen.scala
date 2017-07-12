@@ -21,9 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path.{OpRecordModelPath, OpVarPath}
-
-import scala.collection.JavaConversions._
+import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath, OpVarPath}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -37,12 +35,14 @@ class ReqPathRecordModelProjectionGen(
 
   override type OpProjectionType = OpRecordModelPath
 
-  override protected lazy val fieldGenerators: Map[CField, ReqPathFieldProjectionGen] =
-    op.fieldProjections().values()
-      .filter { fpe =>
+  override type OpFieldProjectionType = OpFieldPathEntry
+
+  override lazy val fieldGenerators: Map[CField, ReqPathFieldProjectionGen] =
+    fieldProjections.values
+      .filter { case (fgo, fpe) =>
         !OpVarPath.isEnd(fpe.fieldProjection().varProjection()) // todo same for maps/lists?
       }
-      .map { fpe =>
+      .map { case (fgo, fpe) =>
         (
           findField(fpe.field().name()),
           new ReqPathFieldProjectionGen(

@@ -20,6 +20,7 @@ package ws.epigraph.names;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public final class DataTypeName {
   }
 
   @Override // TODO cache?
-  public String toString() { return typeName + (defaultTagName == null ? "" : " default " + defaultTagName); }
+  public String toString() { return typeName + (defaultTagName == null || defaultTagName.equals(DatumTypeApi.MONO_TAG_NAME) ? "" : " default " + defaultTagName); }
 
   @Override
   public boolean equals(Object o) {

@@ -31,6 +31,8 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqProjectionGen extends JavaGen {
+  protected type GenType <: ReqProjectionGen
+
   protected val baseNamespaceProvider: BaseNamespaceProvider
 
   protected def baseNamespace: Qn = baseNamespaceProvider.baseNamespace
@@ -47,7 +49,7 @@ trait ReqProjectionGen extends JavaGen {
 
   def fullClassName: String = namespace.append(shortClassName).toString
 
-  protected def parentClassGenOpt: Option[ReqProjectionGen] = None
+  protected def parentClassGenOpt: Option[GenType] = None
 
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 

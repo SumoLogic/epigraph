@@ -16,46 +16,96 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CField, CRecordTypeDef}
+import ws.epigraph.compiler.{CField, CFieldApiWrapper, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.GenRecordModelProjection
+import ws.epigraph.projections.gen.{GenFieldProjectionEntry, GenRecordModelProjection}
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
+
+import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenRecordModelProjection[_, _, _, _, _, _, _ <: DatumTypeApi]
+//  override protected type GenType <: ReqRecordModelProjectionGen
 
-  protected def fieldGenerators: Map[CField, ReqFieldProjectionGen]
+  /** field generators: should only include new or overridden fields, should not include inherited */
+  def fieldGenerators: Map[CField, ReqFieldProjectionGen]
+
+  protected type OpFieldProjectionType <: GenFieldProjectionEntry[_, _, _, _]
 
   // ------
 
   protected val cRecordType: CRecordTypeDef = cType.asInstanceOf[CRecordTypeDef]
 
-  override def children: Iterable[JavaGen] = super.children ++ {
-    // exclude fields taken from parent generator
-    val fgs = fieldGenerators.filterKeys { f =>
-      parentClassGenOpt match {
-        case Some(g: ReqRecordModelProjectionGen) => !g.fieldGenerators.contains(f)
-        case _ => true
+  /** get field projections from `g.op` if they override fields from `t` */
+  def overridingFieldProjections(
+    g: ReqRecordModelProjectionGen,
+    t: CRecordTypeDef): Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] = {
+    val p = g.op
+
+    g.parentClassGenOpt.map(
+      pg => overridingFieldProjections(
+        pg.asInstanceOf[ReqRecordModelProjectionGen], t
+      )
+    ).getOrElse(Map()) ++
+    p.fieldProjections().toMap
+      .filter { case (fn, fp) =>
+        // only keep overriden fields
+        t.findEffectiveField(fn).exists(field => field.valueDataType.name != fp.asInstanceOf[OpFieldProjectionType].field().dataType().name().toString)
       }
-    }
-//    System.out.println(s"""$fullClassName -> [${ fgs.keys.map(k => k.name).mkString(",") }]""")
-    if (ReqFieldProjectionGen.generateFieldProjections)
-      fgs.values
-    else
-      fgs.values.flatMap(_.children)
+      .map { case (fn, fp) =>
+        // convert overriden fields to be of proper type.
+        fn -> (
+          Some(g),
+          fp.asInstanceOf[OpFieldProjectionType]
+            .overridenFieldProjection(new CFieldApiWrapper(t.findEffectiveField(fn).get))
+            .asInstanceOf[OpFieldProjectionType]
+        )
+      }
   }
 
+  /**
+   * field projections: should only include new or overridden fields, should not include inherited
+   *
+   * maps field names to (generatorOpt, projection) pairs, where generatorOpt contains generator of the
+   * overriden field, or None if field is not overriding anything
+   */
+  lazy val fieldProjections: Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] =
+    op.fieldProjections().toMap
+      .filterKeys { !isInherited(_) }
+      .mapValues(p => (None, p.asInstanceOf[OpFieldProjectionType])) ++
+    parentClassGenOpt.map(
+      pg => overridingFieldProjections(
+        pg.asInstanceOf[ReqRecordModelProjectionGen],
+        cRecordType
+      )
+    ).getOrElse(Map())
+
+  def isInherited(fieldName: String): Boolean = parentClassGenOpt.exists { pg =>
+    val rpg = pg.asInstanceOf[ReqRecordModelProjectionGen]
+    rpg.fieldProjections.contains(fieldName) || rpg.isInherited(fieldName)
+  }
+
+  override def children: Iterable[JavaGen] = super.children ++ {
+    // exclude (overriden) fields taken from parent generator
+    if (ReqFieldProjectionGen.generateFieldProjections)
+      fieldGenerators.values
+    else
+      fieldGenerators.values.flatMap(_.children)
+  }
 
   protected def findField(name: String): CField = cRecordType.effectiveFields.find(_.name == name).getOrElse {
     throw new RuntimeException(s"Can't find field '$name' in type '${ cType.name.toString }'")
   }
+
+  def findFieldGenerator(fieldName: String): Option[ReqFieldProjectionGen] =
+    fieldGenerators.find(_._1.name == fieldName).map(_._2)
 
   protected def generate(
     reqRecordModelProjectionFqn: Qn,

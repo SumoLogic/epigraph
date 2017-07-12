@@ -18,8 +18,8 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.service.assemblers.MapAssemblerGen
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.output.OpOutputMapModelProjection
@@ -32,7 +32,7 @@ class ReqOutputMapModelProjectionGen(
   override val op: OpOutputMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqProjectionGen],
+  override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqMapModelProjectionGen {
 
@@ -58,7 +58,7 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpOutputMapModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqOutputModelProjectionGen, op: OpOutputMapModelProjection, normalized: Boolean) =
     new ReqOutputMapModelProjectionGen(
       baseNamespaceProvider,
       op,

@@ -54,8 +54,8 @@ else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
   ${g.elementGen.fullClassName} itemsProjection = p.itemsProjection();
-  Map<K, I> map = itemsExtractor.apply(dto);
-  for (Map.Entry<K, I> entry: map.entrySet()) {
+  Map<K, ? extends I> map = itemsExtractor.apply(dto);
+  for (Map.Entry<K, ? extends I> entry: map.entrySet()) {
     $kt k = keyConverter.apply(entry.getKey());
     b.put${if (isEntity) "$" else "_"}(k, itemAssembler.assemble(entry.getValue(), itemsProjection, ctx));
   }
@@ -91,7 +91,7 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<K, D, I> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
 ${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
   private final @NotNull $keysConverterType keyConverter;
-  private final @NotNull Function<D, Map<K, I>> itemsExtractor;
+  private final @NotNull Function<D, Map<K, ? extends I>> itemsExtractor;
   private final @NotNull $itemAssemblerType itemAssembler;
 ${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
 ${if (hasMeta) s"  //meta assembler\n  private final @NotNull $metaAssemblerType metaAssembler;" else ""}
@@ -109,7 +109,7 @@ ${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
   public $shortClassName(
 ${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
     @NotNull $keysConverterType keyConverter,
-    @NotNull Function<D, Map<K, I>> itemsExtractor,
+    @NotNull Function<D, Map<K, ? extends I>> itemsExtractor,
     @NotNull $itemAssemblerType itemAssembler\
 ${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
 ${if (hasMeta) s",\n    @NotNull $metaAssemblerType metaAssembler" else ""}

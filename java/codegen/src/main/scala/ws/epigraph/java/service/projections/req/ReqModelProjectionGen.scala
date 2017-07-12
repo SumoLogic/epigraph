@@ -34,6 +34,7 @@ import scala.collection.JavaConversions._
 trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
   type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
+  override protected type GenType <: ReqModelProjectionGen
 
   override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
 
@@ -46,7 +47,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected def metaGenerator(metaOp: OpMetaProjectionType): ReqModelProjectionGen =
     throw new RuntimeException("meta projections not supported")
 
-  protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpProjectionType, normalized: Boolean): ReqModelProjectionGen =
+  protected def tailGenerator(parentGen: GenType, op: OpProjectionType, normalized: Boolean): GenType =
     throw new RuntimeException("tail projections not supported")
 
   // -----------
@@ -54,7 +55,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override def children: Iterable[JavaGen] =
-    super.children ++ metaGeneratorOpt.iterator ++ tailGenerators.values ++ normalizedTailGenerators.values
+    super.children ++ metaGeneratorOpt.iterator ++ /*tailGenerators.values ++*/ normalizedTailGenerators.values
 
   protected lazy val params: CodeChunk =
     ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
@@ -78,24 +79,26 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   protected val buildNormalizedTails = true
 
-  protected lazy val tails: CodeChunk = if (!buildTails) CodeChunk.empty else tailGenerators
-    .map { case (tail, gen) => genTail(tail, gen) }
-    .foldLeft(CodeChunk.empty)(_ + _)
+//  protected lazy val tails: CodeChunk = if (!buildTails) CodeChunk.empty else tailGenerators
+//    .map { case (tail, gen) => genTail(tail, gen) }
+//    .foldLeft(CodeChunk.empty)(_ + _)
+
+  protected lazy val tails: CodeChunk = CodeChunk.empty
 
   protected lazy val normalizedTails: CodeChunk = if (!buildNormalizedTails) CodeChunk.empty else normalizedTailGenerators
     .map { case (tail, gen) => genNormalizedTail(tail, gen) }
     .foldLeft(CodeChunk.empty)(_ + _)
 
-  protected lazy val tailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
-    Option(op.polymorphicTails()).map(
-      _.asInstanceOf[java.util.List[OpProjectionType]] // can't set SMP to OpProjectionType, Scala doesn't allow cyclic types
-        .map { t: OpProjectionType => t -> tailGenerator(this, t, normalized = false) }.toMap
-    ).getOrElse(Map())
+//  protected lazy val tailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
+//    Option(op.polymorphicTails()).map(
+//      _.asInstanceOf[java.util.List[OpProjectionType]] // can't set SMP to OpProjectionType, Scala doesn't allow cyclic types
+//        .map { t: OpProjectionType => t -> tailGenerator(this.asInstanceOf[GenType], t, normalized = false) }.toMap
+//    ).getOrElse(Map())
 
   lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
-        t -> tailGenerator(this, op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
+        t -> tailGenerator(this.asInstanceOf[GenType], op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
       }.toMap
     ).getOrElse(Map())
 

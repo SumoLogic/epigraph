@@ -71,7 +71,7 @@ object CTypeApiWrapper {
 class CDataTypeApiWrapper(private val dataType: CDataType) extends DataTypeApi {
   override val `type`: TypeApi = CTypeApiWrapper.wrap(dataType.typeRef.resolved)
 
-  override val defaultTag: TagApi = dataType.defaultTag.map{ ct => new CTagWrapper(ct) }.orNull
+  override val defaultTag: TagApi = dataType.defaultTag.map{ ct => new CTagApiWrapper(ct) }.orNull
 
   override val name: DataTypeName = new DataTypeName(`type`.name(), dataType.defaultTag.map(_.name).orNull)
 
@@ -88,17 +88,17 @@ class CDataTypeApiWrapper(private val dataType: CDataType) extends DataTypeApi {
   }
 }
 
-class CTagWrapper(private val cTag: CTag) extends TagApi {
+class CTagApiWrapper(private val cTag: CTag) extends TagApi {
   override val name: String = cTag.name
 
   override val `type`: DatumTypeApi = CTypeApiWrapper.wrap(cTag.typeRef.resolved).asInstanceOf[DatumTypeApi]
 
   override def annotations(): Annotations = cTag.annotations
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CTagWrapper]
+  def canEqual(other: Any): Boolean = other.isInstanceOf[CTagApiWrapper]
 
   override def equals(other: Any): Boolean = other match {
-    case that: CTagWrapper => (that canEqual this) && cTag == that.cTag
+    case that: CTagApiWrapper => (that canEqual this) && cTag == that.cTag
     case _ => false
   }
 
@@ -115,10 +115,10 @@ trait CTypeDefApiWrapper extends CTypeApiWrapper {
 }
 
 class CVarTypeDefApiWrapper(val cType: CEntityTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
-  override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map{ ct => new CTagWrapper(ct) }
+  override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map{ ct => new CTagApiWrapper(ct) }
 
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
-    mapAsJavaMap(cType.effectiveTags.map{ ct => ct.name -> new CTagWrapper(ct) }.toMap)
+    mapAsJavaMap(cType.effectiveTags.map{ ct => ct.name -> new CTagApiWrapper(ct) }.toMap)
 
   override lazy val supertypes: util.List[_ <: EntityTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[EntityTypeApi]}
 
@@ -142,12 +142,12 @@ class CVarTypeDefApiWrapper(val cType: CEntityTypeDef) extends CTypeDefApiWrappe
 trait CDatumTypeApiWrapper extends CTypeApiWrapper with DatumTypeApi {
   override val cType: CDatumType
 
-  override lazy val tags: util.Collection[_ <: TagApi] = Collections.singletonList(new CTagWrapper(cType.impliedTag))
+  override lazy val tags: util.Collection[_ <: TagApi] = Collections.singletonList(new CTagApiWrapper(cType.impliedTag))
 
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
     Collections.singletonMap(CDatumType.ImpliedDefaultTagName, self())
 
-  override def self(): TagApi = new CTagWrapper(cType.impliedTag)
+  override def self(): TagApi = new CTagApiWrapper(cType.impliedTag)
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)
 

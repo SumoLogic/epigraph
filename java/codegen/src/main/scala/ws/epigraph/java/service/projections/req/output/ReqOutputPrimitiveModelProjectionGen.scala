@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqPrimitiveModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
 
@@ -29,14 +29,14 @@ class ReqOutputPrimitiveModelProjectionGen(
   val op: OpOutputPrimitiveModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqProjectionGen],
+  override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpOutputPrimitiveModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqOutputModelProjectionGen, op: OpOutputPrimitiveModelProjection, normalized: Boolean) =
     new ReqOutputPrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,

@@ -50,19 +50,19 @@ object JavaGenUtils {
 
   def indentButFirstLine(s: String, indent: String): String =
     if (indent.isEmpty || !s.contains('\n')) s
-    else s.lines.zipWithIndex.map{ case (l, i) => if (i == 0) l else indent + l }.mkString("\n")
+    else s.lines.zipWithIndex.map { case (l, i) => if (i == 0) l else indent + l }.mkString("\n")
 
   def indent(s: String, indent: Int): String =
     if (indent == 0) s
-    else s.lines.map{ l => spaces(indent) + l }.mkString("\n")
+    else s.lines.map { l => spaces(indent) + l }.mkString("\n")
 
 
   def fqnToPath(fqn: Qn): Path = if (fqn.isEmpty) EmptyPath else Paths.get(fqn.first, fqn.segments.tail: _*)
 
   def writeFile(
-      root: Path,
-      relativeFilePath: Path,
-      content: String
+    root: Path,
+    relativeFilePath: Path,
+    content: String
   ): Unit = {
     val fullFilePath = root.resolve(relativeFilePath)
     //println(s"Writing to $fullFilePath")
@@ -120,7 +120,7 @@ object JavaGenUtils {
 //    s"{@link ${JavaGenNames.lqn(t, currentType)} ${JavaGenNames.ln(t)}}"
 
   def javadocLink(t: CType, namespace: Qn): String =
-    s"{@link ${JavaGenNames.lqn2(t, namespace.toString)} ${JavaGenNames.ln(t)}}"
+    s"{@link ${ JavaGenNames.lqn2(t, namespace.toString) } ${ JavaGenNames.ln(t) }}"
 
   def withParents(t: CType, trans: (String) => String = identity): String = {
     t.getLinearizedParentsReversed.map(" " + JavaGenNames.lqn(_, t, trans) + ",").mkString
@@ -137,8 +137,28 @@ object JavaGenUtils {
 
 //  def ?[A >: Null <: AnyRef, B](arg: A, ifNotNull: => B, ifNull: => B): B = if (arg ne null) ifNotNull else ifNull
 
-  def generatedAnnotation(generator: Any): String =
-    s"""@javax.annotation.Generated("${ Option(generator.getClass.getCanonicalName).getOrElse(generator.getClass.getName) }")"""
+  def generatedAnnotation(generator: Any): String = {
+    def getOuter(c: Class[_]): Class[_] = {
+      c
+//      try {
+//        if (!c.getDeclaredFields.contains("this$0"))
+//          c
+//        else {
+//          val thisField = c.getDeclaredField("this$0")
+//          val parent = thisField.get(c)
+//          getOuter(parent.getClass)
+//        }
+//      } catch {
+//        case _ : Exception => c
+//      }
+
+    }
+
+    val cls = getOuter(generator.getClass)
+    val name = Option(cls.getCanonicalName).getOrElse(cls.getName)
+    val idx = name.indexOf("$")
+    s"""@javax.annotation.Generated("${ if (idx == -1) name else name.substring(0, idx) }")"""
+  }
 
   def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
 }

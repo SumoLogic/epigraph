@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.delete.OpDeleteMapModelProjection
@@ -61,7 +61,7 @@ class ReqDeleteMapModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpDeleteMapModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteMapModelProjection, normalized: Boolean) =
     new ReqDeleteMapModelProjectionGen(
       baseNamespaceProvider,
       op,

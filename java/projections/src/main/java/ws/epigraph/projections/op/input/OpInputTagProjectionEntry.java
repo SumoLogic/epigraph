@@ -16,11 +16,10 @@
 
 package ws.epigraph.projections.op.input;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class OpInputTagProjectionEntry
   }
 
   @Override
-  protected @Nullable OpInputTagProjectionEntry mergeTags(
+  protected @NotNull OpInputTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<OpInputTagProjectionEntry> tagsEntries,
       final @NotNull OpInputModelProjection<?, ?, ?, ?> mergedModel) {

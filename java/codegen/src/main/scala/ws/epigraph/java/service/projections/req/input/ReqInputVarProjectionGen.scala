@@ -57,7 +57,7 @@ class ReqInputVarProjectionGen(
       override lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
     }
 
-  override protected def tagGenerator(tpe: OpInputTagProjectionEntry): ReqProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpInputTagProjectionEntry): ReqProjectionGen =
     ReqInputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

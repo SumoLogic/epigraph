@@ -36,6 +36,7 @@ abstract class ReqUpdateModelProjectionGen(
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type GenType = ReqUpdateModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceName,

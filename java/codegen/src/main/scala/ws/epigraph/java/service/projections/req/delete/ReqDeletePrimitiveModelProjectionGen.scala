@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqPrimitiveModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeletePrimitiveModelProjection
 
@@ -34,7 +34,7 @@ class ReqDeletePrimitiveModelProjectionGen(
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpDeletePrimitiveModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeletePrimitiveModelProjection, normalized: Boolean) =
     new ReqDeletePrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,

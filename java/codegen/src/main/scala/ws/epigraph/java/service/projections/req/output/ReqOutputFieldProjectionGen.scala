@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputFieldProjection
 
@@ -32,7 +32,7 @@ class ReqOutputFieldProjectionGen(
   protected val op: OpOutputFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  dataParentClassGenOpt: Option[ReqProjectionGen],
+  dataParentClassGenOpt: Option[ReqOutputProjectionGen],
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpOutputFieldProjection

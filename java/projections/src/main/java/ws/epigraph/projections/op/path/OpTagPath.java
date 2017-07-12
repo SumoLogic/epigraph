@@ -16,11 +16,10 @@
 
 package ws.epigraph.projections.op.path;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class OpTagPath extends AbstractTagProjectionEntry<OpTagPath, OpModelPath
   }
 
   @Override
-  protected @Nullable OpTagPath mergeTags(
+  protected @NotNull OpTagPath mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<OpTagPath> tagsEntries,
       final @NotNull OpModelPath<?, ?, ?> mergedModel) {

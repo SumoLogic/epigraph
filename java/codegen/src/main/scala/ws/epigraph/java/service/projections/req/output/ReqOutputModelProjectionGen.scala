@@ -33,11 +33,12 @@ abstract class ReqOutputModelProjectionGen(
   op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqProjectionGen],
+  override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
+  override type GenType = ReqOutputModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceName,
@@ -77,7 +78,7 @@ object ReqOutputModelProjectionGen {
     op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    parentClassGenOpt: Option[ReqProjectionGen],
+    parentClassGenOpt: Option[ReqOutputModelProjectionGen],
     ctx: GenContext): ReqOutputModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>

@@ -35,6 +35,7 @@ abstract class ReqDeleteModelProjectionGen(
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
+  override type GenType = ReqDeleteModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceName,

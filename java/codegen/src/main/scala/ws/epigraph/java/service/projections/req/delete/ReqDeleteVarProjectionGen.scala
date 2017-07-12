@@ -57,7 +57,7 @@ class ReqDeleteVarProjectionGen(
       override lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
     }
 
-  override protected def tagGenerator(tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

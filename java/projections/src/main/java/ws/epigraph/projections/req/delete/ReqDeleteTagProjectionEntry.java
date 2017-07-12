@@ -17,7 +17,6 @@
 package ws.epigraph.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
@@ -38,7 +37,7 @@ public class ReqDeleteTagProjectionEntry
   }
 
   @Override
-  protected @Nullable ReqDeleteTagProjectionEntry mergeTags(
+  protected @NotNull ReqDeleteTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<ReqDeleteTagProjectionEntry> tagsEntries,
       final @NotNull ReqDeleteModelProjection<?, ?, ?> mergedModel) {

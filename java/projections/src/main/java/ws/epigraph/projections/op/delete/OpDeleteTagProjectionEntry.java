@@ -16,11 +16,10 @@
 
 package ws.epigraph.projections.op.delete;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class OpDeleteTagProjectionEntry
   }
   
   @Override
-  protected @Nullable OpDeleteTagProjectionEntry mergeTags(
+  protected @NotNull OpDeleteTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<OpDeleteTagProjectionEntry> tagsEntries,
       final @NotNull OpDeleteModelProjection<?, ?, ?> mergedModel) {

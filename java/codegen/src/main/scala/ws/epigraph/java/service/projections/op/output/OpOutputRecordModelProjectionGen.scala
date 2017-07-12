@@ -21,7 +21,7 @@ import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, gen
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.output.{OpOutputFieldProjectionEntry, OpOutputRecordModelProjection}
-import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
+import ws.epigraph.types.{RecordTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -39,7 +39,6 @@ class OpOutputRecordModelProjectionGen(p: OpOutputRecordModelProjection)
 new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${i(gen(p.params(), ctx))},
-
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
   ${i(genLinkedMap("java.lang.String", fpe, p.fieldProjections().entrySet().map{e =>

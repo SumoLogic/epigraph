@@ -17,13 +17,13 @@
 package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -75,10 +75,23 @@ public abstract class AbstractTagProjectionEntry<
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
 
-  protected abstract @Nullable TP mergeTags(
+  protected abstract @NotNull TP mergeTags(
       @NotNull TagApi tag,
       @NotNull List<TP> tagsEntries,
       @NotNull MP mergedModel);
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public @NotNull TP overridenTagProjection(@NotNull TagApi overridingTag) {
+    return mergeTags(
+        overridingTag,
+        Collections.singletonList(self()),
+        (MP) (projection().normalizedForType(overridingTag.type()))
+    );
+  }
+
+  @SuppressWarnings("unchecked")
+  @NotNull TP self() { return (TP) this; }
 
   @Override
   public @NotNull TextLocation location() { return location; }

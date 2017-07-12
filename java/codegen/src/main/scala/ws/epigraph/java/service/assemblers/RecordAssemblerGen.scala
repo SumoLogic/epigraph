@@ -19,7 +19,7 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CField, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output.{ReqOutputFieldProjectionGen, ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
@@ -56,7 +56,11 @@ class RecordAssemblerGen(
     def javadoc: String = s"$fbf {@code $fieldName} field assembler"
   }
 
-  private val fps: Seq[FieldParts] = g.fieldGenerators.map { case (f, fg) =>
+  private def fieldGenerators(g: G): Map[String, (CField, ReqOutputFieldProjectionGen)] =
+    g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[G])).getOrElse(Map()) ++
+    g.fieldGenerators.map { case (f, p) => f.name -> (f, p) }
+
+  private val fps: Seq[FieldParts] = fieldGenerators(g).map { case (_, (f, fg)) =>
     FieldParts(f, fg.dataProjectionGen)
   }.toSeq
 
@@ -68,7 +72,7 @@ if (visited != null)
 else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
-  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
+${fps.map { fp => s"  if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
 ${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" else ""}\
   return b.asValue();
 }

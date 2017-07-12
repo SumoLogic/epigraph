@@ -171,6 +171,15 @@ public abstract class GenQn<T, S extends GenQn<T, S>> {
     return removeLastSegment().equals(other.removeLastSegment());
   }
 
+  public boolean contains(@NotNull T segment) {
+    for (final T s : segments) {
+      if (s.equals(segment))
+        return true;
+    }
+
+    return false;
+  }
+
   @Override
   public String toString() {
     StringBuilder r = new StringBuilder();

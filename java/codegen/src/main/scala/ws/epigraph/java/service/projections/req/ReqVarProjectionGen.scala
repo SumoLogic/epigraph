@@ -16,12 +16,12 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CEntityTypeDef, CTag}
+import ws.epigraph.compiler.{CEntityTypeDef, CTag, CTagApiWrapper}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
 
@@ -33,8 +33,9 @@ import scala.collection.JavaConversions._
 trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   override type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
+  override protected type GenType <: ReqVarProjectionGen
 
-  protected def tagGenerator(tpe: OpTagProjectionEntryType): ReqProjectionGen
+  protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagProjectionEntryType): ReqProjectionGen
 
   protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqProjectionGen
 
@@ -42,29 +43,71 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
-  override def children: Iterable[JavaGen] = tailGenerators.values ++ normalizedTailGenerators.values ++ {
-    // exclude tags taken from parent generator
-    tagGenerators.filterKeys { t =>
-      parentClassGenOpt match {
-        case Some(g: ReqVarProjectionGen) => !g.tagGenerators.contains(t)
-        case _ => true
-      }
-    }.values
-  }
+  override def children: Iterable[JavaGen] =
+  /*tailGenerators.values ++*/ normalizedTailGenerators.values ++ tagGenerators.values
 
   override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
+  /**
+   * tag projections: should only include new or overridden tags, should not include inherited
+   * maps tag names to (generatorOpt, projection) pairs, where generatorOpt contains generator of the
+   * overriden tag, or None if field is not overriding anything
+   */
+  private def tagProjections(
+    g: ReqVarProjectionGen,
+    t: CEntityTypeDef): Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] = {
+    val p = g.op
+
+    g.parentClassGenOpt.map(
+      pg => tagProjections(
+        pg.asInstanceOf[ReqVarProjectionGen], t
+      )
+    ).getOrElse(Map()) ++
+    p.tagProjections().toMap
+      .filter { case (tn, tp) =>
+        // only keep overriden tags
+        t.findEffectiveTag(tn).exists(tag => tag.typeRef.resolved != tp.tag().`type`())
+      }
+      .map { case (tn, fp) =>
+        // convert overriden tags to be of proper type.
+        tn -> (
+          Some(g),
+          fp.overridenTagProjection(new CTagApiWrapper(t.findEffectiveTag(tn).get)).asInstanceOf[OpTagProjectionEntryType]
+        )
+      }
+  }
+
+  /** tag projections: should only include new or overridden tags, should not include inherited */
+  lazy val tagProjections: Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] =
+    op.tagProjections().toMap
+      .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
+      .mapValues(p => (None, p)) ++
+    parentClassGenOpt.map(
+      pg => tagProjections(
+        pg, cType
+      )
+    ).getOrElse(Map())
+
+  /** tag generators: should only include new or overridden tags, should not include inherited */
   def tagGenerators: Map[CTag, ReqProjectionGen] =
-    op.tagProjections().values().map { tpe => findTag(tpe.tag().name()) -> tagGenerator(tpe) }.toMap
+    tagProjections.values.map { case (pgo, tpe) =>
+      findTag(tpe.tag().name()) -> tagGenerator(pgo, tpe)
+    }.toMap
 
   protected def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse {
     throw new RuntimeException(s"Can't find tag '$name' in type '${ cType.name.toString }'")
   }
 
-  protected lazy val tailGenerators: Map[OpProjectionType, ReqProjectionGen] =
-    Option(op.polymorphicTails()).map(
-      _.map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
-    ).getOrElse(Map())
+  def findTagGenerator(name: String): Option[ReqProjectionGen] = tagGenerators.find(_._1.name == name).map(_._2)
+
+  def isInherited(tagName: String): Boolean = parentClassGenOpt.exists { pg =>
+    pg.tagProjections.contains(tagName) || pg.isInherited(tagName)
+  }
+
+//  protected lazy val tailGenerators: Map[OpProjectionType, ReqProjectionGen] =
+//    Option(op.polymorphicTails()).map(
+//      _.map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
+//    ).getOrElse(Map())
 
   lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] =
     Option(op.polymorphicTails()).map(
@@ -133,7 +176,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     }
 
     val tags = tagGenerators.map { case (tag, gen) => genTag(tag, gen) }.foldLeft(CodeChunk.empty)(_ + _)
-    val tails = tailGenerators.map { case (tail, gen) => genTail(tail, gen) }.foldLeft(CodeChunk.empty)(_ + _)
+    val tails = CodeChunk.empty //tailGenerators.map { case (tail, gen) => genTail(tail, gen) }.foldLeft(CodeChunk.empty)(_ + _)
     val normalizedTails = normalizedTailGenerators
       .map { case (tail, gen) => genNormalizedTail(tail, gen) }
       .foldLeft(CodeChunk.empty)(_ + _)
@@ -180,7 +223,12 @@ ${normalizedTailGenerators.map{ case (t,g) =>
         _default.run();
     }
   }\n"""/*@formatter:on*/ ,
-      Set("ws.epigraph.types.Type", "java.util.function.Function", "java.util.function.Supplier", "java.util.function.Consumer")
+      Set(
+        "ws.epigraph.types.Type",
+        "java.util.function.Function",
+        "java.util.function.Supplier",
+        "java.util.function.Consumer"
+      )
     )
 
     val imports: Set[String] = Set(

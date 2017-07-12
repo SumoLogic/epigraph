@@ -21,6 +21,7 @@ import java.nio.file.Path
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.ReqProjectionGen
 import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
@@ -44,7 +45,12 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def tagType: CType = tag.typeRef.resolved
 
-      def tagAssemblerType: String = s"Assembler<? super D, ? super ${ tagGen.fullClassName }, ? extends ${lqn2(tagType, g.namespace.toString)}.Value>"
+      def tagAssemblerType: String = s"Assembler<? super D, ? super ${ tagGen.fullClassName }, ? extends ${
+        lqn2(
+          tagType,
+          g.namespace.toString
+        )
+      }.Value>"
 
       def fbf: String = tag.name + "Assembler"
 
@@ -57,8 +63,12 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
       def javadoc: String = s"$fbf {@code $tagName} tag assembler"
     }
 
-    val fps: Seq[TagParts] = g.tagGenerators.map { case (f, fg) =>
-      TagParts( f, fg.asInstanceOf[ReqOutputProjectionGen] )
+    def tagGenerators(g: ReqOutputVarProjectionGen): Map[String, (CTag, ReqProjectionGen)] =
+      g.parentClassGenOpt.map(pg => tagGenerators(pg)).getOrElse(Map()) ++
+      g.tagGenerators.map { case (tag, p) => tag.name -> (tag, p) }
+
+    val fps: Seq[TagParts] = tagGenerators(g).map { case (_, (f, fg)) =>
+      TagParts(f, fg.asInstanceOf[ReqOutputProjectionGen])
     }.toSeq
 
     case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) {
@@ -70,7 +80,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts>"
 
-      def javadoc: String = s"$fbf {@code ${ln(tt)}} value assembler"
+      def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
@@ -85,7 +95,7 @@ if (visited != null)
 else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b);
-  ${fps.map { fp => s"if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
+${fps.map { fp => s"  if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assemble(dto, p.${fp.getter}, ctx));" }.mkString("\n")}
   return b;
 }
 """/*@formatter:on*/

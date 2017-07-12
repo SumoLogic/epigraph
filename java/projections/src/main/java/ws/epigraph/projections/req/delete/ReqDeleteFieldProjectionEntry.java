@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,23 @@ public class ReqDeleteFieldProjectionEntry extends AbstractFieldProjectionEntry<
     ReqDeleteModelProjection<?, ?, ?>,
     ReqDeleteFieldProjection
     > {
+
   public ReqDeleteFieldProjectionEntry(
       @NotNull FieldApi field,
       @NotNull ReqDeleteFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
+  }
+
+  @Override
+  public @NotNull ReqDeleteFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
+    return new ReqDeleteFieldProjectionEntry(
+        overridingField,
+        new ReqDeleteFieldProjection(
+            fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
+            TextLocation.UNKNOWN
+        ),
+        TextLocation.UNKNOWN
+    );
   }
 }

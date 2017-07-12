@@ -17,8 +17,8 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.service.assemblers.ListAssemblerGen
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
@@ -30,7 +30,7 @@ class ReqOutputListModelProjectionGen(
   val op: OpOutputListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqProjectionGen],
+  override val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
   extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqListModelProjectionGen {
 
@@ -45,7 +45,7 @@ class ReqOutputListModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpOutputListModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqOutputModelProjectionGen, op: OpOutputListModelProjection, normalized: Boolean) =
     new ReqOutputListModelProjectionGen(
       baseNamespaceProvider,
       op,

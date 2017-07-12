@@ -42,7 +42,7 @@ class ReqPathVarProjectionGen(
     op: OpVarPath,
     normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")
 
-  override protected def tagGenerator(tpe: OpTagPath): ReqPathProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

@@ -80,7 +80,6 @@ public class OpOutputProjectionsTest {
         ")"
     );
 
-
     String expected = lines(
         ":(",
         "  id,",
@@ -776,8 +775,77 @@ public class OpOutputProjectionsTest {
           ""
       );
     } catch (IllegalArgumentException e) {
-      assertTrue(e.getMessage().contains("Can't merge recursive projection 'p' with other projection at <unknown> line 1"));
+      assertTrue(e.getMessage()
+          .contains("Can't merge recursive projection 'p' with other projection at <unknown> line 1"));
     }
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testTailTagType() {
+    OpOutputVarProjection vp = testParsingVarProjection(
+        ":id ~~ws.epigraph.tests.User :id"
+    );
+
+    assertEquals(PersonId.type, vp.tagProjection("id").projection().type());
+
+    OpOutputVarProjection t = vp.tailByType(User.type);
+    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+
+    t = vp.normalizedForType(User.type);
+    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testTailTagType2() {
+    OpOutputVarProjection vp = testParsingVarProjection(
+        ":`record` ( bestFriend :id ~~ws.epigraph.tests.User :id )"
+    );
+
+    vp = ((OpOutputRecordModelProjection) vp.singleTagProjection().projection()).fieldProjection("bestFriend")
+        .fieldProjection()
+        .varProjection();
+
+    assertEquals(PersonId.type, vp.tagProjection("id").projection().type());
+
+    OpOutputVarProjection t = vp.tailByType(User.type);
+    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+
+    t = vp.normalizedForType(User.type);
+    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testTailFieldType() {
+    OpOutputVarProjection vp = testParsingVarProjection(
+        ":`record` ( bestFriend :`record` ( id ) ~ws.epigraph.tests.UserRecord ( id ) )"
+    );
+
+    OpOutputRecordModelProjection rmp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    rmp = (OpOutputRecordModelProjection) rmp.fieldProjection("bestFriend")
+        .fieldProjection()
+        .varProjection()
+        .singleTagProjection()
+        .projection();
+
+    OpOutputModelProjection<?, ?, ?> idProjection =
+        rmp.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
+
+    assertEquals(PersonId.type, idProjection.type());
+
+    OpOutputRecordModelProjection t = rmp.tailByType(UserRecord.type);
+    assertNotNull(t);
+    idProjection = t.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
+//    assertEquals(UserId.type, idProjection.type());
+    assertEquals(PersonId.type, idProjection.type()); // it's not overridden
+
+    t = rmp.normalizedForType(UserRecord.type);
+    assertNotNull(t);
+    idProjection = t.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
+//    assertEquals(UserId.type, idProjection.type());
+    assertEquals(PersonId.type, idProjection.type()); // it's not overridden
   }
 
   private void testTailsNormalization(String str, Type type, String expected) {

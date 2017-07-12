@@ -19,7 +19,7 @@
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
 - [ ] Feature: add support for resource overlays? adding operations to other resources (e.g. with paths)
-- [ ] generated builders should have some form of inheritance
+- [x] generated builders should have some form of inheritance
 - [x] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
 - [x] operations codegen: parameter accessors should be non-null for requried parameters
@@ -37,7 +37,7 @@
 - [ ] remove `requestParams` from requests/URLs?
 - [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
 - [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
-- [ ] better implementation of schema annotations. Get inspiration from Java annotations? e.g.
+- [x] better implementation of schema annotations. Get inspiration from Java annotations? e.g.
     ```
         string MyAnnotation // taget? default?
         record SomeRecord {
@@ -45,6 +45,8 @@
         }  
     ```
     Figure out injections: how to add annotations to existing types/fields.
+- [ ] req output projections codegen: inheritance for list/map elements
+- [ ] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
 
 
 # Type system

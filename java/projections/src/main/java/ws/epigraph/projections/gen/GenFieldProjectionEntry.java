@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ public interface GenFieldProjectionEntry<
   @NotNull FieldApi field();
 
   @NotNull FP fieldProjection();
+
+  // todo add FPE type parameter
+  @NotNull GenFieldProjectionEntry<VP, TP, MP, FP> overridenFieldProjection(@NotNull FieldApi overridingField);
 
   @NotNull TextLocation location();
 }

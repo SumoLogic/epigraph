@@ -38,5 +38,7 @@ public interface GenTagProjectionEntry<
 
   @NotNull TP setModelProjection(@NotNull MP modelProjection);
 
+  @NotNull TP overridenTagProjection(@NotNull TagApi overridingTag);
+
   @NotNull TextLocation location();
 }

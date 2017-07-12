@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package ws.epigraph.projections.op.path;
 
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
 import ws.epigraph.types.FieldApi;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,5 +35,17 @@ public class OpFieldPathEntry extends AbstractFieldProjectionEntry<
       @NotNull OpFieldPath projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
+  }
+
+  @Override
+  public @NotNull OpFieldPathEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
+    return new OpFieldPathEntry(
+        overridingField,
+        new OpFieldPath(
+            fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
+            TextLocation.UNKNOWN
+        ),
+        TextLocation.UNKNOWN
+    );
   }
 }

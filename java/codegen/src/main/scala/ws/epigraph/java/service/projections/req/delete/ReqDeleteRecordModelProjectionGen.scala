@@ -21,9 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.delete.OpDeleteRecordModelProjection
-
-import scala.collection.JavaConversions._
+import ws.epigraph.projections.op.delete.{OpDeleteFieldProjectionEntry, OpDeleteRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -43,9 +41,10 @@ class ReqDeleteRecordModelProjectionGen(
   ) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpDeleteRecordModelProjection
+  override type OpFieldProjectionType = OpDeleteFieldProjectionEntry
 
-  override protected lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
-    op.fieldProjections().values().map { fpe =>
+  override lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
+    fieldProjections.values.map { case (fgo, fpe) => //todo
       (
         findField(fpe.field().name()),
         new ReqDeleteFieldProjectionGen(
@@ -59,7 +58,7 @@ class ReqDeleteRecordModelProjectionGen(
       )
     }.toMap
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpDeleteRecordModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteRecordModelProjection, normalized: Boolean) =
     new ReqDeleteRecordModelProjectionGen(
       baseNamespaceProvider,
       op,

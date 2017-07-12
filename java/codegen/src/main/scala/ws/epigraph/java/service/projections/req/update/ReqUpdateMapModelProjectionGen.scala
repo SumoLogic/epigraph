@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
@@ -55,7 +55,7 @@ class ReqUpdateMapModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputMapModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqUpdateModelProjectionGen, op: OpInputMapModelProjection, normalized: Boolean) =
     new ReqUpdateMapModelProjectionGen(
       baseNamespaceProvider,
       op,

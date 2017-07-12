@@ -28,6 +28,7 @@ import ws.epigraph.psi.DefaultPsiProcessingContext
 import ws.epigraph.refs.ImportAwareTypesResolver
 import ws.epigraph.schema.parser.SchemaPsiParserUtil
 import ws.epigraph.schema.parser.psi._
+import ws.epigraph.types.DatumTypeApi
 
 import scala.annotation.meta.getter
 import scala.collection.JavaConversions._
@@ -221,6 +222,10 @@ class CEntityTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(im
 
   def effectiveTags: Seq[CTag] = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _effectiveTags)
 
+  def findDeclaredTag(name: String): Option[CTag] = declaredTags.find(_.name == name)
+
+  def findEffectiveTag(name: String): Option[CTag] = effectiveTags.find(_.name == name)
+
   private lazy val _effectiveTags: Seq[CTag] = {
     val m: mutable.LinkedHashMap[String, mutable.Builder[CTag, Seq[CTag]]] = new mutable.LinkedHashMap
     for (t <- linearizedParents.flatMap(_.effectiveTags) ++ declaredTags) {
@@ -389,7 +394,7 @@ trait CDatumType extends CType {self =>
 
 object CDatumType {
 
-  val ImpliedDefaultTagName: String = "_" // must not be valid tag name (or refactor JavaGen.dtrn(...))
+  val ImpliedDefaultTagName: String = DatumTypeApi.MONO_TAG_NAME // must not be valid tag name (or refactor JavaGen.dtrn(...))
 
 }
 
@@ -401,6 +406,10 @@ class CRecordTypeDef(csf: CSchemaFile, override val psi: SchemaRecordTypeDef)(im
   override type Super = CRecordTypeDef
 
   override def metaDeclPsi: Option[SchemaMetaDecl] = Option(psi.getMetaDecl)
+  
+  def findDeclaredField(name: String): Option[CField] = declaredFields.find(_.name == name)
+
+  def findEffectiveField(name: String): Option[CField] = effectiveFields.find(_.name == name)
 
   val declaredFields: Seq[CField] = {
     @Nullable val body = psi.getRecordTypeBody

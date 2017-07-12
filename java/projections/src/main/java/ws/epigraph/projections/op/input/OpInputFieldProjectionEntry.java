@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,5 +36,18 @@ public class OpInputFieldProjectionEntry extends AbstractFieldProjectionEntry<
       @NotNull OpInputFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
+  }
+
+  @Override
+  public @NotNull OpInputFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
+    return new OpInputFieldProjectionEntry(
+        overridingField,
+        new OpInputFieldProjection(
+            fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
+            fieldProjection().required(),
+            TextLocation.UNKNOWN
+        ),
+        TextLocation.UNKNOWN
+    );
   }
 }

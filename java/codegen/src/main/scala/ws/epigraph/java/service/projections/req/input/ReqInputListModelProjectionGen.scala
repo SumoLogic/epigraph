@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputListModelProjection
 
@@ -42,7 +42,7 @@ class ReqInputListModelProjectionGen(
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqModelProjectionGen, op: OpInputListModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(parentGen: ReqInputModelProjectionGen, op: OpInputListModelProjection, normalized: Boolean) =
     new ReqInputListModelProjectionGen(
       baseNamespaceProvider,
       op,

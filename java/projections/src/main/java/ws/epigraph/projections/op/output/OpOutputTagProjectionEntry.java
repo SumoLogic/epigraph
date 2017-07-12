@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
@@ -38,7 +37,7 @@ public class OpOutputTagProjectionEntry
   }
 
   @Override
-  protected @Nullable OpOutputTagProjectionEntry mergeTags(
+  protected @NotNull OpOutputTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<OpOutputTagProjectionEntry> tagsEntries,
       final @NotNull OpOutputModelProjection<?, ?, ?> mergedModel) {

@@ -16,11 +16,10 @@
 
 package ws.epigraph.projections.req.path;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.types.TagApi;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class ReqTagPath extends AbstractTagProjectionEntry<ReqTagPath, ReqModelP
   }
 
   @Override
-  protected @Nullable ReqTagPath mergeTags(
+  protected @NotNull ReqTagPath mergeTags(
       final @NotNull TagApi tag,
       final @NotNull List<ReqTagPath> tagsEntries,
       final @NotNull ReqModelPath<?, ?, ?> mergedModel) {
