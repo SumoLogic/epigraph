@@ -283,18 +283,24 @@ class CEntityTypeDef(csf: CSchemaFile, override val psi: SchemaEntityTypeDef)(im
   )
 
   override protected def annotationsPsiOpt: Option[util.List[SchemaAnnotation]] = Option(psi.getEntityTypeBody).map(_.getAnnotationList)
+
 }
 
-class CTag(
+class CTag private[compiler](
   val csf: CSchemaFile,
   val name: String,
   val typeRef: CTypeRef,
   val declPsiOpt: Option[SchemaEntityTagDecl],
-  val locationPsi: PsiElement)
-  (implicit val ctx: CContext) {
+  val locationPsi: PsiElement
+)(implicit val ctx: CContext) {
 
-  def this(csf: CSchemaFile, psi: SchemaEntityTagDecl)(implicit ctx: CContext) =
-    this(csf, psi.getQid.getCanonicalName, CTypeRef(csf, psi.getTypeRef), Some(psi), psi)(ctx)
+  def this(csf: CSchemaFile, psi: SchemaEntityTagDecl)(implicit ctx: CContext) = this(
+    csf,
+    NamePatterns.validateTagName(psi.getQid.getCanonicalName, csf, psi),
+    CTypeRef(csf, psi.getTypeRef),
+    Some(psi),
+    psi
+  )
 
   def compatibleWith(st: CTag): Boolean = st.typeRef.resolved.isAssignableFrom(typeRef.resolved)
 
@@ -314,6 +320,7 @@ class CTag(
     val state = Seq(name, typeRef)
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
+
 }
 
 trait CDatumType extends CType {self =>
@@ -474,7 +481,7 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
 
   // TODO fields with override modifier should check they have superfield(s)
 
-  val name: String = validateFieldName(psi.getQid.getCanonicalName, csf, psi)
+  val name: String = NamePatterns.validateFieldName(psi.getQid.getCanonicalName, csf, psi)
 
   val isAbstract: Boolean = psi.getAbstract ne null
 
@@ -485,14 +492,6 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
   def superfields: Seq[CField] = ctx.after(CPhase.COMPUTE_SUPERTYPES, null, _superfields)
 
   private lazy val _superfields = host.linearizedParents.flatMap(_.effectiveFields.find(_.name == name))
-
-  private def validateFieldName(name: String, csf: CSchemaFile, psi: SchemaFieldDecl)(implicit ctx: CContext): String = {
-    name match {
-      case NamePatterns.FieldName() =>
-      case _ => ctx.errors.add(CMessage.error(csf.filename, csf.position(psi.getQid), s"Invalid field name `$name`"))
-    }
-    name
-  }
 
   def compatibleWith(superField: CField): Boolean = superField.typeRef.resolved.isAssignableFrom(typeRef.resolved) && (
       superField.effectiveDefaultTagName match {
@@ -870,5 +869,21 @@ object NamePatterns {
   val TagName: Regex = FieldName
 
   val TypeName: Regex = """\p{javaUpperCase}(?:\p{IsAlphabetic}|\p{Digit})*""".r
+
+  def validateFieldName(name: String, csf: CSchemaFile, psi: SchemaFieldDecl)(implicit ctx: CContext): String = {
+    name match {
+      case FieldName() =>
+      case _ => ctx.errors.add(CMessage.error(csf.filename, csf.position(psi.getQid), s"Invalid field name `$name`"))
+    }
+    name
+  }
+
+  def validateTagName(name: String, csf: CSchemaFile, psi: SchemaEntityTagDecl)(implicit ctx: CContext): String = {
+    name match {
+      case TagName() =>
+      case _ => ctx.errors.add(CMessage.error(csf.filename, csf.position(psi.getQid), s"Invalid tag name `$name`"))
+    }
+    name
+  }
 
 }

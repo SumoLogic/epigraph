@@ -1,0 +1,25 @@
+namespace ws.epigraph.schema.compiler.tests
+
+entity E {
+
+  UpperCamel: String {
+    @Doc "Tag name should start with lower-case letter"
+  }
+
+  `1`: String  {
+    @Doc "Tag name should start with a letter"
+  }
+
+  `space in a name`: String {
+    @Doc "Tag name should contain only letters and digits"
+  }
+
+  Бар: String  {
+    @Doc "Tag name should start with lower-case (unicode) letter"
+  }
+
+  бар: String  {
+    @Doc "Unicode should be ok"
+  }
+
+}

@@ -1,0 +1,25 @@
+namespace ws.epigraph.schema.compiler.tests
+
+record R {
+
+  UpperCamel: String {
+    @Doc "Field name should start with lower-case letter"
+  }
+
+  `1`: String  {
+    @Doc "Field name should start with a letter"
+  }
+
+  `space in a name`: String {
+    @Doc "Field name should contain only letters and digits"
+  }
+
+  Бар: String  {
+    @Doc "Field name should start with lower-case (unicode) letter"
+  }
+
+  бар: String  {
+    @Doc "Unicode should be ok"
+  }
+
+}

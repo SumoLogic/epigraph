@@ -19,6 +19,7 @@
 package ws.epigraph.compiler
 
 import java.util.Collections
+import java.util.function.Consumer
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -37,6 +38,17 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
     errors.iterator().next().toString should include("is not a subtype")
   }
 
+  it should "fail on invalid field names" in {
+    val compiler = new EpigraphCompiler(
+      Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/badFieldNames.epigraph"))
+    )
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).messages
+    errors.size() shouldBe 4
+    errors.forEach { new Consumer[CMessage] {
+      override def accept(msg: CMessage): Unit = msg.toString should include("Invalid field name")
+    }}
+  }
+
   it should "fail on tags of vartype types" in {
     val compiler = new EpigraphCompiler(
       Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/badTagType.epigraph"))
@@ -44,6 +56,17 @@ class EpigraphCompilerTest extends FlatSpec with Matchers {
     val errors = intercept[EpigraphCompilerException](compiler.compile()).messages
     errors.size() shouldBe 1
     errors.iterator().next().toString should include("is not a datum type")
+  }
+
+  it should "fail on invalid tag names" in {
+    val compiler = new EpigraphCompiler(
+      Collections.singleton(new ResourceSource("/ws/epigraph/compiler/tests/badTagNames.epigraph"))
+    )
+    val errors = intercept[EpigraphCompilerException](compiler.compile()).messages
+    errors.size() shouldBe 4
+    errors.forEach { new Consumer[CMessage] {
+      override def accept(msg: CMessage): Unit = msg.toString should include("Invalid tag name")
+    }}
   }
 
   it should "collect types from resources" in {
