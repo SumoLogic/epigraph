@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-// This is a generated file. Not intended for manual editing.
-package ws.epigraph.schema.parser.psi;
+package ws.epigraph.java
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+trait ShouldRunStrategy {
+  def shouldRun: Boolean
+  def markRun(): Unit
+  def unmarkRun(): Unit
+}
 
-public interface SchemaOpDeleteModelSingleTail extends PsiElement {
+object AlwaysRunStrategry extends ShouldRunStrategy {
+  override def shouldRun: Boolean = true
 
-  @NotNull
-  SchemaOpDeleteModelProjection getOpDeleteModelProjection();
+  override def markRun(): Unit = {}
 
-  @NotNull
-  SchemaTypeRef getTypeRef();
-
+  override def unmarkRun(): Unit = {}
 }

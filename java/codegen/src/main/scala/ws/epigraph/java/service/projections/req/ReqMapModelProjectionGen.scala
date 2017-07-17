@@ -33,7 +33,7 @@ trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
 
   def keyGen: ReqMapKeyProjectionGen
 
-  def elementGen: ReqProjectionGen
+  def elementGen: ReqTypeProjectionGen
 
   protected def keysNullable: Boolean = true
 

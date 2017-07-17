@@ -52,7 +52,7 @@ class ReqOutputRecordModelProjectionGen(
       val field = fpe.field()
       val cField = findField(field.name())
 
-      def fieldGen(parentFieldGenOpt: Option[ReqOutputProjectionGen]) = {
+      def fieldGen(parentFieldGenOpt: Option[ReqOutputTypeProjectionGen]) = {
         //System.out.println(s"$fullClassName :: ${ field.name() } extends ${ parentFieldGenOpt.map(_.fullClassName) } ~ ${fgo.map(_.fullClassName)}")
         new ReqOutputFieldProjectionGen(
           baseNamespaceProvider,
@@ -66,7 +66,7 @@ class ReqOutputRecordModelProjectionGen(
       }
 
         cField ->
-        fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputProjectionGen])))
+        fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputTypeProjectionGen])))
 
     }.toMap
 
@@ -74,7 +74,7 @@ class ReqOutputRecordModelProjectionGen(
     parentGen: ReqOutputModelProjectionGen,
     op: OpOutputRecordModelProjection,
     normalized: Boolean) =
-    new ReqOutputRecordModelProjectionGen(
+    new ReqOutputRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,
       op,
       Some(baseNamespace),

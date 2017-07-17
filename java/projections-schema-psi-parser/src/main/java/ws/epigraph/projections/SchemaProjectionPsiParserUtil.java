@@ -292,4 +292,126 @@ public final class SchemaProjectionPsiParserUtil {
     }
   }
 
+//  @SuppressWarnings("unchecked")
+//  public static <VP extends GenVarProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>>
+//  VP parseNormalizedClause(
+//      VP reference,
+//      String referenceName,
+//      SchemaOpNormalized normalizedPsi,
+//      PsiProcessingContext context,
+//      ReferenceContext<VP, MP> referenceContext,
+//      PsiElement psi,
+//      TypesResolver typesResolver
+//  ) throws PsiProcessingException {
+//
+//    if (normalizedPsi == null)
+//      return reference;
+//    else {
+//      SchemaTypeRef typeRefPsi = normalizedPsi.getTypeRef();
+//
+//      if (typeRefPsi == null)
+//        throw new PsiProcessingException("Missing type reference", psi, context.messages());
+//
+//      TypeRef typeRef = TypeRefs.fromPsi(typeRefPsi, context);
+//      EntityTypeApi type = typeRef.resolveEntityType(typesResolver);
+//
+//      if (type == null) {
+//        GenTagProjectionEntry<?, ?> tagProjection = reference.singleTagProjection();
+//        if (tagProjection == null)
+//          throw new PsiProcessingException(
+//              "internal error",
+//              typeRefPsi, context
+//          );
+//
+//        MP modelProjection = (MP) tagProjection.projection();
+//        MP normalizedModelProjection = parseNormalizedClause(
+//            modelProjection,
+//            referenceName,
+//            normalizedPsi,
+//            context,
+//            referenceContext,
+//            psi,
+//            typesResolver
+//        );
+//
+//        return referenceContext.toSelfVar(normalizedModelProjection);
+//
+//      } else {
+//        String normalizedProjectionName = referenceName + "$" + type.name().toString().replace(".", "_");
+//        VP result =
+//            referenceContext.varReference(type, normalizedProjectionName, true, EpigraphPsiUtil.getLocation(psi));
+//
+//        final Runnable[] r = new Runnable[1];
+//        Runnable runnable = () -> {
+//          try {
+//            referenceContext.resolveEntityRef(
+//                normalizedProjectionName,
+//                reference.normalizedForType(type),
+//                EpigraphPsiUtil.getLocation(psi)
+//            );
+//          } catch (UnresolvedReferenceException e) {
+//            e.reference().runOnResolved(r[0]);
+//          }
+//        };
+//        reference.runOnResolved(runnable);
+//        r[0] = runnable;
+//
+//        return result;
+//      }
+//    }
+//  }
+//
+//  @SuppressWarnings("unchecked")
+//  public static <MP extends GenModelProjection<?, ?, ?, ?>> MP parseNormalizedClause(
+//      MP reference,
+//      String referenceName,
+//      SchemaOpNormalized normalizedPsi,
+//      PsiProcessingContext context,
+//      ReferenceContext<?, MP> referenceContext,
+//      PsiElement psi,
+//      TypesResolver typesResolver
+//  ) throws PsiProcessingException {
+//
+//    if (normalizedPsi == null)
+//      return reference;
+//    else {
+//      SchemaTypeRef typeRefPsi = normalizedPsi.getTypeRef();
+//
+//      if (typeRefPsi == null)
+//        throw new PsiProcessingException("Missing type reference", psi, context.messages());
+//
+//      TypeRef typeRef = TypeRefs.fromPsi(typeRefPsi, context);
+//      DatumTypeApi type = typeRef.resolveDatumType(typesResolver);
+//
+//      if (type == null)
+//        throw new PsiProcessingException(
+//            String.format("Can't resolve model type '%s'", typeRefPsi.getText()),
+//            typeRefPsi, context
+//        );
+//
+//      String normalizedProjectionName = referenceName + "$" + type.name().toString().replace(".", "_");
+//
+//      MP result =
+//          referenceContext.modelReference(type, normalizedProjectionName, true, EpigraphPsiUtil.getLocation(psi));
+//
+//      final Runnable[] r = new Runnable[1];
+//      final Runnable runnable = () -> {
+//        try {
+//          referenceContext.resolveModelRef(
+//              normalizedProjectionName,
+//              (MP) reference.normalizedForType(type),
+//              EpigraphPsiUtil.getLocation(psi)
+//          );
+//        } catch (UnresolvedReferenceException e) {
+//          e.reference().runOnResolved(r[0]);
+//        }
+//      };
+//      r[0] = runnable;
+//
+//      reference.runOnResolved(runnable);
+//
+//      return result;
+//    }
+//  }
+
 }

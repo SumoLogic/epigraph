@@ -78,9 +78,10 @@ public class ReqInputMapModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqInputMapModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.keys = value.keys();
     this.valuesProjection = value.itemsProjection();
+    super.resolve(name, value);
   }
 
   @Override

@@ -16,7 +16,9 @@
 
 package ws.epigraph.java.service.projections.req.delete
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
+import java.util
+
+import ws.epigraph.java.service.projections.req.{ReqProjectionGen, ReqTypeProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
@@ -26,7 +28,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName
 trait ReqDeleteProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("delete")
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqDeleteProjections
+  protected def generatedProjections: util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = ctx.reqDeleteProjections
 }
 
 object ReqDeleteProjectionGen {

@@ -143,8 +143,9 @@ public class OpOutputRecordModelProjection
   public void resolve(
       final @Nullable ProjectionReferenceName name,
       final @NotNull OpOutputRecordModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.fieldProjections = value.fieldProjections();
+    super.resolve(name, value);
   }
 
   @Override

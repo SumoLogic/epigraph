@@ -44,7 +44,8 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override def children: Iterable[JavaGen] =
-  /*tailGenerators.values ++*/ normalizedTailGenerators.values ++ tagGenerators.values
+    tagGenerators.values ++ /*tailGenerators.values ++*/
+    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/.values // filter out named generators
 
   override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 

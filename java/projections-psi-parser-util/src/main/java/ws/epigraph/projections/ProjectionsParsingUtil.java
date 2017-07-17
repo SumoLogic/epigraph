@@ -188,7 +188,7 @@ public final class ProjectionsParsingUtil {
       return (DatumTypeApi) type;
 
     throw new PsiProcessingException(
-        String.format("Expected '%s' to be a non-var type, but actual kind is '%s'",
+        String.format("Expected '%s' to be a model type, but actual kind is '%s'",
             type.name().toString(), type.kind().toString()
         ), location, context);
   }

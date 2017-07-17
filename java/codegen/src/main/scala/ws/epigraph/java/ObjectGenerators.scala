@@ -21,6 +21,7 @@ import ws.epigraph.gdata.{GData, GDatum}
 import ws.epigraph.java.gdata.{GDataGen, GDatumGen}
 import ws.epigraph.lang.{Qn, TextLocation}
 import ws.epigraph.refs.{TypeRef, ValueTypeRef}
+import ws.epigraph.types.TypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,7 +35,7 @@ trait ObjectGenerators {
         new NativePrimitiveGen(obj).generate(ctx)
       } catch {
         case _: IllegalArgumentException =>
-          throw new IllegalArgumentException("Unsupported object kind: " + obj.getClass.getName)
+          throw new IllegalArgumentException(s"Unsupported object kind '${ obj.getClass.getName }' ( $obj )")
       }
     }
 }
@@ -50,6 +51,8 @@ object ObjectGenerators extends ObjectGenerators {
       case d: java.lang.Double => d.toString + "d"
       case f: java.lang.Float => f.toString + "f"
       case b: java.lang.Boolean => b.toString
+
+      case t: TypeApi => ObjectGenUtils.genTypeExpr(t, ctx.gctx)
 
       case qn: Qn => new QnGen(qn).generate(ctx)
 

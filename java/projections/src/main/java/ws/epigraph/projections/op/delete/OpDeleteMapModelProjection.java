@@ -166,9 +166,10 @@ public class OpDeleteMapModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteMapModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.itemsProjection = value.itemsProjection();
     this.keyProjection = value.keyProjection();
+    super.resolve(name, value);
   }
 
   @Override

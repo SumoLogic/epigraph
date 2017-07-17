@@ -31,7 +31,7 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
 
   protected val elementsNamespaceSuffix = "elements"
 
-  def elementGen: ReqProjectionGen
+  def elementGen: ReqTypeProjectionGen
 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(elementGen)
 

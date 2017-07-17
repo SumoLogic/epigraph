@@ -115,8 +115,9 @@ public abstract class ReqUpdateModelProjection<
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     replace = value.replace();
+    super.resolve(name, value);
   }
 
   @Override

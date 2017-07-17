@@ -51,6 +51,8 @@ trait ReqProjectionGen extends JavaGen {
 
   protected def parentClassGenOpt: Option[GenType] = None
 
+//  override def children: Iterable[JavaGen] = parentClassGenOpt
+
   override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   protected val packageStatement: String = s"package $namespace;"
@@ -69,7 +71,7 @@ object ReqProjectionGen {
 
   def namespaceSuffix(name: Option[ProjectionReferenceName], default: Qn): Qn = {
     val r = name.map(_ => Qn.EMPTY).getOrElse(default)
-//    System.out.println(s"namespaceSuffix($name, $default)->$r")
+//    System.out.println(s"namespaceSuffix($name, $default)->'$r'")
     r
   }
 

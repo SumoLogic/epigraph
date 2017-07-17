@@ -21,10 +21,10 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputModelMultiTailItem extends PsiElement {
+public interface SchemaOpDeleteModelTailItem extends PsiElement {
 
   @NotNull
-  SchemaOpOutputModelProjection getOpOutputModelProjection();
+  SchemaOpDeleteModelProjection getOpDeleteModelProjection();
 
   @NotNull
   SchemaTypeRef getTypeRef();

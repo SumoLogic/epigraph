@@ -33,46 +33,46 @@ import java.util.Objects;
 public final class TypeBuilder {
   private TypeBuilder() {}
 
-  public static @NotNull Type_ buildType(
-      @NotNull TypeApi type,
-      @NotNull OutputType_Projection projection,
-      @NotNull Context context) {
-
-    // todo: `abstract` and `doc` fields support
-
-    if (type.kind() == ws.epigraph.types.TypeKind.ENTITY)
-      return VarTypeBuilder.buildVarType((EntityTypeApi) type, projection.normalizedFor_VarType(), context);
-    else
-      return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_DatumType(), context);
-  }
-
-  public static class Context {
-    public final Map<Key, Type_> visited = new HashMap<>();
-
-    static class Key {
-      final @NotNull TypeApi type;
-      final @NotNull Object projection;
-
-      Key(
-          final @NotNull TypeApi type,
-          final @NotNull Object projection) {
-        this.type = type;
-        this.projection = projection;
-      }
-
-      @Override
-      public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Key key = (Key) o;
-        return Objects.equals(type, key.type) &&
-               Objects.equals(projection, key.projection);
-      }
-
-      @Override
-      public int hashCode() {
-        return Objects.hash(type, projection);
-      }
-    }
-  }
+//  public static @NotNull Type_ buildType(
+//      @NotNull TypeApi type,
+//      @NotNull OutputType_Projection projection,
+//      @NotNull Context context) {
+//
+//    // todo: `abstract` and `doc` fields support
+//
+//    if (type.kind() == ws.epigraph.types.TypeKind.ENTITY)
+//      return VarTypeBuilder.buildVarType((EntityTypeApi) type, projection.normalizedFor_VarType(), context);
+//    else
+//      return DatumTypeBuilder.buildDatumType((DatumTypeApi) type, projection.normalizedFor_DatumType(), context);
+//  }
+//
+//  public static class Context {
+//    public final Map<Key, Type_> visited = new HashMap<>();
+//
+//    static class Key {
+//      final @NotNull TypeApi type;
+//      final @NotNull Object projection;
+//
+//      Key(
+//          final @NotNull TypeApi type,
+//          final @NotNull Object projection) {
+//        this.type = type;
+//        this.projection = projection;
+//      }
+//
+//      @Override
+//      public boolean equals(final Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        final Key key = (Key) o;
+//        return Objects.equals(type, key.type) &&
+//               Objects.equals(projection, key.projection);
+//      }
+//
+//      @Override
+//      public int hashCode() {
+//        return Objects.hash(type, projection);
+//      }
+//    }
+//  }
 }

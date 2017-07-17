@@ -149,8 +149,9 @@ public class ReqUpdateRecordModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateRecordModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     fieldProjections = value.fieldProjections();
+    super.resolve(name, value);
   }
 
   @Override

@@ -32,7 +32,7 @@ class ReqOutputFieldProjectionGen(
   protected val op: OpOutputFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  dataParentClassGenOpt: Option[ReqOutputProjectionGen],
+  dataParentClassGenOpt: Option[ReqOutputTypeProjectionGen],
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpOutputFieldProjection

@@ -120,8 +120,8 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull OpDeletePsiProcessingContext context)
       throws PsiProcessingException {
 
-    final SchemaOpDeleteVarProjectionRef varProjectionRef = psi.getOpDeleteVarProjectionRef();
-    if (varProjectionRef == null) {
+    final SchemaOpDeleteVarProjectionRef varProjectionRefPsi = psi.getOpDeleteVarProjectionRef();
+    if (varProjectionRefPsi == null) {
       // usual var projection
       final SchemaOpDeleteUnnamedVarProjection unnamedVarProjection = psi.getOpDeleteUnnamedVarProjection();
       if (unnamedVarProjection == null)
@@ -135,15 +135,15 @@ public final class OpDeleteProjectionsPsiParser {
       );
     } else {
       // var projection reference
-      final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
-      if (varProjectionRefPsi == null)
+      final SchemaQid refNamePsi = varProjectionRefPsi.getQid();
+      if (refNamePsi == null)
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
             context.messages()
         );
 
-      final String projectionName = varProjectionRefPsi.getCanonicalName();
+      final String projectionName = refNamePsi.getCanonicalName();
       return context.referenceContext()
           .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
 
@@ -232,23 +232,15 @@ public final class OpDeleteProjectionsPsiParser {
     else {
       tails = new ArrayList<>();
 
-      @Nullable SchemaOpDeleteVarSingleTail singleTail = psiTail.getOpDeleteVarSingleTail();
+      @Nullable SchemaOpDeleteVarTailItem singleTail = psiTail.getOpDeleteVarTailItem();
       if (singleTail == null) {
         @Nullable SchemaOpDeleteVarMultiTail multiTail = psiTail.getOpDeleteVarMultiTail();
         assert multiTail != null;
-        for (SchemaOpDeleteVarMultiTailItem tailItem : multiTail.getOpDeleteVarMultiTailItemList()) {
-          @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
-          @NotNull SchemaOpDeleteVarProjection psiTailProjection = tailItem.getOpDeleteVarProjection();
-          @NotNull OpDeleteVarProjection tailProjection =
-              buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
-          tails.add(tailProjection);
+        for (SchemaOpDeleteVarTailItem tailItem : multiTail.getOpDeleteVarTailItemList()) {
+          tails.add(parseEntityTailItem(tailItem, dataType, canDelete, typesResolver, context));
         }
       } else {
-        @NotNull SchemaTypeRef tailTypeRef = singleTail.getTypeRef();
-        @NotNull SchemaOpDeleteVarProjection psiTailProjection = singleTail.getOpDeleteVarProjection();
-        @NotNull OpDeleteVarProjection tailProjection =
-            buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
-        tails.add(tailProjection);
+        tails.add(parseEntityTailItem(singleTail, dataType, canDelete, typesResolver, context));
       }
 
       SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
@@ -266,6 +258,18 @@ public final class OpDeleteProjectionsPsiParser {
     } catch (IllegalArgumentException e) {
       throw new PsiProcessingException(e, psi, context.messages());
     }
+  }
+
+  private static @NotNull OpDeleteVarProjection parseEntityTailItem(
+      final SchemaOpDeleteVarTailItem tailItem,
+      final @NotNull DataTypeApi dataType,
+      final boolean canDelete,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
+    @NotNull SchemaOpDeleteVarProjection psiTailProjection = tailItem.getOpDeleteVarProjection();
+    return buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
   }
 
   private static boolean isLeaf(SchemaOpDeleteModelProjection psi) {
@@ -491,8 +495,8 @@ public final class OpDeleteProjectionsPsiParser {
 
     // this follows `parseUnnamedOrRefVarProjection` logic
 
-    final SchemaOpDeleteModelProjectionRef modelProjectionRef = psi.getOpDeleteModelProjectionRef();
-    if (modelProjectionRef == null) {
+    final SchemaOpDeleteModelProjectionRef modelProjectionRefPsi = psi.getOpDeleteModelProjectionRef();
+    if (modelProjectionRefPsi == null) {
       // usual model projection
       final SchemaOpDeleteUnnamedModelProjection unnamedModelProjection = psi.getOpDeleteUnnamedModelProjection();
       if (unnamedModelProjection == null)
@@ -506,15 +510,15 @@ public final class OpDeleteProjectionsPsiParser {
       );
     } else {
       // model projection reference
-      final SchemaQid modelProjectionRefPsi = modelProjectionRef.getQid();
-      if (modelProjectionRefPsi == null)
+      final SchemaQid refNamePsi = modelProjectionRefPsi.getQid();
+      if (refNamePsi == null)
         throw new PsiProcessingException(
             "Incomplete model projection definition: name not specified",
             psi,
             context.messages()
         );
 
-      final String projectionName = modelProjectionRefPsi.getCanonicalName();
+      final String projectionName = refNamePsi.getCanonicalName();
       return (MP) context.referenceContext().modelReference(
           type,
           projectionName,
@@ -648,11 +652,11 @@ public final class OpDeleteProjectionsPsiParser {
     else {
       List<MP> tails = new ArrayList<>();
 
-      final SchemaOpDeleteModelSingleTail singleTailPsi = tailPsi.getOpDeleteModelSingleTail();
+      final @Nullable SchemaOpDeleteModelTailItem singleTailPsi = tailPsi.getOpDeleteModelTailItem();
       if (singleTailPsi == null) {
         final SchemaOpDeleteModelMultiTail multiTailPsi = tailPsi.getOpDeleteModelMultiTail();
         assert multiTailPsi != null;
-        for (SchemaOpDeleteModelMultiTailItem tailItemPsi : multiTailPsi.getOpDeleteModelMultiTailItemList()) {
+        for (SchemaOpDeleteModelTailItem tailItemPsi : multiTailPsi.getOpDeleteModelTailItemList()) {
           tails.add(
               buildModelTailProjection(
                   modelClass,

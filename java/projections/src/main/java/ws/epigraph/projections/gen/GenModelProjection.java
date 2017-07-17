@@ -61,7 +61,18 @@ public interface GenModelProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type);
+  default @NotNull TMP normalizedForType(@NotNull DatumTypeApi type) { return normalizedForType(type, null); }
+
+  /**
+   * Builds normalized view of this model projection for a given type
+   *
+   * @param type target type
+   * @param resultReferenceName optional result reference name
+   *
+   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
+   */
+  @NotNull TMP normalizedForType(@NotNull DatumTypeApi type, @Nullable ProjectionReferenceName resultReferenceName);
 
   /**
    * Merges a list of models together
@@ -85,4 +96,11 @@ public interface GenModelProjection<
 //    toMerge.add(other);
 //    return merge(type(), toMerge, );
 //  }
+
+  /**
+   * Tells if this projection is a normalized version of some other projection
+   *
+   * @return another projection which yields this projection if normalized to {@code type()} or else {@code null}
+   */
+  @Nullable SMP normalizedFrom();
 }

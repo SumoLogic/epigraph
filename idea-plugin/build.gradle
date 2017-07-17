@@ -49,6 +49,6 @@ intellij {
   // alternativeIdeaPath localIdePath
 
   patchPluginXml {
-    untilBuild "171.*" // 2017
+    untilBuild "172.*" // 2017.2
   }
 }

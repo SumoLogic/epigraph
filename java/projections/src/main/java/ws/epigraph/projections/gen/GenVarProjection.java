@@ -91,7 +91,18 @@ public interface GenVarProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
-  @NotNull VP normalizedForType(@NotNull TypeApi type);
+  default @NotNull VP normalizedForType(@NotNull TypeApi type) { return normalizedForType(type, null); }
+
+  /**
+   * Builds normalized view of this var projection for a given type
+   *
+   * @param type                target type
+   * @param resultReferenceName optional result reference name
+   *
+   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
+   */
+  @NotNull VP normalizedForType(@NotNull TypeApi type, @Nullable ProjectionReferenceName resultReferenceName);
 
   /**
    * Merges var projections together.
@@ -100,7 +111,7 @@ public interface GenVarProjection<
    * to be the first item of the list anyways). Such design allows for easier implementations that have to
    * iterate over all the items being merged.
    *
-   * @param varProjections   var projections to merge, guaranteed to contain at least one element
+   * @param varProjections var projections to merge, guaranteed to contain at least one element
    *
    * @return merged var projection
    */
@@ -150,4 +161,10 @@ public interface GenVarProjection<
   @Override
   ProjectionReferenceName referenceName();
 
+  /**
+   * Tells if this projection is a normalized version of some other projection
+   *
+   * @return another projection which yields this projection if normalized to {@code type()} or else {@code null}
+   */
+  @Nullable VP normalizedFrom();
 }

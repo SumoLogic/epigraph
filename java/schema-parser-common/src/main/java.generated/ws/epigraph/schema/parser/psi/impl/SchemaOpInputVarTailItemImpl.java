@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpDeleteModelSingleTailImpl extends ASTWrapperPsiElement implements SchemaOpDeleteModelSingleTail {
+public class SchemaOpInputVarTailItemImpl extends ASTWrapperPsiElement implements SchemaOpInputVarTailItem {
 
-  public SchemaOpDeleteModelSingleTailImpl(ASTNode node) {
+  public SchemaOpInputVarTailItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpDeleteModelSingleTail(this);
+    visitor.visitOpInputVarTailItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,8 +44,8 @@ public class SchemaOpDeleteModelSingleTailImpl extends ASTWrapperPsiElement impl
 
   @Override
   @NotNull
-  public SchemaOpDeleteModelProjection getOpDeleteModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpDeleteModelProjection.class));
+  public SchemaOpInputVarProjection getOpInputVarProjection() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpInputVarProjection.class));
   }
 
   @Override

@@ -93,9 +93,10 @@ public abstract class AbstractOpModelProjection<
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.params = value.params();
     this.annotations = value.annotations();
+    super.resolve(name, value);
   }
 
   @Override

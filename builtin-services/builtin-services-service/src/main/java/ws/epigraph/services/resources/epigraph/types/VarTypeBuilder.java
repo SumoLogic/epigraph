@@ -34,47 +34,47 @@ import ws.epigraph.types.TagApi;
 public final class VarTypeBuilder {
   private VarTypeBuilder() {}
 
-  public static @NotNull VarType buildVarType(
-      @NotNull EntityTypeApi type,
-      @NotNull OutputVarTypeProjection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    VarType.Builder builder = VarType.create();
-
-    // name
-    final OutputQualifiedTypeNameProjection nameProjection = projection.name();
-    if (nameProjection != null) {
-      builder.setName(
-          TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection)
-      );
-    }
-
-    // supertypes
-    final OutputVarType_ListProjection supertypesProjection = projection.supertypes();
-    if (supertypesProjection != null) {
-      final OutputVarTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
-
-      VarType_List.Builder supertypesBuilder = VarType_List.create();
-
-      for (final EntityTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildVarType(supertype, supertypeProjection, context));
-
-      builder.setSupertypes(supertypesBuilder);
-    }
-
-    // tags
-    final OutputTag_ListProjection tagsProjection = projection.tags();
-    if (tagsProjection != null) {
-      final OutputTag_Projection tagProjection = tagsProjection.itemsProjection();
-
-      Tag_List.Builder tagsBuilder = Tag_List.create();
-      for (final TagApi tag : type.tags())
-        tagsBuilder.add(TagBuilder.buildTag(tag, tagProjection, context));
-
-      builder.setTags(tagsBuilder);
-    }
-
-    return builder;
-  }
+//  public static @NotNull VarType buildVarType(
+//      @NotNull EntityTypeApi type,
+//      @NotNull OutputVarTypeProjection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    VarType.Builder builder = VarType.create();
+//
+//    // name
+//    final OutputQualifiedTypeNameProjection nameProjection = projection.name();
+//    if (nameProjection != null) {
+//      builder.setName(
+//          TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection)
+//      );
+//    }
+//
+//    // supertypes
+//    final OutputVarType_ListProjection supertypesProjection = projection.supertypes();
+//    if (supertypesProjection != null) {
+//      final OutputVarTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
+//
+//      VarType_List.Builder supertypesBuilder = VarType_List.create();
+//
+//      for (final EntityTypeApi supertype : type.supertypes())
+//        supertypesBuilder.add(buildVarType(supertype, supertypeProjection, context));
+//
+//      builder.setSupertypes(supertypesBuilder);
+//    }
+//
+//    // tags
+//    final OutputTag_ListProjection tagsProjection = projection.tags();
+//    if (tagsProjection != null) {
+//      final OutputTag_Projection tagProjection = tagsProjection.itemsProjection();
+//
+//      Tag_List.Builder tagsBuilder = Tag_List.create();
+//      for (final TagApi tag : type.tags())
+//        tagsBuilder.add(TagBuilder.buildTag(tag, tagProjection, context));
+//
+//      builder.setTags(tagsBuilder);
+//    }
+//
+//    return builder;
+//  }
 
 }

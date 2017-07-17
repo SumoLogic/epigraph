@@ -16,7 +16,9 @@
 
 package ws.epigraph.java.service.projections.req.update
 
-import ws.epigraph.java.service.projections.req.ReqProjectionGen
+import java.util
+
+import ws.epigraph.java.service.projections.req.{ReqProjectionGen, ReqTypeProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
@@ -26,7 +28,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName
 trait ReqUpdateProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("update")
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName] = ctx.reqUpdateProjections
+  protected def generatedProjections: util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = ctx.reqUpdateProjections
 }
 
 object ReqUpdateProjectionGen {

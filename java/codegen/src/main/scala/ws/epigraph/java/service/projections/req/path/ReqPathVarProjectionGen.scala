@@ -31,7 +31,7 @@ class ReqPathVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpVarPath,
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpVarPath
   override type OpTagProjectionEntryType = OpTagPath
@@ -61,7 +61,7 @@ object ReqPathVarProjectionGen {
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpVarPath,
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqPathProjectionGen = op.`type`().kind() match {
+    ctx: GenContext): ReqPathTypeProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
       new ReqPathVarProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)

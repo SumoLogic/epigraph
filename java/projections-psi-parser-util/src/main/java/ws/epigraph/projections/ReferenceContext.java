@@ -53,10 +53,17 @@ public abstract class ReferenceContext<
       @Nullable final ReferenceContext<EP, MP> parent,
       @NotNull PsiProcessingContext context) {
 
+//    System.out.println("++Created new context: "+referencesNamespace);
     this.referencesNamespace = referencesNamespace;
     this.parent = parent;
     this.context = context;
   }
+
+  @Nullable
+  public ReferenceContext<EP, MP> parentContext() { return parent; }
+
+  @NotNull
+  public ReferenceContext<EP, MP> parentOrThis() { return parent == null ? this : parent; }
 
   @NotNull
   public EP varReference(
@@ -69,6 +76,7 @@ public abstract class ReferenceContext<
 
     if (ref == null) {
       ref = newVarReference(type, location);
+//      System.out.println("Allocated entity reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
       entityReferences.put(name, ref);
       return ref;
     } else return ref;
@@ -86,6 +94,7 @@ public abstract class ReferenceContext<
 
     if (ref == null) {
       ref = newModelReference(type, location);
+//      System.out.println("Allocated model reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
       modelReferences.put(name, ref);
       return ref;
     } else return ref;
@@ -144,8 +153,7 @@ public abstract class ReferenceContext<
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
-      ProjectionReferenceName referenceName =
-          referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
+      ProjectionReferenceName referenceName = projectionReferenceName(name);
 
       EP eref = entityReferences.get(name);
       MP mref = modelReferences.get(name);
@@ -214,7 +222,7 @@ public abstract class ReferenceContext<
 
     value.runOnResolved(() -> {
       ProjectionReferenceName referenceName =
-          referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
+          projectionReferenceName(name);
 
       EP eref = entityReferences.get(name);
       MP mref = modelReferences.get(name);
@@ -268,6 +276,10 @@ public abstract class ReferenceContext<
       }
     });
 
+  }
+
+  public @NotNull ProjectionReferenceName projectionReferenceName(final @NotNull String name) {
+    return referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
   }
 
   private void addIncompatibleProjectionTypeError(
@@ -340,7 +352,10 @@ public abstract class ReferenceContext<
         // a = 1
 
         if (parentReferences == null) {
-          context.addError(String.format("Projection '%s' is not defined", name), ref.location());
+          context.addError(
+              String.format("Projection '%s' is not defined (context: %s)", name, referencesNamespace),
+              ref.location()
+          );
         } else {
           assert parent != null;
           R parentRef = parentReferences.get(name);
@@ -428,4 +443,6 @@ public abstract class ReferenceContext<
     return tpe.projection();
   }
 
+  @Override
+  public String toString() { return "'" + referencesNamespace + "' reference context"; }
 }

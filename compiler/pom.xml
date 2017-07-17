@@ -102,6 +102,7 @@
       <groupId>org.slf4s</groupId>
       <artifactId>slf4s-api_${scala.version.major.minor}</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>

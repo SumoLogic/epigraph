@@ -33,30 +33,18 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
 
   def op: OpProjectionType
 
-  protected def generatedProjections: java.util.Set[ProjectionReferenceName]
+  protected def generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen]
 
   protected def cType: CType
 
-  protected def referenceName: Option[ProjectionReferenceName] = Option(op.referenceName())
+  def referenceNameOpt: Option[ProjectionReferenceName] = Option(op.referenceName())
 
   // -----------
 
-  override def shouldRun: Boolean =
-    ReqTypeProjectionGen.synchronized {
-      referenceName.forall { name =>
-        if (generatedProjections.contains(name))
-          false
-        else {
-          generatedProjections.add(name)
-          true
-        }
-      }
-    }
-
-//  override def namespace: Qn = name.map(_.removeLastSegment()).getOrElse(super.namespace)
+  override val shouldRunStrategy = new ReqProjectionShouldRunStrategy(this, generatedProjections)
 
   protected def genShortClassName(prefix: String, suffix: String, cType: CType): String = {
-    val middle = referenceName.map(s => JavaGenUtils.up(ProjectionGenUtil.toString(s.last()))).getOrElse(ln(cType))
+    val middle = referenceNameOpt.map(s => JavaGenUtils.up(ProjectionGenUtil.toString(s.last()))).getOrElse(ln(cType))
     s"$prefix$middle$suffix"
   }
 
@@ -70,7 +58,7 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
 
   def typeNameToMethodName(_type: CType): String = jn(lqn(_type, cType).replace('.', '_'))
 
-  override def description = s"${super.description} (${cType.name.name}) @ $referenceName"
+  override def description = s"${ super.description } (${ cType.name.name }) @ $referenceNameOpt"
 }
 
 object ReqTypeProjectionGen {

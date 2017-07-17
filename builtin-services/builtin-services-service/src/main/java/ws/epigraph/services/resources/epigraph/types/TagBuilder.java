@@ -20,8 +20,9 @@ import epigraph.schema.NameString;
 import epigraph.schema.TagName;
 import epigraph.schema.Tag_;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection.OutputDatumTypeProjection;
 import ws.epigraph.services._resources.epigraph.projections.output.tagprojection.OutputTag_Projection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
 import ws.epigraph.types.TagApi;
 
 /**
@@ -30,30 +31,30 @@ import ws.epigraph.types.TagApi;
 public final class TagBuilder {
   private TagBuilder() {}
 
-  public static @NotNull Tag_ buildTag(
-      @NotNull TagApi tag,
-      @NotNull OutputTag_Projection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    final Tag_.Builder builder = Tag_.create();
-
-    // name
-    builder.setName(TagName.create().setString(NameString.create(tag.name())));
-
-    // todo doc
-
-    // type
-    final OutputType_Projection typeProjection = projection.type();
-    if (typeProjection != null) {
-      builder.setType(
-          DatumTypeBuilder.buildDatumType(
-              tag.type(),
-              typeProjection.normalizedFor_DatumType(),
-              context
-          )
-      );
-    }
-
-    return builder;
-  }
+//  public static @NotNull Tag_ buildTag(
+//      @NotNull TagApi tag,
+//      @NotNull OutputTag_Projection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    final Tag_.Builder builder = Tag_.create();
+//
+//    // name
+//    builder.setName(TagName.create().setString(NameString.create(tag.name())));
+//
+//    // todo doc
+//
+//    // type
+//    final @Nullable OutputDatumTypeProjection typeProjection = projection.type();
+//    if (typeProjection != null) {
+//      builder.setType(
+//          DatumTypeBuilder.buildDatumType(
+//              tag.type(),
+//              typeProjection,
+//              context
+//          )
+//      );
+//    }
+//
+//    return builder;
+//  }
 }

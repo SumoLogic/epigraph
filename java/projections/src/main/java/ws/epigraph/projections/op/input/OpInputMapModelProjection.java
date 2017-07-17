@@ -173,9 +173,10 @@ public class OpInputMapModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpInputMapModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.keyProjection = value.keyProjection();
     this.itemsProjection = value.itemsProjection();
+    super.resolve(name, value);
   }
 
   @Override

@@ -34,32 +34,35 @@ abstract class ReqOutputModelProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
-  protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqOutputTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
   override type GenType = ReqOutputModelProjectionGen
 
+//  referenceName.foreach(ref => ctx.reqOutputProjections.put(ref, this)) // todo rest
+
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
-    referenceName,
+    referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection")
 
   override protected def reqModelProjectionFqn: Qn =
-  Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 
   protected lazy val required: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   public boolean requried() { return raw.required(); }
-"""/*@formatter:on*/)
+"""/*@formatter:on*/
+  )
 
   override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqOutputModelProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
@@ -79,45 +82,55 @@ object ReqOutputModelProjectionGen {
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqOutputModelProjectionGen],
-    ctx: GenContext): ReqOutputModelProjectionGen = op.`type`().kind() match {
+    ctx: GenContext): ReqOutputModelProjectionGen =
 
-    case TypeKind.RECORD =>
-      new ReqOutputRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpOutputRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        parentClassGenOpt,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqOutputMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpOutputMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        parentClassGenOpt,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqOutputListModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpOutputListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        parentClassGenOpt,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqOutputPrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpOutputPrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        parentClassGenOpt,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqOutputProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.RECORD =>
+          new ReqOutputRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqOutputMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqOutputListModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqOutputPrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputPrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+
+      }
+
+    )
 }

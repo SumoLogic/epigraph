@@ -24,6 +24,8 @@ dependencies {
   compile project(':epigraph-java-util')
 
   compile 'org.scala-lang:scala-library'
+  compile 'org.slf4j:slf4j-simple'
+  compile "org.slf4s:slf4s-api_$scalaVersionMajorMinor"
 
   testCompile "org.scalatest:scalatest_$scalaVersionMajorMinor"
   testCompile 'junit:junit'

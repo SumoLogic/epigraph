@@ -23,8 +23,8 @@ import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.UnresolvedReferenceException;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 
@@ -41,7 +41,7 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
  */
 public abstract class AbstractModelProjection<
     MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*SMP*/?, ?>,
-    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, SMP, ?>,
+    SMP extends AbstractModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi> implements GenModelProjection<MP, SMP, SMP, M> {
 
   protected final @NotNull M model;
@@ -57,6 +57,9 @@ public abstract class AbstractModelProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+
+  protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
+  protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -95,20 +98,61 @@ public abstract class AbstractModelProjection<
 
   protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
 
+//  /**
+//   * Updates cached version of normalized projections.
+//   * <p>
+//   * Used by schema parsers to assign normalized projection aliases, for example
+//   * <code><pre>
+//   *   outputProjection personProjection: Person = :id ~~User $userProjection = :record (firstName)
+//   * </pre></code>
+//   * This will mark {@code personProjection} normalized to {@code User} type as {@code userProjection}
+//   *
+//   * @param targetType target type
+//   * @param normalized normalized projection
+//   */
+//  @SuppressWarnings("unchecked")
+//  public void setNormalizedForType(@NotNull DatumTypeApi targetType, @NotNull SMP normalized) {
+//    TypeName typeName = targetType.name();
+//    normalizedCache.put(typeName, new NormalizedCacheItem(normalized));
+//    normalized.normalizedFrom = self();
+//  }
+
+
+  @SuppressWarnings("unchecked")
+  public <EP extends AbstractVarProjection<EP, ?, ?>> void setNormalizedFrom(final @Nullable SMP normalizedFrom) {
+    this.normalizedFrom = normalizedFrom;
+
+    if (entityProjection != null && normalizedFrom != null) {
+
+      EP ep = (EP) normalizedFrom.entityProjection;
+      if (ep != null)
+        ((EP) entityProjection).normalizedFrom = ep;
+    }
+
+  }
+
+  public void setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    this.entityProjection = entityProjection;
+  }
+
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi targetType) {
-    // keep in sync with AbstractVarProjection.normalizedForType
-    assertResolved();
-    assert (type().kind() == targetType.kind());
+  public @NotNull SMP normalizedForType(
+      final @NotNull DatumTypeApi targetType,
+      final @Nullable ProjectionReferenceName resultReferenceName) {
 
+    // keep in sync with AbstractVarProjection.normalizedForType
     if (targetType.equals(type()))
       return self();
+
+    assertResolved();
+    assert (type().kind() == targetType.kind());
 
     return ModelNormalizationContext.withContext(
         this::newNormalizationContext,
         context -> {
-          NormalizedCacheItem cacheItem = normalizedCache.get(targetType.name());
+          TypeName targetTypeName = targetType.name();
+          NormalizedCacheItem cacheItem = normalizedCache.get(targetTypeName);
           // this projection is already being normalized. If we're in the same thread then it's OK to
           // return same (uninitialized) instance, it will get resolved higher in the stack
           // If this is another thread then we have to await for normalization to finish
@@ -126,55 +170,65 @@ public abstract class AbstractModelProjection<
           if (effectiveType.equals(this.type()))
             return self();
 
-          SMP ref;
-          ProjectionReferenceName normalizedRefName = null;
-          if (name == null) {
-            ref = context.newReference((M) effectiveType, self());
-            normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
-          } else {
-            NormalizationContext.VisitedKey visitedKey = new NormalizationContext.VisitedKey(name, effectiveType.name());
-            ref = context.visited().get(visitedKey);
+          try {
+            SMP ref;
+            ProjectionReferenceName normalizedRefName = resultReferenceName;
+            if (this.name == null) {
+              ref = context.newReference((M) effectiveType, self());
+              ref.setReferenceName(normalizedRefName);
+              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
+            } else {
+              NormalizationContext.VisitedKey visitedKey =
+                  new NormalizationContext.VisitedKey(this.name, effectiveType.name());
+              ref = context.visited().get(visitedKey);
 
-            if (ref != null)
-              return ref;
+              if (ref != null)
+                return ref;
 
-            ref = context.newReference((M) effectiveType, self());
-            context.visited().put(visitedKey, ref);
-            normalizedRefName = ProjectionUtils.normalizedTailNamespace(
-                this.name,
-                effectiveType,
-                ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
-            );
-          }
+              ref = context.newReference((M) effectiveType, self());
+              context.visited().put(visitedKey, ref);
 
-          final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
-          effectiveProjections.add(self()); //we're the least specific projection
+              if (normalizedRefName == null)
+                normalizedRefName = ProjectionUtils.normalizedTailNamespace(
+                    this.name,
+                    effectiveType,
+                    ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
+                );
+            }
 
-          final List<SMP> mergedTails = mergeTails(effectiveProjections);
+            final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
+            effectiveProjections.add(self()); //we're the least specific projection
 
-          final List<SMP> filteredMergedTails;
-          if (mergedTails == null)
-            filteredMergedTails = null;
-          else {
-            filteredMergedTails = mergedTails
+            final List<SMP> mergedTails = mergeTails(effectiveProjections);
+
+            final List<SMP> filteredMergedTails;
+            if (mergedTails == null)
+              filteredMergedTails = null;
+            else {
+              filteredMergedTails = mergedTails
+                  .stream()
+                  // remove 'uninteresting' tails which already describe `effectiveType`
+                  .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
+                  //            .map(t -> t.normalizedForType(targetType))
+                  .collect(Collectors.toList());
+            }
+
+            List<SMP> projectionsToMerge = effectiveProjections
                 .stream()
-                // remove 'uninteresting' tails which already describe `effectiveType`
-                .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
-//            .map(t -> t.normalizedForType(targetType))
+                .filter(p -> p.type().isAssignableFrom(effectiveType))
                 .collect(Collectors.toList());
+
+            SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
+            assert res != null; // since effectiveProjections is non-empty, at least self is there
+            res = postNormalizedForType(targetType, res);
+            res.normalizedFrom = self();
+
+            ref.resolve(normalizedRefName, res);
+            return ref;
+          } catch (RuntimeException e) {
+            normalizedCache.remove(targetTypeName);
+            throw e;
           }
-
-          List<SMP> projectionsToMerge = effectiveProjections
-              .stream()
-              .filter(p -> p.type().isAssignableFrom(effectiveType))
-              .collect(Collectors.toList());
-
-          SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
-          assert res != null; // since effectiveProjections is non-empty, at least self is there
-          res = postNormalizedForType(targetType, res);
-
-          ((GenProjectionReference<SMP>) ref).resolve(normalizedRefName, res);
-          return ref;
         }
     );
 
@@ -215,7 +269,7 @@ public abstract class AbstractModelProjection<
   @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
       @NotNull M model,
       @NotNull List<SMP> modelProjections) {
-    
+
     assert !modelProjections.isEmpty();
 
     modelProjections = new ArrayList<>(new LinkedHashSet<>(modelProjections));
@@ -275,7 +329,8 @@ public abstract class AbstractModelProjection<
           .normalizedForType(metaModel);
     }
 
-    final ProjectionReferenceName mergedRefName = buildReferenceName(modelProjections, modelProjections.get(0).location());
+    final ProjectionReferenceName mergedRefName =
+        buildReferenceName(modelProjections, modelProjections.get(0).location());
     SMP res = merge(
         effectiveType,
         modelProjections,
@@ -353,16 +408,19 @@ public abstract class AbstractModelProjection<
 
   @Override
   public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
-    if (name != null) throw new
-        IllegalArgumentException(
-        String.format("Can't override reference name (%s => %s)", name, referenceName)
-    );
-    this.name = referenceName;
+    setReferenceName0(referenceName);
+    if (entityProjection != null) entityProjection.setReferenceName0(referenceName);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
+  public void setReferenceName0(final @Nullable ProjectionReferenceName referenceName) {
+//    if (name != null) throw new IllegalArgumentException(
+//        String.format("Can't override reference name (%s => %s)", name, referenceName)
+//    );
+    if (this.name == null)
+      this.name = referenceName;
+  }
+
+  protected void preResolveCheck(final @NotNull SMP value) {
     if (!isReference)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())
@@ -375,14 +433,22 @@ public abstract class AbstractModelProjection<
           value.type().name(),
           this.type().name()
       ));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
+    preResolveCheck(value);
 
     this.isResolved = true;
-    this.name = name;
+    setReferenceName(name);
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
+    setNormalizedFrom(value.normalizedFrom);
 
-    for (final Runnable callback : onResolvedCallbacks) callback.run();
+    for (final Runnable callback : onResolvedCallbacks)
+      callback.run();
     onResolvedCallbacks.clear();
   }
 
@@ -397,14 +463,13 @@ public abstract class AbstractModelProjection<
       onResolvedCallbacks.add(callback);
   }
 
-  protected void assertResolved() {
+  protected void assertResolved() throws UnresolvedReferenceException {
     if (!isResolved())
-      throw new IllegalStateException(String.format(
-          "Model projection for '%s' is not resolved: %s",
-          model.name().toString(),
-          name
-      ));
+      throw new UnresolvedReferenceException(this);
   }
+
+  @Override
+  public @Nullable SMP normalizedFrom() { return normalizedFrom; }
 
   @Override
   public boolean equals(Object o) {

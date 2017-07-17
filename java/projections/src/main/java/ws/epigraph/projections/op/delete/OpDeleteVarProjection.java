@@ -61,8 +61,9 @@ public class OpDeleteVarProjection extends AbstractVarProjection<
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpDeleteVarProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.canDelete = value.canDelete();
+    super.resolve(name, value);
   }
 
   @Override

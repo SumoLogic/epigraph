@@ -69,8 +69,9 @@ public class ReqDeleteListModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqDeleteListModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     itemsProjection = value.itemsProjection();
+    super.resolve(name, value);
   }
 
   @Override

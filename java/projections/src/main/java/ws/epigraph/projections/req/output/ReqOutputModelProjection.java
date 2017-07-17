@@ -111,8 +111,9 @@ public abstract class ReqOutputModelProjection<
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     required = value.required();
+    super.resolve(name, value);
   }
 
   @Override

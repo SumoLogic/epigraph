@@ -208,10 +208,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteModelMultiTailItem(@NotNull SchemaOpDeleteModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpDeleteModelPolymorphicTail(@NotNull SchemaOpDeleteModelPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -228,7 +224,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteModelSingleTail(@NotNull SchemaOpDeleteModelSingleTail o) {
+  public void visitOpDeleteModelTailItem(@NotNull SchemaOpDeleteModelTailItem o) {
     visitPsiElement(o);
   }
 
@@ -276,10 +272,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteVarMultiTailItem(@NotNull SchemaOpDeleteVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpDeleteVarPolymorphicTail(@NotNull SchemaOpDeleteVarPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -292,7 +284,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteVarSingleTail(@NotNull SchemaOpDeleteVarSingleTail o) {
+  public void visitOpDeleteVarTailItem(@NotNull SchemaOpDeleteVarTailItem o) {
     visitPsiElement(o);
   }
 
@@ -340,10 +332,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputModelMultiTailItem(@NotNull SchemaOpInputModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpInputModelPolymorphicTail(@NotNull SchemaOpInputModelPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -360,7 +348,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputModelSingleTail(@NotNull SchemaOpInputModelSingleTail o) {
+  public void visitOpInputModelTailItem(@NotNull SchemaOpInputModelTailItem o) {
     visitPsiElement(o);
   }
 
@@ -408,10 +396,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputVarMultiTailItem(@NotNull SchemaOpInputVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpInputVarPolymorphicTail(@NotNull SchemaOpInputVarPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -424,7 +408,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputVarSingleTail(@NotNull SchemaOpInputVarSingleTail o) {
+  public void visitOpInputVarTailItem(@NotNull SchemaOpInputVarTailItem o) {
     visitPsiElement(o);
   }
 
@@ -476,10 +460,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputModelMultiTailItem(@NotNull SchemaOpOutputModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputModelPolymorphicTail(@NotNull SchemaOpOutputModelPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -496,7 +476,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputModelSingleTail(@NotNull SchemaOpOutputModelSingleTail o) {
+  public void visitOpOutputModelTailItem(@NotNull SchemaOpOutputModelTailItem o) {
     visitPsiElement(o);
   }
 
@@ -544,10 +524,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputVarMultiTailItem(@NotNull SchemaOpOutputVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
   public void visitOpOutputVarPolymorphicTail(@NotNull SchemaOpOutputVarPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -560,7 +536,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputVarSingleTail(@NotNull SchemaOpOutputVarSingleTail o) {
+  public void visitOpOutputVarTailItem(@NotNull SchemaOpOutputVarTailItem o) {
     visitPsiElement(o);
   }
 

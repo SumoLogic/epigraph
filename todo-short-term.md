@@ -1,10 +1,19 @@
+- [ ] rest of op parsers: named tails
+- [ ] req projections codegen: inheritance support, copy from output projections implementaiton
+
+- [ ] add `Assemblers` codegen
+- [ ] update reflection implementation
+- [ ] req projections codegen: add inheritance for non-output projections
+- [ ] req projections codegen: remove `normalizedFor` methods
+- [ ] update library example & docs
+
 - [ ] new annotations
-  - [ ] add to op params
-  - [ ] add to op entity projections
-  - [ ] add (delegating) annotations to fields and tags
+  - [x] add to op params
+  - [x] add to op entity projections
+  - [x] add (delegating) annotations to fields and tags
   - [ ] update reflection service
 
-- [ ] allow paths to end with model types
+- [ ] allow paths to end with model types (prereq. for fed. ?)
   
 - Federator
   - [x] support named projections on the top level (not inside service)
@@ -19,8 +28,6 @@
     
 # Yegor dependencies
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc. Entity/Model types?
-- [ ] polymorphic builders or projections
-  - [ ] update introspection service, see `TypeBuilder`, `DatumTypeBuilder`
 - [ ] add enums
 
 # See also

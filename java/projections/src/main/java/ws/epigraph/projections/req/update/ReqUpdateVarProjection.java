@@ -78,8 +78,9 @@ public class ReqUpdateVarProjection extends AbstractVarProjection<
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqUpdateVarProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.replace = value.replace;
+    super.resolve(name, value);
   }
 
   @Override

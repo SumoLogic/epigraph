@@ -55,7 +55,7 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey DECL_TYPE_NAME = DefaultLanguageHighlighterColors.CLASS_NAME;
   public static final TextAttributesKey TYPE_REF = DefaultLanguageHighlighterColors.CLASS_REFERENCE;
-  public static final TextAttributesKey PROJECTION_REF = DefaultLanguageHighlighterColors.LOCAL_VARIABLE;
+  public static final TextAttributesKey PROJECTION_REF = DefaultLanguageHighlighterColors.GLOBAL_VARIABLE;
 
   public static final TextAttributesKey PARAM_NAME = DefaultLanguageHighlighterColors.METADATA;
 

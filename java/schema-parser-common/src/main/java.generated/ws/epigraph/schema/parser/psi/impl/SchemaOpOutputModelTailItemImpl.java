@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpInputModelSingleTailImpl extends ASTWrapperPsiElement implements SchemaOpInputModelSingleTail {
+public class SchemaOpOutputModelTailItemImpl extends ASTWrapperPsiElement implements SchemaOpOutputModelTailItem {
 
-  public SchemaOpInputModelSingleTailImpl(ASTNode node) {
+  public SchemaOpOutputModelTailItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpInputModelSingleTail(this);
+    visitor.visitOpOutputModelTailItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,8 +44,8 @@ public class SchemaOpInputModelSingleTailImpl extends ASTWrapperPsiElement imple
 
   @Override
   @NotNull
-  public SchemaOpInputModelProjection getOpInputModelProjection() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class));
+  public SchemaOpOutputModelProjection getOpOutputModelProjection() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelProjection.class));
   }
 
   @Override

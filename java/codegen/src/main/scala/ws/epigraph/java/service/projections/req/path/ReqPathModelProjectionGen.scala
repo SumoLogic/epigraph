@@ -31,7 +31,7 @@ abstract class ReqPathModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpModelPath[_, _, _ <: DatumTypeApi],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpModelPath[_, _, _ <: DatumTypeApi]

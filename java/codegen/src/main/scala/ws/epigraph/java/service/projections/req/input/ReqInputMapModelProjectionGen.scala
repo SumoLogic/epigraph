@@ -47,7 +47,7 @@ class ReqInputMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqInputTypeProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

@@ -19,6 +19,7 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.UnresolvedReferenceException;
 import ws.epigraph.types.TypeApi;
 
 /**
@@ -26,7 +27,7 @@ import ws.epigraph.types.TypeApi;
  */
 public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>> {
   /** @return qualified projection reference name or {@code null} if there is no name */
-  ProjectionReferenceName referenceName();
+  @Nullable ProjectionReferenceName referenceName();
 
   void setReferenceName(@Nullable ProjectionReferenceName referenceName);
 
@@ -35,6 +36,7 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
    *
    * @param name  projection reference name
    * @param value projection instance to copy state from
+   *
    * @see #referenceName()
    */
   void resolve(@Nullable ProjectionReferenceName name, @NotNull R value);
@@ -57,4 +59,30 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
   @NotNull TypeApi type();
 
   @NotNull TextLocation location();
+
+  /**
+   * Runs specified {@code code} once {@code initialReference} is resolved. If this leads
+   * to {@code UnresolvedReferenceException} then repeats the process on the new unresolved
+   * reference
+   *
+   * @param reference initial reference to use
+   * @param code      code to keep running on unresolved references
+   * @param <R>       reference type
+   */
+  @SuppressWarnings("unchecked")
+  static <R extends GenProjectionReference<R>> void runOnResolved(
+      @NotNull R reference,
+      @NotNull Runnable code) {
+
+    Runnable codeWithTry = () -> {
+      try {
+        code.run();
+      } catch (UnresolvedReferenceException e) {
+        runOnResolved((R) e.reference(), code);
+      }
+    };
+
+    reference.runOnResolved(codeWithTry);
+
+  }
 }

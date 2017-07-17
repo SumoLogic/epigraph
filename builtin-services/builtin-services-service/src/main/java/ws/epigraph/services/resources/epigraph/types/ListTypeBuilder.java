@@ -16,15 +16,6 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.ListType;
-import epigraph.schema.ListType_List;
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.listtype.OutputListTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.listtype.supertypes.OutputListType_ListProjection;
-import ws.epigraph.types.ListTypeApi;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -32,35 +23,35 @@ public final class ListTypeBuilder {
 
   private ListTypeBuilder() {}
 
-  public static @NotNull ListType buildListType(
-      @NotNull ListTypeApi type,
-      @NotNull OutputListTypeProjection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    ListType.Builder builder = ListType.create();
-
-    // name
-    final OutputTypeNameProjectionProjection nameProjection = projection.name();
-    if (nameProjection != null)
-      builder.setName(TypeNameBuilder.buildTypeName(type.name(), nameProjection));
-
-    // supertypes
-    final OutputListType_ListProjection supertypesProjection = projection.supertypes();
-    if (supertypesProjection != null) {
-      final OutputListTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
-
-      ListType_List.Builder supertypesBuilder = ListType_List.create();
-
-      for (final ListTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildListType(supertype, supertypeProjection, context));
-
-      builder.setSupertypes(supertypesBuilder);
-    }
-
-    final OutputDataTypeProjection dataTypeProjection = projection.valueType();
-    if (dataTypeProjection != null)
-      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
-
-    return builder;
-  }
+//  public static @NotNull ListType buildListType(
+//      @NotNull ListTypeApi type,
+//      @NotNull OutputListTypeProjection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    ListType.Builder builder = ListType.create();
+//
+//    // name
+//    final OutputTypeNameProjectionProjection nameProjection = projection.name();
+//    if (nameProjection != null)
+//      builder.setName(TypeNameBuilder.buildTypeName(type.name(), nameProjection));
+//
+//    // supertypes
+//    final OutputListType_ListProjection supertypesProjection = projection.supertypes();
+//    if (supertypesProjection != null) {
+//      final OutputListTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
+//
+//      ListType_List.Builder supertypesBuilder = ListType_List.create();
+//
+//      for (final ListTypeApi supertype : type.supertypes())
+//        supertypesBuilder.add(buildListType(supertype, supertypeProjection, context));
+//
+//      builder.setSupertypes(supertypesBuilder);
+//    }
+//
+//    final OutputDataTypeProjection dataTypeProjection = projection.valueType();
+//    if (dataTypeProjection != null)
+//      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
+//
+//    return builder;
+//  }
 }

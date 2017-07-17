@@ -33,17 +33,17 @@ class ReqUpdateVarProjectionGen(
   val op: OpInputVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
-    referenceName,
+    referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
@@ -88,7 +88,7 @@ object ReqUpdateVarProjectionGen {
     op: OpInputVarProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqUpdateProjectionGen = op.`type`().kind() match {
+    ctx: GenContext): ReqUpdateTypeProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
       new ReqUpdateVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)

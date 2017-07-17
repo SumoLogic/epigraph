@@ -177,6 +177,7 @@ abstract class CTypeDef protected(val csf: CSchemaFile, val psi: SchemaTypeDef, 
 
   protected def annotationsPsiOpt: Option[java.util.List[SchemaAnnotation]] = None
 
+  override def toString: String = name.name
 }
 
 object CTypeDef {
@@ -540,6 +541,8 @@ class CField(val csf: CSchemaFile, val psi: SchemaFieldDecl, val host: CRecordTy
   def annotations: Annotations = ctx.after(CPhase.RESOLVE_TYPEREFS, null, _computedAnnotations)
 
   private lazy val _computedAnnotations: Annotations = CTypeUtil.buildAnnotations(csf, Option(psi.getAnnotationList))
+
+  override def toString: String = name
 }
 
 

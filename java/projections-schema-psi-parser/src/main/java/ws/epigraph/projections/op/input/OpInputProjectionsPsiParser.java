@@ -119,8 +119,8 @@ public final class OpInputProjectionsPsiParser {
       @NotNull OpInputPsiProcessingContext context)
       throws PsiProcessingException {
 
-    final SchemaOpInputVarProjectionRef varProjectionRef = psi.getOpInputVarProjectionRef();
-    if (varProjectionRef == null) {
+    final SchemaOpInputVarProjectionRef varProjectionRefPsi = psi.getOpInputVarProjectionRef();
+    if (varProjectionRefPsi == null) {
       // usual var projection
       final SchemaOpInputUnnamedVarProjection unnamedVarProjection = psi.getOpInputUnnamedVarProjection();
       if (unnamedVarProjection == null)
@@ -133,18 +133,17 @@ public final class OpInputProjectionsPsiParser {
       );
     } else {
       // var projection reference
-      final SchemaQid varProjectionRefPsi = varProjectionRef.getQid();
-      if (varProjectionRefPsi == null)
+      final SchemaQid refNamePsi = varProjectionRefPsi.getQid();
+      if (refNamePsi == null)
         throw new PsiProcessingException(
             "Incomplete var projection definition: name not specified",
             psi,
             context.messages()
         );
 
-      final String projectionName = varProjectionRefPsi.getCanonicalName();
+      final String projectionName = refNamePsi.getCanonicalName();
       return context.referenceContext()
           .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
-
     }
   }
 
@@ -272,35 +271,38 @@ public final class OpInputProjectionsPsiParser {
     else {
       tails = new ArrayList<>();
 
-      @Nullable SchemaOpInputVarSingleTail singleTail = tailPsi.getOpInputVarSingleTail();
+      @Nullable SchemaOpInputVarTailItem singleTail = tailPsi.getOpInputVarTailItem();
       if (singleTail == null) {
         @Nullable SchemaOpInputVarMultiTail multiTail = tailPsi.getOpInputVarMultiTail();
         assert multiTail != null;
-        for (SchemaOpInputVarMultiTailItem tailItem : multiTail.getOpInputVarMultiTailItemList()) {
-          @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
-          @NotNull SchemaOpInputVarProjection psiTailProjection = tailItem.getOpInputVarProjection();
-          @NotNull OpInputVarProjection tailProjection =
-              buildTailProjection(
-                  dataType,
-                  tailTypeRef,
-                  psiTailProjection,
-                  typesResolver,
-                  context
-              );
-          tails.add(tailProjection);
+        for (SchemaOpInputVarTailItem tailItem : multiTail.getOpInputVarTailItemList()) {
+          tails.add(parseEntityTailItem(tailItem, dataType, typesResolver, context));
         }
       } else {
-        @NotNull SchemaTypeRef typeRefPsi = singleTail.getTypeRef();
-        @NotNull SchemaOpInputVarProjection psiTailProjection = singleTail.getOpInputVarProjection();
-        @NotNull OpInputVarProjection tailProjection =
-            buildTailProjection(dataType, typeRefPsi, psiTailProjection, typesResolver, context);
-        tails.add(tailProjection);
+        tails.add(parseEntityTailItem(singleTail, dataType, typesResolver, context));
       }
 
       SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
     }
 
     return tails;
+  }
+
+  private static @NotNull OpInputVarProjection parseEntityTailItem(
+      final SchemaOpInputVarTailItem tailItem,
+      final @NotNull DataTypeApi dataType,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+
+    @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
+    @NotNull SchemaOpInputVarProjection psiTailProjection = tailItem.getOpInputVarProjection();
+    return buildTailProjection(
+        dataType,
+        tailTypeRef,
+        psiTailProjection,
+        typesResolver,
+        context
+    );
   }
 
   private static @Nullable GDatum getModelDefaultValue(
@@ -599,8 +601,8 @@ public final class OpInputProjectionsPsiParser {
 
     // this follows `parseUnnamedOrRefVarProjection` logic
 
-    final SchemaOpInputModelProjectionRef modelProjectionRef = psi.getOpInputModelProjectionRef();
-    if (modelProjectionRef == null) {
+    final SchemaOpInputModelProjectionRef modelProjectionRefPsi = psi.getOpInputModelProjectionRef();
+    if (modelProjectionRefPsi == null) {
       // usual model projection
       final SchemaOpInputUnnamedModelProjection unnamedModelProjection = psi.getOpInputUnnamedModelProjection();
       if (unnamedModelProjection == null)
@@ -615,22 +617,21 @@ public final class OpInputProjectionsPsiParser {
       );
     } else {
       // model projection reference
-      final SchemaQid modelProjectionRefPsi = modelProjectionRef.getQid();
-      if (modelProjectionRefPsi == null)
+      final SchemaQid refNamePsi = modelProjectionRefPsi.getQid();
+      if (refNamePsi == null)
         throw new PsiProcessingException(
             "Incomplete model projection definition: name not specified",
             psi,
             context.messages()
         );
 
-      final String projectionName = modelProjectionRefPsi.getCanonicalName();
+      final String projectionName = refNamePsi.getCanonicalName();
       return (MP) context.referenceContext().modelReference(
           type,
           projectionName,
           true,
           EpigraphPsiUtil.getLocation(psi)
       );
-
     }
   }
 
@@ -858,11 +859,11 @@ public final class OpInputProjectionsPsiParser {
     else {
       List<MP> tails = new ArrayList<>();
 
-      final SchemaOpInputModelSingleTail singleTailPsi = tailPsi.getOpInputModelSingleTail();
+      final SchemaOpInputModelTailItem singleTailPsi = tailPsi.getOpInputModelTailItem();
       if (singleTailPsi == null) {
         final SchemaOpInputModelMultiTail multiTailPsi = tailPsi.getOpInputModelMultiTail();
         assert multiTailPsi != null;
-        for (SchemaOpInputModelMultiTailItem tailItemPsi : multiTailPsi.getOpInputModelMultiTailItemList()) {
+        for (SchemaOpInputModelTailItem tailItemPsi : multiTailPsi.getOpInputModelTailItemList()) {
           tails.add(
               buildModelTailProjection(
                   modelClass,

@@ -16,16 +16,6 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.MapType;
-import epigraph.schema.MapType_List;
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.OutputTypeNameProjectionProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype.OutputDatumTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.maptype.OutputMapTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.maptype.supertypes.OutputMapType_ListProjection;
-import ws.epigraph.types.MapTypeApi;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -33,41 +23,41 @@ public final class MapTypeBuilder {
 
   private MapTypeBuilder() {}
 
-  public static @NotNull MapType buildMapType(
-      @NotNull MapTypeApi type,
-      @NotNull OutputMapTypeProjection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    MapType.Builder builder = MapType.create();
-
-    // name
-    final OutputTypeNameProjectionProjection nameProjection = projection.name();
-    if (nameProjection != null)
-      builder.setName(TypeNameBuilder.buildTypeName(type.name(), nameProjection));
-
-    // supertypes
-    final OutputMapType_ListProjection supertypesProjection = projection.supertypes();
-    if (supertypesProjection != null) {
-      final OutputMapTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
-
-      MapType_List.Builder supertypesBuilder = MapType_List.create();
-
-      for (final MapTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildMapType(supertype, supertypeProjection, context));
-
-      builder.setSupertypes(supertypesBuilder);
-    }
-
-    // keys
-    final OutputDatumTypeProjection keyProjection = projection.keyType();
-    if (keyProjection != null)
-      builder.setKeyType(DatumTypeBuilder.buildDatumType(type.keyType(), keyProjection, context));
-
-    // items
-    final OutputDataTypeProjection dataTypeProjection = projection.valueType();
-    if (dataTypeProjection != null)
-      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
-
-    return builder;
-  }
+//  public static @NotNull MapType buildMapType(
+//      @NotNull MapTypeApi type,
+//      @NotNull OutputMapTypeProjection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    MapType.Builder builder = MapType.create();
+//
+//    // name
+//    final OutputTypeNameProjectionProjection nameProjection = projection.name();
+//    if (nameProjection != null)
+//      builder.setName(TypeNameBuilder.buildTypeName(type.name(), nameProjection));
+//
+//    // supertypes
+//    final OutputMapType_ListProjection supertypesProjection = projection.supertypes();
+//    if (supertypesProjection != null) {
+//      final OutputMapTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
+//
+//      MapType_List.Builder supertypesBuilder = MapType_List.create();
+//
+//      for (final MapTypeApi supertype : type.supertypes())
+//        supertypesBuilder.add(buildMapType(supertype, supertypeProjection, context));
+//
+//      builder.setSupertypes(supertypesBuilder);
+//    }
+//
+//    // keys
+//    final OutputDatumTypeProjection keyProjection = projection.keyType();
+//    if (keyProjection != null)
+//      builder.setKeyType(DatumTypeBuilder.buildDatumType(type.keyType(), keyProjection, context));
+//
+//    // items
+//    final OutputDataTypeProjection dataTypeProjection = projection.valueType();
+//    if (dataTypeProjection != null)
+//      builder.setValueType(DataTypeBuilder.buildDataType(type.dataType(), dataTypeProjection, context));
+//
+//    return builder;
+//  }
 }

@@ -34,13 +34,13 @@ class ReqInputListModelProjectionGen(
 
   override type OpProjectionType = OpInputListModelProjection
 
-  val elementGen: ReqInputProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
-    baseNamespaceProvider,
-    op.itemsProjection(),
-    Some(baseNamespace),
-    namespaceSuffix.append(elementsNamespaceSuffix),
-    ctx
-  )
+  val elementGen: ReqInputTypeProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
+      baseNamespaceProvider,
+      op.itemsProjection(),
+      Some(baseNamespace),
+      namespaceSuffix.append(elementsNamespaceSuffix),
+      ctx
+    )
 
   override protected def tailGenerator(parentGen: ReqInputModelProjectionGen, op: OpInputListModelProjection, normalized: Boolean) =
     new ReqInputListModelProjectionGen(

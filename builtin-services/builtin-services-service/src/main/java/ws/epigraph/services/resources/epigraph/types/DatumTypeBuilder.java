@@ -16,39 +16,34 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.DatumType;
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype.OutputDatumTypeProjection;
-import ws.epigraph.types.*;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class DatumTypeBuilder {
   private DatumTypeBuilder() {}
 
-  public static @NotNull DatumType buildDatumType(
-      @NotNull DatumTypeApi type,
-      @NotNull OutputDatumTypeProjection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    // todo set meta-type
-
-    switch (type.kind()) {
-      case RECORD:
-        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_RecordType(), context);
-      case MAP:
-        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_MapType(), context);
-      case LIST:
-        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_ListType(), context);
-      case PRIMITIVE:
-        return PrimitiveTypeBuilder.buildPrimitiveType(
-            (PrimitiveTypeApi) type,
-            projection.normalizedFor_PrimitiveType()
-        );
-      default:
-        throw new IllegalArgumentException("Unsupported kind: " + type.kind());
-    }
-  }
+//  public static @NotNull DatumType buildDatumType(
+//      @NotNull DatumTypeApi type,
+//      @NotNull OutputDatumTypeProjection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    // todo set meta-type
+//
+//    switch (type.kind()) {
+//      case RECORD:
+//        return RecordTypeBuilder.buildRecordType((RecordTypeApi) type, projection.normalizedFor_RecordType(), context);
+//      case MAP:
+//        return MapTypeBuilder.buildMapType((MapTypeApi) type, projection.normalizedFor_MapType(), context);
+//      case LIST:
+//        return ListTypeBuilder.buildListType((ListTypeApi) type, projection.normalizedFor_ListType(), context);
+//      case PRIMITIVE:
+//        return PrimitiveTypeBuilder.buildPrimitiveType(
+//            (PrimitiveTypeApi) type,
+//            projection.normalizedFor_PrimitiveType()
+//        );
+//      default:
+//        throw new IllegalArgumentException("Unsupported kind: " + type.kind());
+//    }
+//  }
 
 }

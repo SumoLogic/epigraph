@@ -16,15 +16,6 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.PrimitiveType;
-import epigraph.schema.PrimitiveType_List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.OutputQualifiedTypeNameProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.primitivetype.OutputPrimitiveTypeProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.datumtype._nt.primitivetype.supertypes.OutputPrimitiveType_ListProjection;
-import ws.epigraph.types.PrimitiveTypeApi;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -32,30 +23,30 @@ public final class PrimitiveTypeBuilder {
 
   private PrimitiveTypeBuilder() {}
 
-  public static @NotNull PrimitiveType buildPrimitiveType(
-      @NotNull PrimitiveTypeApi type,
-      @NotNull OutputPrimitiveTypeProjection projection) {
-
-    PrimitiveType.Builder builder = PrimitiveType.create();
-
-    // name
-    final @Nullable OutputQualifiedTypeNameProjection nameProjection = projection.name();
-    if (nameProjection != null)
-      builder.setName(TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection));
-
-    // supertypes
-    final OutputPrimitiveType_ListProjection supertypesProjection = projection.supertypes();
-    if (supertypesProjection != null) {
-      final OutputPrimitiveTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
-
-      PrimitiveType_List.Builder supertypesBuilder = PrimitiveType_List.create();
-
-      for (final PrimitiveTypeApi supertype : type.supertypes())
-        supertypesBuilder.add(buildPrimitiveType(supertype, supertypeProjection));
-
-      builder.setSupertypes(supertypesBuilder);
-    }
-
-    return builder;
-  }
+//  public static @NotNull PrimitiveType buildPrimitiveType(
+//      @NotNull PrimitiveTypeApi type,
+//      @NotNull OutputPrimitiveTypeProjection projection) {
+//
+//    PrimitiveType.Builder builder = PrimitiveType.create();
+//
+//    // name
+//    final @Nullable OutputQualifiedTypeNameProjection nameProjection = projection.name();
+//    if (nameProjection != null)
+//      builder.setName(TypeNameBuilder.buildQualifiedTypeName(type.name(), nameProjection));
+//
+//    // supertypes
+//    final OutputPrimitiveType_ListProjection supertypesProjection = projection.supertypes();
+//    if (supertypesProjection != null) {
+//      final OutputPrimitiveTypeProjection supertypeProjection = supertypesProjection.itemsProjection();
+//
+//      PrimitiveType_List.Builder supertypesBuilder = PrimitiveType_List.create();
+//
+//      for (final PrimitiveTypeApi supertype : type.supertypes())
+//        supertypesBuilder.add(buildPrimitiveType(supertype, supertypeProjection));
+//
+//      builder.setSupertypes(supertypesBuilder);
+//    }
+//
+//    return builder;
+//  }
 }

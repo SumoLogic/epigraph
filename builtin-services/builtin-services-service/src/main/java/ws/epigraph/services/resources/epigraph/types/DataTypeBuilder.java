@@ -30,26 +30,26 @@ import ws.epigraph.types.TagApi;
 public final class DataTypeBuilder {
   private DataTypeBuilder() {}
 
-  public static @NotNull DataType buildDataType(
-      @NotNull DataTypeApi dataType,
-      @NotNull OutputDataTypeProjection projection,
-      @NotNull TypeBuilder.Context context) {
-
-    DataType.Builder builder = DataType.create();
-
-    // todo `required`
-
-    // retro
-    final OutputTag_Projection retroProjection = projection.retro();
-    if (retroProjection != null) {
-      final TagApi retroTag = dataType.defaultTag();
-      builder.setRetro(retroTag == null ? null : TagBuilder.buildTag(retroTag, retroProjection, context));
-    }
-
-    final OutputType_Projection typeProjection = projection.type();
-    if (typeProjection != null)
-      builder.setType(TypeBuilder.buildType(dataType.type(), typeProjection, context));
-
-    return builder;
-  }
+//  public static @NotNull DataType buildDataType(
+//      @NotNull DataTypeApi dataType,
+//      @NotNull OutputDataTypeProjection projection,
+//      @NotNull TypeBuilder.Context context) {
+//
+//    DataType.Builder builder = DataType.create();
+//
+//    // todo `required`
+//
+//    // retro
+//    final OutputTag_Projection retroProjection = projection.retro();
+//    if (retroProjection != null) {
+//      final TagApi retroTag = dataType.defaultTag();
+//      builder.setRetro(retroTag == null ? null : TagBuilder.buildTag(retroTag, retroProjection, context));
+//    }
+//
+//    final OutputType_Projection typeProjection = projection.type();
+//    if (typeProjection != null)
+//      builder.setType(TypeBuilder.buildType(dataType.type(), typeProjection, context));
+//
+//    return builder;
+//  }
 }

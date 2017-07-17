@@ -112,8 +112,9 @@ public class ReqInputListModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqInputListModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     itemsProjection = value.itemsProjection();
+    super.resolve(name, value);
   }
 
   @Override

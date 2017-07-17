@@ -26,8 +26,7 @@ trait JavaGen {
 
   protected def relativeFilePath: Path
 
-  /** checks if this generator should be invoked. This method may have side effects and should only be called once */
-  def shouldRun: Boolean = true
+  def shouldRunStrategy: ShouldRunStrategy = AlwaysRunStrategry
 
   protected def generate: String
 

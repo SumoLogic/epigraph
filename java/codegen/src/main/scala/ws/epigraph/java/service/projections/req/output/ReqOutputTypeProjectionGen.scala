@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-// This is a generated file. Not intended for manual editing.
-package ws.epigraph.schema.parser.psi;
+package ws.epigraph.java.service.projections.req.output
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen
 
-public interface SchemaOpOutputModelSingleTail extends PsiElement {
-
-  @NotNull
-  SchemaOpOutputModelProjection getOpOutputModelProjection();
-
-  @NotNull
-  SchemaTypeRef getTypeRef();
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+trait ReqOutputTypeProjectionGen extends ReqTypeProjectionGen with ReqOutputProjectionGen {
 
 }

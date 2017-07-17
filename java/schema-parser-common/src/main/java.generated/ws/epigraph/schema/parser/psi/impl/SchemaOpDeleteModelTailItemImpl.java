@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpDeleteModelMultiTailItemImpl extends ASTWrapperPsiElement implements SchemaOpDeleteModelMultiTailItem {
+public class SchemaOpDeleteModelTailItemImpl extends ASTWrapperPsiElement implements SchemaOpDeleteModelTailItem {
 
-  public SchemaOpDeleteModelMultiTailItemImpl(ASTNode node) {
+  public SchemaOpDeleteModelTailItemImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpDeleteModelMultiTailItem(this);
+    visitor.visitOpDeleteModelTailItem(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

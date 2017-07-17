@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.services.resources.epigraph.types.TypeBuilder.buildType;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -71,18 +70,18 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
     NameString_Type_Map.Builder typeMapBuilder = NameString_Type_Map.create();
     builder.set(typeMapBuilder);
 
-    for (String typeName : typeNames) {
-      NameString.Imm key = NameString.create(typeName).toImmutable();
-      final Type type = types.get(typeName);
-
-      if (type == null)
-        typeMapBuilder.putError(
-            key,
-            new ErrorValue(HttpStatusCode.NOT_FOUND, "Can't find type '" + typeName + "'")
-        );
-      else
-        typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));
-    }
+//    for (String typeName : typeNames) {
+//      NameString.Imm key = NameString.create(typeName).toImmutable();
+//      final Type type = types.get(typeName);
+//
+//      if (type == null)
+//        typeMapBuilder.putError(
+//            key,
+//            new ErrorValue(HttpStatusCode.NOT_FOUND, "Can't find type '" + typeName + "'")
+//        );
+//      else
+//        typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));
+//    }
 
     return CompletableFuture.completedFuture(builder);
   }

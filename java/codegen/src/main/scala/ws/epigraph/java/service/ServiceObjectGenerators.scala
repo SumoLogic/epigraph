@@ -40,6 +40,8 @@ object ServiceObjectGenerators extends ObjectGenerators {
         case prn: ProjectionReferenceName => new ProjectionReferenceNameGen(prn).generate(ctx)
         case prns: ProjectionReferenceName.StringRefNameSegment =>
           new ProjectionReferenceName_StringSegmentGen(prns).generate(ctx)
+        case prnt: ProjectionReferenceName.TypeRefNameSegment =>
+          new ProjectionReferenceName_TypeSegmentGen(prnt).generate(ctx)
 
         case param: OpParam => new OpParamGen(param).generate(ctx)
         case params: OpParams => new OpParamsGen(params).generate(ctx)

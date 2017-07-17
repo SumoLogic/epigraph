@@ -19,17 +19,22 @@ package ws.epigraph.java
 
 import java.io.{File, IOException, PrintWriter, StringWriter}
 import java.nio.file.{Files, Path}
+import java.util
+import java.util.Collections
 import java.util.concurrent._
 
+import org.slf4s.LoggerFactory
 import ws.epigraph.compiler._
 import ws.epigraph.java.service._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 
+import scala.annotation.tailrec
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, mutable}
 
 class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: Settings) {
+  private val log = LoggerFactory.apply(this.getClass)
   private val ctx: GenContext = new GenContext(settings)
 
   def this(ctx: CContext, outputRoot: File, settings: Settings) {
@@ -95,7 +100,6 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     for (alt <- cctx.anonListTypes.values) {
       try {
-        //System.out.println(alt.name().name());
         generators += new AnonListGen(alt, ctx)
       }
       catch {
@@ -105,7 +109,6 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     for (amt <- cctx.anonMapTypes.values) {
       try {
-        //System.out.println(amt.name().name());
         generators += new AnonMapGen(amt, ctx)
       }
       catch {
@@ -169,7 +172,11 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
           val transformerName = namespace.append(transformerDeclaration.name()).toString
 
           if (serverSettings.generate()) {
-            if (serverTransformersOpt.isEmpty || serverTransformersOpt.exists(transformers => transformers.contains(transformerName))) {
+            if (serverTransformersOpt.isEmpty || serverTransformersOpt.exists(
+              transformers => transformers.contains(
+                transformerName
+              )
+            )) {
               generators += new AbstractTransformerGen(transformerDeclaration, namespace, ctx)
             }
           }
@@ -181,13 +188,17 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
 
     val endTime: Long = System.currentTimeMillis
-    System.out.println(s"Epigraph Java code generation took ${ endTime - startTime }ms")
+    log.info(s"Epigraph Java code generation took ${ endTime - startTime }ms")
 
     if (Files.exists(tmpRoot))
       JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
   }
 
+  @tailrec
   private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
+    val generatorsCopy = mutable.Queue(generators)
+    val postponedGenerators: mutable.Queue[JavaGen] = mutable.Queue()
+
     val genParents: mutable.Map[JavaGen, JavaGen] = new mutable.HashMap[JavaGen, JavaGen]()
 
     def addChildrenDebugInfo(parent: JavaGen): Unit = {
@@ -197,38 +208,54 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       }
     }
 
-    def exceptionHandler(g: JavaGen, e: Exception) = {
-      def msg = if (ctx.settings.debug) {
-        val sw = new StringWriter
+    def describeGenerator(g: JavaGen): String = {
+      val sw = new StringWriter
+      val visited = Collections.newSetFromMap(new util.IdentityHashMap[JavaGen, java.lang.Boolean]())
+      var sp = ""
+      var gen = g
+      while (gen != null && !visited.contains(gen)) {
+        sw.append(sp)
+        sw.append(gen.description)
+        sw.append("\n")
+        sp = sp + "  "
+        visited.add(gen)
+        gen = genParents.getOrElse(gen, null)
+      }
+      sw.toString
+    }
 
-        var sp = ""
-        var gen = g
-        while (gen != null) {
-          sw.append(sp)
-          sw.append(gen.description)
-          sw.append("\n")
-          sp = sp + "  "
-          gen = genParents.getOrElse(gen, null)
-        }
+    def exceptionHandler(g: JavaGen, runStrategy: ShouldRunStrategy, e: Exception) = e match {
+      case tle: TryLaterException =>
+        // see ReqTypeProjectionGenCache for one use case of this exception
+        log.info(s"Postponing '${ g.description }' because: ${ tle.getMessage }")
+        runStrategy.unmarkRun()
+        postponedGenerators += g
 
-        e.printStackTrace(new PrintWriter(sw))
-        sw.toString
-      } else e.toString
+      case _ =>
+        def msg = if (ctx.settings.debug) {
+          val sw = new StringWriter
 
-      cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
+          sw.append(describeGenerator(g))
+          e.printStackTrace(new PrintWriter(sw))
+          sw.toString
+        } else e.toString
+
+        cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
     }
 
     if (ctx.settings.debug) {
       // run sequentially
       while (generators.nonEmpty) {
         val generator: JavaGen = generators.dequeue()
-        if (generator.shouldRun) {
+        val runStrategy = generator.shouldRunStrategy
+        if (runStrategy.shouldRun) {
+          runStrategy.markRun()
           try {
             addChildrenDebugInfo(generator)
             generators ++= generator.children
             runner.apply(generator)
           } catch {
-            case e: Exception => exceptionHandler(generator, e)
+            case e: Exception => exceptionHandler(generator, runStrategy, e)
           }
         }
       }
@@ -238,7 +265,9 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       val phaser = new Phaser(1) // active jobs counter + 1
 
       def submit(generator: JavaGen): Unit = {
-        if (generator.shouldRun) {
+        val runStrategy = generator.shouldRunStrategy
+        if (runStrategy.shouldRun) {
+          runStrategy.markRun()
           phaser.register()
           executor.submit(
             new Runnable {
@@ -248,7 +277,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
                   generator.children.foreach(submit)
                   runner.apply(generator)
                 } catch {
-                  case e: Exception => exceptionHandler(generator, e)
+                  case e: Exception => exceptionHandler(generator, runStrategy, e)
                 } finally {
                   phaser.arriveAndDeregister()
                 }
@@ -266,7 +295,23 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       if (!executor.awaitTermination(10, TimeUnit.MINUTES)) throw new RuntimeException("Code generation timeout")
     }
 
-    handleErrors()
+    // run postponed generators, if any
+    val postponedGeneratorsSize = postponedGenerators.size
+    if (postponedGeneratorsSize > 0) {
+      if (generatorsCopy == postponedGenerators) { // couldn't make any progress, abort
+        val msg = new StringWriter()
+        msg.append("The following generators couldn't finish:\n")
+        postponedGenerators.foreach(pg => msg.append(describeGenerator(pg)).append("\n"))
+        cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg.toString))
+
+        handleErrors()
+      } else {
+        log.info(s"Retrying $postponedGeneratorsSize generators")
+        runGeneratorsAndHandleErrors(postponedGenerators, runner)
+      }
+    } else {
+      handleErrors()
+    }
   }
 
 //  public static void main(String... args) throws IOException {

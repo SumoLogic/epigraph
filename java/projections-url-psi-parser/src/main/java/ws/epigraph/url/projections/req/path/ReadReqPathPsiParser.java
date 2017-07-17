@@ -165,7 +165,7 @@ public final class ReadReqPathPsiParser {
             context
         );
     } else if (tagNamePsi != null)
-      context.addError("Tags are not supported for non-var types", tagNamePsi);
+      context.addError("Tags are not supported for model types", tagNamePsi);
 
     final @Nullable UrlReqOutputModelMeta metaPsi = singleTagProjectionPsi.getReqOutputModelMeta();
     if (metaPsi != null)

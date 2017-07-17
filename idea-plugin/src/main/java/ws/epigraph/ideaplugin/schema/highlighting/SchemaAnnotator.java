@@ -249,6 +249,25 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }
+
+      @Override
+      public void visitOpOutputModelProjectionRef(@NotNull final SchemaOpOutputModelProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
+      }
+
+      @Override
+      public void visitOpInputModelProjectionRef(@NotNull final SchemaOpInputModelProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
+      }
+
+      @Override
+      public void visitOpDeleteModelProjectionRef(@NotNull final SchemaOpDeleteModelProjectionRef o) {
+        final SchemaQid qid = o.getQid();
+        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
+      }
+
     });
   }
 

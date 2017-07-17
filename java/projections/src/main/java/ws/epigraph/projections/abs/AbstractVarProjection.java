@@ -22,6 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.UnresolvedReferenceException;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.DatumTypeApi;
@@ -43,7 +44,7 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeVarTails;
 public abstract class AbstractVarProjection<
     VP extends AbstractVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
+    MP extends AbstractModelProjection</*MP*/?, ?, ?>
     > implements GenVarProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
@@ -57,6 +58,8 @@ public abstract class AbstractVarProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+
+  protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
   protected AbstractVarProjection(
       @NotNull TypeApi type,
@@ -78,12 +81,16 @@ public abstract class AbstractVarProjection<
     if (type.kind() != TypeKind.ENTITY) {
       final TP tp = singleTagProjection();
       if (tp != null) {
-        tp.projection().runOnResolved(
-            () -> {
-              if (name == null)
-                name = tp.projection().referenceName();
-            }
-        );
+        MP mp = tp.projection();
+        //noinspection ThisEscapedInObjectConstruction
+        mp.setEntityProjection(this);
+
+//        mp.runOnResolved(
+//            () -> {
+//              if (name == null)
+//                name = mp.referenceName();
+//            }
+//        );
       }
     }
   }
@@ -176,21 +183,43 @@ public abstract class AbstractVarProjection<
 
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
 
+//  /**
+//   * Updates cached version of normalized projections.
+//   * <p>
+//   * Used by schema parsers to assign normalized projection aliases, for example
+//   * <code><pre>
+//   *   outputProjection personProjection: Person = :id ~~User $userProjection = :record (firstName)
+//   * </pre></code>
+//   * This will mark {@code personProjection} normalized to {@code User} type as {@code userProjection}
+//   *
+//   * @param targetType target type
+//   * @param normalized normalized projection
+//   */
+//  public void setNormalizedForType(@NotNull TypeApi targetType, @NotNull VP normalized) {
+//    TypeName typeName = targetType.name();
+//    normalizedCache.put(typeName, new NormalizedCacheItem(normalized));
+//    normalized.normalizedFrom = self();
+//  }
+
   @Override
   @SuppressWarnings("unchecked")
-  public @NotNull VP normalizedForType(@NotNull TypeApi targetType) {
+  public @NotNull VP normalizedForType(
+      @NotNull TypeApi targetType,
+      @Nullable ProjectionReferenceName resultReferenceName) {
+
     // keep in sync with AbstractModelProjection.normalizedForType
+    if (targetType.equals(type()))
+      return self();
+
     assertResolved();
     assert tagProjections != null;
     assert (type().kind() == targetType.kind());
 
-    if (targetType.equals(type()))
-      return self();
-
     return VarNormalizationContext.withContext(
         this::newNormalizationContext,
         context -> {
-          NormalizedCacheItem cacheItem = normalizedCache.get(targetType.name());
+          TypeName targetTypeName = targetType.name();
+          NormalizedCacheItem cacheItem = normalizedCache.get(targetTypeName);
           // this projection is already being normalized. If we're in the same thread then it's OK to
           // return same (uninitialized) instance, it will get resolved higher in the stack
           // If this is another thread then we have to await for normalization to finish
@@ -208,53 +237,72 @@ public abstract class AbstractVarProjection<
           if (effectiveType.equals(type()))
             return self();
 
-          VP ref;
-          ProjectionReferenceName normalizedRefName = null;
-          if (name == null) {
-            ref = context.newReference(effectiveType, self());
-            normalizedCache.put(targetType.name(), new NormalizedCacheItem(ref));
-          } else {
-            NormalizationContext.VisitedKey visitedKey = new NormalizationContext.VisitedKey(name, effectiveType.name());
-            ref = context.visited().get(visitedKey);
+          try {
+            VP ref;
+            ProjectionReferenceName normalizedRefName = resultReferenceName;
+            if (this.name == null) {
+              ref = context.newReference(effectiveType, self());
+              ref.setReferenceName(normalizedRefName);
+              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
+            } else {
+              NormalizationContext.VisitedKey visitedKey =
+                  new NormalizationContext.VisitedKey(this.name, effectiveType.name());
+              ref = context.visited().get(visitedKey);
 
-            if (ref != null)
-              return ref;
+              if (ref != null)
+                return ref;
 
-            ref = context.newReference(effectiveType, self());
-            context.visited().put(visitedKey, ref);
+              ref = context.newReference(effectiveType, self());
+              context.visited().put(visitedKey, ref);
 
-            normalizedRefName = ProjectionUtils.normalizedTailNamespace(
-                name,
-                effectiveType,
-                ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
-            );
-          }
+              if (normalizedRefName == null)
+                normalizedRefName = ProjectionUtils.normalizedTailNamespace(
+                    name,
+                    effectiveType,
+                    ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
+                );
+            }
 
-          final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
-          effectiveProjections.add(self()); //we're the least specific projection
+            final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
+            effectiveProjections.add(self()); //we're the least specific projection
 
-          final List<VP> mergedTails = mergeTails(effectiveProjections);
-          final List<VP> filteredMergedTails;
-          if (mergedTails == null)
-            filteredMergedTails = null;
-          else {
-            filteredMergedTails = mergedTails
+            final List<VP> mergedTails = mergeTails(effectiveProjections);
+            final List<VP> filteredMergedTails;
+            if (mergedTails == null)
+              filteredMergedTails = null;
+            else {
+              filteredMergedTails = mergedTails
+                  .stream()
+                  // remove 'uninteresting' tails which already describe `effectiveType`
+                  .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
+                  //            .map(t -> t.normalizedForType(targetType))
+                  .collect(Collectors.toList());
+            }
+
+            List<VP> projectionsToMerge = effectiveProjections
                 .stream()
-                // remove 'uninteresting' tails which already describe `effectiveType`
-                .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
-//            .map(t -> t.normalizedForType(targetType))
+                .filter(p -> p.type().isAssignableFrom(effectiveType))
                 .collect(Collectors.toList());
+
+            VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge, normalizedRefName);
+            res.normalizedFrom = self();
+
+            // sync reference name with model projection if needed
+            if (type().kind() != TypeKind.ENTITY && resultReferenceName == null) {
+              TP tp = res.singleTagProjection();
+              assert tp != null;
+              MP mp = tp.projection();
+              ProjectionReferenceName modelRefName = mp.referenceName();
+              if (modelRefName != null && !modelRefName.equals(normalizedRefName))
+                normalizedRefName = modelRefName;
+            }
+
+            ref.resolve(normalizedRefName, res);
+            return ref;
+          } catch (RuntimeException e) {
+            normalizedCache.remove(targetTypeName);
+            throw e;
           }
-
-          List<VP> projectionsToMerge = effectiveProjections
-              .stream()
-              .filter(p -> p.type().isAssignableFrom(effectiveType))
-              .collect(Collectors.toList());
-
-          VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge);
-
-          ref.resolve(normalizedRefName, res);
-          return ref;
         }
     );
   }
@@ -341,7 +389,9 @@ public abstract class AbstractVarProjection<
                   String.format(
                       "Can't merge recursive projection [%s] with other projections (%s)",
                       tp.projection().referenceName(),
-                      tagProjections.stream().map(x -> x.tag().name()+":"+x.projection().toString()).collect(Collectors.joining(", "))
+                      tagProjections.stream()
+                          .map(x -> x.tag().name() + ":" + x.projection().toString())
+                          .collect(Collectors.joining(", "))
                   )
               );
             });
@@ -393,7 +443,7 @@ public abstract class AbstractVarProjection<
 
         throw new IllegalArgumentException(message);
       } else
-        return merge(type(), false, mergeTails(varProjections), varProjections);
+        return merge(type(), false, mergeTails(varProjections), varProjections, null);
     }
   }
 
@@ -401,7 +451,8 @@ public abstract class AbstractVarProjection<
       final @NotNull TypeApi effectiveType,
       final boolean normalizeTags,
       final @Nullable List<VP> mergedTails,
-      final @NotNull List<VP> varProjections) {
+      final @NotNull List<VP> varProjections,
+      final @Nullable ProjectionReferenceName defaultReferenceName) {
 
     if (varProjections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
 
@@ -409,7 +460,11 @@ public abstract class AbstractVarProjection<
 
     final @NotNull Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags, varProjections);
     boolean mergedParenthesized = mergeParenthesized(varProjections, mergedTags);
-    final ProjectionReferenceName mergedRefName = buildReferenceName(varProjections, varProjections.get(0).location());
+
+    final ProjectionReferenceName mergedRefName = defaultReferenceName == null
+                                                  ? buildReferenceName(varProjections, varProjections.get(0).location())
+                                                  : defaultReferenceName;
+
     VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
     return res;
@@ -440,7 +495,8 @@ public abstract class AbstractVarProjection<
               entry.getKey(),
               false,
               mergeTails(entry.getValue()),
-              entry.getValue()
+              entry.getValue(),
+              null
           )
       );
     }
@@ -464,11 +520,20 @@ public abstract class AbstractVarProjection<
 
   @Override
   public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
-    this.name = referenceName;
+    setReferenceName0(referenceName);
+    if (isResolved() && type().kind() != TypeKind.ENTITY) {
+      TP tp = singleTagProjection();
+      assert tp != null;
+      tp.projection().setReferenceName0(referenceName);
+    }
   }
 
-  @Override
-  public void resolve(@Nullable ProjectionReferenceName name, @NotNull VP value) {
+  public void setReferenceName0(final @Nullable ProjectionReferenceName referenceName) {
+    if (this.name == null)
+      this.name = referenceName;
+  }
+
+  protected void preResolveCheck(final @NotNull VP value) {
     if (tagProjections != null)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())
@@ -481,15 +546,22 @@ public abstract class AbstractVarProjection<
           value.type().name(),
           this.type().name()
       ));
+  }
+
+  @Override
+  public void resolve(@Nullable ProjectionReferenceName name, @NotNull VP value) {
+    preResolveCheck(value);
 
     this.name = name;
     this.tagProjections = value.tagProjections();
     this.parenthesized = value.parenthesized();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
+    this.normalizedFrom = value.normalizedFrom();
 
 //    System.out.println("Resolved " + name);
-    for (final Runnable callback : onResolvedCallbacks) callback.run();
+    for (final Runnable callback : onResolvedCallbacks)
+      callback.run();
     onResolvedCallbacks.clear();
 
     // set model projection name in case of self-var
@@ -514,16 +586,15 @@ public abstract class AbstractVarProjection<
       onResolvedCallbacks.add(callback);
   }
 
-  protected void assertResolved() {
+  protected void assertResolved() throws UnresolvedReferenceException {
     if (!isResolved())
-      throw new IllegalStateException(String.format(
-          "Var projection for '%s' is not resolved: %s",
-          type().name().toString(),
-          name
-      ));
+      throw new UnresolvedReferenceException(this);
 
     assert tagProjections != null;
   }
+
+  @Override
+  public @Nullable VP normalizedFrom() { return normalizedFrom; }
 
   @Override
   public @NotNull TextLocation location() {

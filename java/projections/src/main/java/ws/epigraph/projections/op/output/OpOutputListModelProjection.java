@@ -115,8 +115,9 @@ public class OpOutputListModelProjection
 
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpOutputListModelProjection value) {
-    super.resolve(name, value);
+    preResolveCheck(value);
     this.itemsProjection = value.itemsProjection();
+    super.resolve(name, value);
   }
 
 

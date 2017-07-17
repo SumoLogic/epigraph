@@ -32,20 +32,33 @@ class ReqOutputListModelProjectionGen(
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqListModelProjectionGen {
+  extends ReqOutputModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpOutputListModelProjection
 
-  val elementGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
-    baseNamespaceProvider,
-    op.itemsProjection(),
-    Some(baseNamespace),
-    namespaceSuffix.append(elementsNamespaceSuffix),
-    None, // todo should extend parent's projection?
-    ctx
-  )
+  val elementGen: ReqOutputTypeProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+      baseNamespaceProvider,
+      op.itemsProjection(),
+      Some(baseNamespace),
+      namespaceSuffix.append(elementsNamespaceSuffix),
+      parentClassGenOpt match {
+        case Some(lmpg: ReqOutputListModelProjectionGen) => Some(lmpg.elementGen)
+        case _ => None
+      },
+      ctx
+    )
 
-  override protected def tailGenerator(parentGen: ReqOutputModelProjectionGen, op: OpOutputListModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqOutputModelProjectionGen,
+    op: OpOutputListModelProjection,
+    normalized: Boolean) =
     new ReqOutputListModelProjectionGen(
       baseNamespaceProvider,
       op,

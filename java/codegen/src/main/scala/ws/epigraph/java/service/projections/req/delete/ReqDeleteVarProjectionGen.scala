@@ -32,17 +32,17 @@ class ReqDeleteVarProjectionGen(
   val op: OpDeleteVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
-    referenceName,
+    referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
@@ -78,7 +78,7 @@ object ReqDeleteVarProjectionGen {
     op: OpDeleteVarProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqDeleteProjectionGen = op.`type`().kind() match {
+    ctx: GenContext): ReqDeleteTypeProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
       new ReqDeleteVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)

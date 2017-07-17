@@ -47,27 +47,32 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   def overridingFieldProjections(
     g: ReqRecordModelProjectionGen,
     t: CRecordTypeDef): Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] = {
+
     val p = g.op
 
-    g.parentClassGenOpt.map(
-      pg => overridingFieldProjections(
-        pg.asInstanceOf[ReqRecordModelProjectionGen], t
-      )
-    ).getOrElse(Map()) ++
-    p.fieldProjections().toMap
-      .filter { case (fn, fp) =>
+    val parentOverridingFieldProjections = g.parentClassGenOpt.map(
+      pg => overridingFieldProjections(pg.asInstanceOf[ReqRecordModelProjectionGen], t)
+    ).getOrElse(Map())
+
+    val gOverridingFieldProjections = p.fieldProjections().toMap
+      .filter { case (fieldName, fieldProjection) =>
         // only keep overriden fields
-        t.findEffectiveField(fn).exists(field => field.valueDataType.name != fp.asInstanceOf[OpFieldProjectionType].field().dataType().name().toString)
+        t.findEffectiveField(fieldName).exists(
+          field =>
+            field.valueDataType.name != fieldProjection.asInstanceOf[OpFieldProjectionType].field().dataType().name().toString
+        )
       }
-      .map { case (fn, fp) =>
+      .map { case (fieldName, fieldProjection) =>
         // convert overriden fields to be of proper type.
-        fn -> (
+        fieldName -> (
           Some(g),
-          fp.asInstanceOf[OpFieldProjectionType]
-            .overridenFieldProjection(new CFieldApiWrapper(t.findEffectiveField(fn).get))
+          fieldProjection.asInstanceOf[OpFieldProjectionType]
+            .overridenFieldProjection(new CFieldApiWrapper(t.findEffectiveField(fieldName).get))
             .asInstanceOf[OpFieldProjectionType]
         )
       }
+
+    parentOverridingFieldProjections ++ gOverridingFieldProjections
   }
 
   /**

@@ -32,17 +32,17 @@ abstract class ReqDeleteModelProjectionGen(
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
   override type GenType = ReqDeleteModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
-    referenceName,
+    referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceName, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 

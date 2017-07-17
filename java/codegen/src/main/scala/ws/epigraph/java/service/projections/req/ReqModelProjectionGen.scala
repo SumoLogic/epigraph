@@ -55,7 +55,8 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override def children: Iterable[JavaGen] =
-    super.children ++ metaGeneratorOpt.iterator ++ /*tailGenerators.values ++*/ normalizedTailGenerators.values
+    super.children ++ metaGeneratorOpt.iterator ++ /*tailGenerators.values ++*/
+    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/.values // filter out named generators
 
   protected lazy val params: CodeChunk =
     ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
@@ -189,5 +190,4 @@ ${normalizedTailGenerators.map{ case (t,g) =>
  * Request output projection for ${JavaGenUtils.javadocLink(cType, namespace)} type
  */
 """/*@formatter:on*/
-
 }

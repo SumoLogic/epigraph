@@ -56,7 +56,7 @@ resource epigraph: EpigraphResource {
     tags [] ($dataProjection)
   )
 
-  outputProjection datumProjection: Datum = ( type $typeProjection )  ~ (
+  outputProjection datumProjection: Datum = ( type $datumTypeProjection )  ~ (
     RecordDatum $recordDatumProjection,
     MapDatum $mapDatumProjection,
     ListDatum $listDatumProjection,
@@ -82,7 +82,7 @@ resource epigraph: EpigraphResource {
   // annotations
 
   outputProjection annotationsProjection: Annotations = [] (
-    type $typeProjection,
+    type $datumTypeProjection,
     value $datumProjection
   )
 
@@ -109,7 +109,8 @@ resource epigraph: EpigraphResource {
     annotations $annotationsProjection
   ) ~ (
     VarType ( tags * $tagProjection ),
-    DatumType $datumTypeProjection = (
+    DatumType $datumTypeProjection = (     // datumTypeProjection = typeProjection ~ DatumType
+      // supertypes * $datumTypeProjection // can't merge recursive projections yet
       metaType $datumTypeProjection
     ) ~ (
       RecordType (
@@ -127,13 +128,9 @@ resource epigraph: EpigraphResource {
     )
   )
 
-  // todo
-  // outputProjection datumTypeProjection: DatumType = $typeProjection | DatumType
-  // and remove $datumTypeProjection inlined in typeProjection
-
   outputProjection tagProjection: Tag = (
     name :`string`,
-    type $typeProjection,
+    type $datumTypeProjection,
     annotations $annotationsProjection
   )
 
