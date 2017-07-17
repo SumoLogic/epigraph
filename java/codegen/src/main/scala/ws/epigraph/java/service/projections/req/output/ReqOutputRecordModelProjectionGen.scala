@@ -65,8 +65,8 @@ class ReqOutputRecordModelProjectionGen(
         )
       }
 
-        cField ->
-        fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputTypeProjectionGen])))
+      cField ->
+      fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputTypeProjectionGen])))
 
     }.toMap
 
@@ -86,9 +86,14 @@ class ReqOutputRecordModelProjectionGen(
       override protected val buildNormalizedTails: Boolean = normalized
     }
 
+  lazy val assemblerGen = new RecordAssemblerGen(this, ctx)
+
   override lazy val children: Iterable[JavaGen] =
-    if (fieldGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/) super.children
-    else super.children ++ Iterable(new RecordAssemblerGen(this, ctx))
+    if (fieldGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/ ) super.children
+    else {
+      super.children ++ Iterable(assemblerGen)
+    }
+
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"),
