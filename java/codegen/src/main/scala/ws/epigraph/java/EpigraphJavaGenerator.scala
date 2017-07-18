@@ -196,13 +196,14 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
   @tailrec
   private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
+    val doDebugTraces = true // ctx.settings.debug()
     val generatorsCopy = mutable.Queue(generators)
     val postponedGenerators: mutable.Queue[JavaGen] = mutable.Queue()
 
     val genParents: mutable.Map[JavaGen, JavaGen] = new mutable.HashMap[JavaGen, JavaGen]()
 
     def addChildrenDebugInfo(parent: JavaGen): Unit = {
-      if (ctx.settings.debug()) {
+      if (doDebugTraces) {
         val children = parent.children
         children.foreach(c => genParents.put(c, parent))
       }
@@ -232,7 +233,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
         postponedGenerators += g
 
       case _ =>
-        def msg = if (ctx.settings.debug) {
+        def msg = if (doDebugTraces) {
           val sw = new StringWriter
 
           sw.append(describeGenerator(g))
