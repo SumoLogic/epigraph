@@ -33,7 +33,7 @@ class TransformerDeclarationGen(td: TransformerDeclaration, baseNamespace: Qn, v
   protected val namespace: Qn = TransformerDeclarationGen.transformerDeclarationNamespace(baseNamespace, td)
   protected val transformerDeclarationClassName: String = TransformerDeclarationGen.transformerDeclarationClassName(td)
 
-  override protected def relativeFilePath: Path =
+  override def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(TransformerDeclarationGen.transformerDeclarationClassName(td) + ".java")
 
   override protected def generateObject(ctx: ObjectGenContext): String = {

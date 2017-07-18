@@ -39,7 +39,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
   protected val className: String = ResourceClientGen.clientClassName(rd)
   protected val resourceDeclarationClassName: String = ResourceDeclarationGen.resourceDeclarationClassName(rd)
 
-  override protected def relativeFilePath: Path =
+  override def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(ResourceClientGen.clientClassName(rd) + ".java")
 
 

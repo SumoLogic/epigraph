@@ -34,7 +34,7 @@ import scala.collection.JavaConversions._
 class AbstractResourceFactoryGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: GenContext) extends JavaGen {
   protected val namespace: Qn = AbstractResourceFactoryGen.abstractResourceFactoryNamespace(baseNamespace, rd)
 
-  override protected def relativeFilePath: Path =
+  override def relativeFilePath: Path =
     JavaGenUtils.fqnToPath(namespace).resolve(AbstractResourceFactoryGen.abstractResourceFactoryClassName(rd) + ".java")
 
   private val abstractOperationGens: Map[OperationDeclaration, AbstractOperationGen] =

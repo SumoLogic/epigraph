@@ -24,7 +24,7 @@ trait JavaGen {
 
   protected def ctx: GenContext
 
-  protected def relativeFilePath: Path
+  def relativeFilePath: Path
 
   def shouldRunStrategy: ShouldRunStrategy = AlwaysRunStrategry
 

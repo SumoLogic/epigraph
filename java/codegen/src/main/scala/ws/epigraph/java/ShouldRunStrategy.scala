@@ -20,15 +20,20 @@ package ws.epigraph.java
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ShouldRunStrategy {
-  def shouldRun: Boolean
-  def markRun(): Unit
-  def unmarkRun(): Unit
+  /**
+   * Check if generator should run. If it should: mark as run and return `true`, else return `false`. Should
+   * be implemented as an atomic call
+   *
+   * @return `true` if generator must be called, `false` otherwise
+   */
+  def checkAndMark: Boolean
+
+  /** unmark generator as run allowing it to be called again */
+  def unmark(): Unit
 }
 
 object AlwaysRunStrategry extends ShouldRunStrategy {
-  override def shouldRun: Boolean = true
+  override def checkAndMark: Boolean = true
 
-  override def markRun(): Unit = {}
-
-  override def unmarkRun(): Unit = {}
+  override def unmark(): Unit = {}
 }

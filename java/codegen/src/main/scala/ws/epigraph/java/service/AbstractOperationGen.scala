@@ -43,7 +43,7 @@ trait AbstractOperationGen extends JavaGen {
 
   val shortClassName: String = AbstractOperationGen.abstractOperationClassName(op)
 
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   protected val operationInfo = OperationInfo(baseNamespace, rd.fieldName(), op)
 

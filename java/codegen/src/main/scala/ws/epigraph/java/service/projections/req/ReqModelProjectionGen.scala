@@ -50,6 +50,8 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   protected def tailGenerator(parentGen: GenType, op: OpProjectionType, normalized: Boolean): GenType =
     throw new RuntimeException("tail projections not supported")
 
+  override def description: String = "[M] " + super.description
+
   // -----------
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)

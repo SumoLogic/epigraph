@@ -38,7 +38,7 @@ abstract class JavaTypeGen[Type >: Null <: CType](protected val t: Type, protect
   protected def typeExpression: String = s"$typeClassExpression.Type.instance()"
 
   // TODO respect annotations changing namespace/type names for java
-  protected override def relativeFilePath: Path =
+  override def relativeFilePath: Path =
   JavaGenUtils.fqnToPath(getNamedTypeComponent(t).name.fqn.removeLastSegment()).resolve(JavaGenNames.ln(t) + ".java")
 
   /** local java name for type [[t]] */

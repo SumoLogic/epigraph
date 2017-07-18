@@ -53,7 +53,7 @@ trait ReqProjectionGen extends JavaGen {
 
 //  override def children: Iterable[JavaGen] = parentClassGenOpt
 
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   protected val packageStatement: String = s"package $namespace;"
 

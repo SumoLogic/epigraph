@@ -30,7 +30,7 @@ class IndexGen(protected val ctx: GenContext) extends JavaGen {
 
     private val IndexClassName: String = Constants.TypesIndex.className
 
-    override protected def relativeFilePath: Path =
+    override def relativeFilePath: Path =
       Paths.get(s"${Constants.TypesIndex.namespace.replaceAll("\\.", "/")}/$IndexClassName.java")
 
     override protected def generate: String = /*@formatter:off*/sn"""\

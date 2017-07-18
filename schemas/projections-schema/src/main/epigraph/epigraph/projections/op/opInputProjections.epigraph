@@ -71,6 +71,7 @@ record OpInputMapModelProjection extends OpInputModelProjection {
 record OpInputKeyProjection extends Annotated {
   `required`: Boolean { @Doc "if `null` - keys are not accepted" }
   params: map[String, OpParam]
+  `projection`: OpOutputModelProjection
 }
 
 record OpInputEnumModelProjection extends OpInputModelProjection {

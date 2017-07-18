@@ -117,6 +117,9 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
       }.toMap
     ).getOrElse(Map())
 
+
+  override def description: String = "[V] " + super.description
+
   protected def generate(
     reqVarProjectionFqn: Qn,
     reqTagProjectionEntryFqn: Qn,

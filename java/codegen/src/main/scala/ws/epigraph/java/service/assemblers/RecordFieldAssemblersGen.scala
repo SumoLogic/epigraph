@@ -41,7 +41,7 @@ class RecordFieldAssemblersGen(
 
   val fullClassName: String = namespace.append(shortClassName).toString
 
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) {
     def fieldName: String = jn(field.name)

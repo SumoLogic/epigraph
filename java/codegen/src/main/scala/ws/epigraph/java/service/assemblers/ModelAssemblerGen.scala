@@ -45,7 +45,7 @@ trait ModelAssemblerGen extends JavaGen {
 
   val shortClassName: String = ln(cType) + "Assembler"
 
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
 
   protected val t: String = lqn2(cType, nsString)
 

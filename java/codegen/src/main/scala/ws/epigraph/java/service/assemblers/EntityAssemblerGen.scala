@@ -33,7 +33,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
   val shortClassName: String = ln(cType) + "Assembler"
 
-  override protected def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
 
   private val hasTails = g.normalizedTailGenerators.nonEmpty
 

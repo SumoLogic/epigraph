@@ -27,9 +27,14 @@ class ReqProjectionShouldRunStrategy(
   generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen]
 ) extends ShouldRunStrategy {
 
-  override def shouldRun: Boolean = gen.referenceNameOpt.forall(ref => !generatedProjections.containsKey(ref))
+  override def checkAndMark: Boolean = generatedProjections.synchronized {
+    val shouldRun = gen.referenceNameOpt.forall(ref => !generatedProjections.containsKey(ref))
+    if (shouldRun) {
+      gen.referenceNameOpt.foreach(ref => generatedProjections.put(ref, gen))
+    }
+    shouldRun
+  }
 
-  override def markRun(): Unit = gen.referenceNameOpt.foreach(ref => generatedProjections.put(ref, gen))
-
-  override def unmarkRun(): Unit = gen.referenceNameOpt.foreach(ref => generatedProjections.remove(ref))
+  // generatedProjections is a concurrent collection, no need for synchronized {}
+  override def unmark(): Unit = gen.referenceNameOpt.foreach(ref => generatedProjections.remove(ref))
 }

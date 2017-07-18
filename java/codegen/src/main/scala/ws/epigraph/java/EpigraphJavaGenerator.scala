@@ -18,7 +18,7 @@
 package ws.epigraph.java
 
 import java.io.{File, IOException, PrintWriter, StringWriter}
-import java.nio.file.{Files, Path}
+import java.nio.file.{FileAlreadyExistsException, Files, Path}
 import java.util
 import java.util.Collections
 import java.util.concurrent._
@@ -31,7 +31,7 @@ import ws.epigraph.schema.ResourcesSchema
 
 import scala.annotation.tailrec
 import scala.collection.JavaConversions._
-import scala.collection.{JavaConversions, mutable}
+import scala.collection.{JavaConversions, immutable, mutable}
 
 class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: Settings) {
   private val log = LoggerFactory.apply(this.getClass)
@@ -116,7 +116,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       }
     }
 
-    runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
+    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpRoot))
+    generators.clear()
 
 
 //    final Set<CDataType> anonMapValueTypes = new HashSet<>();
@@ -185,7 +186,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     }
 
-    runGeneratorsAndHandleErrors(generators, _.writeUnder(tmpRoot))
+    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpRoot))
 
     val endTime: Long = System.currentTimeMillis
     log.info(s"Epigraph Java code generation took ${ endTime - startTime }ms")
@@ -195,32 +196,41 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
   }
 
   @tailrec
-  private def runGeneratorsAndHandleErrors(generators: mutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
+  private def runGeneratorsAndHandleErrors(generators: immutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
     val doDebugTraces = true // ctx.settings.debug()
-    val generatorsCopy = mutable.Queue(generators)
-    val postponedGenerators: mutable.Queue[JavaGen] = mutable.Queue()
+    val generatorsCopy = generators
 
-    val genParents: mutable.Map[JavaGen, JavaGen] = new mutable.HashMap[JavaGen, JavaGen]()
+    // mutable state, should be thread-safe
+    val postponedGenerators = new java.util.concurrent.ConcurrentLinkedQueue[JavaGen]()
+    val genParents = new java.util.concurrent.ConcurrentHashMap[JavaGen, JavaGen]()
 
-    def addChildrenDebugInfo(parent: JavaGen): Unit = {
+    def addDebugInfo(gen: JavaGen): Unit = {
+      log.debug("Running: " + gen.description)
       if (doDebugTraces) {
-        val children = parent.children
-        children.foreach(c => genParents.put(c, parent))
+        val children = gen.children
+        children.foreach(c => genParents.put(c, gen))
       }
     }
 
-    def describeGenerator(g: JavaGen): String = {
+    def describeGenerator(g: JavaGen, showGensProducingSameFile: Boolean): String = {
       val sw = new StringWriter
       val visited = Collections.newSetFromMap(new util.IdentityHashMap[JavaGen, java.lang.Boolean]())
       var sp = ""
       var gen = g
       while (gen != null && !visited.contains(gen)) {
         sw.append(sp)
+        sw.append(gen.hashCode().toString).append(" ")
         sw.append(gen.description)
         sw.append("\n")
         sp = sp + "  "
         visited.add(gen)
         gen = genParents.getOrElse(gen, null)
+      }
+
+      if (showGensProducingSameFile) {
+        val samePathGens = genParents.keys.filter(_.relativeFilePath == g.relativeFilePath)
+        sw.append("Producing: " + g.relativeFilePath).append("\n  also produced by: \n")
+        samePathGens.foreach(t => sw.append(describeGenerator(t, showGensProducingSameFile = false)))
       }
       sw.toString
     }
@@ -229,31 +239,37 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       case tle: TryLaterException =>
         // see ReqTypeProjectionGenCache for one use case of this exception
         log.info(s"Postponing '${ g.description }' because: ${ tle.getMessage }")
-        runStrategy.unmarkRun()
-        postponedGenerators += g
+        runStrategy.unmark()
+        postponedGenerators.add(g)
 
-      case _ =>
+      case ex =>
         def msg = if (doDebugTraces) {
           val sw = new StringWriter
+          sw.append(ex.getMessage).append("\n")
 
-          sw.append(describeGenerator(g))
-          e.printStackTrace(new PrintWriter(sw))
+          sw.append(describeGenerator(g, showGensProducingSameFile = true))
+          if (!ex.isInstanceOf[FileAlreadyExistsException]) { // not interested in these traces
+            sw.append("\n")
+            ex.printStackTrace(new PrintWriter(sw))
+          }
           sw.toString
-        } else e.toString
+        } else ex.toString
 
         cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
     }
 
     if (ctx.settings.debug) {
       // run sequentially
-      while (generators.nonEmpty) {
-        val generator: JavaGen = generators.dequeue()
+      var _generators = generators
+      while (_generators.nonEmpty) {
+        val (generator, newGenerators) = _generators.dequeue
+        _generators = newGenerators
+
         val runStrategy = generator.shouldRunStrategy
-        if (runStrategy.shouldRun) {
-          runStrategy.markRun()
+        if (runStrategy.checkAndMark) {
           try {
-            addChildrenDebugInfo(generator)
-            generators ++= generator.children
+            addDebugInfo(generator)
+            _generators ++= generator.children
             runner.apply(generator)
           } catch {
             case e: Exception => exceptionHandler(generator, runStrategy, e)
@@ -267,14 +283,13 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
       def submit(generator: JavaGen): Unit = {
         val runStrategy = generator.shouldRunStrategy
-        if (runStrategy.shouldRun) {
-          runStrategy.markRun()
+        if (runStrategy.checkAndMark) {
           phaser.register()
           executor.submit(
             new Runnable {
               override def run(): Unit = {
                 try {
-                  addChildrenDebugInfo(generator)
+                  addDebugInfo(generator)
                   generator.children.foreach(submit)
                   runner.apply(generator)
                 } catch {
@@ -289,7 +304,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       }
 
       generators.foreach { submit }
-      generators.clear()
+//      generators.clear()
 
       phaser.arriveAndAwaitAdvance()
       executor.shutdown()
@@ -299,20 +314,30 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     // run postponed generators, if any
     val postponedGeneratorsSize = postponedGenerators.size
     if (postponedGeneratorsSize > 0) {
+      //noinspection ComparingUnrelatedTypes  (should actually be OK?)
       if (generatorsCopy == postponedGenerators) { // couldn't make any progress, abort
         val msg = new StringWriter()
         msg.append("The following generators couldn't finish:\n")
-        postponedGenerators.foreach(pg => msg.append(describeGenerator(pg)).append("\n"))
+        postponedGenerators.foreach(
+          pg => msg.append(describeGenerator(pg, showGensProducingSameFile = true)).append(
+            "\n"
+          )
+        )
         cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg.toString))
 
         handleErrors()
       } else {
         log.info(s"Retrying $postponedGeneratorsSize generators")
-        runGeneratorsAndHandleErrors(postponedGenerators, runner)
+        runGeneratorsAndHandleErrors(queue(postponedGenerators), runner)
       }
     } else {
       handleErrors()
     }
+  }
+
+  private def queue[T] (i : Iterable[T]): immutable.Queue[T] = {
+    val q = immutable.Queue[T]()
+    q ++ i
   }
 
 //  public static void main(String... args) throws IOException {
