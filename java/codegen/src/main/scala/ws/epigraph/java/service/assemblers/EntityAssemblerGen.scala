@@ -23,34 +23,47 @@ import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.ReqProjectionGen
 import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.java.{GenContext, JavaGenUtils}
+import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends JavaGen {
+class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends AssemblerGen {
   val cType: CType = JavaGenUtils.toCType(g.op.`type`())
 
-  val shortClassName: String = ln(cType) + "Assembler"
+  override protected def namespace: Qn = g.namespace
 
-  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
+  override protected val shortClassName: String = ln(cType) + "Assembler"
+
+  override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
   private val hasTails = g.normalizedTailGenerators.nonEmpty
 
+  importManager.use(namespace.append(shortClassName))
+
+  protected val projectionName: importManager.ImportedName = importManager.use(g.fullClassName)
+
   override protected def generate: String = {
-    val t = lqn2(cType, g.namespace.toString)
+    import Imports._
+
+    val t = lqn2(cType, namespace.toString)
 
     case class TagParts(tag: CTag, tagGen: ReqOutputProjectionGen) {
+      val tagGenName: importManager.ImportedName = importManager.use(tagGen.fullClassName)
+
+      val assemblerResultType: importManager.ImportedName = importManager.use(
+        lqn2(
+          tagType,
+          namespace.toString
+        )
+      )
+
       def tagName: String = jn(tag.name)
 
       def tagType: CType = tag.typeRef.resolved
 
-      def tagAssemblerType: String = s"Assembler<? super D, ? super ${ tagGen.fullClassName }, ? extends ${
-        lqn2(
-          tagType,
-          g.namespace.toString
-        )
-      }.Value>"
+      def tagAssemblerType: String = s"$assembler<? super D, ? super $tagGenName, ? extends $assemblerResultType.Value>"
 
       def fbf: String = tag.name + "Assembler"
 
@@ -72,13 +85,15 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
     }.toSeq
 
     case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) {
+      val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
+
       def tt: CType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
 
-      def tts: String = lqn2(tt, g.namespace.toString)
+      val tts: importManager.ImportedName = importManager.use(lqn2(tt, g.namespace.toString))
 
       def fbf: String = JavaGenUtils.lo(ln(tt)) + "Assembler"
 
-      def fbft: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $tts>"
+      def fbft: String = s"$assembler<? super D, ? super $tailGenName, ? extends $tts>"
 
       def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
     }
@@ -86,10 +101,12 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
       TailParts(tg.asInstanceOf[ReqOutputVarProjectionGen])
     }.toSeq
+    
+    val obj = importManager.use("java.lang.Object")
 
-    val defaultBuild: String = /*@formatter:off*/sn"""\
-AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
-Object visited = ctx.visited.get(key);
+    lazy val defaultBuild: String = /*@formatter:off*/sn"""\
+$assemblerContext.Key key = new $assemblerContext.Key(dto, p);
+$obj visited = ctx.visited.get(key);
 if (visited != null)
   return ($t) visited;
 else {
@@ -105,7 +122,7 @@ ${fps.map { fp => s"  if (p.${fp.getter} != null) b.${fp.setter}(${fp.fbf}.assem
     }"""/*@formatter:on*/
 
     lazy val tailsBuild: String = /*@formatter:off*/sn"""
-      return ${g.shortClassName}.dispatcher.dispatch(
+      return $projectionName.dispatcher.dispatch(
           p,
           ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
 ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.mkString("          ",",\n          ",",\n") else ""}\
@@ -114,30 +131,23 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.fbf}.assemble(dto, tp, ctx)" }.
           }
       );"""/*@formatter:on*/
 
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "org.jetbrains.annotations.Nullable",
-      "java.util.function.Function",
-      "ws.epigraph.assembly.Assembler",
-      "ws.epigraph.assembly.AssemblerContext",
-      "ws.epigraph.types.Type"
-    )
+    closeImports()
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package ${g.namespace};
 
-${JavaGenUtils.generateImports(imports)}
+${JavaGenUtils.generateImports(importManager.imports)}
 
 /**
  * Assembler for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t> {
-${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
+public class $shortClassName<D> implements $assembler<@$nullable D, @$notNull $projectionName, /*@$notNull*/ $t> {
+${if (hasTails) s"  private final @$notNull $func<? super D, Type> typeExtractor;\n" else "" }\
   //tag assemblers
-${fps.map { fp => s"  private final @NotNull ${fp.tagAssemblerType} ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
+${fps.map { fp => s"  private final @$notNull ${fp.tagAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+${if (hasTails) tps.map { tp => s"  private final @$notNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Assembler constructor
@@ -147,9 +157,9 @@ ${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
    */
   public $shortClassName(
-${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    @NotNull ${fp.tagAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
+${if (hasTails) s"    @$notNull $func<? super D, Type> typeExtractor,\n" else "" }\
+${fps.map { fp => s"    @$notNull ${fp.tagAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
+${if (hasTails) tps.map { tp => s"    @$notNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
 ${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
@@ -166,10 +176,10 @@ ${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n
    * @return {@code $t} object
    */
   @Override
-  public @NotNull $t assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
+  public @$notNull $t assemble(@$notNull D dto, @$notNull $projectionName p, @$notNull $assemblerContext ctx) {
     if (dto == null) {
       $t.Builder b = $t.create();
-${fps.map { fp => s"      if (p.${fp.getter} != null) b.${fp.setter}Error(ws.epigraph.errors.ErrorValue.NULL);" }.mkString("", "\n", "\n")}\
+${fps.map { fp => s"      if (p.${fp.getter} != null) b.${fp.setter}Error($errValue.NULL);" }.mkString("", "\n", "\n")}\
       return b;
     } else ${if (hasTails) tailsBuild else nonTailsBuild}
   }

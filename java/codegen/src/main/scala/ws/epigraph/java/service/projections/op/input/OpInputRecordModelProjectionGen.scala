@@ -21,7 +21,7 @@ import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, gen
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
-import ws.epigraph.types.{RecordType, RecordTypeApi, TypeApi}
+import ws.epigraph.types.{RecordTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
@@ -43,7 +43,7 @@ new $o(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("java.lang.String", fpe, p.fieldProjections().entrySet().map{e =>
+  ${i(genLinkedMap("java.lang.String", fpe.toString, p.fieldProjections().entrySet().map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}

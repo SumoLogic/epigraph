@@ -197,7 +197,7 @@ new ${ctx.use("ws.epigraph.service.Resource")}(
 
     val kind = ServiceNames.operationKinds(o.kind())
     val ukind = up(kind)
-    val operation: String = ctx.use(s"ws.epigraph.service.operations.${ ukind }Operation")
+    val operation = ctx.use(s"ws.epigraph.service.operations.${ ukind }Operation")
     val methodType: String = s"$operation<${ ObjectGenUtils.genDataRef(o.outputType(), ctx.gctx) }>"
 
     val notnull = ctx.use("org.jetbrains.annotations.NotNull")

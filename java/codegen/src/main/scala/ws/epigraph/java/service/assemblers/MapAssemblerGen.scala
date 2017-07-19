@@ -42,20 +42,27 @@ class MapAssemblerGen(
 
   private val isEntity = itemCType.kind == CTypeKind.ENTITY
 
-  private val kt = lqn2(keyCType, nsString)
-  private val it = lqn2(itemCType, nsString)
+  private val kt = importManager.use(lqn2(keyCType, nsString))
+  private val it = importManager.use(lqn2(itemCType, nsString))
+  private val elementGenName = importManager.use(g.elementGen.fullClassName)
 
-  val defaultBuild: String = /*@formatter:off*/sn"""\
-AssemblerContext.Key key = new AssemblerContext.Key(dto, p);
-Object visited = ctx.visited.get(key);
+  import Imports._
+
+  private val obj = importManager.use("java.lang.Object")
+  private val mp = importManager.use("java.util.Map")
+
+  protected lazy val defaultBuild: String = {
+    /*@formatter:off*/sn"""\
+$assemblerContext.Key key = new $assemblerContext.Key(dto, p);
+$obj visited = ctx.visited.get(key);
 if (visited != null)
   return ($t.Value) visited;
 else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
-  ${g.elementGen.fullClassName} itemsProjection = p.itemsProjection();
-  Map<K, ? extends I> map = itemsExtractor.apply(dto);
-  for (Map.Entry<K, ? extends I> entry: map.entrySet()) {
+  $elementGenName itemsProjection = p.itemsProjection();
+  $mp<K, ? extends I> map = itemsExtractor.apply(dto);
+  for ($mp.Entry<K, ? extends I> entry: map.entrySet()) {
     $kt k = keyConverter.apply(entry.getKey());
     b.put${if (isEntity) "$" else "_"}(k, itemAssembler.assemble(entry.getValue(), itemsProjection, ctx));
   }
@@ -63,38 +70,31 @@ ${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" els
   return b.asValue();
 }
 """/*@formatter:on*/
+  }
 
   override protected def generate: String = {
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      "org.jetbrains.annotations.Nullable",
-      "java.util.function.Function",
-      "java.util.Map",
-      "ws.epigraph.assembly.Assembler",
-      "ws.epigraph.assembly.AssemblerContext",
-      "ws.epigraph.types.Type"
-    )
+    closeImports()
 
-    val keysConverterType = s"Function<K, $kt>"
-    val itemAssemblerType = s"Assembler<I, ${ g.elementGen.fullClassName }, /*@NotNull*/ $it${ if (isEntity) "" else ".Value" }>"
+    val keysConverterType = s"$func<K, $kt>"
+    val itemAssemblerType = s"$assembler<I, $elementGenName, /*@$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package ${g.namespace};
 
-${JavaGenUtils.generateImports(imports)}
+${JavaGenUtils.generateImports(importManager.imports)}
 
 /**
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<K, D, I> implements Assembler<@Nullable D, @NotNull ${g.shortClassName}, /*@NotNull*/ $t.Value> {
-${if (hasTails) "  private final @NotNull Function<? super D, Type> typeExtractor;\n" else "" }\
-  private final @NotNull $keysConverterType keyConverter;
-  private final @NotNull Function<D, Map<K, ? extends I>> itemsExtractor;
-  private final @NotNull $itemAssemblerType itemAssembler;
-${if (hasTails) tps.map { tp => s"  private final @NotNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
-${if (hasMeta) s"  //meta assembler\n  private final @NotNull $metaAssemblerType metaAssembler;" else ""}
+public class $shortClassName<K, D, I> implements $assembler<@$nullable D, @$notNull $projectionName, /*@$notNull*/ $t.Value> {
+${if (hasTails) s"  private final @$notNull $func<? super D, Type> typeExtractor;\n" else "" }\
+  private final @$notNull $keysConverterType keyConverter;
+  private final @$notNull $func<D, $mp<K, ? extends I>> itemsExtractor;
+  private final @$notNull $itemAssemblerType itemAssembler;
+${if (hasTails) tps.map { tp => s"  private final @$notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
+${if (hasMeta) s"  //meta assembler\n  private final @$notNull $metaAssemblerType metaAssembler;" else ""}
 
   /**
    * Assembler constructor
@@ -107,12 +107,12 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
 ${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
    */
   public $shortClassName(
-${if (hasTails) s"    @NotNull Function<? super D, Type> typeExtractor,\n" else "" }\
-    @NotNull $keysConverterType keyConverter,
-    @NotNull Function<D, Map<K, ? extends I>> itemsExtractor,
-    @NotNull $itemAssemblerType itemAssembler\
-${if (hasTails) tps.map { tp => s"    @NotNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
-${if (hasMeta) s",\n    @NotNull $metaAssemblerType metaAssembler" else ""}
+${if (hasTails) s"    @$notNull $func<? super D, Type> typeExtractor,\n" else "" }\
+    @$notNull $keysConverterType keyConverter,
+    @$notNull $func<D, $mp<K, ? extends I>> itemsExtractor,
+    @$notNull $itemAssemblerType itemAssembler\
+${if (hasTails) tps.map { tp => s"    @$notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
+${if (hasMeta) s",\n    @$notNull $metaAssemblerType metaAssembler" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.keyConverter = keyConverter;
@@ -132,9 +132,9 @@ ${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}
    * @return {@code $t} value object
    */
   @Override
-  public @NotNull $t.Value assemble(@NotNull D dto, @NotNull ${g.shortClassName} p, @NotNull AssemblerContext ctx) {
+  public @$notNull $t.Value assemble(@$notNull D dto, @$notNull $projectionName p, @$notNull $assemblerContext ctx) {
     if (dto == null)
-      return $t.type.createValue(ws.epigraph.errors.ErrorValue.NULL);
+      return $t.type.createValue($errValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}
   }
 }"""/*@formatter:on*/

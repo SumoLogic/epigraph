@@ -20,9 +20,9 @@ import java.nio.file.Path
 
 import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
+import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputModelProjection
 import ws.epigraph.types.DatumTypeApi
@@ -32,31 +32,37 @@ import ws.epigraph.types.DatumTypeApi
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ModelAssemblerGen extends JavaGen {
+trait ModelAssemblerGen extends AssemblerGen {
   protected type G <: ReqOutputModelProjectionGen
 
   protected def g: G
 
-  protected val namespace: Qn = g.namespace
+  override protected val namespace: Qn = g.namespace
 
   protected val nsString: String = namespace.toString
 
   protected val cType: CDatumType = JavaGenUtils.toCType(g.op.`type`())
 
-  val shortClassName: String = ln(cType) + "Assembler"
+  override protected val shortClassName: String = ln(cType) + "Assembler"
 
   override def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
 
-  protected val t: String = lqn2(cType, nsString)
+  protected val t: importManager.ImportedName = importManager.use(lqn2(cType, nsString))
+
+  protected val projectionName: importManager.ImportedName = importManager.use(g.fullClassName)
+
+  importManager.use(namespace.append(shortClassName))
 
   case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
     def `type`: CDatumType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
 
-    def typeString: String = lqn2(`type`, nsString)
+    val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
+
+    val tailResultType: importManager.ImportedName = importManager.use(lqn2(`type`, nsString))
 
     def assembler: String = JavaGenUtils.lo(ln(`type`)) + "Assembler"
 
-    def assemblerType: String = s"Assembler<? super D, ? super ${ tailProjectionGen.fullClassName }, ? extends $typeString.Value>"
+    def assemblerType: String = s"${ Imports.assembler }<? super D, ? super $tailGenName, ? extends $tailResultType.Value>"
 
     def javadoc: String = s"$assembler {@code ${ ln(`type`) }} value assembler"
   }
@@ -74,7 +80,7 @@ trait ModelAssemblerGen extends JavaGen {
     }"""/*@formatter:on*/
 
   protected lazy val tailsBuild: String = /*@formatter:off*/sn"""
-      return ${g.shortClassName}.dispatcher.dispatch(
+      return $projectionName.dispatcher.dispatch(
           p,
           ${if (hasTails) "typeExtractor.apply(dto)" else s"$t.type"},
 ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ctx)" }.mkString("          ",",\n          ",",\n") else ""}\
@@ -91,5 +97,16 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
 
   protected lazy val metaCType: CDatumType = JavaGenUtils.toCType(metaProjection.`type`().asInstanceOf[DatumTypeApi])
 
-  protected lazy val metaAssemblerType: String = s"Assembler<? super D, ? super ${ g.metaGeneratorOpt.get.fullClassName }, ? extends ${ lqn2(metaCType, g.namespace.toString) }>"
+  protected val metaGeneratorNameOpt: Option[importManager.ImportedName] = g.metaGeneratorOpt.map(
+    mg => importManager.use(
+      mg.fullClassName
+    )
+  )
+
+  protected lazy val metaAssemblerType: String = s"${ Imports.assembler }<? super D, ? super ${ metaGeneratorNameOpt.get }, ? extends ${
+    lqn2(
+      metaCType,
+      g.namespace.toString
+    )
+  }>"
 }

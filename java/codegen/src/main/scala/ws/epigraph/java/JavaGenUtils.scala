@@ -160,5 +160,5 @@ object JavaGenUtils {
     s"""@javax.annotation.Generated("${ if (idx == -1) name else name.substring(0, idx) }")"""
   }
 
-  def generateImports(imports: Set[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
+  def generateImports(imports: Iterable[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
 }

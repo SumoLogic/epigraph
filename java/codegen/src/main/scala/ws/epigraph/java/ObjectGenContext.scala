@@ -45,6 +45,8 @@ class ObjectGenContext(val gctx: GenContext, val namespace: Qn, val useQualified
 
   //
 
+  // todo switch to using ImportManager
+
   def use(i: String): String = {
     if (i == null || i.isEmpty) throw new IllegalArgumentException
     addImport(i, namespace) // todo make private

@@ -42,7 +42,7 @@ class GDatumGen(datum: GDatum) extends ObjectGen[GDatum](datum) {
     /*@formatter:off*/sn"""\
 new $o(
   ${gen(rd.typeRef(), ctx)},
-  ${i(ObjectGenUtils.genLinkedMap("java.lang.String", gdv, rd.fields().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${i(ObjectGenUtils.genLinkedMap("java.lang.String", gdv.toString, rd.fields().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(rd.location(), ctx)}
 )"""/*@formatter:on*/
   }
@@ -52,7 +52,7 @@ new $o(
     /*@formatter:off*/sn"""\
 new $o(
   ${gen(md.typeRef(), ctx)},
-  ${i(ObjectGenUtils.genLinkedMap(o, gdv, md.entries().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${i(ObjectGenUtils.genLinkedMap(o, gdv.toString, md.entries().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(md.location(), ctx)}
 )"""/*@formatter:on*/
   }

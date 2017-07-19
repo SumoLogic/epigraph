@@ -34,7 +34,7 @@ class AnnotationsGen(anns: Annotations) extends ObjectGen[Annotations](anns) {
       val a = ctx.use("ws.epigraph.annotations.Annotation")
       /*@formatter:off*/sn"""\
 new $o(
-  ${i(ObjectGenUtils.genHashMap(dt, a, anns.asMap().entrySet().map{e =>
+  ${i(ObjectGenUtils.genHashMap(dt.toString, a.toString, anns.asMap().entrySet().map{e =>
         (ObjectGenUtils.genTypeExpr(e.getKey, ctx.gctx), gen(e.getValue, ctx))}, ctx))
    }
 )"""/*@formatter:on*/

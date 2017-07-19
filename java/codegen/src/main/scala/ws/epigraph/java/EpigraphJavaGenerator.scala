@@ -230,7 +230,8 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
       if (showGensProducingSameFile) {
         val samePathGens = genParents.keys.filter(_.relativeFilePath == g.relativeFilePath)
         sw.append("Producing: " + g.relativeFilePath).append("\n  also produced by: \n")
-        samePathGens.foreach(t => sw.append(describeGenerator(t, showGensProducingSameFile = false)))
+        if (samePathGens.isEmpty) sw.append("<none>\n")
+        else samePathGens.foreach(t => sw.append(describeGenerator(t, showGensProducingSameFile = false)))
       }
       sw.toString
     }
@@ -335,7 +336,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     }
   }
 
-  private def queue[T] (i : Iterable[T]): immutable.Queue[T] = {
+  private def queue[T](i: Iterable[T]): immutable.Queue[T] = {
     val q = immutable.Queue[T]()
     q ++ i
   }

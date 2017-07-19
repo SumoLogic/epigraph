@@ -26,7 +26,7 @@ abstract class ObjectGen[T](val obj: T) extends AbstractObjectGen {
     if (obj == null) "null"
     else {
       val objExpr = ctx.use(obj.getClass.getCanonicalName)
-      generateObject(objExpr, ctx)
+      generateObject(objExpr.toString, ctx)
     }
   }
 
