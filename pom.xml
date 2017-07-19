@@ -20,7 +20,7 @@
 
   <groupId>ws.epigraph</groupId>
   <artifactId>epigraph</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <description>Epigraph project</description>
@@ -367,7 +367,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0.2</version>
+          <version>0.0.3-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
@@ -381,7 +381,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0.2</version>
+          <version>0.0.3-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
