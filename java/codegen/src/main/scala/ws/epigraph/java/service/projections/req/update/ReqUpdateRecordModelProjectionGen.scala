@@ -19,6 +19,7 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.{OpInputFieldProjectionEntry, OpInputRecordModelProjection}
@@ -51,7 +52,7 @@ class ReqUpdateRecordModelProjectionGen(
           ctx
         )
       )
-    }.toMap
+    }.toListMap
 
   override protected def tailGenerator(parentGen: ReqUpdateModelProjectionGen, op: OpInputRecordModelProjection, normalized: Boolean) =
     new ReqUpdateRecordModelProjectionGen(

@@ -18,6 +18,7 @@ package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CEntityTypeDef, CTag, CTagApiWrapper}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
@@ -64,7 +65,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
         pg.asInstanceOf[ReqVarProjectionGen], t
       )
     ).getOrElse(Map()) ++
-    p.tagProjections().toMap
+    p.tagProjections().toSeq.toListMap
       .filter { case (tn, tp) =>
         // only keep overriden tags
         t.findEffectiveTag(tn).exists(tag => tag.typeRef.resolved != tp.tag().`type`())
@@ -80,7 +81,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 
   /** tag projections: should only include new or overridden tags, should not include inherited */
   lazy val tagProjections: Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] =
-    op.tagProjections().toMap
+    op.tagProjections().toSeq.toListMap
       .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
       .mapValues(p => (None, p)) ++
     parentClassGenOpt.map(
@@ -93,7 +94,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   def tagGenerators: Map[CTag, ReqProjectionGen] =
     tagProjections.values.map { case (pgo, tpe) =>
       findTag(tpe.tag().name()) -> tagGenerator(pgo, tpe)
-    }.toMap
+    }.toListMap
 
   protected def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse {
     throw new RuntimeException(s"Can't find tag '$name' in type '${ cType.name.toString }'")
@@ -114,7 +115,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     Option(op.polymorphicTails()).map(
       _.map { t: OpProjectionType =>
         t -> tailGenerator(op.normalizedForType(t.`type`()), normalized = true)
-      }.toMap
+      }.toListMap
     ).getOrElse(Map())
 
 

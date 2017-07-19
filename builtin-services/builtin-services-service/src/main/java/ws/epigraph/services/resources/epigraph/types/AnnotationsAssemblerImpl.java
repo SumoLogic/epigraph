@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
+package ws.epigraph.services.resources.epigraph.types;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import ws.epigraph.annotations.Annotation;
+import ws.epigraph.annotations.Annotations;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.services._resources.epigraph.projections.output.annotationsprojection.AnnotationsAssembler;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface DatumTypeApi extends TypeApi {
-  String MONO_TAG_NAME = "$self"; // TODO better name (for the constant and the tag)
+public class AnnotationsAssemblerImpl extends AnnotationsAssembler<Annotations, Qn, Annotation> {
+  public static final AnnotationsAssemblerImpl INSTANCE = new AnnotationsAssemblerImpl();
 
-  @NotNull TagApi self();
-
-  @Override
-  @NotNull List<@NotNull ? extends DatumTypeApi> supertypes();
-
-  @Nullable DatumTypeApi metaType();
+  private AnnotationsAssemblerImpl() {
+    super(
+        null,
+        null,
+        null
+    );
+  }
 }

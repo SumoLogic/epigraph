@@ -19,6 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath, OpVarPath}
@@ -53,7 +54,7 @@ class ReqPathRecordModelProjectionGen(
             ctx
           )
         )
-      }.toMap
+      }.toListMap
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqRecordModelPath"),

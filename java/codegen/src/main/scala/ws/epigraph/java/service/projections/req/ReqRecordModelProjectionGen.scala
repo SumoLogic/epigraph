@@ -24,6 +24,7 @@ import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenFieldProjectionEntry, GenRecordModelProjection}
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 
 import scala.collection.JavaConversions._
 
@@ -54,7 +55,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
       pg => overridingFieldProjections(pg.asInstanceOf[ReqRecordModelProjectionGen], t)
     ).getOrElse(Map())
 
-    val gOverridingFieldProjections = p.fieldProjections().toMap
+    val gOverridingFieldProjections = p.fieldProjections().toSeq.toListMap
       .filter { case (fieldName, fieldProjection) =>
         // only keep overriden fields
         t.findEffectiveField(fieldName).exists(
@@ -82,7 +83,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
    * overriden field, or None if field is not overriding anything
    */
   lazy val fieldProjections: Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] =
-    op.fieldProjections().toMap
+    op.fieldProjections().toSeq.toListMap
       .filterKeys { !isInherited(_) }
       .mapValues(p => (None, p.asInstanceOf[OpFieldProjectionType])) ++
     parentClassGenOpt.map(

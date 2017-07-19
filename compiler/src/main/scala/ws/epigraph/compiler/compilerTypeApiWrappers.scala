@@ -147,6 +147,8 @@ trait CDatumTypeApiWrapper extends CTypeApiWrapper with DatumTypeApi {
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
     Collections.singletonMap(CDatumType.ImpliedDefaultTagName, self())
 
+  override lazy val supertypes: util.List[_ <: DatumTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[DatumTypeApi] }
+
   override def self(): TagApi = new CTagApiWrapper(cType.impliedTag)
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)

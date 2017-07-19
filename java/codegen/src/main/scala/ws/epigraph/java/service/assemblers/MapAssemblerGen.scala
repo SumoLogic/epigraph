@@ -61,8 +61,8 @@ else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
   $elementGenName itemsProjection = p.itemsProjection();
-  $mp<K, ? extends I> map = itemsExtractor.apply(dto);
-  for ($mp.Entry<K, ? extends I> entry: map.entrySet()) {
+  $mp<K, ? extends V> map = mapExtractor.apply(dto);
+  for ($mp.Entry<K, ? extends V> entry: map.entrySet()) {
     $kt k = keyConverter.apply(entry.getKey());
     b.put${if (isEntity) "$" else "_"}(k, itemAssembler.assemble(entry.getValue(), itemsProjection, ctx));
   }
@@ -76,7 +76,7 @@ ${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" els
     closeImports()
 
     val keysConverterType = s"$func<K, $kt>"
-    val itemAssemblerType = s"$assembler<I, $elementGenName, /*@$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
+    val itemAssemblerType = s"$assembler<V, $elementGenName, /*@$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -86,12 +86,16 @@ ${JavaGenUtils.generateImports(importManager.imports)}
 
 /**
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
+ *
+ * @param <D> DTO type, should be decomposable into a map from {@code K} to {@code V}
+ * @param <K> DTO map keys type
+ * @param <V> DTO map keys type
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<K, D, I> implements $assembler<@$nullable D, @$notNull $projectionName, /*@$notNull*/ $t.Value> {
+public class $shortClassName<D, K, V> implements $assembler<@$nullable D, @$notNull $projectionName, /*@$notNull*/ $t.Value> {
 ${if (hasTails) s"  private final @$notNull $func<? super D, Type> typeExtractor;\n" else "" }\
   private final @$notNull $keysConverterType keyConverter;
-  private final @$notNull $func<D, $mp<K, ? extends I>> itemsExtractor;
+  private final @$notNull $func<D, $mp<K, ? extends V>> mapExtractor;
   private final @$notNull $itemAssemblerType itemAssembler;
 ${if (hasTails) tps.map { tp => s"  private final @$notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
 ${if (hasMeta) s"  //meta assembler\n  private final @$notNull $metaAssemblerType metaAssembler;" else ""}
@@ -101,7 +105,7 @@ ${if (hasMeta) s"  //meta assembler\n  private final @$notNull $metaAssemblerTyp
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
    * @param keyConverter key converter
-   * @param itemsExtractor items extractor
+   * @param mapExtractor map extractor
    * @param itemAssembler items assembler\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }\
 ${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
@@ -109,14 +113,14 @@ ${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
   public $shortClassName(
 ${if (hasTails) s"    @$notNull $func<? super D, Type> typeExtractor,\n" else "" }\
     @$notNull $keysConverterType keyConverter,
-    @$notNull $func<D, $mp<K, ? extends I>> itemsExtractor,
+    @$notNull $func<D, $mp<K, ? extends V>> mapExtractor,
     @$notNull $itemAssemblerType itemAssembler\
 ${if (hasTails) tps.map { tp => s"    @$notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
 ${if (hasMeta) s",\n    @$notNull $metaAssemblerType metaAssembler" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.keyConverter = keyConverter;
-    this.itemsExtractor = itemsExtractor;
+    this.mapExtractor = mapExtractor;
     this.itemAssembler = itemAssembler;\
 ${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
 ${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}

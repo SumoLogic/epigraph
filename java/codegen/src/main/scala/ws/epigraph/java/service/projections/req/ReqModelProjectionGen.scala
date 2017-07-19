@@ -25,6 +25,7 @@ import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 
 import scala.collection.JavaConversions._
 
@@ -102,7 +103,7 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
         t -> tailGenerator(this.asInstanceOf[GenType], op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
-      }.toMap
+      }.toListMap
     ).getOrElse(Map())
 
   private def genTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = {

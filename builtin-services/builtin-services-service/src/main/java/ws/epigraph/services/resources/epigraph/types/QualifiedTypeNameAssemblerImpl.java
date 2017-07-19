@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
+package ws.epigraph.services.resources.epigraph.types;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import ws.epigraph.names.QualifiedTypeName;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.QualifiedTypeNameAssembler;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface DatumTypeApi extends TypeApi {
-  String MONO_TAG_NAME = "$self"; // TODO better name (for the constant and the tag)
+public final class QualifiedTypeNameAssemblerImpl extends QualifiedTypeNameAssembler<QualifiedTypeName> {
+  public static final QualifiedTypeNameAssemblerImpl INSTANCE = new QualifiedTypeNameAssemblerImpl();
 
-  @NotNull TagApi self();
+  private QualifiedTypeNameAssemblerImpl() {
+    super(TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER, QualifiedNameAssemblerImpl.INSTANCE);
+  }
 
-  @Override
-  @NotNull List<@NotNull ? extends DatumTypeApi> supertypes();
-
-  @Nullable DatumTypeApi metaType();
 }

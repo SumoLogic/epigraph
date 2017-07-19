@@ -161,4 +161,21 @@ object JavaGenUtils {
   }
 
   def generateImports(imports: Iterable[String]): String = imports.toList.sorted.mkString("import ", ";\nimport ", ";")
+
+//  object IterableToListMapObject {
+//    import collection.immutable.ListMap
+//
+//    implicit class IterableToListMap[T, U](it: Iterable[(T, U)]) {
+//      def toListMap: ListMap[T, U] = ListMap(it.toSeq: _*)
+//    }
+//  }
+
+  object TraversableOnceToListMapObject {
+    import collection.immutable.ListMap
+
+    implicit class TraversableOnceToListMap[T, U](it: TraversableOnce[(T, U)]) {
+      def toListMap: ListMap[T, U] = ListMap(it.toSeq: _*)
+    }
+  }
+
 }

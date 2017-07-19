@@ -23,6 +23,7 @@ import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.{OpOutputFieldProjectionEntry, OpOutputRecordModelProjection}
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -68,7 +69,7 @@ class ReqOutputRecordModelProjectionGen(
       cField ->
       fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqOutputTypeProjectionGen])))
 
-    }.toMap
+    }.toListMap
 
   override protected def tailGenerator(
     parentGen: ReqOutputModelProjectionGen,

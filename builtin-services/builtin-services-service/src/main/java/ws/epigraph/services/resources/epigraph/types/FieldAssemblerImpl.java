@@ -20,38 +20,23 @@ import epigraph.schema.FieldName;
 import epigraph.schema.Field_;
 import epigraph.schema.NameString;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.OutputDataTypeProjection;
+import ws.epigraph.assembly.AssemblerContext;
+import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.Field_Assembler;
 import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.OutputField_Projection;
 import ws.epigraph.types.FieldApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FieldBuilder {
-  private FieldBuilder() {}
+public final class FieldAssemblerImpl extends Field_Assembler<FieldApi> {
+  public static final FieldAssemblerImpl INSTANCE = new FieldAssemblerImpl();
 
-//  public static @NotNull Field_ buildField(
-//      @NotNull FieldApi field,
-//      @NotNull OutputField_Projection projection,
-//      @NotNull TypeBuilder.Context context) {
-//
-//    final Field_.Builder builder = Field_.create();
-//
-//    // name
-//    builder.setName(
-//        FieldName.create().setString(
-//            NameString.create(field.name())
-//        )
-//    );
-//
-//    // todo doc
-//
-//
-//    // data type
-//    final OutputDataTypeProjection valueTypeProjection = projection.valueType();
-//    if (valueTypeProjection != null)
-//      builder.setValueType(DataTypeBuilder.buildDataType(field.dataType(), valueTypeProjection, context));
-//
-//    return builder;
-//  }
+  private FieldAssemblerImpl() {
+    super(
+        (f, p, c) -> FieldName.create().setString(NameString.create(f.name())),
+        DataTypeAssemblerImpl.INSTANCE.on(FieldApi::dataType),
+        AnnotationsAssemblerImpl.INSTANCE.on(FieldApi::annotations)
+    );
+  }
+
 }

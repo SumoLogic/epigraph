@@ -45,7 +45,8 @@
         }  
     ```
     Figure out injections: how to add annotations to existing types/fields.
-- [ ] req output projections codegen: inheritance for list/map elements
+- [x] req output projections codegen: inheritance for list/map elements
+- [ ] req output projections codegen: use `ImportManager` to get more readable projections code
 - [ ] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
 
 

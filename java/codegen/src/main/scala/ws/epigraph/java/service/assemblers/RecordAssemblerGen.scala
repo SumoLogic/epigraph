@@ -22,6 +22,8 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.{ReqOutputFieldProjectionGen, ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
+import scala.collection.immutable.ListMap
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -63,7 +65,7 @@ class RecordAssemblerGen(
   }
 
   private def fieldGenerators(g: G): Map[String, (CField, ReqOutputFieldProjectionGen)] =
-    g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[G])).getOrElse(Map()) ++
+    g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[G])).getOrElse(ListMap()) ++
     g.fieldGenerators.map { case (f, p) => f.name -> (f, p) }
 
   private val fps: Seq[FieldParts] = fieldGenerators(g).map { case (_, (f, fg)) =>

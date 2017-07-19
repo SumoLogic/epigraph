@@ -18,6 +18,8 @@ package ws.epigraph.assembly;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 /**
  * Base interface for generated data assemblers. Builds Epigraph
  * data instance based on data transfer object and request projection.
@@ -37,5 +39,29 @@ public interface Assembler<D, P, R> {
    */
   @NotNull R assemble(@NotNull D dto, @NotNull P projection, @NotNull AssemblerContext ctx);
 
-  // add `andThen(Function)` if needed
+  /**
+   * Composes a function {@code f} with an assembler by applying {@code f} to the data object
+   * before {@code assemble} call. Ideologically it would be similar to {@code f.andThen(this)}
+   *
+   * @param f   function to run on the data object
+   * @param <T> new data object type
+   *
+   * @return composed assembler
+   */
+  default <T> @NotNull Assembler<T, P, R> on(@NotNull Function<T, D> f) {
+    return (dto, projection, ctx) -> assemble(f.apply(dto), projection, ctx);
+  }
+
+  /**
+   * Composes a function {@code f} with an assembler by applying {@code f} to the result object
+   * after {@code assemble} call.
+   *
+   * @param f   function to run on the assembly result
+   * @param <T> new assembly result type
+   *
+   * @return composed assembler
+   */
+  default <T> @NotNull Assembler<D, P, T> andThen(@NotNull Function<R, T> f) {
+    return (dto, projection, ctx) -> f.apply(assemble(dto, projection, ctx));
+  }
 }

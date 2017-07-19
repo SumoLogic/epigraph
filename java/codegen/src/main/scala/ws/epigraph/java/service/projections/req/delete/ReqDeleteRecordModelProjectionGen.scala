@@ -19,6 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.{OpDeleteFieldProjectionEntry, OpDeleteRecordModelProjection}
@@ -56,7 +57,7 @@ class ReqDeleteRecordModelProjectionGen(
           ctx
         )
       )
-    }.toMap
+    }.toListMap
 
   override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteRecordModelProjection, normalized: Boolean) =
     new ReqDeleteRecordModelProjectionGen(
