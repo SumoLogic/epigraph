@@ -31,13 +31,13 @@ public final class DataTypeNameAssemblerImpl extends DataTypeNameAssembler<DataT
 
   private DataTypeNameAssemblerImpl() {
     super(
-        TypeNameAssemblerImpl.INSTANCE.on(dtn -> dtn.typeName),
         new TagNameAssembler<>(
             (dtn, p, c) ->
                 Optional.ofNullable(dtn.defaultTagName)
                     .<NameString.Value>map(retro -> NameString.create(retro).asValue())
                     .orElse(NameString.type.createValue(null))
-        )
+        ),
+        TypeNameAssemblerImpl.INSTANCE.on(dtn -> dtn.typeName)
     );
   }
 }

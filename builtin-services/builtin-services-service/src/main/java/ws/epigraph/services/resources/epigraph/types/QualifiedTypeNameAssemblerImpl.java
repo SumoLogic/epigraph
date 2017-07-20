@@ -26,7 +26,7 @@ public final class QualifiedTypeNameAssemblerImpl extends QualifiedTypeNameAssem
   public static final QualifiedTypeNameAssemblerImpl INSTANCE = new QualifiedTypeNameAssemblerImpl();
 
   private QualifiedTypeNameAssemblerImpl() {
-    super(TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER, QualifiedNameAssemblerImpl.INSTANCE);
+    super(QualifiedNameAssemblerImpl.INSTANCE, TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER);
   }
 
 }

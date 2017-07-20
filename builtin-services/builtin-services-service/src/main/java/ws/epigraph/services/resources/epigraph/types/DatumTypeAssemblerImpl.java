@@ -18,8 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection.DatumTypeAssembler;
 import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection.supertypes.DatumType_ListAssembler;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.Type;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -30,16 +29,16 @@ public class DatumTypeAssemblerImpl extends DatumTypeAssembler<DatumTypeApi> {
   public DatumTypeAssemblerImpl() {
     super(
         t -> (Type) t, // type extractor
-        TypeNameAssemblerImpl.INSTANCE.on(DatumTypeApi::name), // name
         TypeAssemblerImpl.ABSTRACT_ASSEMBLER.on(t -> (DatumTypeApi) t), // abstract
         AnnotationsAssemblerImpl.INSTANCE.on(DatumTypeApi::annotations), // annotations
         INSTANCE.on(DatumTypeApi::metaType), // meta
-        new DatumType_ListAssembler<>(DatumTypeApi::supertypes, DatumTypeAssemblerImpl.INSTANCE), // supertypes
+        TypeNameAssemblerImpl.INSTANCE.on(DatumTypeApi::name), // name
+        new DatumType_ListAssembler<>(DatumTypeApi::supertypes, INSTANCE), // supertypes
         //tails
-        null,
-        null,
-        null,
-        null
+        RecordTypeAssemblerImpl.INSTANCE.on(t -> (RecordTypeApi) t), // record
+        MapTypeAssemblerImpl.INSTANCE.on(t -> (MapTypeApi) t), // map
+        ListTypeAssemblerImpl.INSTANCE.on(t -> (ListTypeApi) t), // list
+        PrimitiveTypeAssemblerImpl.INSTANCE.on(t -> (PrimitiveTypeApi) t) // primitive
     );
   }
 }

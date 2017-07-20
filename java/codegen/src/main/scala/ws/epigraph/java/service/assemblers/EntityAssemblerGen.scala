@@ -49,7 +49,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
     val t = lqn2(cType, namespace.toString)
 
-    case class TagParts(tag: CTag, tagGen: ReqOutputProjectionGen) {
+    case class TagParts(tag: CTag, tagGen: ReqOutputProjectionGen) extends Comparable[TagParts] {
       val tagGenName: importManager.ImportedName = importManager.use(tagGen.fullClassName)
 
       val assemblerResultType: importManager.ImportedName = importManager.use(
@@ -74,6 +74,8 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
       def dispatchTagInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
 
       def javadoc: String = s"$fbf {@code $tagName} tag assembler"
+
+      override def compareTo(o: TagParts): Int = tag.name.compareTo(o.tag.name)
     }
 
     def tagGenerators(g: ReqOutputVarProjectionGen): Map[String, (CTag, ReqProjectionGen)] =
@@ -82,9 +84,9 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
     val fps: Seq[TagParts] = tagGenerators(g).map { case (_, (f, fg)) =>
       TagParts(f, fg.asInstanceOf[ReqOutputProjectionGen])
-    }.toSeq
+    }.toSeq.sorted
 
-    case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) {
+    case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) extends Comparable [TailParts] {
       val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
 
       def tt: CType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
@@ -96,11 +98,13 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
       def fbft: String = s"$assembler<? super D, ? super $tailGenName, ? extends $tts>"
 
       def javadoc: String = s"$fbf {@code ${ ln(tt) }} value assembler"
+
+      override def compareTo(o: TailParts): Int = fbf.compareTo(o.fbf)
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
       TailParts(tg.asInstanceOf[ReqOutputVarProjectionGen])
-    }.toSeq
+    }.toSeq//.sorted
     
     val obj = importManager.use("java.lang.Object")
 

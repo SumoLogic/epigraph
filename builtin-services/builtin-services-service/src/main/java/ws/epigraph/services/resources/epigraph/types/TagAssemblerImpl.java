@@ -29,9 +29,9 @@ public final class TagAssemblerImpl extends Tag_Assembler<TagApi> {
 
   private TagAssemblerImpl() {
     super(
-        (tag, projection, ctx) -> TagName.create().setString(NameString.create(tag.name())),
-        DatumTypeAssemblerImpl.INSTANCE.on(TagApi::type),
-        AnnotationsAssemblerImpl.INSTANCE.on(TagApi::annotations)
+        AnnotationsAssemblerImpl.INSTANCE.on(TagApi::annotations),
+    (tag, projection, ctx) -> TagName.create().setString(NameString.create(tag.name())),
+        DatumTypeAssemblerImpl.INSTANCE.on(TagApi::type)
     );
   }
 }

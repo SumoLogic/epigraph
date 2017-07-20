@@ -28,11 +28,11 @@ public final class AnonMapTypeNameAssemblerImpl extends AnonMapTypeNameAssembler
 
   private AnonMapTypeNameAssemblerImpl() {
     super(
-        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER,
         new AnonMapTypeNameRecordAssembler<>(
             TypeNameAssemblerImpl.INSTANCE,
             DataTypeNameAssemblerImpl.INSTANCE.on(tn -> tn.valueTypeName)
-        )
+        ),
+        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER
     );
   }
 }

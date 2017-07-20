@@ -27,8 +27,8 @@ public final class AnonListTypeNameAssemblerImpl extends AnonListTypeNameAssembl
 
   private AnonListTypeNameAssemblerImpl() {
     super(
-        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER,
-        DataTypeNameAssemblerImpl.INSTANCE.on(tn -> tn.elementTypeName)
+        DataTypeNameAssemblerImpl.INSTANCE.on(tn -> tn.elementTypeName),
+        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER
     );
   }
 }

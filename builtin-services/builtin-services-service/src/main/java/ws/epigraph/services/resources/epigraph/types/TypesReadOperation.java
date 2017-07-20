@@ -16,34 +16,30 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.NameString;
 import epigraph.schema.NameString_Type_Map;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.errors.ErrorValue;
+import ws.epigraph.assembly.AssemblerContext;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.services._resources.epigraph.operations.read.types.AbstractReadTypesOperation;
 import ws.epigraph.services._resources.epigraph.operations.read.types.output.OutputEpigraphFieldProjection;
-import ws.epigraph.services._resources.epigraph.operations.read.types.output.OutputNameString_Type_MapKeyProjection;
-import ws.epigraph.services._resources.epigraph.operations.read.types.output.OutputNameString_Type_MapProjection;
 import ws.epigraph.services._resources.epigraph.operations.read.types.path.EpigraphFieldPath;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.OutputType_Projection;
-import ws.epigraph.types.Type;
-import ws.epigraph.util.HttpStatusCode;
+import ws.epigraph.types.TypeApi;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class TypesReadOperation extends AbstractReadTypesOperation {
-  private final @NotNull Map<String, ? extends Type> types;
+  private final @NotNull Map<String, ? extends TypeApi> types;
 
   public TypesReadOperation(
-      final @NotNull ReadOperationDeclaration declaration,
-      @NotNull Map<String, ? extends Type> types) {
+      @NotNull ReadOperationDeclaration declaration,
+      @NotNull Map<String, ? extends TypeApi> types) {
+
     super(declaration);
     this.types = new TreeMap<>(types); // make it sorted
   }
@@ -54,36 +50,13 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       final @NotNull EpigraphFieldPath path,
       final @NotNull OutputEpigraphFieldProjection projection) {
 
-    final OutputNameString_Type_MapProjection typesMapProjection = projection.dataProjection();
-    final OutputType_Projection typeProjection = typesMapProjection.itemsProjection();
-    final List<OutputNameString_Type_MapKeyProjection> keys = typesMapProjection.keys();
-
-    final List<String> typeNames;
-
-    if (keys == null) {
-      typeNames = new ArrayList<>(types.keySet());
-      Collections.sort(typeNames);
-    } else {
-      typeNames = keys.stream().map(k -> k.value().getVal()).collect(Collectors.toList());
-    }
-
-    NameString_Type_Map.Builder typeMapBuilder = NameString_Type_Map.create();
-    builder.set(typeMapBuilder);
-
-//    for (String typeName : typeNames) {
-//      NameString.Imm key = NameString.create(typeName).toImmutable();
-//      final Type type = types.get(typeName);
-//
-//      if (type == null)
-//        typeMapBuilder.putError(
-//            key,
-//            new ErrorValue(HttpStatusCode.NOT_FOUND, "Can't find type '" + typeName + "'")
-//        );
-//      else
-//        typeMapBuilder.put(key, buildType(type, typeProjection, new TypeBuilder.Context()));
-//    }
-
+    builder.set_(NameString_Type_MapAssemblerImpl.INSTANCE.assemble(
+        types,
+        projection.dataProjection(),
+        new AssemblerContext()
+    ));
     return CompletableFuture.completedFuture(builder);
+
   }
 
 }

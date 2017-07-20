@@ -37,10 +37,10 @@ public final class TypeAssemblerImpl extends Type_Assembler<TypeApi> {
   private TypeAssemblerImpl() {
     super(
         t -> (Type) t,  // type extractor
-        TypeNameAssemblerImpl.INSTANCE.on(TypeApi::name), // name
-        new Type_ListAssembler<>(TypeApi::supertypes, TypeAssemblerImpl.INSTANCE), // supertypes
         ABSTRACT_ASSEMBLER, // abstract
         AnnotationsAssemblerImpl.INSTANCE.on(TypeApi::annotations), // annotations
+        TypeNameAssemblerImpl.INSTANCE.on(TypeApi::name), // name
+        new Type_ListAssembler<>(TypeApi::supertypes, TypeAssemblerImpl.INSTANCE), // supertypes
         //tails
         EntityTypeAssembler.INSTANCE.on(t -> (EntityTypeApi) t), // entity
         DatumTypeAssemblerImpl.INSTANCE.on(t -> (DatumTypeApi) t) // datum

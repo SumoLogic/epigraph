@@ -31,9 +31,9 @@ public final class EntityTypeAssembler extends VarTypeAssembler<EntityTypeApi> {
     super(
         TypeAssemblerImpl.ABSTRACT_ASSEMBLER.on(t -> (EntityTypeApi) t), // abstract
         AnnotationsAssemblerImpl.INSTANCE.on(EntityTypeApi::annotations), // annotations
-        new Tag_ListAssembler<>(EntityTypeApi::tags, TagAssemblerImpl.INSTANCE), // tags
         QualifiedTypeNameAssemblerImpl.INSTANCE.on(EntityTypeApi::name), // name
-        new VarType_ListAssembler<>(EntityTypeApi::supertypes, INSTANCE)  // supertypes
+        new VarType_ListAssembler<>(EntityTypeApi::supertypes, INSTANCE),  // supertypes
+        new Tag_ListAssembler<>(EntityTypeApi::tags, TagAssemblerImpl.INSTANCE) // tags
     );
   }
 }

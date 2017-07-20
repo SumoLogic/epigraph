@@ -28,8 +28,8 @@ public final class DataTypeAssemblerImpl extends DataTypeAssembler<DataTypeApi> 
   private DataTypeAssemblerImpl() {
 
     super(
-        TypeAssemblerImpl.INSTANCE.on(DataTypeApi::type),
-        TagAssemblerImpl.INSTANCE.on(DataTypeApi::defaultTag)
+        TagAssemblerImpl.INSTANCE.on(DataTypeApi::defaultTag),
+        TypeAssemblerImpl.INSTANCE.on(DataTypeApi::type)
     );
 
   }

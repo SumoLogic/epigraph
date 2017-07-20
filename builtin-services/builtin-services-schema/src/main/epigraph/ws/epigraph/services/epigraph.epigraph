@@ -110,7 +110,7 @@ resource epigraph: EpigraphResource {
   ) ~ (
     VarType ( tags * $tagProjection ),
     DatumType $datumTypeProjection = (     // datumTypeProjection = typeProjection ~ DatumType
-      // supertypes * $datumTypeProjection // can't merge recursive projections yet
+      // supertypes * $datumTypeProjection // can't merge recursive projections yet. And not needed actually: normalized version will have it as list[DatumType] with $datumTypeProjection for items anyways
       metaType $datumTypeProjection
     ) ~ (
       RecordType (

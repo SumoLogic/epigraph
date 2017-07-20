@@ -16,23 +16,28 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.FieldName;
 import epigraph.schema.NameString;
-import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.Field_Assembler;
-import ws.epigraph.types.FieldApi;
+import ws.epigraph.services._resources.epigraph.operations.read.types.output.NameString_Type_MapAssembler;
+import ws.epigraph.types.TypeApi;
+
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FieldAssemblerImpl extends Field_Assembler<FieldApi> {
-  public static final FieldAssemblerImpl INSTANCE = new FieldAssemblerImpl();
+public final class NameString_Type_MapAssemblerImpl extends NameString_Type_MapAssembler<
+    Map<String, ? extends TypeApi>,
+    String,
+    TypeApi> {
 
-  private FieldAssemblerImpl() {
+  public static final NameString_Type_MapAssemblerImpl INSTANCE = new NameString_Type_MapAssemblerImpl();
+
+  private NameString_Type_MapAssemblerImpl() {
     super(
-        AnnotationsAssemblerImpl.INSTANCE.on(FieldApi::annotations),
-        (f, p, c) -> FieldName.create().setString(NameString.create(f.name())),
-        DataTypeAssemblerImpl.INSTANCE.on(FieldApi::dataType)
+        NameString::create,
+        Function.identity(),
+        TypeAssemblerImpl.INSTANCE
     );
   }
-
 }

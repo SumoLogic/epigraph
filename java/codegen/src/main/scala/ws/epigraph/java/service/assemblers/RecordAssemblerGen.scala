@@ -35,7 +35,7 @@ class RecordAssemblerGen(
 
   import Imports._
 
-  case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) {
+  case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) extends Comparable[FieldParts] {
     def fieldName: String = jn(field.name)
 
     def fieldType: CType = field.typeRef.resolved
@@ -62,6 +62,8 @@ class RecordAssemblerGen(
     def dispatchFieldInit: String = s"if (p.$getter != null) b.$setter($fbf.assemble(dto, p.$getter, ctx));"
 
     def javadoc: String = s"$fbf {@code $fieldName} field assembler"
+
+    override def compareTo(o: FieldParts): Int = field.name.compareTo(o.field.name)
   }
 
   private def fieldGenerators(g: G): Map[String, (CField, ReqOutputFieldProjectionGen)] =
@@ -70,7 +72,7 @@ class RecordAssemblerGen(
 
   private val fps: Seq[FieldParts] = fieldGenerators(g).map { case (_, (f, fg)) =>
     FieldParts(f, fg.dataProjectionGen)
-  }.toSeq
+  }.toSeq.sorted
 
   private val obj = importManager.use("java.lang.Object")
 
