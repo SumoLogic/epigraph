@@ -18,26 +18,26 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
 import ws.epigraph.names.DataTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.DataTypeNameAssembler;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.retrotagname.TagNameAssembler;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.DataTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.retrotagname.TagNameAsm;
 
 import java.util.Optional;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class DataTypeNameAssemblerImpl extends DataTypeNameAssembler<DataTypeName> {
-  public static final DataTypeNameAssemblerImpl INSTANCE = new DataTypeNameAssemblerImpl();
+public final class DataTypeNameAsmImpl extends DataTypeNameAsm<DataTypeName> {
+  public static final DataTypeNameAsmImpl INSTANCE = new DataTypeNameAsmImpl();
 
-  private DataTypeNameAssemblerImpl() {
+  private DataTypeNameAsmImpl() {
     super(
-        new TagNameAssembler<>(
+        new TagNameAsm<>(
             (dtn, p, c) ->
                 Optional.ofNullable(dtn.defaultTagName)
                     .<NameString.Value>map(retro -> NameString.create(retro).asValue())
                     .orElse(NameString.type.createValue(null))
         ),
-        TypeNameAssemblerImpl.INSTANCE.on(dtn -> dtn.typeName)
+        TypeNameAsmImpl.INSTANCE.on(dtn -> dtn.typeName)
     );
   }
 }

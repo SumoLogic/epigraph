@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CMapType
-import ws.epigraph.java.service.assemblers.MapAssemblerGen
+import ws.epigraph.java.service.assemblers.MapAsmGen
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
@@ -85,7 +85,7 @@ class ReqOutputMapModelProjectionGen(
     }
 
 
-  override def children: Iterable[JavaGen] = super.children ++ Iterable(new MapAssemblerGen(this, ctx))
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(new MapAsmGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),

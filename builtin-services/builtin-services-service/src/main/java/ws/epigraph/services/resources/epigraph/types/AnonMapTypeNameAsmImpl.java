@@ -17,22 +17,22 @@
 package ws.epigraph.services.resources.epigraph.types;
 
 import ws.epigraph.names.AnonMapTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.AnonMapTypeNameAssembler;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.record.AnonMapTypeNameRecordAssembler;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.AnonMapTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.record.AnonMapTypeNameRecordAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class AnonMapTypeNameAssemblerImpl extends AnonMapTypeNameAssembler<AnonMapTypeName> {
-  public static final AnonMapTypeNameAssemblerImpl INSTANCE = new AnonMapTypeNameAssemblerImpl();
+public final class AnonMapTypeNameAsmImpl extends AnonMapTypeNameAsm<AnonMapTypeName> {
+  public static final AnonMapTypeNameAsmImpl INSTANCE = new AnonMapTypeNameAsmImpl();
 
-  private AnonMapTypeNameAssemblerImpl() {
+  private AnonMapTypeNameAsmImpl() {
     super(
-        new AnonMapTypeNameRecordAssembler<>(
-            TypeNameAssemblerImpl.INSTANCE,
-            DataTypeNameAssemblerImpl.INSTANCE.on(tn -> tn.valueTypeName)
+        new AnonMapTypeNameRecordAsm<>(
+            TypeNameAsmImpl.INSTANCE,
+            DataTypeNameAsmImpl.INSTANCE.on(tn -> tn.valueTypeName)
         ),
-        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER
+        TypeNameAsmImpl.TYPE_NAME_ASM
     );
   }
 }

@@ -18,7 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString_Type_Map;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.assembly.AssemblerContext;
+import ws.epigraph.assembly.AsmContext;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.services._resources.epigraph.operations.read.types.AbstractReadTypesOperation;
 import ws.epigraph.services._resources.epigraph.operations.read.types.output.OutputEpigraphFieldProjection;
@@ -50,10 +50,10 @@ public class TypesReadOperation extends AbstractReadTypesOperation {
       final @NotNull EpigraphFieldPath path,
       final @NotNull OutputEpigraphFieldProjection projection) {
 
-    builder.set_(NameString_Type_MapAssemblerImpl.INSTANCE.assemble(
+    builder.set_(NameString_Type_MapAsmImpl.INSTANCE.assemble(
         types,
         projection.dataProjection(),
-        new AssemblerContext()
+        new AsmContext()
     ));
     return CompletableFuture.completedFuture(builder);
 

@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.service.assemblers.RecordAssemblerGen
+import ws.epigraph.java.service.assemblers.RecordAsmGen
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
@@ -87,7 +87,7 @@ class ReqOutputRecordModelProjectionGen(
       override protected val buildNormalizedTails: Boolean = normalized
     }
 
-  lazy val assemblerGen = new RecordAssemblerGen(this, ctx)
+  lazy val assemblerGen = new RecordAsmGen(this, ctx)
 
   override lazy val children: Iterable[JavaGen] =
     if (fieldGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/ ) super.children

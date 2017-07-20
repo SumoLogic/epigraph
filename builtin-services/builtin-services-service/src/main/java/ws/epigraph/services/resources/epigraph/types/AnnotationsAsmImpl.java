@@ -16,22 +16,22 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.NameString;
-import epigraph.schema.TagName;
-import ws.epigraph.services._resources.epigraph.projections.output.tagprojection.Tag_Assembler;
-import ws.epigraph.types.TagApi;
+import ws.epigraph.annotations.Annotation;
+import ws.epigraph.annotations.Annotations;
+import ws.epigraph.lang.Qn;
+import ws.epigraph.services._resources.epigraph.projections.output.annotationsprojection.AnnotationsAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class TagAssemblerImpl extends Tag_Assembler<TagApi> {
-  public static final TagAssemblerImpl INSTANCE = new TagAssemblerImpl();
+public class AnnotationsAsmImpl extends AnnotationsAsm<Annotations, Qn, Annotation> {
+  public static final AnnotationsAsmImpl INSTANCE = new AnnotationsAsmImpl();
 
-  private TagAssemblerImpl() {
+  private AnnotationsAsmImpl() {
     super(
-        AnnotationsAssemblerImpl.INSTANCE.on(TagApi::annotations),
-    (tag, projection, ctx) -> TagName.create().setString(NameString.create(tag.name())),
-        DatumTypeAssemblerImpl.INSTANCE.on(TagApi::type)
+        null,
+        null,
+        null
     );
   }
 }

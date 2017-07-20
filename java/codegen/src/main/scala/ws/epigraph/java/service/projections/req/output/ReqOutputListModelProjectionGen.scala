@@ -16,7 +16,7 @@
 
 package ws.epigraph.java.service.projections.req.output
 
-import ws.epigraph.java.service.assemblers.ListAssemblerGen
+import ws.epigraph.java.service.assemblers.ListAsmGen
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
@@ -71,7 +71,7 @@ class ReqOutputListModelProjectionGen(
       override protected val buildNormalizedTails: Boolean = normalized
     }
 
-  override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAssemblerGen(this, ctx))
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAsmGen(this, ctx))
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputListModelProjection"),

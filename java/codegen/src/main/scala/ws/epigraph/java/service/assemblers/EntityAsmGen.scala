@@ -29,12 +29,12 @@ import ws.epigraph.lang.Qn
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends AssemblerGen {
+class EntityAsmGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends AsmGen {
   val cType: CType = JavaGenUtils.toCType(g.op.`type`())
 
   override protected def namespace: Qn = g.namespace
 
-  override protected val shortClassName: String = ln(cType) + "Assembler"
+  override protected val shortClassName: String = ln(cType) + "Asm"
 
   override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
@@ -63,9 +63,9 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       def tagType: CType = tag.typeRef.resolved
 
-      def tagAssemblerType: String = s"$assembler<? super D, ? super $tagGenName, ? extends $assemblerResultType.Value>"
+      def tagAsmType: String = s"$assembler<? super D, ? super $tagGenName, ? extends $assemblerResultType.Value>"
 
-      def fbf: String = tag.name + "Assembler"
+      def fbf: String = tag.name + "Asm"
 
       def getter: String = tagName + "()"
 
@@ -93,7 +93,7 @@ class EntityAssemblerGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) exte
 
       val tts: importManager.ImportedName = importManager.use(lqn2(tt, g.namespace.toString))
 
-      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Assembler"
+      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Asm"
 
       def fbft: String = s"$assembler<? super D, ? super $tailGenName, ? extends $tts>"
 
@@ -144,17 +144,17 @@ package ${g.namespace};
 ${JavaGenUtils.generateImports(importManager.imports)}
 
 /**
- * Assembler for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
+ * Asm for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D> implements $assembler<D, $notNull $projectionName, $notNull $t> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   //tag assemblers
-${fps.map { fp => s"  private final $notNull ${fp.tagAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+${fps.map { fp => s"  private final $notNull ${fp.tagAsmType} ${fp.fbf};"}.mkString("\n") }\
 ${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
-   * Assembler constructor
+   * Asm constructor
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
 ${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
@@ -162,7 +162,7 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
    */
   public $shortClassName(
 ${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    $notNull ${fp.tagAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
+${fps.map { fp => s"    $notNull ${fp.tagAsmType} ${fp.fbf}"}.mkString(",\n") }\
 ${if (hasTails) tps.map { tp => s"    $notNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\

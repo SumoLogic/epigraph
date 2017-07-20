@@ -16,21 +16,26 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.DataTypeAssembler;
-import ws.epigraph.types.DataTypeApi;
+import epigraph.schema.NameString;
+import ws.epigraph.services._resources.epigraph.operations.read.types.output.NameString_Type_MapAsm;
+import ws.epigraph.types.TypeApi;
+
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class DataTypeAssemblerImpl extends DataTypeAssembler<DataTypeApi> {
-  public static final DataTypeAssemblerImpl INSTANCE = new DataTypeAssemblerImpl();
+public final class NameString_Type_MapAsmImpl
+    extends NameString_Type_MapAsm<Map<String, ? extends TypeApi>, String, TypeApi> {
 
-  private DataTypeAssemblerImpl() {
+  public static final NameString_Type_MapAsmImpl INSTANCE = new NameString_Type_MapAsmImpl();
 
+  private NameString_Type_MapAsmImpl() {
     super(
-        TagAssemblerImpl.INSTANCE.on(DataTypeApi::defaultTag),
-        TypeAssemblerImpl.INSTANCE.on(DataTypeApi::type)
+        NameString::create,
+        Function.identity(),
+        TypeAsmImpl.INSTANCE
     );
-
   }
 }

@@ -22,7 +22,7 @@ import ws.epigraph.lang.Qn
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait AssemblerGen extends JavaGen {
+trait AsmGen extends JavaGen {
   protected def namespace: Qn
   protected def shortClassName: String
 
@@ -34,8 +34,8 @@ trait AssemblerGen extends JavaGen {
     val nullable: ImportManager.Imported =
       if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.Nullable").prepend("@") else ImportManager.empty
     val func: ImportManager.Imported = importManager.use("java.util.function.Function")
-    val assembler: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Assembler")
-    val assemblerContext: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AssemblerContext")
+    val assembler: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Asm")
+    val assemblerContext: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AsmContext")
     val _type: ImportManager.Imported = importManager.use("ws.epigraph.types.Type")
     val errValue: ImportManager.Imported = importManager.use("ws.epigraph.errors.ErrorValue")
   }

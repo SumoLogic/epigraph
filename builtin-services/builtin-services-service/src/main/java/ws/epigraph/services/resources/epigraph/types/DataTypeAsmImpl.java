@@ -16,17 +16,21 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.names.QualifiedTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.QualifiedTypeNameAssembler;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.DataTypeAsm;
+import ws.epigraph.types.DataTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class QualifiedTypeNameAssemblerImpl extends QualifiedTypeNameAssembler<QualifiedTypeName> {
-  public static final QualifiedTypeNameAssemblerImpl INSTANCE = new QualifiedTypeNameAssemblerImpl();
+public final class DataTypeAsmImpl extends DataTypeAsm<DataTypeApi> {
+  public static final DataTypeAsmImpl INSTANCE = new DataTypeAsmImpl();
 
-  private QualifiedTypeNameAssemblerImpl() {
-    super(QualifiedNameAssemblerImpl.INSTANCE, TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER);
+  private DataTypeAsmImpl() {
+
+    super(
+        TagAsmImpl.INSTANCE.on(DataTypeApi::defaultTag),
+        TypeAsmImpl.INSTANCE.on(DataTypeApi::type)
+    );
+
   }
-
 }

@@ -16,23 +16,19 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.FieldName;
-import epigraph.schema.NameString;
-import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.Field_Assembler;
-import ws.epigraph.types.FieldApi;
+import ws.epigraph.names.AnonListTypeName;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonlisttypename.AnonListTypeNameAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class FieldAssemblerImpl extends Field_Assembler<FieldApi> {
-  public static final FieldAssemblerImpl INSTANCE = new FieldAssemblerImpl();
+public final class AnonListTypeNameAsmImpl extends AnonListTypeNameAsm<AnonListTypeName> {
+  public static final AnonListTypeNameAsmImpl INSTANCE = new AnonListTypeNameAsmImpl();
 
-  private FieldAssemblerImpl() {
+  private AnonListTypeNameAsmImpl() {
     super(
-        AnnotationsAssemblerImpl.INSTANCE.on(FieldApi::annotations),
-        (f, p, c) -> FieldName.create().setString(NameString.create(f.name())),
-        DataTypeAssemblerImpl.INSTANCE.on(FieldApi::dataType)
+        DataTypeNameAsmImpl.INSTANCE.on(tn -> tn.elementTypeName),
+        TypeNameAsmImpl.TYPE_NAME_ASM
     );
   }
-
 }

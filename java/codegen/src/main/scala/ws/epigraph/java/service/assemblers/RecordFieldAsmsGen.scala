@@ -29,7 +29,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class RecordFieldAssemblersGen(
+class RecordFieldAsmsGen(
   projectionGen: ReqOutputRecordModelProjectionGen,
   override val ctx: GenContext) extends JavaGen {
 
@@ -37,7 +37,7 @@ class RecordFieldAssemblersGen(
 
   private val cType: CDatumType = JavaGenUtils.toCType(projectionGen.op.`type`())
 
-  val shortClassName: String = ln(cType) + "FieldAssemblers"
+  val shortClassName: String = ln(cType) + "FieldAsms"
 
   val fullClassName: String = namespace.append(shortClassName).toString
 
@@ -50,8 +50,8 @@ class RecordFieldAssemblersGen(
 
     def isEntity: Boolean = fieldType.kind == CTypeKind.ENTITY
 
-    //def assemblerType: String = s"Assembler<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
-    def assemblerType: String = s"Assembler<D, ${ fieldGen.fullClassName }, ? extends ${
+    //def assemblerType: String = s"Asm<? super D, ? super ${ fieldGen.fullClassName }, ? extends ${
+    def assemblerType: String = s"Asm<D, ${ fieldGen.fullClassName }, ? extends ${
       lqn2(
         fieldType,
         namespace.toString
@@ -70,8 +70,8 @@ class RecordFieldAssemblersGen(
 
 
   override protected def generate: String = {
-    val parentGenOpt: Option[RecordFieldAssemblersGen] = projectionGen
-      .parentClassGenOpt.map(_.asInstanceOf[ReqOutputRecordModelProjectionGen].assemblerGen.asInstanceOf[RecordAssemblerGen2].fieldAssemblersGen) // second `asInstanceOf` can be removed after switching to RecordAssemblerGen2
+    val parentGenOpt: Option[RecordFieldAsmsGen] = projectionGen
+      .parentClassGenOpt.map(_.asInstanceOf[ReqOutputRecordModelProjectionGen].assemblerGen.asInstanceOf[RecordAsmGen2].fieldAsmsGen) // second `asInstanceOf` can be removed after switching to RecordAsmGen2
 
     val extendsClause = parentGenOpt.map(pg => "extends " + pg.fullClassName + "<D> ").getOrElse("")
 
@@ -81,7 +81,7 @@ class RecordFieldAssemblersGen(
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
-      "ws.epigraph.assembly.Assembler"
+      "ws.epigraph.assembly.Asm"
     )
 
     /*@formatter:off*/sn"""\

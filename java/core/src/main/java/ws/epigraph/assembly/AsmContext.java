@@ -27,7 +27,7 @@ import java.util.Objects;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class AssemblerContext {
+public final class AsmContext {
   public final Map<Key, Object> visited = new HashMap<>();
 
   public static final class Key {

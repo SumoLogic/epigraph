@@ -25,9 +25,9 @@ import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ListAssemblerGen(
+class ListAsmGen(
   override protected val g: ReqOutputListModelProjectionGen,
-  val ctx: GenContext) extends JavaGen with ModelAssemblerGen {
+  val ctx: GenContext) extends JavaGen with ModelAsmGen {
 
   override protected type G = ReqOutputListModelProjectionGen
 
@@ -59,9 +59,9 @@ else {
   $elementGenName itemsProjection = p.itemsProjection();
   $iterable<? extends I> items = itemsExtractor.apply(dto);
   for (I item: items) {
-    b.add${if (isEntity) "" else "_"}(itemAssembler.assemble(item, itemsProjection, ctx));
+    b.add${if (isEntity) "" else "_"}(itemAsm.assemble(item, itemsProjection, ctx));
   }
-${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" else ""}\
+${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
   return b.asValue();
 }
 """/*@formatter:on*/
@@ -72,7 +72,7 @@ ${if (hasMeta) s"  b.setMeta(metaAssembler.assemble(dto, p.meta(), ctx));\n" els
 
     closeImports()
 
-    val itemAssemblerType = s"$assembler<I, $elementGenName, /*$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
+    val itemAsmType = s"$assembler<I, $elementGenName, /*$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -87,31 +87,31 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D, I> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   private final $notNull $func<D, $iterable<? extends I>> itemsExtractor;
-  private final $notNull $itemAssemblerType itemAssembler;
+  private final $notNull $itemAsmType itemAsm;
 ${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
-${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAssemblerType metaAssembler;" else ""}
+${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaAsm;" else ""}
 
   /**
-   * Assembler constructor
+   * Asm constructor
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
    * @param itemsExtractor items extractor
-   * @param itemAssembler items assembler\
+   * @param itemAsm items assembler\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }\
-${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
+${if (hasMeta) s"\n   * @param metaAsm metadata assembler" else ""}
    */
   public $shortClassName(
 ${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
     $notNull $func<D, $iterable<? extends I>> itemsExtractor,
-    $notNull $itemAssemblerType itemAssembler\
+    $notNull $itemAsmType itemAsm\
 ${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
-${if (hasMeta) s",\n    $notNull $metaAssemblerType metaAssembler" else ""}
+${if (hasMeta) s",\n    $notNull $metaAsmType metaAsm" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
     this.itemsExtractor = itemsExtractor;
-    this.itemAssembler = itemAssembler;\
+    this.itemAsm = itemAsm;\
 ${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
-${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}
+${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
   }
 
   /**

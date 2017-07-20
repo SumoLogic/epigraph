@@ -16,22 +16,17 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import epigraph.schema.NameString;
-import ws.epigraph.names.QualifiedName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.name.QualifiedNameAssembler;
-
-import java.util.Arrays;
+import ws.epigraph.names.QualifiedTypeName;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.QualifiedTypeNameAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class QualifiedNameAssemblerImpl extends QualifiedNameAssembler<QualifiedName, String> {
-  public static final QualifiedNameAssemblerImpl INSTANCE = new QualifiedNameAssemblerImpl();
+public final class QualifiedTypeNameAsmImpl extends QualifiedTypeNameAsm<QualifiedTypeName> {
+  public static final QualifiedTypeNameAsmImpl INSTANCE = new QualifiedTypeNameAsmImpl();
 
-  private QualifiedNameAssemblerImpl() {
-    super(
-        qn -> Arrays.asList(qn.toFqn().segments),
-        (d, p, c) -> NameString.create(d).asValue()
-    );
+  private QualifiedTypeNameAsmImpl() {
+    super(QualifiedNameAsmImpl.INSTANCE, TypeNameAsmImpl.TYPE_NAME_ASM);
   }
+
 }

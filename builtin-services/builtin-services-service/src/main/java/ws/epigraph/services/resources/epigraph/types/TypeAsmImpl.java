@@ -16,10 +16,11 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.assembly.Assembler;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.Type_Assembler;
+import epigraph.Boolean;
+import ws.epigraph.assembly.Asm;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.Type_Asm;
 import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.abstract_.OutputBooleanProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.supertypes.Type_ListAssembler;
+import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.supertypes.Type_ListAsm;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.EntityTypeApi;
 import ws.epigraph.types.Type;
@@ -28,22 +29,22 @@ import ws.epigraph.types.TypeApi;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class TypeAssemblerImpl extends Type_Assembler<TypeApi> {
-  public static final TypeAssemblerImpl INSTANCE = new TypeAssemblerImpl();
+public final class TypeAsmImpl extends Type_Asm<TypeApi> {
+  public static final TypeAsmImpl INSTANCE = new TypeAsmImpl();
 
-  public static final Assembler<TypeApi, OutputBooleanProjection, epigraph.Boolean.Value> ABSTRACT_ASSEMBLER =
+  public static final Asm<TypeApi, OutputBooleanProjection, Boolean.Value> ABSTRACT_ASM =
       (t, p, c) -> epigraph.Boolean.create(/*t.isAbstract()*/ false).asValue(); // todo
 
-  private TypeAssemblerImpl() {
+  private TypeAsmImpl() {
     super(
         t -> (Type) t,  // type extractor
-        ABSTRACT_ASSEMBLER, // abstract
-        AnnotationsAssemblerImpl.INSTANCE.on(TypeApi::annotations), // annotations
-        TypeNameAssemblerImpl.INSTANCE.on(TypeApi::name), // name
-        new Type_ListAssembler<>(TypeApi::supertypes, TypeAssemblerImpl.INSTANCE), // supertypes
+        ABSTRACT_ASM, // abstract
+        AnnotationsAsmImpl.INSTANCE.on(TypeApi::annotations), // annotations
+        TypeNameAsmImpl.INSTANCE.on(TypeApi::name), // name
+        new Type_ListAsm<>(TypeApi::supertypes, TypeAsmImpl.INSTANCE), // supertypes
         //tails
-        EntityTypeAssembler.INSTANCE.on(t -> (EntityTypeApi) t), // entity
-        DatumTypeAssemblerImpl.INSTANCE.on(t -> (DatumTypeApi) t) // datum
+        EntityTypeAsm.INSTANCE.on(t -> (EntityTypeApi) t), // entity
+        DatumTypeAsmImpl.INSTANCE.on(t -> (DatumTypeApi) t) // datum
     );
   }
 }

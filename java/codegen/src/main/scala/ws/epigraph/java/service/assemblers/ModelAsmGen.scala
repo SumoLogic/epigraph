@@ -32,7 +32,7 @@ import ws.epigraph.types.DatumTypeApi
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ModelAssemblerGen extends AssemblerGen {
+trait ModelAsmGen extends AsmGen {
   protected type G <: ReqOutputModelProjectionGen
 
   protected def g: G
@@ -43,7 +43,7 @@ trait ModelAssemblerGen extends AssemblerGen {
 
   protected val cType: CDatumType = JavaGenUtils.toCType(g.op.`type`())
 
-  override protected val shortClassName: String = ln(cType) + "Assembler"
+  override protected val shortClassName: String = ln(cType) + "Asm"
 
   override def relativeFilePath: Path = JavaGenUtils.fqnToPath(g.namespace).resolve(shortClassName + ".java")
 
@@ -60,7 +60,7 @@ trait ModelAssemblerGen extends AssemblerGen {
 
     val tailResultType: importManager.ImportedName = importManager.use(lqn2(`type`, nsString))
 
-    def assembler: String = JavaGenUtils.lo(ln(`type`)) + "Assembler"
+    def assembler: String = JavaGenUtils.lo(ln(`type`)) + "Asm"
 
     def assemblerType: String = s"${ Imports.assembler }<? super D, ? super $tailGenName, ? extends $tailResultType.Value>"
 
@@ -103,7 +103,7 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
     )
   )
 
-  protected lazy val metaAssemblerType: String = s"${ Imports.assembler }<? super D, ? super ${ metaGeneratorNameOpt.get }, ? extends ${
+  protected lazy val metaAsmType: String = s"${ Imports.assembler }<? super D, ? super ${ metaGeneratorNameOpt.get }, ? extends ${
     lqn2(
       metaCType,
       g.namespace.toString

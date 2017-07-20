@@ -27,7 +27,7 @@ import java.util.function.Function;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @FunctionalInterface
-public interface Assembler<D, P, R> {
+public interface Asm<D, P, R> {
   /**
    * Assembles Epigraph data instance
    *
@@ -37,7 +37,7 @@ public interface Assembler<D, P, R> {
    *
    * @return Epigraph data
    */
-  @NotNull R assemble(@NotNull D dto, @NotNull P projection, @NotNull AssemblerContext ctx);
+  @NotNull R assemble(@NotNull D dto, @NotNull P projection, @NotNull AsmContext ctx);
 
   /**
    * Composes a function {@code f} with an assembler by applying {@code f} to the data object
@@ -48,7 +48,7 @@ public interface Assembler<D, P, R> {
    *
    * @return composed assembler
    */
-  default <T> @NotNull Assembler<T, P, R> on(@NotNull Function<T, D> f) {
+  default <T> @NotNull Asm<T, P, R> on(@NotNull Function<T, D> f) {
     return (dto, projection, ctx) -> assemble(f.apply(dto), projection, ctx);
   }
 
@@ -61,7 +61,7 @@ public interface Assembler<D, P, R> {
    *
    * @return composed assembler
    */
-  default <T> @NotNull Assembler<D, P, T> andThen(@NotNull Function<R, T> f) {
+  default <T> @NotNull Asm<D, P, T> andThen(@NotNull Function<R, T> f) {
     return (dto, projection, ctx) -> f.apply(assemble(dto, projection, ctx));
   }
 }

@@ -16,19 +16,22 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.names.AnonListTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonlisttypename.AnonListTypeNameAssembler;
+import epigraph.schema.NameString;
+import ws.epigraph.names.QualifiedName;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.name.QualifiedNameAsm;
+
+import java.util.Arrays;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class AnonListTypeNameAssemblerImpl extends AnonListTypeNameAssembler<AnonListTypeName> {
-  public static final AnonListTypeNameAssemblerImpl INSTANCE = new AnonListTypeNameAssemblerImpl();
+public final class QualifiedNameAsmImpl extends QualifiedNameAsm<QualifiedName, String> {
+  public static final QualifiedNameAsmImpl INSTANCE = new QualifiedNameAsmImpl();
 
-  private AnonListTypeNameAssemblerImpl() {
+  private QualifiedNameAsmImpl() {
     super(
-        DataTypeNameAssemblerImpl.INSTANCE.on(tn -> tn.elementTypeName),
-        TypeNameAssemblerImpl.TYPE_NAME_ASSEMBLER
+        qn -> Arrays.asList(qn.toFqn().segments),
+        (d, p, c) -> NameString.create(d).asValue()
     );
   }
 }

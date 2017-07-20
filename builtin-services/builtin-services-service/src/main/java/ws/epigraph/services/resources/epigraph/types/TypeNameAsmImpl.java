@@ -17,24 +17,24 @@
 package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
-import ws.epigraph.assembly.Assembler;
+import ws.epigraph.assembly.Asm;
 import ws.epigraph.names.AnonListTypeName;
 import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.TypeNameAssembler;
+import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.TypeNameAsm;
 import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.string.OutputNameStringProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class TypeNameAssemblerImpl extends TypeNameAssembler<TypeName> {
-  public static final TypeNameAssemblerImpl INSTANCE = new TypeNameAssemblerImpl();
+public final class TypeNameAsmImpl extends TypeNameAsm<TypeName> {
+  public static final TypeNameAsmImpl INSTANCE = new TypeNameAsmImpl();
 
-  public static final Assembler<TypeName, OutputNameStringProjection, NameString.Value> TYPE_NAME_ASSEMBLER =
+  public static final Asm<TypeName, OutputNameStringProjection, NameString.Value> TYPE_NAME_ASM =
       (d, p, c) -> NameString.create(d.toString()).asValue();
 
-  private TypeNameAssemblerImpl() {
+  private TypeNameAsmImpl() {
     super(
         tn -> {
           if (tn instanceof QualifiedTypeName) return epigraph.schema.QualifiedTypeName.type;
@@ -42,10 +42,10 @@ public final class TypeNameAssemblerImpl extends TypeNameAssembler<TypeName> {
           else if (tn instanceof AnonMapTypeName) return epigraph.schema.AnonMapTypeName.type;
           else throw new IllegalArgumentException(tn.getClass().getName());
         },
-        TYPE_NAME_ASSEMBLER,
-        QualifiedTypeNameAssemblerImpl.INSTANCE.on(tn -> (QualifiedTypeName) tn),
-        AnonListTypeNameAssemblerImpl.INSTANCE.on(tn -> (AnonListTypeName) tn),
-        AnonMapTypeNameAssemblerImpl.INSTANCE.on(tn -> (AnonMapTypeName) tn)
+        TYPE_NAME_ASM,
+        QualifiedTypeNameAsmImpl.INSTANCE.on(tn -> (QualifiedTypeName) tn),
+        AnonListTypeNameAsmImpl.INSTANCE.on(tn -> (AnonListTypeName) tn),
+        AnonMapTypeNameAsmImpl.INSTANCE.on(tn -> (AnonMapTypeName) tn)
     );
   }
 
