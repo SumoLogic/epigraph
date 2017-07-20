@@ -138,3 +138,7 @@
 - See [IDEA plugin todo](idea-plugin/todo.md)
 - See [IDEA plugin bugs](idea-plugin/bugs.md)
 - See `**/issues.md`
+
+# Unsorted Things From Chris
+- https://sumologic.slack.com/archives/C2PN5GQS1/p1500590191278104 - If you give a `resource`'s `outputProjection` a Record or a `*` instead of a list of fields, it fails to compile.  IntelliJ does not highlight this
+- https://sumologic.slack.com/archives/C2PN5GQS1/p1500590236292212 - The blue font in the compilation error is very difficult to read on the default iTerm theme (black background) 
