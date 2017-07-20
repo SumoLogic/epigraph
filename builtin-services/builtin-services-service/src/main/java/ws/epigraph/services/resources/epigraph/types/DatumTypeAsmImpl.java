@@ -16,19 +16,37 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection.DatumTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection.supertypes.DatumType_ListAsm;
+import epigraph.schema.DatumType;
+import ws.epigraph.assembly.Asm;
+import ws.epigraph.assembly.LazyAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype.DatumTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype.OutputDatumTypeProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype.supertypes.DatumType_ListAsm;
 import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DatumTypeAsmImpl extends DatumTypeAsm<DatumTypeApi> {
-  public static final DatumTypeAsmImpl INSTANCE = new DatumTypeAsmImpl();
+  public static final Asm<DatumTypeApi, OutputDatumTypeProjection, DatumType.Value> INSTANCE =
+      new LazyAsm<>(DatumTypeAsmImpl::new);
 
   public DatumTypeAsmImpl() {
     super(
-        t -> (Type) t, // type extractor
+        t -> {
+          switch (t.kind()) {
+            case RECORD:
+              return epigraph.schema.RecordType.type;
+            case MAP:
+              return epigraph.schema.MapType.type;
+            case LIST:
+              return epigraph.schema.ListType.type;
+            case PRIMITIVE:
+              return epigraph.schema.PrimitiveType.type;
+            default:
+              throw new RuntimeException("unknown kind: " + t.kind());
+          }
+        },
         TypeAsmImpl.ABSTRACT_ASM.on(t -> (DatumTypeApi) t), // abstract
         AnnotationsAsmImpl.INSTANCE.on(DatumTypeApi::annotations), // annotations
         INSTANCE.on(DatumTypeApi::metaType), // meta

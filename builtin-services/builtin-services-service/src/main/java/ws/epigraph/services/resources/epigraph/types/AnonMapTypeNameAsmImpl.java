@@ -17,8 +17,8 @@
 package ws.epigraph.services.resources.epigraph.types;
 
 import ws.epigraph.names.AnonMapTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.AnonMapTypeNameAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonmaptypename.record.AnonMapTypeNameRecordAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename._nt.anonmaptypename.AnonMapTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename._nt.anonmaptypename.record.AnonMapTypeNameRecordAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

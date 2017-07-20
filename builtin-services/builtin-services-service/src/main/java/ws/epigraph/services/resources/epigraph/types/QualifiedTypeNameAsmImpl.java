@@ -17,7 +17,7 @@
 package ws.epigraph.services.resources.epigraph.types;
 
 import ws.epigraph.names.QualifiedTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.QualifiedTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename._nt.qualifiedtypename.QualifiedTypeNameAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

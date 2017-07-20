@@ -16,8 +16,8 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.listtype.ListTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.listtype.supertypes.ListType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.listtype.ListTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.listtype.supertypes.ListType_ListAsm;
 import ws.epigraph.types.ListTypeApi;
 
 /**

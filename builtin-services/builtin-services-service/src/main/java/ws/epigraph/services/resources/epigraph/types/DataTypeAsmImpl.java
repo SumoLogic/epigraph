@@ -16,7 +16,7 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datatypeprojection.DataTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datatype.DataTypeAsm;
 import ws.epigraph.types.DataTypeApi;
 
 /**

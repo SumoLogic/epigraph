@@ -16,8 +16,8 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.primitivetype.PrimitiveTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.primitivetype.supertypes.PrimitiveType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.primitivetype.PrimitiveTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.primitivetype.supertypes.PrimitiveType_ListAsm;
 import ws.epigraph.types.PrimitiveTypeApi;
 
 /**

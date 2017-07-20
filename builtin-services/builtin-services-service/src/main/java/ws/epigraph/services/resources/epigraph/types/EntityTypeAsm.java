@@ -16,9 +16,9 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.VarTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.supertypes.VarType_ListAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection._nt.vartype.tags.Tag_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.VarTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.supertypes.VarType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.tags.Tag_ListAsm;
 import ws.epigraph.types.EntityTypeApi;
 
 /**

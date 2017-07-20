@@ -42,34 +42,34 @@ resource epigraph: EpigraphResource {
 
   // data
 
-  outputProjection valueProjection: Value = (
-    data $datumProjection,
+  outputProjection value: Value = (
+    data $datum,
     error (statusCode, message, exception)
   )
 
-  outputProjection dataProjection: Data = ( type $typeProjection ) ~ (
-    EntityData $entityDataProjection,
-    Datum $datumProjection
+  outputProjection data: Data = ( type $type ) ~ (
+    EntityData $entityData,
+    Datum $datum
   )
 
-  outputProjection entityDataProjection: EntityData = (
-    tags [] ($dataProjection)
+  outputProjection entityData: EntityData = (
+    tags [] ($data)
   )
 
-  outputProjection datumProjection: Datum = ( type $datumTypeProjection )  ~ (
-    RecordDatum $recordDatumProjection,
-    MapDatum $mapDatumProjection,
-    ListDatum $listDatumProjection,
-    PrimitiveDatum $primitiveDatumProjection
+  outputProjection datum: Datum = ( type $datumType )  ~ (
+    RecordDatum $recordDatum,
+    MapDatum $mapDatum,
+    ListDatum $listDatum,
+    PrimitiveDatum $primitiveDatum
   )
 
-  outputProjection recordDatumProjection: RecordDatum = ( fields [] ( $valueProjection ) )
+  outputProjection recordDatum: RecordDatum = ( fields [] ( $value ) )
 
-  outputProjection mapDatumProjection: MapDatum = ( entries [] ( $valueProjection ) )
+  outputProjection mapDatum: MapDatum = ( entries [] ( $value ) )
 
-  outputProjection listDatumProjection: ListDatum = ( entries * ( $valueProjection ) )
+  outputProjection listDatum: ListDatum = ( entries * ( $value ) )
 
-  outputProjection primitiveDatumProjection: PrimitiveDatum = () ~ (
+  outputProjection primitiveDatum: PrimitiveDatum = () ~ (
     StringDatum (value),
     IntegerDatum (value),
     LongDatum (value),
@@ -81,74 +81,74 @@ resource epigraph: EpigraphResource {
 
   // annotations
 
-  outputProjection annotationsProjection: Annotations = [] (
-    type $datumTypeProjection,
-    value $datumProjection
+  outputProjection annotations: Annotations = [] (
+    type $datumType,
+    value $datum
   )
 
   // types
 
-  outputProjection typeNameProjection: TypeName = :`string` ~~ (
+  outputProjection typeName: TypeName = :`string` ~~ (
     QualifiedTypeName :name,
-    AnonListTypeName :elementTypeName $dataTypeNameProjection,
+    AnonListTypeName :elementTypeName $dataTypeName,
     AnonMapTypeName :`record`(
-      keyTypeName $typeNameProjection,
-      valueTypeName $dataTypeNameProjection
+      keyTypeName $typeName,
+      valueTypeName $dataTypeName
     )
   )
 
-  outputProjection dataTypeNameProjection: DataTypeName = (
-    typeName $typeNameProjection,
+  outputProjection dataTypeName: DataTypeName = (
+    typeName $typeName,
     retroTagName :`string`
   )
 
-  outputProjection typeProjection: Type = (
-    name $typeNameProjection,
-    supertypes * $typeProjection,
+  outputProjection type: Type = (
+    name $typeName,
+    supertypes * $type,
     `abstract`,
-    annotations $annotationsProjection
+    annotations $annotations
   ) ~ (
-    VarType ( tags * $tagProjection ),
-    DatumType $datumTypeProjection = (     // datumTypeProjection = typeProjection ~ DatumType
-      // supertypes * $datumTypeProjection // can't merge recursive projections yet. And not needed actually: normalized version will have it as list[DatumType] with $datumTypeProjection for items anyways
-      metaType $datumTypeProjection
+    VarType ( tags * $tag ),
+    DatumType $datumType = (     // datumType = type ~ DatumType
+      // supertypes * $datumType // can't merge recursive projections yet. And not needed actually: normalized version will have it as list[DatumType] with $datumType for items anyways
+      metaType $datumType
     ) ~ (
       RecordType (
-        declaredFields * $fieldProjection
+        declaredFields * $field
         // add `computed` fields too?
       ),
       MapType (
-        keyType $typeProjection
-        valueType $dataTypeProjection
+        keyType $type
+        valueType $dataType
       ),
       ListType (
-        valueType $dataTypeProjection
+        valueType $dataType
       ),
       PrimitiveType // empty, but gives us properly typed `name` and `supertypes` projections
     )
   )
 
-  outputProjection tagProjection: Tag = (
+  outputProjection tag: Tag = (
     name :`string`,
-    type $datumTypeProjection,
-    annotations $annotationsProjection
+    type $datumType,
+    annotations $annotations
   )
 
-  outputProjection fieldProjection: Field = (
+  outputProjection field: Field = (
     name :`string`,
-    valueType $dataTypeProjection,
-    annotations $annotationsProjection
+    valueType $dataType,
+    annotations $annotations
   )
 
-  outputProjection dataTypeProjection : DataType = (
-    type $typeProjection,
-    `retro` $tagProjection
+  outputProjection dataType: DataType = (
+    type $type,
+    `retro` $tag
   )
 
   // operations
 
   read types { // todo remove name
     path /types
-    outputProjection [] ( $typeProjection )
+    outputProjection [] ( $type )
   }
 }

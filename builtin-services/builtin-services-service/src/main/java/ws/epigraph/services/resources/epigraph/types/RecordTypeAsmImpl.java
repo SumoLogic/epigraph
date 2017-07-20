@@ -16,9 +16,9 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.recordtype.RecordTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.recordtype.declaredfields.Field_ListAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.recordtype.supertypes.RecordType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.recordtype.RecordTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.recordtype.declaredfields.Field_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.recordtype.supertypes.RecordType_ListAsm;
 import ws.epigraph.types.RecordTypeApi;
 
 /**

@@ -18,21 +18,24 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
 import ws.epigraph.assembly.Asm;
+import ws.epigraph.assembly.LazyAsm;
 import ws.epigraph.names.AnonListTypeName;
 import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.TypeNameAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection.string.OutputNameStringProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typename.OutputTypeNameProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.typename.TypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename.string.OutputNameStringProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class TypeNameAsmImpl extends TypeNameAsm<TypeName> {
-  public static final TypeNameAsmImpl INSTANCE = new TypeNameAsmImpl();
-
   public static final Asm<TypeName, OutputNameStringProjection, NameString.Value> TYPE_NAME_ASM =
       (d, p, c) -> NameString.create(d.toString()).asValue();
+
+  public static final Asm<TypeName, OutputTypeNameProjection, epigraph.schema.TypeName> INSTANCE =
+    new LazyAsm<>(TypeNameAsmImpl::new);
 
   private TypeNameAsmImpl() {
     super(

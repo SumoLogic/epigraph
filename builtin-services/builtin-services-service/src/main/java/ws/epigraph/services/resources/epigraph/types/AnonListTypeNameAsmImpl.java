@@ -17,7 +17,7 @@
 package ws.epigraph.services.resources.epigraph.types;
 
 import ws.epigraph.names.AnonListTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.anonlisttypename.AnonListTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename._nt.anonlisttypename.AnonListTypeNameAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package ws.epigraph.services.resources.epigraph.types;
+package ws.epigraph.assembly;
 
-import epigraph.schema.NameString;
-import epigraph.schema.TagName;
-import ws.epigraph.services._resources.epigraph.projections.output.tag.Tag_Asm;
-import ws.epigraph.types.TagApi;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class TagAsmImpl extends Tag_Asm<TagApi> {
-  public static final TagAsmImpl INSTANCE = new TagAsmImpl();
+public class LazyAsm<D, P, R> implements Asm<D, P, R> {
+  private final Supplier<Asm<D, P, R>> asmSupplier;
 
-  private TagAsmImpl() {
-    super(
-        AnnotationsAsmImpl.INSTANCE.on(TagApi::annotations),
-        (tag, projection, ctx) -> TagName.create().setString(NameString.create(tag.name())),
-        DatumTypeAsmImpl.INSTANCE.on(TagApi::type)
-    );
+  public LazyAsm(final @NotNull Supplier<Asm<D, P, R>> supplier) {asmSupplier = supplier;}
+
+  @Override
+  public @NotNull R assemble(
+      final @NotNull D dto, final @NotNull P projection, final @NotNull AsmContext ctx) {
+
+    return asmSupplier.get().assemble(dto, projection, ctx);
   }
 }

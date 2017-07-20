@@ -16,8 +16,8 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.maptype.MapTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datumtypeprojection._nt.maptype.supertypes.MapType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.maptype.MapTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datumtype._nt.maptype.supertypes.MapType_ListAsm;
 import ws.epigraph.types.MapTypeApi;
 
 /**

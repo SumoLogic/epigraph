@@ -18,8 +18,8 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
 import ws.epigraph.names.DataTypeName;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.DataTypeNameAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.datatypenameprojection.retrotagname.TagNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypename.DataTypeNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.datatypename.retrotagname.TagNameAsm;
 
 import java.util.Optional;
 

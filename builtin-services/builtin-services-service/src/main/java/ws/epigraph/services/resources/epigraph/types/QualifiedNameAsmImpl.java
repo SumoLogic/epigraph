@@ -18,7 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.NameString;
 import ws.epigraph.names.QualifiedName;
-import ws.epigraph.services._resources.epigraph.projections.output.typenameprojection._nt.qualifiedtypename.name.QualifiedNameAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.typename._nt.qualifiedtypename.name.QualifiedNameAsm;
 
 import java.util.Arrays;
 

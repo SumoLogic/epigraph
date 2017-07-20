@@ -18,26 +18,23 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.Boolean;
 import ws.epigraph.assembly.Asm;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.Type_Asm;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.abstract_.OutputBooleanProjection;
-import ws.epigraph.services._resources.epigraph.projections.output.typeprojection.supertypes.Type_ListAsm;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.EntityTypeApi;
-import ws.epigraph.types.Type;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.services._resources.epigraph.projections.output.type.Type_Asm;
+import ws.epigraph.services._resources.epigraph.projections.output.type.abstract_.OutputBooleanProjection;
+import ws.epigraph.services._resources.epigraph.projections.output.type.supertypes.Type_ListAsm;
+import ws.epigraph.types.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class TypeAsmImpl extends Type_Asm<TypeApi> {
-  public static final TypeAsmImpl INSTANCE = new TypeAsmImpl();
-
   public static final Asm<TypeApi, OutputBooleanProjection, Boolean.Value> ABSTRACT_ASM =
       (t, p, c) -> epigraph.Boolean.create(/*t.isAbstract()*/ false).asValue(); // todo
 
+  public static final TypeAsmImpl INSTANCE = new TypeAsmImpl();
+
   private TypeAsmImpl() {
     super(
-        t -> (Type) t,  // type extractor
+        t -> (t.kind() == TypeKind.ENTITY) ? epigraph.schema.VarType.type : epigraph.schema.DatumType.type,  // (output) type extractor
         ABSTRACT_ASM, // abstract
         AnnotationsAsmImpl.INSTANCE.on(TypeApi::annotations), // annotations
         TypeNameAsmImpl.INSTANCE.on(TypeApi::name), // name

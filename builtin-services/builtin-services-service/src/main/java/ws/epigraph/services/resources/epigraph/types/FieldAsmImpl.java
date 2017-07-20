@@ -18,7 +18,7 @@ package ws.epigraph.services.resources.epigraph.types;
 
 import epigraph.schema.FieldName;
 import epigraph.schema.NameString;
-import ws.epigraph.services._resources.epigraph.projections.output.fieldprojection.Field_Asm;
+import ws.epigraph.services._resources.epigraph.projections.output.field.Field_Asm;
 import ws.epigraph.types.FieldApi;
 
 /**

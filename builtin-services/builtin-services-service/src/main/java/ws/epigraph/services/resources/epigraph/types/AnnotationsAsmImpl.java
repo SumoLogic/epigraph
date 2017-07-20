@@ -19,7 +19,7 @@ package ws.epigraph.services.resources.epigraph.types;
 import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.services._resources.epigraph.projections.output.annotationsprojection.AnnotationsAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.annotations.AnnotationsAsm;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
