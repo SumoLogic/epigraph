@@ -105,12 +105,12 @@ ${JavaGenUtils.generateImports(importManager.imports)}
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements $assembler<@$nullable D, @$notNull $projectionName, /*@$notNull*/ $t.Value> {
-${if (hasTails) s"  private final @$notNull $func<? super D, Type> typeExtractor;\n" else "" }\
+public class $shortClassName<D> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
+${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   //field assemblers
-${fps.map { fp => s"  private final @$notNull ${fp.fieldAssemblerType} ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"  private final @$notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
-${if (hasMeta) s"  //meta assembler\n  private final @$notNull $metaAssemblerType metaAssembler;" else ""}
+${fps.map { fp => s"  private final $notNull ${fp.fieldAssemblerType} ${fp.fbf};"}.mkString("\n") }\
+${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
+${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAssemblerType metaAssembler;" else ""}
 
   /**
    * Assembler constructor
@@ -121,10 +121,10 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
 ${if (hasMeta) s"\n   * @param metaAssembler metadata assembler" else ""}
    */
   public $shortClassName(
-${if (hasTails) s"    @$notNull $func<? super D, Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    @$notNull ${fp.fieldAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
-${if (hasTails) tps.map { tp => s"    @$notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
-${if (hasMeta) s",\n    @$notNull $metaAssemblerType metaAssembler" else ""}
+${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
+${fps.map { fp => s"    $notNull ${fp.fieldAssemblerType} ${fp.fbf}"}.mkString(",\n") }\
+${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
+${if (hasMeta) s",\n    $notNull $metaAssemblerType metaAssembler" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
 ${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
@@ -142,7 +142,7 @@ ${if (hasMeta) s"\n    this.metaAssembler = metaAssembler;" else ""}
    * @return {@code $t} value object
    */
   @Override
-  public @$notNull $t.Value assemble(@$notNull D dto, @$notNull $projectionName p, @$notNull $assemblerContext ctx) {
+  public $notNull $t.Value assemble(D dto, $notNull $projectionName p, $notNull $assemblerContext ctx) {
     if (dto == null)
       return $t.type.createValue($errValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}

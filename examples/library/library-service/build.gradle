@@ -28,5 +28,6 @@ dependencies {
 }
 
 epigraph {
+  java8Annotations = false
   server {}
 }

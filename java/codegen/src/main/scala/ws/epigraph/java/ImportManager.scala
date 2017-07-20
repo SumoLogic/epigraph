@@ -97,7 +97,7 @@ class ImportManager(val namespace: Qn, alwaysUseQualified: Boolean = false) {
   }
 
 
-  class ImportedName(val fqn: Qn) extends Ordered[ImportedName]{
+  class ImportedName(val fqn: Qn) extends ImportManager.Imported with Ordered[ImportedName] {
     def inNamespace: Boolean = fqn.removeLastSegment() == namespace
 
     def explicitlyImported: Boolean = fqn.removeLastSegment() == ImportManager.javaLang
@@ -138,4 +138,20 @@ class ImportManager(val namespace: Qn, alwaysUseQualified: Boolean = false) {
 
 object ImportManager {
   private val javaLang = Qn.fromDotSeparated("java.lang")
+
+  val empty: Imported = new Imported {override def toString: String = "" }
+
+  trait Imported /*extends Ordered[Imported]*/ {
+    override def toString: String
+
+    def prepend(s: String): Imported = {
+      lazy val ts = toString
+      new Imported {
+        override def toString: String = s + ts
+      }
+    }
+
+//    override def compare(that: Imported): Int = toString.compareTo(that.toString)
+  }
+
 }

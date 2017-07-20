@@ -75,6 +75,7 @@
         <groupId>ws.epigraph</groupId>
         <artifactId>epigraph-java-maven-plugin</artifactId>
         <configuration>
+          <java8Annotations>false</java8Annotations>
           <server>
             <services>
               <service>ws.epigraph.tests.user</service>

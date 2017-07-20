@@ -32,6 +32,7 @@ dependencies {
 }
 
 epigraph {
+  java8Annotations = false
   server {
     services = [
       "ws.epigraph.tests.user",

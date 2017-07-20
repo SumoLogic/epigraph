@@ -29,18 +29,19 @@ trait AssemblerGen extends JavaGen {
   protected lazy val importManager: ImportManager = new ImportManager(namespace)
 
   protected object Imports {
-    val notNull: ImportManager#ImportedName = importManager.use("org.jetbrains.annotations.NotNull")
-    val nullable: ImportManager#ImportedName = importManager.use("org.jetbrains.annotations.Nullable")
-    val func: ImportManager#ImportedName = importManager.use("java.util.function.Function")
-    val assembler: ImportManager#ImportedName = importManager.use("ws.epigraph.assembly.Assembler")
-    val assemblerContext: ImportManager#ImportedName = importManager.use("ws.epigraph.assembly.AssemblerContext")
-    val _type: ImportManager#ImportedName = importManager.use("ws.epigraph.types.Type")
-    val errValue: ImportManager#ImportedName = importManager.use("ws.epigraph.errors.ErrorValue")
+    val notNull: ImportManager.Imported =
+      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.NotNull").prepend("@") else ImportManager.empty
+    val nullable: ImportManager.Imported =
+      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.Nullable").prepend("@") else ImportManager.empty
+    val func: ImportManager.Imported = importManager.use("java.util.function.Function")
+    val assembler: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Assembler")
+    val assemblerContext: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AssemblerContext")
+    val _type: ImportManager.Imported = importManager.use("ws.epigraph.types.Type")
+    val errValue: ImportManager.Imported = importManager.use("ws.epigraph.errors.ErrorValue")
   }
 
   protected def closeImports(): Unit = {
-    val _ = Imports.notNull // cause lazy eval
+    val _ = Imports.assembler // cause lazy eval
     importManager.close()
   }
-
 }
