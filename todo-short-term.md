@@ -1,8 +1,6 @@
-- [ ] rest of op parsers: named tails
-- [ ] req projections codegen: inheritance support, copy from output projections implementaiton
-
-- [ ] add `Assemblers` codegen
-- [ ] update reflection implementation
+- [x] add `Assemblers` codegen
+- [x] update reflection implementation
+- [ ] rest of op parsers: named tails normalization
 - [ ] req projections codegen: add inheritance for non-output projections
 - [ ] req projections codegen: remove `normalizedFor` methods
 - [ ] update library example & docs

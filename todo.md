@@ -3,15 +3,7 @@
 - [ ] gradle/maven build: add verification that all files have apache license headers
 
 # Framework
-- JSON marshaller
-  -[x] metadata support
-  -[x] recursive data support
-- JSON unmarshaller
-  -[x] metadata support
-  -[x] recursive data support
-- [x] Format for parameter values in URL. Currently: GData with single quotes.
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`
-- [x] Replace `List<PsiProcessingError>` by `PsiProcessingContext`, so we can pass more context information for error messages
 - [ ] Recursive GData support? GData snippets in schema?
 - [ ] data trimmer (currently unused since marshallers trim data anyways)
   - [ ] generify
@@ -19,10 +11,7 @@
   - [ ] add tests
   - [ ] invocation layer should run it on operation inputs/outputs for in-process calls
 - [ ] Feature: add support for resource overlays? adding operations to other resources (e.g. with paths)
-- [x] generated builders should have some form of inheritance
-- [x] `Operation` instances must be validated befor execution, e.g. input data must match input projection, all requried parts must be present etc
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
-- [x] operations codegen: parameter accessors should be non-null for requried parameters
 - [ ] `OperationFilterChains`
   - [ ] add filters that ensure req<->op validity
   - [ ] add filter that ensures map keys validity w.r.t. op. map key model projection 
@@ -45,7 +34,6 @@
         }  
     ```
     Figure out injections: how to add annotations to existing types/fields.
-- [x] req output projections codegen: inheritance for list/map elements
 - [ ] req output projections codegen: use `ImportManager` to get more readable projections code
 - [ ] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
 
@@ -86,23 +74,11 @@
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
-- [x] figure out remaining `mergeOpTails` (done for output projections, so should be easy)
-  - [x] update parser
-  - [x] input parser
-  - [x] delete parser
 - [ ] ~~Perform full tails normalization in parsers~~
-- [x] Unify req projections pretty printers, there's lots of code duplication
-- [x] Unify op projections pretty printers, there's lots of code duplication
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
 - [ ] ~~generated req projections: cache normalized projections?~~ (cached in `AbstractVarProjection`)
-- [x] fix projections pretty printer for records, see OpOutputProjectionsTest.testParsing
 - [ ] ~~remove type information from projections?~~
   - [ ] ~~record projections should contain a String->FP, not String->FPE map~~
-- [x] support for recursive projections
-- [x] correct `equals` support, see todo on `AbstractVarProjection.equals`
-- [x] enable real named model projections. Currently they can't be used for tags, meta or model tails
-- [x] allow attaching tails to references? e.g. `$foo ~Bar(..)`
-- [x] enable model projection references for req projections
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
@@ -111,14 +87,13 @@
 - [ ] req update projections should support paths (trunk), with trimmed input data on the wire
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
-- [ ] add normalized aliases to request projections (to be on par with op projections)
+- [ ] add normalized aliases to request projections (to be on par with op projections) (i.e. `(foo) ~ Bar $bar = (bar)` should produce `$bar` as a normalized version)
 
 # Operations
 
 # Service
 
 # Build
-- [ ] Fix circular build problem. Depends on Schema compiler/proper resouces compilation task above (~ a month of work)
 - [x] Try to remove sources copying from `java/schema-parser`, include generated sources directly. See if IDEA will get confused about them. If all is fine: get rid of `maven-resources-plugin`
 - Gradle
   -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
@@ -131,7 +106,7 @@
 - Cleanup
   - [x] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
         Because, e.g. map[Foo, Bar] extends map[Foo, BarSuper1], map[Foo, BarSuper2], etc.
-  - [ ] DataType(Api): type should be VarType ?
+  - [ ] DataType(Api): type should be EntityType ?
   - [ ] Rename Data/Var/Union type to some common name
 
 # Other
