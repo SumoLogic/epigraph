@@ -129,7 +129,8 @@
   - [x] gradle
 
 - Cleanup
-  - [ ] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
+  - [x] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
+        Because, e.g. map[Foo, Bar] extends map[Foo, BarSuper1], map[Foo, BarSuper2], etc.
   - [ ] DataType(Api): type should be VarType ?
   - [ ] Rename Data/Var/Union type to some common name
 
@@ -140,5 +141,5 @@
 - See `**/issues.md`
 
 # Unsorted Things From Chris
-- https://sumologic.slack.com/archives/C2PN5GQS1/p1500590191278104 - If you give a `resource`'s `outputProjection` a Record or a `*` instead of a list of fields, it fails to compile.  IntelliJ does not highlight this
-- https://sumologic.slack.com/archives/C2PN5GQS1/p1500590236292212 - The blue font in the compilation error is very difficult to read on the default iTerm theme (black background) 
+- [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1500590191278104 - If you give a `resource`'s `outputProjection` a Record or a `*` instead of a list of fields, it fails to compile.  IntelliJ does not highlight this
+- [x] https://sumologic.slack.com/archives/C2PN5GQS1/p1500590236292212 - The blue font in the compilation error is very difficult to read on the default iTerm theme (black background)
