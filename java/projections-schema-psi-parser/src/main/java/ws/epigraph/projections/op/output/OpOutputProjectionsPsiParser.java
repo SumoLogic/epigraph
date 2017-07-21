@@ -80,7 +80,7 @@ public final class OpOutputProjectionsPsiParser {
 
       if (unnamedOrRefVarProjection == null)
         throw new PsiProcessingException(
-            "Incomplete var projection definition",
+            "Incomplete entity projection definition",
             psi,
             context.messages()
         );
@@ -206,37 +206,17 @@ public final class OpOutputProjectionsPsiParser {
       throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
-    final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections;
 
     @Nullable SchemaOpOutputSingleTagProjection singleTagProjectionPsi = psi.getOpOutputSingleTagProjection();
 
     if (singleTagProjectionPsi == null) {
       @Nullable SchemaOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
-      // parse list of tags
-      @NotNull List<SchemaOpOutputMultiTagProjectionItem> tagProjectionPsiList =
-          multiTagProjection.getOpOutputMultiTagProjectionItemList();
-
-      for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final TagApi tag =
-            getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
-
-        tagProjections.put(
-            tag.name(),
-            new OpOutputTagProjectionEntry(
-                tag,
-                parseModelProjection(
-                    tag.type(),
-                    tagProjectionPsi.getOpOutputModelProjection(),
-                    typesResolver,
-                    context
-                ),
-                EpigraphPsiUtil.getLocation(tagProjectionPsi)
-            )
-        );
-      }
+      tagProjections = parseMultiTagProjection(dataType, multiTagProjection, typesResolver, context);
     } else {
       // todo (here and other parsers): simplify this tag logic
+      tagProjections = new LinkedHashMap<>();
       TagApi tag = findTag(
           type,
           singleTagProjectionPsi.getTagName(),
@@ -272,27 +252,8 @@ public final class OpOutputProjectionsPsiParser {
 
     OpOutputVarProjection result = new OpOutputVarProjection(type, EpigraphPsiUtil.getLocation(psi));
 
-    // parse tails
-    final List<OpOutputVarProjection> tails;
-    @Nullable SchemaOpOutputVarPolymorphicTail psiTail = psi.getOpOutputVarPolymorphicTail();
-    if (psiTail == null) tails = null;
-    else {
-      tails = new ArrayList<>();
-
-      @Nullable SchemaOpOutputVarTailItem singleTail = psiTail.getOpOutputVarTailItem();
-      if (singleTail == null) {
-        @Nullable SchemaOpOutputVarMultiTail multiTail = psiTail.getOpOutputVarMultiTail();
-        assert multiTail != null;
-        for (SchemaOpOutputVarTailItem tailItem : multiTail.getOpOutputVarTailItemList()) {
-          tails.add(parseEntityTailItem(tailItem, dataType, result, typesResolver, context));
-        }
-      } else {
-        tails.add(parseEntityTailItem(singleTail, dataType, result, typesResolver, context));
-      }
-
-      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
-
-    }
+    final List<OpOutputVarProjection> tails =
+        parseTails(result, dataType, psi.getOpOutputVarPolymorphicTail(), typesResolver, context);
 
     try {
       OpOutputVarProjection tmp = new OpOutputVarProjection(
@@ -310,8 +271,72 @@ public final class OpOutputProjectionsPsiParser {
     }
   }
 
+  public static @NotNull LinkedHashMap<String, OpOutputTagProjectionEntry> parseMultiTagProjection(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull SchemaOpOutputMultiTagProjection multiTagProjection,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    final LinkedHashMap<String, OpOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+
+    @NotNull List<SchemaOpOutputMultiTagProjectionItem> tagProjectionPsiList =
+        multiTagProjection.getOpOutputMultiTagProjectionItemList();
+
+    for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
+      final TagApi tag =
+          getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+
+      tagProjections.put(
+          tag.name(),
+          new OpOutputTagProjectionEntry(
+              tag,
+              parseModelProjection(
+                  tag.type(),
+                  tagProjectionPsi.getOpOutputModelProjection(),
+                  typesResolver,
+                  context
+              ),
+              EpigraphPsiUtil.getLocation(tagProjectionPsi)
+          )
+      );
+    }
+
+    return tagProjections;
+  }
+
+  public static @Nullable List<OpOutputVarProjection> parseTails(
+      final @NotNull OpOutputVarProjection parentProjection,
+      final @NotNull DataTypeApi dataType,
+      final @Nullable SchemaOpOutputVarPolymorphicTail tailPsi,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpOutputPsiProcessingContext context)
+      throws PsiProcessingException {
+
+    final List<OpOutputVarProjection> tails;
+
+    if (tailPsi == null) tails = null;
+    else {
+      tails = new ArrayList<>();
+
+      @Nullable SchemaOpOutputVarTailItem singleTail = tailPsi.getOpOutputVarTailItem();
+      if (singleTail == null) {
+        @Nullable SchemaOpOutputVarMultiTail multiTail = tailPsi.getOpOutputVarMultiTail();
+        assert multiTail != null;
+        for (SchemaOpOutputVarTailItem tailItem : multiTail.getOpOutputVarTailItemList()) {
+          tails.add(parseEntityTailItem(tailItem, dataType, parentProjection, typesResolver, context));
+        }
+      } else {
+        tails.add(parseEntityTailItem(singleTail, dataType, parentProjection, typesResolver, context));
+      }
+
+      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
+
+    }
+    return tails;
+  }
+
   private static @NotNull OpOutputVarProjection parseEntityTailItem(
-      final SchemaOpOutputVarTailItem tailItem,
+      final @NotNull SchemaOpOutputVarTailItem tailItem,
       final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputVarProjection parentProjection,
       final @NotNull TypesResolver typesResolver,
@@ -489,7 +514,7 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private static @NotNull <MP extends OpOutputModelProjection<?, ?, ?>, SMP extends OpOutputModelProjection<SMP, SMP, ?>>
+  private static @NotNull <MP extends OpOutputModelProjection<?, ?, ?>>
   /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
