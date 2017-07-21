@@ -23,7 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
+import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
@@ -61,6 +63,17 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
+    return parseVarProjection(dataType, canDelete, psi, null, typesResolver, context);
+  }
+
+  public static OpDeleteVarProjection parseVarProjection(
+      @NotNull DataTypeApi dataType,
+      boolean canDelete,
+      @NotNull SchemaOpDeleteVarProjection psi,
+      @Nullable OpDeleteVarProjection parentProjection,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
     final SchemaOpDeleteNamedVarProjection namedVarProjection = psi.getOpDeleteNamedVarProjection();
     if (namedVarProjection == null) {
       final SchemaOpDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
@@ -84,31 +97,71 @@ public final class OpDeleteProjectionsPsiParser {
       // named var projection
       final String projectionName = namedVarProjection.getQid().getCanonicalName();
 
-      final @Nullable SchemaOpDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjection =
+      final @Nullable SchemaOpDeleteUnnamedOrRefVarProjection unnamedOrRefVarProjectionPsi =
           namedVarProjection.getOpDeleteUnnamedOrRefVarProjection();
 
-      if (unnamedOrRefVarProjection == null)
+      if (unnamedOrRefVarProjectionPsi == null)
         throw new PsiProcessingException(
-            String.format("Incomplete var projection '%s' definition", projectionName),
+            String.format("Incomplete entity projection '%s' definition", projectionName),
             psi,
             context.messages()
         );
 
+      TypeApi type = dataType.type();
+
+      ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+          referenceContext = parentProjection == null
+                             ? context.referenceContext()                  // not tail: usual context
+                             : context.referenceContext().parentOrThis();  // tail: global context
+
       final OpDeleteVarProjection reference = context.referenceContext()
-          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
           canDelete,
-          unnamedOrRefVarProjection,
+          unnamedOrRefVarProjectionPsi,
           typesResolver,
           context
       );
 
-      context.referenceContext()
-          .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
+      if (parentProjection == null) {
+        referenceContext.resolveEntityRef(
+            projectionName,
+            value,
+            EpigraphPsiUtil.getLocation(unnamedOrRefVarProjectionPsi)
+        );
 
-      return reference;
+        return reference;
+      } else {
+        // special case:
+        // someProjection = ( ... ) ~~ SubType $subProjection = ( ... )
+        // must result in `subProjection` created in the same namespace as `someProjection`
+        // (that's why we have to access parent context here)
+        // and it's value will be `parentProjection.normalizedForType(SubType)
+
+        // `reference` belongs to parent context and will contain normalized tail
+
+        GenProjectionReference.runOnResolved(
+            parentProjection,
+            () -> {
+              OpDeleteVarProjection normalizedTail = parentProjection.normalizedForType(
+                  type,
+                  referenceContext.projectionReferenceName(projectionName)
+              );
+
+              referenceContext.resolveEntityRef( //resolve normalizedTailRef to normalizedTail
+                  projectionName,
+                  normalizedTail,
+                  EpigraphPsiUtil.getLocation(unnamedOrRefVarProjectionPsi)
+              );
+              // give normalized tail proper alias
+//              parentProjection.setNormalizedForType(type, reference);
+            }
+        );
+
+        return value; // return non-normalized tail
+      }
     }
   }
 
@@ -158,39 +211,22 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
-    final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections;
 
     @Nullable SchemaOpDeleteSingleTagProjection singleTagProjectionPsi = psi.getOpDeleteSingleTagProjection();
 
     if (singleTagProjectionPsi == null) {
       @Nullable SchemaOpDeleteMultiTagProjection multiTagProjection = psi.getOpDeleteMultiTagProjection();
       assert multiTagProjection != null;
-      // parse list of tags
-      @NotNull Iterable<SchemaOpDeleteMultiTagProjectionItem> tagProjectionPsiList =
-          multiTagProjection.getOpDeleteMultiTagProjectionItemList();
+      tagProjections = parseMultiTagProjection(dataType, multiTagProjection, typesResolver, context);
 
-      for (SchemaOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-        final TagApi tag =
-            getTag(type, tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
-
-        tagProjections.put(
-            tag.name(),
-            new OpDeleteTagProjectionEntry(
-                tag,
-                parseModelProjection(
-                    tag.type(),
-                    tagProjectionPsi.getOpDeleteModelProjection(),
-                    typesResolver,
-                    context
-                ),
-                EpigraphPsiUtil.getLocation(tagProjectionPsi)
-            )
-        );
-      }
     } else {
       // leaf nodes can always be deleted
       if (isLeaf(singleTagProjectionPsi.getOpDeleteModelProjection()))
         canDelete = true;
+
+      // todo (here and other parsers): simplify this tag logic
+      tagProjections = new LinkedHashMap<>();
 
       TagApi tag = findTag(
           type,
@@ -225,29 +261,13 @@ public final class OpDeleteProjectionsPsiParser {
       }
     }
 
-    // parse tails
-    final List<OpDeleteVarProjection> tails;
-    @Nullable SchemaOpDeleteVarPolymorphicTail psiTail = psi.getOpDeleteVarPolymorphicTail();
-    if (psiTail == null) tails = null;
-    else {
-      tails = new ArrayList<>();
+    OpDeleteVarProjection result = new OpDeleteVarProjection(type, EpigraphPsiUtil.getLocation(psi));
 
-      @Nullable SchemaOpDeleteVarTailItem singleTail = psiTail.getOpDeleteVarTailItem();
-      if (singleTail == null) {
-        @Nullable SchemaOpDeleteVarMultiTail multiTail = psiTail.getOpDeleteVarMultiTail();
-        assert multiTail != null;
-        for (SchemaOpDeleteVarTailItem tailItem : multiTail.getOpDeleteVarTailItemList()) {
-          tails.add(parseEntityTailItem(tailItem, dataType, canDelete, typesResolver, context));
-        }
-      } else {
-        tails.add(parseEntityTailItem(singleTail, dataType, canDelete, typesResolver, context));
-      }
-
-      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
-    }
+    final List<OpDeleteVarProjection> tails =
+        parseTails(result, dataType, canDelete, psi.getOpDeleteVarPolymorphicTail(), typesResolver, context);
 
     try {
-      return new OpDeleteVarProjection(
+      OpDeleteVarProjection tmp = new OpDeleteVarProjection(
           type,
           canDelete,
           tagProjections,
@@ -255,21 +275,96 @@ public final class OpDeleteProjectionsPsiParser {
           tails,
           EpigraphPsiUtil.getLocation(psi)
       );
+
+      result.resolve(null, tmp);
+      return result;
     } catch (IllegalArgumentException e) {
       throw new PsiProcessingException(e, psi, context.messages());
     }
   }
 
+  public static @NotNull LinkedHashMap<String, OpDeleteTagProjectionEntry> parseMultiTagProjection(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull SchemaOpDeleteMultiTagProjection multiTagProjection,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final LinkedHashMap<String, OpDeleteTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+
+    @NotNull Iterable<SchemaOpDeleteMultiTagProjectionItem> tagProjectionPsiList =
+        multiTagProjection.getOpDeleteMultiTagProjectionItemList();
+
+    for (SchemaOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
+      final TagApi tag =
+          getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+
+      tagProjections.put(
+          tag.name(),
+          new OpDeleteTagProjectionEntry(
+              tag,
+              parseModelProjection(
+                  tag.type(),
+                  tagProjectionPsi.getOpDeleteModelProjection(),
+                  typesResolver,
+                  context
+              ),
+              EpigraphPsiUtil.getLocation(tagProjectionPsi)
+          )
+      );
+    }
+
+    return tagProjections;
+  }
+
+  public static @Nullable List<OpDeleteVarProjection> parseTails(
+      final @NotNull OpDeleteVarProjection parentProjection,
+      final @NotNull DataTypeApi dataType,
+      final boolean canDelete,
+      final @Nullable SchemaOpDeleteVarPolymorphicTail tailPsi,
+      final @NotNull TypesResolver typesResolver,
+      final @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
+
+    final List<OpDeleteVarProjection> tails;
+
+    if (tailPsi == null) tails = null;
+    else {
+      tails = new ArrayList<>();
+
+      @Nullable SchemaOpDeleteVarTailItem singleTail = tailPsi.getOpDeleteVarTailItem();
+      if (singleTail == null) {
+        @Nullable SchemaOpDeleteVarMultiTail multiTail = tailPsi.getOpDeleteVarMultiTail();
+        assert multiTail != null;
+        for (SchemaOpDeleteVarTailItem tailItem : multiTail.getOpDeleteVarTailItemList()) {
+          tails.add(parseEntityTailItem(tailItem, dataType, parentProjection, canDelete, typesResolver, context));
+        }
+      } else {
+        tails.add(parseEntityTailItem(singleTail, dataType, parentProjection, canDelete, typesResolver, context));
+      }
+
+      SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
+    }
+    return tails;
+  }
+
   private static @NotNull OpDeleteVarProjection parseEntityTailItem(
       final SchemaOpDeleteVarTailItem tailItem,
       final @NotNull DataTypeApi dataType,
+      final @NotNull OpDeleteVarProjection parentProjection,
       final boolean canDelete,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
     @NotNull SchemaOpDeleteVarProjection psiTailProjection = tailItem.getOpDeleteVarProjection();
-    return buildTailProjection(dataType, canDelete, tailTypeRef, psiTailProjection, typesResolver, context);
+    return buildTailProjection(
+        dataType,
+        canDelete,
+        tailTypeRef,
+        psiTailProjection,
+        parentProjection,
+        typesResolver,
+        context
+    );
   }
 
   private static boolean isLeaf(SchemaOpDeleteModelProjection psi) {
@@ -326,6 +421,7 @@ public final class OpDeleteProjectionsPsiParser {
       boolean canDelete,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteVarProjection psiTailProjection,
+      @NotNull OpDeleteVarProjection parentProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -337,6 +433,7 @@ public final class OpDeleteProjectionsPsiParser {
         tailType.dataType(dataType.defaultTag()),
         canDelete,
         psiTailProjection,
+        parentProjection,
         typesResolver,
         context
     );
@@ -411,17 +508,19 @@ public final class OpDeleteProjectionsPsiParser {
         OpDeleteModelProjection.class,
         type,
         psi,
+        null,
         typesResolver,
         context
     );
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private static @NotNull <MP extends OpDeleteModelProjection<?, ?, ?>>
   /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       @NotNull SchemaOpDeleteModelProjection psi,
+      @Nullable MP parentProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context)
       throws PsiProcessingException {
@@ -451,15 +550,20 @@ public final class OpDeleteProjectionsPsiParser {
       // named model projection
       final String projectionName = namedModelProjection.getQid().getCanonicalName();
 
-      final @Nullable SchemaOpDeleteUnnamedOrRefModelProjection unnamedOrRefModelProjection =
+      final @Nullable SchemaOpDeleteUnnamedOrRefModelProjection unnamedOrRefModelProjectionPsi =
           namedModelProjection.getOpDeleteUnnamedOrRefModelProjection();
 
-      if (unnamedOrRefModelProjection == null)
+      if (unnamedOrRefModelProjectionPsi == null)
         throw new PsiProcessingException(
             String.format("Incomplete model projection '%s' definition", projectionName),
             psi,
             context.messages()
         );
+
+      ReferenceContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+          referenceContext = parentProjection == null
+                             ? context.referenceContext()                  // not tail: usual context
+                             : context.referenceContext().parentOrThis();  // tail: global context
 
       final MP reference = (MP) context.referenceContext()
           .modelReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
@@ -467,19 +571,52 @@ public final class OpDeleteProjectionsPsiParser {
       final MP value = parseUnnamedOrRefModelProjection(
           modelClass,
           type,
-          unnamedOrRefModelProjection,
+          unnamedOrRefModelProjectionPsi,
           typesResolver,
           context
       );
 
-      //noinspection rawtypes
-      context.referenceContext().<OpDeleteModelProjection>resolveModelRef(
-          projectionName,
-          value,
-          EpigraphPsiUtil.getLocation(unnamedOrRefModelProjection)
-      );
+      if (parentProjection == null) {
+        referenceContext.<OpDeleteModelProjection>resolveModelRef(
+            projectionName,
+            value,
+            EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+        );
 
-      return reference;
+        return reference;
+      } else {
+        // special case:
+        // someProjection = ( ... ) ~~ SubType $subProjection = ( ... )
+        // must result in `subProjection` created in the same namespace as `someProjection`
+        // (that's why we have to access parent context here)
+        // and it's value will be `parentProjection.normalizedForType(SubType)
+
+        // `reference` belongs to parent context and will contain normalized tail
+
+        GenProjectionReference.runOnResolved(
+            (OpDeleteModelProjection) parentProjection,
+            () -> {
+              OpDeleteModelProjection<?, ?, ?> normalizedTail = parentProjection.normalizedForType(
+                  type,
+                  referenceContext.projectionReferenceName(projectionName)
+              );
+
+              referenceContext.<OpDeleteModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
+                  projectionName,
+                  normalizedTail,
+                  EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+              );
+
+              // give normalized tail proper alias
+//              ((OpOutputModelProjection<?, SMP, ?>) parentProjection).setNormalizedForType(
+//                  type,
+//                  (SMP) reference
+//              );
+            }
+        );
+
+        return value; // return non-normalized tail
+      }
     }
   }
 
@@ -552,13 +689,17 @@ public final class OpDeleteProjectionsPsiParser {
         if (recordModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        return (MP) parseRecordModelProjection(
+        OpDeleteRecordModelProjection recordModel =
+            new OpDeleteRecordModelProjection((RecordTypeApi) type, EpigraphPsiUtil.getLocation(psi));
+
+        OpDeleteRecordModelProjection recordModelTmp = parseRecordModelProjection(
             (RecordTypeApi) type,
             params,
             annotations,
             parseModelTails(
                 OpDeleteRecordModelProjection.class,
                 psi.getOpDeleteModelPolymorphicTail(),
+                recordModel,
                 typesResolver,
                 context
             ),
@@ -566,6 +707,9 @@ public final class OpDeleteProjectionsPsiParser {
             typesResolver,
             context
         );
+
+        recordModel.resolve(null, recordModelTmp);
+        return (MP) recordModel;
 
       case MAP:
         assert modelClass.isAssignableFrom(OpDeleteMapModelProjection.class);
@@ -575,13 +719,17 @@ public final class OpDeleteProjectionsPsiParser {
         if (mapModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        return (MP) parseMapModelProjection(
+        OpDeleteMapModelProjection mapModel =
+            new OpDeleteMapModelProjection((MapTypeApi) type, EpigraphPsiUtil.getLocation(psi));
+
+        OpDeleteMapModelProjection mapModelTmp = parseMapModelProjection(
             (MapTypeApi) type,
             params,
             annotations,
             parseModelTails(
                 OpDeleteMapModelProjection.class,
                 psi.getOpDeleteModelPolymorphicTail(),
+                mapModel,
                 typesResolver,
                 context
             ),
@@ -589,6 +737,9 @@ public final class OpDeleteProjectionsPsiParser {
             typesResolver,
             context
         );
+
+        mapModel.resolve(null, mapModelTmp);
+        return (MP) mapModel;
 
       case LIST:
         assert modelClass.isAssignableFrom(OpDeleteListModelProjection.class);
@@ -598,13 +749,17 @@ public final class OpDeleteProjectionsPsiParser {
         if (listModelProjectionPsi == null)
           return (MP) createDefaultModelProjection(type, params, annotations, psi, context);
 
-        return (MP) parseListModelProjection(
+        OpDeleteListModelProjection listModel =
+            new OpDeleteListModelProjection((ListTypeApi) type, EpigraphPsiUtil.getLocation(psi));
+
+        OpDeleteListModelProjection listModelTmp = parseListModelProjection(
             (ListTypeApi) type,
             params,
             annotations,
             parseModelTails(
                 OpDeleteListModelProjection.class,
                 psi.getOpDeleteModelPolymorphicTail(),
+                listModel,
                 typesResolver,
                 context
             ),
@@ -613,24 +768,34 @@ public final class OpDeleteProjectionsPsiParser {
             context
         );
 
+        listModel.resolve(null, listModelTmp);
+        return (MP) listModel;
+
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
 
       case PRIMITIVE:
         assert modelClass.isAssignableFrom(OpDeletePrimitiveModelProjection.class);
 
-        return (MP) parsePrimitiveModelProjection(
+        OpDeletePrimitiveModelProjection primitiveModel =
+            new OpDeletePrimitiveModelProjection((PrimitiveTypeApi) type, EpigraphPsiUtil.getLocation(psi));
+
+        OpDeletePrimitiveModelProjection primitiveModelTmp = parsePrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             params,
             annotations,
             parseModelTails(
                 OpDeletePrimitiveModelProjection.class,
                 psi.getOpDeleteModelPolymorphicTail(),
+                primitiveModel,
                 typesResolver,
                 context
             ),
             psi
         );
+
+        primitiveModel.resolve(null, primitiveModelTmp);
+        return (MP) primitiveModel;
 
       case ENTITY:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), psi, context);
@@ -640,11 +805,12 @@ public final class OpDeleteProjectionsPsiParser {
     }
   }
 
-  @Contract("_, null, _, _ -> null")
+  @Contract("_, null, _, _, _ -> null")
   private static @Nullable <MP extends OpDeleteModelProjection<?, ?, ?>>
   /*@Nullable*/ List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
       @Nullable SchemaOpDeleteModelPolymorphicTail tailPsi,
+      @NotNull MP parentProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -662,6 +828,7 @@ public final class OpDeleteProjectionsPsiParser {
                   modelClass,
                   tailItemPsi.getTypeRef(),
                   tailItemPsi.getOpDeleteModelProjection(),
+                  parentProjection,
                   typesResolver,
                   context
               )
@@ -673,6 +840,7 @@ public final class OpDeleteProjectionsPsiParser {
                 modelClass,
                 singleTailPsi.getTypeRef(),
                 singleTailPsi.getOpDeleteModelProjection(),
+                parentProjection,
                 typesResolver,
                 context
             )
@@ -690,6 +858,7 @@ public final class OpDeleteProjectionsPsiParser {
       @NotNull Class<MP> modelClass,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpDeleteModelProjection modelProjectionPsi,
+      @NotNull MP parentProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpDeletePsiProcessingContext context) throws PsiProcessingException {
 
@@ -700,6 +869,7 @@ public final class OpDeleteProjectionsPsiParser {
         modelClass,
         tailType,
         modelProjectionPsi,
+        parentProjection,
         typesResolver,
         context
     );

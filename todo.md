@@ -74,11 +74,7 @@
 
 # Projections
 - [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
-- [ ] ~~Perform full tails normalization in parsers~~
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
-- [ ] ~~generated req projections: cache normalized projections?~~ (cached in `AbstractVarProjection`)
-- [ ] ~~remove type information from projections?~~
-  - [ ] ~~record projections should contain a String->FP, not String->FPE map~~
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
@@ -87,7 +83,6 @@
 - [ ] req update projections should support paths (trunk), with trimmed input data on the wire
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
-- [ ] add normalized aliases to request projections (to be on par with op projections) (i.e. `(foo) ~ Bar $bar = (bar)` should produce `$bar` as a normalized version)
 
 # Operations
 

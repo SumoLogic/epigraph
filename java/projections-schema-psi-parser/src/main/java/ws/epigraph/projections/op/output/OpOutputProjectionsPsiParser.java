@@ -905,6 +905,7 @@ public final class OpOutputProjectionsPsiParser {
   }
 
   private static @Nullable TypeKind findProjectionKind(@NotNull SchemaOpOutputUnnamedModelProjection psi) {
+    // todo move to common
     if (psi.getOpOutputRecordModelProjection() != null) return TypeKind.RECORD;
     if (psi.getOpOutputMapModelProjection() != null) return TypeKind.MAP;
     if (psi.getOpOutputListModelProjection() != null) return TypeKind.LIST;
