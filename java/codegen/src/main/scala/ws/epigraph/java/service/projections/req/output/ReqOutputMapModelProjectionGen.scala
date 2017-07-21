@@ -79,10 +79,11 @@ class ReqOutputMapModelProjectionGen(
       tailNamespaceSuffix(op.`type`(), normalized),
       Some(parentGen),
       ctx
-    ) {
-      override protected val buildTails: Boolean = !normalized
-      override protected val buildNormalizedTails: Boolean = normalized
-    }
+    )
+//    {
+//      override protected val buildTails: Boolean = !normalized
+//      override protected val buildNormalizedTails: Boolean = normalized
+//    }
 
 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(new MapAsmGen(this, ctx))

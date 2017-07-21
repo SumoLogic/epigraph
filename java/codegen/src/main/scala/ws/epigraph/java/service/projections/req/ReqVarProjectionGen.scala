@@ -144,47 +144,48 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
       )
     )
 
-    def genTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = toCType(tail.`type`())
-      CodeChunk(
-        /*@formatter:off*/sn"""\
-  /**
-   * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
-   */
-  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(false)}() {
-    ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
-    return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
-  }
-"""/*@formatter:on*/ ,
-        Set(
-          "org.jetbrains.annotations.Nullable"
-        )
-      )
-    }
-
-    def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
-      val tailCtype = toCType(tail.`type`())
-      val tailTypeExpr = lqn2(tailCtype, namespace.toString)
-      CodeChunk(
-        /*@formatter:off*/sn"""\
-  /**
-   * @return var projection normalized for ${JavaGenUtils.javadocLink(tailCtype, namespace)} type
-   *
-   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
-   */
-  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
-    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
-  }
-"""/*@formatter:on*/ ,
-        Set()
-      )
-    }
+//    def genTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
+//      val tailCtype = toCType(tail.`type`())
+//      CodeChunk(
+//        /*@formatter:off*/sn"""\
+//  /**
+//   * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
+//   */
+//  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(false)}() {
+//    ${reqVarProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
+//    return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
+//  }
+//"""/*@formatter:on*/ ,
+//        Set(
+//          "org.jetbrains.annotations.Nullable"
+//        )
+//      )
+//    }
+//
+//    def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqProjectionGen): CodeChunk = {
+//      val tailCtype = toCType(tail.`type`())
+//      val tailTypeExpr = lqn2(tailCtype, namespace.toString)
+//      CodeChunk(
+//        /*@formatter:off*/sn"""\
+//  /**
+//   * @return var projection normalized for ${JavaGenUtils.javadocLink(tailCtype, namespace)} type
+//   *
+//   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
+//   */
+//  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
+//    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
+//  }
+//"""/*@formatter:on*/ ,
+//        Set()
+//      )
+//    }
 
     val tags = tagGenerators.map { case (tag, gen) => genTag(tag, gen) }.foldLeft(CodeChunk.empty)(_ + _)
     val tails = CodeChunk.empty //tailGenerators.map { case (tail, gen) => genTail(tail, gen) }.foldLeft(CodeChunk.empty)(_ + _)
-    val normalizedTails = normalizedTailGenerators
-      .map { case (tail, gen) => genNormalizedTail(tail, gen) }
-      .foldLeft(CodeChunk.empty)(_ + _)
+    val normalizedTails = CodeChunk.empty
+//      normalizedTailGenerators
+//      .map { case (tail, gen) => genNormalizedTail(tail, gen) }
+//      .foldLeft(CodeChunk.empty)(_ + _)
 
     //                                                                                                   dispatcher code
     val dispatcher = if (normalizedTailGenerators.isEmpty) CodeChunk.empty else new CodeChunk(

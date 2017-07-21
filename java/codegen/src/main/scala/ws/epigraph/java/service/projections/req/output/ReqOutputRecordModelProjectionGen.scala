@@ -80,10 +80,11 @@ class ReqOutputRecordModelProjectionGen(
       tailNamespaceSuffix(op.`type`(), normalized),
       Some(parentGen),
       ctx
-    ) {
-      override protected val buildTails: Boolean = !normalized
-      override protected val buildNormalizedTails: Boolean = normalized
-    }
+    )
+//    {
+//      override protected val buildTails: Boolean = !normalized
+//      override protected val buildNormalizedTails: Boolean = normalized
+//    }
 
   lazy val assemblerGen = new RecordAsmGen(this, ctx)
 

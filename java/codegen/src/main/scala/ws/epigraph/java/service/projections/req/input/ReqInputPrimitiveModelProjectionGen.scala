@@ -53,10 +53,11 @@ class ReqInputPrimitiveModelProjectionGen(
       tailNamespaceSuffix(op.`type`(), normalized),
       Some(parentGen),
       ctx
-    ) {
-      override protected val buildTails: Boolean = !normalized
-      override protected val buildNormalizedTails: Boolean = normalized
-    }
+    )
+//    {
+//      override protected val buildTails: Boolean = !normalized
+//      override protected val buildNormalizedTails: Boolean = normalized
+//    }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputPrimitiveModelProjection")
