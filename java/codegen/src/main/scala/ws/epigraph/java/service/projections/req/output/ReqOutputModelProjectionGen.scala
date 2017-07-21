@@ -70,7 +70,7 @@ abstract class ReqOutputModelProjectionGen(
       metaOp,
       Some(baseNamespace),
       namespaceSuffix.append("meta"),
-      None, // todo should extend parent projection's meta?
+      parentClassGenOpt.flatMap(_.metaGeneratorOpt.map(_.asInstanceOf[ReqOutputModelProjectionGen])),
       ctx
     )
 }

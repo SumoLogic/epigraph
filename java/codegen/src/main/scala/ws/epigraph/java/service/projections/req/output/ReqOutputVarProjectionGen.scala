@@ -109,7 +109,6 @@ object ReqOutputVarProjectionGen {
       op.`type`().kind() match {
 
         case TypeKind.ENTITY =>
-
           new ReqOutputVarProjectionGen(
             baseNamespaceProvider,
             op,

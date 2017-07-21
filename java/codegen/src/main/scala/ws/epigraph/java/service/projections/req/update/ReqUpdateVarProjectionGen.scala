@@ -33,10 +33,12 @@ class ReqUpdateVarProjectionGen(
   val op: OpInputVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqUpdateVarProjectionGen],
   protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
+  override protected type GenType = ReqUpdateVarProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
@@ -53,17 +55,29 @@ class ReqUpdateVarProjectionGen(
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(this),
       ctx
     ) {
       override lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
     }
 
-  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpInputTagProjectionEntry): ReqProjectionGen =
+  override protected def tagGenerator(
+    pgo: Option[ReqVarProjectionGen],
+    tpe: OpInputTagProjectionEntry): ReqProjectionGen =
+    tagGenerator(
+      tpe,
+      pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqUpdateModelProjectionGen]))
+    )
+
+  protected def tagGenerator(
+    tpe: OpInputTagProjectionEntry,
+    parentTagGenOpt: Option[ReqUpdateModelProjectionGen]): ReqProjectionGen =
     ReqUpdateModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
       Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
+      parentTagGenOpt,
       ctx
     )
 
@@ -71,14 +85,15 @@ class ReqUpdateVarProjectionGen(
     Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateVarProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateTagProjectionEntry"),
 
-  CodeChunk(/*@formatter:off*/sn"""\
+    CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if entity must be replaced (updated), and {@code false} if it must be patched
    */
   public boolean replace() {
     return raw.replace();
   }
-"""/*@formatter:on*/)
+"""/*@formatter:on*/
+    )
   )
 }
 
@@ -88,43 +103,66 @@ object ReqUpdateVarProjectionGen {
     op: OpInputVarProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqUpdateTypeProjectionGen = op.`type`().kind() match {
+    parentClassGenOpt: Option[ReqUpdateTypeProjectionGen],
+    ctx: GenContext): ReqUpdateTypeProjectionGen =
 
-    case TypeKind.ENTITY =>
-      new ReqUpdateVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)
-    case TypeKind.RECORD =>
-      new ReqUpdateRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqUpdateMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqUpdateListModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqUpdatePrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unknown projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqUpdateProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.ENTITY =>
+          new ReqUpdateVarProjectionGen(
+            baseNamespaceProvider,
+            op,
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateVarProjectionGen]),
+            ctx
+          )
+
+        case TypeKind.RECORD =>
+          new ReqUpdateRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpInputRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqUpdateMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpInputMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqUpdateListModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpInputListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqUpdatePrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpInputPrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unknown projection kind: $x")
+
+      }
+
+    )
 }

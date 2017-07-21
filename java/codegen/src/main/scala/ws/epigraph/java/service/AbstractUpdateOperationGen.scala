@@ -41,6 +41,7 @@ class AbstractUpdateOperationGen(
       op.inputProjection(),
       None,
       Qn.EMPTY,
+      None,
       ctx
     )
 

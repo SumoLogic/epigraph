@@ -32,39 +32,56 @@ class ReqUpdateRecordModelProjectionGen(
   val op: OpInputRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
-
   override type OpFieldProjectionType = OpInputFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqUpdateFieldProjectionGen] =
-    fieldProjections.values.map { case (fgo, fpe) => // todo
-      (
-        findField(fpe.field().name()),
+    fieldProjections.values.map { case (fgo, fpe) =>
+      val field = fpe.field()
+      val cField = findField(field.name())
+
+      def fieldGen(parentFieldGenOpt: Option[ReqUpdateTypeProjectionGen]) = {
         new ReqUpdateFieldProjectionGen(
           baseNamespaceProvider,
-          fpe.field().name(),
+          field.name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
-          namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
+          namespaceSuffix.append(jn(field.name()).toLowerCase),
+          parentFieldGenOpt,
           ctx
         )
-      )
+      }
+
+      cField ->
+      fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqUpdateTypeProjectionGen])))
+
     }.toListMap
 
-  override protected def tailGenerator(parentGen: ReqUpdateModelProjectionGen, op: OpInputRecordModelProjection, normalized: Boolean) =
-    new ReqUpdateRecordModelProjectionGen(
+  override protected def tailGenerator(
+    parentGen: ReqUpdateModelProjectionGen,
+    op: OpInputRecordModelProjection,
+    normalized: Boolean) =
+    new ReqUpdateRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

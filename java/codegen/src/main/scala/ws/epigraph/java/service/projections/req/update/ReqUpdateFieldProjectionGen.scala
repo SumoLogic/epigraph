@@ -32,6 +32,7 @@ class ReqUpdateFieldProjectionGen(
   protected val op: OpInputFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
+  dataParentClassGenOpt: Option[ReqUpdateTypeProjectionGen],
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpInputFieldProjection
@@ -46,6 +47,7 @@ class ReqUpdateFieldProjectionGen(
       op.varProjection(),
       baseNamespaceOpt,
       namespaceSuffix,
+      dataParentClassGenOpt,
       ctx
     )
 

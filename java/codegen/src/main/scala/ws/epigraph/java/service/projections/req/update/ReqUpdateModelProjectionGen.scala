@@ -33,6 +33,7 @@ abstract class ReqUpdateModelProjectionGen(
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
   protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
@@ -45,13 +46,13 @@ abstract class ReqUpdateModelProjectionGen(
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateVarProjection")
 
   override protected def reqModelProjectionFqn: Qn =
-  Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 
@@ -62,7 +63,8 @@ abstract class ReqUpdateModelProjectionGen(
   public boolean replace() {
     return raw.replace();
   }
-"""/*@formatter:on*/)
+"""/*@formatter:on*/
+  )
 
 }
 
@@ -72,41 +74,56 @@ object ReqUpdateModelProjectionGen {
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqUpdateModelProjectionGen = op.`type`().kind() match {
+    parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
+    ctx: GenContext): ReqUpdateModelProjectionGen =
 
-    case TypeKind.RECORD =>
-      new ReqUpdateRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqUpdateMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqUpdateListModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqUpdatePrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputPrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqUpdateProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.RECORD =>
+          new ReqUpdateRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqUpdateMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqUpdateListModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqUpdatePrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputPrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+
+      }
+
+    )
 }

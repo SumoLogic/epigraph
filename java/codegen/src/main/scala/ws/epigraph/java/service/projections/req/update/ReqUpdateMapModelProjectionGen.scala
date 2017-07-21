@@ -31,8 +31,16 @@ class ReqUpdateMapModelProjectionGen(
   override val op: OpInputMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqMapModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 
@@ -52,20 +60,27 @@ class ReqUpdateMapModelProjectionGen(
     op.itemsProjection(),
     Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
+    parentClassGenOpt match {
+      case Some(mmpg: ReqUpdateMapModelProjectionGen) => Some(mmpg.elementGen)
+      case _ => None
+    },
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqUpdateModelProjectionGen, op: OpInputMapModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqUpdateModelProjectionGen,
+    op: OpInputMapModelProjection,
+    normalized: Boolean) =
     new ReqUpdateMapModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

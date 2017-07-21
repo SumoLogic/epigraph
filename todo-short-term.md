@@ -1,7 +1,7 @@
 - [x] add `Assemblers` codegen
 - [x] update reflection implementation
 - [x] rest of op parsers: named tails normalization
-- [ ] req projections codegen: add inheritance for non-output projections
+- [x] req projections codegen: add inheritance for non-output projections
 - [ ] req projections codegen: remove `normalizedFor` methods
 - [ ] assemblers: update library example docs
 

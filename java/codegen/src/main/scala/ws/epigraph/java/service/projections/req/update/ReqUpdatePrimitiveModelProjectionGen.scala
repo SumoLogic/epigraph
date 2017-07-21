@@ -29,22 +29,33 @@ class ReqUpdatePrimitiveModelProjectionGen(
   val op: OpInputPrimitiveModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqUpdateModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpInputPrimitiveModelProjection
 
-  override protected def tailGenerator(parentGen: ReqUpdateModelProjectionGen, op: OpInputPrimitiveModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqUpdateModelProjectionGen,
+    op: OpInputPrimitiveModelProjection,
+    normalized: Boolean) =
     new ReqUpdatePrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(
