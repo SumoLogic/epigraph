@@ -34,8 +34,8 @@ public final class AuthorAsmImpl extends AuthorAsm<AuthorsBackend.AuthorData> {
         // :record model assembler
         new AuthorRecordAsm<>(
             (dto, proj, c) -> String.type.createValueOfNullable(dto.firstName),
-            (d, proj, c) -> String.type.createValueOfNullable(d.lastName),
-            (d, proj, c) -> String.type.createValueOfNullable(d.middleName)
+            (dto, proj, c) -> String.type.createValueOfNullable(dto.lastName),
+            (dto, proj, c) -> String.type.createValueOfNullable(dto.middleName)
         )
     );
   }
