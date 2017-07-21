@@ -4,13 +4,13 @@
 
   <groupId>ws.epigraph.examples</groupId>
   <artifactId>examples</artifactId>
-  <version>0.0.3</version>
+  <version>0.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
   </parent>
 
   <modules>
@@ -39,7 +39,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0.3</version>
+          <version>0.0.4-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
@@ -53,7 +53,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0.3</version>
+          <version>0.0.4-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
@@ -67,7 +67,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-scala-maven-plugin</artifactId>
-          <version>0.0.3</version>
+          <version>0.0.4-SNAPSHOT</version>
           <executions>
             <execution>
               <goals>
