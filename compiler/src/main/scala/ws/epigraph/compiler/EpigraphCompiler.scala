@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile
 import org.intellij.grammar.LightPsi
 import org.jetbrains.annotations.Nullable
 import org.slf4s.Logging
-import ws.epigraph.psi.{PsiProcessingMessage, PsiProcessingException}
+import ws.epigraph.psi.{PsiProcessingException, PsiProcessingMessage}
 import ws.epigraph.schema.SchemasPsiProcessingContext
 import ws.epigraph.schema.parser.psi._
 import ws.epigraph.schema.parser.{ResourcesSchemaPsiParser, SchemaParserDefinition}
@@ -52,7 +52,7 @@ class EpigraphCompiler(
 
   implicit val ctx: CContext = new CContext
 
-  implicit private val PPConfig = EpigraphCompiler.PPConfig
+  // implicit private val PPConfig = EpigraphCompiler.PPConfig // was used for debug printouts
 
   @throws[EpigraphCompilerException]("if compilation failed")
   def compile(): CContext = {
@@ -127,7 +127,7 @@ class EpigraphCompiler(
 
     handleErrors(7)
 
-    //printSchemaFiles(ctx.schemaFiles.values)
+    //printSchemaFiles(ctx.schemaFiles.values) // was used for debug printouts
 
     ctx
 
@@ -326,15 +326,19 @@ class EpigraphCompiler(
 
 object EpigraphCompiler extends Logging {
 
-  //      import pprint.Config.Colors._
-  implicit private val PPConfig = pprint.Config(
-    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
-  )
+// this was used for debug printouts
+//  import pprint.Config.Colors._
+//  implicit private val PPConfig = pprint.Config(
+//    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
+//  )
 
-  def renderErrors(ctx: CContext): Unit = {
-    // bring pretty printers into scope
-    import CPrettyPrinters._
-    log.error(ctx.errors.map(pprint.stringify).mkString("\n", "\n\n", ""))
+  def renderErrors(ctx: CContext): Unit = ctx.errors.foreach { msg =>
+    val renderer: String => Unit = msg.level match {
+      case CMessageLevel.Error => log.error(_)
+      case CMessageLevel.Warning => log.warn(_)
+      case _ => log.info(_)
+    }
+    renderer.apply(msg.toString)
   }
 
 }

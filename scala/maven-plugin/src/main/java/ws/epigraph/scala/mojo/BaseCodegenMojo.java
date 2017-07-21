@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 /**
  * Base for Epigraph Codegen Mojos.
  */
-public abstract class BaseCodegenMojo extends AbstractMojo {
+public abstract class BaseCodegenMojo extends AbstractMojo { // TODO extend AbstractCompilingMojo
   private static final Pattern SCHEMA_FILENAME_PATTERN = Pattern.compile(".+\\.epigraph");
 
   /**

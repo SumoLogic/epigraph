@@ -80,7 +80,25 @@ class CContext(val tabWidth: Int = 2) {
 
 }
 
-case class CMessage(filename: String, position: CMessagePosition, message: String, level: CMessageLevel)
+case class CMessage(filename: String, position: CMessagePosition, message: String, level: CMessageLevel) {
+
+  override def toString: String = toStringBuilder(new java.lang.StringBuilder).toString
+
+  def toStringBuilder(sb: java.lang.StringBuilder): java.lang.StringBuilder = {
+    sb.append(filename)
+    if (position != CMessagePosition.NA) {
+      sb.append(':').append(position.line).append(':').append(position.column)
+    }
+    sb.append('\n')
+    sb.append(level.name).append(": ").append(message)
+    position.lineText.foreach { text =>
+      sb.append('\n').append(text)
+      sb.append('\n').append(" " * (position.column - 1)).append("^")
+    }
+    sb
+  }
+
+}
 
 object CMessage {
   def error(filename: String, position: CMessagePosition, message: String) =
@@ -92,11 +110,26 @@ object CMessage {
 
 case class CMessagePosition(line: Int, column: Int, tokenLength: Int, lineText: Option[String])
 
-sealed trait CMessageLevel
+sealed trait CMessageLevel {
+
+  def name: String
+
+}
 
 object CMessageLevel {
-  object Warning extends CMessageLevel
-  object Error extends CMessageLevel
+
+  object Warning extends CMessageLevel {
+
+    override val name: String = "Warning"
+
+  }
+
+  object Error extends CMessageLevel {
+
+    override val name: String = "Error"
+
+  }
+
 }
 
 object CMessagePosition {

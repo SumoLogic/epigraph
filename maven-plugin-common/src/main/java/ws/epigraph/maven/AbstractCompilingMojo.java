@@ -18,7 +18,6 @@
 
 package ws.epigraph.maven;
 
-import ws.epigraph.compiler.*;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
@@ -29,7 +28,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.jetbrains.annotations.NotNull;
-import scala.Option;
+import ws.epigraph.compiler.CContext;
+import ws.epigraph.compiler.CMessage;
+import ws.epigraph.compiler.EpigraphCompiler;
+import ws.epigraph.compiler.EpigraphCompilerException;
+import ws.epigraph.compiler.FileSource;
+import ws.epigraph.compiler.JarSource;
+import ws.epigraph.compiler.Source;
 
 import java.io.File;
 import java.io.IOException;
@@ -158,7 +163,6 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
     while (jarSources.hasNext()) sources.add(jarSources.next());
   }
 
-  // todo duplicates code from BaseCodegenMojo
   private @NotNull CContext compile(
       Collection<? extends FileSource> sources,
       Collection<? extends Source> dependencySources
@@ -169,27 +173,7 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
       return compiler.compile();
     } catch (EpigraphCompilerException failure) {
       StringBuilder sb = new StringBuilder();
-      for (CMessage err : compiler.ctx().errors()) {
-        CMessagePosition pos = err.position(); // TODO skip :line:colon, line text, and ^ if NA
-        sb.append(err.filename()).append(':').append(pos.line()).append(':').append(pos.column()).append('\n');
-
-
-        if (err.level().equals(CMessageLevel.Error$.MODULE$)) {
-          sb.append("Error");
-        } else if (err.level().equals(CMessageLevel.Warning$.MODULE$)) {
-          sb.append("Warning");
-        } else {
-          sb.append("Message");
-        }
-
-        sb.append(": ").append(err.message()).append('\n');
-        Option<String> errText = pos.lineText();
-        if (errText.nonEmpty()) {
-          sb.append('\177').append(errText.get()).append('\n');
-          sb.append('\177').append(String.format("%" + (pos.column()) + "s", "^")).append('\n');
-        }
-      }
-
+      for (CMessage err : failure.messages()) { err.toStringBuilder(sb).append('\n'); }
       throw new MojoFailureException(this, "Schema compilation failed", sb.toString());
     }
 
