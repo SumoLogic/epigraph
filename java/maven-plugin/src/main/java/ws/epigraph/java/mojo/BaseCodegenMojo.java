@@ -40,8 +40,8 @@ import java.util.Collection;
 public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
 
   /** Whether Java 8 annotations should be used in generated code. */
-  @Parameter(property = "epigraph.java.java8Annotations")
-  protected boolean java8Annotations = true;
+  @Parameter(property = "epigraph.java.java8Annotations", defaultValue = "true")
+  protected boolean java8Annotations;
 
   @Override
   protected void produceOutput(
