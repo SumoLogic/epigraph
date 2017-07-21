@@ -28,14 +28,14 @@ public final class AuthorAsmImpl extends AuthorAsm<AuthorsBackend.AuthorData> {
 
   private AuthorAsmImpl() {
     super(
-        // :id tag assembler
-        (d, p, c) -> AuthorId.create(d.id).asValue(),
+        // :id model assembler
+        (dto, proj, c) -> AuthorId.create(dto.id).asValue(),
 
-        // :record tag assembler
+        // :record model assembler
         new AuthorRecordAsm<>(
-            (d, p, c) -> String.type.createValueOfNullable(d.firstName),
-            (d, p, c) -> String.type.createValueOfNullable(d.lastName),
-            (d, p, c) -> String.type.createValueOfNullable(d.middleName)
+            (dto, proj, c) -> String.type.createValueOfNullable(dto.firstName),
+            (d, proj, c) -> String.type.createValueOfNullable(d.lastName),
+            (d, proj, c) -> String.type.createValueOfNullable(d.middleName)
         )
     );
   }
