@@ -89,8 +89,7 @@ case class CMessage(filename: String, position: CMessagePosition, message: Strin
     if (position != CMessagePosition.NA) {
       sb.append(':').append(position.line).append(':').append(position.column)
     }
-    sb.append('\n')
-    sb.append(level.name).append(": ").append(message)
+    sb.append('\n').append(level.name).append(": ").append(message)
     position.lineText.foreach { text =>
       sb.append('\n').append(text)
       sb.append('\n').append(" " * (position.column - 1)).append("^")

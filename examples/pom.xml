@@ -14,6 +14,7 @@
   </parent>
 
   <modules>
+    <module>library</module>
     <module>sumo-schema</module>
     <module>sumo-schema-java</module>
     <module>users</module>
