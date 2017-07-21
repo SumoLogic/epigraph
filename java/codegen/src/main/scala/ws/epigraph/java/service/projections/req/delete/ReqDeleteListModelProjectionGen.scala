@@ -29,12 +29,14 @@ class ReqDeleteListModelProjectionGen(
   val op: OpDeleteListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
     baseNamespaceOpt,
     _namespaceSuffix,
+    parentClassGenOpt,
     ctx
   ) with ReqListModelProjectionGen {
 
@@ -45,20 +47,28 @@ class ReqDeleteListModelProjectionGen(
     op.itemsProjection(),
     Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
+    parentClassGenOpt match {
+      case Some(lmpg: ReqDeleteListModelProjectionGen) => Some(lmpg.elementGen)
+      case _ => None
+    },
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteListModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqDeleteModelProjectionGen,
+    op: OpDeleteListModelProjection,
+    normalized: Boolean) =
     new ReqDeleteListModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
+//      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

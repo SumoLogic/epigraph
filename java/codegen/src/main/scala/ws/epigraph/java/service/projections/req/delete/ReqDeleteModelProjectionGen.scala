@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -32,6 +32,7 @@ abstract class ReqDeleteModelProjectionGen(
   op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
@@ -44,13 +45,13 @@ abstract class ReqDeleteModelProjectionGen(
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection")
 
   override protected def reqModelProjectionFqn: Qn =
-  Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
@@ -61,41 +62,56 @@ object ReqDeleteModelProjectionGen {
     op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqDeleteModelProjectionGen = op.`type`().kind() match {
+    parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
+    ctx: GenContext): ReqDeleteModelProjectionGen =
 
-    case TypeKind.RECORD =>
-      new ReqDeleteRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpDeleteRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqDeleteMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpDeleteMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqDeleteListModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpDeleteListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqDeletePrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpDeletePrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqDeleteProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.RECORD =>
+          new ReqDeleteRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpDeleteRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqDeleteMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpDeleteMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqDeleteListModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpDeleteListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqDeletePrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpDeletePrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+
+      }
+
+    )
 }

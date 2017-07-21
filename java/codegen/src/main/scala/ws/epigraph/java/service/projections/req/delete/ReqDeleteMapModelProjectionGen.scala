@@ -31,12 +31,14 @@ class ReqDeleteMapModelProjectionGen(
   override val op: OpDeleteMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
     baseNamespaceOpt,
     _namespaceSuffix,
+    parentClassGenOpt,
     ctx
   ) with ReqMapModelProjectionGen {
 
@@ -58,20 +60,28 @@ class ReqDeleteMapModelProjectionGen(
     op.itemsProjection(),
     Some(baseNamespace),
     namespaceSuffix.append(elementsNamespaceSuffix),
+    parentClassGenOpt match {
+      case Some(mmpg: ReqDeleteMapModelProjectionGen) => Some(mmpg.elementGen)
+      case _ => None
+    },
     ctx
   )
 
-  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteMapModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqDeleteModelProjectionGen,
+    op: OpDeleteMapModelProjection,
+    normalized: Boolean) =
     new ReqDeleteMapModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
+//      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

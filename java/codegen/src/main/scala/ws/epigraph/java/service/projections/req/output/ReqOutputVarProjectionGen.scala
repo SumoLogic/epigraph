@@ -40,8 +40,6 @@ class ReqOutputVarProjectionGen(
   override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
   override protected type GenType = ReqOutputVarProjectionGen
 
-//  referenceNam˜e.foreach(ref => ctx.reqOutputProjections.put(ref, this)) // todo rest
-
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)

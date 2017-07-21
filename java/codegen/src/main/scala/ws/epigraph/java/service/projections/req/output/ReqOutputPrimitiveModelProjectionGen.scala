@@ -31,12 +31,22 @@ class ReqOutputPrimitiveModelProjectionGen(
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, parentClassGenOpt, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqOutputModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpOutputPrimitiveModelProjection
 
 
-  override protected def tailGenerator(parentGen: ReqOutputModelProjectionGen, op: OpOutputPrimitiveModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqOutputModelProjectionGen,
+    op: OpOutputPrimitiveModelProjection,
+    normalized: Boolean) =
     new ReqOutputPrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,

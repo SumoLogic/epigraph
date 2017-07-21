@@ -41,6 +41,7 @@ class AbstractDeleteOperationGen(
       op.deleteProjection(),
       None,
       Qn.EMPTY,
+      None,
       ctx
     )
 

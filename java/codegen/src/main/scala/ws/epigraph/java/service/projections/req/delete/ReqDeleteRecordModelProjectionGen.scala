@@ -32,12 +32,14 @@ class ReqDeleteRecordModelProjectionGen(
   val op: OpDeleteRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
   extends ReqDeleteModelProjectionGen(
     baseNamespaceProvider,
     op,
     baseNamespaceOpt,
     _namespaceSuffix,
+    parentClassGenOpt,
     ctx
   ) with ReqRecordModelProjectionGen {
 
@@ -45,31 +47,41 @@ class ReqDeleteRecordModelProjectionGen(
   override type OpFieldProjectionType = OpDeleteFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
-    fieldProjections.values.map { case (fgo, fpe) => //todo
-      (
-        findField(fpe.field().name()),
+    fieldProjections.values.map { case (fgo, fpe) =>
+      val field = fpe.field()
+      val cField = findField(field.name())
+
+      def fieldGen(parentFieldGenOpt: Option[ReqDeleteTypeProjectionGen]) = {
         new ReqDeleteFieldProjectionGen(
           baseNamespaceProvider,
-          fpe.field().name(),
+          field.name(),
           fpe.fieldProjection(),
           Some(baseNamespace),
-          namespaceSuffix.append(jn(fpe.field().name()).toLowerCase),
+          namespaceSuffix.append(jn(field.name()).toLowerCase),
+          parentFieldGenOpt,
           ctx
         )
-      )
+      }
+
+      cField ->
+      fieldGen(fgo.flatMap(fg => fg.findFieldGenerator(field.name()).map(_.dataProjectionGen.asInstanceOf[ReqDeleteTypeProjectionGen])))
+
     }.toListMap
 
-  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeleteRecordModelProjection, normalized: Boolean) =
-    new ReqDeleteRecordModelProjectionGen(
+  override protected def tailGenerator(
+    parentGen: ReqDeleteModelProjectionGen,
+    op: OpDeleteRecordModelProjection,
+    normalized: Boolean) =
+    new ReqDeleteRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

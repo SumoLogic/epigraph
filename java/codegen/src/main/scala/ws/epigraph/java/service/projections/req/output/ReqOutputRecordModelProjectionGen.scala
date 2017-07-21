@@ -45,7 +45,6 @@ class ReqOutputRecordModelProjectionGen(
   ) with ReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpOutputRecordModelProjection
-
   override type OpFieldProjectionType = OpOutputFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
@@ -54,7 +53,6 @@ class ReqOutputRecordModelProjectionGen(
       val cField = findField(field.name())
 
       def fieldGen(parentFieldGenOpt: Option[ReqOutputTypeProjectionGen]) = {
-        //System.out.println(s"$fullClassName :: ${ field.name() } extends ${ parentFieldGenOpt.map(_.fullClassName) } ~ ${fgo.map(_.fullClassName)}")
         new ReqOutputFieldProjectionGen(
           baseNamespaceProvider,
           field.name(),

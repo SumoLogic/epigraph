@@ -29,22 +29,35 @@ class ReqDeletePrimitiveModelProjectionGen(
   val op: OpDeletePrimitiveModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqPrimitiveModelProjectionGen {
+  extends ReqDeleteModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpDeletePrimitiveModelProjection
 
-  override protected def tailGenerator(parentGen: ReqDeleteModelProjectionGen, op: OpDeletePrimitiveModelProjection, normalized: Boolean) =
+
+  override protected def tailGenerator(
+    parentGen: ReqDeleteModelProjectionGen,
+    op: OpDeletePrimitiveModelProjection,
+    normalized: Boolean) =
     new ReqDeletePrimitiveModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
+//      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

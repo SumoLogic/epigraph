@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.TypeKind
@@ -32,10 +32,12 @@ class ReqDeleteVarProjectionGen(
   val op: OpDeleteVarProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqDeleteVarProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
+  override protected type GenType = ReqDeleteVarProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
@@ -52,17 +54,30 @@ class ReqDeleteVarProjectionGen(
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(this),
       ctx
     ) {
       override lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
     }
 
-  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
+
+  override protected def tagGenerator(
+    pgo: Option[ReqVarProjectionGen],
+    tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
+    tagGenerator(
+      tpe,
+      pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqDeleteModelProjectionGen]))
+    )
+
+  protected def tagGenerator(
+    tpe: OpDeleteTagProjectionEntry,
+    parentTagGenOpt: Option[ReqDeleteModelProjectionGen]): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
       Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
+      parentTagGenOpt,
       ctx
     )
 
@@ -78,43 +93,65 @@ object ReqDeleteVarProjectionGen {
     op: OpDeleteVarProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqDeleteTypeProjectionGen = op.`type`().kind() match {
+    parentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
+    ctx: GenContext): ReqDeleteTypeProjectionGen =
 
-    case TypeKind.ENTITY =>
-      new ReqDeleteVarProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, namespaceSuffix, ctx)
-    case TypeKind.RECORD =>
-      new ReqDeleteRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqDeleteMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqDeleteListModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqDeletePrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unknown projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqDeleteProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.ENTITY =>
+          new ReqDeleteVarProjectionGen(
+            baseNamespaceProvider,
+            op,
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteVarProjectionGen]),
+            ctx
+          )
+        case TypeKind.RECORD =>
+          new ReqDeleteRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpDeleteRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqDeleteMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpDeleteMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqDeleteListModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpDeleteListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqDeletePrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.singleTagProjection().projection().asInstanceOf[OpDeletePrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unknown projection kind: $x")
+
+      }
+
+    )
 }

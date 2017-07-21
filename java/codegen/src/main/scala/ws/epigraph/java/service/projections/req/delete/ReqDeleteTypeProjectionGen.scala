@@ -21,6 +21,4 @@ import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqDeleteTypeProjectionGen extends ReqTypeProjectionGen with ReqDeleteProjectionGen{
-
-}
+trait ReqDeleteTypeProjectionGen extends ReqTypeProjectionGen with ReqDeleteProjectionGen
