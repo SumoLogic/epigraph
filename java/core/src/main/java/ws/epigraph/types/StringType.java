@@ -73,6 +73,11 @@ public abstract class StringType extends PrimitiveType<String> {
     }
 
     @Override
+    public @NotNull Val.Imm createValueOfNullable(@Nullable String val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
       return Val.Imm.Raw.create(errorOrNull);
     }
@@ -117,6 +122,11 @@ public abstract class StringType extends PrimitiveType<String> {
     @Override
     public final @NotNull MyDatumBuilder createBuilder(@NotNull String val) {
       return datumBuilderConstructor.apply(new StringDatum.Builder.Raw(this, val));
+    }
+
+    @Override
+    public final @NotNull MyImmVal createValueOfNullable(@Nullable String val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
     }
 
     @Override

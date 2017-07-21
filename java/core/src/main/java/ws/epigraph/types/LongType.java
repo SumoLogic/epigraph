@@ -73,6 +73,11 @@ public abstract class LongType extends PrimitiveType<Long> {
     }
 
     @Override
+    public @NotNull Val.Imm createValueOfNullable(@Nullable Long val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
       return Val.Imm.Raw.create(errorOrNull);
     }
@@ -117,6 +122,11 @@ public abstract class LongType extends PrimitiveType<Long> {
     @Override
     public final @NotNull MyDatumBuilder createBuilder(@NotNull Long val) {
       return datumBuilderConstructor.apply(new LongDatum.Builder.Raw(this, val));
+    }
+
+    @Override
+    public @NotNull MyImmVal createValueOfNullable(final @Nullable Long val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
     }
 
     @Override

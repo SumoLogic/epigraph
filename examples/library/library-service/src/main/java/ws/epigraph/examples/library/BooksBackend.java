@@ -88,6 +88,8 @@ public final class BooksBackend {
         .collect(Collectors.toList());
   }
 
+  public static Map<BookId, BookData> getBooks() { return books; }
+
   public static class BookData {
     public final @NotNull BookId id;
     public final @NotNull String title;

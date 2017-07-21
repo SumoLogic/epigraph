@@ -39,7 +39,7 @@ public final class AuthorsBackend {
       @Nullable String lastName) {
 
     AuthorId id = AuthorId.create(nextId.incrementAndGet());
-    authors.put(id, new AuthorData(firstName, middleName, lastName));
+    authors.put(id, new AuthorData(id.getVal(), firstName, middleName, lastName));
     return id;
   }
 
@@ -82,11 +82,13 @@ public final class AuthorsBackend {
   }
 
   public static class AuthorData {
+    public final long id;
     public final @Nullable String firstName;
     public final @Nullable String middleName;
     public final @Nullable String lastName;
 
-    public AuthorData(@Nullable String firstName, @Nullable String middleName, @Nullable String lastName) {
+    public AuthorData(long id, @Nullable String firstName, @Nullable String middleName, @Nullable String lastName) {
+      this.id = id;
       this.firstName = firstName;
       this.middleName = middleName;
       this.lastName = lastName;

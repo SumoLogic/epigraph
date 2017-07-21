@@ -73,6 +73,11 @@ public abstract class DoubleType extends PrimitiveType<Double> {
     }
 
     @Override
+    public @NotNull Val.Imm createValueOfNullable(@Nullable Double val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
       return Val.Imm.Raw.create(errorOrNull);
     }
@@ -117,6 +122,11 @@ public abstract class DoubleType extends PrimitiveType<Double> {
     @Override
     public final @NotNull MyDatumBuilder createBuilder(@NotNull Double val) {
       return datumBuilderConstructor.apply(new DoubleDatum.Builder.Raw(this, val));
+    }
+
+    @Override
+    public @NotNull MyImmVal createValueOfNullable(@Nullable Double val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
     }
 
     @Override

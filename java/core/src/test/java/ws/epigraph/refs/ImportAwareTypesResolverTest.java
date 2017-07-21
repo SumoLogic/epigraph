@@ -202,6 +202,9 @@ public class ImportAwareTypesResolverTest {
 
       @Override
       public @NotNull PrimitiveTypeApi.PrimitiveKind primitiveKind() { return PrimitiveKind.STRING; }
+
+      @Override
+      public @NotNull Val.Imm createValueOfNullable(final @Nullable String val) { return null; }
     };
   }
 

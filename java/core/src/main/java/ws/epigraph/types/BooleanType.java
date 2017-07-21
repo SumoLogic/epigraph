@@ -73,6 +73,11 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
     }
 
     @Override
+    public @NotNull Val.Imm createValueOfNullable(@Nullable Boolean val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
       return Val.Imm.Raw.create(errorOrNull);
     }
@@ -117,6 +122,11 @@ public abstract class BooleanType extends PrimitiveType<Boolean> {
     @Override
     public final @NotNull MyDatumBuilder createBuilder(@NotNull Boolean val) {
       return datumBuilderConstructor.apply(new BooleanDatum.Builder.Raw(this, val));
+    }
+
+    @Override
+    public @NotNull MyImmVal createValueOfNullable(@Nullable Boolean val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
     }
 
     @Override

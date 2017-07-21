@@ -73,6 +73,11 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     }
 
     @Override
+    public @NotNull Val.Imm createValueOfNullable(@Nullable Integer val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    @Override
     public @NotNull Val.Imm.Raw createValue(@Nullable ErrorValue errorOrNull) {
       return Val.Imm.Raw.create(errorOrNull);
     }
@@ -117,6 +122,11 @@ public abstract class IntegerType extends PrimitiveType<Integer> {
     @Override
     public final @NotNull MyDatumBuilder createBuilder(@NotNull Integer val) {
       return datumBuilderConstructor.apply(new IntegerDatum.Builder.Raw(this, val));
+    }
+
+    @Override
+    public @NotNull MyImmVal createValueOfNullable(@Nullable Integer val) {
+      return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
     }
 
     @Override

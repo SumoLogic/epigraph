@@ -36,7 +36,8 @@ public class BooksResourceFactory extends AbstractBooksResourceFactory {
   @Override
   protected @NotNull ReadOperation<BookId_BookRecord_Map.Data> constructReadOperation(
       @NotNull ReadOperationDeclaration operationDeclaration) throws ServiceInitializationException {
-    return new BooksReadOperation(operationDeclaration);
+     return new BooksReadOperation(operationDeclaration);
+//   return new AsmBasedBooksReadOperation(operationDeclaration);
   }
 
   @Override

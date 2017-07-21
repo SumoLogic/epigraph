@@ -58,6 +58,8 @@ public abstract class PrimitiveType<Native> extends DatumTypeImpl implements Pri
 
   public abstract @NotNull PrimitiveDatum.Builder<Native> createBuilder(@NotNull Native val);
 
+  public abstract @NotNull Val.Imm createValueOfNullable(@Nullable Native val);
+
   //public abstract @NotNull PrimitiveDatum.Imm<Native> createImmutable(@NotNull Native val);
 
 
