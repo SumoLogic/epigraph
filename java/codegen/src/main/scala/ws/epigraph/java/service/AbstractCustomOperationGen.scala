@@ -42,6 +42,7 @@ class AbstractCustomOperationGen(
         inputProjection,
         None,
         Qn.EMPTY,
+        None,
         ctx
       )
     }

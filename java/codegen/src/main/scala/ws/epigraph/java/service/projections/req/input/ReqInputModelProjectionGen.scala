@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -32,6 +32,7 @@ abstract class ReqInputModelProjectionGen(
   op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqInputModelProjectionGen],
   protected val ctx: GenContext) extends ReqInputTypeProjectionGen with ReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
@@ -44,13 +45,13 @@ abstract class ReqInputModelProjectionGen(
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
   override protected def reqVarProjectionFqn: Qn =
     Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection")
 
   override protected def reqModelProjectionFqn: Qn =
-  Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
@@ -61,41 +62,56 @@ object ReqInputModelProjectionGen {
     op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    ctx: GenContext): ReqInputModelProjectionGen = op.`type`().kind() match {
+    parentClassGenOpt: Option[ReqInputModelProjectionGen],
+    ctx: GenContext): ReqInputModelProjectionGen =
 
-    case TypeKind.RECORD =>
-      new ReqInputRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputRecordModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqInputMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputMapModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.LIST =>
-      new ReqInputListModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputListModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqInputPrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.asInstanceOf[OpInputPrimitiveModelProjection],
-        baseNamespaceOpt,
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqInputProjections,
 
-  }
+      op.`type`().kind() match {
+
+        case TypeKind.RECORD =>
+          new ReqInputRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqInputMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqInputListModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqInputPrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpInputPrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+
+      }
+
+    )
 }

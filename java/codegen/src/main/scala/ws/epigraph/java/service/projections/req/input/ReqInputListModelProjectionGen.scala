@@ -29,30 +29,45 @@ class ReqInputListModelProjectionGen(
   val op: OpInputListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
+  override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(baseNamespaceProvider, op, baseNamespaceOpt, _namespaceSuffix, ctx) with ReqListModelProjectionGen {
+  extends ReqInputModelProjectionGen(
+    baseNamespaceProvider,
+    op,
+    baseNamespaceOpt,
+    _namespaceSuffix,
+    parentClassGenOpt,
+    ctx
+  ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpInputListModelProjection
 
   val elementGen: ReqInputTypeProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
-      baseNamespaceProvider,
-      op.itemsProjection(),
-      Some(baseNamespace),
-      namespaceSuffix.append(elementsNamespaceSuffix),
-      ctx
-    )
+    baseNamespaceProvider,
+    op.itemsProjection(),
+    Some(baseNamespace),
+    namespaceSuffix.append(elementsNamespaceSuffix),
+    parentClassGenOpt match {
+      case Some(lmpg: ReqInputListModelProjectionGen) => Some(lmpg.elementGen)
+      case _ => None
+    },
+    ctx
+  )
 
-  override protected def tailGenerator(parentGen: ReqInputModelProjectionGen, op: OpInputListModelProjection, normalized: Boolean) =
+  override protected def tailGenerator(
+    parentGen: ReqInputModelProjectionGen,
+    op: OpInputListModelProjection,
+    normalized: Boolean) =
     new ReqInputListModelProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
       tailNamespaceSuffix(op.`type`(), normalized),
+      Some(parentGen),
       ctx
     ) {
       override protected val buildTails: Boolean = !normalized
       override protected val buildNormalizedTails: Boolean = normalized
-      override protected val parentClassGenOpt = Some(parentGen)
     }
 
   override protected def generate: String = generate(

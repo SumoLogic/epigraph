@@ -41,6 +41,7 @@ class AbstractCreateOperationGen(
       op.inputProjection(),
       None,
       Qn.EMPTY,
+      None,
       ctx
     )
 

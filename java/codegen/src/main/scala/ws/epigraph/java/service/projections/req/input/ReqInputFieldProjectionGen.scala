@@ -32,6 +32,7 @@ class ReqInputFieldProjectionGen(
   protected val op: OpInputFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
+  dataParentClassGenOpt: Option[ReqInputTypeProjectionGen],
   protected val ctx: GenContext) extends ReqInputProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpInputFieldProjection
@@ -46,6 +47,7 @@ class ReqInputFieldProjectionGen(
       op.varProjection(),
       baseNamespaceOpt,
       namespaceSuffix,
+      dataParentClassGenOpt,
       ctx
     )
 
