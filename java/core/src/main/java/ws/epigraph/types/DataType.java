@@ -18,11 +18,10 @@
 
 package ws.epigraph.types;
 
-import ws.epigraph.data.Data;
-import ws.epigraph.names.DataTypeName;
-import ws.epigraph.types.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.data.Data;
+import ws.epigraph.names.DataTypeName;
 
 import java.util.Objects;
 

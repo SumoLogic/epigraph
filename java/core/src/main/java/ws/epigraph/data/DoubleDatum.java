@@ -234,9 +234,9 @@ public interface DoubleDatum extends PrimitiveDatum<Double> {
     }
 
 
-    public static abstract class Static<
+    public abstract static class Static<
         MyImmDatum extends DoubleDatum.Imm.Static,
-        MyValBuilder extends Val.Builder.Static
+        MyValBuilder extends Val.Builder.Static<?, ?>
         > extends DoubleDatum.Builder
         implements DoubleDatum.Static, PrimitiveDatum.Builder.Static<Double, MyImmDatum> {
 

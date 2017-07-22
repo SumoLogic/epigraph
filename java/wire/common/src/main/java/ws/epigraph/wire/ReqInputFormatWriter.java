@@ -21,8 +21,6 @@ package ws.epigraph.wire;
 import net.jcip.annotations.NotThreadSafe;
 import ws.epigraph.projections.req.input.ReqInputModelProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 
 @NotThreadSafe
 public interface ReqInputFormatWriter extends FormatWriter<ReqInputVarProjection, ReqInputModelProjection<?, ?, ?>> {

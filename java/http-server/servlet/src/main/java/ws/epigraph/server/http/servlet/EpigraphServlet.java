@@ -170,7 +170,7 @@ public abstract class EpigraphServlet extends HttpServlet {
         final @NotNull HttpMethod requestMethod,
         final @Nullable String operationName,
         final @NotNull EpigraphServlet.@NotNull ServletInvocationContext context) {
-      super.handleRequest(decodedUri, requestMethod, operationName, context, newOperationInvocationContext(context));
+      handleRequest(decodedUri, requestMethod, operationName, context, newOperationInvocationContext(context));
     }
 
     @Override

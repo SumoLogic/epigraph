@@ -26,6 +26,6 @@ public interface Self<Self> { // TODO This?
   // This can, of course, be intentionally broken (`class Foo implements Self<Bar>`); good job then.
   @Contract(pure = true)
   @SuppressWarnings("unchecked")
-  public default @NotNull Self self() { return (Self) this; }
+  default @NotNull Self self() { return (Self) this; }
 
 }

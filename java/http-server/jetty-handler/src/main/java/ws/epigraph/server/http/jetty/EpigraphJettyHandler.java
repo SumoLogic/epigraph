@@ -168,7 +168,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
         final @NotNull HttpMethod requestMethod,
         final @Nullable String operationName,
         final @NotNull JettyHandlerInvocationContext context) {
-      super.handleRequest(decodedUri, requestMethod, operationName, context, newOperationInvocationContext(context));
+      handleRequest(decodedUri, requestMethod, operationName, context, newOperationInvocationContext(context));
     }
 
     @Override

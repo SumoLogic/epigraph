@@ -138,16 +138,16 @@ public class Resource {
     final Operations<? extends CustomOperation<?>> ops;
     switch (method) {
       case GET:
-        ops = this.customGetOperations;
+        ops = customGetOperations;
         break;
       case POST:
-        ops = this.customPostOperations;
+        ops = customPostOperations;
         break;
       case PUT:
-        ops = this.customPutOperations;
+        ops = customPutOperations;
         break;
       case DELETE:
-        ops = this.customDeleteOperations;
+        ops = customDeleteOperations;
         break;
       default:
         throw new IllegalArgumentException("Unknown HTTP method: " + method);
