@@ -66,7 +66,7 @@
 - [ ] Check that anonymous map keys are datum (not data) type
 
 # Maven plugin
-- [ ] use slf4j for logging
+- [x] use slf4j for logging
 
 # Gradle plugin
 - [ ] use slf4j for logging
@@ -94,8 +94,8 @@
   -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
   -[x] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
 - Maven
-- [ ] include `examples` in main build
-  - [ ] maven
+- [x] include `examples` in main build
+  - [x] maven
   - [x] gradle
 
 - Cleanup
