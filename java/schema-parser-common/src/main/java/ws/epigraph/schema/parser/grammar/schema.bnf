@@ -471,7 +471,7 @@ opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection /*opParamDefault?*/ 
 
 private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
-opKeyProjection ::= 'projection' opInputModelProjection { pin=1 }
+opKeyProjection ::= 'projection' ':' opInputModelProjection { pin=1 }
 
 // op path --------------------------------------------------------
 

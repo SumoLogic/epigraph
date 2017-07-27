@@ -23,7 +23,7 @@ import ws.epigraph.types.PrimitiveTypeApi;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class PrimitiveTypeAsmImpl extends PrimitiveTypeAsm<PrimitiveTypeApi> {
+public final class PrimitiveTypeAsmImpl extends PrimitiveTypeAsm<PrimitiveTypeApi> {
   public static final PrimitiveTypeAsmImpl INSTANCE = new PrimitiveTypeAsmImpl();
 
   private PrimitiveTypeAsmImpl() {

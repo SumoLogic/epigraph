@@ -83,6 +83,8 @@
 - [ ] req update projections should support paths (trunk), with trimmed input data on the wire
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
+- [ ] op entity projections: no syntax for body (annotations/defaults/...)
+- [ ] entity poly tails: change `~~` to `~` and put it after model projection (make non-greedy). Model projection must be in braces.
 
 # Operations
 

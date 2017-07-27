@@ -258,7 +258,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         }
 
         l.beginCInd(0);
-        l.print("projection");
+        l.print("projection:");
         brk();
         OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
         ipp.printModel(keyModelProjection, 0);

@@ -26,6 +26,9 @@ public interface SchemaOpKeyProjection extends PsiElement {
   @Nullable
   SchemaOpInputModelProjection getOpInputModelProjection();
 
+  @Nullable
+  PsiElement getColon();
+
   @NotNull
   PsiElement getProjection();
 

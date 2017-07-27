@@ -160,7 +160,7 @@ public class OpInputProjectionsTest {
     testParsingVarProjection(
         lines(
             ":`record` (",
-            "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection ( firstName, lastName ) ](",
+            "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection: ( firstName, lastName ) ](",
             "    ( firstName ) )",
             ")"
         )

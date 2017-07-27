@@ -3931,13 +3931,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'projection' opInputModelProjection
+  // 'projection' ':' opInputModelProjection
   public static boolean opKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opKeyProjection")) return false;
     if (!nextTokenIs(b, S_PROJECTION)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_KEY_PROJECTION, null);
-    r = consumeToken(b, S_PROJECTION);
+    r = consumeTokens(b, 1, S_PROJECTION, S_COLON);
     p = r; // pin = 1
     r = r && opInputModelProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);

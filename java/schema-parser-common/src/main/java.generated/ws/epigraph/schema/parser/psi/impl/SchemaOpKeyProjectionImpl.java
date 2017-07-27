@@ -49,6 +49,12 @@ public class SchemaOpKeyProjectionImpl extends ASTWrapperPsiElement implements S
   }
 
   @Override
+  @Nullable
+  public PsiElement getColon() {
+    return findChildByType(S_COLON);
+  }
+
+  @Override
   @NotNull
   public PsiElement getProjection() {
     return notNullChild(findChildByType(S_PROJECTION));
