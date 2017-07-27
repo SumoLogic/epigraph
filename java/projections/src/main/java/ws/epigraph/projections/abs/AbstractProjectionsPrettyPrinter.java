@@ -153,14 +153,14 @@ public abstract class AbstractProjectionsPrettyPrinter<
       l.beginIInd();
       brk();
       if (polymorphicTails.size() == 1) {
-        l.print("~~");
+        l.print(":~");
         VP tail = polymorphicTails.iterator().next();
         l.print(tail.type().name().toString());
         brk();
         printVar(tail, 0);
       } else {
         l.beginCInd();
-        l.print("~~(");
+        l.print(":~(");
         boolean first = true;
         for (VP tail : polymorphicTails) {
           if (first) first = false;

@@ -515,7 +515,7 @@ opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')
 opOutputSingleTagProjection ::= ( ':' tagName)? opOutputModelProjection
 opOutputMultiTagProjectionItem ::= tagName opOutputModelProjection
 
-opOutputVarPolymorphicTail ::= '~' '~' ( opOutputVarTailItem | opOutputVarMultiTail ) {pin=2}
+opOutputVarPolymorphicTail ::= ':' '~' ( opOutputVarTailItem | opOutputVarMultiTail ) {pin=2}
 opOutputVarMultiTail ::= '(' (opOutputVarTailItem ','?)* ')' {pin=1}
 opOutputVarTailItem ::= typeRef opOutputVarProjection
 
@@ -573,7 +573,7 @@ opInputMultiTagProjection ::= ':' '(' (opInputMultiTagProjectionItem ','?)* ')' 
 opInputSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? opInputModelProjection
 opInputMultiTagProjectionItem ::= '+'? tagName opInputModelProjection
 
-opInputVarPolymorphicTail ::= '~' '~' ( opInputVarTailItem | opInputVarMultiTail ) {pin=2}
+opInputVarPolymorphicTail ::= ':' '~' ( opInputVarTailItem | opInputVarMultiTail ) {pin=2}
 opInputVarMultiTail ::= '(' (opInputVarTailItem ','?)* ')' {pin=1}
 opInputVarTailItem ::= typeRef opInputVarProjection
 
@@ -644,7 +644,7 @@ opDeleteMultiTagProjection ::= ':' '(' (opDeleteMultiTagProjectionItem ','?)* ')
 opDeleteSingleTagProjection ::= ( ':' tagName)? opDeleteModelProjection
 opDeleteMultiTagProjectionItem ::= tagName opDeleteModelProjection
 
-opDeleteVarPolymorphicTail ::= '~' '~' ( opDeleteVarTailItem | opDeleteVarMultiTail ) {pin=2}
+opDeleteVarPolymorphicTail ::= ':' '~' ( opDeleteVarTailItem | opDeleteVarMultiTail ) {pin=2}
 opDeleteVarMultiTail ::= '(' (opDeleteVarTailItem ','?)* ')' {pin=1}
 opDeleteVarTailItem ::= typeRef opDeleteVarProjection
 

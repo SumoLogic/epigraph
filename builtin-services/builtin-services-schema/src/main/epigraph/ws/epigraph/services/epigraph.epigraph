@@ -88,7 +88,7 @@ resource epigraph: EpigraphResource {
 
   // types
 
-  outputProjection typeName: TypeName = :`string` ~~ (
+  outputProjection typeName: TypeName = :`string` :~ (
     QualifiedTypeName :name,
     AnonListTypeName :elementTypeName $dataTypeName,
     AnonMapTypeName :`record`(

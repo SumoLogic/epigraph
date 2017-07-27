@@ -79,9 +79,9 @@ public class ReqOutputJsonFormatWriterTest {
       "    friends *( :id ),",
       "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
       "  )",
-      ") ~~(",
+      ") :~(",
       "      ws.epigraph.tests.User :`record` (profile)",
-      "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+      "        :~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
       "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
       ")"
   ), resolver);
@@ -218,7 +218,7 @@ public class ReqOutputJsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":record(id)~~ws.epigraph.tests.User :record(profile)",
+        ":record(id):~ws.epigraph.tests.User :record(profile)",
         person,
         "{\"TYPE\":\"ws.epigraph.tests.Person\",\"DATA\":{\"id\":1}}"
     );
@@ -237,7 +237,7 @@ public class ReqOutputJsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":id~~ws.epigraph.tests.User :record(profile)",
+        ":id:~ws.epigraph.tests.User :record(profile)",
         person,
         "{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}"
     );
@@ -255,7 +255,7 @@ public class ReqOutputJsonFormatWriterTest {
             .toImmutable();
 
     testRender(
-        ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
+        ":record(id):~ws.epigraph.tests.User :record(profile) :~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         person,
         "{\"TYPE\":\"ws.epigraph.tests.SubUser\",\"DATA\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}"
     );

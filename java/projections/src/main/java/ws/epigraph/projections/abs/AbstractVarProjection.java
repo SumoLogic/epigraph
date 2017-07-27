@@ -68,6 +68,8 @@ public abstract class AbstractVarProjection<
       @Nullable List<VP> polymorphicTails,
       @NotNull TextLocation location) {
 
+    assert polymorphicTails == null || !polymorphicTails.isEmpty();
+
     this.type = type;
     this.tagProjections = tagProjections;
     this.parenthesized = parenthesized;
@@ -188,7 +190,7 @@ public abstract class AbstractVarProjection<
 //   * <p>
 //   * Used by schema parsers to assign normalized projection aliases, for example
 //   * <code><pre>
-//   *   outputProjection personProjection: Person = :id ~~User $userProjection = :record (firstName)
+//   *   outputProjection personProjection: Person = :id :~User $userProjection = :record (firstName)
 //   * </pre></code>
 //   * This will mark {@code personProjection} normalized to {@code User} type as {@code userProjection}
 //   *
@@ -271,12 +273,13 @@ public abstract class AbstractVarProjection<
             if (mergedTails == null)
               filteredMergedTails = null;
             else {
-              filteredMergedTails = mergedTails
+              final List<VP> tmp = mergedTails
                   .stream()
                   // remove 'uninteresting' tails which already describe `effectiveType`
                   .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
                   //            .map(t -> t.normalizedForType(targetType))
                   .collect(Collectors.toList());
+              filteredMergedTails = tmp.isEmpty() ? null : tmp;
             }
 
             List<VP> projectionsToMerge = effectiveProjections
@@ -551,6 +554,8 @@ public abstract class AbstractVarProjection<
   @Override
   public void resolve(@Nullable ProjectionReferenceName name, @NotNull VP value) {
     preResolveCheck(value);
+
+    assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.name = name;
     this.tagProjections = value.tagProjections();

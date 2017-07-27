@@ -2944,13 +2944,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opDeleteVarTailItem | opDeleteVarMultiTail )
+  // ':' '~' ( opDeleteVarTailItem | opDeleteVarMultiTail )
   public static boolean opDeleteVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opDeleteVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, S_TILDA)) return false;
+    if (!nextTokenIs(b, S_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_DELETE_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    r = consumeTokens(b, 2, S_COLON, S_TILDA);
     p = r; // pin = 2
     r = r && opDeleteVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -3868,13 +3868,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opInputVarTailItem | opInputVarMultiTail )
+  // ':' '~' ( opInputVarTailItem | opInputVarMultiTail )
   public static boolean opInputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opInputVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, S_TILDA)) return false;
+    if (!nextTokenIs(b, S_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_INPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    r = consumeTokens(b, 2, S_COLON, S_TILDA);
     p = r; // pin = 2
     r = r && opInputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);
@@ -4751,13 +4751,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '~' '~' ( opOutputVarTailItem | opOutputVarMultiTail )
+  // ':' '~' ( opOutputVarTailItem | opOutputVarMultiTail )
   public static boolean opOutputVarPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opOutputVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, S_TILDA)) return false;
+    if (!nextTokenIs(b, S_COLON)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, S_TILDA, S_TILDA);
+    r = consumeTokens(b, 2, S_COLON, S_TILDA);
     p = r; // pin = 2
     r = r && opOutputVarPolymorphicTail_2(b, l + 1);
     exit_section_(b, l, m, r, p, null);

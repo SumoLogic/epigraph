@@ -91,7 +91,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testPolymorphicGet() throws IOException {
     get(
-        "/users[4,5](:record(id,firstName,lastName,bestFriend:record(id)~~User:record(profile)))",
+        "/users[4,5](:record(id,firstName,lastName,bestFriend:record(id):~User:record(profile)))",
         200,
         "[{'K':4,'V':" +
         "{'id':4,'firstName':'First4','lastName':'Last4','bestFriend':" +
@@ -114,7 +114,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testPathPolyGet() throws IOException {
     get(
-        "/user:record(firstName)~~User:record(profile)",
+        "/user:record(firstName):~User:record(profile)",
         200,
         "{'firstName':'Alfred','profile':{'ERROR':404,'message':'Not Found'}}"
     );
@@ -123,7 +123,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testPathPolyGetRequired() throws IOException {
     get(
-        "/user:record(firstName)~~User:record(+profile)",
+        "/user:record(firstName):~User:record(+profile)",
         412,
         // this is /user:record value
         "{\"ERROR\":412,\"message\":\":record/profile : Required data is a [404] error: Not Found\"}"
@@ -133,7 +133,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testPolyRequiredButAbsent() throws IOException {
     get(
-        "/user:record(friends*(:record(firstName)~~User:record(+profile)))",
+        "/user:record(friends*(:record(firstName):~User:record(+profile)))",
         520,
         ":record/friends[2]:record : Required field ''profile'' is missing",
         ContentTypes.TEXT_UTF8

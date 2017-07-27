@@ -67,6 +67,8 @@ public abstract class AbstractModelProjection<
       @Nullable List<SMP> polymorphicTails,
       @NotNull TextLocation location
   ) {
+    assert polymorphicTails == null || !polymorphicTails.isEmpty();
+
     this.model = model;
     this.metaProjection = metaProjection;
     this.polymorphicTails = polymorphicTails;
@@ -103,7 +105,7 @@ public abstract class AbstractModelProjection<
 //   * <p>
 //   * Used by schema parsers to assign normalized projection aliases, for example
 //   * <code><pre>
-//   *   outputProjection personProjection: Person = :id ~~User $userProjection = :record (firstName)
+//   *   outputProjection personProjection: Person = :id :~User $userProjection = :record (firstName)
 //   * </pre></code>
 //   * This will mark {@code personProjection} normalized to {@code User} type as {@code userProjection}
 //   *
@@ -205,12 +207,13 @@ public abstract class AbstractModelProjection<
             if (mergedTails == null)
               filteredMergedTails = null;
             else {
-              filteredMergedTails = mergedTails
+              final List<SMP> tmp = mergedTails
                   .stream()
                   // remove 'uninteresting' tails which already describe `effectiveType`
                   .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
                   //            .map(t -> t.normalizedForType(targetType))
                   .collect(Collectors.toList());
+              filteredMergedTails = tmp.isEmpty() ? null : tmp;
             }
 
             List<SMP> projectionsToMerge = effectiveProjections
@@ -439,6 +442,8 @@ public abstract class AbstractModelProjection<
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     preResolveCheck(value);
+
+    assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.isResolved = true;
     setReferenceName(name);

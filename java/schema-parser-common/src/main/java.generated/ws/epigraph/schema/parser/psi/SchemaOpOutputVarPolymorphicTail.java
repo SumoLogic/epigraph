@@ -29,4 +29,10 @@ public interface SchemaOpOutputVarPolymorphicTail extends PsiElement {
   @Nullable
   SchemaOpOutputVarTailItem getOpOutputVarTailItem();
 
+  @NotNull
+  PsiElement getColon();
+
+  @NotNull
+  PsiElement getTilda();
+
 }

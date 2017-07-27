@@ -134,7 +134,7 @@ public final class OpInputProjectionsPsiParser {
         return reference;
       } else {
         // special case:
-        // someProjection = ( ... ) ~~ SubType $subProjection = ( ... )
+        // someProjection = ( ... ) :~ SubType $subProjection = ( ... )
         // must result in `subProjection` created in the same namespace as `someProjection`
         // (that's why we have to access parent context here)
         // and it's value will be `parentProjection.normalizedForType(SubType)
@@ -650,7 +650,7 @@ public final class OpInputProjectionsPsiParser {
         return reference;
       } else {
         // special case:
-        // someProjection = ( ... ) ~~ SubType $subProjection = ( ... )
+        // someProjection = ( ... ) :~ SubType $subProjection = ( ... )
         // must result in `subProjection` created in the same namespace as `someProjection`
         // (that's why we have to access parent context here)
         // and it's value will be `parentProjection.normalizedForType(SubType)

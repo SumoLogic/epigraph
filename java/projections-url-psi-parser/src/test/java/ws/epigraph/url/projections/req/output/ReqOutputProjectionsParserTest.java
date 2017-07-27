@@ -86,7 +86,7 @@ public class ReqOutputProjectionsParserTest {
           "        id,",
           "        firstName",
           "      ),",
-          "    ) ) ~~ws.epigraph.tests.User : profile ,",
+          "    ) ) :~ws.epigraph.tests.User : profile ,",
           "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :(id,`record`(id)) ),",
@@ -94,9 +94,9 @@ public class ReqOutputProjectionsParserTest {
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "    friendRecordMap [ forbidden ] (id, firstName)",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
-          ") ~~(",
+          ") :~(",
           "      ws.epigraph.tests.User :`record` (profile)",
-          "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+          "        :~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
           "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
           ")"
       )
@@ -238,8 +238,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseTail() {
     testParse(
-        ":id ~~User :record ( profile )",
-        ":id ~~ws.epigraph.tests.User :record ( profile )",
+        ":id :~User :record ( profile )",
+        ":id :~ws.epigraph.tests.User :record ( profile )",
         1
     );
   }
@@ -247,8 +247,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseDoubleTail() {
     testParse(
-        ":id ~~User :record ( profile ) ~~SubUser :record (worstEnemy(id))",
-        ":id ~~ws.epigraph.tests.User :record ( profile ) ~~ws.epigraph.tests.SubUser :record ( worstEnemy ( id ) )",
+        ":id :~User :record ( profile ) :~SubUser :record (worstEnemy(id))",
+        ":id :~ws.epigraph.tests.User :record ( profile ) :~ws.epigraph.tests.SubUser :record ( worstEnemy ( id ) )",
         1
     );
   }
@@ -313,8 +313,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testRequiredFieldWithTails() {
     testParse(
-        ":record ( +bestFriend :( id ) ~~ws.epigraph.tests.User :( profile ) )",
-        ":record ( +bestFriend :( +id ) ~~ws.epigraph.tests.User :( +profile ) )",
+        ":record ( +bestFriend :( id ) :~ws.epigraph.tests.User :( profile ) )",
+        ":record ( +bestFriend :( +id ) :~ws.epigraph.tests.User :( +profile ) )",
         1
     );
   }
@@ -333,27 +333,27 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":record(id)~~ws.epigraph.tests.User :record(firstName)",
+        ":record(id):~ws.epigraph.tests.User :record(firstName)",
         User.type,
         ":record ( firstName, id )"
     );
 
     testTailsNormalization(
-        ":record(id)~~ws.epigraph.tests.SubUser :record(firstName)",
+        ":record(id):~ws.epigraph.tests.SubUser :record(firstName)",
         SubUser.type,
         ":record ( firstName, id )"
     );
 
     // parameters merging
     testTailsNormalization(
-        ":record(id,firstName;param='foo')~~ws.epigraph.tests.User :record(firstName;param='bar')",
+        ":record(id,firstName;param='foo'):~ws.epigraph.tests.User :record(firstName;param='bar')",
         User.type,
         ":record ( firstName ;param = 'bar', id )"
     );
 
     // annotations merging
     testTailsNormalization(
-        ":record(id,firstName!doc='doc1')~~ws.epigraph.tests.User :record(firstName!doc='doc2')",
+        ":record(id,firstName!doc='doc1'):~ws.epigraph.tests.User :record(firstName!doc='doc2')",
         User.type,
         ":record ( firstName !doc = \"doc2\", id )"
     );
@@ -362,7 +362,7 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testListTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":record(friends*(:id))~~ws.epigraph.tests.User :record(friends*(:record(id)))",
+        ":record(friends*(:id)):~ws.epigraph.tests.User :record(friends*(:record(id)))",
         User.type,
         ":record ( friends *( :( record ( id ), id ) ) )"
     );
@@ -371,13 +371,13 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testMapTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
-        ":record(friendsMap[1](:id))~~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
+        ":record(friendsMap[1](:id)):~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
         ":record ( friendsMap [ '2';keyParam = 'foo', '1' ]( :( record ( id ), id ) ) )"
     );
 
     testTailsNormalization(
-        ":record(friendsMap[2 ;keyParam='bar'](:id))~~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
+        ":record(friendsMap[2 ;keyParam='bar'](:id)):~ws.epigraph.tests.User :record(friendsMap[2 ;keyParam='foo'](:record(id)))",
         User.type,
         ":record ( friendsMap [ '2';keyParam = 'foo' ]( :( record ( id ), id ) ) )"
     );

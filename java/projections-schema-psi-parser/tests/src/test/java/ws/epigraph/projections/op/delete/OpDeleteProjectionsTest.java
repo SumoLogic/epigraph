@@ -143,16 +143,16 @@ public class OpDeleteProjectionsTest {
   @Test
   public void testParseTail() throws PsiProcessingException {
     testParsingVarProjection(
-        "~~ws.epigraph.tests.User :id",
-        ":id ~~ws.epigraph.tests.User :id"
+        ":~ws.epigraph.tests.User :id",
+        ":id :~ws.epigraph.tests.User :id"
     );
   }
 
   @Test
   public void testParseTails() throws PsiProcessingException {
     testParsingVarProjection(
-        "~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
-        ":id ~~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
+        ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
+        ":id :~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
 

@@ -35,7 +35,7 @@ resource users: PersonMap {
           bestFriend:(
             id,
             `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
-          )~~User:(
+          ):~User:(
             `record`(
               worstEnemy( id, firstName, lastName, profile )
               profile
@@ -49,7 +49,7 @@ resource users: PersonMap {
             )
           )
         )
-      )~~User:(
+      ):~User:(
         id,
         `record`( profile, worstEnemy( profile ) )
       )
@@ -69,7 +69,7 @@ resource users: PersonMap {
       bestFriend:(
         +id,
         `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
-      )~~User:(
+      ):~User:(
         `record`(
           worstEnemy( +id, firstName, lastName, profile )
           profile
@@ -183,7 +183,7 @@ resource user: Person {
         bestFriend:(
           id,
           `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
-        )~~ws.epigraph.tests.User:(
+        ):~ws.epigraph.tests.User:(
           `record`(
             worstEnemy( id, firstName, lastName, profile )
             profile
@@ -194,10 +194,10 @@ resource user: Person {
           :(
             id,
             `record`( id, firstName, lastName )
-          ) ~~User:`record`(profile)
+          ) :~User:`record`(profile)
         )
       )
-    )~~User:(
+    ):~User:(
       id,
       `record`( profile, worstEnemy( profile ) )
     )

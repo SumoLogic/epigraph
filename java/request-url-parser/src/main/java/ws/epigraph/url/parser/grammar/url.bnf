@@ -169,7 +169,7 @@ reqOutputStarTagProjection ::= ':' '*' // all tags with empty contents
 
 reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
 
-reqOutputVarPolymorphicTail ::= '~' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail ) {pin=2}
+reqOutputVarPolymorphicTail ::= ':' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail ) {pin=2}
 reqOutputVarSingleTail ::= typeRef reqOutputComaVarProjection
 reqOutputVarMultiTail ::= '(' (reqOutputVarMultiTailItem ','?)* ')' {pin=1}
 reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
@@ -266,7 +266,7 @@ reqUpdateSingleTagProjection ::= ( ':' '+'? tagName?)? reqUpdateModelProjectionW
 reqUpdateMultiTagProjection ::= ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')' {pin=2}
 reqUpdateMultiTagProjectionItem ::= '+'? tagName reqUpdateModelProjectionWithProperties
 
-reqUpdateVarPolymorphicTail ::= '~' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail ) {pin=2}
+reqUpdateVarPolymorphicTail ::= ':' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail ) {pin=2}
 reqUpdateVarSingleTail ::= typeRef reqUpdateVarProjection
 reqUpdateVarMultiTail ::= '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=1}
 reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
@@ -310,7 +310,7 @@ reqDeleteSingleTagProjection ::= ( ':' tagName)? reqDeleteModelProjectionWithPro
 reqDeleteMultiTagProjection ::= ':' '(' (reqDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
 reqDeleteMultiTagProjectionItem ::= tagName reqDeleteModelProjectionWithProperties
 
-reqDeleteVarPolymorphicTail ::= '~' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=2}
+reqDeleteVarPolymorphicTail ::= ':' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=2}
 reqDeleteVarSingleTail ::= typeRef reqDeleteVarProjection
 reqDeleteVarMultiTail ::= '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=1}
 reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
@@ -354,7 +354,7 @@ reqInputSingleTagProjection ::= ( ':' tagName)? reqInputModelProjectionWithPrope
 reqInputMultiTagProjection ::= ':' '(' (reqInputMultiTagProjectionItem ','?)* ')' {pin=2}
 reqInputMultiTagProjectionItem ::= tagName reqInputModelProjectionWithProperties
 
-reqInputVarPolymorphicTail ::= '~' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
+reqInputVarPolymorphicTail ::= ':' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
 reqInputVarSingleTail ::= typeRef reqInputVarProjection
 reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
 reqInputVarMultiTailItem ::= typeRef reqInputVarProjection

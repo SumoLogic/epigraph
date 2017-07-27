@@ -86,9 +86,9 @@ public class ReqOutputJsonFormatReaderTest {
           "    friends *( :id ),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
           "  )",
-          ") ~~(",
+          ") :~(",
           "      ws.epigraph.tests.User :`record` (profile)",
-          "        ~~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
+          "        :~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
           "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
           ")"
       )
@@ -211,7 +211,7 @@ public class ReqOutputJsonFormatReaderTest {
   @Test
   public void testReadTailNoMatch() throws IOException, JsonFormatException {
     testReadFail(
-        ":record(id)~~ws.epigraph.tests.User :record(profile)",
+        ":record(id):~ws.epigraph.tests.User :record(profile)",
         "{\"TYPE\":\"ws.epigraph.tests.Person\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}",
         "Unknown field 'record' in record type 'ws.epigraph.tests.PersonRecord'"
     );
@@ -229,7 +229,7 @@ public class ReqOutputJsonFormatReaderTest {
             .toImmutable();
 
     testRead(
-        ":id~~ws.epigraph.tests.User :record(profile)",
+        ":id:~ws.epigraph.tests.User :record(profile)",
         "{\"TYPE\":\"ws.epigraph.tests.User\",\"DATA\":{\"id\":1,\"record\":{\"profile\":\"http://foo\"}}}", person
     );
   }
@@ -246,7 +246,7 @@ public class ReqOutputJsonFormatReaderTest {
             .toImmutable();
 
     testRead(
-        ":record(id)~~ws.epigraph.tests.User :record(profile) ~~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
+        ":record(id):~ws.epigraph.tests.User :record(profile) :~ws.epigraph.tests.SubUser :record(worstEnemy(id))",
         "{\"TYPE\":\"ws.epigraph.tests.SubUser\",\"DATA\":{\"id\":1,\"worstEnemy\":{\"id\":1}}}", person
     );
   }

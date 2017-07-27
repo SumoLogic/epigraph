@@ -73,7 +73,7 @@ public class ReqUpdateProjectionsParserTest {
           "    friends *( :id ),",
           "    friendsMap [ ;param: epigraph.String ]( :(id, `record` (id, firstName) ) )",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
-          ") ~~ws.epigraph.tests.User :`record` (profile)"
+          ") :~ws.epigraph.tests.User :`record` (profile)"
       )
   );
 
@@ -165,8 +165,8 @@ public class ReqUpdateProjectionsParserTest {
   @Test
   public void testParseTail() {
     testParse(
-        ":id ~~User :record ( profile )",
-        ":+id ~~ws.epigraph.tests.User :record ( +profile )"
+        ":id :~User :record ( profile )",
+        ":+id :~ws.epigraph.tests.User :record ( +profile )"
     );
   }
 
