@@ -8,9 +8,11 @@ Under construction
 
 
 ### First-time Maven build bootstrap:
-- In project root folder run: `./mvnw clean install -Plight-psi,main`
+- In project root folder run: `./mvnw clean install -Plight-psi`
+- Build the rest normally, e.g.: `./mvnw clean test`
 
 
 ### IntelliJ IDEA project set-up:
 - In project root folder run: `./mvnw clean install -Plight-psi,main`
+  (installs current development version of Epigraph Maven plugin(s) to make these available to IDEA builds)
 - In IDEA menu: `File` > `Open...` > Select project root folder
