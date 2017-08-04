@@ -1,0 +1,13 @@
+namespace ws.epigraph.tests.multimodule.baz
+
+entity Baz extends ws.epigraph.tests.multimodule.foo.Foo {
+  id: BazId
+  rec: BazRec
+}
+
+long BazId extends ws.epigraph.tests.multimodule.foo.FooId
+
+record BazRec extends ws.epigraph.tests.multimodule.foo.FooRec {
+  id: BazId
+  next: Baz
+}

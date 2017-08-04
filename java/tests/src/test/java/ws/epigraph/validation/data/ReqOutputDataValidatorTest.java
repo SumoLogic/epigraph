@@ -24,7 +24,7 @@ import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.ReqOutputDataValidator;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.types.DataType;
@@ -42,7 +42,7 @@ import static junit.framework.TestCase.fail;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputDataValidatorTest {
-  private final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
+  private final TypesResolver resolver = StaticTypesResolver.instance();
 
   @Test
   public void testNoError() {

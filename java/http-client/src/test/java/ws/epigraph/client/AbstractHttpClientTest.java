@@ -30,7 +30,7 @@ import ws.epigraph.invocation.DefaultOperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.printers.DataPrinter;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.*;
@@ -66,7 +66,7 @@ public abstract class AbstractHttpClientTest {
   protected static final int TIMEOUT = 100; // ms
   protected static final Charset CHARSET = StandardCharsets.UTF_8;
 
-  protected static final TypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
+  protected static final TypesResolver resolver = StaticTypesResolver.instance();
   protected static final ResourceDeclaration resourceDeclaration = UsersResourceDeclaration.INSTANCE;
   protected static CloseableHttpAsyncClient httpClient;
 

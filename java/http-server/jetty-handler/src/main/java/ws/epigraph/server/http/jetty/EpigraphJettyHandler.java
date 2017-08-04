@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import ws.epigraph.data.Data;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
@@ -53,7 +53,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
   private final @NotNull Server server;
 
   public EpigraphJettyHandler(final @NotNull Service service, final int responseTimeout) {
-    this(service, IndexBasedTypesResolver.INSTANCE, responseTimeout);
+    this(service, StaticTypesResolver.instance(), responseTimeout);
   }
 
   public EpigraphJettyHandler(

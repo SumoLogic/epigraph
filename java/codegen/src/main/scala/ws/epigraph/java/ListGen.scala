@@ -118,7 +118,7 @@ ${t.meta match {
   /**
    * Class for `${t.name.name}` type.
    */
-  $typeClass\
+$typeClass\
 
   /**
    * Builder for `${t.name.name}` datum.

@@ -1,0 +1,13 @@
+namespace ws.epigraph.tests.multimodule.foo
+
+entity Foo {
+  id: FooId
+  rec: FooRec
+}
+
+long FooId
+
+record FooRec {
+  id: FooId
+  next: Foo
+}

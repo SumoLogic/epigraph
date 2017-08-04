@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>test-multimodule-baz</artifactId>
+
+  <description>Fat (schema, schema-java, and java) module</description>
+
+  <parent>
+    <groupId>ws.epigraph.tests</groupId>
+    <artifactId>test-multimodule</artifactId>
+    <version>0.0.4-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>test-multimodule-bar-schema</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>test-multimodule-foo-schema</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/epigraph</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-test-source</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/test/epigraph</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-maven-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>

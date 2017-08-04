@@ -80,6 +80,7 @@
         <module>scala</module>
         <module>scala/codegen-test</module>
         <module>schemas</module>
+        <module>slf4test</module>
         <module>tests</module>
       </modules>
     </profile>

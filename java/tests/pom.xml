@@ -155,12 +155,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>com.io7m.jpplib</groupId>
       <artifactId>io7m-jpplib-core</artifactId>
       <scope>test</scope>

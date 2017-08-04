@@ -25,8 +25,12 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.refs.IndexBasedTypesResolver;
-import ws.epigraph.tests.*;
+import ws.epigraph.refs.StaticTypesResolver;
+import ws.epigraph.tests.Person;
+import ws.epigraph.tests.PersonId;
+import ws.epigraph.tests.PersonRecord;
+import ws.epigraph.tests.Person_List;
+import ws.epigraph.tests.String_PersonRecord_Map;
 import ws.epigraph.types.DataType;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -237,7 +241,7 @@ public class ReqOutputRequiredDataPrunerTest {
     OpOutputVarProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
         (DataType) data.type().dataType(),
         opProjection,
-        IndexBasedTypesResolver.INSTANCE
+        StaticTypesResolver.instance()
     );
 
     StepsAndProjection<ReqOutputVarProjection> req =
@@ -245,7 +249,7 @@ public class ReqOutputRequiredDataPrunerTest {
             (DataType) data.type().dataType(),
             op,
             reqProjection,
-            IndexBasedTypesResolver.INSTANCE
+            StaticTypesResolver.instance()
         );
 
     return pruner.pruneData(data, req.projection());
@@ -259,7 +263,7 @@ public class ReqOutputRequiredDataPrunerTest {
     OpOutputVarProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
         datum.type().dataType(),
         opProjection,
-        IndexBasedTypesResolver.INSTANCE
+        StaticTypesResolver.instance()
     );
 
     StepsAndProjection<ReqOutputVarProjection> req =
@@ -267,7 +271,7 @@ public class ReqOutputRequiredDataPrunerTest {
             datum.type().dataType(),
             op,
             reqProjection,
-            IndexBasedTypesResolver.INSTANCE
+            StaticTypesResolver.instance()
         );
 
     //noinspection ConstantConditions

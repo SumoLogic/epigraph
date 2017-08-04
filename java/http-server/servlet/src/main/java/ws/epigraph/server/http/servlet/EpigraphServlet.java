@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import ws.epigraph.data.Data;
 import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
@@ -80,7 +80,7 @@ public abstract class EpigraphServlet extends HttpServlet {
     }
   }
 
-  protected @NotNull TypesResolver initTypesResolver(ServletConfig config) { return IndexBasedTypesResolver.INSTANCE; }
+  protected @NotNull TypesResolver initTypesResolver(ServletConfig config) { return StaticTypesResolver.instance(); }
 
   protected abstract @NotNull Service initService(ServletConfig config) throws ServiceInitializationException;
 

@@ -21,7 +21,7 @@ import io.undertow.UndertowOptions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.server.http.undertow.EpigraphUndertowHandler;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
@@ -39,7 +39,7 @@ public class EpigraphResourceTest {
   private static final String HOST = "localhost";
   private static final int TIMEOUT = 100; // ms
 
-  private static final IndexBasedTypesResolver resolver = IndexBasedTypesResolver.INSTANCE;
+  private static final StaticTypesResolver resolver = StaticTypesResolver.instance();
   private static Undertow server;
 
   private static @NotNull Service buildEpigraphService(Map<String, ? extends Type> types)
@@ -58,7 +58,7 @@ public class EpigraphResourceTest {
         .addHttpListener(PORT, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
         .setHandler(new EpigraphUndertowHandler(
-            buildEpigraphService(resolver.index()),
+            buildEpigraphService(resolver.types()),
             resolver,
             TIMEOUT))
         .build();
@@ -74,4 +74,5 @@ public class EpigraphResourceTest {
   public static void main(String[] args) throws ServiceInitializationException {
     start();
   }
+
 }

@@ -24,14 +24,15 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface TypesResolver {
-  @Nullable
-  TypeApi resolve(@NotNull QnTypeRef reference);
 
   @Nullable
-  TypeApi resolve(@NotNull AnonListRef reference);
+  TypeApi resolve(@NotNull QnTypeRef typeRef);
 
   @Nullable
-  TypeApi resolve(@NotNull AnonMapRef reference);
+  TypeApi resolve(@NotNull AnonListRef typeRef);
+
+  @Nullable
+  TypeApi resolve(@NotNull AnonMapRef typeRef);
 
   default @Nullable DataTypeApi resolve(@NotNull ValueTypeRef valueTypeRef) {
     @Nullable TypeApi type = valueTypeRef.typeRef().resolve(this);

@@ -62,7 +62,7 @@ class ResourceClientGen(rd: ResourceDeclaration, baseNamespace: Qn, val ctx: Gen
       "ws.epigraph.invocation.OperationFilterChains",
       "ws.epigraph.invocation.OperationInvocationContext",
       "ws.epigraph.invocation.OperationInvocationException",
-      "ws.epigraph.refs.IndexBasedTypesResolver",
+      "ws.epigraph.refs.StaticTypesResolver",
       "ws.epigraph.refs.TypesResolver",
       "ws.epigraph.schema.operations.OperationDeclaration",
       "ws.epigraph.util.EBean",
@@ -109,10 +109,10 @@ public class $className {
         new FormatBasedServerProtocol(
             JsonFormatFactories.INSTANCE,
             StandardCharsets.UTF_8,
-            IndexBasedTypesResolver.INSTANCE
+            StaticTypesResolver.instance()
         ),
         StandardCharsets.UTF_8,
-        IndexBasedTypesResolver.INSTANCE,
+        StaticTypesResolver.instance(),
         OperationFilterChains.defaultFilterChains(),
         false
     );

@@ -14,8 +14,18 @@
   </parent>
 
   <modules>
+    <module>multimodule</module>
     <module>schema</module>
     <module>schema-java</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>slf4test</artifactId>
+      <version>0.0.4-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

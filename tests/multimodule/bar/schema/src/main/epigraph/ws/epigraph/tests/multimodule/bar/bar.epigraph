@@ -1,0 +1,17 @@
+namespace ws.epigraph.tests.multimodule.bar
+
+import ws.epigraph.tests.multimodule.foo.Foo
+import ws.epigraph.tests.multimodule.foo.FooId
+import ws.epigraph.tests.multimodule.foo.FooRec
+
+entity Bar supplements Foo {
+  id: BarId
+  rec: BarRec
+}
+
+long BarId supplements FooId
+
+record BarRec supplements FooRec {
+  id: BarId
+  bar: Bar
+}

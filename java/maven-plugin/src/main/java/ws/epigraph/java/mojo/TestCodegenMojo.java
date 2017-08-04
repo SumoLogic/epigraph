@@ -18,6 +18,7 @@
 
 package ws.epigraph.java.mojo;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -106,7 +107,10 @@ public class TestCodegenMojo extends BaseCodegenMojo {
   protected File getOutputDirectory() { return testOutputDirectory; }
 
   @Override
-  protected void addResultsToProject(MavenProject project, String path) { project.addTestCompileSourceRoot(path); }
+  protected void addResultsToProject(String path, Resource resources) {
+    project.addTestCompileSourceRoot(path);
+    project.addTestResource(resources);
+  }
 
   @Override
   protected Settings constructSettings() {

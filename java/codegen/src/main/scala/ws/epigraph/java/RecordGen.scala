@@ -512,24 +512,24 @@ $datumData\
 """/*@formatter:on*/
   }
 
-    def superSetters(f: CField): String = {
-        val superfields = invariantSuperfields(f)
-        if (superfields.isEmpty) "" else {
-            "extends " + superfields.map(
-                sf => sn"${lqn(sf.host, f.host)}.Set${up(sf.name)}"
-            ).mkString(", ") + " "
-        }
-    }
+  def superSetters(f: CField): String = {
+      val superfields = invariantSuperfields(f)
+      if (superfields.isEmpty) "" else {
+          "extends " + superfields.map(
+              sf => sn"${lqn(sf.host, t)}.Set${up(sf.name)}"
+          ).mkString(", ") + " "
+      }
+  }
 
-    def invariantSuperfields(f: CField): Seq[CField] = if (f.host == t) f.superfields.filter(
-        sf => sf.valueDataType == f.valueDataType
-    ) else Seq(f)
+  def invariantSuperfields(f: CField): Seq[CField] = if (f.host == t) f.superfields.filter(
+      sf => sf.valueDataType == f.valueDataType
+  ) else Seq(f)
 
-    // append '$' to field getters/setters if their value type has retro tag
-    def retro(f: CField): String = if (f.effectiveDefaultTagName.isDefined) "$" else ""
+  // append '$' to field getters/setters if their value type has retro tag
+  def retro(f: CField): String = if (f.effectiveDefaultTagName.isDefined) "$" else ""
 
-    def setters: String = if (t.effectiveFields.isEmpty) "" else t.effectiveFields.map(
-        f => s"Set${up(f.name)}"
-    ).mkString(",\n      ", ", ", "")
+  def setters: String = if (t.effectiveFields.isEmpty) "" else t.effectiveFields.map(
+      f => s"Set${up(f.name)}"
+  ).mkString(",\n      ", ", ", "")
 
 }

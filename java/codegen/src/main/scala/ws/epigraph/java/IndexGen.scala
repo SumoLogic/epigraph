@@ -16,7 +16,9 @@
 
 package ws.epigraph.java
 
+import java.io.{PrintWriter, StringWriter}
 import java.nio.file.{Path, Paths}
+import java.util.Properties
 
 import ws.epigraph.gen.Constants
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
@@ -28,42 +30,22 @@ import scala.collection.JavaConverters._
  */
 class IndexGen(protected val ctx: GenContext) extends JavaGen {
 
-    private val IndexClassName: String = Constants.TypesIndex.className
+  override def relativeFilePath: Path = Paths.get(Constants.TypesIndex.resourcePath)
 
-    override def relativeFilePath: Path =
-      Paths.get(s"${Constants.TypesIndex.namespace.replaceAll("\\.", "/")}/$IndexClassName.java")
+  // TODO this needs to be refactored to produce structured json/yaml instead of .properties
 
-    override protected def generate: String = /*@formatter:off*/sn"""\
-package epigraph.index;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.types.AbstractTypesIndex;
-import ws.epigraph.types.Type;
-import ws.epigraph.util.Unmodifiable;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-${JavaGenUtils.generatedAnnotation(this)}
-public final class $IndexClassName extends AbstractTypesIndex {
-  public static final @NotNull $IndexClassName INSTANCE = new $IndexClassName();
-
-  private $IndexClassName() { super(types()); }
-
-  private static @NotNull Map<${NotNull_}String, ${NotNull_}? extends Type> types() {
-    Map<${NotNull_}String, ${NotNull_}Type> types = new LinkedHashMap<>();
-
-${ctx.generatedTypes.asScala.toSeq./*TODO better*/sortWith((a, b) => a._1.name < b._1.name).map { entry => sn"""\
-    types.put("${entry._1.name}", ${entry._2}.Type.instance());
-"""
-  }.mkString
-}\
-
-    return Unmodifiable.map(types);
-  }
-
-}
+  override protected def generate: String = {
+    val properties = new Properties
+    ctx.generatedTypes.asScala.foreach(kv => properties.setProperty(kv._1.name, kv._2 + "$Type"))
+    val writer = new StringWriter // doesn't need to be closed
+    properties.store(new PrintWriter(writer), null)
+    /*@formatter:off*/sn"""\
+# Mappings from canonical fully-qualified Epigraph type names to generated Java class names for the types.
+#
+# ${JavaGenUtils.generatedAnnotation(this)}
+#
+$writer\
 """/*@formatter:on*/
+  }
 
 }

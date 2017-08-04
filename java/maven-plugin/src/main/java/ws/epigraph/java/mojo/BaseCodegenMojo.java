@@ -18,6 +18,7 @@
 
 package ws.epigraph.java.mojo;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugins.annotations.Parameter;
 import ws.epigraph.java.EpigraphJavaGenerator;
 import ws.epigraph.java.Settings;
@@ -26,13 +27,12 @@ import ws.epigraph.compiler.CContext;
 import ws.epigraph.compiler.FileSource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-
+import java.util.Collections;
 
 /**
  * Base for Epigraph Java Codegen Mojos.
@@ -51,13 +51,21 @@ public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
   ) throws MojoExecutionException, MojoFailureException {
     try {
       new EpigraphJavaGenerator(ctx, outputDirectory, constructSettings()).generate();
-      addResultsToProject(project, outputDirectory.getCanonicalPath());
+      String path = outputDirectory.getCanonicalPath();
+      addResultsToProject(path, generatedResources(path));
     } catch (IOException e) {
       throw new MojoExecutionException("Error generating sources to " + outputDirectory, e);
     }
   }
 
-  protected abstract void addResultsToProject(MavenProject project, String path);
+  private static Resource generatedResources(String path) {
+    Resource resources = new Resource();
+    resources.setDirectory(path);
+    resources.setExcludes(Collections.singletonList("**/*.java")); // include everything except .java sources
+    return resources;
+  }
+
+  protected abstract void addResultsToProject(String path, Resource resources);
 
   protected abstract Settings constructSettings();
 

@@ -64,6 +64,9 @@
   - [ ] Remove types API?
   - [ ] Revert gradle/maven build changes added to avoid circular dependencies (see `compiler` build files)
 - [ ] Check that anonymous map keys are datum (not data) type
+- [ ] Generated artifacts index format (json? yaml? both?)
+  - [ ] Should provide enough information to detect incompatible supplements, etc.
+- [ ] Handle top-level package names obscured by in-scope field/variable names in generated code
 
 # Maven plugin
 - [x] use slf4j for logging

@@ -34,7 +34,7 @@ final class CDataType( // TODO split into CVarDataType and CDatumDataType?
     csf, CTypeRef(csf, psi.getTypeRef), CDataType.defaultTagName(psi.getRetroDecl)
   )
 
-  val name: String = typeRef.name.name + defaultTagNameDecl.map(" default " + _).getOrElse("")
+  val name: String = typeRef.name.name + defaultTagNameDecl.map(" default " + _).getOrElse("") // TODO " retro "?
 
   csf.dataTypes.add(this) // register self with schema file
 

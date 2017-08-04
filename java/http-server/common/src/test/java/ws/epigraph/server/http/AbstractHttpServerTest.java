@@ -52,7 +52,7 @@ import static junit.framework.TestCase.assertTrue;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpServerTest {
-  protected static final int PORT = 8888;
+  protected static final int PORT = 8888; // FIXME allocate dynamically
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
 

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -102,11 +103,8 @@ public interface Util {
     return res;
   }
 
-  static <K, V> HashMap<K, V> createSingletonHashMap(K key, V value) {
-    final HashMap<K, V> res = createHashMap(1);
-    res.put(key, value);
-    return res;
-  }
+  // FIXME remove (or at least rename)
+  static <K, V> Map<K, V> createSingletonHashMap(K key, V value) { return Collections.singletonMap(key, value); }
 
   static <K, V> HashMap<K, V> createHashMap(K[] keys, V[] values) {
     if (keys.length != values.length)

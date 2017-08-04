@@ -16,10 +16,6 @@
     <maven.compiler.target>1.6</maven.compiler.target>
   </properties>
 
-  <prerequisites>
-    <!--<maven>TBD</maven>-->
-  </prerequisites>
-
   <dependencies>
 
     <dependency>

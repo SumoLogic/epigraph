@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface TypeRef {
+
   @Nullable
   TypeApi resolve(@NotNull TypesResolver resolver);
 
@@ -38,4 +39,5 @@ public interface TypeRef {
     if (t instanceof EntityTypeApi) return (EntityTypeApi) t;
     else return null; // or throw if it has wrong kind?
   }
+
 }

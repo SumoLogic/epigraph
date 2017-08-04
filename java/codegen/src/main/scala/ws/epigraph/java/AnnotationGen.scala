@@ -31,6 +31,6 @@ new $o(
   ${ObjectGenUtils.genTypeExpr(ann.`type`(), ctx.gctx)},
   ${i(gen(ann.gDatum(), ctx))},
   ${gen(ann.location(), ctx)},
-  ${ctx.use("ws.epigraph.refs.IndexBasedTypesResolver")}.INSTANCE
+  ${ctx.use("ws.epigraph.refs.StaticTypesResolver")}.instance()
 )"""/*@formatter:on*/
 }

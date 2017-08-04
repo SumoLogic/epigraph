@@ -4,7 +4,7 @@
 
 ### Medium
 - Errors on duplicate fields/tags
-- Warning if folder structure doesn't correspond to namespace (ideally with hotfixes)
+- [ ] Warning if folder structure doesn't correspond to namespace (ideally with hotfixes)
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)
   - [ ] Changing default on vartypes is allowed. Defaults on fields (even implicit) must be compatible with parent fields:

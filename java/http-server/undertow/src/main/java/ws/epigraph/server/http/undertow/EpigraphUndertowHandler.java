@@ -30,7 +30,7 @@ import ws.epigraph.http.EpigraphHeaders;
 import ws.epigraph.invocation.OperationFilterChains;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationErrorImpl;
-import ws.epigraph.refs.IndexBasedTypesResolver;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
@@ -59,7 +59,7 @@ public class EpigraphUndertowHandler
   private final long responseTimeout;
 
   public EpigraphUndertowHandler(@NotNull Service service, final long responseTimeout) {
-    this(service, IndexBasedTypesResolver.INSTANCE, responseTimeout);
+    this(service, StaticTypesResolver.instance(), responseTimeout);
   }
 
   public EpigraphUndertowHandler(

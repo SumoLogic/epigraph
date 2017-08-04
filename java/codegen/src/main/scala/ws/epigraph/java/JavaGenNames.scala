@@ -43,11 +43,11 @@ object JavaGenNames {
 
   def javaFqn(fqn: Qn): String = fqn.segments.map(jn).mkString(".")
 
-  /** java type name for given type as seen from the context of the other type namespace */
-  def lqn(t: CType, lt: CType): String = lqn(t, lt, identity[String] _)
+//  /** java type name for given type as seen from the context of the other type namespace */
+//  def lqn(t: CType, lt: CType): String = lqn(t, lt, identity[String] _)
 
   /** java type name for given type as seen from the context of the other type namespace */
-  def lqn(t: CType, lt: CType, lnTrans: (String) => String): String = lqn2(t, pn(lt), lnTrans)
+  def lqn(t: CType, lt: CType, lnTrans: (String) => String = identity): String = lqn2(t, pn(lt), lnTrans)
 
   /** java type name for given type as seen from the context of the other type namespace */
   def lqn2(t: CType, namespace: String, lnTrans: (String) => String = identity): String = {

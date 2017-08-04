@@ -17,14 +17,28 @@
 package ws.epigraph.gen;
 
 /**
- * Constants used by Java code generator
+ * Constants used by Java code generator.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface Constants {
+
   int indent = 2;
 
+  /** Constants related to generated types index artifacts. */
   interface TypesIndex {
+
+    /** Relative path to generated types index resource file(s). */
+    String resourcePath = "epigraph/index/typesIndex.properties"; // TODO put under META-INF/?
+
+    /** @deprecated Java index is no longer used */
+    @Deprecated
     String namespace = "epigraph.index";
+
+    /** @deprecated Java index is no longer used */
+    @Deprecated
     String className = "TypesIndex";
+
   }
+
 }

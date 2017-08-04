@@ -104,8 +104,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
+      <groupId>ws.epigraph</groupId>
+      <artifactId>slf4test</artifactId>
+      <version>0.0.4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
