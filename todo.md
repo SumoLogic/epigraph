@@ -118,3 +118,4 @@
 - [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1500590191278104 - If you give a `resource`'s `outputProjection` a Record or a `*` instead of a list of fields, it fails to compile.  IntelliJ does not highlight this
 - [x] https://sumologic.slack.com/archives/C2PN5GQS1/p1500590236292212 - The blue font in the compilation error is very difficult to read on the default iTerm theme (black background)
 - [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1501890729529761 - `@Doc` annotation, without an import, doesn't show as compilation error in IntelliJ
+- [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1502142890265437 - Releases should publish sources too, to make development easier
