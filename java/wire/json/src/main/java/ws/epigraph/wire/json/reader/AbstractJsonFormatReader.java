@@ -81,33 +81,33 @@ import java.util.stream.Collectors;
 
 import static ws.epigraph.wire.json.JsonFormatCommon.*;
 
+/* JSON wire format gammar: // can be visualized (railroad diagram) here: http://www.bottlecaps.de/rr/ui
+
+Data ::= BackRef | PolyData | MonoData // PolyData triggered by projection (polymorphic tails presence)
+  BackRef ::= '{' '"REC"' ':' integer '}' // integer = how many var datas up the stack to skip to get the same instance
+  PolyData ::= '{' '"TYPE"' ':' string ',' '"DATA"' ':' MonoData '}'
+  MonoData ::= MultiValue | Value // MultiValue triggered by projection (parenthesized flag)
+    MultiValue ::= '{' ( tag ':' Value ( ',' tag ':' Value )* )? '}' // 0 or more comma-separated entries
+      tag ::= string
+    Value ::= PolyValue | MonoValue // PolyValue triggered by projection (polymorphic tails presence)
+      PolyValue ::= '{' '"TYPE"' ':' string ',' '"DATA"' ':' MonoValue '}'
+      MonoValue ::= Error | Datum | 'null'
+        Error ::= '{' "ERROR" ':' integer ',' "message" ':' string '}' // TODO make it more like exception
+        Datum ::= DatumWithMeta | DatumNoMeta // depending on meta-projection presence
+          DatumWithMeta ::= '{' '"META"' ':' DatumNoMeta ',' '"DATA"' ':' DatumNoMeta '}'
+          DatumNoMeta ::= Record | Map | List | Primitive | Enum
+            Record ::= '{' ( field ':' Data ( ',' field ':' Data )* )? '}' // 0 or more comma-separated entries
+                field ::= string
+            Map ::= '[' ( ( MapEntry ',' )* MapEntry )? ']' // 0 or more comma-separated entries
+              MapEntry ::= '{' '"K"' ':' DatumNoMeta ',' '"V"' ':' Data '}'
+            List ::= '[' ( ( Data ',' )* Data )? ']' // 0 or more comma-separated entries
+            Primitive ::= string | number | 'true' | 'false'
+            Enum ::= string // ? TODO
+
+*/
 
 /**
- * Abstract projection-driven JSON data reader
- * <p/>
- * Format grammar (some quotes omitted):<p/>
- * <p>
- * <code> <pre>
- * DATA ::= RECDATA | POLYDATA | MONODATA                              // POLYDATA triggered by projection (polymorphic tails presence)
- * RECDATA ::= '{' "REC" ':' NUMBER '}'                                // NUMBER = how many var datas up the stack to skip to get the same instance
- * POLYDATA ::= '{' "type" ':' TYPE, "data" ':' MONODATA '}'
- * TYPE ::= '"' ( STRING '.' )* STRING '"'                             // enquoted dot-separated type FQN string
- * MONODATA ::= MULTIDATA | VALUE                                      // triggered by projection (parenthesized flag)
- * MULTIDATA ::= '{' (( "tag" ':' VALUE ',' )* "tag" ':' VALUE )? '}'  // 0 or more comma-separated entries
- * VALUE ::= POLYVALUE | MONOVALUE                                     // triggered by projection (polymorphic tails presence)
- * POLYVALUE ::= '{' "type" ':' TYPE, "data" ':' MONOVALUE '}'
- * MONOVALUE ::= ERROR | DATUM | 'null'
- * ERROR ::= '{' "ERROR": INTEGER ',' "message": STRING '}'
- * DATUM ::= DATUM_WITH_META | DATUM_NO_META                           // depending on meta-projection presence
- * DATUM_WITH_META ::= '{' "meta" ':' DATUM_NO_META ',' "data" ':' DATUM_NO_META '}'
- * DATUM_NO_META ::= RECORD | MAP | LIST | PRIMITIVE | ENUM
- * RECORD ::= { (( "field" ':' DATA ',' )* "field ':' DATA )* '}'      // 0 or more comma-separated entries
- * MAP ::= '[' (( MAP_ENTRY ',' )* MAP_ENTRY )? ]                      // 0 or more comma-separated entries
- * MAP_ENTRY ::= '{' "key" ':' DATUM ',' "value" ':' DATA '}'
- * LIST ::= '[' (( DATA ',' )* DATA )? ']'                             // 0 or more comma-separated entries
- * PRIMITIVE ::= STRING | INTEGER | LONG | DOUBLE | BOOLEAN
- * ENUM ::= STRING // ? TODO
- * </pre></code>
+ * Abstract projection-driven JSON data reader.
  *
  * @author Yegor Borovikov
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -1157,7 +1157,7 @@ abstract class AbstractJsonFormatReader<
     );
   }
 
-  private final class JsonState {
+  private static final class JsonState {
     final JsonToken token;
     final String text;
     final String name;
