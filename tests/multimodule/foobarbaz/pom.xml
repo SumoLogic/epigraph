@@ -36,12 +36,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>test-multimodule-baz</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
   </dependencies>
 
 </project>
