@@ -1,11 +1,10 @@
-dist: trusty
 sudo: required
 
 language: java
 jdk: oraclejdk8
 
-install: ./mvnw --show-version --batch-mode clean install -Plight-psi,main -DskipTests -DskipITs
+install: ./mvnw --show-version --batch-mode clean install -Plight-psi
 
-script: ./mvnw --batch-mode test
+script: ./mvnw --batch-mode clean test
 
 # TODO run gradle build as well?
