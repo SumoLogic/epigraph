@@ -1,4 +1,4 @@
-# Epigraph
+# Epigraph [![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg)](https://travis-ci.org/SumoLogic/epigraph)
 
 Under construction
 
