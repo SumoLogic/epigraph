@@ -1,7 +1,8 @@
 language: java
-
 jdk: oraclejdk8
 
-script: ./mvnw clean install -Plight-psi && ./mvnw clean test
+install: ./mvnw --show-version --batch-mode clean install -Plight-psi,main -DskipTests -DskipITs
+
+script: ./mvnw --batch-mode test
 
 # TODO run gradle build as well?
