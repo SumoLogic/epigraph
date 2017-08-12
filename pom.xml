@@ -555,6 +555,19 @@
           <version>1.9.5</version>
         </plugin>
 
+        <plugin>
+          <!-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report -->
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.7.9</version>
+          <configuration>
+            <excludes><!-- https://github.com/jacoco/jacoco/issues/34 -->
+              <exclude>ws/epigraph/wire/json/reader/*putJsonFormatReader*</exclude>
+              <exclude>ws/epigraph/projections/**/*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+
       </plugins>
 
     </pluginManagement>
