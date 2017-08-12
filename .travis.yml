@@ -11,4 +11,5 @@ script: ./mvnw --batch-mode clean test
 
 cache:
   directories:
-    - $HOME/.m2
+    - $HOME/.m2/repository
+    - $HOME/.m2/wrapper
