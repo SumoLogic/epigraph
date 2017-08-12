@@ -3,9 +3,9 @@ sudo: required
 language: java
 jdk: oraclejdk8
 
-install: ./mvnw --show-version --batch-mode clean install -Plight-psi
+install: ./mvnw --batch-mode install -Plight-psi
 
-script: ./mvnw --batch-mode clean test
+script: ./mvnw --show-version -Dbuildtime.output.log test
 
 # TODO run gradle build as well?
 

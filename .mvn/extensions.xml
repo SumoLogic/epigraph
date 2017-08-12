@@ -5,6 +5,7 @@
 >
 
     <!-- https://github.com/timgifford/maven-buildtime-extension -->
+    <!-- enable with -Dbuildtime.output.log[=true] -->
     <extension>
         <groupId>co.leantechniques</groupId>
         <artifactId>maven-buildtime-extension</artifactId>
