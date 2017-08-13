@@ -1,4 +1,6 @@
-# Epigraph [![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg)](https://travis-ci.org/SumoLogic/epigraph)
+# Epigraph
+[![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg)](https://travis-ci.org/SumoLogic/epigraph)
+[![codecov.io](https://codecov.io/github/SumoLogic/epigraph/coverage.svg)](https://codecov.io/github/SumoLogic/epigraph)
 
 Under construction
 
