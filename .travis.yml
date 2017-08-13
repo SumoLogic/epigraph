@@ -14,7 +14,7 @@ script: ./mvnw --show-version -Dbuildtime.output.log
   clean
   org.jacoco:jacoco-maven-plugin:prepare-agent
   test
-  org.jacoco:jacoco-maven-plugin:report
+  org.jacoco:jacoco-maven-plugin:report-aggregate
 
 # TODO run gradle build as well?
 
