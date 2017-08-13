@@ -581,6 +581,7 @@
           <configuration>
             <excludes><!-- https://github.com/jacoco/jacoco/issues/34 -->
               <exclude>ws/epigraph/wire/json/reader/*putJsonFormatReader*</exclude>
+              <exclude>ws/epigraph/wire/json/reader/ReqUpdateJsonFormatReader.class*</exclude>
               <exclude>ws/epigraph/projections/**/*</exclude>
             </excludes>
           </configuration>

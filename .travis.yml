@@ -10,9 +10,16 @@ cache:
 
 install: ./mvnw --show-version install -Plight-psi
 
-script: ./mvnw --show-version -Dbuildtime.output.log test
+script: ./mvnw --show-version -Dbuildtime.output.log
+  clean
+  org.jacoco:jacoco-maven-plugin:prepare-agent
+  test
+  org.jacoco:jacoco-maven-plugin:report
 
 # TODO run gradle build as well?
 
 before_cache:
   - rm -rf $HOME/.m2/repository/ws/epigraph
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
