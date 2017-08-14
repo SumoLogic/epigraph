@@ -88,7 +88,7 @@ public class ReqDeleteListModelProjection
             .map(ReqDeleteListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull ReqDeleteVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqDeleteVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new ReqDeleteListModelProjection(

@@ -98,14 +98,14 @@ public class OpOutputMapModelProjection
     OpOutputMapModelProjection prevProjection = null;
     for (final OpOutputMapModelProjection projection : modelProjections) {
 
-      final @NotNull OpOutputKeyProjection keyProjection = projection.keyProjection();
+      final /*@NotNull*/ OpOutputKeyProjection keyProjection = projection.keyProjection();
       keysParams.add(keyProjection.params());
       keysAnnotations.add(keyProjection.annotations());
       final OpKeyPresence presence = keyProjection.presence();
 
       if (mergedKeysPresence == null) mergedKeysPresence = presence;
       else {
-        @Nullable OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        /*@Nullable*/ OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
         if (newKeysPresence == null)
           throw new IllegalArgumentException(
               String.format(

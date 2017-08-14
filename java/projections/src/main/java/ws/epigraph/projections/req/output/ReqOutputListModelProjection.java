@@ -85,7 +85,7 @@ public class ReqOutputListModelProjection
             .map(ReqOutputListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull ReqOutputVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqOutputVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new ReqOutputListModelProjection(

@@ -66,10 +66,10 @@ public abstract class AbstractTagProjectionEntry<
   public TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
-    final List<@NotNull MP> models =
+    final List</*@NotNull */MP> models =
         tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
 
-    final @NotNull MP mp = models.get(0);
+    final /*@NotNull*/ MP mp = models.get(0);
     MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);

@@ -78,7 +78,7 @@ public class ReqDeleteProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutNoParamsEmpty(@NotNull ReqDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqDeleteMapModelProjection) {
       ReqDeleteMapModelProjection mapModelProjection = (ReqDeleteMapModelProjection) mp;
-      @Nullable List<ReqDeleteKeyProjection> keys = mapModelProjection.keys();
+      /*@Nullable*/ List<ReqDeleteKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
       return super.isPrintoutNoParamsEmpty(mp);

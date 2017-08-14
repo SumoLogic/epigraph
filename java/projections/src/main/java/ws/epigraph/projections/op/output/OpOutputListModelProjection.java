@@ -83,7 +83,7 @@ public class OpOutputListModelProjection
             .map(OpOutputListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull OpOutputVarProjection mergedItemsVarType =
+    final /*@NotNull*/ OpOutputVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new OpOutputListModelProjection(

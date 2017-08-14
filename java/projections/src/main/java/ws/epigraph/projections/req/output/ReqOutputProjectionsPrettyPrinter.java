@@ -156,7 +156,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutNoParamsEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqOutputMapModelProjection) {
       ReqOutputMapModelProjection mapModelProjection = (ReqOutputMapModelProjection) mp;
-      @Nullable List<ReqOutputKeyProjection> keys = mapModelProjection.keys();
+      /*@Nullable*/ List<ReqOutputKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
       return super.isPrintoutNoParamsEmpty(mp);

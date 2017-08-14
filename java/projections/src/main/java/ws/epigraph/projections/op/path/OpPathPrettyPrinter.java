@@ -60,7 +60,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
   @Override
   public void printRecordProjection(@NotNull OpRecordModelPath mp) throws E {
-    final @Nullable OpFieldPathEntry entry = mp.pathFieldProjection();
+    final /*@Nullable*/ OpFieldPathEntry entry = mp.pathFieldProjection();
 
     if (entry != null) {
       l.beginIInd();

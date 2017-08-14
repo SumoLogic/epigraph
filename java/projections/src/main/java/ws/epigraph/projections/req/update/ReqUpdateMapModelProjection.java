@@ -104,7 +104,7 @@ public class ReqUpdateMapModelProjection
             .map(ReqUpdateMapModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull ReqUpdateVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqUpdateVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new ReqUpdateMapModelProjection(

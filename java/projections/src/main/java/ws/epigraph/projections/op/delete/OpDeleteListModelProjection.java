@@ -83,7 +83,7 @@ public class OpDeleteListModelProjection
             .map(OpDeleteListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull OpDeleteVarProjection mergedItemsVarType =
+    final /*@NotNull*/ OpDeleteVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new OpDeleteListModelProjection(

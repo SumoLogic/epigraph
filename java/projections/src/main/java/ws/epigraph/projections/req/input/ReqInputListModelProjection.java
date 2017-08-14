@@ -82,7 +82,7 @@ public class ReqInputListModelProjection
             .map(ReqInputListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final @NotNull ReqInputVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqInputVarProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
     return new ReqInputListModelProjection(

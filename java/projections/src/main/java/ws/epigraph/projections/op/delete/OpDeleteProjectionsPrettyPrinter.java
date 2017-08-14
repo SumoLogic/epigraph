@@ -117,7 +117,7 @@ public class OpDeleteProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutNoParamsEmpty(@NotNull OpDeleteModelProjection<?, ?, ?> mp) {
     if (mp instanceof OpDeleteMapModelProjection) {
       OpDeleteMapModelProjection mapModelProjection = (OpDeleteMapModelProjection) mp;
-      @NotNull OpDeleteKeyProjection keyProjection = mapModelProjection.keyProjection();
+      /*@NotNull*/ OpDeleteKeyProjection keyProjection = mapModelProjection.keyProjection();
 
       if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
