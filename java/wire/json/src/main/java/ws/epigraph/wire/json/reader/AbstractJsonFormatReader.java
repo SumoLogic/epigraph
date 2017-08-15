@@ -791,25 +791,25 @@ abstract class AbstractJsonFormatReader<
 
   @Override
   public @Nullable Datum readDatum(@NotNull DatumType valueType) throws IOException, JsonFormatException {
-    @NotNull JsonToken token = nextNonEof();
-    @Nullable String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
+    /*@NotNull*/ JsonToken token = nextNonEof();
+    /*@Nullable*/ String firstFieldName = token == JsonToken.START_OBJECT ? nextFieldName() : null;
     return finishReadingDatum(token, firstFieldName, valueType);
   }
 
   @Override
   public @NotNull Val readValue(@NotNull DatumType type) throws IOException, JsonFormatException {
-    final @NotNull JsonToken token = nextNonEof();
+    final /*@NotNull*/ JsonToken token = nextNonEof();
     // null?
     if (token == JsonToken.VALUE_NULL) return type.createValue(null);
     // error?
-    final @Nullable String firstFieldName;
+    final /*@Nullable*/ String firstFieldName;
     if (token == JsonToken.START_OBJECT) { // can be a record or an error
       firstFieldName = nextFieldName(); // advances to next token (field name or end object - in valid cases)
       if (JsonFormat.ERROR_CODE_FIELD.equals(firstFieldName)) return type.createValue(finishReadingError());
     } else firstFieldName = null;
 
     // datum
-    final @NotNull Datum datum = finishReadingDatum(token, firstFieldName, type);
+    final /*@NotNull*/ Datum datum = finishReadingDatum(token, firstFieldName, type);
     return datum.asValue();
   }
 

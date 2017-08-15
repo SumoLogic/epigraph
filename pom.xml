@@ -602,10 +602,8 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.7.9</version>
           <configuration>
-            <excludes><!-- https://github.com/jacoco/jacoco/issues/34 -->
-              <exclude>ws/epigraph/wire/json/reader/*putJsonFormatReader*</exclude>
-              <exclude>ws/epigraph/wire/json/reader/ReqUpdateJsonFormatReader.class*</exclude>
-              <!--<exclude>ws/epigraph/projections/**/*</exclude>-->
+            <excludes><!-- use "binary class name" with a `*` suffix, see https://github.com/jacoco/jacoco/issues/34 -->
+              <!--<exclude>ws/epigraph/wire/json/reader/ReqUpdateJsonFormatReader*</exclude>-->
             </excludes>
           </configuration>
         </plugin>
