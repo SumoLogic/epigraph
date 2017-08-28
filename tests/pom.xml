@@ -4,13 +4,13 @@
 
   <groupId>ws.epigraph.tests</groupId>
   <artifactId>tests</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
   </parent>
 
   <modules>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>slf4test</artifactId>
-      <version>0.0.4</version>
+      <version>0.0.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

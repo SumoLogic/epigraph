@@ -37,7 +37,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-http-client</artifactId>
-      <version>0.0.4</version>
+      <version>0.0.5-SNAPSHOT</version>
     </dependency>
 
   </dependencies>
