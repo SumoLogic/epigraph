@@ -8,7 +8,7 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph-java</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
   </parent>
 
   <description>Epigraph wire format(s) support for Java</description>
