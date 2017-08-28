@@ -24,3 +24,6 @@
 
 # Mac OS X laundry
 .DS_Store
+
+# m2 stuff on release?
+.repository
