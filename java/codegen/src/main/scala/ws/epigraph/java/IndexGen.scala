@@ -30,6 +30,9 @@ import scala.collection.JavaConverters._
  */
 class IndexGen(protected val ctx: GenContext) extends JavaGen {
 
+  /** Index should be generated under generated resources root folder. */
+  final override protected def pickRoot(sourcesRoot: Path, resourcesRoot: Path): Path = resourcesRoot
+
   override def relativeFilePath: Path = Paths.get(Constants.TypesIndex.resourcePath)
 
   // TODO this needs to be refactored to produce structured json/yaml instead of .properties

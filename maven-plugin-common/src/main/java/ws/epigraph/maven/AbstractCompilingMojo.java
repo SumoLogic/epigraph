@@ -69,7 +69,7 @@ public abstract class AbstractCompilingMojo extends AbstractMojo {
 
   protected abstract Collection<? extends String> getSourceRoots(@NotNull MavenProject project) throws IOException;
 
-  /** e.g. `target/classes` or `target/test-classes` */
+  /** e.g. `target/classes`, or `target/test-classes`, or `target/generated-sources/epigraph.java`, etc. */
   protected abstract File getOutputDirectory();
 
   protected abstract String[] includes();

@@ -50,11 +50,11 @@ public abstract class BaseCodegenMojo extends AbstractCompilingMojo {
       @NotNull CContext ctx
   ) throws MojoExecutionException, MojoFailureException {
     try {
-      new EpigraphJavaGenerator(ctx, outputDirectory, constructSettings()).generate();
+      new EpigraphJavaGenerator(ctx, outputDirectory, outputDirectory, constructSettings()).generate();
       String path = outputDirectory.getCanonicalPath();
       addResultsToProject(path, generatedResources(path));
     } catch (IOException e) {
-      throw new MojoExecutionException("Error generating sources to " + outputDirectory, e);
+      throw new MojoExecutionException("Error generating sources to " + outputDirectory + ": " + e.toString(), e);
     }
   }
 

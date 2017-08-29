@@ -32,12 +32,11 @@ trait JavaGen {
 
   def children: Iterable[JavaGen] = Iterable()
 
-  def writeUnder(sourcesRoot: Path): Unit = {
-//    if (shouldRun) {
-      //System.out.println("Writing to '" + relativeFilePath + "'")
-      JavaGenUtils.writeFile(sourcesRoot, relativeFilePath, generate)
-//    }
+  final def writeUnder(sourcesRoot: Path, resourcesRoot: Path): Unit = {
+      JavaGenUtils.writeFile(pickRoot(sourcesRoot, resourcesRoot), relativeFilePath, generate)
   }
+
+  protected def pickRoot(sourcesRoot: Path, resourcesRoot: Path): Path = sourcesRoot
 
   /** Yields "@NotNull " annotation in case java 8 (type use, type parameter) annotations are enabled. */
   def `NotNull_`: String = if (ctx.java8Annotations) "@NotNull " else ""

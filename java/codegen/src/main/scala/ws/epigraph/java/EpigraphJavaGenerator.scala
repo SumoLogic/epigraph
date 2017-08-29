@@ -33,23 +33,48 @@ import scala.annotation.tailrec
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, immutable, mutable}
 
-class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settings: Settings) {
+class EpigraphJavaGenerator private(
+    val cctx: CContext,
+    val javaOutputRoot: Path,
+    val resourcesOutputRoot: Path,
+    val settings: Settings
+) {
+
+  /**
+   * Checks if java and resources output roots are nested in each other,
+   * and returns true if the directories are the same.
+   */
+  private def validateOutputRoots():Boolean = {
+    val javaPath = javaOutputRoot.toAbsolutePath
+    val resourcesPath = resourcesOutputRoot.toAbsolutePath
+    val samePaths = javaPath == resourcesPath
+    if (!samePaths) {
+      if (javaPath.startsWith(resourcesPath) || resourcesPath.startsWith(javaPath)) {
+        throw new IllegalArgumentException("One of Java or resources output paths may not be nested under the other")
+      }
+    }
+    samePaths
+  }
+
+  private val singleOutput = validateOutputRoots()
+
   private val log = LoggerFactory.apply(this.getClass)
+
   private val ctx: GenContext = new GenContext(settings)
 
-  def this(ctx: CContext, outputRoot: File, settings: Settings) {
-    this(ctx, outputRoot.toPath, settings)
+  def this(ctx: CContext, javaOutputRoot: File, resourcesOutputRoot: File, settings: Settings) {
+    this(ctx, javaOutputRoot.toPath, resourcesOutputRoot.toPath, settings)
   }
 
   @throws[IOException]
   def generate() {
-    val tmpRoot: Path = JavaGenUtils.rmrf(
-      outputRoot.resolveSibling(outputRoot.getFileName.toString + "~tmp"),
-      outputRoot.getParent
+
+    def tmpSibling(path: Path): Path = JavaGenUtils.rmrf(
+      path.resolveSibling(path.getFileName.toString + "~tmp"), path.getParent
     )
-//    for (CNamespace namespace : ctx.namespaces().values()) {
-//      new NamespaceGen(namespace, ctx).writeUnder(tmpRoot);
-//    }
+
+    val tmpJavaRoot: Path = tmpSibling(javaOutputRoot)
+    val tmpResourcesRoot: Path = if (singleOutput) tmpJavaRoot else tmpSibling(resourcesOutputRoot)
 
     // TODO only generate request projection classes if there are any resources defined ?
 
@@ -90,8 +115,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
             case _ =>
               throw new UnsupportedOperationException(typeDef.kind.toString)
           }
-        }
-        catch {
+        } catch {
           case _: CompilerException => // keep going collecting errors
         }
 
@@ -101,8 +125,7 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     for (alt <- cctx.anonListTypes.values) {
       try {
         generators += new AnonListGen(alt, ctx)
-      }
-      catch {
+      } catch {
         case _: CompilerException =>
       }
     }
@@ -110,13 +133,12 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     for (amt <- cctx.anonMapTypes.values) {
       try {
         generators += new AnonMapGen(amt, ctx)
-      }
-      catch {
+      } catch {
         case _: CompilerException =>
       }
     }
 
-    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpRoot))
+    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpJavaRoot, tmpResourcesRoot))
     generators.clear()
 
 
@@ -125,11 +147,10 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 //      anonMapValueTypes.add(amt.valueDataType());
 //    }
 //    for (CDataType valueType : anonMapValueTypes) {
-//      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpRoot);
+//      new AnonBaseMapGen(valueType, ctx).writeUnder(tmpJavaRoot, tmpResourcesRoot);
 //    }
 
-    if (cctx.schemaFiles.nonEmpty)
-      generators += new IndexGen(ctx)
+    if (cctx.schemaFiles.nonEmpty) generators += new IndexGen(ctx)
 
     // generate server/client stubs
     val serverSettings = ctx.settings.serverSettings()
@@ -186,13 +207,20 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
 
     }
 
-    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpRoot))
+    runGeneratorsAndHandleErrors(queue(generators), _.writeUnder(tmpJavaRoot, tmpResourcesRoot))
 
     val endTime: Long = System.currentTimeMillis
     log.info(s"Epigraph Java code generation took ${ endTime - startTime }ms")
 
-    if (Files.exists(tmpRoot))
-      JavaGenUtils.move(tmpRoot, outputRoot, outputRoot.getParent)// move new root to final location
+    if (Files.exists(tmpJavaRoot)) {
+      // move new java root to the final location
+      JavaGenUtils.move(tmpJavaRoot, javaOutputRoot, javaOutputRoot.getParent)
+    }
+    if (!singleOutput && Files.exists(tmpResourcesRoot)) {
+      // move new resources root to the final location
+      JavaGenUtils.move(tmpResourcesRoot, resourcesOutputRoot, resourcesOutputRoot.getParent)
+    }
+
   }
 
   @tailrec
@@ -341,18 +369,10 @@ class EpigraphJavaGenerator(val cctx: CContext, val outputRoot: Path, val settin
     q ++ i
   }
 
-//  public static void main(String... args) throws IOException {
-//    new EpigraphJavaGenerator(
-//        SchemaCompiler.testcompile(),
-//        Paths.get("java/codegen-test/src/main/java")
-//    ).generate();
-//  }
-
   private def handleErrors() {
     if (!cctx.errors.isEmpty) {
       EpigraphCompiler.renderErrors(cctx)
       throw new Exception("Build failed") // todo better integration with mvn/gradle/...
-      //System.exit(10)
     }
   }
 

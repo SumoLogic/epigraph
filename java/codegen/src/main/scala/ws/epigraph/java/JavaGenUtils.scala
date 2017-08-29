@@ -81,8 +81,8 @@ object JavaGenUtils {
     }
   }
 
+  /** Removes the directory at `path`, returns the same `path`. */
   def rmrf(path: Path, top: Path): Path = {
-    //println(s"Removing $path")
     if (Files.exists(path)) {
       checkBounds(path, top)
       if (Files.isDirectory(path)) {
@@ -101,6 +101,7 @@ object JavaGenUtils {
       throw new IllegalArgumentException(s"out of bounds! $path, $top")
   }
 
+  /** Moves source path to target path, removing the target first if already exists. */
   def move(source: Path, target: Path, top: Path): Unit = {
     if (Files.exists(target)) {
       val tmp = rmrf(target.resolveSibling(target.getFileName.toString + "~old"), top)
