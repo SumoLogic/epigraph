@@ -16,11 +16,14 @@
 
 package ws.epigraph.compiler
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@RunWith(classOf[JUnitRunner])
 class LineNumberUtilSpec extends FlatSpec with Matchers {
   "LineNumberUtil" should "count line and column numbers" in {
     val u = new LineNumberUtil("ab\tc\ndef\r\nhij", 2)

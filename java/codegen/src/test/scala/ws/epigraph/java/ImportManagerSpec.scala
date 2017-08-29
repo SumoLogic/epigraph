@@ -16,12 +16,15 @@
 
 package ws.epigraph.java
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@RunWith(classOf[JUnitRunner])
 class ImportManagerSpec extends FlatSpec with Matchers {
   "ImportManager" should "correctly handle java.lang" in {
     val im = new ImportManager(Qn.fromDotSeparated("a.b"))

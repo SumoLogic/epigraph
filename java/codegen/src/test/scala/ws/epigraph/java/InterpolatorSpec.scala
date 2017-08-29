@@ -16,6 +16,8 @@
 
 package ws.epigraph.java
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.NewlineStringInterpolator.i
@@ -23,6 +25,7 @@ import ws.epigraph.java.NewlineStringInterpolator.i
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@RunWith(classOf[JUnitRunner])
 class InterpolatorSpec extends FlatSpec with Matchers {
   "NS Interpolator" should "correctly treat new lines" in {
     val s = /*@formatter:off*/sn"""\

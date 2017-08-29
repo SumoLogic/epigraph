@@ -2,6 +2,8 @@ package ws.epigraph.java
 
 import java.io.File
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.{FlatSpec, Matchers}
 import ws.epigraph.compiler.CContext
 import ws.epigraph.java.Settings.{ClientSettings, ServerSettings}
@@ -9,6 +11,7 @@ import ws.epigraph.java.Settings.{ClientSettings, ServerSettings}
 /**
  * @author yegor 2017-08-28.
  */
+@RunWith(classOf[JUnitRunner])
 class EpigraphJavaGeneratorSpec extends FlatSpec with Matchers {
 
   val ctx = new CContext()
