@@ -105,9 +105,9 @@ object JavaGenUtils {
   def move(source: Path, target: Path, top: Path): Unit = {
     if (Files.exists(target)) {
       val tmp = rmrf(target.resolveSibling(target.getFileName.toString + "~old"), top)
-      Files.move(target, tmp)
-      Files.move(source, target)
-      rmrf(tmp, top)
+      Files.move(target, tmp) // move old target contents out of the way
+      Files.move(source, target) // move the source to the target location
+      rmrf(tmp, top) // remove the old target
     } else {
       Files.move(source, target)
     }

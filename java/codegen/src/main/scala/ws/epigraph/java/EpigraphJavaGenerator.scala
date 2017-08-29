@@ -44,6 +44,7 @@ class EpigraphJavaGenerator private(
    * Checks if java and resources output roots are nested in each other,
    * and returns true if the directories are the same.
    */
+  @throws[IllegalArgumentException]
   private def validateOutputRoots():Boolean = {
     val javaPath = javaOutputRoot.toAbsolutePath
     val resourcesPath = resourcesOutputRoot.toAbsolutePath
