@@ -228,11 +228,18 @@
         <artifactId>maven-plugin-api</artifactId>
         <version>3.3.9</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven.plugin-testing</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <version>3.2.0</version><!-- 3.3.0 is broken: https://issues.apache.org/jira/browse/MPLUGINTESTING-35 -->
+      </dependency>
+
       <dependency>
         <groupId>org.apache.maven.plugin-tools</groupId>
         <artifactId>maven-plugin-annotations</artifactId>
         <version>${maven-plugin-version}</version>
-        <!--<scope>provided</scope>-->
+        <scope>provided</scope>
       </dependency>
 
       <dependency>

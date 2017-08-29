@@ -36,12 +36,15 @@ import java.util.Collection;
  * Generate Java bindings for Epigraph Schema source files (.epigraph).
  */
 @Mojo(
-    name = "generate-sources", // TODO generateSources?
+    name = MainCodegenMojo.MOJO_GOAL_NAME,
     defaultPhase = LifecyclePhase.GENERATE_SOURCES,
     requiresDependencyResolution = ResolutionScope.COMPILE,
     threadSafe = true
 )
 public class MainCodegenMojo extends BaseCodegenMojo {
+
+  /** The name of this mojo goal. */
+  public static final String MOJO_GOAL_NAME = "generate-sources"; // TODO "generateSources"?
 
   /**
    * The source directory of Epigraph Schema files. This directory is added to the
@@ -85,7 +88,7 @@ public class MainCodegenMojo extends BaseCodegenMojo {
    */
   @Parameter
   private Server server = null; // keep name in sync with `EpigraphJavaPluginExtension.groovy`
-  
+
   /**
    * Client generator configuration
    */

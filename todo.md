@@ -14,7 +14,7 @@
 - [ ] operations codegen: process(inputData) parameter should be non-null if marked as required in the projection
 - [ ] `OperationFilterChains`
   - [ ] add filters that ensure req<->op validity
-  - [ ] add filter that ensures map keys validity w.r.t. op. map key model projection 
+  - [ ] add filter that ensures map keys validity w.r.t. op. map key model projection
         e.g. `weirdResource: map[UserRecord,UserRecord] ... outputProjection [projection (firstName, +lastName)](..)`
         should only allow map keys with optional `firstName` and mandatory `lastName` and no other fields, both op. input and output
 - [ ] Feature: Wrap `Data` in Futures to support async operations
@@ -31,7 +31,7 @@
         string MyAnnotation // taget? default?
         record SomeRecord {
           @MyAnnotation "foo"
-        }  
+        }
     ```
     Figure out injections: how to add annotations to existing types/fields.
 - [ ] req output projections codegen: use `ImportManager` to get more readable projections code
@@ -121,3 +121,9 @@
 - [x] https://sumologic.slack.com/archives/C2PN5GQS1/p1502142890265437 - Releases should publish sources too, to make development easier
 - [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1502142552131468 - Clients use a concrete class, instead of interface/ class combo.  This makes dynamic proxying very hard, automatic retries hard, etc.  (Java proxies use interfaces, last I checked)
 - [x] Release job needs to publish sources too to make it easy to debug/examine in other projects
+
+# Instrument maven plugin(s) with jacoco agent?
+- [ ] e.g.: argLine set to -javaagent:/home/travis/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/travis/build/SumoLogic/epigraph/target/jacoco.exec
+- [ ] then add the .exec to considered ones
+
+# Move java codegen classes into a subpackage
