@@ -28,9 +28,12 @@ abstract record Operation extends Annotated {
   `outputProjection`: OpOutputFieldProjection
 }
 
+// path always starts with resource type
+// inputType/outputType override resource type or path tip type (if present)
+
 // routing:
 // if operation name is provided using query parameter: find operation by verb and name. Else:
-// find all unnamed operations by verb (NB: methods can be overriden in X-HTTP-METHOD header)
+// find all operations by verb (NB: methods can be overriden in X-HTTP-METHOD header)
 // sort them by op path length in descending order then declaration order (must be stable!)
 // for each of them:
 // if it's a READ:

@@ -580,6 +580,11 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
+
+    // if type specified explicitly: use it
+    // else use path tip type, if present
+    // else use resource type
+
     final @Nullable SchemaValueTypeRef typeRefPsi =
         declaredOutputTypePsi == null ? null : declaredOutputTypePsi.getValueTypeRef();
 
@@ -605,9 +610,14 @@ public final class OperationsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
 
+    // if type specified explicitly: use it
+    // else use path tip type, if present
+    // else use resource type
+
     final @Nullable SchemaTypeRef typeRefPsi = inputTypePsi == null ? null : inputTypePsi.getTypeRef();
     if (inputTypePsi == null || typeRefPsi == null) {
       if (path == null) {
+        // no path and no explicit type: use resource type
 
         @NotNull TypeApi rtt = resourceType.type();
 
@@ -616,6 +626,7 @@ public final class OperationsPsiParser {
         return resourceType;
 
       } else {
+        // path provided but no explicit type: use path tip type
 
         final @NotNull DataTypeApi tipType = ProjectionUtils.tipType(path);
 
@@ -626,6 +637,7 @@ public final class OperationsPsiParser {
         return tipType;
       }
     }
+    // explicit type given: use it
     final @Nullable DatumTypeApi datumType = TypeRefs.fromPsi(typeRefPsi, context).resolveDatumType(resolver);
     if (datumType == null)
       throw new PsiProcessingException("Can't resolve input type '" + typeRefPsi.getText() + "'", typeRefPsi, context);

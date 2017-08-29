@@ -66,36 +66,45 @@ class EpigraphJavaPlugin implements Plugin<ProjectInternal> {
 
   private void configureSourceSets(Project project) {
     // http://gradle.1045684.n5.nabble.com/plugins-that-generate-source-code-td1437853.html
+    // https://discuss.gradle.org/t/how-can-i-compile-generated-sources/7541/14
 
     SourceSetContainer sourceSets = project.sourceSets
     TaskContainer tasks = project.tasks
 
     sourceSets.all { SourceSet sourceSet ->
 //      if (!isTestSourceSet(sourceSet)) {
-        String taskName = sourceSet.getTaskName('generate', 'EpigraphJavaBindings')
-        GenerateJavaBindingsTask task = tasks.create(taskName, GenerateJavaBindingsTask.class)
-        task.setDescription("Generate $sourceSet.name Epigraph Java bindings")
-        task.setGroup(BasePlugin.BUILD_GROUP)
-        task.sourceSetName = sourceSet.name
-        def destinationDir = task.getDestinationDir()
-        task.outputs.dir destinationDir
+      String taskName = sourceSet.getTaskName('generate', 'EpigraphJavaBindings')
+      GenerateJavaBindingsTask task = tasks.create(taskName, GenerateJavaBindingsTask.class)
+      task.setDescription("Generate $sourceSet.name Epigraph Java bindings")
+      task.setGroup(BasePlugin.BUILD_GROUP)
+      task.sourceSetName = sourceSet.name
 
-        sourceSet.getAllSource().srcDir(destinationDir)
+      def generatedSourcesDir = task.getDestinationSourcesDir()
+      task.outputs.dir generatedSourcesDir
 
-        SourceTask compileJavaTask = tasks.getByName(sourceSet.getCompileJavaTaskName()) as SourceTask
-        if (compileJavaTask != null) {
-          compileJavaTask.dependsOn task
-          compileJavaTask.source destinationDir
-        }
+      // otherwise idea doesn't recognize generated sources
+      sourceSet.getAllSource().srcDir(generatedSourcesDir)
 
-        def configuration = isTestSourceSet(sourceSet) ? epigraphTestConfiguration : epigraphConfiguration
-        task.setConfiguration(configuration)
-        task.dependsOn configuration
+      def generatedResourcesDir = task.getDestinationResourcesDir()
+////      sourceSet.output.dir(generatedResourcesDir, builtBy: taskName) // see https://docs.gradle.org/4.1/dsl/org.gradle.api.tasks.SourceSetOutput.html
+      sourceSet.resources.srcDirs = [ generatedResourcesDir ] // ?  from https://youtrack.jetbrains.com/issue/IDEA-133399
 
-        if (project.hasProperty('idea')) {
-          def ideaModule = project.idea.module
-          ideaModule.generatedSourceDirs += destinationDir
-        }
+      SourceTask compileJavaTask = tasks.getByName(sourceSet.getCompileJavaTaskName()) as SourceTask
+      if (compileJavaTask != null) {
+        compileJavaTask.dependsOn task
+        compileJavaTask.source generatedSourcesDir
+      }
+
+      def configuration = isTestSourceSet(sourceSet) ? epigraphTestConfiguration : epigraphConfiguration
+      task.setConfiguration(configuration)
+      task.dependsOn configuration
+
+      if (project.hasProperty('idea')) {
+        def ideaModule = project.idea.module
+        ideaModule.generatedSourceDirs += generatedSourcesDir
+        // no extra steps needed to add resources?
+        // see https://youtrack.jetbrains.com/issue/IDEA-133399
+      }
 //      }
     }
   }

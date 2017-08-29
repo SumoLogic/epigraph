@@ -30,6 +30,8 @@ import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
+import ws.epigraph.refs.QnTypeRef;
+import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.schema.Namespaces;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.tests._resources.users.UsersResourceDeclaration;
@@ -162,5 +164,10 @@ public class GeneratedClassesTest {
     printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
+  }
+
+  @Test
+  public void testIndex() {
+    assertNotNull(StaticTypesResolver.instance().resolve(new QnTypeRef(Qn.fromDotSeparated("ws.epigraph.tests.PersonMap"))));
   }
 }

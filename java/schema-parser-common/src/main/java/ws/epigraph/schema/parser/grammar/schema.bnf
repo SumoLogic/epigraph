@@ -473,7 +473,7 @@ private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
 opKeyProjection ::= 'projection' ':' opInputModelProjection { pin=1 }
 
-// op path --------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------- path
 
 // no tails, no branching, no meta
 
@@ -485,6 +485,7 @@ private opVarPathBody ::= '{' (opModelPathProperty ','?)* '}' {pin=1}
 
 opModelPathProperty ::= opParam | annotation
 
+// todo: missing body here
 opModelPath ::= ( opRecordModelPath
                 | opMapModelPath
                 )?

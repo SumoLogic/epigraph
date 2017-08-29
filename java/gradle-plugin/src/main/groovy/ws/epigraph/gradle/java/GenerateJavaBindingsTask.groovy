@@ -31,19 +31,20 @@ import ws.epigraph.java.Settings
 @ParallelizableTask
 class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTaskBase {
   private String sourceSetName
-  private File destinationDir
+  private File destinationSourcesDir
+  private File destinationResourcesDir
 
   GenerateJavaBindingsTask() {}
 
   @TaskAction
   void run() {
-    destinationDir.mkdirs()
+    destinationSourcesDir.mkdirs()
 
-    def context = compileFiles();
+    def context = compileFiles()
     if (!context.errors().isEmpty())
       throw new GradleException('Schema compilation failed with errors')
 
-    getLogger().info("Generating Java bindings to '${getDestinationDir()}'")
+    getLogger().info("Generating Java bindings to '${getDestinationSourcesDir()}'")
 
     Server server = project.epigraph.server
     Client client = project.epigraph.client
@@ -62,7 +63,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
         java8Annotations
     )
 
-    new EpigraphJavaGenerator(context, getDestinationDir(), settings).generate()
+    new EpigraphJavaGenerator(context, getDestinationSourcesDir(), getDestinationResourcesDir(), settings).generate()
   }
 
   @Override
@@ -76,21 +77,41 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
   }
 
   @OutputDirectory
-  File getDestinationDir() {
-    if (destinationDir == null) {
+  File getDestinationSourcesDir() {
+    if (destinationSourcesDir == null) {
       if (sourceSetName == null)
-        throw new GradleException('Neither destination dir nor source name is set')
+        throw new GradleException('Neither destination sources dir nor source name is set')
 
-      getLogger().debug('Using default destination dir')
+      getLogger().debug('Using default destination sources dir')
       def generatedSrcDir = new File(project.buildDir, 'generated-src')
       def javaGeneratedSrcDir = new File(generatedSrcDir, 'epigraph.java')
-      setDestinationDir(new File(javaGeneratedSrcDir, sourceSetName))
+      setDestinationSourcesDir(new File(javaGeneratedSrcDir, sourceSetName))
     }
 
-    return destinationDir
+    return destinationSourcesDir
   }
 
-  void setDestinationDir(File destinationDir) {
-    this.destinationDir = destinationDir
+  void setDestinationSourcesDir(File dir) {
+    this.destinationSourcesDir = dir
   }
+
+  @OutputDirectory
+  File getDestinationResourcesDir() {
+    if (destinationResourcesDir == null) {
+      if (sourceSetName == null)
+        throw new GradleException('Neither destination resources dir nor source name is set')
+
+      getLogger().debug('Using default destination resources dir')
+      def generatedSrcDir = new File(project.buildDir, 'generated-src')
+      def generatedResDir = new File(generatedSrcDir, 'epigraph.resources')
+      setDestinationResourcesDir(new File(generatedResDir, sourceSetName))
+    }
+
+    return destinationResourcesDir
+  }
+
+  void setDestinationResourcesDir(File dir) {
+    this.destinationResourcesDir = dir
+  }
+
 }
