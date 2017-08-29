@@ -266,7 +266,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
-                  success.getData(),
+                  success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
                   outputProjection.projection().varProjection()
               )
@@ -328,14 +328,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
                 readResult -> {
                   try {
-                    writeData(
-                        operationKind,
-                        readResult.pathSteps,
-                        readResult.projection,
-                        readResult.data,
-                        context,
-                        operationInvocationContext
-                    );
+                    if (readResult == null)
+                      serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
+                    else
+                      writeData(
+                          operationKind,
+                          readResult.pathSteps,
+                          readResult.projection,
+                          readResult.data,
+                          context,
+                          operationInvocationContext
+                      );
                   } catch (RuntimeException e) {
                     writeInvocationErrorAndCloseContext(
                         new GenericServerInvocationError(e.toString()),
@@ -471,7 +474,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
-                  success.getData(),
+                  success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
                   outputProjection.projection().varProjection()
               )
@@ -624,7 +627,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
-                  success.getData(),
+                  success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
                   outputProjection.projection().varProjection()
               )
@@ -750,7 +753,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
-                  success.getData(),
+                  success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
                   outputProjection.projection().varProjection()
               )
@@ -923,7 +926,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         ), operationInvocationContext
     ).thenApply(result -> result.mapSuccess(success ->
         new ReadResult(
-            success.getData(),
+            success == null ? null : success.getData(),
             outputProjection.pathSteps(),
             outputProjection.projection().varProjection()
         )

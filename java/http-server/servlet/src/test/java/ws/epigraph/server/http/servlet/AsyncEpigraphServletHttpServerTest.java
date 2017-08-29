@@ -35,7 +35,7 @@ import javax.servlet.ServletConfig;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings("ProhibitedExceptionDeclared")
-public class EpigraphServletHttpServerTest extends AbstractHttpServerTest {
+public class AsyncEpigraphServletHttpServerTest extends AbstractHttpServerTest {
   private static Server jettyServer;
 
   private int port = PORT;
@@ -96,7 +96,7 @@ public class EpigraphServletHttpServerTest extends AbstractHttpServerTest {
 
   }
 
-  public static class TestServlet extends EpigraphServlet {
+  public static class TestServlet extends AsyncEpigraphServlet {
     @Override
     protected @NotNull Service initService(final ServletConfig config) throws ServiceInitializationException {
       return buildUsersService();

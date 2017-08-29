@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.server.http.HttpExchange;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,14 +30,10 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class ServletExchange implements HttpExchange {
-  private final @NotNull AsyncContext ac;
+public abstract class ServletExchange implements HttpExchange {
+  protected abstract @NotNull HttpServletRequest request();
 
-  public ServletExchange(final @NotNull AsyncContext ac) {this.ac = ac;}
-
-  private @NotNull HttpServletRequest request() { return (HttpServletRequest) ac.getRequest();}
-
-  private @NotNull HttpServletResponse response() { return (HttpServletResponse) ac.getResponse();}
+  protected abstract @NotNull HttpServletResponse response();
 
   @Override
   public @Nullable String getHeader(final @NotNull String headerName) {
@@ -68,7 +63,5 @@ public final class ServletExchange implements HttpExchange {
   }
 
   @Override
-  public void close() {
-    ac.complete();
-  }
+  public void close() {}
 }

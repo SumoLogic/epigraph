@@ -30,7 +30,7 @@ import javax.servlet.ServletConfig;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ServletHttpClientTest extends AbstractHttpClientTest {
+public class AsyncServletGeneratedClientTest extends AbstractGeneratedClientTest {
   private static Server jettyServer;
 
   @BeforeClass

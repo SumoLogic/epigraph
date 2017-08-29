@@ -21,7 +21,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import ws.epigraph.server.http.servlet.EpigraphServlet;
+import ws.epigraph.server.http.servlet.SyncEpigraphServlet;
 import ws.epigraph.service.Service;
 import ws.epigraph.service.ServiceInitializationException;
 
@@ -30,7 +30,7 @@ import javax.servlet.ServletConfig;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ServletGeneratedClientTest extends AbstractGeneratedClientTest {
+public class SyncServletGeneratedClientTest extends AbstractGeneratedClientTest {
   private static Server jettyServer;
 
   @BeforeClass
@@ -49,7 +49,7 @@ public class ServletGeneratedClientTest extends AbstractGeneratedClientTest {
     jettyServer.stop();
   }
 
-  public static class TestServlet extends EpigraphServlet {
+  public static class TestServlet extends SyncEpigraphServlet {
     @Override
     protected @NotNull Service initService(final ServletConfig config) throws ServiceInitializationException {
       return buildUsersService();

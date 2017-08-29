@@ -30,7 +30,7 @@ import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.server.http.*;
-import ws.epigraph.server.http.servlet.ServletExchange;
+import ws.epigraph.server.http.servlet.AsyncServletExchange;
 import ws.epigraph.service.Service;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -155,7 +155,7 @@ public class EpigraphJettyHandler extends AbstractHandler {
       super(
           service,
           serverProtocolFactory.newServerProtocol(
-              c -> new ServletExchange(c.asyncContext),
+              c -> new AsyncServletExchange(c.asyncContext),
               formatSelector,
               typesResolver
           ),
