@@ -43,5 +43,7 @@ echo "synchronizing gradle version"
 ./mvnw scm:checkin -Dmessage='gradle version sync' -DpushChanges=true
 
 echo "pushing changes to git"
-git push origin master
+# git push origin master
 git push origin master --tags
+
+# todo: build idea plugin, create github release, attach plugin to it
