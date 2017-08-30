@@ -24,7 +24,7 @@
   <parent>
     <groupId>ws.epigraph.examples</groupId>
     <artifactId>examples-users</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
   </parent>
 
   <dependencies>
