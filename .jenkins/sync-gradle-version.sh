@@ -5,7 +5,7 @@
 # see https://github.com/gradle/gradle/blob/v4.0.0-milestone-1/subprojects/plugin-use/src/main/java/org/gradle/plugin/use/resolve/internal/ArtifactRepositoryPluginResolver.java
 
 version=$(grep -m 1 version pom.xml | sed -e 's/.*>\(.*\)-SNAPSHOT.*/\1/')
-echo "changing version to $version"
+echo "changing gradle version to $version"
 
 perl -pi -e "s/epigraphVersion = .*/epigraphVersion = $version/" gradle.properties
 

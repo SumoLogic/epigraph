@@ -19,28 +19,29 @@ fi
 NEW_VERSION="${NEW_VERSION}-SNAPSHOT"
 echo "New version: ${NEW_VERSION}"
 
-# remove -SNAPSHOT from current version
+echo "removing -SNAPSHOT from current version"
 ./mvnw build-helper:parse-version versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}'
 
-# build
+echo "building"
 ./mvnw clean install -Plight-psi
 ./mvnw -DdeployAtEnd=true clean deploy -fae
 
-# commit version change
+echo "committing version change"
 ./mvnw scm:checkin -Dmessage='release ${project.version} version change' -DpushChanges=false
 
-# tag
+echo "tagging"
 ./mvnw scm:tag -Dtag='release_${project.version}' -DpushChanges=false
 
-# set new version
+echo "setting new version"
 ./mvnw versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion="${NEW_VERSION}"
 ./mvnw scm:checkin -Dmessage="${NEW_VERSION} version change" -DpushChanges=false
 
-# synchronize gradle version
+echo "synchronizing gradle version"
 .jenkins/sync-gradle-version.sh
-git add -u
-git commit -m "gradle version sync"
+# git add -u
+# git commit -m "gradle version sync"
+./mvnw scm:checkin -Dmessage='gradle version sync' -DpushChanges=true
 
-#push changes
+echo "pushing changes to git"
 git push origin master
 git push origin master --tags
