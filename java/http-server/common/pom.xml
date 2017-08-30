@@ -24,7 +24,7 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph-http-server</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>slf4test</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
