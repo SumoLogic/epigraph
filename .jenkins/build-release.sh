@@ -27,7 +27,7 @@ echo "New version: ${NEW_VERSION}"
 ./mvnw -DdeployAtEnd=true clean deploy -fae
 
 # commit version change
-./mvnw scm:checkin -Dmessage="release ${project.version} version change" -DpushChanges=false
+./mvnw scm:checkin -Dmessage='release ${project.version} version change' -DpushChanges=false
 
 # tag
 ./mvnw scm:tag -Dtag='release_${project.version}' -DpushChanges=false
@@ -37,7 +37,7 @@ echo "New version: ${NEW_VERSION}"
 ./mvnw scm:checkin -Dmessage="${NEW_VERSION} version change" -DpushChanges=false
 
 # synchronize gradle version
-.jenkins/sync_gradle_version.sh
+.jenkins/sync-gradle-version.sh
 git add -u
 git commit -m "gradle version sync"
 
