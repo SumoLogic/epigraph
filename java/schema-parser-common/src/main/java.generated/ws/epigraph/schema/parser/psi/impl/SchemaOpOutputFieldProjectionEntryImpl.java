@@ -54,4 +54,10 @@ public class SchemaOpOutputFieldProjectionEntryImpl extends ASTWrapperPsiElement
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaQid.class));
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
+  }
+
 }

@@ -428,6 +428,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpOutputDefaultValue(@NotNull SchemaOpOutputDefaultValue o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpOutputFieldProjection(@NotNull SchemaOpOutputFieldProjection o) {
     visitPsiElement(o);
   }

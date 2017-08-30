@@ -513,8 +513,8 @@ opOutputUnnamedVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTa
 private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputSingleTagProjection ::= ( ':' tagName)? opOutputModelProjection
-opOutputMultiTagProjectionItem ::= tagName opOutputModelProjection
+opOutputSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? opOutputModelProjection // todo parser
+opOutputMultiTagProjectionItem ::= '+'? tagName opOutputModelProjection // todo parser
 
 opOutputVarPolymorphicTail ::= ':' '~' ( opOutputVarTailItem | opOutputVarMultiTail ) {pin=2}
 opOutputVarMultiTail ::= '(' (opOutputVarTailItem ','?)* ')' {pin=1}
@@ -536,23 +536,28 @@ opOutputUnnamedModelProjection ::= opOutputModelProjectionProperties ?
                                    )?
 
 private opOutputModelProjectionProperties ::= '{' (opOutputModelProperty ','?)* '}' {pin=1}
-opOutputModelProperty ::= opParam | annotation | opOutputModelMeta
-opOutputModelMeta ::= 'meta' ':' opOutputModelProjection
+opOutputModelProperty ::= opOutputDefaultValue | opParam | annotation | opOutputModelMeta {
+  recoverWhile = opOutputModelPropertyRecover
+}
+private opOutputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
+opOutputDefaultValue ::= 'default' ':' datum {pin=1} // todo parser
+
+opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
 
 
 // op output record
 opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
-opOutputFieldProjectionEntry ::= qid opOutputFieldProjection { pin=1 recoverWhile=recordModelProjectionRecover}
+opOutputFieldProjectionEntry ::= '+'? qid opOutputFieldProjection { pin=2 recoverWhile=recordModelProjectionRecover}
 opOutputFieldProjection ::= /* opOutputComplexFieldProjection | */ opOutputSimpleFieldProjection
 //private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
 private opOutputSimpleFieldProjection ::= opOutputVarProjection
 //opOutputFieldProjectionBodyPart ::= opParam | annotation
 
 // op output list
-opOutputListModelProjection ::= '*' ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 }
+opOutputListModelProjection ::= '*' '+'? ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 } // todo parser
 
 // op output map
-opOutputMapModelProjection ::= opOutputKeyProjection ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 }
+opOutputMapModelProjection ::= opOutputKeyProjection '+'? ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 } // todo parser
 opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
 private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
 opOutputKeyProjectionPart ::= opKeyProjection | opParam | annotation {
@@ -604,7 +609,7 @@ opInputModelMeta ::= 'meta' ':' '+'? opInputModelProjection
 
 // op input record
 opInputRecordModelProjection ::= '(' (opInputFieldProjectionEntry ','?)* ')' { pin=1 }
-opInputFieldProjectionEntry ::= '+'? qid opInputFieldProjection { // '+' means that field itself must be present
+opInputFieldProjectionEntry ::= '+'? qid opInputFieldProjection { // '+' means that field itself must be present | todo: or is it 'required' on var?
  pin=2
  recoverWhile=recordModelProjectionRecover
 }
@@ -617,7 +622,7 @@ opInputListModelProjection ::= '*' ( opInputBracedVarProjection | opInputVarProj
 
 // op input map
 opInputMapModelProjection ::= opInputKeyProjection ( opInputBracedVarProjection | opInputVarProjection ) { pin=1 }
-opInputKeyProjection ::= '[' opInputKeyProjectionInt ']' {pin=1} // todo add required|forbidden as in delete projection
+opInputKeyProjection ::= '[' opInputKeyProjectionInt ']' {pin=1}
 private opInputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opInputKeyProjectionPart ','?)*
 opInputKeyProjectionPart ::= opKeyProjection | opParam | annotation {
   recoverWhile = opInputKeyProjectionRecover

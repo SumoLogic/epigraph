@@ -29,4 +29,7 @@ public interface SchemaOpOutputMultiTagProjectionItem extends PsiElement {
   @NotNull
   SchemaTagName getTagName();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

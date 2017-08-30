@@ -29,4 +29,7 @@ public interface SchemaOpOutputFieldProjectionEntry extends PsiElement {
   @NotNull
   SchemaQid getQid();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

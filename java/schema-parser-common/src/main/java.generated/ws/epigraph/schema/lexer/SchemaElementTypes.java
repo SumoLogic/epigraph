@@ -142,6 +142,7 @@ public interface SchemaElementTypes {
   IElementType S_OP_MAP_MODEL_PATH = new SchemaElementType("S_OP_MAP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH = new SchemaElementType("S_OP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH_PROPERTY = new SchemaElementType("S_OP_MODEL_PATH_PROPERTY");
+  IElementType S_OP_OUTPUT_DEFAULT_VALUE = new SchemaElementType("S_OP_OUTPUT_DEFAULT_VALUE");
   IElementType S_OP_OUTPUT_FIELD_PROJECTION = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION");
   IElementType S_OP_OUTPUT_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION_ENTRY");
   IElementType S_OP_OUTPUT_KEY_PROJECTION = new SchemaElementType("S_OP_OUTPUT_KEY_PROJECTION");
@@ -608,6 +609,9 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_MODEL_PATH_PROPERTY) {
         return new SchemaOpModelPathPropertyImpl(node);
+      }
+      else if (type == S_OP_OUTPUT_DEFAULT_VALUE) {
+        return new SchemaOpOutputDefaultValueImpl(node);
       }
       else if (type == S_OP_OUTPUT_FIELD_PROJECTION) {
         return new SchemaOpOutputFieldProjectionImpl(node);

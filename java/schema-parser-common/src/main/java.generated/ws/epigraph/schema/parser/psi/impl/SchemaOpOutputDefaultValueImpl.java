@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaOpOutputModelPropertyImpl extends ASTWrapperPsiElement implements SchemaOpOutputModelProperty {
+public class SchemaOpOutputDefaultValueImpl extends ASTWrapperPsiElement implements SchemaOpOutputDefaultValue {
 
-  public SchemaOpOutputModelPropertyImpl(ASTNode node) {
+  public SchemaOpOutputDefaultValueImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitOpOutputModelProperty(this);
+    visitor.visitOpOutputDefaultValue(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,26 +44,20 @@ public class SchemaOpOutputModelPropertyImpl extends ASTWrapperPsiElement implem
 
   @Override
   @Nullable
-  public SchemaAnnotation getAnnotation() {
-    return PsiTreeUtil.getChildOfType(this, SchemaAnnotation.class);
+  public SchemaDatum getDatum() {
+    return PsiTreeUtil.getChildOfType(this, SchemaDatum.class);
   }
 
   @Override
   @Nullable
-  public SchemaOpOutputDefaultValue getOpOutputDefaultValue() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputDefaultValue.class);
+  public PsiElement getColon() {
+    return findChildByType(S_COLON);
   }
 
   @Override
-  @Nullable
-  public SchemaOpOutputModelMeta getOpOutputModelMeta() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputModelMeta.class);
-  }
-
-  @Override
-  @Nullable
-  public SchemaOpParam getOpParam() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpParam.class);
+  @NotNull
+  public PsiElement getDefault() {
+    return notNullChild(findChildByType(S_DEFAULT));
   }
 
 }

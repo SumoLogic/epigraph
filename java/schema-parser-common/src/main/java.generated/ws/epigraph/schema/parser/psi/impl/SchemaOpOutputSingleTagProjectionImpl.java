@@ -60,4 +60,10 @@ public class SchemaOpOutputSingleTagProjectionImpl extends ASTWrapperPsiElement 
     return findChildByType(S_COLON);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
+  }
+
 }

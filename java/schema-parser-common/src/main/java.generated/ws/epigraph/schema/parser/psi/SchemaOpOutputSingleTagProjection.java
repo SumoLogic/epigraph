@@ -32,4 +32,7 @@ public interface SchemaOpOutputSingleTagProjection extends PsiElement {
   @Nullable
   PsiElement getColon();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

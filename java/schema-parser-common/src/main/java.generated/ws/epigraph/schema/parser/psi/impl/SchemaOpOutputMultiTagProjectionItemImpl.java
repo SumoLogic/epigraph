@@ -54,4 +54,10 @@ public class SchemaOpOutputMultiTagProjectionItemImpl extends ASTWrapperPsiEleme
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTagName.class));
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
+  }
+
 }

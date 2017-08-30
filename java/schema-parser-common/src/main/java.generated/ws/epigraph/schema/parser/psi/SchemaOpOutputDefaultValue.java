@@ -21,21 +21,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpOutputMapModelProjection extends PsiElement {
+public interface SchemaOpOutputDefaultValue extends PsiElement {
+
+  @Nullable
+  SchemaDatum getDatum();
+
+  @Nullable
+  PsiElement getColon();
 
   @NotNull
-  SchemaOpOutputKeyProjection getOpOutputKeyProjection();
-
-  @Nullable
-  SchemaOpOutputVarProjection getOpOutputVarProjection();
-
-  @Nullable
-  PsiElement getParenLeft();
-
-  @Nullable
-  PsiElement getParenRight();
-
-  @Nullable
-  PsiElement getPlus();
+  PsiElement getDefault();
 
 }
