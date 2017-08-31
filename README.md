@@ -1,6 +1,6 @@
 # Epigraph
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg)](https://travis-ci.org/SumoLogic/epigraph)
+[![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg?branch=master)](https://travis-ci.org/SumoLogic/epigraph/branches)
 [![codecov.io](https://codecov.io/github/SumoLogic/epigraph/coverage.svg)](https://codecov.io/github/SumoLogic/epigraph)
 
 Under construction
