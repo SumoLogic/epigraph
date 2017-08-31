@@ -91,7 +91,8 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
 
   // meta stuff
 
-  protected lazy val metaProjection: OpOutputModelProjection[_, _, _] = g.op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _]]
+  protected lazy val metaProjection: OpOutputModelProjection[_, _, _, _] =
+    g.op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _, _]]
 
   protected lazy val hasMeta: Boolean = g.metaGeneratorOpt.isDefined
 

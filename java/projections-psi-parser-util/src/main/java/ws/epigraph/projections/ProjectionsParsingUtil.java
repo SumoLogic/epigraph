@@ -50,7 +50,7 @@ public final class ProjectionsParsingUtil {
 
     if (tag == null)
       throw new PsiProcessingException(
-          String.format("Can't parse default tag projection for '%s', default tag not specified", type.name()),
+          String.format("Can't parse retro tag projection for '%s', retro tag not specified", type.name()),
           location,
           context
       );

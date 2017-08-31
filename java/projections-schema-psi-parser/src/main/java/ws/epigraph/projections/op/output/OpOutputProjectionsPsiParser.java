@@ -527,7 +527,7 @@ public final class OpOutputProjectionsPsiParser {
         defaultTag = datumType.self();
       } else {
         throw new PsiProcessingException(
-            String.format("Can't build default projection for '%s', default tag not specified", type.name()),
+            String.format("Can't build default projection for '%s', retro tag not specified", type.name()),
             locationPsi,
             context
         );

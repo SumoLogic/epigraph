@@ -18,10 +18,13 @@ package ws.epigraph.projections.op.output;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpKeyPresence;
+import ws.epigraph.projections.op.OpParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,6 +53,61 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
+  protected boolean printModelParamsInBlock(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) throws E {
+    final OpParams params = projection.params();
+    final Annotations annotations = projection.annotations();
+    final GDatum defaultValue = projection.defaultValue();
+    final OpOutputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
+
+    boolean first = true;
+    if (!params.isEmpty())
+      //noinspection ConstantConditions
+      first = printOpParams(params, false, first);
+    if (!annotations.isEmpty())
+      first = printAnnotations(annotations, false, first);
+
+    if (defaultValue != null) {
+      if (first)
+        first = false;
+      else {
+        l.print(",");
+        brk();
+      }
+      l.beginIInd(0).print("default:");
+      brk();
+      gdataPrettyPrinter.print(defaultValue);
+      l.end();
+    }
+
+    if (metaProjection != null) {
+      if (first)
+        first = false;
+      else
+        brk();
+
+      l.beginIInd(0).print("meta:");
+      brk();
+      if (metaProjection.flagged()) l.print("+");
+      printModel(metaProjection, 0);
+      l.end();
+    }
+
+    return first;
+  }
+
+  @Override
+  protected void printTagName(@NotNull String tagName, @NotNull OpOutputModelProjection<?, ?, ?, ?> mp) throws E {
+    if (mp.flagged()) l.print("+");
+    l.print(escape(tagName));
+  }
+
+  @Override
+  protected String fieldNamePrefix(final @NotNull OpOutputFieldProjectionEntry fieldEntry) {
+    return fieldEntry.fieldProjection().varProjection().flagged() ? "+" : "";
+    // todo: don't print '+' for vars/models if printed for field
+  }
+
+  @Override
   public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
       printRecordProjection((OpOutputRecordModelProjection) mp);
@@ -61,12 +119,23 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
 
   private void printModelOnly(OpOutputMapModelProjection mp) throws E {
     @NotNull OpOutputKeyProjection keyProjection = mp.keyProjection();
-    printMapModelProjection(keyProjection.presence().getPrettyPrinterString(), keyProjection, mp.itemsProjection());
+    OpOutputVarProjection itemsProjection = mp.itemsProjection();
+
+    printMapModelProjection(
+        keyProjection.presence().getPrettyPrinterString(),
+        keyProjection,
+        itemsProjection.flagged() ? "+" : "",
+        // todo: don't print '+' for vars/models if printed for items
+        itemsProjection
+    );
   }
 
   private void printModelOnly(OpOutputListModelProjection mp) throws E {
     l.beginIInd();
-    l.print("*(");
+    l.print("*");
+    if (mp.itemsProjection().flagged()) l.print("+");
+    // todo: don't print '+' for vars/models if printed for items
+    l.print("(");
     brk();
     printVar(mp.itemsProjection(), 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -76,7 +145,8 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutNoParamsEmpty(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp) {
     if (mp instanceof OpOutputMapModelProjection) {
       OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
-      /*@NotNull*/ OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
+      /*@NotNull*/
+      OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
 
       if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
@@ -85,5 +155,10 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
       return isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
       return super.isPrintoutNoParamsEmpty(mp);
+  }
+
+  @Override
+  public boolean modelParamsEmpty(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
+    return projection.defaultValue() == null && super.modelParamsEmpty(projection);
   }
 }

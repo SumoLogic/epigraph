@@ -30,12 +30,13 @@ record PersonRecord {
   lastName: String
   middleName: String
   bestFriend: Person
-  bestFriend2: Person
+  bestFriend2: Person retro id
   bestFriend3: Person
   worstEnemy: PersonRecord
   friends: list[Person]
   friendRecords: list[PersonRecord]
   friendsMap: map[String, Person]
+  friendsMap2: PersonMap
   friendRecordMap: map[String, PersonRecord]
   personRecToPersonRec: map[PersonRecord, PersonRecord]
 }

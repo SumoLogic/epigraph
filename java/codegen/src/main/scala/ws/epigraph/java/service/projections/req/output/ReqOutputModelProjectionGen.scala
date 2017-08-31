@@ -30,14 +30,14 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqOutputModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   protected val ctx: GenContext) extends ReqOutputTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi]
-  override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqOutputModelProjectionGen
 
 //  referenceName.foreach(ref => ctx.reqOutputProjections.put(ref, this)) // todo rest
@@ -78,7 +78,7 @@ abstract class ReqOutputModelProjectionGen(
 object ReqOutputModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi],
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqOutputModelProjectionGen],

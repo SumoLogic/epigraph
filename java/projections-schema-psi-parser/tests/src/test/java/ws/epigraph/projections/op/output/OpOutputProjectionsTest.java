@@ -526,6 +526,25 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testFlagged() throws PsiProcessingException {
+    testParsingVarProjection(":+id");
+    testParsingVarProjection(":`record` ( +id )");
+    testParsingVarProjection(":`record` ( id+ )", ":`record` ( +id )");
+    testParsingVarProjection(":`record` ( bestFriend2+ )", ":`record` ( +bestFriend2 :+id )");
+    testParsingVarProjection(":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :+id )");
+
+    // todo: enable smarter output in pretty printer
+    testParsingVarProjection(":`record` ( friends*+:id )", ":`record` ( friends *+( :+id ) )");
+    testParsingVarProjection(":`record` ( friendsMap[forbidden]+:id)", ":`record` ( friendsMap [ forbidden ]+( :+id ) )");
+
+    testParsingVarProjection(":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
+  }
+  @Test
+  public void testParseDefault() throws PsiProcessingException {
+    testParsingVarProjection(":id { default: 123 }");
+  }
+
+  @Test
   public void testTailsNormalization() throws PsiProcessingException {
     testTailsNormalization(
         ":id :~ws.epigraph.tests.User:`record`(id)",
