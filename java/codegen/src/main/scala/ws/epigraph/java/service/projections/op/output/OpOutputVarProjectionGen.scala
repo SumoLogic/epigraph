@@ -60,6 +60,7 @@ private static OpOutputVarProjection $methodName() {
     outputProjectionRefs.put("$opNameString", ref);
     OpOutputVarProjection value = new OpOutputVarProjection(
       ${genTypeExpr(p.`type`(), ctx.gctx)},
+      ${p.flagged().toString},
       ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
         (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
       ${p.parenthesized().toString},
@@ -81,6 +82,7 @@ private static OpOutputVarProjection $methodName() {
       /*@formatter:off*/sn"""\
 new OpOutputVarProjection(
   ${genTypeExpr(p.`type`(), ctx.gctx)},
+  ${p.flagged().toString},
   ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
     (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},

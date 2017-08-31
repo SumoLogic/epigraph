@@ -39,11 +39,6 @@ public class OpOutputFieldProjectionEntry extends AbstractFieldProjectionEntry<
     super(field, projection, location);
   }
 
-  public boolean flagged() {
-    TagApi defaultTag = field().dataType().defaultTag();
-    return fieldProjection().flagged(defaultTag == null ? null : defaultTag.name());
-  }
-
   @Override
   public @NotNull OpOutputFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
     return new OpOutputFieldProjectionEntry(

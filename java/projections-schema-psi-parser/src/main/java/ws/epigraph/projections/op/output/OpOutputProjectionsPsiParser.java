@@ -222,7 +222,7 @@ public final class OpOutputProjectionsPsiParser {
     if (singleTagProjectionPsi == null) {
       @Nullable SchemaOpOutputMultiTagProjection multiTagProjection = psi.getOpOutputMultiTagProjection();
       assert multiTagProjection != null;
-      tagProjections = parseMultiTagProjection(dataType, flagged, multiTagProjection, typesResolver, context);
+      tagProjections = parseMultiTagProjection(dataType, multiTagProjection, typesResolver, context);
     } else {
       // todo (here and other parsers): simplify this tag logic
       tagProjections = new LinkedHashMap<>();
@@ -245,17 +245,13 @@ public final class OpOutputProjectionsPsiParser {
               context
           );
 
-        // '+' on fields/vars should not work on non-retro tags (if retro tag is present)
-        if (defaultTag != null && tag != defaultTag)
-          flagged = false;
-
         tagProjections.put(
             tag.name(),
             new OpOutputTagProjectionEntry(
                 tag,
                 parseModelProjection(
                     tag.type(),
-                    flagged || singleTagProjectionPsi.getPlus() != null,
+                    singleTagProjectionPsi.getPlus() != null,
                     singleTagProjectionPsi.getOpOutputModelProjection(),
                     typesResolver,
                     context
@@ -274,6 +270,7 @@ public final class OpOutputProjectionsPsiParser {
     try {
       OpOutputVarProjection tmp = new OpOutputVarProjection(
           type,
+          flagged,
           tagProjections,
           singleTagProjectionPsi == null || tagProjections.size() != 1,
           tails,
@@ -289,7 +286,6 @@ public final class OpOutputProjectionsPsiParser {
 
   public static @NotNull LinkedHashMap<String, OpOutputTagProjectionEntry> parseMultiTagProjection(
       final @NotNull DataTypeApi dataType,
-      boolean flagged,
       final @NotNull SchemaOpOutputMultiTagProjection multiTagProjection,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -309,7 +305,7 @@ public final class OpOutputProjectionsPsiParser {
               tag,
               parseModelProjection(
                   tag.type(),
-                  flagged || tagProjectionPsi.getPlus() != null,
+                  tagProjectionPsi.getPlus() != null,
                   tagProjectionPsi.getOpOutputModelProjection(),
                   typesResolver,
                   context
@@ -484,6 +480,7 @@ public final class OpOutputProjectionsPsiParser {
       @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
     return new OpOutputVarProjection(
         type,
+        false,
         ProjectionUtils.singletonLinkedHashMap(
             tag.name(),
             new OpOutputTagProjectionEntry(

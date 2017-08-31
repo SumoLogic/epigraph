@@ -49,14 +49,7 @@ public class OpOutputFieldProjection extends AbstractOpFieldProjection<
     return new OpOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
-  public boolean flagged(@Nullable String retroTagName) {
-    if (retroTagName == null) {
-      return varProjection().flagged();
-    } else {
-      OpOutputTagProjectionEntry defaultTPE = varProjection().tagProjection(retroTagName);
-      return defaultTPE == null ? varProjection().flagged() : defaultTPE.projection().flagged();
-    }
-  }
+  public boolean flagged() { return varProjection().flagged(); }
 
   @Override
   protected @NotNull OpOutputFieldProjection merge(

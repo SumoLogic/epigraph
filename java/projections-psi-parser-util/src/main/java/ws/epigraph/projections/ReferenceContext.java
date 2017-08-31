@@ -437,6 +437,7 @@ public abstract class ReferenceContext<
   protected abstract @NotNull EP toSelfVar(@NotNull MP mRef);
 
   protected @NotNull MP fromSelfVar(@NotNull EP eRef) {
+    assert eRef.isResolved();
     assert eRef.type().kind() != TypeKind.ENTITY;
     GenTagProjectionEntry<?, MP> tpe = eRef.singleTagProjection();
     assert tpe != null;

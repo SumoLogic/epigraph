@@ -349,6 +349,7 @@ public class OpOutputProjectionsTest {
 
     OpOutputVarProjection personRecordVarProjection = new OpOutputVarProjection(
         PersonRecord.type,
+        false,
         ProjectionUtils.singletonLinkedHashMap(
             DatumType.MONO_TAG_NAME,
             new OpOutputTagProjectionEntry(
@@ -530,12 +531,12 @@ public class OpOutputProjectionsTest {
     testParsingVarProjection(":+id");
     testParsingVarProjection(":`record` ( +id )");
     testParsingVarProjection(":`record` ( id+ )", ":`record` ( +id )");
-    testParsingVarProjection(":`record` ( bestFriend2+ )", ":`record` ( +bestFriend2 :+id )");
-    testParsingVarProjection(":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :+id )");
+    testParsingVarProjection(":`record` ( bestFriend2+ )", ":`record` ( bestFriend2 :+id )");
+    testParsingVarProjection(":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :id )");
 
     // todo: enable smarter output in pretty printer
-    testParsingVarProjection(":`record` ( friends*+:id )", ":`record` ( friends *+( :+id ) )");
-    testParsingVarProjection(":`record` ( friendsMap[forbidden]+:id)", ":`record` ( friendsMap [ forbidden ]+( :+id ) )");
+    testParsingVarProjection(":`record` ( friends*+:id )", ":`record` ( friends *+( :id ) )");
+    testParsingVarProjection(":`record` ( friendsMap[forbidden]+:id)", ":`record` ( friendsMap [ forbidden ]+( :id ) )");
 
     testParsingVarProjection(":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
   }
@@ -976,6 +977,7 @@ public class OpOutputProjectionsTest {
 //    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
     final OpOutputVarProjection selfVar = new OpOutputVarProjection(
         modelProjection.type(),
+        false,
         ProjectionUtils.singletonLinkedHashMap(
             modelProjection.type().self().name(),
             new OpOutputTagProjectionEntry(
