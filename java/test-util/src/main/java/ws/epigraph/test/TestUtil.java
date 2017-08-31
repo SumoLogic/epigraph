@@ -373,8 +373,8 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {
@@ -390,7 +390,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?> projection) {
+  public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);

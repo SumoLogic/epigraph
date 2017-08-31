@@ -30,15 +30,18 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputRecordModelProjection,
     OpOutputFieldProjectionEntry,
     OpOutputFieldProjection,
     E> {
 
+  // todo + on tags/fields/maps/lists
+  // todo defaults
+
   public OpOutputProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> context) {
     super(layouter, context);
   }
 
@@ -47,7 +50,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+  public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
     if (mp instanceof OpOutputRecordModelProjection)
       printRecordProjection((OpOutputRecordModelProjection) mp);
     else if (mp instanceof OpOutputMapModelProjection)
@@ -70,7 +73,7 @@ public class OpOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutNoParamsEmpty(@NotNull OpOutputModelProjection<?, ?, ?> mp) {
+  public boolean isPrintoutNoParamsEmpty(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp) {
     if (mp instanceof OpOutputMapModelProjection) {
       OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
       /*@NotNull*/ OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();

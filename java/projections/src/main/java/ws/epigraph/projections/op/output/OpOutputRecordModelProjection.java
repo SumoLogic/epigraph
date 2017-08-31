@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.GRecordDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
@@ -39,11 +40,11 @@ import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputRecordModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputRecordModelProjection, RecordTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputRecordModelProjection, RecordTypeApi, GRecordDatum>
     implements GenRecordModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputRecordModelProjection,
     OpOutputFieldProjectionEntry,
     OpOutputFieldProjection,
@@ -54,14 +55,16 @@ public class OpOutputRecordModelProjection
 
   public OpOutputRecordModelProjection(
       @NotNull RecordTypeApi model,
+      boolean flagged,
+      @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
       @Nullable List<OpOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, params, annotations, metaProjection, tails, location);
+    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
     this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
@@ -81,10 +84,12 @@ public class OpOutputRecordModelProjection
   @Override
   protected OpOutputRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
+      final boolean mergedFlagged,
+      final @Nullable GRecordDatum mergedDefault,
       final @NotNull List<OpOutputRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputRecordModelProjection> mergedTails) {
 
     Map<FieldApi, OpOutputFieldProjection> mergedFieldProjections =
@@ -104,6 +109,8 @@ public class OpOutputRecordModelProjection
 
     return new OpOutputRecordModelProjection(
         model,
+        mergedFlagged,
+        mergedDefault,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
@@ -130,6 +137,8 @@ public class OpOutputRecordModelProjection
 
     return new OpOutputRecordModelProjection(
         n.type(),
+        n.flagged(),
+        n.defaultValue(),
         n.params(),
         n.annotations(),
         n.metaProjection(),

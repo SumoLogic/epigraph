@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.GPrimitiveDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
 import ws.epigraph.projections.op.OpParams;
@@ -30,17 +31,19 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputPrimitiveModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
+    implements GenPrimitiveModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
 
   public OpOutputPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
+      boolean flagged,
+      @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
       @Nullable List<OpOutputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, tails, location);
+    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
   }
 
   public OpOutputPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
@@ -50,14 +53,18 @@ public class OpOutputPrimitiveModelProjection
   @Override
   protected OpOutputPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
+      final boolean mergedFlagged,
+      final @Nullable GPrimitiveDatum mergedDefault,
       final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputPrimitiveModelProjection> mergedTails) {
 
     return new OpOutputPrimitiveModelProjection(
         model,
+        mergedFlagged,
+        mergedDefault,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,

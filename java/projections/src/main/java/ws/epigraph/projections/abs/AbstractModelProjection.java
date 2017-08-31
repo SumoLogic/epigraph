@@ -445,12 +445,12 @@ public abstract class AbstractModelProjection<
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
-    this.isResolved = true;
     setReferenceName(name);
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     setNormalizedFrom(value.normalizedFrom);
+    this.isResolved = true;
 
     for (final Runnable callback : onResolvedCallbacks)
       callback.run();

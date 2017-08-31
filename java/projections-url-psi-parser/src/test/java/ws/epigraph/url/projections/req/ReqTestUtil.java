@@ -107,6 +107,7 @@ public final class ReqTestUtil {
       );
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
           opOutputPsiProcessingContext

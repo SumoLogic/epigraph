@@ -145,7 +145,5 @@ public abstract class OpInputModelProjection<
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), required, defaultValue);
-  }
+  public int hashCode() { return Objects.hash(super.hashCode(), required, defaultValue); }
 }

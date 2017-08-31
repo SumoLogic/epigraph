@@ -513,8 +513,8 @@ opOutputUnnamedVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTa
 private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
 
 opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? opOutputModelProjection // todo parser
-opOutputMultiTagProjectionItem ::= '+'? tagName opOutputModelProjection // todo parser
+opOutputSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? opOutputModelProjection
+opOutputMultiTagProjectionItem ::= '+'? tagName opOutputModelProjection
 
 opOutputVarPolymorphicTail ::= ':' '~' ( opOutputVarTailItem | opOutputVarMultiTail ) {pin=2}
 opOutputVarMultiTail ::= '(' (opOutputVarTailItem ','?)* ')' {pin=1}
@@ -540,7 +540,7 @@ opOutputModelProperty ::= opOutputDefaultValue | opParam | annotation | opOutput
   recoverWhile = opOutputModelPropertyRecover
 }
 private opOutputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
-opOutputDefaultValue ::= 'default' ':' datum {pin=1} // todo parser
+opOutputDefaultValue ::= 'default' ':' datum {pin=1}
 
 opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
 
@@ -554,10 +554,10 @@ private opOutputSimpleFieldProjection ::= opOutputVarProjection
 //opOutputFieldProjectionBodyPart ::= opParam | annotation
 
 // op output list
-opOutputListModelProjection ::= '*' '+'? ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 } // todo parser
+opOutputListModelProjection ::= '*' '+'? ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 }
 
 // op output map
-opOutputMapModelProjection ::= opOutputKeyProjection '+'? ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 } // todo parser
+opOutputMapModelProjection ::= opOutputKeyProjection '+'? ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 }
 opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
 private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
 opOutputKeyProjectionPart ::= opKeyProjection | opParam | annotation {

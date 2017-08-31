@@ -54,7 +54,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
   public void printOperation(
       @NotNull OperationDeclaration operation,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> outputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> outputProjectionsPrinterContext,
       @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> inputProjectionsPrinterContext,
       @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> deleteProjectionsPrinterContext
   ) throws E {

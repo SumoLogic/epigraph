@@ -29,11 +29,11 @@ import ws.epigraph.types.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputReferenceContext
-    extends ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> {
+    extends ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> {
 
   public OpOutputReferenceContext(
       final @NotNull ProjectionReferenceName referencesNamespace,
-      final @Nullable ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> parent,
+      final @Nullable ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);
   }
@@ -46,31 +46,31 @@ public class OpOutputReferenceContext
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?> newRecordModelReference(
+  protected OpOutputModelProjection<?, ?, ?, ?> newRecordModelReference(
       final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
     return new OpOutputRecordModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?> newMapModelReference(
+  protected OpOutputModelProjection<?, ?, ?, ?> newMapModelReference(
       final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
     return new OpOutputMapModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?> newListModelReference(
+  protected OpOutputModelProjection<?, ?, ?, ?> newListModelReference(
       final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
     return new OpOutputListModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?> newPrimitiveModelReference(
+  protected OpOutputModelProjection<?, ?, ?, ?> newPrimitiveModelReference(
       final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
     return new OpOutputPrimitiveModelProjection(type, location);
   }
 
   @Override
-  protected @NotNull OpOutputVarProjection toSelfVar(final @NotNull OpOutputModelProjection<?, ?, ?> mRef) {
+  protected @NotNull OpOutputVarProjection toSelfVar(final @NotNull OpOutputModelProjection<?, ?, ?, ?> mRef) {
     final DatumTypeApi modelType = mRef.type();
     return new OpOutputVarProjection(
         modelType,

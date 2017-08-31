@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.AbstractOpFieldProjection;
 import ws.epigraph.types.DataTypeApi;
@@ -29,9 +30,11 @@ import java.util.List;
 public class OpOutputFieldProjection extends AbstractOpFieldProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputFieldProjection
     > {
+
+  // private final boolean flagged; // flagged field = flagged field retro model | var = all models flagged
 
   public OpOutputFieldProjection(
 //      @NotNull OpParams params,
@@ -44,6 +47,15 @@ public class OpOutputFieldProjection extends AbstractOpFieldProjection<
   @Override
   public @NotNull OpOutputFieldProjection setVarProjection(final @NotNull OpOutputVarProjection varProjection) {
     return new OpOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
+  }
+
+  public boolean flagged(@Nullable String retroTagName) {
+    if (retroTagName == null) {
+      return varProjection().flagged();
+    } else {
+      OpOutputTagProjectionEntry defaultTPE = varProjection().tagProjection(retroTagName);
+      return defaultTPE == null ? varProjection().flagged() : defaultTPE.projection().flagged();
+    }
   }
 
   @Override

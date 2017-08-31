@@ -204,7 +204,7 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull OpOutputTagProjectionEntry opTagProjection =
           getTagProjection(tag.name(), op, tagLocation, context);
 
-      @NotNull OpOutputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
       @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
           singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
@@ -294,7 +294,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
       final TagApi tag = entry.getValue().tag();
-      final OpOutputModelProjection<?, ?, ?> opModelProjection = entry.getValue().projection();
+      final OpOutputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
 
       tagProjections.put(
           entry.getKey(),
@@ -481,7 +481,7 @@ public final class ReqOutputProjectionsPsiParser {
         @NotNull OpOutputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, singleTagProjectionPsi, context);
 
-        @NotNull OpOutputModelProjection<?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpOutputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
 
         @NotNull UrlReqOutputComaModelProjection modelProjectionPsi =
             singleTagProjectionPsi.getReqOutputComaModelProjection();
@@ -582,7 +582,7 @@ public final class ReqOutputProjectionsPsiParser {
             UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, context);
         @NotNull OpOutputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
 
-        OpOutputModelProjection<?, ?, ?> opTagProjection = opTag.projection();
+        OpOutputModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
 
         @NotNull UrlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
@@ -668,14 +668,14 @@ public final class ReqOutputProjectionsPsiParser {
 
   @Contract("_, null, _, _ -> null")
   private static @Nullable ReqOutputModelProjection<?, ?, ?> parseModelMetaProjection(
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @Nullable UrlReqOutputModelMeta modelMetaPsi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
     if (modelMetaPsi == null) return null;
 
-    OpOutputModelProjection<?, ?, ?> metaOp = op.metaProjection();
+    OpOutputModelProjection<?, ?, ?, ?> metaOp = op.metaProjection();
 
     if (metaOp == null) {
       context.addError(
@@ -795,7 +795,7 @@ public final class ReqOutputProjectionsPsiParser {
 
   @SuppressWarnings("unchecked")
   private static @NotNull StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> parseTrunkModelProjection(
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -821,7 +821,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static <MP extends ReqOutputModelProjection<?, ?, ?>>
   @NotNull StepsAndProjection<? extends MP> parseTrunkModelProjection(
       @NotNull Class<MP> modelClass,
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -933,7 +933,7 @@ public final class ReqOutputProjectionsPsiParser {
   @SuppressWarnings("unchecked")
   private static <MP extends ReqOutputModelProjection<?, ?, ?>> @NotNull MP parseComaModelProjection(
       @NotNull Class<MP> modelClass,
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -1093,7 +1093,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static <MP extends ReqOutputModelProjection<?, ?, ?>>
   @Nullable List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @Nullable UrlReqOutputModelPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -1149,7 +1149,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static <MP extends ReqOutputModelProjection<?, ?, ?>>
   @NotNull MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqOutputComaModelProjection modelProjectionPsi,
@@ -1163,7 +1163,7 @@ public final class ReqOutputProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    final OpOutputModelProjection<?, ?, ?> opTail =
+    final OpOutputModelProjection<?, ?, ?, ?> opTail =
         ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseComaModelProjection(
@@ -1194,7 +1194,7 @@ public final class ReqOutputProjectionsPsiParser {
   private static @NotNull ReqOutputModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean required,
-      @NotNull OpOutputModelProjection<?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @NotNull PsiElement locationPsi,

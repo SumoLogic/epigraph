@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.GListDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -34,11 +35,11 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputListModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputListModelProjection, ListTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputListModelProjection, ListTypeApi, GListDatum>
     implements GenListModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputListModelProjection,
     ListTypeApi
     > {
@@ -47,13 +48,15 @@ public class OpOutputListModelProjection
 
   public OpOutputListModelProjection(
       @NotNull ListTypeApi model,
+      boolean flagged,
+      @Nullable GListDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpOutputVarProjection itemsProjection,
       @Nullable List<OpOutputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, tails, location);
+    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -68,14 +71,15 @@ public class OpOutputListModelProjection
     return itemsProjection;
   }
 
-  /* static */
   @Override
   protected OpOutputListModelProjection merge(
       final @NotNull ListTypeApi model,
+      final boolean mergedFlagged,
+      final @Nullable GListDatum mergedDefault,
       final @NotNull List<OpOutputListModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputListModelProjection> mergedTails) {
 
     List<OpOutputVarProjection> itemProjections =
@@ -88,6 +92,8 @@ public class OpOutputListModelProjection
 
     return new OpOutputListModelProjection(
         model,
+        mergedFlagged,
+        mergedDefault,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
@@ -104,6 +110,8 @@ public class OpOutputListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new OpOutputListModelProjection(
         n.type(),
+        n.flagged(),
+        n.defaultValue(),
         n.params(),
         n.annotations(),
         n.metaProjection(),

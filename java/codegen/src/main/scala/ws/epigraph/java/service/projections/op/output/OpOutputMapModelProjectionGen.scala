@@ -36,6 +36,8 @@ class OpOutputMapModelProjectionGen(p: OpOutputMapModelProjection) extends Objec
     /*@formatter:off*/sn"""\
 new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
+  ${p.flagged().toString},
+  ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},

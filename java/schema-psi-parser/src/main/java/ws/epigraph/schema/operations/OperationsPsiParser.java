@@ -544,6 +544,7 @@ public final class OperationsPsiParser {
     } else {
       fieldProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
           outputType,
+          false,
           outputFieldProjectionPsi,
           resolver,
           psiProcessingContext

@@ -74,6 +74,7 @@ public final class WireTestUtil {
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
           outputPsiProcessingContext

@@ -19,6 +19,7 @@ package ws.epigraph.projections.op.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.gdata.GMapDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -36,11 +37,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpOutputMapModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?>, OpOutputMapModelProjection, MapTypeApi>
+    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputMapModelProjection, MapTypeApi, GMapDatum>
     implements GenMapModelProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputMapModelProjection,
     MapTypeApi
     > {
@@ -50,14 +51,16 @@ public class OpOutputMapModelProjection
 
   public OpOutputMapModelProjection(
       @NotNull MapTypeApi model,
+      boolean flagged,
+      @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpOutputKeyProjection keyProjection,
       @NotNull OpOutputVarProjection itemsProjection,
       @Nullable List<OpOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, params, annotations, metaProjection, tails, location);
+    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
     this.keyProjection = keyProjection;
   }
@@ -80,16 +83,18 @@ public class OpOutputMapModelProjection
   }
 
   /* static */
+
   @Override
   protected OpOutputMapModelProjection merge(
       final @NotNull MapTypeApi model,
+      final boolean mergedFlagged,
+      final @Nullable GMapDatum mergedDefault,
       final @NotNull List<OpOutputMapModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
-      final Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?> mergedMetaProjection,
+      final @NotNull Annotations mergedAnnotations,
+      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpOutputMapModelProjection> mergedTails) {
 
-    // todo unify this code with OpInputMapModelProjection, OpDeleteMapModelProjection
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
     OpKeyPresence mergedKeysPresence = null;
@@ -127,6 +132,8 @@ public class OpOutputMapModelProjection
 
     return new OpOutputMapModelProjection(
         model,
+        mergedFlagged,
+        mergedDefault,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
@@ -153,6 +160,8 @@ public class OpOutputMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new OpOutputMapModelProjection(
         n.type(),
+        n.flagged(),
+        n.defaultValue(),
         n.params(),
         n.annotations(),
         n.metaProjection(),

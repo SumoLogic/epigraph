@@ -70,7 +70,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     Namespaces namespaces = new Namespaces(Qn.fromDotSeparated(namespaceString));
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
         globalOutputProjectionsContext = new ProjectionsPrettyPrinterContext<>(
         ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace()),
         null
@@ -93,7 +93,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
       if (first) first = false;
       else l.brk();
 
-      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           resourceOutputProjectionsContext = new ProjectionsPrettyPrinterContext<>(
           ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace(resource.fieldName())),
           globalOutputProjectionsContext
@@ -161,7 +161,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   private void printTransformer(
       @NotNull Namespaces namespaces,
       @NotNull TransformerDeclaration transformer,
-      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> globalOutputProjections,
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> globalOutputProjections,
       ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> globalInputProjections
   ) throws E {
 
@@ -205,7 +205,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     l.beginIInd();
     l.print("outputProjection").brk();
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> opc =
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> opc =
         new ProjectionsPrettyPrinterContext<>(
             ProjectionReferenceName.fromQn(namespaces.projectionsNamespace()),
             globalOutputProjections
@@ -221,7 +221,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   private void printResource(
       @NotNull Namespaces namespaces,
       @NotNull ResourceDeclaration resource,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> resourceOutputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> resourceOutputProjectionsPrinterContext,
       @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> resourceInputProjectionsPrinterContext,
       @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> resourceDeleteProjectionsPrinterContext
   ) throws E {
@@ -247,7 +247,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     for (OperationDeclaration operation : resource.operations()) {
 
-      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           operationOutputProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               ProjectionReferenceName.fromQn(
@@ -325,9 +325,9 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
   private void printOutputProjections(
       final @Nullable String resourceName,
-      final @Nullable ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> parent,
+      final @Nullable ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> parent,
       final @NotNull Collection<OpOutputVarProjection> globalOutputVarProjections,
-      final @NotNull Collection<OpOutputModelProjection<?, ?, ?>> globalOutputModelProjections,
+      final @NotNull Collection<OpOutputModelProjection<?, ?, ?, ?>> globalOutputModelProjections,
       final @NotNull Namespaces namespaces) throws E {
 
     printGlobalProjections(

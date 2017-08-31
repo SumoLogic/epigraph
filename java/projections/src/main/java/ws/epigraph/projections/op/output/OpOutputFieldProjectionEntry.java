@@ -20,6 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
 import ws.epigraph.types.FieldApi;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.types.TagApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -27,14 +28,20 @@ import org.jetbrains.annotations.NotNull;
 public class OpOutputFieldProjectionEntry extends AbstractFieldProjectionEntry<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>,
+    OpOutputModelProjection<?, ?, ?, ?>,
     OpOutputFieldProjection
     > {
+
   public OpOutputFieldProjectionEntry(
       @NotNull FieldApi field,
       @NotNull OpOutputFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
+  }
+
+  public boolean flagged() {
+    TagApi defaultTag = field().dataType().defaultTag();
+    return fieldProjection().flagged(defaultTag == null ? null : defaultTag.name());
   }
 
   @Override

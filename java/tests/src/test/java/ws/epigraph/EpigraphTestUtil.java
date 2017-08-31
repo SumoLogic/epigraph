@@ -116,6 +116,7 @@ public final class EpigraphTestUtil {
       );
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
           opOutputPsiProcessingContext

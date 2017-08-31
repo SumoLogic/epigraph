@@ -37,6 +37,8 @@ class OpOutputListModelProjectionGen(p: OpOutputListModelProjection)
     /*@formatter:off*/sn"""\
 new OpOutputListModelProjection(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
+  ${p.flagged().toString},
+  ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},

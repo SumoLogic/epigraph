@@ -304,8 +304,8 @@ public class OpOutputProjectionsTest {
         )
     );
     //noinspection ConstantConditions
-    final OpOutputModelProjection<?, ?, ?> mp = vp.singleTagProjection().projection();
-    final OpOutputModelProjection<?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type);
+    final OpOutputModelProjection<?, ?, ?, ?> mp = vp.singleTagProjection().projection();
+    final OpOutputModelProjection<?, ?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type);
 
     String p = printOpOutputModelProjection(normalized);
     assertEquals("( diamond, firstName, id )", p); // but not `lastName`!
@@ -345,7 +345,7 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection personProjection = testParsingVarProjection(":`record` ( id )");
 
     @SuppressWarnings("ConstantConditions")
-    OpOutputModelProjection<?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
+    OpOutputModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
 
     OpOutputVarProjection personRecordVarProjection = new OpOutputVarProjection(
         PersonRecord.type,
@@ -856,7 +856,7 @@ public class OpOutputProjectionsTest {
         .singleTagProjection()
         .projection();
 
-    OpOutputModelProjection<?, ?, ?> idProjection =
+    OpOutputModelProjection<?, ?, ?, ?> idProjection =
         rmp.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
 
     assertEquals(PersonId.type, idProjection.type());
@@ -951,7 +951,7 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection varProjection = parseOpOutputVarProjection(str);
     final OpOutputTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
-    final OpOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+    final OpOutputModelProjection<?, ?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
 //    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
@@ -1046,6 +1046,7 @@ public class OpOutputProjectionsTest {
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
           config.dataType(),
+          false,
           psiVarProjection,
           config.resolver(),
           outputPsiProcessingContext

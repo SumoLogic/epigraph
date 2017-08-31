@@ -32,7 +32,7 @@ import java.util.Map;
 public class OpOutputVarProjection extends AbstractVarProjection<
     OpOutputVarProjection,
     OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?>
+    OpOutputModelProjection<?, ?, ?, ?>
     > {
 
   public OpOutputVarProjection(
@@ -48,6 +48,10 @@ public class OpOutputVarProjection extends AbstractVarProjection<
     super(type, location);
   }
 
+  public boolean flagged() {
+    return tagProjections().values().stream().allMatch(tp -> tp.projection().flagged());
+  }
+
   @Override
   protected OpOutputVarProjection merge(
       final @NotNull TypeApi effectiveType,
@@ -58,7 +62,7 @@ public class OpOutputVarProjection extends AbstractVarProjection<
 
     return new OpOutputVarProjection(effectiveType, mergedTags, mergedParenthesized, mergedTails, TextLocation.UNKNOWN);
   }
-  
+
   @Override
   protected @NotNull VarNormalizationContext<OpOutputVarProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(

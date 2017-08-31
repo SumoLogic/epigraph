@@ -271,6 +271,7 @@ public final class ResourcesSchemaPsiParser {
           } else {
             outputProjection = OpOutputProjectionsPsiParser.parseVarProjection(
                 transformerType.dataType(),
+                false,
                 varProjectionPsi,
                 resolver,
                 new OpOutputPsiProcessingContext(
@@ -614,7 +615,7 @@ public final class ResourcesSchemaPsiParser {
 
   private static class OutputUnnamedVarReferenceParser implements UnnamedVarParser<
       OpOutputVarProjection,
-      OpOutputModelProjection<?, ?, ?>,
+      OpOutputModelProjection<?, ?, ?, ?>,
       OpOutputReferenceContext,
       SchemaOpOutputUnnamedOrRefVarProjection> {
 
@@ -640,6 +641,7 @@ public final class ResourcesSchemaPsiParser {
 
       return OpOutputProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
+          false,
           psi,
           resolver,
           outputPsiProcessingContext
