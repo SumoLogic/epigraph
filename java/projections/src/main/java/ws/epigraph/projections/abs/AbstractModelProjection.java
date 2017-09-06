@@ -493,6 +493,7 @@ public abstract class AbstractModelProjection<
 
   @Override
   public int hashCode() {
+//    assertResolved(); // todo: this should be prohibited for unresolved projections
     return Objects.hash(model, metaProjection);
   }
 

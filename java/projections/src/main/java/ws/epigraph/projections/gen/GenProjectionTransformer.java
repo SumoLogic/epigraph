@@ -44,6 +44,16 @@ public abstract class GenProjectionTransformer<
   private final Map<VP, VP> visited = new IdentityHashMap<>();
   private final Set<VP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
 
+  private GenProjectionTransformationMap<VP, MP> transformationMap = null;
+
+  public @NotNull VP transform(
+      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
+      @NotNull VP projection) {
+
+    this.transformationMap = transformationMap;
+    return transform(projection);
+  }
+
   protected @NotNull VP transform(@NotNull VP projection) {
     // postpone transformation if projection is not resolved yet
     if (!projection.isResolved()) {
@@ -57,7 +67,7 @@ public abstract class GenProjectionTransformer<
 
     VP res = visited.get(projection);
     if (res != null) {
-      usedRecursively.add(res);
+      usedRecursively.add(res); // do the same for models? or vars is enough?
       return res;
     }
 
@@ -102,9 +112,12 @@ public abstract class GenProjectionTransformer<
 
     if (usedRec) {
       res.resolve(projection.referenceName(), transformed);
+      transformationMap.addEntityMapping(projection, res);
       return res;
-    } else
+    } else {
+      transformationMap.addEntityMapping(projection, transformed);
       return transformed;
+    }
   }
 
 
@@ -142,23 +155,33 @@ public abstract class GenProjectionTransformer<
       transformedMeta = transform(meta);
 
     boolean mustRebuild = tailsChanged || meta != transformedMeta;
+    final MP transformed;
 
     switch (projection.type().kind()) {
 
       case RECORD:
-        return (MP) transform((RMP) projection, (List<RMP>) transformedTails, transformedMeta, mustRebuild);
+        transformed = (MP) transform((RMP) projection, (List<RMP>) transformedTails, transformedMeta, mustRebuild);
+        break;
       case MAP:
-        return (MP) transform((MMP) projection, (List<MMP>) transformedTails, transformedMeta, mustRebuild);
+        transformed = (MP) transform((MMP) projection, (List<MMP>) transformedTails, transformedMeta, mustRebuild);
+        break;
       case LIST:
-        return (MP) transform((LMP) projection, (List<LMP>) transformedTails, transformedMeta, mustRebuild);
+        transformed = (MP) transform((LMP) projection, (List<LMP>) transformedTails, transformedMeta, mustRebuild);
+        break;
       case PRIMITIVE:
-        return (MP) transform((PMP) projection, (List<PMP>) transformedTails, transformedMeta, mustRebuild);
+        transformed = (MP) transform((PMP) projection, (List<PMP>) transformedTails, transformedMeta, mustRebuild);
+        break;
       case ENUM:
         throw new UnsupportedOperationException();
       default:
         throw new IllegalStateException();
 
     }
+
+    if (projection != transformed)
+      transformationMap.addModelMapping(projection, transformed);
+
+    return transformed;
   }
 
   protected @NotNull RMP transform(

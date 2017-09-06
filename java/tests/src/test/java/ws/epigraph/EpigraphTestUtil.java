@@ -16,6 +16,9 @@
 
 package ws.epigraph;
 
+import de.uka.ilkd.pp.Layouter;
+import de.uka.ilkd.pp.NoExceptions;
+import de.uka.ilkd.pp.StringBackend;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +27,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.gdata.GData;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.printers.DataPrinter;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
@@ -163,6 +167,27 @@ public final class EpigraphTestUtil {
 
       return res;
     });
+  }
+
+  public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>(
+            ProjectionReferenceName.EMPTY,
+            null
+        ) {
+          @Override
+          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+            return true;
+          }
+        };
+
+    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter, pctx);
+    printer.printVar(projection, 0);
+    layouter.close();
+    return sb.getString();
   }
 
   public static void checkEquals(@NotNull Data expected, @NotNull Data actual) {

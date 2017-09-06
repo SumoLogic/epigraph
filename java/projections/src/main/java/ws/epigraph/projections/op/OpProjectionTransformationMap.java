@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.input;
+package ws.epigraph.projections.op;
 
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.psi.DelegatingPsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.projections.gen.GenProjectionTransformationMap;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final @NotNull OpInputReferenceContext referenceContext;
-
-  public OpInputPsiProcessingContext(
-      final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull OpInputReferenceContext referenceContext) {
-    super(psiProcessingContext);
-    this.referenceContext = referenceContext;
-  }
-
-  public @NotNull OpInputReferenceContext referenceContext() {
-    return referenceContext;
-  }
+public class OpProjectionTransformationMap
+    extends GenProjectionTransformationMap<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> {
 }

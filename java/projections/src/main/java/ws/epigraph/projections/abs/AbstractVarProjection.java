@@ -626,7 +626,8 @@ public abstract class AbstractVarProjection<
 
   @Override
   public int hashCode() {
-    if (name != null) return name.hashCode();
+//    assertResolved(); // todo: this should be prohibited for unresolved projections
+//    if (name != null) return name.hashCode();
     return Objects.hash(type, tagProjections, polymorphicTails);
   }
 
