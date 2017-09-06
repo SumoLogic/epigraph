@@ -143,7 +143,7 @@ public class ReadReqPathParserTest {
 
     UrlReqOutputTrunkVarProjection psi = getPsi(expr);
     final ReadReqPathParsingResult<ReqVarPath> result =
-        TestUtil.runPsiParser(context -> ReadReqPathPsiParser.parseVarPath(
+        TestUtil.runPsiParser(true, context -> ReadReqPathPsiParser.parseVarPath(
             opPath,
             Person.type.dataType(null),
             psi,

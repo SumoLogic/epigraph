@@ -531,7 +531,7 @@ public final class OperationsPsiParser {
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
       final @NotNull OpOutputVarProjection varProjection =
-          OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, psiProcessingContext);
+          OpProjectionsPsiParser.createDefaultVarProjection(outputType, location, psiProcessingContext);
 
       fieldProjection = new OpOutputFieldProjection(
 //          OpParams.EMPTY,

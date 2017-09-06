@@ -61,6 +61,8 @@ public abstract class AbstractModelProjection<
   protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
   protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
 
+  private final Throwable allocationTrace = new Throwable();
+
   protected AbstractModelProjection(
       @NotNull M model,
       @Nullable MP metaProjection,
@@ -450,6 +452,7 @@ public abstract class AbstractModelProjection<
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     setNormalizedFrom(value.normalizedFrom);
+    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
     this.isResolved = true;
 
     for (final Runnable callback : onResolvedCallbacks)
@@ -484,6 +487,9 @@ public abstract class AbstractModelProjection<
     return Objects.equals(model, that.model) &&
            Objects.equals(metaProjection, that.metaProjection);
   }
+
+  @Override
+  public @Nullable Throwable allocationTrace() { return allocationTrace; }
 
   @Override
   public int hashCode() {

@@ -61,6 +61,8 @@ public abstract class AbstractVarProjection<
 
   protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
+  private final Throwable allocationTrace = new Throwable();
+
   protected AbstractVarProjection(
       @NotNull TypeApi type,
       @NotNull Map<String, TP> tagProjections,
@@ -563,6 +565,7 @@ public abstract class AbstractVarProjection<
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     this.normalizedFrom = value.normalizedFrom();
+    this.normalizedCache.putAll(((AbstractVarProjection<VP, TP, MP>) value).normalizedCache);
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks)
@@ -605,6 +608,9 @@ public abstract class AbstractVarProjection<
   public @NotNull TextLocation location() {
     return location;
   }
+
+  @Override
+  public @Nullable Throwable allocationTrace() { return allocationTrace; }
 
   @SuppressWarnings("unchecked")
   @Override

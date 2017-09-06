@@ -117,7 +117,7 @@ public class DeleteRequestUrlPsiParserTest {
         context
     );
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(true, context.messages());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 

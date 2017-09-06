@@ -109,7 +109,7 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  private EP lookupEntityReference(@NotNull String name, boolean useParent) {
+  public EP lookupEntityReference(@NotNull String name, boolean useParent) {
     EP eref = entityReferences.get(name);
 
     if (eref == null) {
@@ -126,7 +126,7 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  private MP lookupModelReference(@NotNull String name, boolean useParent) {
+  public MP lookupModelReference(@NotNull String name, boolean useParent) {
 
     MP mref = modelReferences.get(name);
 

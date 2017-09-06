@@ -95,7 +95,7 @@ public class ReqPathParserTest {
   private void testParse(String expr, String expectedProjection) {
     UrlReqVarPath psi = getPsi(expr);
 
-    final @NotNull ReqVarPath path = TestUtil.runPsiParser(context ->
+    final @NotNull ReqVarPath path = TestUtil.runPsiParser(true, context ->
         ReqPathPsiParser.parseVarPath(
             personOpPath,
             Person.type.dataType(null),

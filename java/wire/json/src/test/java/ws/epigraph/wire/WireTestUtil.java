@@ -21,10 +21,7 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
@@ -61,7 +58,7 @@ public final class WireTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpInputReferenceContext inputReferenceContext =
           new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpOutputReferenceContext outputReferenceContext =
@@ -103,7 +100,7 @@ public final class WireTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       ReqOutputReferenceContext referenceContext =
           new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);

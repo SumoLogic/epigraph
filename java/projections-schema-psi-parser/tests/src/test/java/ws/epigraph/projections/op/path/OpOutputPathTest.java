@@ -170,7 +170,7 @@ public class OpOutputPathTest {
       return vp;
     };
 
-    return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
+    return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);
   }
 
 }

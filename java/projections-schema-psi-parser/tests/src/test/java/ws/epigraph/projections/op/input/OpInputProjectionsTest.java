@@ -239,7 +239,7 @@ public class OpInputProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpInputReferenceContext varReferenceContext =
           new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpInputPsiProcessingContext inputPsiProcessingContext =

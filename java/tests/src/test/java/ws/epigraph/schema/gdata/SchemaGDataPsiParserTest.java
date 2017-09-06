@@ -67,6 +67,6 @@ public class SchemaGDataPsiParserTest {
 
     failIfHasErrors(dataValue, errorsAccumulator);
 
-    return runPsiParser(errors -> SchemaGDataPsiParser.parseValue(dataValue, errors));
+    return runPsiParser(true, errors -> SchemaGDataPsiParser.parseValue(dataValue, errors));
   }
 }

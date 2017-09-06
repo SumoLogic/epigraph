@@ -60,7 +60,7 @@ public class OpOutputListModelProjection
     this.itemsProjection = itemsProjection;
   }
 
-  protected OpOutputListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
+  public OpOutputListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 

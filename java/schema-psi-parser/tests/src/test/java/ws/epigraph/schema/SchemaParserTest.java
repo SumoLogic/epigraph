@@ -540,7 +540,7 @@ public class SchemaParserTest {
 //    String psiDump = DebugUtil.psiToString(psiFile, true, false).trim();
 //    System.out.println(psiDump);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       SchemasPsiProcessingContext schemasPsiProcessingContext = new SchemasPsiProcessingContext();
       ResourcesSchema schema = ResourcesSchemaPsiParser.parseResourcesSchema(
           psiFile,

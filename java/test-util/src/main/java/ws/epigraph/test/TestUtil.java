@@ -427,13 +427,22 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static void failIfHasErrors(final List<PsiProcessingMessage> errors) {
-    if (!errors.isEmpty()) {
+  public static void failIfHasErrors(boolean failOnWarnings, final List<PsiProcessingMessage> messages) {
+    if (!messages.isEmpty()) {
+      boolean fatal = false;
       StringBuilder sb = new StringBuilder("\n");
-      for (final PsiProcessingMessage error : errors)
-        sb.append(error.location()).append(": ").append(error.message()).append("\n");
+      for (final PsiProcessingMessage message : messages) {
 
-      fail(sb.toString());
+        if (message.level() == PsiProcessingMessage.Level.ERROR)
+          fatal = true;
+
+        sb.append(message.location()).append(": ").append(message.message()).append("\n");
+      }
+
+      if (fatal || failOnWarnings)
+        fail(sb.toString());
+//      else
+//        System.out.print(sb.toString());
     }
   }
 
@@ -451,7 +460,7 @@ public final class TestUtil {
     }
   }
 
-  public static @NotNull <R> R runPsiParser(@NotNull TestUtil.PsiParserClosure<R> closure) {
+  public static @NotNull <R> R runPsiParser(boolean failOnWarnings, @NotNull TestUtil.PsiParserClosure<R> closure) {
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     R r = null;
 
@@ -461,7 +470,7 @@ public final class TestUtil {
       context.setErrors(e.messages());
     }
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(failOnWarnings, context.messages());
 
     assert r != null;
     return r;

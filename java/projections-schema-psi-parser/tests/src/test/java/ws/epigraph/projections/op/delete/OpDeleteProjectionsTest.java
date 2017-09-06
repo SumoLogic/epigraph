@@ -250,7 +250,7 @@ public class OpDeleteProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpInputReferenceContext inputReferenceContext =
           new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpDeleteReferenceContext deleteReferenceContext =

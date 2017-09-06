@@ -27,10 +27,7 @@ import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.projections.op.path.OpVarPath;
@@ -91,7 +88,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpInputReferenceContext opInputReferenceContext =
           new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpOutputReferenceContext opOutputReferenceContext =
@@ -137,7 +134,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       ReqOutputReferenceContext reqOutputReferenceContext =
           new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -206,7 +203,7 @@ public final class ReqTestUtil {
       return vp;
     };
 
-    return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
+    return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);
   }
 
   public static @NotNull ReqUpdateVarProjection parseReqUpdateVarProjection(
@@ -225,7 +222,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       ReqUpdateReferenceContext reqUpdateReferenceContext =
           new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
@@ -262,7 +259,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       ReqInputReferenceContext reqInputReferenceContext =
           new ReqInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -299,7 +296,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       ReqDeleteReferenceContext reqDeleteReferenceContext =
           new ReqDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -334,7 +331,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpInputReferenceContext opInputReferenceContext =
           new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -370,7 +367,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       OpDeleteReferenceContext opDeleteReferenceContext =
           new OpDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       OpInputReferenceContext opInputReferenceContext =

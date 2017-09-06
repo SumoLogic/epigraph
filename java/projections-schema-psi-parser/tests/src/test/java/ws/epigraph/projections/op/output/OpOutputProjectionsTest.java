@@ -323,7 +323,7 @@ public class OpOutputProjectionsTest {
     referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", personProjection, TextLocation.UNKNOWN);
-    failIfHasErrors(ppc.messages());
+    failIfHasErrors(true, ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -347,6 +347,7 @@ public class OpOutputProjectionsTest {
     @SuppressWarnings("ConstantConditions")
     OpOutputModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
 
+    // like `personProjection`, but built for `PersonRecord`, not `Person` type
     OpOutputVarProjection personRecordVarProjection = new OpOutputVarProjection(
         PersonRecord.type,
         false,
@@ -367,9 +368,10 @@ public class OpOutputProjectionsTest {
 
     final OpOutputReferenceContext referenceContext =
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+
     referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
 //    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
-    failIfHasErrors(ppc.messages());
+    failIfHasErrors(true, ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -405,7 +407,7 @@ public class OpOutputProjectionsTest {
     referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", paginationProjection, TextLocation.UNKNOWN);
-    failIfHasErrors(ppc.messages());
+    failIfHasErrors(true, ppc.messages());
 
     TestConfig testConfig = new TestConfig() {
       @Override
@@ -528,21 +530,36 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testFlagged() throws PsiProcessingException {
-    testParsingVarProjection(":+id");
-    testParsingVarProjection(":`record` ( +id )");
-    testParsingVarProjection(":`record` ( id+ )", ":`record` ( +id )");
-    testParsingVarProjection(":`record` ( bestFriend2+ )", ":`record` ( bestFriend2 :+id )");
-    testParsingVarProjection(":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :id )");
+    TestConfig cfg = new TestConfig() {
+      @Override
+      boolean failOnWarnings() { return false; }
+    };
+
+    testParsingVarProjection(cfg, ":+id");
+    testParsingVarProjection(cfg, ":`record` ( +id )");
+    testParsingVarProjection(cfg, ":`record` ( id+ )", ":`record` ( +id )");
+    testParsingVarProjection(cfg, ":`record` ( bestFriend2+ )", ":`record` ( bestFriend2 :+id )");
+    testParsingVarProjection(cfg, ":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :id )");
 
     // todo: enable smarter output in pretty printer
-    testParsingVarProjection(":`record` ( friends*+:id )", ":`record` ( friends *+( :id ) )");
-    testParsingVarProjection(":`record` ( friendsMap[forbidden]+:id)", ":`record` ( friendsMap [ forbidden ]+( :id ) )");
+    testParsingVarProjection(cfg, ":`record` ( friends*+:id )", ":`record` ( friends *+( :id ) )");
+    testParsingVarProjection(
+        cfg,
+        ":`record` ( friendsMap[forbidden]+:id)",
+        ":`record` ( friendsMap [ forbidden ]+( :id ) )"
+    );
 
-    testParsingVarProjection(":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
+    testParsingVarProjection(cfg, ":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
   }
+
   @Test
   public void testParseDefault() throws PsiProcessingException {
-    testParsingVarProjection(":id { default: 123 }");
+    TestConfig cfg = new TestConfig() {
+      @Override
+      boolean failOnWarnings() { return false; }
+    };
+
+    testParsingVarProjection(cfg, ":id { default: 123 }");
   }
 
   @Test
@@ -683,6 +700,87 @@ public class OpOutputProjectionsTest {
         UserRecord.type,
         "( worstEnemy ( firstName, id ) )"
     );
+  }
+
+  @Test
+  public void testNamedEntityTail() throws PsiProcessingException {
+    PsiProcessingContext ppc = new DefaultPsiProcessingContext();
+
+    final OpOutputReferenceContext referenceContext =
+        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+
+    failIfHasErrors(true, ppc.messages());
+
+    TestConfig testConfig = new TestConfig() {
+      @Override
+      @NotNull DataType dataType() { return new DataType(Person.type, null); }
+
+      @Override
+      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+        return referenceContext;
+      }
+    };
+
+    OpOutputVarProjection vp = testParsingVarProjection(
+        testConfig,
+        ":id :~ws.epigraph.tests.User $user = :`record` ( id )",
+        // should we preserve original label for some reason?
+        ":id :~ws.epigraph.tests.User :`record` ( id )"
+    );
+
+    referenceContext.ensureAllReferencesResolved();
+    failIfHasErrors(true, ppc.messages());
+
+    OpOutputVarProjection userProjection = referenceContext.lookupEntityReference("user", false);
+    assertNotNull(userProjection);
+    assertEquals(User.type, userProjection.type());
+
+    OpOutputVarProjection normalized = vp.normalizedForType(User.type);
+    assertEquals(userProjection, normalized);
+    assertEquals(vp, normalized.normalizedFrom());
+  }
+
+  @Test
+  public void testNamedModelTail() throws PsiProcessingException {
+    PsiProcessingContext ppc = new DefaultPsiProcessingContext();
+
+    final OpOutputReferenceContext referenceContext =
+        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+
+    failIfHasErrors(true, ppc.messages());
+
+    TestConfig testConfig = new TestConfig() {
+      @Override
+      @NotNull DataType dataType() { return new DataType(Person.type, null); }
+
+      @Override
+      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+        return referenceContext;
+      }
+    };
+
+    OpOutputVarProjection vp = testParsingVarProjection(
+        testConfig,
+        ":`record` ( id ) ~ws.epigraph.tests.UserRecord $user = ( firstName )",
+        // should we preserve original label for some reason?
+        ":`record` ( id ) ~ws.epigraph.tests.UserRecord ( firstName )"
+    );
+
+    referenceContext.ensureAllReferencesResolved();
+    failIfHasErrors(true, ppc.messages());
+
+    @SuppressWarnings("ConstantConditions")
+    OpOutputRecordModelProjection mp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+
+    OpOutputRecordModelProjection userProjection =
+        (OpOutputRecordModelProjection) referenceContext.lookupModelReference("user", false);
+
+    assertNotNull(userProjection);
+    assertEquals(UserRecord.type, userProjection.type());
+
+    OpOutputRecordModelProjection normalized = mp.normalizedForType(UserRecord.type);
+    assertEquals(userProjection, normalized);
+    assertEquals(mp, normalized.normalizedFrom());
   }
 
   @Test
@@ -1022,6 +1120,10 @@ public class OpOutputProjectionsTest {
     );
   }
 
+  private OpOutputVarProjection testParsingVarProjection(TestConfig config, String str) {
+    return testParsingVarProjection(config, str, str);
+  }
+
   private OpOutputVarProjection testParsingVarProjection(
       TestConfig config,
       String projectionString,
@@ -1055,7 +1157,7 @@ public class OpOutputProjectionsTest {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(config.failOnWarnings(), context -> {
       OpInputReferenceContext inputReferenceContext = config.inputReferenceContext(context);
       OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext(context);
 
@@ -1118,6 +1220,8 @@ public class OpOutputProjectionsTest {
     }
 
     boolean ensureReferencesResolved() { return true; }
+
+    boolean failOnWarnings() { return true; }
   }
 
 }

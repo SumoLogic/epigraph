@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ResourcesSchemaPsiParser {
+  // todo transform projections after all references are resolved
   private ResourcesSchemaPsiParser() {}
 
   // currently we can get multiple ResourcesSchema instances for the same namespace (if there are multiple files for it)
@@ -269,7 +270,7 @@ public final class ResourcesSchemaPsiParser {
                 transformerOutputProjectionPsi
             );
           } else {
-            outputProjection = OpOutputProjectionsPsiParser.parseVarProjection(
+            outputProjection = OpProjectionsPsiParser.parseVarProjection(
                 transformerType.dataType(),
                 false,
                 varProjectionPsi,
@@ -639,7 +640,7 @@ public final class ResourcesSchemaPsiParser {
           referenceContext
       );
 
-      return OpOutputProjectionsPsiParser.parseUnnamedOrRefVarProjection(
+      return OpProjectionsPsiParser.parseUnnamedOrRefVarProjection(
           type,
           false,
           psi,

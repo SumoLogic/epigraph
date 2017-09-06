@@ -58,7 +58,7 @@ public final class RequestUrlPsiParserTestUtil {
 
     failIfHasErrors(psiFile, errorsAccumulator);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       SchemasPsiProcessingContext schemasPsiProcessingContext = new SchemasPsiProcessingContext();
       ResourcesSchema schema = ResourcesSchemaPsiParser.parseResourcesSchema(
           psiFile,
