@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
@@ -731,12 +732,12 @@ public class OpOutputProjectionsTest {
     referenceContext.ensureAllReferencesResolved();
     failIfHasErrors(true, ppc.messages());
 
-    OpOutputVarProjection userProjection = referenceContext.lookupEntityReference("user", false);
+    ReferenceContext.RefItem<OpOutputVarProjection> userProjection = referenceContext.lookupEntityReference("user", false);
     assertNotNull(userProjection);
-    assertEquals(User.type, userProjection.type());
+    assertEquals(User.type, userProjection.apply().type());
 
     OpOutputVarProjection normalized = vp.normalizedForType(User.type);
-    assertEquals(userProjection, normalized);
+    assertEquals(userProjection.apply(), normalized);
     assertEquals(vp, normalized.normalizedFrom());
   }
 
@@ -772,14 +773,14 @@ public class OpOutputProjectionsTest {
     @SuppressWarnings("ConstantConditions")
     OpOutputRecordModelProjection mp = (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
 
-    OpOutputRecordModelProjection userProjection =
-        (OpOutputRecordModelProjection) referenceContext.lookupModelReference("user", false);
+    ReferenceContext.RefItem<OpOutputModelProjection<?, ?, ?, ?>> userProjection =
+        referenceContext.lookupModelReference("user", false);
 
     assertNotNull(userProjection);
-    assertEquals(UserRecord.type, userProjection.type());
+    assertEquals(UserRecord.type, userProjection.apply().type());
 
     OpOutputRecordModelProjection normalized = mp.normalizedForType(UserRecord.type);
-    assertEquals(userProjection, normalized);
+    assertEquals(userProjection.apply(), normalized);
     assertEquals(mp, normalized.normalizedFrom());
   }
 
