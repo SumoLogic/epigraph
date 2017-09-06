@@ -216,7 +216,12 @@ public abstract class GenProjectionTransformer<
     );
   }
 
-  public @NotNull FP transform(@NotNull FP fp) {
+  public @NotNull FP transform(@NotNull GenProjectionTransformationMap<VP, MP> transformationMap, @NotNull FP fp) {
+    this.transformationMap = transformationMap;
+    return transform(fp);
+  }
+
+  private @NotNull FP transform(@NotNull FP fp) {
     VP ep = fp.varProjection();
     VP transformedEp = transform(ep);
     return transformFieldProjection(fp, transformedEp, ep != transformedEp);

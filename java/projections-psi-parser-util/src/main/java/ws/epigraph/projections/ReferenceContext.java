@@ -299,9 +299,11 @@ public abstract class ReferenceContext<
     );
   }
 
-  public <R extends GenProjectionReference<R>> void ensureAllReferencesResolved() {
+  public <R extends GenProjectionReference<R>> boolean ensureAllReferencesResolved() {
+    boolean allResolved = true;
+
     for (Map.Entry<String, EP> entry : entityReferences.entrySet())
-      ensureReferenceResolved(
+      allResolved &= ensureReferenceResolved(
           entry.getKey(),
           entry.getValue(),
           () -> {
@@ -316,7 +318,7 @@ public abstract class ReferenceContext<
       );
 
     for (final Map.Entry<String, MP> entry : modelReferences.entrySet()) {
-      ensureReferenceResolved(
+      allResolved &= ensureReferenceResolved(
           entry.getKey(),
           (R) entry.getValue(),
           () -> {
@@ -333,13 +335,17 @@ public abstract class ReferenceContext<
 
 //    if (parent != null)
 //      parent.ensureAllReferencesResolved();
+
+    return allResolved;
   }
 
-  private <R extends GenProjectionReference<R>> void ensureReferenceResolved(
+  private <R extends GenProjectionReference<R>> boolean ensureReferenceResolved(
       @NotNull String name,
       @NotNull R ref,
       @NotNull Supplier<Boolean> backupResolver,
       @Nullable Map<String, R> parentReferences) {
+
+    boolean allResolved = true;
 
     if (!ref.isResolved()) {
       // check if backup resolver can handle it (resolve entity ref from model ref or v.v.)
@@ -352,6 +358,7 @@ public abstract class ReferenceContext<
         // a = 1
 
         if (parentReferences == null) {
+          allResolved = false;
           context.addError(
               String.format("Projection '%s' is not defined (context: %s)", name, referencesNamespace),
               ref.location()
@@ -376,6 +383,7 @@ public abstract class ReferenceContext<
       }
     }
 
+    return allResolved;
   }
 
   @NotNull
@@ -442,6 +450,31 @@ public abstract class ReferenceContext<
     GenTagProjectionEntry<?, MP> tpe = eRef.singleTagProjection();
     assert tpe != null;
     return tpe.projection();
+  }
+
+  public final void transform(@NotNull GenProjectionTransformationMap<EP, MP> transformationMap) {
+    if (!ensureAllReferencesResolved())
+      throw new IllegalArgumentException(
+          "Can't apply transformation map to a reference context when not all references are resolved");
+
+    for (final Map.Entry<String, EP> entry : entityReferences.entrySet()) {
+      EP old = entry.getValue();
+      EP _new = transformationMap.getEntityMapping(old);
+
+      if (_new != null)
+        entry.setValue(_new);
+    }
+
+    for (final Map.Entry<String, MP> entry : modelReferences.entrySet()) {
+      MP old = entry.getValue();
+      MP _new = transformationMap.getModelMapping(old);
+
+      if (_new != null)
+        entry.setValue(_new);
+    }
+
+    if (parent != null)
+      parent.transform(transformationMap);
   }
 
   @Override

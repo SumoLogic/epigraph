@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.op.OpProjectionTransformationMap;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.psi.SchemaOpOutputFieldProjection;
@@ -45,9 +46,14 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputVarProjection res =
         OpProjectionsPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
 
-    return enabled
-           ? new ParsedOutputProjectionPostProcessor(context).transform(res)
-           : res;
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      OpOutputVarProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
   }
 
   public static @NotNull OpOutputFieldProjection parseFieldProjection(
@@ -60,9 +66,14 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputFieldProjection res =
         OpProjectionsPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
 
-    return enabled
-           ? new ParsedOutputProjectionPostProcessor(context).transform(res)
-           : res;
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      @NotNull OpOutputFieldProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
   }
 
   public static OpOutputVarProjection parseUnnamedOrRefVarProjection(
@@ -76,8 +87,13 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputVarProjection res =
         OpProjectionsPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
 
-    return enabled
-           ? new ParsedOutputProjectionPostProcessor(context).transform(res)
-           : res;
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      OpOutputVarProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
   }
 }
