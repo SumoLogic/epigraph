@@ -59,6 +59,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           varProjection.location()
       );
       newProjection.setReferenceName(varProjection.referenceName());
+      newProjection.copyNormalizedTailReferenceNames(varProjection);
       return newProjection;
     } else return varProjection;
   }
@@ -99,7 +100,14 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           transformedTails,
           recordModelProjection.location()
       );
+
       newProjection.setReferenceName(recordModelProjection.referenceName());
+//      AbstractVarProjection<?, ?, ?> entityProjection = recordModelProjection.entityProjection();
+//      if (entityProjection != null) {
+//        newProjection.setEntityProjection(entityProjection);
+//      }
+
+      newProjection.copyNormalizedTailReferenceNames(recordModelProjection);
       return newProjection;
     } else return recordModelProjection;
   }
@@ -151,7 +159,14 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           transformedTails,
           mapModelProjection.location()
       );
+
       newProjection.setReferenceName(mapModelProjection.referenceName());
+//      AbstractVarProjection<?, ?, ?> entityProjection = mapModelProjection.entityProjection();
+//      if (entityProjection != null) {
+//        newProjection.setEntityProjection(entityProjection);
+//      }
+
+      newProjection.copyNormalizedTailReferenceNames(mapModelProjection);
       return newProjection;
     } else return mapModelProjection;
   }
@@ -176,7 +191,14 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           transformedTails,
           listModelProjection.location()
       );
+
       newProjection.setReferenceName(listModelProjection.referenceName());
+//      AbstractVarProjection<?, ?, ?> entityProjection = listModelProjection.entityProjection();
+//      if (entityProjection != null) {
+//        newProjection.setEntityProjection(entityProjection);
+//      }
+
+      newProjection.copyNormalizedTailReferenceNames(listModelProjection);
       return newProjection;
     } else return listModelProjection;
   }
@@ -199,7 +221,14 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           transformedTails,
           primitiveModelProjection.location()
       );
+
       newProjection.setReferenceName(primitiveModelProjection.referenceName());
+//      AbstractVarProjection<?, ?, ?> entityProjection = primitiveModelProjection.entityProjection();
+//      if (entityProjection != null) {
+//        newProjection.setEntityProjection(entityProjection);
+//      }
+
+      newProjection.copyNormalizedTailReferenceNames(primitiveModelProjection);
       return newProjection;
     } else return primitiveModelProjection;
   }

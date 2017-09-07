@@ -477,9 +477,9 @@ public abstract class ReferenceContext<
   }
 
   public final void transform(@NotNull GenProjectionTransformationMap<EP, MP> transformationMap) {
-    if (!ensureAllReferencesResolved())
-      throw new IllegalArgumentException(
-          "Can't apply transformation map to a reference context when not all references are resolved");
+//    if (!ensureAllReferencesResolved())
+//      throw new IllegalArgumentException(
+//          "Can't apply transformation map to a reference context when not all references are resolved");
 
     for (final Map.Entry<String, RefItem<EP>> entry : entityReferences.entrySet()) {
       EP old = entry.getValue().argument();

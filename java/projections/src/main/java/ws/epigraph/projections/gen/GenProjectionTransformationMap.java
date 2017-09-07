@@ -34,9 +34,13 @@ public class GenProjectionTransformationMap<
   private final @NotNull IdentityHashMap<VP, VP> epMapping = new IdentityHashMap<>();
   private final @NotNull IdentityHashMap<MP, MP> mpMapping = new IdentityHashMap<>();
 
-  public void addEntityMapping(@NotNull VP old, @NotNull VP _new) { if (old != _new) epMapping.put(old, _new); }
+  public void addEntityMapping(@NotNull VP old, @NotNull VP _new) {
+    if (old != _new) epMapping.put(old, _new);
+  }
 
-  public void addModelMapping(@NotNull MP old, @NotNull MP _new) { if (old != _new) mpMapping.put(old, _new); }
+  public void addModelMapping(@NotNull MP old, @NotNull MP _new) {
+    if (old != _new) mpMapping.put(old, _new);
+  }
 
   public @Nullable VP getEntityMapping(@NotNull VP old) { return epMapping.get(old); }
 

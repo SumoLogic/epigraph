@@ -87,6 +87,7 @@ public abstract class AbstractVarProjection<
       final TP tp = singleTagProjection();
       if (tp != null) {
         MP mp = tp.projection();
+        setReferenceName0(mp.referenceName());
         //noinspection ThisEscapedInObjectConstruction
         mp.setEntityProjection(this);
 
@@ -192,6 +193,10 @@ public abstract class AbstractVarProjection<
       @NotNull ProjectionReferenceName tailReferenceName) {
 
     normalizedTailNames.put(type.name(), tailReferenceName);
+  }
+
+  public void copyNormalizedTailReferenceNames(@NotNull VP vp) {
+    normalizedTailNames.putAll(vp.normalizedTailNames);
   }
 
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();

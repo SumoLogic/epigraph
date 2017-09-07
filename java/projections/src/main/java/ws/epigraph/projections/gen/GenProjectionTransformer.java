@@ -41,10 +41,19 @@ public abstract class GenProjectionTransformer<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
 
+  private final Map<VP, VP> transformedCache = new IdentityHashMap<>();
   private final Map<VP, VP> visited = new IdentityHashMap<>();
+//  private final Map<VP, VP> postponed = new IdentityHashMap<>();
   private final Set<VP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
 
   private GenProjectionTransformationMap<VP, MP> transformationMap = null;
+
+  void reset() {
+    transformedCache.clear();
+    visited.clear();
+//    postponed.clear();
+    usedRecursively.clear();
+  }
 
   public @NotNull VP transform(
       @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
@@ -55,16 +64,35 @@ public abstract class GenProjectionTransformer<
   }
 
   protected @NotNull VP transform(@NotNull VP projection) {
+    VP cached = transformedCache.get(projection);
+    if (cached != null)
+      return cached;
+    if (transformedCache.values().contains(projection))
+      return projection; // avoid transforming what is already transformed
+
     // postpone transformation if projection is not resolved yet
-    if (!projection.isResolved()) {
+//    VP res = postponed.get(projection);
+//    if (res != null)
+//      return res;
+
+    if (projection.isResolved()) {
+      return transformResolved(projection);
+    } else {
       final VP ref = newEntityRef(projection.type(), projection.location());
+      transformedCache.put(projection, ref);
+//      postponed.put(projection, ref);
       projection.runOnResolved(() -> {
-        VP transformed = transform(projection);
-        ref.resolve(projection.referenceName(), transformed);
+        VP transformed = transformResolved(projection);
+        transformed.runOnResolved(() -> {
+//          postponed.remove(projection);
+          ref.resolve(projection.referenceName(), transformed);
+        });
       });
       return ref;
     }
+  }
 
+  private @NotNull VP transformResolved(@NotNull VP projection) {
     VP res = visited.get(projection);
     if (res != null) {
       usedRecursively.add(res); // do the same for models? or vars is enough?
@@ -113,9 +141,11 @@ public abstract class GenProjectionTransformer<
     if (usedRec) {
       res.resolve(projection.referenceName(), transformed);
       transformationMap.addEntityMapping(projection, res);
+      transformedCache.put(projection, res);
       return res;
     } else {
       transformationMap.addEntityMapping(projection, transformed);
+      transformedCache.put(projection, transformed);
       return transformed;
     }
   }

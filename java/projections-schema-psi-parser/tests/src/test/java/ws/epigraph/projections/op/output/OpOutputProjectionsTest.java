@@ -724,9 +724,9 @@ public class OpOutputProjectionsTest {
 
     OpOutputVarProjection vp = testParsingVarProjection(
         testConfig,
-        ":id :~ws.epigraph.tests.User $user = :`record` ( id )",
+        ":id :~ws.epigraph.tests.User $user = :`record` ( id, bestFriend4 $user )",
         // should we preserve original label for some reason?
-        ":id :~ws.epigraph.tests.User :`record` ( id )"
+        ":id :~ws.epigraph.tests.User :`record` ( id, bestFriend4 <UNRESOLVED> )" // $user is unresolved in parser's scope
     );
 
     referenceContext.ensureAllReferencesResolved();
@@ -925,7 +925,7 @@ public class OpOutputProjectionsTest {
     } catch (IllegalArgumentException e) {
       assertTrue(
           e.getMessage(),
-          e.getMessage().contains("Can't merge recursive projection [p._nt.UserRecord] with other projection")
+          e.getMessage().contains("Can't merge recursive projection 'p' with other projection")
       );
     }
   }

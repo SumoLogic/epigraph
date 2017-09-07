@@ -115,6 +115,10 @@ public abstract class AbstractModelProjection<
     normalizedTailNames().put(type.name(), tailReferenceName);
   }
 
+  public void copyNormalizedTailReferenceNames(@NotNull SMP mp) {
+    normalizedTailNames().putAll(mp.normalizedTailNames());
+  }
+
   protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
 
 //  /**
@@ -156,6 +160,7 @@ public abstract class AbstractModelProjection<
    * @param entityProjection entity projection corresponding to this model projeciton (there should be a 1-1 relation)
    */
   public void setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    if (entityProjection == this.entityProjection) return;
     if (this.entityProjection != null)
       throw new IllegalStateException("Entity projection can only be set once");
     this.entityProjection = entityProjection;
@@ -163,6 +168,14 @@ public abstract class AbstractModelProjection<
     // entity projection's `normalizedTailNames` is the source of truth now
     entityProjection.normalizedTailNames.putAll(normalizedTailNames);
     normalizedTailNames.clear();
+
+    if (!Objects.equals(referenceName(), entityProjection.referenceName()))
+      throw new IllegalStateException(String.format(
+          "[%s] {%s} != {%s}",
+          type().name().toString(),
+          name,
+          entityProjection.referenceName()
+      ));
   }
 
   public @Nullable AbstractVarProjection<?, ?, ?> entityProjection() { return entityProjection; }
@@ -456,7 +469,8 @@ public abstract class AbstractModelProjection<
   @Override
   public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
     setReferenceName0(referenceName);
-    if (entityProjection != null) entityProjection.setReferenceName0(referenceName);
+    if (entityProjection != null)
+      entityProjection.setReferenceName0(referenceName);
   }
 
   public void setReferenceName0(final @Nullable ProjectionReferenceName referenceName) {
@@ -497,6 +511,15 @@ public abstract class AbstractModelProjection<
 //    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
     this.normalizedTailNames().putAll(value.normalizedTailNames());
     this.entityProjection = value.entityProjection;
+
+    if (entityProjection != null && !Objects.equals(name, entityProjection.referenceName()))
+      throw new IllegalStateException(String.format(
+          "[%s] {%s} != {%s}",
+          value.type().name().toString(),
+          name,
+          entityProjection.referenceName()
+      ));
+
     this.isResolved = true;
 
     for (final Runnable callback : onResolvedCallbacks)

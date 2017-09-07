@@ -212,7 +212,7 @@ public final class OpProjectionsPsiParser {
       final String projectionName = refNamePsi.getCanonicalName();
 
       return context.referenceContext()
-          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(refNamePsi));
     }
   }
 
