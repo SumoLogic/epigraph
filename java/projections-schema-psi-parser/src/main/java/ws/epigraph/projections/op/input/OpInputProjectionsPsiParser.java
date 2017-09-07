@@ -115,7 +115,7 @@ public final class OpInputProjectionsPsiParser {
                              : context.referenceContext().parentOrThis();  // tail: global context
 
       final OpInputVarProjection reference = context.referenceContext()
-          .varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpInputVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -195,7 +195,7 @@ public final class OpInputProjectionsPsiParser {
 
       final String projectionName = refNamePsi.getCanonicalName();
       return context.referenceContext()
-          .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
     }
   }
 
@@ -641,7 +641,7 @@ public final class OpInputProjectionsPsiParser {
       );
 
       if (parentProjection == null) {
-        referenceContext.<OpInputModelProjection>resolveModelRef(
+        referenceContext.resolveModelRef(
             projectionName,
             value,
             EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
@@ -665,7 +665,7 @@ public final class OpInputProjectionsPsiParser {
                   referenceContext.projectionReferenceName(projectionName)
               );
 
-              referenceContext.<OpInputModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
+              referenceContext.resolveModelRef( //resolve normalizedTailRef to normalizedTail
                   projectionName,
                   normalizedTail,
                   EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)

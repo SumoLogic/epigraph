@@ -580,7 +580,7 @@ public final class ResourcesSchemaPsiParser {
             );
           else {
             //final VP reference =
-            referenceContext.varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
+            referenceContext.entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(projectionDefPsi));
 
             final RC innerReferenceContext = innerReferenceContextFactory.apply(projectionName);
             final VP value = psiParser.parse(

@@ -321,7 +321,7 @@ public class OpOutputProjectionsTest {
 
     final OpOutputReferenceContext referenceContext =
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
-    referenceContext.varReference(Person.type, "ref", false, TextLocation.UNKNOWN);
+    referenceContext.entityReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", personProjection, TextLocation.UNKNOWN);
     failIfHasErrors(true, ppc.messages());
@@ -370,7 +370,7 @@ public class OpOutputProjectionsTest {
     final OpOutputReferenceContext referenceContext =
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
 
-    referenceContext.varReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
+    referenceContext.entityReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
 //    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
     failIfHasErrors(true, ppc.messages());
 
@@ -405,7 +405,7 @@ public class OpOutputProjectionsTest {
 
     final OpOutputReferenceContext referenceContext =
         new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
-    referenceContext.varReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
+    referenceContext.entityReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", paginationProjection, TextLocation.UNKNOWN);
     failIfHasErrors(true, ppc.messages());
@@ -739,6 +739,9 @@ public class OpOutputProjectionsTest {
     OpOutputVarProjection normalized = vp.normalizedForType(User.type);
     assertEquals(userProjection.apply(), normalized);
     assertEquals(vp, normalized.normalizedFrom());
+    ProjectionReferenceName referenceName = normalized.referenceName();
+    assertNotNull(referenceName);
+    assertEquals("user", referenceName.toString());
   }
 
   @Test
@@ -782,6 +785,9 @@ public class OpOutputProjectionsTest {
     OpOutputRecordModelProjection normalized = mp.normalizedForType(UserRecord.type);
     assertEquals(userProjection.apply(), normalized);
     assertEquals(mp, normalized.normalizedFrom());
+    ProjectionReferenceName referenceName = normalized.referenceName();
+    assertNotNull(referenceName);
+    assertEquals("user", referenceName.toString());
   }
 
   @Test

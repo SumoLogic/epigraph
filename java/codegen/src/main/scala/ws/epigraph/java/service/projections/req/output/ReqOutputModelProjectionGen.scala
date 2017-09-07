@@ -30,7 +30,7 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqOutputModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _], // todo unused
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],

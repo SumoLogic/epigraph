@@ -72,22 +72,26 @@ public class OpOutputReferenceContext
   @Override
   protected @NotNull OpOutputVarProjection toSelfVar(final @NotNull OpOutputModelProjection<?, ?, ?, ?> mRef) {
     assert mRef.isResolved();
-    final DatumTypeApi modelType = mRef.type();
-    return new OpOutputVarProjection(
-        modelType,
-        mRef.flagged(),
-        ProjectionUtils.singletonLinkedHashMap(
-            modelType.self().name(),
-            new OpOutputTagProjectionEntry(
-                modelType.self(),
-                mRef,
-                TextLocation.UNKNOWN
-            )
-        ),
-        false,
-        null,
-        TextLocation.UNKNOWN
-    );
+    OpOutputVarProjection ep = (OpOutputVarProjection) mRef.entityProjection();
+    if (ep == null) {
+      final DatumTypeApi modelType = mRef.type();
+      return new OpOutputVarProjection(
+          modelType,
+          mRef.flagged(),
+          ProjectionUtils.singletonLinkedHashMap(
+              modelType.self().name(),
+              new OpOutputTagProjectionEntry(
+                  modelType.self(),
+                  mRef,
+                  TextLocation.UNKNOWN
+              )
+          ),
+          false,
+          null,
+          TextLocation.UNKNOWN
+      );
+    } else
+      return ep;
   }
 
   @Override

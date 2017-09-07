@@ -115,7 +115,7 @@ public final class OpDeleteProjectionsPsiParser {
                              : context.referenceContext().parentOrThis();  // tail: global context
 
       final OpDeleteVarProjection reference = context.referenceContext()
-          .varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -198,7 +198,7 @@ public final class OpDeleteProjectionsPsiParser {
 
       final String projectionName = refNamePsi.getCanonicalName();
       return context.referenceContext()
-          .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
 
     }
   }
@@ -577,7 +577,7 @@ public final class OpDeleteProjectionsPsiParser {
       );
 
       if (parentProjection == null) {
-        referenceContext.<OpDeleteModelProjection>resolveModelRef(
+        referenceContext.resolveModelRef(
             projectionName,
             value,
             EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
@@ -601,7 +601,7 @@ public final class OpDeleteProjectionsPsiParser {
                   referenceContext.projectionReferenceName(projectionName)
               );
 
-              referenceContext.<OpDeleteModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
+              referenceContext.resolveModelRef( //resolve normalizedTailRef to normalizedTail
                   projectionName,
                   normalizedTail,
                   EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)

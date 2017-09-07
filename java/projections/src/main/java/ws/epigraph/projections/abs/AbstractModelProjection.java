@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.abs;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
@@ -57,6 +58,7 @@ public abstract class AbstractModelProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+  private final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
   protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
   protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
@@ -100,6 +102,19 @@ public abstract class AbstractModelProjection<
   @Override
   public @Nullable List<SMP> polymorphicTails() { return polymorphicTails; }
 
+  @Contract(pure = true)
+  protected @NotNull Map<TypeName, ProjectionReferenceName> normalizedTailNames() {
+    return entityProjection == null ? normalizedTailNames : entityProjection.normalizedTailNames;
+  }
+
+  @Override
+  public void setNormalizedTailReferenceName(
+      @NotNull DatumTypeApi type,
+      @NotNull ProjectionReferenceName tailReferenceName) {
+
+    normalizedTailNames().put(type.name(), tailReferenceName);
+  }
+
   protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
 
 //  /**
@@ -135,12 +150,31 @@ public abstract class AbstractModelProjection<
 
   }
 
+  /**
+   * Sets entity projection reference for datum type projections
+   *
+   * @param entityProjection entity projection corresponding to this model projeciton (there should be a 1-1 relation)
+   */
   public void setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    if (this.entityProjection != null)
+      throw new IllegalStateException("Entity projection can only be set once");
     this.entityProjection = entityProjection;
+
+    // entity projection's `normalizedTailNames` is the source of truth now
+    entityProjection.normalizedTailNames.putAll(normalizedTailNames);
+    normalizedTailNames.clear();
+  }
+
+  public @Nullable AbstractVarProjection<?, ?, ?> entityProjection() { return entityProjection; }
+
+  @Override
+  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi type) {
+    return normalizedForType(type, normalizedTailNames().get(type.name()));
   }
 
   @Override
   @SuppressWarnings("unchecked")
+  @Deprecated
   public @NotNull SMP normalizedForType(
       final @NotNull DatumTypeApi targetType,
       final @Nullable ProjectionReferenceName resultReferenceName) {
@@ -180,7 +214,6 @@ public abstract class AbstractModelProjection<
             if (this.name == null) {
               ref = context.newReference((M) effectiveType, self());
               ref.setReferenceName(normalizedRefName);
-              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
             } else {
               NormalizationContext.VisitedKey visitedKey =
                   new NormalizationContext.VisitedKey(this.name, effectiveType.name());
@@ -199,6 +232,7 @@ public abstract class AbstractModelProjection<
                     ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
                 );
             }
+            normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
 
             final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
             effectiveProjections.add(self()); //we're the least specific projection
@@ -343,6 +377,14 @@ public abstract class AbstractModelProjection<
         mergedTails
     );
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
+
+    // todo check for clashes
+    Map<TypeName, ProjectionReferenceName> mergedTailNames = new HashMap<>();
+    for (SMP mp : modelProjections) {
+      mergedTailNames.putAll(mp.normalizedTailNames());
+    }
+    res.normalizedTailNames().putAll(mergedTailNames);
+
     return res;
   }
 
@@ -452,7 +494,9 @@ public abstract class AbstractModelProjection<
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     setNormalizedFrom(value.normalizedFrom);
-    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
+//    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
+    this.normalizedTailNames().putAll(value.normalizedTailNames());
+    this.entityProjection = value.entityProjection;
     this.isResolved = true;
 
     for (final Runnable callback : onResolvedCallbacks)

@@ -90,7 +90,7 @@ public final class ReqDeleteProjectionsPsiParser {
         );
 
       final ReqDeleteVarProjection reference = context.varReferenceContext()
-          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final ReqDeleteVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -161,7 +161,7 @@ public final class ReqDeleteProjectionsPsiParser {
         context.addUnverifiedRefOp(referenceName, op);
 
       return context.varReferenceContext()
-          .varReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
     }
 
   }

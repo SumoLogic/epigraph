@@ -67,7 +67,7 @@ public abstract class ReferenceContext<
   public ReferenceContext<EP, MP> parentOrThis() { return parent == null ? this : parent; }
 
   @NotNull
-  public EP varReference(
+  public EP entityReference(
       @NotNull TypeApi type,
       @NotNull String name,
       boolean useParent,
@@ -78,10 +78,13 @@ public abstract class ReferenceContext<
     if (ref == null) {
       ref = new IdRefItem<>(newVarReference(type, location));
 //      System.out.println("Allocated entity reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      entityReferences.put(name, ref);
+      addEntityReference(name, ref);
       return ref.apply();
     } else return ref.apply();
+  }
 
+  public void addEntityReference(@NotNull String name, @NotNull RefItem<EP> refItem) {
+    entityReferences.put(name, refItem);
   }
 
   @NotNull
@@ -96,10 +99,14 @@ public abstract class ReferenceContext<
     if (ref == null) {
       ref = (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, location));
 //      System.out.println("Allocated model reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      modelReferences.put(name, ref);
+      addModelReference(name, ref);
       return ref.apply();
     } else return ref.apply();
 
+  }
+
+  public void addModelReference(@NotNull String name, @NotNull RefItem<MP> refItem) {
+    modelReferences.put(name, refItem);
   }
 
   public boolean isResolved(@NotNull String name) {
@@ -147,9 +154,14 @@ public abstract class ReferenceContext<
            (parent != null && parent.hasReference(name));
   }
 
-  public <R extends GenProjectionReference<R>> void resolveEntityRef(
+  public void resolveEntityRef( @NotNull String name, @NotNull EP value, @NotNull TextLocation location) {
+    resolveEntityRef(name, value, true, location);
+  }
+
+  private  <R extends GenProjectionReference<R>> void resolveEntityRef(
       @NotNull String name,
       @NotNull EP value,
+      boolean updateMRef,
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
@@ -169,7 +181,7 @@ public abstract class ReferenceContext<
         } else {
           if (eref.type().isAssignableFrom(value.type())) {
             EP _normalized = value.normalizedForType(eref.type());
-            eref.resolve(referenceName, _normalized);
+            eitem.argument().resolve(referenceName, _normalized);
             resolvedAt.put(name, location);
 
           } else {
@@ -178,7 +190,7 @@ public abstract class ReferenceContext<
         }
       }
 
-      if (mref != null) {
+      if (updateMRef && mref != null) {
         if (mref.isResolved()) {
           context.addError(
               String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
@@ -192,7 +204,7 @@ public abstract class ReferenceContext<
                   String.format("Broken isAssignableFrom between %s and %s", mref.type().name(), value.type().name())
               );
             else {
-              ((GenProjectionReference<R>) mref).resolve(referenceName, (R) (fromSelfVar(_normalized)));
+              ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) (fromSelfVar(_normalized)));
               resolvedAt.put(name, location);
             }
           } else
@@ -218,9 +230,14 @@ public abstract class ReferenceContext<
     });
   }
 
-  public <R extends GenProjectionReference<R>> void resolveModelRef(
+  public void resolveModelRef( @NotNull String name, @NotNull MP value, @NotNull TextLocation location) {
+    resolveModelRef(name, value, true, location);
+  }
+
+  private <R extends GenProjectionReference<R>> void resolveModelRef(
       @NotNull String name,
       @NotNull MP value,
+      boolean updateERef,
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
@@ -241,7 +258,7 @@ public abstract class ReferenceContext<
         } else {
           if (mref.type().isAssignableFrom(value.type())) {
             MP _normalized = (MP) value.normalizedForType(mref.type());
-            ((GenProjectionReference<R>) mref).resolve(referenceName, (R) _normalized);
+            ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) _normalized);
             resolvedAt.put(name, location);
           } else {
             addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
@@ -249,7 +266,7 @@ public abstract class ReferenceContext<
         }
       }
 
-      if (eref != null) {
+      if (updateERef && eref != null) {
         if (eref.isResolved()) {
           context.addError(
               String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
@@ -258,7 +275,7 @@ public abstract class ReferenceContext<
 
           if (eref.type().isAssignableFrom(value.type())) {
             EP evalue = toSelfVar(value);
-            eref.resolve(referenceName, evalue);
+            eitem.argument().resolve(referenceName, evalue);
             resolvedAt.put(name, location);
           } else
             addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
@@ -315,7 +332,7 @@ public abstract class ReferenceContext<
           () -> {
             RefItem<MP> mref = modelReferences.get(entry.getKey());
             if (mref != null && mref.isResolved()) {
-              resolveEntityRef(entry.getKey(), toSelfVar(mref.apply()), mref.location());
+              resolveEntityRef(entry.getKey(), toSelfVar(mref.apply()), false, mref.location());
               return true;
             } else
               return false;
@@ -331,7 +348,7 @@ public abstract class ReferenceContext<
           () -> {
             RefItem<EP> eref = entityReferences.get(entry.getKey());
             if (eref != null && eref.isResolved()) {
-              resolveModelRef(entry.getKey(), fromSelfVar(eref.apply()), eref.location());
+              resolveModelRef(entry.getKey(), fromSelfVar(eref.apply()), false, eref.location());
               return true;
             } else
               return false;
@@ -367,7 +384,7 @@ public abstract class ReferenceContext<
         if (parentReferences == null) {
           allResolved = false;
           context.addError(
-              String.format("Projection '%s' is not defined (context: %s)", name, referencesNamespace),
+              String.format("Projection '%s' is not defined (context: '%s')", name, referencesNamespace),
               ref.location()
           );
         } else {

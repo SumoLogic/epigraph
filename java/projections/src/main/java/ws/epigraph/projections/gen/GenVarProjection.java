@@ -102,7 +102,17 @@ public interface GenVarProjection<
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
    * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
    */
+  @Deprecated
   @NotNull VP normalizedForType(@NotNull TypeApi type, @Nullable ProjectionReferenceName resultReferenceName);
+
+  /**
+   * Sets normalized tail reference name. Normalized tail produced using
+   * {@link #normalizedForType(TypeApi)} will have this reference name assigned
+   *
+   * @param type              target type
+   * @param tailReferenceName normalized tail reference name
+   */
+  void setNormalizedTailReferenceName(@NotNull TypeApi type, @NotNull ProjectionReferenceName tailReferenceName);
 
   /**
    * Merges var projections together.

@@ -92,7 +92,7 @@ public final class ReqUpdateProjectionsPsiParser {
         );
 
       final ReqUpdateVarProjection reference = context.varReferenceContext()
-          .varReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final ReqUpdateVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -167,7 +167,7 @@ public final class ReqUpdateProjectionsPsiParser {
         context.addUnverifiedRefOp(referenceName, op);
 
       return context.varReferenceContext()
-          .varReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
     }
 
   }

@@ -26,7 +26,7 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
-import ws.epigraph.projections.gen.GenProjectionReference;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
@@ -118,7 +118,7 @@ public final class OpProjectionsPsiParser {
                              : context.referenceContext().parentOrThis();  // tail: global context
 
       final OpOutputVarProjection reference = referenceContext
-          .varReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final OpOutputVarProjection value = parseUnnamedOrRefVarProjection(
           dataType,
@@ -145,21 +145,33 @@ public final class OpProjectionsPsiParser {
 
         // `reference` belongs to parent context and will contain normalized tail
 
-        GenProjectionReference.runOnResolved(
-            parentProjection,
-            () -> {
-              OpOutputVarProjection normalizedTail = parentProjection.normalizedForType(
-                  type,
-                  referenceContext.projectionReferenceName(projectionName)
-              );
-
-              referenceContext.resolveEntityRef( //resolve normalizedTailRef to normalizedTail
-                  projectionName,
-                  normalizedTail,
-                  EpigraphPsiUtil.getLocation(unnamedOrRefVarProjectionPsi)
-              );
-            }
+        ProjectionReferenceName referenceName = referenceContext.projectionReferenceName(projectionName);
+        parentProjection.setNormalizedTailReferenceName(type, referenceName);
+        // add parent reference that will call `normalizedForType` when dereferenced
+        referenceContext.addEntityReference(
+            projectionName,
+            new ReferenceContext.RefItem<>(
+                parentProjection,
+                p -> p.normalizedForType(type),
+                EpigraphPsiUtil.getLocation(unnamedOrRefVarProjectionPsi)
+            )
         );
+
+//        GenProjectionReference.runOnResolved(
+//            parentProjection,
+//            () -> {
+//              OpOutputVarProjection normalizedTail = parentProjection.normalizedForType(
+//                  type,
+//                  referenceName
+//              );
+//
+//              referenceContext.resolveEntityRef( //resolve normalizedTailRef to normalizedTail
+//                  projectionName,
+//                  normalizedTail,
+//                  EpigraphPsiUtil.getLocation(unnamedOrRefVarProjectionPsi)
+//              );
+//            }
+//        );
 
         return value; // return non-normalized tail
       }
@@ -200,7 +212,7 @@ public final class OpProjectionsPsiParser {
       final String projectionName = refNamePsi.getCanonicalName();
 
       return context.referenceContext()
-          .varReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
+          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(psi));
     }
   }
 
@@ -619,7 +631,7 @@ public final class OpProjectionsPsiParser {
       );
 
       if (parentProjection == null) {
-        referenceContext.<OpOutputModelProjection>resolveModelRef(
+        referenceContext.resolveModelRef(
             projectionName,
             value,
             EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
@@ -635,21 +647,34 @@ public final class OpProjectionsPsiParser {
 
         // `reference` belongs to parent context and will contain normalized tail
 
-        GenProjectionReference.runOnResolved(
-            (OpOutputModelProjection) parentProjection,
-            () -> {
-              OpOutputModelProjection<?, ?, ?, ?> normalizedTail = parentProjection.normalizedForType(
-                  type,
-                  referenceContext.projectionReferenceName(projectionName)
-              );
+        ProjectionReferenceName referenceName = referenceContext.projectionReferenceName(projectionName);
 
-              referenceContext.<OpOutputModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
-                  projectionName,
-                  normalizedTail,
-                  EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
-              );
-            }
+        parentProjection.setNormalizedTailReferenceName(type, referenceName);
+        // add parent reference that will call `normalizedForType` when dereferenced
+        referenceContext.addModelReference(
+            projectionName,
+            new ReferenceContext.RefItem<>(
+                parentProjection,
+                p -> p.normalizedForType(type),
+                EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+            )
         );
+
+//        GenProjectionReference.runOnResolved(
+//            (OpOutputModelProjection) parentProjection,
+//            () -> {
+//              OpOutputModelProjection<?, ?, ?, ?> normalizedTail = parentProjection.normalizedForType(
+//                  type,
+//                  referenceName
+//              );
+//
+//              referenceContext.<OpOutputModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
+//                  projectionName,
+//                  normalizedTail,
+//                  EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+//              );
+//            }
+//        );
 
         return value; // return non-normalized tail
       }

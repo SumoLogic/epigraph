@@ -58,6 +58,7 @@ public abstract class AbstractVarProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+  protected final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
   protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
@@ -185,6 +186,14 @@ public abstract class AbstractVarProjection<
     return polymorphicTails;
   }
 
+  @Override
+  public void setNormalizedTailReferenceName(
+      @NotNull TypeApi type,
+      @NotNull ProjectionReferenceName tailReferenceName) {
+
+    normalizedTailNames.put(type.name(), tailReferenceName);
+  }
+
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
 
 //  /**
@@ -206,7 +215,13 @@ public abstract class AbstractVarProjection<
 //  }
 
   @Override
+  public @NotNull VP normalizedForType(final @NotNull TypeApi type) {
+    return normalizedForType(type, normalizedTailNames.get(type.name()));
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
+  @Deprecated
   public @NotNull VP normalizedForType(
       @NotNull TypeApi targetType,
       @Nullable ProjectionReferenceName resultReferenceName) {
@@ -247,7 +262,6 @@ public abstract class AbstractVarProjection<
             if (this.name == null) {
               ref = context.newReference(effectiveType, self());
               ref.setReferenceName(normalizedRefName);
-              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
             } else {
               NormalizationContext.VisitedKey visitedKey =
                   new NormalizationContext.VisitedKey(this.name, effectiveType.name());
@@ -266,6 +280,7 @@ public abstract class AbstractVarProjection<
                     ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
                 );
             }
+            normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
 
             final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
             effectiveProjections.add(self()); //we're the least specific projection
@@ -472,6 +487,14 @@ public abstract class AbstractVarProjection<
 
     VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
+
+    // todo check for clashes
+    Map<TypeName, ProjectionReferenceName> mergedTailNames = new HashMap<>();
+    for (VP vp : varProjections) {
+      mergedTailNames.putAll(vp.normalizedTailNames);
+    }
+    res.normalizedTailNames.putAll(mergedTailNames);
+
     return res;
   }
 
@@ -565,7 +588,8 @@ public abstract class AbstractVarProjection<
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     this.normalizedFrom = value.normalizedFrom();
-    this.normalizedCache.putAll(((AbstractVarProjection<VP, TP, MP>) value).normalizedCache);
+//    this.normalizedCache.putAll(((AbstractVarProjection<VP, TP, MP>) value).normalizedCache);
+    this.normalizedTailNames.putAll(value.normalizedTailNames);
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks)
