@@ -19,6 +19,7 @@ package ws.epigraph.projections.req.output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
@@ -38,27 +39,27 @@ public abstract class ReqOutputModelProjection<
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
-  protected /*final*/ boolean required;
+  protected /*final*/ boolean flagged;
 
   protected ReqOutputModelProjection(
       @NotNull M model,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable MP metaProjection,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location) {
     super(model, params, metaProjection, directives, tails, location);
-    this.required = required;
+    this.flagged = flagged;
   }
 
   protected ReqOutputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
-  public boolean required() {
+  public boolean flagged() {
     assert isResolved();
-    return required;
+    return flagged;
   }
 
   @SuppressWarnings("unchecked")
@@ -81,6 +82,18 @@ public abstract class ReqOutputModelProjection<
   }
 
   @Override
+  public void setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    super.setEntityProjection(entityProjection);
+    if (entityProjection instanceof ReqOutputVarProjection) {
+      ReqOutputVarProjection r = (ReqOutputVarProjection) entityProjection;
+      if (r.flagged())
+        flagged = true;
+      else if (flagged())
+        r.flagged = true;
+    }
+  }
+
+  @Override
   protected SMP merge(
       final @NotNull M model,
       final @NotNull List<SMP> modelProjections,
@@ -91,7 +104,7 @@ public abstract class ReqOutputModelProjection<
 
     return merge(
         model,
-        modelProjections.stream().anyMatch(ReqOutputModelProjection::required),
+        modelProjections.stream().anyMatch(ReqOutputModelProjection::flagged),
         modelProjections,
         mergedParams,
         mergedDirectives,
@@ -102,7 +115,7 @@ public abstract class ReqOutputModelProjection<
 
   protected abstract SMP merge(
       @NotNull M model,
-      boolean mergedRequired,
+      boolean mergedFlagged,
       @NotNull List<SMP> modelProjections,
       @NotNull ReqParams mergedParams,
       @NotNull Directives mergedDirectives,
@@ -112,7 +125,7 @@ public abstract class ReqOutputModelProjection<
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     preResolveCheck(value);
-    required = value.required();
+    flagged = value.flagged();
     super.resolve(name, value);
   }
 
@@ -122,11 +135,11 @@ public abstract class ReqOutputModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final ReqOutputModelProjection<?, ?, ?> that = (ReqOutputModelProjection<?, ?, ?>) o;
-    return required == that.required;
+    return flagged == that.flagged;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), required);
+    return Objects.hash(super.hashCode(), flagged);
   }
 }

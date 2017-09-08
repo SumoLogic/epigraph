@@ -73,20 +73,26 @@ public class ReqOutputReferenceContext
 
   @Override
   protected @NotNull ReqOutputVarProjection toSelfVar(final @NotNull ReqOutputModelProjection<?, ?, ?> mRef) {
-    final DatumTypeApi modelType = mRef.type();
-    return new ReqOutputVarProjection(
-        modelType,
-        ProjectionUtils.singletonLinkedHashMap(
-            modelType.self().name(),
-            new ReqOutputTagProjectionEntry(
-                modelType.self(),
-                mRef,
-                TextLocation.UNKNOWN
-            )
-        ),
-        false,
-        null,
-        TextLocation.UNKNOWN
-    );
+    assert mRef.isResolved();
+    ReqOutputVarProjection ep = (ReqOutputVarProjection) mRef.entityProjection();
+    if (ep == null) {
+      final DatumTypeApi modelType = mRef.type();
+      return new ReqOutputVarProjection(
+          modelType,
+          mRef.flagged(),
+          ProjectionUtils.singletonLinkedHashMap(
+              modelType.self().name(),
+              new ReqOutputTagProjectionEntry(
+                  modelType.self(),
+                  mRef,
+                  TextLocation.UNKNOWN
+              )
+          ),
+          false,
+          null,
+          TextLocation.UNKNOWN
+      );
+    } else
+      return ep;
   }
 }

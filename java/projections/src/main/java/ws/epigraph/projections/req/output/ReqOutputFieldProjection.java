@@ -21,7 +21,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,32 +33,27 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
     ReqOutputFieldProjection
     > {
 
-//  private final boolean required;
+//  private final boolean flagged;
 
   public ReqOutputFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
       @NotNull ReqOutputVarProjection projection,
-//      boolean required,
+//      boolean flagged,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
-//    this.required = required;
+//    this.flagged = flagged;
   }
 
   /**
-   * @return {@code true} iff all models (including polymorphic tails) are required
+   * @return {@code true} iff field entity projection is flagged
    */
-  public boolean required() {
-    return required(varProjection());
+  public boolean flagged() {
+    return flagged(varProjection());
   }
 
-  private static boolean required(@NotNull ReqOutputVarProjection vp) {
-    if (vp.tagProjections().isEmpty() && vp.polymorphicTails() == null) return false;
-
-    if (vp.tagProjections().values().stream().anyMatch(tpe -> !tpe.projection().required()))
-      return false;
-    final Collection<ReqOutputVarProjection> tails = vp.polymorphicTails();
-    return tails == null || tails.stream().allMatch(ReqOutputFieldProjection::required);
+  private static boolean flagged(@NotNull ReqOutputVarProjection vp) {
+    return vp.flagged();
   }
 
   @Override
@@ -79,7 +73,7 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
 //        mergedParams,
 //        mergedAnnotations,
         mergedVarProjection,
-//        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::required),
+//        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::flagged),
         TextLocation.UNKNOWN
     );
   }
@@ -90,11 +84,11 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
 //    if (o == null || getClass() != o.getClass()) return false;
 //    if (!super.equals(o)) return false;
 //    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
-//    return required == that.required;
+//    return flagged == that.flagged;
 //  }
 //
 //  @Override
 //  public int hashCode() {
-//    return Objects.hash(super.hashCode(), required);
+//    return Objects.hash(super.hashCode(), flagged);
 //  }
 }

@@ -90,6 +90,6 @@ class ReqOutputMapModelProjectionGen(
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputMapModelProjection"),
-    required
+    flagged
   )
 }

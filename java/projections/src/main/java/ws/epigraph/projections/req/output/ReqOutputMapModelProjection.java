@@ -90,7 +90,7 @@ public class ReqOutputMapModelProjection
   @Override
   protected ReqOutputMapModelProjection merge(
       final @NotNull MapTypeApi model,
-      final boolean mergedRequired,
+      final boolean mergedFlagged,
       final @NotNull List<ReqOutputMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -121,7 +121,7 @@ public class ReqOutputMapModelProjection
 
     return new ReqOutputMapModelProjection(
         model,
-        mergedRequired,
+        mergedFlagged,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -141,7 +141,7 @@ public class ReqOutputMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new ReqOutputMapModelProjection(
         n.type(),
-        n.required(),
+        n.flagged(),
         n.params(),
         n.directives(),
         n.metaProjection(),

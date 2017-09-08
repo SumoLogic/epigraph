@@ -54,7 +54,7 @@ public class ReqOutputPrimitiveModelProjection
   @Override
   protected ReqOutputPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
-      final boolean mergedRequired,
+      final boolean mergedFlagged,
       final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -63,7 +63,7 @@ public class ReqOutputPrimitiveModelProjection
 
     return new ReqOutputPrimitiveModelProjection(
         model,
-        mergedRequired,
+        mergedFlagged,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,

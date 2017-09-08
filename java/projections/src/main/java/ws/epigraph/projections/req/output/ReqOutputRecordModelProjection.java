@@ -87,7 +87,7 @@ public class ReqOutputRecordModelProjection
   @Override
   protected ReqOutputRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
-      final boolean mergedRequired,
+      final boolean mergedFlagged,
       final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -111,7 +111,7 @@ public class ReqOutputRecordModelProjection
 
     return new ReqOutputRecordModelProjection(
         model,
-        mergedRequired,
+        mergedFlagged,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -126,10 +126,10 @@ public class ReqOutputRecordModelProjection
       final @NotNull DatumTypeApi targetType,
       final @NotNull ReqOutputRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
-    
+
     final Map<String, ReqOutputFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
-    
+
     final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,
         normalizedFields,
@@ -138,7 +138,7 @@ public class ReqOutputRecordModelProjection
 
     return new ReqOutputRecordModelProjection(
         n.type(),
-        n.required(),
+        n.flagged(),
         n.params(),
         n.directives(),
         n.metaProjection(),

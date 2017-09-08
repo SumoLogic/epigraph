@@ -143,8 +143,8 @@ public final class ReqTestUtil {
 
       @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           reqOutputPsiProcessingContext

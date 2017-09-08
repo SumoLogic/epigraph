@@ -73,7 +73,7 @@ public class ReqOutputListModelProjection
   @Override
   protected ReqOutputListModelProjection merge(
       final @NotNull ListTypeApi model,
-      final boolean mergedRequired,
+      final boolean mergedFlagged,
       final @NotNull List<ReqOutputListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -90,7 +90,7 @@ public class ReqOutputListModelProjection
 
     return new ReqOutputListModelProjection(
         model,
-        mergedRequired,
+        mergedFlagged,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -107,7 +107,7 @@ public class ReqOutputListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new ReqOutputListModelProjection(
         n.type(),
-        n.required(),
+        n.flagged(),
         n.params(),
         n.directives(),
         n.metaProjection(),

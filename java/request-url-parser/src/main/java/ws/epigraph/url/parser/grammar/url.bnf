@@ -206,7 +206,7 @@ reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordModelProjection // no ta
 reqOutputTrunkRecordModelProjection ::= '/' '+'? qid reqOutputTrunkFieldProjection {pin=3}
 reqOutputTrunkFieldProjection ::= /* reqParamsAndAnnotations */ reqOutputTrunkVarProjection
 
-reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection reqOutputTrunkVarProjection
+reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection '+'? reqOutputTrunkVarProjection
 private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
 
 // req output coma part

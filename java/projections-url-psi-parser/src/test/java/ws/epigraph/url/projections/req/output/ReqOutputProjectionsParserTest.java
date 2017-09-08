@@ -307,14 +307,14 @@ public class ReqOutputProjectionsParserTest {
   public void testRequiredField() {
     ReqOutputVarProjection vp = testParse(":record ( +id )", 1);
     ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
-    assertTrue(rmp.fieldProjection("id").fieldProjection().required());
+    assertTrue(rmp.fieldProjection("id").fieldProjection().flagged());
   }
 
   @Test
   public void testRequiredFieldWithTails() {
     testParse(
         ":record ( +bestFriend :( id ) :~ws.epigraph.tests.User :( profile ) )",
-        ":record ( +bestFriend :( +id ) :~ws.epigraph.tests.User :( +profile ) )",
+//        ":record ( +bestFriend :( +id ) :~ws.epigraph.tests.User :( +profile ) )",
         1
     );
   }
@@ -322,7 +322,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testRequiredFieldMultiModel() {
     // + on field implies + on models
-    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
+//    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
+    testParse(":record ( +bestFriend :( id, record ) )", 1);
   }
 
   @Test
@@ -496,6 +497,7 @@ public class ReqOutputProjectionsParserTest {
     final ReqOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
     final ReqOutputVarProjection normalizedVar = new ReqOutputVarProjection(
         varProjection.type(),
+        false,
         ProjectionUtils.singletonLinkedHashMap(
             tagProjectionEntry.tag().name(),
             new ReqOutputTagProjectionEntry(

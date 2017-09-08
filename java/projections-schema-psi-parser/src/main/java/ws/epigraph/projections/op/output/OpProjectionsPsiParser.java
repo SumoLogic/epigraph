@@ -341,16 +341,17 @@ public final class OpProjectionsPsiParser {
     if (tailPsi == null) tails = null;
     else {
       tails = new ArrayList<>();
+      boolean flagged = parentProjection.flagged();
 
       @Nullable SchemaOpOutputVarTailItem singleTail = tailPsi.getOpOutputVarTailItem();
       if (singleTail == null) {
         @Nullable SchemaOpOutputVarMultiTail multiTail = tailPsi.getOpOutputVarMultiTail();
         assert multiTail != null;
         for (SchemaOpOutputVarTailItem tailItem : multiTail.getOpOutputVarTailItemList()) {
-          tails.add(parseEntityTailItem(tailItem, dataType, parentProjection, typesResolver, context));
+          tails.add(parseEntityTailItem(tailItem, flagged, dataType, parentProjection, typesResolver, context));
         }
       } else {
-        tails.add(parseEntityTailItem(singleTail, dataType, parentProjection, typesResolver, context));
+        tails.add(parseEntityTailItem(singleTail, flagged, dataType, parentProjection, typesResolver, context));
       }
 
       SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
@@ -361,6 +362,7 @@ public final class OpProjectionsPsiParser {
 
   private static @NotNull OpOutputVarProjection parseEntityTailItem(
       final @NotNull SchemaOpOutputVarTailItem tailItem,
+      final boolean flagged,
       final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputVarProjection parentProjection,
       final @NotNull TypesResolver typesResolver,
@@ -368,7 +370,15 @@ public final class OpProjectionsPsiParser {
 
     @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
     @NotNull SchemaOpOutputVarProjection psiTailProjection = tailItem.getOpOutputVarProjection();
-    return buildTailProjection(dataType, tailTypeRef, psiTailProjection, parentProjection, typesResolver, context);
+    return buildTailProjection(
+        dataType,
+        flagged,
+        tailTypeRef,
+        psiTailProjection,
+        parentProjection,
+        typesResolver,
+        context
+    );
   }
 
   private static @Nullable GDatum getModelDefaultValue(
@@ -458,6 +468,7 @@ public final class OpProjectionsPsiParser {
 
   private static @NotNull OpOutputVarProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
+      boolean flagged,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpOutputVarProjection psiTailProjection,
       @NotNull OpOutputVarProjection parentProjection,
@@ -470,7 +481,7 @@ public final class OpProjectionsPsiParser {
 
     OpOutputVarProjection ep = parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
-        false, // todo allow flags on tails
+        flagged, // todo allow flags on tails
         psiTailProjection,
         parentProjection,
         typesResolver,

@@ -107,8 +107,8 @@ public final class WireTestUtil {
 
       StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           psiProcessingContext

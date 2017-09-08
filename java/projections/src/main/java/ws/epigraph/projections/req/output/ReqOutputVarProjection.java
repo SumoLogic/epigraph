@@ -21,10 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,8 +38,11 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     ReqOutputModelProjection<?, ?, ?>
     > {
 
+  protected /*final*/ boolean flagged;
+
   public ReqOutputVarProjection(
       @NotNull TypeApi type,
+      boolean flagged,
       @NotNull Map<String, ReqOutputTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<ReqOutputVarProjection> polymorphicTails,
@@ -45,11 +51,16 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
 
     if (tagProjections.size() > 1 && !parenthesized)
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
+
+    //noinspection ConstantConditions
+    this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
   }
 
   public ReqOutputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
   }
+
+  public boolean flagged() { return flagged; }
 
   @Override
   protected ReqOutputVarProjection merge(
@@ -59,8 +70,10 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
       final boolean mergedParenthesized,
       final List<ReqOutputVarProjection> mergedTails) {
 
+    boolean mergedFlagged = varProjections.stream().anyMatch(ReqOutputVarProjection::flagged);
     return new ReqOutputVarProjection(
         effectiveType,
+        mergedFlagged,
         mergedTags,
         mergedParenthesized, mergedTails,
         TextLocation.UNKNOWN
@@ -74,4 +87,24 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     );
   }
 
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputVarProjection value) {
+    preResolveCheck(value);
+    this.flagged = value.flagged();
+    super.resolve(name, value);
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    final ReqOutputVarProjection that = (ReqOutputVarProjection) o;
+    return flagged == that.flagged;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), flagged);
+  }
 }

@@ -156,8 +156,8 @@ public final class EpigraphTestUtil {
 
       @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           reqOutputPsiProcessingContext

@@ -76,7 +76,7 @@ class ReqOutputListModelProjectionGen(
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputListModelProjection"),
-    required
+    flagged
   )
 
 }

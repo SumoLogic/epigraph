@@ -112,8 +112,8 @@ public final class ReadRequestUrlPsiParser {
     if (trunkVarProjection != null) {
       @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           pathTipType,
-          op.outputProjection().varProjection(),
           false,
+          op.outputProjection().varProjection(),
           trunkVarProjection,
           newResolver,
           reqOutputPsiProcessingContext
@@ -125,8 +125,8 @@ public final class ReadRequestUrlPsiParser {
     } else if (comaVarProjection != null) {
       StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
           pathTipType,
-          op.outputProjection().varProjection(),
           false,
+          op.outputProjection().varProjection(),
           comaVarProjection,
           newResolver,
           reqOutputPsiProcessingContext
@@ -138,8 +138,10 @@ public final class ReadRequestUrlPsiParser {
       steps = 0;
       varProjection = new ReqOutputVarProjection(
           pathTipType.type(),
+          false,
           Collections.emptyMap(),
-          false, null,
+          false,
+          null,
           TextLocation.UNKNOWN
       );
       fieldLocation = TextLocation.UNKNOWN;

@@ -156,8 +156,8 @@ public final class RequestFactory {
         if (trunkVarProjection != null) {
           StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
               pathTipType,
-              operationDeclaration.outputProjection().varProjection(),
               false,
+              operationDeclaration.outputProjection().varProjection(),
               trunkVarProjection,
               typesResolver,
               reqOutputPsiProcessingContext
@@ -167,8 +167,8 @@ public final class RequestFactory {
         } else if (comaVarProjection != null) {
           StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
               pathTipType,
-              operationDeclaration.outputProjection().varProjection(),
               false,
+              operationDeclaration.outputProjection().varProjection(),
               comaVarProjection,
               typesResolver,
               reqOutputPsiProcessingContext
@@ -177,8 +177,10 @@ public final class RequestFactory {
         } else {
           ReqOutputVarProjection vp = new ReqOutputVarProjection(
               pathTipType.type(),
+              false,
               Collections.emptyMap(),
-              false, null,
+              false,
+              null,
               TextLocation.UNKNOWN
           );
           reqFieldProjection = new ReqOutputFieldProjection(vp, vp.location());
@@ -558,8 +560,8 @@ public final class RequestFactory {
     try {
       @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           reqOutputPsiProcessingContext

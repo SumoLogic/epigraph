@@ -42,7 +42,7 @@ public class ReqOutputDataValidator extends GenDataValidator<
   @Override
   protected void validateDataOnly(final @NotNull Data data, final @NotNull ReqOutputVarProjection projection) {
 
-    projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
+    projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
       final String obj = data.type().kind() == TypeKind.ENTITY ? "tag '" + tagName + "'" : "value";
@@ -67,7 +67,7 @@ public class ReqOutputDataValidator extends GenDataValidator<
       final @NotNull RecordDatum datum,
       final @NotNull ReqOutputRecordModelProjection projection) {
 
-    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
+    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
       final Data fieldData = datum._raw().fieldsData().get(fieldName);
