@@ -77,7 +77,7 @@
 
     <dependency>
       <groupId>com.lihaoyi</groupId>
-      <artifactId>pprint_${scala.version.major.minor}</artifactId>
+      <artifactId>pprint_${scala.compat.version}</artifactId>
       <scope>compile</scope><!-- TODO - use in test scope only? -->
     </dependency>
 
@@ -94,13 +94,13 @@
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+      <artifactId>scalatest_${scala.compat.version}</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.slf4s</groupId>
-      <artifactId>slf4s-api_${scala.version.major.minor}</artifactId>
+      <artifactId>slf4s-api_${scala.compat.version}</artifactId>
     </dependency>
 
     <dependency>

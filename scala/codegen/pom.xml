@@ -41,17 +41,17 @@
 
     <dependency>
       <groupId>org.scalameta</groupId>
-      <artifactId>trees_${scala.version.major.minor}</artifactId>
+      <artifactId>trees_${scala.compat.version}</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+      <artifactId>scalatest_${scala.compat.version}</artifactId>
     </dependency>
 
     <dependency>
       <groupId>com.lihaoyi</groupId>
-      <artifactId>pprint_${scala.version.major.minor}</artifactId>
+      <artifactId>pprint_${scala.compat.version}</artifactId>
       <scope>compile</scope><!-- TODO - use in test scope only? -->
     </dependency>
 

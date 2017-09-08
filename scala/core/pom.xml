@@ -15,7 +15,7 @@
 
     <dependency>
       <groupId>com.lihaoyi</groupId>
-      <artifactId>pprint_${scala.version.major.minor}</artifactId>
+      <artifactId>pprint_${scala.compat.version}</artifactId>
       <scope>compile</scope><!-- TODO - use in test scope only? -->
       <exclusions>
         <exclusion><!-- depends on outdated version... -->

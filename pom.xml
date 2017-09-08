@@ -113,11 +113,8 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scala.version.major>2</scala.version.major>
-    <scala.version.minor>11</scala.version.minor>
-    <scala.version.patch>11</scala.version.patch>
-    <scala.version.major.minor>${scala.version.major}.${scala.version.minor}</scala.version.major.minor>
-    <scala.version>${scala.version.major.minor}.${scala.version.patch}</scala.version>
+    <scala.compat.version>2.11</scala.compat.version>
+    <scala.version>${scala.compat.version}.11</scala.version>
 
   </properties>
 
@@ -144,13 +141,13 @@
 
       <dependency>
         <groupId>com.lihaoyi</groupId>
-        <artifactId>pprint_${scala.version.major.minor}</artifactId>
+        <artifactId>pprint_${scala.compat.version}</artifactId>
         <version>0.4.4</version>
       </dependency>
 
       <dependency>
         <groupId>com.typesafe.scala-logging</groupId>
-        <artifactId>scala-logging_${scala.version.major.minor}</artifactId>
+        <artifactId>scala-logging_${scala.compat.version}</artifactId>
         <version>3.7.2</version>
       </dependency>
 
@@ -310,18 +307,18 @@
 
       <dependency>
         <groupId>org.scalameta</groupId>
-        <artifactId>scalameta_${scala.version.major.minor}</artifactId>
+        <artifactId>scalameta_${scala.compat.version}</artifactId>
         <version>1.6.0</version>
       </dependency>
       <dependency>
         <groupId>org.scalameta</groupId>
-        <artifactId>trees_${scala.version.major.minor}</artifactId>
+        <artifactId>trees_${scala.compat.version}</artifactId>
         <version>1.6.0</version>
       </dependency>
 
       <dependency>
         <groupId>org.scalatest</groupId>
-        <artifactId>scalatest_${scala.version.major.minor}</artifactId>
+        <artifactId>scalatest_${scala.compat.version}</artifactId>
         <version>3.2.0-SNAP7</version>
         <scope>test</scope>
       </dependency>
@@ -344,7 +341,7 @@
 
       <dependency>
         <groupId>org.slf4s</groupId>
-        <artifactId>slf4s-api_${scala.version.major.minor}</artifactId>
+        <artifactId>slf4s-api_${scala.compat.version}</artifactId>
         <version>1.7.25</version>
       </dependency>
 
@@ -441,8 +438,8 @@
             </execution>
           </executions>
           <configuration>
-            <scalaVersion>${scala.version}</scalaVersion>
-            <scalaCompatVersion>${scala.version.major.minor}</scalaCompatVersion>
+            <!--<scalaVersion>${scala.version}</scalaVersion>-->
+            <!--<scalaCompatVersion>${scala.compat.version}</scalaCompatVersion>-->
             <failOnMultipleScalaVersions>true</failOnMultipleScalaVersions>
             <recompileMode>incremental</recompileMode><!-- compiles .java as well -->
             <args>
