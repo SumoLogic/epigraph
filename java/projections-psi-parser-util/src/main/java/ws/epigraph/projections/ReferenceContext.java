@@ -154,11 +154,11 @@ public abstract class ReferenceContext<
            (parent != null && parent.hasReference(name));
   }
 
-  public void resolveEntityRef( @NotNull String name, @NotNull EP value, @NotNull TextLocation location) {
+  public void resolveEntityRef(@NotNull String name, @NotNull EP value, @NotNull TextLocation location) {
     resolveEntityRef(name, value, true, location);
   }
 
-  private  <R extends GenProjectionReference<R>> void resolveEntityRef(
+  private <R extends GenProjectionReference<R>> void resolveEntityRef(
       @NotNull String name,
       @NotNull EP value,
       boolean updateMRef,
@@ -230,7 +230,7 @@ public abstract class ReferenceContext<
     });
   }
 
-  public void resolveModelRef( @NotNull String name, @NotNull MP value, @NotNull TextLocation location) {
+  public void resolveModelRef(@NotNull String name, @NotNull MP value, @NotNull TextLocation location) {
     resolveModelRef(name, value, true, location);
   }
 
@@ -476,6 +476,12 @@ public abstract class ReferenceContext<
     return tpe.projection();
   }
 
+  /**
+   * Updates references using a transformation map obtained
+   * during projection {@link GenProjectionTransformer transformation}.
+   *
+   * @param transformationMap references transformation map
+   */
   public final void transform(@NotNull GenProjectionTransformationMap<EP, MP> transformationMap) {
 //    if (!ensureAllReferencesResolved())
 //      throw new IllegalArgumentException(
@@ -526,6 +532,31 @@ public abstract class ReferenceContext<
     );
   }
 
+  /**
+   * Reference item is a pair of a reference of type {@code R}
+   * called "argument" and a function from {@code R} to {@code R}.
+   * <p>
+   * "argument" can be unresolved and can also be refined (changed) over time,
+   * for instance if projection is transformed and references
+   * are updated using {@link ReferenceContext#transform(GenProjectionTransformationMap)}
+   * transformation map.
+   * Function must be stateless.
+   * <p>
+   * In simplest case "argument" is target reference and function is identity,
+   * this case is described by {@link IdRefItem}.
+   * <p>
+   * A more complex case is a named normalized tail reference, for example
+   * <code>
+   * <pre>
+   *     outputProjection $foo = ( a, b ) ~Bar $bar = ( c )
+   *   </pre>
+   * </code>
+   * This results in "bar" reference created in the same context as "foo", with
+   * {@code RefItem} having "foo" as the argument and a call
+   * to {@link GenModelProjection#normalizedForType(DatumTypeApi) normalizedForType} as a function
+   *
+   * @param <R>
+   */
   public static class RefItem<R extends GenProjectionReference</*R*/?>> {
     private @NotNull R argument;
     private final @NotNull Function<R, R> func;

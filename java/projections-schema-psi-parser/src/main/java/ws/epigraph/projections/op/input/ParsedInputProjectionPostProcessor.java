@@ -36,5 +36,67 @@ class ParsedInputProjectionPostProcessor extends OpProjectionTransformer {
 
 
   // todo
+  /*
+  public static @NotNull OpOutputVarProjection parseVarProjection(
+      @NotNull DataTypeApi dataType,
+      boolean flagged,
+      @NotNull SchemaOpOutputVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    OpOutputVarProjection res =
+        OpProjectionsPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
+
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      OpOutputVarProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
+  }
+
+  public static @NotNull OpOutputFieldProjection parseFieldProjection(
+      @NotNull DataTypeApi fieldType,
+      boolean flagged,
+      @NotNull SchemaOpOutputFieldProjection psi,
+      @NotNull TypesResolver resolver,
+      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+
+    OpOutputFieldProjection res =
+        OpProjectionsPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
+
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      @NotNull OpOutputFieldProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
+  }
+
+  public static OpOutputVarProjection parseUnnamedOrRefVarProjection(
+      @NotNull DataTypeApi dataType,
+      boolean flagged,
+      @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpOutputPsiProcessingContext context)
+      throws PsiProcessingException {
+
+    OpOutputVarProjection res =
+        OpProjectionsPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
+
+    if (enabled) {
+      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
+      OpOutputVarProjection transformed =
+          new ParsedOutputProjectionPostProcessor(context).transform(transformationMap, res);
+      context.referenceContext().transform(transformationMap);
+      return transformed;
+    } else
+      return res;
+  }
+  */
 
 }

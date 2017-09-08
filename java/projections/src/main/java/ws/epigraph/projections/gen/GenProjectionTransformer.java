@@ -28,7 +28,6 @@ import java.util.*;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-@Deprecated // transformations break references
 public abstract class GenProjectionTransformer<
     VP extends GenVarProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
@@ -41,17 +40,17 @@ public abstract class GenProjectionTransformer<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
 
-  private final Map<VP, VP> transformedCache = new IdentityHashMap<>();
+  private final Map<VP, VP> transformedEntitiesCache = new IdentityHashMap<>();
+  private final Map<MP, MP> transformedModelsCache = new IdentityHashMap<>();
   private final Map<VP, VP> visited = new IdentityHashMap<>();
-//  private final Map<VP, VP> postponed = new IdentityHashMap<>();
   private final Set<VP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
 
   private GenProjectionTransformationMap<VP, MP> transformationMap = null;
 
   void reset() {
-    transformedCache.clear();
+    transformedEntitiesCache.clear();
+    transformedModelsCache.clear();
     visited.clear();
-//    postponed.clear();
     usedRecursively.clear();
   }
 
@@ -64,29 +63,22 @@ public abstract class GenProjectionTransformer<
   }
 
   protected @NotNull VP transform(@NotNull VP projection) {
-    VP cached = transformedCache.get(projection);
+    VP cached = transformedEntitiesCache.get(projection);
     if (cached != null)
       return cached;
-    if (transformedCache.values().contains(projection))
+    if (transformedEntitiesCache.values().contains(projection))
       return projection; // avoid transforming what is already transformed
 
     // postpone transformation if projection is not resolved yet
-//    VP res = postponed.get(projection);
-//    if (res != null)
-//      return res;
 
     if (projection.isResolved()) {
       return transformResolved(projection);
     } else {
       final VP ref = newEntityRef(projection.type(), projection.location());
-      transformedCache.put(projection, ref);
-//      postponed.put(projection, ref);
+      transformedEntitiesCache.put(projection, ref);
       projection.runOnResolved(() -> {
         VP transformed = transformResolved(projection);
-        transformed.runOnResolved(() -> {
-//          postponed.remove(projection);
-          ref.resolve(projection.referenceName(), transformed);
-        });
+        transformed.runOnResolved(() -> ref.resolve(projection.referenceName(), transformed));
       });
       return ref;
     }
@@ -141,18 +133,44 @@ public abstract class GenProjectionTransformer<
     if (usedRec) {
       res.resolve(projection.referenceName(), transformed);
       transformationMap.addEntityMapping(projection, res);
-      transformedCache.put(projection, res);
+      transformedEntitiesCache.put(projection, res);
       return res;
     } else {
       transformationMap.addEntityMapping(projection, transformed);
-      transformedCache.put(projection, transformed);
+      transformedEntitiesCache.put(projection, transformed);
       return transformed;
     }
   }
 
-
   @SuppressWarnings("unchecked")
   protected @NotNull MP transform(@NotNull MP projection) {
+    MP cached = transformedModelsCache.get(projection);
+    if (cached != null)
+      return cached;
+    if (transformedModelsCache.values().contains(projection))
+      return projection; // avoid transforming what is already transformed
+
+    // postpone transformation if projection is not resolved yet
+
+    if (projection.isResolved()) {
+      return transformResolved(projection);
+    } else {
+      final MP ref = newModelRef(projection.type(), projection.location());
+      transformedModelsCache.put(projection, ref);
+      projection.runOnResolved(() -> {
+        MP transformed = transformResolved(projection);
+        transformed.runOnResolved(() -> ((GenProjectionReference<MP>) ref).resolve(
+            projection.referenceName(),
+            transformed
+        ));
+      });
+      return ref;
+    }
+
+  }
+
+  @SuppressWarnings("unchecked")
+  private @NotNull MP transformResolved(@NotNull MP projection) {
     // postpone transformation if projection is not resolved yet
     if (!projection.isResolved()) {
       final MP ref = newModelRef(projection.type(), projection.location());
