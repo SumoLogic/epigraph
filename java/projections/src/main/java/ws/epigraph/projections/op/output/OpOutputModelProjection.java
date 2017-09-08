@@ -22,6 +22,7 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.AbstractOpModelProjection;
 import ws.epigraph.projections.op.OpParams;
@@ -66,6 +67,18 @@ public abstract class OpOutputModelProjection<
   public boolean flagged() { return flagged; }
 
   public @Nullable D defaultValue() { return defaultValue; }
+
+  @Override
+  public void setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    super.setEntityProjection(entityProjection);
+    if (entityProjection instanceof OpOutputVarProjection) {
+      OpOutputVarProjection o = (OpOutputVarProjection) entityProjection;
+      if (o.flagged())
+        flagged = true;
+      else if (flagged())
+        o.flagged = true;
+    }
+  }
 
   @SuppressWarnings("unchecked")
   @Override

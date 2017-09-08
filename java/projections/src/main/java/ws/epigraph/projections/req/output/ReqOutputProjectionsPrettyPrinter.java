@@ -106,7 +106,6 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
       l.end();
     } else {
       l.beginIInd();
-      if (mp.keysRequired()) l.print("+");
       l.print("[");
 
       if (keys == null) {
@@ -126,7 +125,9 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         }
       }
 
-      brk().print("](");
+      brk().print("]");
+      if (mp.keysRequired()) l.print("+");
+      l.print("(");
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
         brk();

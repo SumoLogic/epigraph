@@ -142,7 +142,7 @@ private requestParamRecover ::= ! ( '?' | '&' )
 
 reqParam ::= ';' qid '=' datum // todo attach reqInputProjection too?
 reqAnnotation ::= '!' annotation
-private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )* 
+private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 
 // req path --------------------------------------------------------
 
@@ -188,7 +188,7 @@ reqOutputUnnamedTrunkVarProjection ::= ( reqOutputStarTagProjection
                                 | reqOutputTrunkSingleTagProjection
                                 ) reqOutputVarPolymorphicTail?
 
-reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqOutputTrunkModelProjectionWithProperties reqOutputModelMeta?
+reqOutputTrunkSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? reqOutputTrunkModelProjectionWithProperties reqOutputModelMeta?
 
 private reqOutputTrunkModelProjectionWithProperties ::= reqParamsAndAnnotations reqOutputTrunkModelProjection
 
@@ -221,7 +221,7 @@ reqOutputUnnamedComaVarProjection ::= ( reqOutputStarTagProjection
                                       ) reqOutputVarPolymorphicTail?
 private reqOutputBracedComaVarProjection ::= '(' reqOutputComaVarProjection ')'
 
-reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaModelProjectionWithProperties
+reqOutputComaSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? reqOutputComaModelProjectionWithProperties
 reqOutputComaMultiTagProjection ::= ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')' {pin=2}
 reqOutputComaMultiTagProjectionItem ::= '+'? tagName reqOutputComaModelProjectionWithProperties
 
@@ -244,10 +244,12 @@ reqOutputComaRecordModelProjection ::= '(' ( '*' | ( (reqOutputComaFieldProjecti
 reqOutputComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqOutputComaVarProjection
 
 // req output list
-reqOutputComaListModelProjection ::= '*' ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )? { pin=1 }
+// todo parser +
+reqOutputComaListModelProjection ::= '*' '+'? ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )? { pin=1 }
 
 // req output map
-reqOutputComaMapModelProjection ::= '+'? reqOutputComaKeysProjection ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
+// todo parser +
+reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '+'? ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
 reqOutputComaKeysProjection ::= '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
 

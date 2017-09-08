@@ -154,7 +154,7 @@ public class ReqOutputRequiredDataPrunerTest {
                 .put("3", null),
 
             "[](id)",
-            "+[1,2,3](+id)"
+            "[1,2,3]+(+id)"
         ),
 
         "['2']/id : Required data is a [111] error: xxx"
