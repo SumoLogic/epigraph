@@ -184,8 +184,8 @@ public final class ReadRequestUrlPsiParser {
 
     final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-            false,  // ?
             resourceType, //op.outputType() ? same for reads
+            false,  // ?
             op.outputProjection(),
             fieldProjectionPsi, newResolver,
             reqOutputPsiProcessingContext
