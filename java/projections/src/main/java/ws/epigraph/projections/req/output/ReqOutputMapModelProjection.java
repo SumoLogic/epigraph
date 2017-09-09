@@ -51,7 +51,7 @@ public class ReqOutputMapModelProjection
 
   public ReqOutputMapModelProjection(
       @NotNull MapTypeApi model,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
@@ -61,7 +61,7 @@ public class ReqOutputMapModelProjection
       @Nullable List<ReqOutputMapModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, required, params, directives, metaProjection, tails, location);
+    super(model, flagged, params, directives, metaProjection, tails, location);
     this.keys = keys == null ? null : Collections.unmodifiableList(keys);
     this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;

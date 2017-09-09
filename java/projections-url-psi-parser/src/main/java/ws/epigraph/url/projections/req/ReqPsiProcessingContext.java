@@ -44,7 +44,7 @@ public abstract class ReqPsiProcessingContext<
     varReferenceContext = context;
   }
 
-  public @NotNull VRC varReferenceContext() { return varReferenceContext; }
+  public @NotNull VRC referenceContext() { return varReferenceContext; }
 
   public @Nullable Queue<OVP> verifiedRefOps(@NotNull String name) {
     return verifiedRefOps.get(name);
@@ -62,7 +62,7 @@ public abstract class ReqPsiProcessingContext<
   public @Nullable Queue<OVP> unverifiedRefOps(@NotNull String name) {
     return unverifiedRefOps.get(name);
   }
-  
+
   public void addUnverifiedRefOp(@NotNull String name, OVP op) {
     Queue<OVP> ops = unverifiedRefOps(name);
     if (ops == null) {

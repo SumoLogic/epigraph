@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
+package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.names.DataTypeName;
+import ws.epigraph.projections.op.OpProjectionTransformer;
+import ws.epigraph.psi.PsiProcessingContext;
 
 /**
+ * Post-processor for input projections. Does a few things:
+ * <ul>
+ *   <li>Checks that required (+) entity projections are either self-vars or have a retro tag</li>
+ *   <li>If the above test passes: marks all entity models as required</li>
+ * </ul>
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface DataTypeApi {
-  @NotNull TypeApi type();
+class OpInputProjectionPostProcessor extends OpProjectionTransformer {
+  // logic here is similar to ReqOutputProjectionPostProcessor, keep them in sync
 
-  @Nullable TagApi defaultTag(); // todo rename to retro
+  private final @NotNull PsiProcessingContext context;
 
-  @NotNull DataTypeName name();
+  OpInputProjectionPostProcessor(final @NotNull PsiProcessingContext context) {this.context = context;}
+
+  // todo
 }

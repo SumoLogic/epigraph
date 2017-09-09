@@ -88,7 +88,7 @@ public class ProjectionsTransformerTest {
       }
     };
 
-    vp = t.transform(transformationMap, vp);
+    vp = t.transform(transformationMap, vp, null);
 
     s = EpigraphTestUtil.printOpOutputVarProjection(vp);
     assertEquals(transformedProjection, s);

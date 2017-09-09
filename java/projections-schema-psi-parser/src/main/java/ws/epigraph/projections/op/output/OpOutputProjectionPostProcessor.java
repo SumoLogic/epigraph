@@ -21,7 +21,7 @@ import ws.epigraph.projections.op.OpProjectionTraversal;
 import ws.epigraph.psi.PsiProcessingContext;
 
 /**
- * Post-processor for input projections. Does a few things:
+ * Post-processor for output projections. Does a few things:
  * <ul>
  * <li>Checks that there are no default values</li>
  * <li>Checks that there are no default flags</li>
@@ -29,10 +29,10 @@ import ws.epigraph.psi.PsiProcessingContext;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ParsedOutputProjectionPostProcessor extends OpProjectionTraversal {
+class OpOutputProjectionPostProcessor extends OpProjectionTraversal {
   private final @NotNull PsiProcessingContext context;
 
-  ParsedOutputProjectionPostProcessor(final @NotNull PsiProcessingContext context) {this.context = context;}
+  OpOutputProjectionPostProcessor(final @NotNull PsiProcessingContext context) {this.context = context;}
 
   @Override
   protected boolean visitVarProjection(final @NotNull OpOutputVarProjection projection) {

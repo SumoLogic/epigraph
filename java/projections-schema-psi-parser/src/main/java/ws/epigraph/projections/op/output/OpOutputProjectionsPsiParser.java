@@ -41,7 +41,7 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputVarProjection res =
         OpProjectionsPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
 
-    new ParsedOutputProjectionPostProcessor(context).traverse(res);
+    new OpOutputProjectionPostProcessor(context).traverse(res);
     return res;
   }
 
@@ -55,7 +55,7 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputFieldProjection res =
         OpProjectionsPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
 
-    new ParsedOutputProjectionPostProcessor(context).traverse(res);
+    new OpOutputProjectionPostProcessor(context).traverse(res);
     return res;
   }
 
@@ -70,7 +70,7 @@ public final class OpOutputProjectionsPsiParser {
     OpOutputVarProjection res =
         OpProjectionsPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
 
-    new ParsedOutputProjectionPostProcessor(context).traverse(res);
+    new OpOutputProjectionPostProcessor(context).traverse(res);
     return res;
   }
 }

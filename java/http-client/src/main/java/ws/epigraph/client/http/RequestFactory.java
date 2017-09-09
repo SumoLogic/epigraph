@@ -122,8 +122,8 @@ public final class RequestFactory {
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
         StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
             ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-                false,  // ?
                 resourceType,
+                false,  // ?
                 operationDeclaration.outputProjection(),
                 psi,
                 typesResolver,

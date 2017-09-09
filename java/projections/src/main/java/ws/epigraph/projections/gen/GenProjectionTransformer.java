@@ -19,9 +19,7 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TagApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 import java.util.*;
 
@@ -56,13 +54,14 @@ public abstract class GenProjectionTransformer<
 
   public @NotNull VP transform(
       @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
-      @NotNull VP projection) {
+      @NotNull VP projection,
+      @Nullable DataTypeApi dataType) {
 
     this.transformationMap = transformationMap;
-    return transform(projection);
+    return transform(projection, dataType);
   }
 
-  protected @NotNull VP transform(@NotNull VP projection) {
+  protected @NotNull VP transform(@NotNull VP projection, @Nullable DataTypeApi dataType) {
     VP cached = transformedEntitiesCache.get(projection);
     if (cached != null)
       return cached;
@@ -72,19 +71,19 @@ public abstract class GenProjectionTransformer<
     // postpone transformation if projection is not resolved yet
 
     if (projection.isResolved()) {
-      return transformResolved(projection);
+      return transformResolved(projection, dataType);
     } else {
       final VP ref = newEntityRef(projection.type(), projection.location());
       transformedEntitiesCache.put(projection, ref);
       projection.runOnResolved(() -> {
-        VP transformed = transformResolved(projection);
+        VP transformed = transformResolved(projection, dataType);
         transformed.runOnResolved(() -> ref.resolve(projection.referenceName(), transformed));
       });
       return ref;
     }
   }
 
-  private @NotNull VP transformResolved(@NotNull VP projection) {
+  protected @NotNull VP transformResolved(@NotNull VP projection, @Nullable DataTypeApi dataType) {
     VP res = visited.get(projection);
     if (res != null) {
       usedRecursively.add(res); // do the same for models? or vars is enough?
@@ -117,7 +116,7 @@ public abstract class GenProjectionTransformer<
     if (tails != null) {
       transformedTails = new ArrayList<>(tails.size());
       for (final VP tail : tails) {
-        VP transformedTail = transform(tail);
+        VP transformedTail = transform(tail, dataType);
 
         if (transformedTail != tail)
           tailsChanged = true;
@@ -125,7 +124,13 @@ public abstract class GenProjectionTransformer<
       }
     }
 
-    VP transformed = transformVarProjection(projection, transformedTags, transformedTails, tagsChanged || tailsChanged);
+    VP transformed = transformVarProjection(
+        projection,
+        dataType,
+        transformedTags,
+        transformedTails,
+        tagsChanged || tailsChanged
+    );
     visited.remove(projection);
     boolean usedRec = usedRecursively.contains(res);
     usedRecursively.remove(res);
@@ -247,7 +252,7 @@ public abstract class GenProjectionTransformer<
       FPE fpe = entry.getValue();
 
       FP fp = fpe.fieldProjection();
-      FP transformedFp = transform(fp);
+      FP transformedFp = transform(fp, fpe.field().dataType());
       FPE transformed = transformFieldProjectionEntry(projection, fpe, transformedFp, fp != transformedFp);
 
       if (transformed != fpe)
@@ -264,14 +269,18 @@ public abstract class GenProjectionTransformer<
     );
   }
 
-  public @NotNull FP transform(@NotNull GenProjectionTransformationMap<VP, MP> transformationMap, @NotNull FP fp) {
+  public @NotNull FP transform(
+      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
+      @NotNull FP fp,
+      @NotNull DataTypeApi dataType) {
+
     this.transformationMap = transformationMap;
-    return transform(fp);
+    return transform(fp, dataType);
   }
 
-  private @NotNull FP transform(@NotNull FP fp) {
+  private @NotNull FP transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
     VP ep = fp.varProjection();
-    VP transformedEp = transform(ep);
+    VP transformedEp = transform(ep, dataType);
     return transformFieldProjection(fp, transformedEp, ep != transformedEp);
   }
 
@@ -282,7 +291,7 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    VP transformedItemsProjection = transform(projection.itemsProjection());
+    VP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().valueType());
     //noinspection unchecked
     return transformMapModelProjection(
         projection,
@@ -300,7 +309,7 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    VP transformedItemsProjection = transform(projection.itemsProjection());
+    VP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().elementType());
     //noinspection unchecked
     return transformListModelProjection(
         projection,
@@ -325,14 +334,16 @@ public abstract class GenProjectionTransformer<
    * Transforms var projection
    *
    * @param varProjection             original instance
+   * @param dataType                  data type of the container that holds this projection (field, map or list entry), if known
    * @param transformedTagProjections transformed tag projections
    * @param transformedTails          transformed tail projections
    * @param mustRebuild               {@code true} iff any of the parts (tags or tails) has changed and projection must be rebuilt
    *
    * @return original or transformed projection
    */
-  protected abstract @NotNull VP transformVarProjection(
+  protected abstract VP transformVarProjection(
       @NotNull VP varProjection,
+      @Nullable DataTypeApi dataType,
       @NotNull Map<String, TP> transformedTagProjections,
       @Nullable List<VP> transformedTails,
       boolean mustRebuild);

@@ -89,7 +89,7 @@ public final class ReqDeleteProjectionsPsiParser {
             context.messages()
         );
 
-      final ReqDeleteVarProjection reference = context.varReferenceContext()
+      final ReqDeleteVarProjection reference = context.referenceContext()
           .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final ReqDeleteVarProjection value = parseUnnamedOrRefVarProjection(
@@ -100,7 +100,7 @@ public final class ReqDeleteProjectionsPsiParser {
           context
       );
 
-      context.varReferenceContext()
+      context.referenceContext()
           .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
       final Queue<OpDeleteVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
@@ -160,7 +160,7 @@ public final class ReqDeleteProjectionsPsiParser {
       if (verifiedOps == null || !verifiedOps.contains(op))
         context.addUnverifiedRefOp(referenceName, op);
 
-      return context.varReferenceContext()
+      return context.referenceContext()
           .entityReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi));
     }
 

@@ -96,7 +96,7 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-      final ReqOutputVarProjection reference = context.varReferenceContext()
+      final ReqOutputVarProjection reference = context.referenceContext()
           .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
@@ -109,7 +109,7 @@ public final class ReqProjectionsPsiParser {
               context
           );
 
-      context.varReferenceContext()
+      context.referenceContext()
           .resolveEntityRef(
               projectionName,
               stepsAndProjection.projection(),
@@ -367,7 +367,7 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-      final ReqOutputVarProjection reference = context.varReferenceContext()
+      final ReqOutputVarProjection reference = context.referenceContext()
           .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
       final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = parseUnnamedOrRefComaVarProjection(
@@ -379,7 +379,7 @@ public final class ReqProjectionsPsiParser {
           context
       );
 
-      context.varReferenceContext()
+      context.referenceContext()
           .resolveEntityRef(
               projectionName,
               stepsAndProjection.projection(),
@@ -451,7 +451,7 @@ public final class ReqProjectionsPsiParser {
 
       return new StepsAndProjection<>(
           0,
-          context.varReferenceContext()
+          context.referenceContext()
               .entityReference(dataType.type(), referenceName, true, EpigraphPsiUtil.getLocation(psi))
       );
     }

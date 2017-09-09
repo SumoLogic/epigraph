@@ -47,14 +47,14 @@ public class ReqOutputListModelProjection
 
   public ReqOutputListModelProjection(
       @NotNull ListTypeApi model,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @NotNull ReqOutputVarProjection itemsProjection,
       @Nullable List<ReqOutputListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, directives, metaProjection, tails, location);
+    super(model, flagged, params, directives, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 

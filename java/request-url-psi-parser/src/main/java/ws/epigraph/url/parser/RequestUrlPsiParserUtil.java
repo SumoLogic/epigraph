@@ -74,8 +74,8 @@ public final class RequestUrlPsiParserUtil {
     } else {
       final StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
           ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-              false, // ?
               dataType,
+              false, // ?
               op,
               psi,
               resolver,

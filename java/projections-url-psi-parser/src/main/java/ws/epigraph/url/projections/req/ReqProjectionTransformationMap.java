@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.types;
+package ws.epigraph.url.projections.req;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.names.DataTypeName;
+import ws.epigraph.projections.gen.GenProjectionTransformationMap;
+import ws.epigraph.projections.req.output.ReqOutputModelProjection;
+import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface DataTypeApi {
-  @NotNull TypeApi type();
-
-  @Nullable TagApi defaultTag(); // todo rename to retro
-
-  @NotNull DataTypeName name();
+public class ReqProjectionTransformationMap
+    extends GenProjectionTransformationMap<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {
 }

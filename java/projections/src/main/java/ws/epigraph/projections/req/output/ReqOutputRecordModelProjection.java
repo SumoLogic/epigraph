@@ -54,7 +54,7 @@ public class ReqOutputRecordModelProjection
 
   public ReqOutputRecordModelProjection(
       @NotNull RecordTypeApi model,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
@@ -62,7 +62,7 @@ public class ReqOutputRecordModelProjection
       @Nullable List<ReqOutputRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, required, params, directives, metaProjection, tails, location);
+    super(model, flagged, params, directives, metaProjection, tails, location);
     this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);

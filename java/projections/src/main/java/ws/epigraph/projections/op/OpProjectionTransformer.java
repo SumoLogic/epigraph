@@ -41,9 +41,12 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     OpOutputFieldProjection
     > {
 
+  // NB keep in sync with OpProjectionTransformer
+
   @Override
-  protected @NotNull OpOutputVarProjection transformVarProjection(
+  protected OpOutputVarProjection transformVarProjection(
       final @NotNull OpOutputVarProjection varProjection,
+      final @Nullable DataTypeApi dataType,
       final @NotNull Map<String, OpOutputTagProjectionEntry> transformedTagProjections,
       final @Nullable List<OpOutputVarProjection> transformedTails,
       final boolean mustRebuild) {
@@ -57,8 +60,8 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           transformedTails,
           varProjection.location()
       );
-      newProjection.setReferenceName(varProjection.referenceName());
-      newProjection.copyNormalizedTailReferenceNames(varProjection);
+
+      fixTransformedEntity(varProjection, newProjection);
       return newProjection;
     } else return varProjection;
   }
@@ -100,13 +103,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           recordModelProjection.location()
       );
 
-      newProjection.setReferenceName(recordModelProjection.referenceName());
-//      AbstractVarProjection<?, ?, ?> entityProjection = recordModelProjection.entityProjection();
-//      if (entityProjection != null) {
-//        newProjection.setEntityProjection(entityProjection);
-//      }
-
-      newProjection.copyNormalizedTailReferenceNames(recordModelProjection);
+      fixTransformedModel(recordModelProjection, newProjection);
       return newProjection;
     } else return recordModelProjection;
   }
@@ -159,13 +156,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           mapModelProjection.location()
       );
 
-      newProjection.setReferenceName(mapModelProjection.referenceName());
-//      AbstractVarProjection<?, ?, ?> entityProjection = mapModelProjection.entityProjection();
-//      if (entityProjection != null) {
-//        newProjection.setEntityProjection(entityProjection);
-//      }
-
-      newProjection.copyNormalizedTailReferenceNames(mapModelProjection);
+      fixTransformedModel(mapModelProjection, newProjection);
       return newProjection;
     } else return mapModelProjection;
   }
@@ -191,13 +182,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           listModelProjection.location()
       );
 
-      newProjection.setReferenceName(listModelProjection.referenceName());
-//      AbstractVarProjection<?, ?, ?> entityProjection = listModelProjection.entityProjection();
-//      if (entityProjection != null) {
-//        newProjection.setEntityProjection(entityProjection);
-//      }
-
-      newProjection.copyNormalizedTailReferenceNames(listModelProjection);
+      fixTransformedModel(listModelProjection, newProjection);
       return newProjection;
     } else return listModelProjection;
   }
@@ -221,15 +206,23 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
           primitiveModelProjection.location()
       );
 
-      newProjection.setReferenceName(primitiveModelProjection.referenceName());
-//      AbstractVarProjection<?, ?, ?> entityProjection = primitiveModelProjection.entityProjection();
-//      if (entityProjection != null) {
-//        newProjection.setEntityProjection(entityProjection);
-//      }
-
-      newProjection.copyNormalizedTailReferenceNames(primitiveModelProjection);
+      fixTransformedModel(primitiveModelProjection, newProjection);
       return newProjection;
     } else return primitiveModelProjection;
+  }
+
+  protected void fixTransformedEntity(@NotNull OpOutputVarProjection old, @NotNull OpOutputVarProjection _new) {
+    _new.setReferenceName(old.referenceName());
+    _new.copyNormalizedTailReferenceNames(old);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected <SMP extends OpOutputModelProjection<?, SMP, ?, ?>> void fixTransformedModel(
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> old,
+      @NotNull OpOutputModelProjection<?, SMP, ?, ?> _new) {
+
+    _new.setReferenceName(old.referenceName());
+    _new.copyNormalizedTailReferenceNames((SMP) old);
   }
 
   @Override

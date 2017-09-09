@@ -35,13 +35,13 @@ public class ReqOutputPrimitiveModelProjection
 
   public ReqOutputPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqOutputPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, required, params, directives, metaProjection, tails, location);
+    super(model, flagged, params, directives, metaProjection, tails, location);
   }
 
   public ReqOutputPrimitiveModelProjection(
