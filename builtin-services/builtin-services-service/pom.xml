@@ -24,7 +24,7 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph-builtin-services</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7-SNAPSHOT</version>
   </parent>
 
   <dependencies>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-http-server-undertow</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.7-SNAPSHOT</version>
     </dependency>
 
     <dependency>
