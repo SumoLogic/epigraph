@@ -20,21 +20,21 @@ NEW_VERSION="${NEW_VERSION}-SNAPSHOT"
 echo "New version: ${NEW_VERSION}"
 
 echo "removing -SNAPSHOT from current version"
-./mvnw build-helper:parse-version versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}'
+./mvnw -Plight-psi,main build-helper:parse-version versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}'
 
 echo "building"
-./mvnw clean install -Plight-psi
-./mvnw -DdeployAtEnd=true clean deploy -fae
+# ./mvnw clean install -Plight-psi
+./mvnw -Plight-psi,main -DdeployAtEnd=true clean deploy -fae
 
 echo "committing version change"
-./mvnw scm:checkin -Dmessage='release ${project.version} version change' -DpushChanges=false
+./mvnw -Plight-psi,main scm:checkin -Dmessage='release ${project.version} version change' -DpushChanges=false
 
 echo "tagging"
-./mvnw scm:tag -Dtag='release_${project.version}' -DpushChanges=false
+./mvnw -Plight-psi,main scm:tag -Dtag='release_${project.version}' -DpushChanges=false
 
 echo "setting new version"
-./mvnw versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion="${NEW_VERSION}"
-./mvnw scm:checkin -Dmessage="${NEW_VERSION} version change" -DpushChanges=false
+./mvnw -Plight-psi,main versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion="${NEW_VERSION}"
+./mvnw -Plight-psi,main scm:checkin -Dmessage="${NEW_VERSION} version change" -DpushChanges=false
 
 echo "synchronizing gradle version"
 .jenkins/sync-gradle-version.sh
