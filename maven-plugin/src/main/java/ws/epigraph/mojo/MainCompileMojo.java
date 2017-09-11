@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Compile Epigraph Schema source files (.epigraph).
+ * Compiles Epigraph Schema sources (<code>*.epigraph</code>).
  */
 @Mojo(
     name = "compile",
@@ -41,10 +41,9 @@ import java.util.Collection;
 public class MainCompileMojo extends BaseCompileMojo {
 
   /**
-   * The source directory of Epigraph Schema files. This directory is added to the
-   * classpath at schema compiling time. All files can therefore be referenced
-   * as classpath resources following the directory structure under the
-   * source directory.
+   * The source directory of Epigraph Schema files. This directory is added to the classpath at schema compiling time.
+   * All files can therefore be referenced as classpath resources following the directory structure under the source
+   * directory.
    */
   @Parameter(defaultValue = "${project.build.sourceDirectory}/../epigraph")
   protected File sourceDirectory;
@@ -56,17 +55,15 @@ public class MainCompileMojo extends BaseCompileMojo {
   private File outputDirectory;
 
   /**
-   * A set of Ant-like inclusion patterns used to select files from the source
-   * directory for processing. By default, the pattern
-   * <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
+   * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default, the
+   * pattern <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
    */
   @Parameter
-  private String[] includes = new String[]{SCHEMA_FILE_ANT_PATTERN};
+  private String[] includes = {SCHEMA_FILE_ANT_PATTERN};
 
   /**
-   * A set of Ant-like exclusion patterns used to prevent certain files from
-   * being processed. By default, this set is empty such that no files are
-   * excluded.
+   * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set is
+   * empty such that no files are excluded.
    */
   @Parameter
   private String[] excludes = {};

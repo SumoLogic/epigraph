@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * Compile Epigraph Schema source files (.epigraph).
+ * Compiles Epigraph Schema test sources (<code>*.epigraph</code>).
  */
 @Mojo(
     name = "testCompile",
@@ -41,29 +41,29 @@ import java.util.Collection;
 public class TestCompileMojo extends BaseCompileMojo {
 
   /**
-   *
+   * The source directory of test-scope Epigraph Schema files. This directory is added to the classpath at schema
+   * compiling time. All files can therefore be referenced as classpath resources following the directory structure
+   * under the source directory.
    */
   @Parameter(defaultValue = "${project.build.testSourceDirectory}/../epigraph")
   private File testSourceDirectory;
 
   /**
-   *
+   * The directory in which to place compilation output.
    */
   @Parameter(defaultValue = "${project.build.testOutputDirectory}")
   private File testOutputDirectory;
 
   /**
-   * A set of Ant-like inclusion patterns used to select files from the source
-   * directory for processing. By default, the pattern
-   * <code>**&#47;*.epigraph</code> is used to select epigraph Schema files.
+   * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default, the
+   * pattern <code>**&#47;*.epigraph</code> is used to select Epigraph Schema files.
    */
   @Parameter
   private String[] testIncludes = {SCHEMA_FILE_ANT_PATTERN};
 
   /**
-   * A set of Ant-like exclusion patterns used to prevent certain files from
-   * being processed. By default, this set is empty such that no files are
-   * excluded.
+   * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set is
+   * empty such that no files are excluded.
    */
   @Parameter
   private String[] testExcludes = {};
