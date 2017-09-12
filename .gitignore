@@ -4,9 +4,9 @@ target/
 .flattened-pom.xml
 
 # Gradle
-.gradle/
-/out/
+/.gradle/
 build/
+!src/**/build/
 
 # IntelliJ IDEA
 /.idea/

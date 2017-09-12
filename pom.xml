@@ -44,7 +44,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <revision>_-SNAPSHOT</revision>
+    <revision>_-SNAPSHOT</revision><!-- keep in sync with bom/pom.xml -->
 
     <scala.compat.version>2.11</scala.compat.version>
     <scala.version>${scala.compat.version}.11</scala.version>
@@ -61,7 +61,7 @@
         </property>
       </activation>
       <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
-        <!-- TODO <module>bom</module>-->
+        <module>bom</module>
         <module>builtin-services</module>
         <module>compiler</module>
         <module>examples</module>
@@ -523,7 +523,7 @@
                 <rules>
 
                   <!-- http://maven.apache.org/enforcer/enforcer-rules/reactorModuleConvergence.html -->
-                  <reactorModuleConvergence/>
+                  <!--<reactorModuleConvergence/>--><!-- doesn't allow module with no parent (e.g. ./bom) -->
 
                   <!-- http://maven.apache.org/enforcer/enforcer-rules/requireJavaVersion.html -->
                   <requireJavaVersion>
