@@ -11,14 +11,14 @@ Under construction
 
 
 ### First-time Maven build bootstrap:
-- In project root folder run: `./mvnw clean install -Plight-psi`
+- In the project root folder run: `./mvnw clean install -Plight-psi,-main`
 - Build the rest normally, e.g.: `./mvnw clean test`
 
 ### First-time Gradle build bootstrap:
 - In project root folder run: `./gradlew -c settings-bootstrap.gradle publishGradlePlugins`
 - Build the rest normally, e.g.: `./gradlew clean build`
 
-### IntelliJ IDEA project set-up (maven):
-- In project root folder run: `./mvnw clean install -Plight-psi,main`
+### IntelliJ IDEA project set-up (Maven):
+- In the project root folder run: `./mvnw clean install -Plight-psi`
   (installs current development version of Epigraph Maven plugin(s) to make these available to IDEA builds)
 - In IDEA menu: `File` > `Open...` > Select project root folder

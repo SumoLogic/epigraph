@@ -24,12 +24,12 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <description>Epigraph for Java</description>
 
-  <modules>
+  <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
     <module>codegen</module>
     <module>core</module>
     <module>data-processing</module>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>slf4test</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>${revision}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

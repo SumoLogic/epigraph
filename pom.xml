@@ -20,57 +20,48 @@
 
   <groupId>ws.epigraph</groupId>
   <artifactId>epigraph</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <description>Epigraph project</description>
   <url>https://github.com/SumoLogic/epigraph</url>
 
-  <organization>
-    <name>Sumo Logic</name>
-    <url>https://www.sumologic.com/</url>
-  </organization>
-  <inceptionYear>2016</inceptionYear>
-
-  <scm>
-    <url>https://github.com/SumoLogic/epigraph</url>
-    <connection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</developerConnection>
-  </scm>
-
-  <developers>
-
-    <developer>
-      <id>konstantin</id>
-      <name>Konstantin Sobolev</name>
-      <email>konstantin.sobolev@gmail.com</email>
-    </developer>
-
-    <developer>
-      <id>yegor</id>
-      <name>Yegor Borovikov</name>
-      <email>yegorb@gmail.com</email>
-    </developer>
-
-  </developers>
-
   <!-- first-time build bootstrap:
-      ./mvnw clean install -Plight-psi,main
+      ./mvnw clean install -Plight-psi && ./mvnw clean test-compile
   -->
   <!-- IDEA project set-up:
     - Run: ./mvnw clean install -Plight-psi,main
     - File > Open... > Select project root folder
   -->
 
+  <properties>
+
+    <maven.compiler.parameters>true</maven.compiler.parameters>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <maven-plugin-version>3.5</maven-plugin-version><!-- maven-plugin-plugin and related libs -->
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <revision>_-SNAPSHOT</revision>
+
+    <scala.compat.version>2.11</scala.compat.version>
+    <scala.version>${scala.compat.version}.11</scala.version>
+
+  </properties>
+
   <profiles>
 
     <profile>
       <id>main</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!skipMain</name>
+        </property>
       </activation>
       <modules><!-- please maintain alphabetical order (unless there's a reason - then provide it in a comment) -->
-        <!--<module>add-sources-maven-plugin</module>&lt;!&ndash; TODO move to a separate profile &ndash;&gt;-->
+        <!-- TODO <module>bom</module>-->
         <module>builtin-services</module>
         <module>compiler</module>
         <module>examples</module>
@@ -101,22 +92,28 @@
       </modules>
     </profile>
 
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
-
-  <properties>
-
-    <!--<maven.compiler.parameters>true</maven.compiler.parameters>-->
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-
-    <maven-plugin-version>3.5</maven-plugin-version><!-- maven-plugin-plugin and related libs -->
-
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <scala.compat.version>2.11</scala.compat.version>
-    <scala.version>${scala.compat.version}.11</scala.version>
-
-  </properties>
 
   <dependencyManagement><!-- sets version for shared child dependencies -->
     <dependencies><!-- maintain alphabetical order; blank line between different group ids -->
@@ -365,8 +362,29 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <flattenMode>ossrh</flattenMode>
+          <updatePomFile>true</updatePomFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+            <!--<phase>process-resources</phase>-->
+            <phase>verify</phase>
+          </execution>
+          <execution>
+            <id>clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>clean</phase>
+          </execution>
+        </executions>
       </plugin>
 
       <!--<plugin>-->
@@ -400,7 +418,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0.7-SNAPSHOT</version>
+          <version>${revision}</version>
           <executions>
             <execution>
               <goals>
@@ -414,7 +432,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0.7-SNAPSHOT</version>
+          <version>${revision}</version>
           <executions>
             <execution>
               <goals>
@@ -446,6 +464,7 @@
               <arg>-target:jvm-${maven.compiler.target}</arg>
             </args>
             <javacArgs>
+              <javacArg>-parameters</javacArg>
               <javacArg>-source</javacArg>
               <javacArg>${maven.compiler.source}</javacArg>
               <javacArg>-target</javacArg>
@@ -496,11 +515,15 @@
           <version>1.4.1</version>
           <executions>
             <execution>
+              <id>enforce-at-validate-phase</id>
               <goals>
                 <goal>enforce</goal>
               </goals>
               <configuration>
                 <rules>
+
+                  <!-- http://maven.apache.org/enforcer/enforcer-rules/reactorModuleConvergence.html -->
+                  <reactorModuleConvergence/>
 
                   <!-- http://maven.apache.org/enforcer/enforcer-rules/requireJavaVersion.html -->
                   <requireJavaVersion>
@@ -509,15 +532,15 @@
 
                   <!-- http://maven.apache.org/enforcer/enforcer-rules/requireMavenVersion.html -->
                   <requireMavenVersion>
-                    <version>3.0</version>
+                    <version>3.1.1</version><!-- 3.1.1+ is required by maven-flatten-plugin used for release -->
                   </requireMavenVersion>
 
                 </rules>
               </configuration>
             </execution>
-            <execution><!-- these rules require compile phase to work correctly (on current reactor build) -->
-              <id>enforce-compile-phase</id>
-              <phase>compile</phase>
+            <execution><!-- these rules require test scope resolution to work correctly (on current reactor build) -->
+              <id>enforce-at-test-compile-phase</id>
+              <phase>test-compile</phase>
               <goals>
                 <goal>enforce</goal>
               </goals>
@@ -598,13 +621,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>3.0.1</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
 
         <plugin>
@@ -623,6 +639,12 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>1.0.0</version>
         </plugin>
 
         <plugin>
@@ -694,6 +716,34 @@
 
     </plugins>
   </reporting>
+
+  <organization>
+    <name>Sumo Logic</name>
+    <url>https://www.sumologic.com/</url>
+  </organization>
+  <inceptionYear>2016</inceptionYear>
+
+  <developers>
+
+    <developer>
+      <id>konstantin</id>
+      <name>Konstantin Sobolev</name>
+      <email>konstantin.sobolev@gmail.com</email>
+    </developer>
+
+    <developer>
+      <id>yegor</id>
+      <name>Yegor Borovikov</name>
+      <email>yegorb@gmail.com</email>
+    </developer>
+
+  </developers>
+
+  <scm>
+    <url>https://github.com/SumoLogic/epigraph</url>
+    <connection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/SumoLogic/epigraph.git</developerConnection>
+  </scm>
 
   <distributionManagement>
     <snapshotRepository>

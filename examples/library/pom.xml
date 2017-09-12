@@ -24,7 +24,7 @@
   <parent>
     <groupId>ws.epigraph.examples</groupId>
     <artifactId>examples</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <modules>
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>slf4test</artifactId>
-      <version>0.0.7-SNAPSHOT</version>
+      <version>${revision}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -78,7 +78,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>0.0.7-SNAPSHOT</version>
+          <version>${revision}</version>
           <executions>
             <execution>
               <goals>
@@ -92,7 +92,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>0.0.7-SNAPSHOT</version>
+          <version>${revision}</version>
           <executions>
             <execution>
               <goals>

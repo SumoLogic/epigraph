@@ -1,49 +1,35 @@
 #!/usr/bin/env bash
-
 set -e
 
-cd $WORKSPACE
+[ -z "$WORKSPACE" ] || cd "$WORKSPACE" # TODO not sure this is at all needed
 
-NEW_VERSION=$1
+##
+# Splits the argument around '.' as delimiter, increments the last part, and echoes incremented and re-assembled version
+function bump() {
+  local PARTS IFS='.'
+  read -a PARTS <<< "$1"
+  local LAST=$((${#PARTS[*]} - 1))
+  PARTS[$LAST]=$((${PARTS[$LAST]} + 1))
+  echo "${PARTS[*]}"
+}
 
 if [ -z "$NEW_VERSION" ]; then
-  echo "autodetecting next version"
-  v=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec | tail -n 1`
-  [[ $v =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)-SNAPSHOT ]] || ( echo "error parsing version"; exit -1 )
-  major=${BASH_REMATCH[1]}
-  minor=${BASH_REMATCH[2]}
-  patch=${BASH_REMATCH[3]}
-  NEW_VERSION="${major}.${minor}.$((patch+1))"
+  RELEASED_VERSION="$(\
+    mvn --quiet -pl pom.xml build-helper:released-version \
+      exec:exec -Dexec.executable='echo' -Dexec.args='${releasedVersion.version}' \
+  )"
+  # TODO check version is well-formed?
+  echo "Latest released version: $RELEASED_VERSION"
+  NEW_VERSION=$(bump "$RELEASED_VERSION")
 fi
 
-NEW_VERSION="${NEW_VERSION}-SNAPSHOT"
-echo "New version: ${NEW_VERSION}"
+echo -------------------------------------------------------------------------------
+echo ------ Releasing version $NEW_VERSION
+echo -------------------------------------------------------------------------------
 
-echo "removing -SNAPSHOT from current version"
-./mvnw -Plight-psi,main build-helper:parse-version versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}'
+set -x
 
-echo "building"
-# ./mvnw clean install -Plight-psi
-./mvnw -Plight-psi,main -DdeployAtEnd=true clean deploy -fae
+./mvnw --show-version -Dbuildtime.output.log \
+  clean deploy -Plight-psi,release -Drevision=$NEW_VERSION -DdeployAtEnd=true
 
-echo "committing version change"
-./mvnw -Plight-psi,main scm:checkin -Dmessage='release ${project.version} version change' -DpushChanges=false
-
-echo "tagging"
-./mvnw -Plight-psi,main scm:tag -Dtag='release_${project.version}' -DpushChanges=false
-
-echo "setting new version"
-./mvnw -Plight-psi,main versions:set -DgroupId=ws.epigraph -DoldVersion='${project.version}' -DnewVersion="${NEW_VERSION}"
-./mvnw -Plight-psi,main scm:checkin -Dmessage="${NEW_VERSION} version change" -DpushChanges=false
-
-echo "synchronizing gradle version"
-.jenkins/sync-gradle-version.sh
-# git add -u
-# git commit -m "gradle version sync"
-./mvnw scm:checkin -Dmessage='gradle version sync' -DpushChanges=true
-
-echo "pushing changes to git"
-# git push origin master
-git push origin master --tags
-
-# todo: build idea plugin, create github release, attach plugin to it
+git tag "release_$NEW_VERSION" && git push origin "release_$NEW_VERSION" # TODO use "vX.Y.Z" tags

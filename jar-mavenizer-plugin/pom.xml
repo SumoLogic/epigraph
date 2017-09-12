@@ -19,13 +19,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>jar-mavenizer-plugin</artifactId>
+  <artifactId>jar-mavenizer-plugin</artifactId><!-- TODO rename to jar-mavenizer-maven-plugin? -->
   <packaging>maven-plugin</packaging>
 
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <name>Jar Mavenizer Maven Plugin</name>
@@ -39,7 +39,7 @@
 
 
   <prerequisites>
-    <!--<maven>TBD</maven>-->
+    <maven>3.0</maven>
   </prerequisites>
 
   <dependencies>

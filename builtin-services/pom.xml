@@ -24,7 +24,7 @@
   <parent>
     <groupId>ws.epigraph</groupId>
     <artifactId>epigraph</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <description>Epigraph built-in services</description>
