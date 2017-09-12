@@ -8,7 +8,7 @@ cache:
     - $HOME/.m2/repository
     - $HOME/.m2/wrapper
 
-install: ./mvnw --show-version install -Plight-psi
+install: ./mvnw --show-version install -Plight-psi,-main # TODO light-psi install is no longer needed, move to script
 
 script: ./mvnw --show-version -Dbuildtime.output.log
   clean

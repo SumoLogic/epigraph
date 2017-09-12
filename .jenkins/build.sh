@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
-cd $WORKSPACE
-
-# ./mvnw clean install -Plight-psi
-./mvnw -Plight-psi,main -DdeployAtEnd=true clean deploy -fae
+./mvnw --show-version --batch-mode clean test -Plight-psi --fail-at-end
