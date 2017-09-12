@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
+##
+# Deploys artifacts to the repository. The new version is taken from NEW_VERSION variable or inferred from the latest
+# version of the main pom in the repository by incrementing its last (e.g. PATCH) part by 1.
+# The script is expected to be run from the root of the project.
+
 set -e
 
-[ -z "$WORKSPACE" ] || cd "$WORKSPACE" # TODO not sure this is at all needed
-
 ##
-# Splits the argument around '.' as delimiter, increments the last part, and echoes incremented and re-assembled version
+# Splits the string argument around '.' as delimiter, increments the last part, and echoes incremented and re-assembled
+# version.
 function bump() {
+  # TODO check version argument is well-formed (at theast the last segment being numeric)?
   local PARTS IFS='.'
   read -a PARTS <<< "$1"
   local LAST=$((${#PARTS[*]} - 1))
@@ -14,11 +19,11 @@ function bump() {
 }
 
 if [ -z "$NEW_VERSION" ]; then
+  # mvn is used here (instead of mvnw) because the latter doesn't respect `--quiet` option and pollutes the output
   RELEASED_VERSION="$(\
     mvn --quiet -pl pom.xml build-helper:released-version \
       exec:exec -Dexec.executable='echo' -Dexec.args='${releasedVersion.version}' \
   )"
-  # TODO check version is well-formed?
   echo "Latest released version: $RELEASED_VERSION"
   NEW_VERSION=$(bump "$RELEASED_VERSION")
 fi
@@ -29,7 +34,7 @@ echo ---------------------------------------------------------------------------
 
 set -x
 
-./mvnw --show-version -Dbuildtime.output.log \
+./mvnw --show-version --batch-mode -Dbuildtime.output.log \
   clean deploy -Plight-psi,release -Drevision=$NEW_VERSION -DdeployAtEnd=true
 
-git tag "release_$NEW_VERSION" && git push origin "release_$NEW_VERSION" # TODO use "vX.Y.Z" tags
+git tag "v$NEW_VERSION" && git push origin "v$NEW_VERSION"
