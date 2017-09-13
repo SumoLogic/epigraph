@@ -53,7 +53,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>test-jar</goal>
+              <goal>test-jar</goal><!-- FIXME these seem to no longer be used -->
             </goals>
           </execution>
         </executions>
