@@ -32,14 +32,6 @@
     <plugins>
 
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip><!-- skip jacoco (instrumentation, reports, etc.) for this module -->
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>ws.epigraph</groupId>
         <artifactId>jar-mavenizer-plugin</artifactId>
         <version>${revision}</version>

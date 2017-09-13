@@ -663,9 +663,14 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.7.9</version>
           <configuration>
-            <excludes><!-- use "binary class name" with a `*` suffix, see https://github.com/jacoco/jacoco/issues/34 -->
+            <excludes>
+              <!-- use "vm/binary class name" with a `*` suffix, see https://github.com/jacoco/jacoco/issues/34 -->
               <!--<exclude>ws/epigraph/wire/json/reader/ReqUpdateJsonFormatReader*</exclude>-->
             </excludes>
+            <includes>
+              <!-- instrument/report only ws.epigraph.* classes (otherwise we exceed codecov upload size limit) -->
+              <include>ws/epigraph/*</include>
+            </includes>
           </configuration>
         </plugin>
 
