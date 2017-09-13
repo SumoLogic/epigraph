@@ -8,9 +8,9 @@ cache:
     - $HOME/.m2/repository
     - $HOME/.m2/wrapper
 
-install: ./mvnw --show-version install -Plight-psi,-main # TODO light-psi install is no longer needed, move to script
+install: true
 
-script: ./mvnw --show-version -Dbuildtime.output.log
+script: ./mvnw --show-version -Dbuildtime.output.log -Plight-psi
   clean
   org.jacoco:jacoco-maven-plugin:prepare-agent
   test
@@ -18,6 +18,7 @@ script: ./mvnw --show-version -Dbuildtime.output.log
 
 # TODO run gradle build as well?
 
+# Remove any Epigrph project artifacts (that change from build to build) from cached local repository:
 before_cache:
   - rm -rf $HOME/.m2/repository/ws/epigraph
 
