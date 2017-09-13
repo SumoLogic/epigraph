@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
 
@@ -30,59 +30,59 @@ import ws.epigraph.types.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputReferenceContext
-    extends ReferenceContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {
+    extends ReferenceContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
 
   public ReqOutputReferenceContext(
       final @NotNull ProjectionReferenceName referencesNamespace,
-      final @Nullable ReferenceContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> parent,
+      final @Nullable ReferenceContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);
   }
 
   @Override
-  protected @NotNull ReqOutputVarProjection newVarReference(
+  protected @NotNull ReqEntityProjection newVarReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
 
-    return new ReqOutputVarProjection(type, location);
+    return new ReqEntityProjection(type, location);
   }
 
   @Override
-  protected ReqOutputModelProjection<?, ?, ?> newRecordModelReference(
+  protected ReqModelProjection<?, ?, ?> newRecordModelReference(
       final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
-    return new ReqOutputRecordModelProjection(type, location);
+    return new ReqRecordModelProjection(type, location);
   }
 
   @Override
-  protected ReqOutputModelProjection<?, ?, ?> newMapModelReference(
+  protected ReqModelProjection<?, ?, ?> newMapModelReference(
       final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
-    return new ReqOutputMapModelProjection(type, location);
+    return new ReqMapModelProjection(type, location);
   }
 
   @Override
-  protected ReqOutputModelProjection<?, ?, ?> newListModelReference(
+  protected ReqModelProjection<?, ?, ?> newListModelReference(
       final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
-    return new ReqOutputListModelProjection(type, location);
+    return new ReqListModelProjection(type, location);
   }
 
   @Override
-  protected ReqOutputModelProjection<?, ?, ?> newPrimitiveModelReference(
+  protected ReqModelProjection<?, ?, ?> newPrimitiveModelReference(
       final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
-    return new ReqOutputPrimitiveModelProjection(type, location);
+    return new ReqPrimitiveModelProjection(type, location);
   }
 
   @Override
-  protected @NotNull ReqOutputVarProjection toSelfVar(final @NotNull ReqOutputModelProjection<?, ?, ?> mRef) {
+  protected @NotNull ReqEntityProjection toSelfVar(final @NotNull ReqModelProjection<?, ?, ?> mRef) {
     assert mRef.isResolved();
-    ReqOutputVarProjection ep = (ReqOutputVarProjection) mRef.entityProjection();
+    ReqEntityProjection ep = (ReqEntityProjection) mRef.entityProjection();
     if (ep == null) {
       final DatumTypeApi modelType = mRef.type();
-      return new ReqOutputVarProjection(
+      return new ReqEntityProjection(
           modelType,
           mRef.flagged(),
           ProjectionUtils.singletonLinkedHashMap(
               modelType.self().name(),
-              new ReqOutputTagProjectionEntry(
+              new ReqTagProjectionEntry(
                   modelType.self(),
                   mRef,
                   TextLocation.UNKNOWN

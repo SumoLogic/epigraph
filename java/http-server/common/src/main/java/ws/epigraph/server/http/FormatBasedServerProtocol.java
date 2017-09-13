@@ -26,9 +26,9 @@ import ws.epigraph.http.ContentType;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.OperationKind;
@@ -119,7 +119,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public void writeDataResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqOutputVarProjection projection,
+      @NotNull ReqEntityProjection projection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -136,7 +136,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public void writeDatumResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
+      @NotNull ReqModelProjection<?, ?, ?> projection,
       @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {

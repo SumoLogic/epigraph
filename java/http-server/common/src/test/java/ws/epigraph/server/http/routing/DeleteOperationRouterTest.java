@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -209,7 +209,7 @@ public class DeleteOperationRouterTest {
       assertEquals(expectedDeleteProjection, TestUtil.printReqDeleteVarProjection(deleteProjection.varProjection()));
     }
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = deleteRequestUrl.outputProjection();
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection = deleteRequestUrl.outputProjection();
 
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(

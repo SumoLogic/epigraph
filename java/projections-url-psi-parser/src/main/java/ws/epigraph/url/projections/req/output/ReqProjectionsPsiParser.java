@@ -23,15 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
 //import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.req.ReqParams;
-import ws.epigraph.projections.req.output.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -54,7 +52,7 @@ public final class ReqProjectionsPsiParser {
 
   // trunk var ================================================
 
-  protected static @NotNull StepsAndProjection<ReqOutputVarProjection> parseTrunkVarProjection(
+  protected static @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -96,10 +94,10 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-      final ReqOutputVarProjection reference = context.referenceContext()
+      final ReqEntityProjection reference = context.referenceContext()
           .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
-      final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+      final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
           parseUnnamedOrRefTrunkVarProjection(
               dataType,
               flagged,
@@ -139,7 +137,7 @@ public final class ReqProjectionsPsiParser {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseUnnamedOrRefTrunkVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefTrunkVarProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull OpOutputVarProjection op,
@@ -169,7 +167,7 @@ public final class ReqProjectionsPsiParser {
     }
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseUnnamedTrunkVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedTrunkVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -178,7 +176,7 @@ public final class ReqProjectionsPsiParser {
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
-    final LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections;
+    final LinkedHashMap<String, ReqTagProjectionEntry> tagProjections;
     final int steps;
     final boolean parenthesized;
 
@@ -197,7 +195,7 @@ public final class ReqProjectionsPsiParser {
 
       tagProjections = new LinkedHashMap<>();
 
-      final ReqOutputModelProjection<?, ?, ?> parsedModelProjection;
+      final ReqModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
       final @NotNull TagApi tag = getTag(dataType, getTagName(tagNamePsi), op, tagLocation, context);
@@ -208,7 +206,7 @@ public final class ReqProjectionsPsiParser {
       @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
           singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
-      StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
+      StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
           flagged || singleTagProjectionPsi.getPlus() != null,
           parseReqParams(
@@ -235,7 +233,7 @@ public final class ReqProjectionsPsiParser {
 
       tagProjections.put(
           tag.name(),
-          new ReqOutputTagProjectionEntry(
+          new ReqTagProjectionEntry(
               tag,
               parsedModelProjection,
               EpigraphPsiUtil.getLocation(tagLocation)
@@ -252,13 +250,13 @@ public final class ReqProjectionsPsiParser {
       parenthesized = true;
     }
 
-    final List<ReqOutputVarProjection> tails =
+    final List<ReqEntityProjection> tails =
         parseTails(dataType, flagged, op, psi.getReqOutputVarPolymorphicTail(), subResolver, context);
 
     try {
       return new StepsAndProjection<>(
           steps,
-          new ReqOutputVarProjection(
+          new ReqEntityProjection(
               type,
               flagged,
               tagProjections,
@@ -294,7 +292,7 @@ public final class ReqProjectionsPsiParser {
 
   private static void addStarTags(
       final @NotNull OpOutputVarProjection op,
-      final @NotNull LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections,
+      final @NotNull LinkedHashMap<String, ReqTagProjectionEntry> tagProjections,
       final @NotNull ReqOutputPsiProcessingContext context,
       final @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
@@ -306,7 +304,7 @@ public final class ReqProjectionsPsiParser {
 
       tagProjections.put(
           entry.getKey(),
-          new ReqOutputTagProjectionEntry(
+          new ReqTagProjectionEntry(
               tag,
               createDefaultModelProjection(
                   tag.type(),
@@ -325,7 +323,7 @@ public final class ReqProjectionsPsiParser {
 
   // coma var ================================================
 
-  protected static @NotNull StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
+  protected static @NotNull StepsAndProjection<ReqEntityProjection> parseComaVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -367,10 +365,10 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-      final ReqOutputVarProjection reference = context.referenceContext()
+      final ReqEntityProjection reference = context.referenceContext()
           .entityReference(dataType.type(), projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
-      final StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = parseUnnamedOrRefComaVarProjection(
+      final StepsAndProjection<ReqEntityProjection> stepsAndProjection = parseUnnamedOrRefComaVarProjection(
           dataType,
           flagged,
           op,
@@ -409,7 +407,7 @@ public final class ReqProjectionsPsiParser {
 
   }
 
-  public static StepsAndProjection<ReqOutputVarProjection> parseUnnamedOrRefComaVarProjection(
+  public static StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefComaVarProjection(
       final @NotNull DataTypeApi dataType,
       boolean flagged,
       final @NotNull OpOutputVarProjection op,
@@ -458,7 +456,7 @@ public final class ReqProjectionsPsiParser {
 
   }
 
-  public static StepsAndProjection<ReqOutputVarProjection> parseUnnamedComaVarProjection(
+  public static StepsAndProjection<ReqEntityProjection> parseUnnamedComaVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -467,7 +465,7 @@ public final class ReqProjectionsPsiParser {
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
     final TypeApi type = dataType.type();
-    final LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections;
+    final LinkedHashMap<String, ReqTagProjectionEntry> tagProjections;
     final boolean parenthesized;
 
     final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), typesResolver);
@@ -504,8 +502,8 @@ public final class ReqProjectionsPsiParser {
         @NotNull UrlReqOutputComaModelProjection modelProjectionPsi =
             singleTagProjectionPsi.getReqOutputComaModelProjection();
 
-        final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
-            ReqOutputModelProjection.class,
+        final ReqModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
+            ReqModelProjection.class,
             opModelProjection,
             flagged || singleTagProjectionPsi.getPlus() != null,
             parseReqParams(
@@ -527,7 +525,7 @@ public final class ReqProjectionsPsiParser {
 
         tagProjections.put(
             tag.name(),
-            new ReqOutputTagProjectionEntry(
+            new ReqTagProjectionEntry(
                 tag,
                 parsedModelProjection,
                 EpigraphPsiUtil.getLocation(singleTagProjectionPsi)
@@ -544,13 +542,13 @@ public final class ReqProjectionsPsiParser {
       parenthesized = true;
     }
 
-    final List<ReqOutputVarProjection> tails =
+    final List<ReqEntityProjection> tails =
         parseTails(dataType, flagged, op, psi.getReqOutputVarPolymorphicTail(), subResolver, context);
 
     try {
       return new StepsAndProjection<>(
           0,
-          new ReqOutputVarProjection(
+          new ReqEntityProjection(
               type,
               flagged,
               tagProjections,
@@ -578,7 +576,7 @@ public final class ReqProjectionsPsiParser {
     return tagLocation;
   }
 
-  private static LinkedHashMap<String, ReqOutputTagProjectionEntry> parseComaMultiTagProjection(
+  private static LinkedHashMap<String, ReqTagProjectionEntry> parseComaMultiTagProjection(
       @NotNull DataTypeApi dataType,
       @NotNull OpOutputVarProjection op,
       @NotNull UrlReqOutputComaMultiTagProjection psi,
@@ -594,7 +592,7 @@ public final class ReqProjectionsPsiParser {
 
     final @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), typesResolver);
 
-    final LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    final LinkedHashMap<String, ReqTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     // parse list of tags
     @NotNull Iterable<UrlReqOutputComaMultiTagProjectionItem> tagProjectionPsiList =
@@ -616,8 +614,8 @@ public final class ReqProjectionsPsiParser {
 
         @NotNull UrlReqOutputComaModelProjection modelProjection = tagProjectionPsi.getReqOutputComaModelProjection();
 
-        final ReqOutputModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
-            ReqOutputModelProjection.class,
+        final ReqModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
+            ReqModelProjection.class,
             opTagProjection,
             tagProjectionPsi.getPlus() != null,
             parseReqParams(
@@ -634,7 +632,7 @@ public final class ReqProjectionsPsiParser {
 
         tagProjections.put(
             tag.name(),
-            new ReqOutputTagProjectionEntry(
+            new ReqTagProjectionEntry(
                 tag,
                 parsedModelProjection,
                 EpigraphPsiUtil.getLocation(tagProjectionPsi)
@@ -646,7 +644,7 @@ public final class ReqProjectionsPsiParser {
     return tagProjections;
   }
 
-  private static List<ReqOutputVarProjection> parseTails(
+  private static List<ReqEntityProjection> parseTails(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -654,7 +652,7 @@ public final class ReqProjectionsPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    final List<ReqOutputVarProjection> tails;
+    final List<ReqEntityProjection> tails;
 
     @NotNull TypesResolver subResolver = addTypeNamespace(dataType.type(), typesResolver);
 
@@ -675,7 +673,7 @@ public final class ReqProjectionsPsiParser {
 
             @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
             @NotNull UrlReqOutputComaVarProjection psiTailProjection = tailItem.getReqOutputComaVarProjection();
-            @NotNull ReqOutputVarProjection tailProjection =
+            @NotNull ReqEntityProjection tailProjection =
                 buildTailProjection(dataType, flagged, op, tailTypeRef, psiTailProjection, subResolver, context);
             tails.add(tailProjection);
 
@@ -685,7 +683,7 @@ public final class ReqProjectionsPsiParser {
       } else {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqOutputComaVarProjection psiTailProjection = singleTail.getReqOutputComaVarProjection();
-        @NotNull ReqOutputVarProjection tailProjection =
+        @NotNull ReqEntityProjection tailProjection =
             buildTailProjection(dataType, flagged, op, tailTypeRef, psiTailProjection, subResolver, context);
         tails.add(tailProjection);
       }
@@ -697,7 +695,7 @@ public final class ReqProjectionsPsiParser {
 
 
   @Contract("_, null, _, _ -> null")
-  private static @Nullable ReqOutputModelProjection<?, ?, ?> parseModelMetaProjection(
+  private static @Nullable ReqModelProjection<?, ?, ?> parseModelMetaProjection(
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @Nullable UrlReqOutputModelMeta modelMetaPsi,
       @NotNull TypesResolver resolver,
@@ -718,7 +716,7 @@ public final class ReqProjectionsPsiParser {
     // no params/annotations/meta on meta for now
 
     return parseComaModelProjection(
-        ReqOutputModelProjection.class,
+        ReqModelProjection.class,
         metaOp,
         modelMetaPsi.getPlus() != null,
         ReqParams.EMPTY,
@@ -730,7 +728,7 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static ReqOutputVarProjection buildTailProjection(
+  private static ReqEntityProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -758,7 +756,7 @@ public final class ReqProjectionsPsiParser {
   /**
    * Creates default var projection with explicitly specified list of tags
    */
-  private static ReqOutputVarProjection createDefaultVarProjection(
+  private static ReqEntityProjection createDefaultVarProjection(
       @NotNull TypeApi type,
       @NotNull Iterable<TagApi> tags,
       @NotNull OpOutputVarProjection op,
@@ -766,14 +764,14 @@ public final class ReqProjectionsPsiParser {
       @NotNull PsiElement locationPsi,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    LinkedHashMap<String, ReqOutputTagProjectionEntry> tagProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     for (TagApi tag : tags) {
       final OpOutputTagProjectionEntry opOutputTagProjection = op.tagProjections().get(tag.name());
       if (opOutputTagProjection != null) {
         tagProjections.put(
             tag.name(),
-            new ReqOutputTagProjectionEntry(
+            new ReqTagProjectionEntry(
                 tag,
                 createDefaultModelProjection(
                     tag.type(),
@@ -790,7 +788,7 @@ public final class ReqProjectionsPsiParser {
       }
     }
 
-    return new ReqOutputVarProjection(
+    return new ReqEntityProjection(
         type,
         false,
         tagProjections,
@@ -799,7 +797,7 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  protected static @NotNull ReqOutputVarProjection createDefaultVarProjection(
+  protected static @NotNull ReqEntityProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
       @NotNull OpOutputVarProjection op,
       boolean required,
@@ -814,18 +812,18 @@ public final class ReqProjectionsPsiParser {
   }
 
   @SuppressWarnings("unchecked")
-  private static @NotNull StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>> parseTrunkModelProjection(
+  private static @NotNull StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> parseTrunkModelProjection(
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    return (StepsAndProjection<? extends ReqOutputModelProjection<?, ?, ?>>) parseTrunkModelProjection(
-        ReqOutputModelProjection.class,
+    return (StepsAndProjection<? extends ReqModelProjection<?, ?, ?>>) parseTrunkModelProjection(
+        ReqModelProjection.class,
         op,
         required,
         params,
@@ -838,14 +836,14 @@ public final class ReqProjectionsPsiParser {
   }
 
   @SuppressWarnings("unchecked")
-  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  private static <MP extends ReqModelProjection<?, ?, ?>>
   @NotNull StepsAndProjection<? extends MP> parseTrunkModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputTrunkModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -855,7 +853,7 @@ public final class ReqProjectionsPsiParser {
     //noinspection SwitchStatementWithoutDefaultBranch,EnumSwitchStatementWhichMissesCases
     switch (op.type().kind()) {
       case RECORD:
-        assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqRecordModelProjection.class);
         @Nullable
         UrlReqOutputTrunkRecordModelProjection trunkRecordProjectionPsi = psi.getReqOutputTrunkRecordModelProjection();
 
@@ -870,7 +868,7 @@ public final class ReqProjectionsPsiParser {
               directives,
               metaProjection,
               parseModelTails(
-                  ReqOutputRecordModelProjection.class,
+                  ReqRecordModelProjection.class,
                   op,
                   psi.getReqOutputModelPolymorphicTail(),
                   subResolver,
@@ -883,7 +881,7 @@ public final class ReqProjectionsPsiParser {
         }
 
       case MAP:
-        assert modelClass.isAssignableFrom(ReqOutputMapModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqMapModelProjection.class);
         @Nullable
         UrlReqOutputTrunkMapModelProjection trunkMapProjectionPsi = psi.getReqOutputTrunkMapModelProjection();
 
@@ -898,7 +896,7 @@ public final class ReqProjectionsPsiParser {
               directives,
               metaProjection,
               parseModelTails(
-                  ReqOutputMapModelProjection.class,
+                  ReqMapModelProjection.class,
                   op,
                   psi.getReqOutputModelPolymorphicTail(),
                   subResolver,
@@ -951,13 +949,13 @@ public final class ReqProjectionsPsiParser {
   }
 
   @SuppressWarnings("unchecked")
-  private static <MP extends ReqOutputModelProjection<?, ?, ?>> @NotNull MP parseComaModelProjection(
+  private static <MP extends ReqModelProjection<?, ?, ?>> @NotNull MP parseComaModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @NotNull UrlReqOutputComaModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -967,7 +965,7 @@ public final class ReqProjectionsPsiParser {
 
     switch (model.kind()) {
       case RECORD:
-        assert modelClass.isAssignableFrom(ReqOutputRecordModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqRecordModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
         final OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
@@ -987,7 +985,7 @@ public final class ReqProjectionsPsiParser {
             directives,
             metaProjection,
             parseModelTails(
-                ReqOutputRecordModelProjection.class,
+                ReqRecordModelProjection.class,
                 op,
                 psi.getReqOutputModelPolymorphicTail(),
                 subResolver,
@@ -999,7 +997,7 @@ public final class ReqProjectionsPsiParser {
         );
 
       case MAP:
-        assert modelClass.isAssignableFrom(ReqOutputMapModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqMapModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
         final OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
@@ -1017,7 +1015,7 @@ public final class ReqProjectionsPsiParser {
             directives,
             metaProjection,
             parseModelTails(
-                ReqOutputMapModelProjection.class,
+                ReqMapModelProjection.class,
                 op,
                 psi.getReqOutputModelPolymorphicTail(),
                 subResolver,
@@ -1029,7 +1027,7 @@ public final class ReqProjectionsPsiParser {
         );
 
       case LIST:
-        assert modelClass.isAssignableFrom(ReqOutputListModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqListModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
         final OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
@@ -1048,7 +1046,7 @@ public final class ReqProjectionsPsiParser {
             directives,
             metaProjection,
             parseModelTails(
-                ReqOutputListModelProjection.class,
+                ReqListModelProjection.class,
                 op,
                 psi.getReqOutputModelPolymorphicTail(),
                 subResolver,
@@ -1063,7 +1061,7 @@ public final class ReqProjectionsPsiParser {
         throw new PsiProcessingException("Unsupported type kind: " + model.kind(), psi, context);
 
       case PRIMITIVE:
-        assert modelClass.isAssignableFrom(ReqOutputPrimitiveModelProjection.class);
+        assert modelClass.isAssignableFrom(ReqPrimitiveModelProjection.class);
         return (MP) parsePrimitiveModelProjection(
             (PrimitiveTypeApi) model,
             required,
@@ -1071,7 +1069,7 @@ public final class ReqProjectionsPsiParser {
             directives,
             metaProjection,
             parseModelTails(
-                ReqOutputPrimitiveModelProjection.class,
+                ReqPrimitiveModelProjection.class,
                 op,
                 psi.getReqOutputModelPolymorphicTail(),
                 subResolver,
@@ -1110,7 +1108,7 @@ public final class ReqProjectionsPsiParser {
   }
 
   @Contract("_, _, null, _, _ -> null")
-  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  private static <MP extends ReqModelProjection<?, ?, ?>>
   @Nullable List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
@@ -1166,7 +1164,7 @@ public final class ReqProjectionsPsiParser {
     }
   }
 
-  private static <MP extends ReqOutputModelProjection<?, ?, ?>>
+  private static <MP extends ReqModelProjection<?, ?, ?>>
   @NotNull MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
@@ -1211,7 +1209,7 @@ public final class ReqProjectionsPsiParser {
     return null;
   }
 
-  private static @NotNull ReqOutputModelProjection<?, ?, ?> createDefaultModelProjection(
+  private static @NotNull ReqModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean required,
       @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
@@ -1227,7 +1225,7 @@ public final class ReqProjectionsPsiParser {
         OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
         final Map<String, OpOutputFieldProjectionEntry> opFields = opRecord.fieldProjections();
 
-        final @NotNull Map<String, ReqOutputFieldProjectionEntry> fields;
+        final @NotNull Map<String, ReqFieldProjectionEntry> fields;
 
         if (opFields.isEmpty()) {
           fields = Collections.emptyMap();
@@ -1266,7 +1264,7 @@ public final class ReqProjectionsPsiParser {
 //          }
         }
 
-        return new ReqOutputRecordModelProjection(
+        return new ReqRecordModelProjection(
             (RecordTypeApi) type,
             required,
             params,
@@ -1287,7 +1285,7 @@ public final class ReqProjectionsPsiParser {
           );
 
         MapTypeApi mapType = (MapTypeApi) type;
-        final ReqOutputVarProjection valueVarProjection = createDefaultVarProjection(
+        final ReqEntityProjection valueVarProjection = createDefaultVarProjection(
             mapType.valueType(),
             opMap.itemsProjection(),
             required,
@@ -1295,7 +1293,7 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-        return new ReqOutputMapModelProjection(
+        return new ReqMapModelProjection(
             mapType,
             required,
             params,
@@ -1311,7 +1309,7 @@ public final class ReqProjectionsPsiParser {
         OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         ListTypeApi listType = (ListTypeApi) type;
 
-        final ReqOutputVarProjection itemVarProjection = createDefaultVarProjection(
+        final ReqEntityProjection itemVarProjection = createDefaultVarProjection(
             listType.elementType(),
             opList.itemsProjection(),
             required,
@@ -1319,7 +1317,7 @@ public final class ReqProjectionsPsiParser {
             context
         );
 
-        return new ReqOutputListModelProjection(
+        return new ReqListModelProjection(
             listType,
             required,
             params,
@@ -1339,7 +1337,7 @@ public final class ReqProjectionsPsiParser {
         // todo
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
       case PRIMITIVE:
-        return new ReqOutputPrimitiveModelProjection(
+        return new ReqPrimitiveModelProjection(
             (PrimitiveTypeApi) type,
             required,
             params,
@@ -1353,13 +1351,13 @@ public final class ReqProjectionsPsiParser {
     }
   }
 
-  private static @NotNull StepsAndProjection<ReqOutputRecordModelProjection> parseTrunkRecordModelProjection(
+  private static @NotNull StepsAndProjection<ReqRecordModelProjection> parseTrunkRecordModelProjection(
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputRecordModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqRecordModelProjection> tails,
       @NotNull UrlReqOutputTrunkRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -1391,7 +1389,7 @@ public final class ReqProjectionsPsiParser {
     @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     boolean fieldFlagged = psi.getPlus() != null;
 
-    @Nullable LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
+    @Nullable LinkedHashMap<String, ReqFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     final int steps;
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
@@ -1405,7 +1403,7 @@ public final class ReqProjectionsPsiParser {
             fieldType.name()
         ), psi, context);
 
-      @NotNull ReqOutputVarProjection varProjection = createDefaultVarProjection(
+      @NotNull ReqEntityProjection varProjection = createDefaultVarProjection(
           fieldType,
           opFieldProjection.varProjection(),
           fieldFlagged,
@@ -1415,9 +1413,9 @@ public final class ReqProjectionsPsiParser {
 
       fieldProjections.put(
           fieldName,
-          new ReqOutputFieldProjectionEntry(
+          new ReqFieldProjectionEntry(
               field,
-              new ReqOutputFieldProjection(
+              new ReqFieldProjection(
 //                  ReqParams.EMPTY,
 //                  Annotations.EMPTY,
                   varProjection,
@@ -1432,7 +1430,7 @@ public final class ReqProjectionsPsiParser {
       // default model projection is a coma projection
       steps = 2;
     } else {
-      @NotNull StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
+      @NotNull StepsAndProjection<ReqFieldProjection> fieldStepsAndProjection =
           parseTrunkFieldProjection(
               fieldType,
               fieldFlagged,
@@ -1444,7 +1442,7 @@ public final class ReqProjectionsPsiParser {
 
       fieldProjections.put(
           fieldName,
-          new ReqOutputFieldProjectionEntry(
+          new ReqFieldProjectionEntry(
               field,
               fieldStepsAndProjection.projection(),
               EpigraphPsiUtil.getLocation(fieldProjectionPsi)
@@ -1456,7 +1454,7 @@ public final class ReqProjectionsPsiParser {
 
     return new StepsAndProjection<>(
         steps,
-        new ReqOutputRecordModelProjection(
+        new ReqRecordModelProjection(
             op.type(),
             required,
             params,
@@ -1469,7 +1467,7 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  protected static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
+  protected static @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull OpOutputFieldProjection op,
@@ -1481,7 +1479,7 @@ public final class ReqProjectionsPsiParser {
     return parseTrunkFieldProjection(fieldType, flagged,  /*op.params(), */op.varProjection(), psi, resolver, context);
   }
 
-  private static StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
+  private static StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       //      @Nullable OpParams opParams,
@@ -1492,10 +1490,10 @@ public final class ReqProjectionsPsiParser {
   ) throws PsiProcessingException {
 
     final int steps;
-    final ReqOutputVarProjection varProjection;
+    final ReqEntityProjection varProjection;
 
     @Nullable UrlReqOutputTrunkVarProjection psiVarProjection = psi.getReqOutputTrunkVarProjection();
-    StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseTrunkVarProjection(fieldType, flagged, opVarProjection, psiVarProjection, resolver, context);
 
     varProjection = stepsAndProjection.projection();
@@ -1505,7 +1503,7 @@ public final class ReqProjectionsPsiParser {
 
     return new StepsAndProjection<>(
         steps,
-        new ReqOutputFieldProjection(
+        new ReqFieldProjection(
 //            parseReqParams(psi.getReqParamList(), opParams, resolver, context),
 //            parseAnnotations(psi.getReqAnnotationList(), context),
             varProjection,
@@ -1515,18 +1513,18 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull ReqOutputRecordModelProjection parseComaRecordModelProjection(
+  private static @NotNull ReqRecordModelProjection parseComaRecordModelProjection(
       @NotNull OpOutputRecordModelProjection op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputRecordModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqRecordModelProjection> tails,
       @NotNull UrlReqOutputComaRecordModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    LinkedHashMap<String, ReqOutputFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
+    LinkedHashMap<String, ReqFieldProjectionEntry> fieldProjections = new LinkedHashMap<>();
     @NotNull Iterable<UrlReqOutputComaFieldProjection> psiFieldProjections = psi.getReqOutputComaFieldProjectionList();
 
     Map<String, OpOutputFieldProjectionEntry> opFields = op.fieldProjections();
@@ -1559,7 +1557,7 @@ public final class ReqProjectionsPsiParser {
 
             @Nullable UrlReqOutputComaVarProjection psiVarProjection =
                 fieldProjectionPsi.getReqOutputComaVarProjection();
-            @NotNull ReqOutputVarProjection varProjection =
+            @NotNull ReqEntityProjection varProjection =
                 parseComaVarProjection(
                     field.dataType(),
                     fieldFlagged,
@@ -1573,9 +1571,9 @@ public final class ReqProjectionsPsiParser {
 
             fieldProjections.put(
                 fieldName,
-                new ReqOutputFieldProjectionEntry(
+                new ReqFieldProjectionEntry(
                     field,
-                    new ReqOutputFieldProjection(
+                    new ReqFieldProjection(
 //                        fieldParams,
 //                        fieldAnnotations,
                         varProjection,
@@ -1597,9 +1595,9 @@ public final class ReqProjectionsPsiParser {
 
         fieldProjections.put(
             entry.getKey(),
-            new ReqOutputFieldProjectionEntry(
+            new ReqFieldProjectionEntry(
                 field,
-                new ReqOutputFieldProjection(
+                new ReqFieldProjection(
 //                    ReqParams.EMPTY,
 //                    Annotations.EMPTY,
                     createDefaultVarProjection(
@@ -1619,7 +1617,7 @@ public final class ReqProjectionsPsiParser {
 
     }
 
-    return new ReqOutputRecordModelProjection(
+    return new ReqRecordModelProjection(
         op.type(),
         required,
         params,
@@ -1631,13 +1629,13 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull StepsAndProjection<ReqOutputMapModelProjection> parseTrunkMapModelProjection(
+  private static @NotNull StepsAndProjection<ReqMapModelProjection> parseTrunkMapModelProjection(
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputMapModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqMapModelProjection> tails,
       @NotNull UrlReqOutputTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -1650,7 +1648,7 @@ public final class ReqProjectionsPsiParser {
         getDatum(valuePsi, op.type().keyType(), resolver, "Error processing map key: ", context);
     if (keyValue == null) throw new PsiProcessingException("Null keys are not allowed", valuePsi, context);
 
-    ReqOutputKeyProjection keyProjection = new ReqOutputKeyProjection(
+    ReqKeyProjection keyProjection = new ReqKeyProjection(
         keyValue,
         parseReqParams(psi.getReqParamList(), op.keyProjection().params(), resolver, psi, context),
         parseAnnotations(psi.getReqAnnotationList(), context),
@@ -1658,10 +1656,10 @@ public final class ReqProjectionsPsiParser {
     );
 
     final int steps;
-    final ReqOutputVarProjection valueProjection;
+    final ReqEntityProjection valueProjection;
 
     @Nullable UrlReqOutputTrunkVarProjection valueProjectionPsi = psi.getReqOutputTrunkVarProjection();
-    StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseTrunkVarProjection(
             op.type().valueType(),
             psi.getPlus() != null,
@@ -1676,7 +1674,7 @@ public final class ReqProjectionsPsiParser {
 
     return new StepsAndProjection<>(
         steps,
-        new ReqOutputMapModelProjection(
+        new ReqMapModelProjection(
             op.type(),
             required,
             params,
@@ -1691,13 +1689,13 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull ReqOutputMapModelProjection parseComaMapModelProjection(
+  private static @NotNull ReqMapModelProjection parseComaMapModelProjection(
       @NotNull OpOutputMapModelProjection op,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputMapModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqMapModelProjection> tails,
       @NotNull UrlReqOutputComaMapModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -1705,7 +1703,7 @@ public final class ReqProjectionsPsiParser {
     @NotNull UrlReqOutputComaKeysProjection keysProjectionPsi = psi.getReqOutputComaKeysProjection();
 
     final @NotNull OpOutputKeyProjection opKeyProjection = op.keyProjection();
-    final List<ReqOutputKeyProjection> keyProjections;
+    final List<ReqKeyProjection> keyProjections;
 
     if (keysProjectionPsi.getStar() == null) {
       final Collection<UrlReqOutputComaKeyProjection> keyProjectionsPsi =
@@ -1728,7 +1726,7 @@ public final class ReqProjectionsPsiParser {
             if (keyValue == null) context.addError("Null keys are not allowed", valuePsi);
             else {
               keyProjections.add(
-                  new ReqOutputKeyProjection(
+                  new ReqKeyProjection(
                       keyValue,
                       parseReqParams(
                           keyProjectionPsi.getReqParamList(),
@@ -1754,7 +1752,7 @@ public final class ReqProjectionsPsiParser {
     }
 
     @Nullable UrlReqOutputComaVarProjection valueProjectionPsi = psi.getReqOutputComaVarProjection();
-    final @NotNull ReqOutputVarProjection valueProjection;
+    final @NotNull ReqEntityProjection valueProjection;
     if (valueProjectionPsi == null) {
       valueProjection = createDefaultVarProjection(
           op.type().valueType(),
@@ -1775,7 +1773,7 @@ public final class ReqProjectionsPsiParser {
     }
 
 
-    return new ReqOutputMapModelProjection(
+    return new ReqMapModelProjection(
         op.type(),
         required,
         params,
@@ -1789,18 +1787,18 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull ReqOutputListModelProjection parseListModelProjection(
+  private static @NotNull ReqListModelProjection parseListModelProjection(
       @NotNull OpOutputListModelProjection op,
       boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputListModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqListModelProjection> tails,
       @NotNull UrlReqOutputComaListModelProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    ReqOutputVarProjection itemsProjection;
+    ReqEntityProjection itemsProjection;
     @Nullable UrlReqOutputComaVarProjection reqOutputVarProjectionPsi = psi.getReqOutputComaVarProjection();
     if (reqOutputVarProjectionPsi == null)
       itemsProjection = createDefaultVarProjection(op.type().elementType(), op.itemsProjection(), true, psi, context);
@@ -1816,7 +1814,7 @@ public final class ReqProjectionsPsiParser {
           ).projection();
 
 
-    return new ReqOutputListModelProjection(
+    return new ReqListModelProjection(
         op.type(),
         flagged,
         params,
@@ -1828,16 +1826,16 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull ReqOutputPrimitiveModelProjection parsePrimitiveModelProjection(
+  private static @NotNull ReqPrimitiveModelProjection parsePrimitiveModelProjection(
       @NotNull PrimitiveTypeApi type,
       boolean required,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputPrimitiveModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqPrimitiveModelProjection> tails,
       @NotNull PsiElement locationPsi) {
 
-    return new ReqOutputPrimitiveModelProjection(
+    return new ReqPrimitiveModelProjection(
         type,
         required,
         params,

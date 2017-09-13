@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.AbstractReqFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -26,19 +25,19 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputFieldProjection
+public class ReqFieldProjection extends AbstractReqFieldProjection<
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqFieldProjection
     > {
 
 //  private final boolean flagged;
 
-  public ReqOutputFieldProjection(
+  public ReqFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
-      @NotNull ReqOutputVarProjection projection,
+      @NotNull ReqEntityProjection projection,
 //      boolean flagged,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
@@ -52,24 +51,24 @@ public class ReqOutputFieldProjection extends AbstractReqFieldProjection<
     return flagged(varProjection());
   }
 
-  private static boolean flagged(@NotNull ReqOutputVarProjection vp) {
+  private static boolean flagged(@NotNull ReqEntityProjection vp) {
     return vp.flagged();
   }
 
   @Override
-  public @NotNull ReqOutputFieldProjection setVarProjection(final @NotNull ReqOutputVarProjection varProjection) {
-    return new ReqOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
+  public @NotNull ReqFieldProjection setVarProjection(final @NotNull ReqEntityProjection varProjection) {
+    return new ReqFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
   @Override
-  protected ReqOutputFieldProjection merge(
+  protected ReqFieldProjection merge(
       final @NotNull DataTypeApi type,
-      final @NotNull List<ReqOutputFieldProjection> fieldProjections,
+      final @NotNull List<ReqFieldProjection> fieldProjections,
 //      final @NotNull ReqParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull ReqOutputVarProjection mergedVarProjection) {
+      final @NotNull ReqEntityProjection mergedVarProjection) {
 
-    return new ReqOutputFieldProjection(
+    return new ReqFieldProjection(
 //        mergedParams,
 //        mergedAnnotations,
         mergedVarProjection,

@@ -32,12 +32,12 @@ import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpVarPath;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
@@ -107,7 +107,7 @@ public final class RequestFactory {
     throwErrors(psi, errorsAccumulator);
 
     final ReqFieldPath reqPath;
-    final ReqOutputFieldProjection reqFieldProjection;
+    final ReqFieldProjection reqFieldProjection;
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
@@ -120,7 +120,7 @@ public final class RequestFactory {
             new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
         ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
-        StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
+        StepsAndProjection<ReqFieldProjection> stepsAndProjection =
             ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
                 resourceType,
                 false,  // ?
@@ -154,7 +154,7 @@ public final class RequestFactory {
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
         if (trunkVarProjection != null) {
-          StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().varProjection(),
@@ -163,9 +163,9 @@ public final class RequestFactory {
               reqOutputPsiProcessingContext
           );
 
-          reqFieldProjection = new ReqOutputFieldProjection(r.projection(), r.projection().location());
+          reqFieldProjection = new ReqFieldProjection(r.projection(), r.projection().location());
         } else if (comaVarProjection != null) {
-          StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
+          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().varProjection(),
@@ -173,9 +173,9 @@ public final class RequestFactory {
               typesResolver,
               reqOutputPsiProcessingContext
           );
-          reqFieldProjection = new ReqOutputFieldProjection(r.projection(), r.projection().location());
+          reqFieldProjection = new ReqFieldProjection(r.projection(), r.projection().location());
         } else {
-          ReqOutputVarProjection vp = new ReqOutputVarProjection(
+          ReqEntityProjection vp = new ReqEntityProjection(
               pathTipType.type(),
               false,
               Collections.emptyMap(),
@@ -183,7 +183,7 @@ public final class RequestFactory {
               null,
               TextLocation.UNKNOWN
           );
-          reqFieldProjection = new ReqOutputFieldProjection(vp, vp.location());
+          reqFieldProjection = new ReqFieldProjection(vp, vp.location());
         }
 
         reqOutputReferenceContext.ensureAllReferencesResolved();
@@ -243,7 +243,7 @@ public final class RequestFactory {
 
     }
 
-    ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
+    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
             operationDeclaration.outputType().dataType(),
@@ -270,7 +270,7 @@ public final class RequestFactory {
         reqFieldPath,
         requestData,
         reqInputFieldProjection,
-        reqOutputFieldProjection
+        reqFieldProjection
     );
   }
 
@@ -316,7 +316,7 @@ public final class RequestFactory {
       );
     }
 
-    ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
+    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
             operationDeclaration.outputType().dataType(),
@@ -347,7 +347,7 @@ public final class RequestFactory {
         reqFieldPath,
         requestData,
         reqUpdateFieldProjection,
-        reqOutputFieldProjection
+        reqFieldProjection
     );
   }
 
@@ -391,7 +391,7 @@ public final class RequestFactory {
       );
     }
 
-    ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
+    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
             operationDeclaration.outputType().dataType(),
@@ -414,7 +414,7 @@ public final class RequestFactory {
     return new DeleteOperationRequest(
         reqFieldPath,
         reqDeleteFieldProjection,
-        reqOutputFieldProjection
+        reqFieldProjection
     );
   }
 
@@ -460,7 +460,7 @@ public final class RequestFactory {
       );
     }
 
-    ReqOutputFieldProjection reqOutputFieldProjection = new ReqOutputFieldProjection(
+    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
         parseReqOutputProjection(
             outputRequestString,
             operationDeclaration.outputType().dataType(),
@@ -499,7 +499,7 @@ public final class RequestFactory {
         reqFieldPath,
         requestData,
         reqInputFieldProjection,
-        reqOutputFieldProjection
+        reqFieldProjection
     );
   }
 
@@ -543,7 +543,7 @@ public final class RequestFactory {
     return psiVarPath;
   }
 
-  private static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputProjection(
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputProjection(
       @NotNull String projection,
       @NotNull DataTypeApi type,
       @NotNull OpOutputVarProjection op,
@@ -558,7 +558,7 @@ public final class RequestFactory {
         new ReqOutputPsiProcessingContext(context, referenceContext);
 
     try {
-      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
           false,
           op,
@@ -596,6 +596,7 @@ public final class RequestFactory {
     return psi;
   }
 
+  @Deprecated
   private static @NotNull ReqInputVarProjection parseReqInputProjection(
       @NotNull String projection,
       @NotNull DataTypeApi dataType,

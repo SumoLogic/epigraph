@@ -17,7 +17,7 @@
 package ws.epigraph.service.operations;
 
 import ws.epigraph.data.Data;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class UpdateOperationRequest extends OperationRequest {
       final @Nullable ReqFieldPath path,
       final @NotNull Data data,
       final @Nullable ReqUpdateFieldProjection updateProjection,
-      final @NotNull ReqOutputFieldProjection outputProjection) {
+      final @NotNull ReqFieldProjection outputProjection) {
 
     super(path, outputProjection);
     this.data = data;

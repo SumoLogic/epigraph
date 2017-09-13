@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqPrimitiveModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqPrimitiveModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputPrimitiveModelProjection
 
@@ -38,7 +38,7 @@ class ReqUpdatePrimitiveModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with ReqPrimitiveModelProjectionGen {
+  ) with AbstractReqPrimitiveModelProjectionGen {
 
   override type OpProjectionType = OpInputPrimitiveModelProjection
 

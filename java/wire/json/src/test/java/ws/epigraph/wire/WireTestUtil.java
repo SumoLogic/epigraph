@@ -22,7 +22,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
@@ -84,7 +84,7 @@ public final class WireTestUtil {
     });
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
       @NotNull OpOutputVarProjection op,
       @NotNull String projectionString,
@@ -105,7 +105,7 @@ public final class WireTestUtil {
           new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
           false,
           op,

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.printers.DataPrinter;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.service.AmbiguousPathException;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -37,7 +37,7 @@ public final class DataPathRemover {
   private DataPathRemover() {} // todo move somewhere?
 
   public static @NotNull PathRemovalResult removePath(
-      @NotNull ReqOutputVarProjection projection,
+      @NotNull ReqEntityProjection projection,
       @NotNull Data data,
       int steps) throws AmbiguousPathException {
 
@@ -49,7 +49,7 @@ public final class DataPathRemover {
       case 0:
         return PathRemovalResult.NULL;
       case 1:
-        final ReqOutputTagProjectionEntry tpe =
+        final ReqTagProjectionEntry tpe =
             projection.tagProjections().values().iterator().next();
 
         final Val val = data._raw().tagValues().get(tpe.tag().name());
@@ -67,7 +67,7 @@ public final class DataPathRemover {
   }
 
   public static @NotNull PathRemovalResult removePath(
-      @NotNull ReqOutputModelProjection<?, ?, ?> mp,
+      @NotNull ReqModelProjection<?, ?, ?> mp,
       @NotNull Val val,
       int steps) throws AmbiguousPathException {
 
@@ -77,7 +77,7 @@ public final class DataPathRemover {
   }
 
   public static @NotNull PathRemovalResult removePath(
-      @NotNull ReqOutputModelProjection<?, ?, ?> mp,
+      @NotNull ReqModelProjection<?, ?, ?> mp,
       @NotNull Datum datum,
       int steps) throws AmbiguousPathException {
 
@@ -89,15 +89,15 @@ public final class DataPathRemover {
       case ENTITY:
         throw new IllegalArgumentException("Unsupported model kind: " + mp.type().kind());
       case RECORD:
-        ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) mp;
-        Map<String, ReqOutputFieldProjectionEntry> fieldProjections = rmp.fieldProjections();
+        ReqRecordModelProjection rmp = (ReqRecordModelProjection) mp;
+        Map<String, ReqFieldProjectionEntry> fieldProjections = rmp.fieldProjections();
 
 
         switch (fieldProjections.size()) {
           case 0:
             return PathRemovalResult.NULL;
           case 1:
-            ReqOutputFieldProjectionEntry entry = fieldProjections.values().iterator().next();
+            ReqFieldProjectionEntry entry = fieldProjections.values().iterator().next();
             Data fieldData = ((RecordDatum) datum)._raw().fieldsData().get(entry.field().name());
             if (fieldData == null)
               return new PathRemovalResult(
@@ -112,8 +112,8 @@ public final class DataPathRemover {
         }
 
       case MAP:
-        ReqOutputMapModelProjection mmp = (ReqOutputMapModelProjection) mp;
-        List<ReqOutputKeyProjection> keys = mmp.keys();
+        ReqMapModelProjection mmp = (ReqMapModelProjection) mp;
+        List<ReqKeyProjection> keys = mmp.keys();
         Map<Datum.@NotNull Imm, @NotNull ? extends Data> mapElements = ((MapDatum) datum)._raw().elements();
 
         if (keys == null) {
@@ -130,7 +130,7 @@ public final class DataPathRemover {
             case 0:
               return PathRemovalResult.NULL;
             case 1:
-              final ReqOutputKeyProjection kp = keys.iterator().next();
+              final ReqKeyProjection kp = keys.iterator().next();
               final Datum.Imm key = kp.value().toImmutable();
               final Data value = mapElements.get(key);
 
@@ -158,7 +158,7 @@ public final class DataPathRemover {
         }
 
       case LIST:
-        ReqOutputListModelProjection lmp = (ReqOutputListModelProjection) mp;
+        ReqListModelProjection lmp = (ReqListModelProjection) mp;
         final List<@NotNull ? extends Data> listElements = ((ListDatum) datum)._raw().elements();
 
         switch (listElements.size()) {
@@ -185,16 +185,16 @@ public final class DataPathRemover {
   public static class PathRemovalResult {
     public static final PathRemovalResult NULL = new PathRemovalResult(null, null, null, null, null);
 
-    public final @Nullable ReqOutputVarProjection dataProjection;
+    public final @Nullable ReqEntityProjection dataProjection;
     public final @Nullable Data data;
-    public final @Nullable ReqOutputModelProjection<?, ?, ?> datumProjection;
+    public final @Nullable ReqModelProjection<?, ?, ?> datumProjection;
     public final @Nullable Datum datum;
     public final @Nullable ErrorValue error;
 
     public PathRemovalResult(
-        @Nullable ReqOutputVarProjection projection,
+        @Nullable ReqEntityProjection projection,
         @Nullable Data data,
-        @Nullable ReqOutputModelProjection<?, ?, ?> datumProjection,
+        @Nullable ReqModelProjection<?, ?, ?> datumProjection,
         @Nullable Datum datum,
         @Nullable ErrorValue error) {
       dataProjection = projection;
@@ -204,7 +204,7 @@ public final class DataPathRemover {
       this.error = error;
     }
 
-    public PathRemovalResult(@NotNull ReqOutputVarProjection dataProjection, @Nullable Data data) {
+    public PathRemovalResult(@NotNull ReqEntityProjection dataProjection, @Nullable Data data) {
       this(
           dataProjection,
           data,
@@ -214,7 +214,7 @@ public final class DataPathRemover {
       );
     }
 
-    public PathRemovalResult(@NotNull ReqOutputModelProjection<?, ?, ?> datumProjection, @Nullable Datum datum) {
+    public PathRemovalResult(@NotNull ReqModelProjection<?, ?, ?> datumProjection, @Nullable Datum datum) {
       this(
           null,
           null,
@@ -224,7 +224,7 @@ public final class DataPathRemover {
       );
     }
 
-    public PathRemovalResult(@NotNull ReqOutputModelProjection<?, ?, ?> mp, @Nullable ErrorValue error) {
+    public PathRemovalResult(@NotNull ReqModelProjection<?, ?, ?> mp, @Nullable ErrorValue error) {
       this(
           null,
           null,

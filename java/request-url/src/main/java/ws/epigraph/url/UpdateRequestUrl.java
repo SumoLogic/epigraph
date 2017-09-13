@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 
@@ -37,7 +37,7 @@ public class UpdateRequestUrl extends RequestUrl {
       final @NotNull String fieldName,
       final @Nullable ReqFieldPath path,
       final @Nullable ReqUpdateFieldProjection updateProjection,
-      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
 

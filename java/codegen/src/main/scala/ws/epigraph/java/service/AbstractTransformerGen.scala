@@ -22,8 +22,7 @@ import ws.epigraph.compiler.CTypeKind
 import ws.epigraph.java.JavaGenNames.{lqdrn2, lqn2}
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.BaseNamespaceProvider
-import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqEntityProjectionGen, ReqProjectionGen}
 import ws.epigraph.java._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.TransformerDeclaration
@@ -38,7 +37,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
 
   override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
-  protected val outputProjectionGen: ReqOutputProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  protected val outputProjectionGen: ReqProjectionGen = ReqEntityProjectionGen.dataProjectionGen(
     new BaseNamespaceProvider {override def baseNamespace: Qn = namespace },
     td.outputProjection(),
     None,
@@ -55,7 +54,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
     val notnull = sctx.use("org.jetbrains.annotations.NotNull")
     val cfut = sctx.use("java.util.concurrent.CompletableFuture")
     val ires = sctx.use("ws.epigraph.invocation.InvocationResult")
-    val rovp = sctx.use("ws.epigraph.projections.req.output.ReqOutputVarProjection")
+    val rovp = sctx.use("ws.epigraph.projections.req.ReqEntityProjection")
     val data = sctx.use("ws.epigraph.data.Data")
     val proj = sctx.use(outputProjectionGen.fullClassName)
 

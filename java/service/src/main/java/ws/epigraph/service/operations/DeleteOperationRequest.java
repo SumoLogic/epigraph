@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package ws.epigraph.service.operations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 /**
@@ -31,7 +31,7 @@ public class DeleteOperationRequest extends OperationRequest {
   public DeleteOperationRequest(
       final @Nullable ReqFieldPath path,
       final @NotNull ReqDeleteFieldProjection deleteProjection,
-      final @NotNull ReqOutputFieldProjection outputProjection) {
+      final @NotNull ReqFieldProjection outputProjection) {
 
     super(path, outputProjection);
     this.DeleteProjection = deleteProjection;

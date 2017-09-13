@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.ReqKeyProjection;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
@@ -35,30 +32,30 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputMapModelProjection
-    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputMapModelProjection, MapTypeApi>
+public class ReqMapModelProjection
+    extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputMapModelProjection,
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqMapModelProjection,
     MapTypeApi
     > {
 
-  private /*final*/ @Nullable List<ReqOutputKeyProjection> keys;
+  private /*final*/ @Nullable List<ReqKeyProjection> keys;
   private boolean keysRequired;
-  private /*final @NotNull*/ @Nullable ReqOutputVarProjection valuesProjection;
+  private /*final @NotNull*/ @Nullable ReqEntityProjection valuesProjection;
 
-  public ReqOutputMapModelProjection(
+  public ReqMapModelProjection(
       @NotNull MapTypeApi model,
       boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputKeyProjection> keys,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqKeyProjection> keys,
       boolean keysRequired,
-      @NotNull ReqOutputVarProjection valuesProjection,
-      @Nullable List<ReqOutputMapModelProjection> tails,
+      @NotNull ReqEntityProjection valuesProjection,
+      @Nullable List<ReqMapModelProjection> tails,
       @NotNull TextLocation location) {
 
     super(model, flagged, params, directives, metaProjection, tails, location);
@@ -67,18 +64,18 @@ public class ReqOutputMapModelProjection
     this.valuesProjection = valuesProjection;
   }
 
-  public ReqOutputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+  public ReqMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
   @Override
-  public @NotNull ReqOutputVarProjection itemsProjection() {
+  public @NotNull ReqEntityProjection itemsProjection() {
     assert isResolved();
     assert valuesProjection != null;
     return valuesProjection;
   }
 
-  public @Nullable List<ReqOutputKeyProjection> keys() {
+  public @Nullable List<ReqKeyProjection> keys() {
     assert isResolved();
     return keys;
   }
@@ -88,45 +85,45 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  protected ReqOutputMapModelProjection merge(
+  protected ReqMapModelProjection merge(
       final @NotNull MapTypeApi model,
       final boolean mergedFlagged,
-      final @NotNull List<ReqOutputMapModelProjection> modelProjections,
+      final @NotNull List<ReqMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputMapModelProjection> mergedTails) {
+      final @Nullable ReqModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqMapModelProjection> mergedTails) {
 
 
-    final List<ReqOutputKeyProjection> mergedKeys;
+    final List<ReqKeyProjection> mergedKeys;
 
-    if (modelProjections.stream().map(ReqOutputMapModelProjection::keys).anyMatch(Objects::isNull)) {
+    if (modelProjections.stream().map(ReqMapModelProjection::keys).anyMatch(Objects::isNull)) {
       mergedKeys = null;
     } else {
       //noinspection ConstantConditions
-      mergedKeys = ReqKeyProjection.merge(
+      mergedKeys = AbstractReqKeyProjection.merge(
           modelProjections.stream().flatMap(projection -> projection.keys().stream()),
           (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
-              new ReqOutputKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
+              new ReqKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)
       );
     }
 
-    List<ReqOutputVarProjection> itemProjections =
+    List<ReqEntityProjection> itemProjections =
         modelProjections.stream()
-            .map(ReqOutputMapModelProjection::itemsProjection)
+            .map(ReqMapModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ ReqOutputVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqEntityProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
-    return new ReqOutputMapModelProjection(
+    return new ReqMapModelProjection(
         model,
         mergedFlagged,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
         mergedKeys,
-        modelProjections.stream().anyMatch(ReqOutputMapModelProjection::keysRequired),
+        modelProjections.stream().anyMatch(ReqMapModelProjection::keysRequired),
         mergedItemsVarType,
         mergedTails,
         TextLocation.UNKNOWN
@@ -134,12 +131,12 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  protected @NotNull ReqOutputMapModelProjection postNormalizedForType(
+  protected @NotNull ReqMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final @NotNull ReqOutputMapModelProjection n) {
+      final @NotNull ReqMapModelProjection n) {
 
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    return new ReqOutputMapModelProjection(
+    return new ReqMapModelProjection(
         n.type(),
         n.flagged(),
         n.params(),
@@ -154,7 +151,7 @@ public class ReqOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqMapModelProjection value) {
     preResolveCheck(value);
     keys = value.keys();
     keysRequired = value.keysRequired();
@@ -167,7 +164,7 @@ public class ReqOutputMapModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqOutputMapModelProjection that = (ReqOutputMapModelProjection) o;
+    ReqMapModelProjection that = (ReqMapModelProjection) o;
     return Objects.equals(keys, that.keys) &&
            keysRequired == that.keysRequired &&
            Objects.equals(valuesProjection, that.valuesProjection);

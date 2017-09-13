@@ -41,7 +41,7 @@ class ReqDeleteRecordModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with ReqRecordModelProjectionGen {
+  ) with AbstractReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpDeleteRecordModelProjection
   override type OpFieldProjectionType = OpDeleteFieldProjectionEntry

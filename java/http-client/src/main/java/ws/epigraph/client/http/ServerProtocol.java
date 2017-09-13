@@ -23,8 +23,8 @@ import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
@@ -40,7 +40,7 @@ public interface ServerProtocol {
   @NotNull String[] mimeTypes();
 
   InvocationResult<ReadOperationResponse<Data>> readResponse(
-      @NotNull ReqOutputVarProjection projection,
+      @NotNull ReqEntityProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,
       int okStatusCode);

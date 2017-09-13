@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 /**
@@ -34,7 +34,7 @@ public class CustomOperationRequest extends OperationRequest {
       final @Nullable ReqFieldPath path,
       final @Nullable Data data,
       final @Nullable ReqInputFieldProjection inputProjection,
-      final @NotNull ReqOutputFieldProjection outputProjection) {
+      final @NotNull ReqFieldProjection outputProjection) {
     super(path, outputProjection);
     this.data = data;
     this.inputProjection = inputProjection;

@@ -19,7 +19,7 @@ package ws.epigraph.url.parser;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -127,7 +127,7 @@ public class ReadRequestUrlPsiParserTest {
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
+    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedProjection,

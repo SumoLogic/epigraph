@@ -33,7 +33,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
@@ -131,7 +131,7 @@ public final class EpigraphTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
       @NotNull OpOutputVarProjection op,
       @NotNull String projectionString,
@@ -154,7 +154,7 @@ public final class EpigraphTestUtil {
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
           false,
           op,

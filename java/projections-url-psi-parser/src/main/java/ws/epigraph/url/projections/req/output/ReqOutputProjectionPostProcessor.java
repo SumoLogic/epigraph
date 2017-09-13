@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
@@ -43,18 +43,18 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
 
   private final @NotNull PsiProcessingContext context;
 
-  private final Map<ReqOutputModelProjection<?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
+  private final Map<ReqModelProjection<?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
 
   ReqOutputProjectionPostProcessor(final @NotNull PsiProcessingContext context) {this.context = context;}
 
   @Override
-  protected @NotNull ReqOutputVarProjection transformResolved(
-      @NotNull ReqOutputVarProjection projection,
+  protected @NotNull ReqEntityProjection transformResolved(
+      @NotNull ReqEntityProjection projection,
       @Nullable DataTypeApi dataType) {
 
     // build model -> entity index
-    for (final Map.Entry<String, ReqOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
+    for (final Map.Entry<String, ReqTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
       modelToEntity.put(entry.getValue().projection(), new EntityProjectionAndDataType(projection, dataType));
     }
 
@@ -76,13 +76,13 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
     return super.transformResolved(projection, dataType);
   }
 
-  private boolean flagModel(@NotNull ReqOutputModelProjection<?, ?, ?> modelProjection) {
+  private boolean flagModel(@NotNull ReqModelProjection<?, ?, ?> modelProjection) {
     if (modelProjection.flagged()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);
       if (epd == null || !epd.ep.flagged()) return false;
       else {
-        ReqOutputVarProjection entityProjection = epd.ep;
+        ReqEntityProjection entityProjection = epd.ep;
         DataTypeApi dataType = epd.dataType;
 
         if (entityProjection.type().kind() != TypeKind.ENTITY) // we're the '$self' model
@@ -98,15 +98,15 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqOutputRecordModelProjection transformRecordModelProjection(
-      final @NotNull ReqOutputRecordModelProjection recordModelProjection,
-      final @NotNull Map<String, ReqOutputFieldProjectionEntry> transformedFields,
-      final @Nullable List<ReqOutputRecordModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqRecordModelProjection transformRecordModelProjection(
+      final @NotNull ReqRecordModelProjection recordModelProjection,
+      final @NotNull Map<String, ReqFieldProjectionEntry> transformedFields,
+      final @Nullable List<ReqRecordModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(recordModelProjection)) {
-      ReqOutputRecordModelProjection newProjection = new ReqOutputRecordModelProjection(
+      ReqRecordModelProjection newProjection = new ReqRecordModelProjection(
           recordModelProjection.type(),
           true,
           recordModelProjection.params(),
@@ -129,15 +129,15 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqOutputMapModelProjection transformMapModelProjection(
-      final @NotNull ReqOutputMapModelProjection mapModelProjection,
-      final @NotNull ReqOutputVarProjection transformedItemsProjection,
-      final @Nullable List<ReqOutputMapModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqMapModelProjection transformMapModelProjection(
+      final @NotNull ReqMapModelProjection mapModelProjection,
+      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @Nullable List<ReqMapModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(mapModelProjection)) {
-      ReqOutputMapModelProjection newProjection = new ReqOutputMapModelProjection(
+      ReqMapModelProjection newProjection = new ReqMapModelProjection(
           mapModelProjection.type(),
           true,
           mapModelProjection.params(),
@@ -162,15 +162,15 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqOutputListModelProjection transformListModelProjection(
-      final @NotNull ReqOutputListModelProjection listModelProjection,
-      final @NotNull ReqOutputVarProjection transformedItemsProjection,
-      final @Nullable List<ReqOutputListModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqListModelProjection transformListModelProjection(
+      final @NotNull ReqListModelProjection listModelProjection,
+      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @Nullable List<ReqListModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(listModelProjection)) {
-      ReqOutputListModelProjection newProjection = new ReqOutputListModelProjection(
+      ReqListModelProjection newProjection = new ReqListModelProjection(
           listModelProjection.type(),
           true,
           listModelProjection.params(),
@@ -193,14 +193,14 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqOutputPrimitiveModelProjection transformPrimitiveModelProjection(
-      final @NotNull ReqOutputPrimitiveModelProjection primitiveModelProjection,
-      final @Nullable List<ReqOutputPrimitiveModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveModelProjection(
+      final @NotNull ReqPrimitiveModelProjection primitiveModelProjection,
+      final @Nullable List<ReqPrimitiveModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(primitiveModelProjection)) {
-      ReqOutputPrimitiveModelProjection newProjection = new ReqOutputPrimitiveModelProjection(
+      ReqPrimitiveModelProjection newProjection = new ReqPrimitiveModelProjection(
           primitiveModelProjection.type(),
           true,
           primitiveModelProjection.params(),
@@ -221,11 +221,11 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
   }
 
   private static final class EntityProjectionAndDataType {
-    public final @NotNull ReqOutputVarProjection ep;
+    public final @NotNull ReqEntityProjection ep;
     public final @Nullable DataTypeApi dataType;
 
     private EntityProjectionAndDataType(
-        final @NotNull ReqOutputVarProjection ep,
+        final @NotNull ReqEntityProjection ep,
         final @Nullable DataTypeApi type) {
 
       this.ep = ep;

@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeleteKeyProjection
 
@@ -32,7 +32,7 @@ class ReqDeleteMapKeyProjectionGen(
   protected val op: OpDeleteKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqMapKeyProjectionGen {
+  protected val ctx: GenContext) extends ReqDeleteProjectionGen with AbstractReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpDeleteKeyProjection
 

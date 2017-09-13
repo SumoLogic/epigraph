@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.PrimitiveTypeApi;
 
 import java.util.List;
@@ -29,22 +27,22 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputPrimitiveModelProjection
-    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputPrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputPrimitiveModelProjection, PrimitiveTypeApi> {
+public class ReqPrimitiveModelProjection
+    extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqPrimitiveModelProjection, PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<ReqModelProjection<?, ?, ?>, ReqPrimitiveModelProjection, PrimitiveTypeApi> {
 
-  public ReqOutputPrimitiveModelProjection(
+  public ReqPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
       boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @Nullable List<ReqOutputPrimitiveModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @Nullable List<ReqPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flagged, params, directives, metaProjection, tails, location);
   }
 
-  public ReqOutputPrimitiveModelProjection(
+  public ReqPrimitiveModelProjection(
       final @NotNull PrimitiveTypeApi model,
       final @NotNull TextLocation location) {
     super(model, location);
@@ -52,16 +50,16 @@ public class ReqOutputPrimitiveModelProjection
 
   /* static */
   @Override
-  protected ReqOutputPrimitiveModelProjection merge(
+  protected ReqPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
       final boolean mergedFlagged,
-      final @NotNull List<ReqOutputPrimitiveModelProjection> modelProjections,
+      final @NotNull List<ReqPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputPrimitiveModelProjection> mergedTails) {
+      final @Nullable ReqModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqPrimitiveModelProjection> mergedTails) {
 
-    return new ReqOutputPrimitiveModelProjection(
+    return new ReqPrimitiveModelProjection(
         model,
         mergedFlagged,
         mergedParams,

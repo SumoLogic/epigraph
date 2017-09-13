@@ -21,7 +21,6 @@ import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2, ttr}
 import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen._
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
@@ -31,14 +30,14 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqVarProjectionGen extends ReqTypeProjectionGen {
+trait AbstractReqVarProjectionGen extends AbstractReqTypeProjectionGen {
   override type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
-  override protected type GenType <: ReqVarProjectionGen
+  override protected type GenType <: AbstractReqVarProjectionGen
 
-  protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagProjectionEntryType): ReqProjectionGen
+  protected def tagGenerator(pgo: Option[AbstractReqVarProjectionGen], tpe: OpTagProjectionEntryType): AbstractReqProjectionGen
 
-  protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqProjectionGen
+  protected def tailGenerator(op: OpProjectionType, normalized: Boolean): AbstractReqProjectionGen
 
   // -----------
 
@@ -56,13 +55,13 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
    * overriden tag, or None if field is not overriding anything
    */
   private def tagProjections(
-    g: ReqVarProjectionGen,
-    t: CEntityTypeDef): Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] = {
+    g: AbstractReqVarProjectionGen,
+    t: CEntityTypeDef): Map[String, (Option[AbstractReqVarProjectionGen], OpTagProjectionEntryType)] = {
     val p = g.op
 
     g.parentClassGenOpt.map(
       pg => tagProjections(
-        pg.asInstanceOf[ReqVarProjectionGen], t
+        pg.asInstanceOf[AbstractReqVarProjectionGen], t
       )
     ).getOrElse(Map()) ++
     p.tagProjections().toSeq.toListMap
@@ -80,7 +79,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   }
 
   /** tag projections: should only include new or overridden tags, should not include inherited */
-  lazy val tagProjections: Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] =
+  lazy val tagProjections: Map[String, (Option[AbstractReqVarProjectionGen], OpTagProjectionEntryType)] =
     op.tagProjections().toSeq.toListMap
       .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
       .mapValues(p => (None, p)) ++
@@ -91,7 +90,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     ).getOrElse(Map())
 
   /** tag generators: should only include new or overridden tags, should not include inherited */
-  def tagGenerators: Map[CTag, ReqProjectionGen] =
+  def tagGenerators: Map[CTag, AbstractReqProjectionGen] =
     tagProjections.values.map { case (pgo, tpe) =>
       findTag(tpe.tag().name()) -> tagGenerator(pgo, tpe)
     }.toListMap
@@ -100,7 +99,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     throw new RuntimeException(s"Can't find tag '$name' in type '${ cType.name.toString }'")
   }
 
-  def findTagGenerator(name: String): Option[ReqProjectionGen] = tagGenerators.find(_._1.name == name).map(_._2)
+  def findTagGenerator(name: String): Option[AbstractReqProjectionGen] = tagGenerators.find(_._1.name == name).map(_._2)
 
   def isInherited(tagName: String): Boolean = parentClassGenOpt.exists { pg =>
     pg.tagProjections.contains(tagName) || pg.isInherited(tagName)
@@ -111,7 +110,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
 //      _.map { t: OpProjectionType => t -> tailGenerator(t, normalized = false) }.toMap
 //    ).getOrElse(Map())
 
-  lazy val normalizedTailGenerators: Map[OpProjectionType, ReqProjectionGen] =
+  lazy val normalizedTailGenerators: Map[OpProjectionType, AbstractReqProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.map { t: OpProjectionType =>
         t -> tailGenerator(op.normalizedForType(t.`type`()), normalized = true)
@@ -127,7 +126,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
     extra: CodeChunk = CodeChunk.empty
   ): String = {
 
-    def genTag(tag: CTag, tagGenerator: ReqProjectionGen): CodeChunk = CodeChunk(
+    def genTag(tag: CTag, tagGenerator: AbstractReqProjectionGen): CodeChunk = CodeChunk(
       /*@formatter:off*/sn"""\
   /**
    * @return {@code ${tag.name}} tag projection

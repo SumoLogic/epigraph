@@ -19,9 +19,9 @@
 package ws.epigraph.wire;
 
 import net.jcip.annotations.NotThreadSafe;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 
 @NotThreadSafe
-public interface ReqOutputFormatWriter extends FormatWriter<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {
+public interface ReqOutputFormatWriter extends FormatWriter<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
 }

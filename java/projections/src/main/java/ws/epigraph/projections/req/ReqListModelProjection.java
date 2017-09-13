@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
 
@@ -33,37 +31,37 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputListModelProjection
-    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputListModelProjection, ListTypeApi>
+public class ReqListModelProjection
+    extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqListModelProjection, ListTypeApi>
     implements GenListModelProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputListModelProjection,
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqListModelProjection,
     ListTypeApi
     > {
 
-  private /*final @NotNull*/ @Nullable ReqOutputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable ReqEntityProjection itemsProjection;
 
-  public ReqOutputListModelProjection(
+  public ReqListModelProjection(
       @NotNull ListTypeApi model,
       boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @NotNull ReqOutputVarProjection itemsProjection,
-      @Nullable List<ReqOutputListModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @NotNull ReqEntityProjection itemsProjection,
+      @Nullable List<ReqListModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flagged, params, directives, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
-  public ReqOutputListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
+  public ReqListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
   @Override
-  public @NotNull ReqOutputVarProjection itemsProjection() {
+  public @NotNull ReqEntityProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
@@ -71,24 +69,24 @@ public class ReqOutputListModelProjection
 
   /* static */
   @Override
-  protected ReqOutputListModelProjection merge(
+  protected ReqListModelProjection merge(
       final @NotNull ListTypeApi model,
       final boolean mergedFlagged,
-      final @NotNull List<ReqOutputListModelProjection> modelProjections,
+      final @NotNull List<ReqListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputListModelProjection> mergedTails) {
+      final @Nullable ReqModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqListModelProjection> mergedTails) {
 
-    List<ReqOutputVarProjection> itemProjections =
+    List<ReqEntityProjection> itemProjections =
         modelProjections.stream()
-            .map(ReqOutputListModelProjection::itemsProjection)
+            .map(ReqListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ ReqOutputVarProjection mergedItemsVarType =
+    final /*@NotNull*/ ReqEntityProjection mergedItemsVarType =
         itemProjections.get(0).merge(itemProjections);
 
-    return new ReqOutputListModelProjection(
+    return new ReqListModelProjection(
         model,
         mergedFlagged,
         mergedParams,
@@ -101,11 +99,11 @@ public class ReqOutputListModelProjection
   }
 
   @Override
-  protected @NotNull ReqOutputListModelProjection postNormalizedForType(
+  protected @NotNull ReqListModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final @NotNull ReqOutputListModelProjection n) {
+      final @NotNull ReqListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
-    return new ReqOutputListModelProjection(
+    return new ReqListModelProjection(
         n.type(),
         n.flagged(),
         n.params(),
@@ -118,7 +116,7 @@ public class ReqOutputListModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputListModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqListModelProjection value) {
     preResolveCheck(value);
     itemsProjection = value.itemsProjection();
     super.resolve(name, value);
@@ -129,7 +127,7 @@ public class ReqOutputListModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    ReqOutputListModelProjection that = (ReqOutputListModelProjection) o;
+    ReqListModelProjection that = (ReqListModelProjection) o;
     return Objects.equals(itemsProjection, that.itemsProjection);
   }
 

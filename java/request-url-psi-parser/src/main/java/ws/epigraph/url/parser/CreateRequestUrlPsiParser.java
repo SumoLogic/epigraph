@@ -23,8 +23,8 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -93,7 +93,7 @@ public final class CreateRequestUrlPsiParser {
         op.outputType(); // already calculated based on outputType/path declared in idl
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
             opOutputType.dataType(),
             op.outputProjection(),
@@ -155,7 +155,7 @@ public final class CreateRequestUrlPsiParser {
     final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
-    final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
             op.outputType().dataType(),
             op.outputProjection(),

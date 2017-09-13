@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
@@ -34,13 +34,13 @@ import java.util.Objects;
 public abstract class RequestUrl {
   private final @NotNull String fieldName;
   private final @Nullable ReqFieldPath path;
-  private final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection;
+  private final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection;
   private final @NotNull Map<String, GDatum> parameters;
 
   protected RequestUrl(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
-      @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
 
     this.fieldName = fieldName;
@@ -53,7 +53,7 @@ public abstract class RequestUrl {
 
   public @Nullable ReqFieldPath path() { return path; }
 
-  public @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection() { return outputProjection; }
+  public @NotNull StepsAndProjection<ReqFieldProjection> outputProjection() { return outputProjection; }
 
   public @NotNull Map<String, GDatum> parameters() { return parameters; }
 

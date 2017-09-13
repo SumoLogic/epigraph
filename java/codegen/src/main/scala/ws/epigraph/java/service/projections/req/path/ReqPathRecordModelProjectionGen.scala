@@ -32,7 +32,7 @@ class ReqPathRecordModelProjectionGen(
   val op: OpRecordModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
+  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with AbstractReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpRecordModelPath
 

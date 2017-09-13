@@ -22,7 +22,7 @@ import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -95,7 +95,7 @@ public final class UpdateRequestUrlPsiParser {
     TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
     @NotNull DataTypeApi inputDataType = opInputType.dataType();
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
             opOutputType.dataType(),
             op.outputProjection(),
@@ -163,7 +163,7 @@ public final class UpdateRequestUrlPsiParser {
 
     TypesResolver outputResolver = addTypeNamespace(resourceType.type(), typesResolver);
     final @Nullable UrlReqOutputTrunkFieldProjection outputProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    final StepsAndProjection<ReqOutputFieldProjection> outputStepsAndProjection =
+    final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
         RequestUrlPsiParserUtil.parseOutputProjection(
             op.outputType().dataType(),
             op.outputProjection(),

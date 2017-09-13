@@ -16,9 +16,9 @@
 
 package ws.epigraph.java.service.projections.req.delete
 
-import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen
+import ws.epigraph.java.service.projections.req.AbstractReqTypeProjectionGen
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqDeleteTypeProjectionGen extends ReqTypeProjectionGen with ReqDeleteProjectionGen
+trait ReqDeleteTypeProjectionGen extends AbstractReqTypeProjectionGen with ReqDeleteProjectionGen

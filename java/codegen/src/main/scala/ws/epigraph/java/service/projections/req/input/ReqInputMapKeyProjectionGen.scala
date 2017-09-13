@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputKeyProjection
 
@@ -32,7 +32,7 @@ class ReqInputMapKeyProjectionGen(
   protected val op: OpInputKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqInputProjectionGen with ReqMapKeyProjectionGen {
+  protected val ctx: GenContext) extends ReqInputProjectionGen with AbstractReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpInputKeyProjection
 

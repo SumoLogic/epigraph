@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
@@ -38,7 +38,7 @@ public class CustomRequestUrl extends RequestUrl {
       @NotNull final String fieldName,
       @Nullable final ReqFieldPath path,
       @Nullable ReqInputFieldProjection inputProjection,
-      @NotNull final StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      @NotNull final StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull final Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
     this.inputProjection = inputProjection;

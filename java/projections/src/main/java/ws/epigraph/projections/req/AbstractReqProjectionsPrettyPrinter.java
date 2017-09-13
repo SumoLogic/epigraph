@@ -196,19 +196,19 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     return super.modelParamsEmpty(mp) && mp.directives().isEmpty() && mp.params().isEmpty();
   }
 
-  protected void printReqKey(final ReqKeyProjection key) throws E {
+  protected void printReqKey(final AbstractReqKeyProjection key) throws E {
     dataPrinter.print(null, key.value());
     printParams(key.params());
     printDirectives(key.directives());
   }
 
-  protected void printMapModelProjection(@Nullable List<? extends ReqKeyProjection> keys, @NotNull VP itemsProjection)
+  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
       throws E {
     printMapModelProjection(keys, "", itemsProjection);
   }
 
   protected void printMapModelProjection(
-      @Nullable List<? extends ReqKeyProjection> keys,
+      @Nullable List<? extends AbstractReqKeyProjection> keys,
       @NotNull String itemsProjectionPrefix,
       @NotNull VP itemsProjection)
       throws E {
@@ -220,7 +220,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       l.print("*");
     } else {
       boolean first = true;
-      for (ReqKeyProjection key : keys) {
+      for (AbstractReqKeyProjection key : keys) {
         if (first) {
           brk();
           first = false;

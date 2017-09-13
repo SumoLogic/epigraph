@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenProjectionTransformer;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.types.*;
 
 import java.util.List;
@@ -30,29 +30,29 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqProjectionTransformer extends GenProjectionTransformer<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputMapModelProjection,
-    ReqOutputListModelProjection,
-    ReqOutputPrimitiveModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqMapModelProjection,
+    ReqListModelProjection,
+    ReqPrimitiveModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection
     > {
 
   // NB keep in sync with OpProjectionTransformer
 
   @Override
-  protected ReqOutputVarProjection transformVarProjection(
-      final @NotNull ReqOutputVarProjection varProjection,
+  protected ReqEntityProjection transformVarProjection(
+      final @NotNull ReqEntityProjection varProjection,
       final @Nullable DataTypeApi dataType,
-      final @NotNull Map<String, ReqOutputTagProjectionEntry> transformedTagProjections,
-      final @Nullable List<ReqOutputVarProjection> transformedTails,
+      final @NotNull Map<String, ReqTagProjectionEntry> transformedTagProjections,
+      final @Nullable List<ReqEntityProjection> transformedTails,
       final boolean mustRebuild) {
 
     if (mustRebuild) {
-      ReqOutputVarProjection newProjection = new ReqOutputVarProjection(
+      ReqEntityProjection newProjection = new ReqEntityProjection(
           varProjection.type(),
           varProjection.flagged(),
           transformedTagProjections,
@@ -67,15 +67,15 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputTagProjectionEntry transformTagProjection(
-      final @NotNull ReqOutputVarProjection varProjection,
+  protected @NotNull ReqTagProjectionEntry transformTagProjection(
+      final @NotNull ReqEntityProjection varProjection,
       final @NotNull TagApi tag,
-      final @NotNull ReqOutputTagProjectionEntry tagProjection,
-      final @NotNull ReqOutputModelProjection<?, ?, ?> transformedModelProjection,
+      final @NotNull ReqTagProjectionEntry tagProjection,
+      final @NotNull ReqModelProjection<?, ?, ?> transformedModelProjection,
       final boolean mustRebuild) {
 
     return mustRebuild ?
-           new ReqOutputTagProjectionEntry(
+           new ReqTagProjectionEntry(
                tag,
                transformedModelProjection,
                tagProjection.location()
@@ -83,15 +83,15 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputRecordModelProjection transformRecordModelProjection(
-      final @NotNull ReqOutputRecordModelProjection recordModelProjection,
-      final @NotNull Map<String, ReqOutputFieldProjectionEntry> transformedFields,
-      final @Nullable List<ReqOutputRecordModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqRecordModelProjection transformRecordModelProjection(
+      final @NotNull ReqRecordModelProjection recordModelProjection,
+      final @NotNull Map<String, ReqFieldProjectionEntry> transformedFields,
+      final @Nullable List<ReqRecordModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (mustRebuild) {
-      ReqOutputRecordModelProjection newProjection = new ReqOutputRecordModelProjection(
+      ReqRecordModelProjection newProjection = new ReqRecordModelProjection(
           recordModelProjection.type(),
           recordModelProjection.flagged(),
           recordModelProjection.params(),
@@ -108,25 +108,25 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputFieldProjection transformFieldProjection(
-      final @NotNull ReqOutputFieldProjection fieldProjection,
-      final @NotNull ReqOutputVarProjection transformedEntityProjection,
+  protected @NotNull ReqFieldProjection transformFieldProjection(
+      final @NotNull ReqFieldProjection fieldProjection,
+      final @NotNull ReqEntityProjection transformedEntityProjection,
       final boolean mustRebuild) {
 
-    return mustRebuild ? new ReqOutputFieldProjection(
+    return mustRebuild ? new ReqFieldProjection(
         transformedEntityProjection,
         fieldProjection.location()
     ) : fieldProjection;
   }
 
   @Override
-  protected @NotNull ReqOutputFieldProjectionEntry transformFieldProjectionEntry(
-      final @NotNull ReqOutputRecordModelProjection modelProjection,
-      final @NotNull ReqOutputFieldProjectionEntry fieldProjectionEntry,
-      final @NotNull ReqOutputFieldProjection transformedFieldProjection,
+  protected @NotNull ReqFieldProjectionEntry transformFieldProjectionEntry(
+      final @NotNull ReqRecordModelProjection modelProjection,
+      final @NotNull ReqFieldProjectionEntry fieldProjectionEntry,
+      final @NotNull ReqFieldProjection transformedFieldProjection,
       final boolean mustRebuild) {
 
-    return mustRebuild ? new ReqOutputFieldProjectionEntry(
+    return mustRebuild ? new ReqFieldProjectionEntry(
         fieldProjectionEntry.field(),
         transformedFieldProjection,
         fieldProjectionEntry.location()
@@ -134,15 +134,15 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputMapModelProjection transformMapModelProjection(
-      final @NotNull ReqOutputMapModelProjection mapModelProjection,
-      final @NotNull ReqOutputVarProjection transformedItemsProjection,
-      final @Nullable List<ReqOutputMapModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqMapModelProjection transformMapModelProjection(
+      final @NotNull ReqMapModelProjection mapModelProjection,
+      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @Nullable List<ReqMapModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (mustRebuild) {
-      ReqOutputMapModelProjection newProjection = new ReqOutputMapModelProjection(
+      ReqMapModelProjection newProjection = new ReqMapModelProjection(
           mapModelProjection.type(),
           mapModelProjection.flagged(),
           mapModelProjection.params(),
@@ -161,15 +161,15 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputListModelProjection transformListModelProjection(
-      final @NotNull ReqOutputListModelProjection listModelProjection,
-      final @NotNull ReqOutputVarProjection transformedItemsProjection,
-      final @Nullable List<ReqOutputListModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqListModelProjection transformListModelProjection(
+      final @NotNull ReqListModelProjection listModelProjection,
+      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @Nullable List<ReqListModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (mustRebuild) {
-      ReqOutputListModelProjection newProjection = new ReqOutputListModelProjection(
+      ReqListModelProjection newProjection = new ReqListModelProjection(
           listModelProjection.type(),
           listModelProjection.flagged(),
           listModelProjection.params(),
@@ -186,14 +186,14 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull ReqOutputPrimitiveModelProjection transformPrimitiveModelProjection(
-      final @NotNull ReqOutputPrimitiveModelProjection primitiveModelProjection,
-      final @Nullable List<ReqOutputPrimitiveModelProjection> transformedTails,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> transformedMeta,
+  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveModelProjection(
+      final @NotNull ReqPrimitiveModelProjection primitiveModelProjection,
+      final @Nullable List<ReqPrimitiveModelProjection> transformedTails,
+      final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (mustRebuild) {
-      ReqOutputPrimitiveModelProjection newProjection = new ReqOutputPrimitiveModelProjection(
+      ReqPrimitiveModelProjection newProjection = new ReqPrimitiveModelProjection(
           primitiveModelProjection.type(),
           primitiveModelProjection.flagged(),
           primitiveModelProjection.params(),
@@ -208,40 +208,40 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
     } else return primitiveModelProjection;
   }
 
-  protected void fixTransformedEntity(@NotNull ReqOutputVarProjection old, @NotNull ReqOutputVarProjection _new) {
+  protected void fixTransformedEntity(@NotNull ReqEntityProjection old, @NotNull ReqEntityProjection _new) {
     _new.setReferenceName(old.referenceName());
     _new.copyNormalizedTailReferenceNames(old);
   }
 
   @SuppressWarnings("unchecked")
-  protected <SMP extends ReqOutputModelProjection<?, SMP, ?>> void fixTransformedModel(
-      @NotNull ReqOutputModelProjection<?, ?, ?> old,
-      @NotNull ReqOutputModelProjection<?, SMP, ?> _new) {
+  protected <SMP extends ReqModelProjection<?, SMP, ?>> void fixTransformedModel(
+      @NotNull ReqModelProjection<?, ?, ?> old,
+      @NotNull ReqModelProjection<?, SMP, ?> _new) {
 
     _new.setReferenceName(old.referenceName());
     _new.copyNormalizedTailReferenceNames((SMP) old);
   }
 
   @Override
-  protected @NotNull ReqOutputVarProjection newEntityRef(
+  protected @NotNull ReqEntityProjection newEntityRef(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
-    return new ReqOutputVarProjection(type, location);
+    return new ReqEntityProjection(type, location);
   }
 
   @Override
-  protected @NotNull ReqOutputModelProjection<?, ?, ?> newModelRef(
+  protected @NotNull ReqModelProjection<?, ?, ?> newModelRef(
       final @NotNull DatumTypeApi model,
       final @NotNull TextLocation location) {
     switch (model.kind()) {
       case RECORD:
-        return new ReqOutputRecordModelProjection((RecordTypeApi) model, location);
+        return new ReqRecordModelProjection((RecordTypeApi) model, location);
       case MAP:
-        return new ReqOutputMapModelProjection((MapTypeApi) model, location);
+        return new ReqMapModelProjection((MapTypeApi) model, location);
       case LIST:
-        return new ReqOutputListModelProjection((ListTypeApi) model, location);
+        return new ReqListModelProjection((ListTypeApi) model, location);
       case PRIMITIVE:
-        return new ReqOutputPrimitiveModelProjection((PrimitiveTypeApi) model, location);
+        return new ReqPrimitiveModelProjection((PrimitiveTypeApi) model, location);
       default:
         throw new IllegalArgumentException("Unsupported model kind: " + model.kind());
     }

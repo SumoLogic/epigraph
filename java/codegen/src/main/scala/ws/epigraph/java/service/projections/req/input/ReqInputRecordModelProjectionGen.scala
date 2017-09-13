@@ -41,7 +41,7 @@ class ReqInputRecordModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with ReqRecordModelProjectionGen {
+  ) with AbstractReqRecordModelProjectionGen {
 
   override type OpProjectionType = OpInputRecordModelProjection
   override type OpFieldProjectionType = OpInputFieldProjectionEntry

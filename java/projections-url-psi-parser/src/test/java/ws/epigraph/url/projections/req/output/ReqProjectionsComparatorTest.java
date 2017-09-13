@@ -18,33 +18,27 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.*;
-import ws.epigraph.psi.PsiProcessingException;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqProjectionsComparator;
+import ws.epigraph.projections.req.ReqRecordModelProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumType;
-import ws.epigraph.types.Type;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputProjectionsComparatorTest {
+public class ReqProjectionsComparatorTest {
   // todo introduce separate projections-test module
 
   private final DataType dataType = new DataType(Person.type, Person.id);
@@ -70,28 +64,28 @@ public class ReqOutputProjectionsComparatorTest {
         "$rec = :`record`(firstName, lastName, bestFriend $rec)"
     );
 
-    ReqOutputVarProjection vp1 = parseReqVarProjection(
+    ReqEntityProjection vp1 = parseReqVarProjection(
         op,
         "$rec = :record( firstName, bestFriend:record( lastName,bestFriend $rec ) )"
     );
 
-    ReqOutputVarProjection vp2 = parseReqVarProjection(
+    ReqEntityProjection vp2 = parseReqVarProjection(
         op,
         "$rec = :record( lastName, bestFriend:record( firstName,bestFriend $rec ) )"
     );
 
-    ReqOutputProjectionsComparator comparator = new ReqOutputProjectionsComparator(false, false);
+    ReqProjectionsComparator comparator = new ReqProjectionsComparator(false, false);
     assertFalse(comparator.equals(vp1, vp2));
 
-    final ReqOutputVarProjection vp1_1 =
-        ((ReqOutputRecordModelProjection) vp1.tagProjection("record").projection()).fieldProjection("bestFriend")
+    final ReqEntityProjection vp1_1 =
+        ((ReqRecordModelProjection) vp1.tagProjection("record").projection()).fieldProjection("bestFriend")
             .fieldProjection()
             .varProjection();
 
     assertTrue(comparator.equals(vp1_1, vp2));
   }
 
-  private @NotNull ReqOutputVarProjection parseReqVarProjection(@NotNull OpOutputVarProjection op, String s) {
+  private @NotNull ReqEntityProjection parseReqVarProjection(@NotNull OpOutputVarProjection op, String s) {
     return parseReqOutputVarProjection(dataType, op, s, resolver).projection();
   }
 

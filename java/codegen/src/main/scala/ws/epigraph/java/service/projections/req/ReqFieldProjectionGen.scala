@@ -16,64 +16,42 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.JavaGenUtils
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.JavaGenUtils.up
+import ws.epigraph.java.service.projections.req.ReqProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.AbstractOpFieldProjection
+import ws.epigraph.projections.op.output.OpOutputFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqFieldProjectionGen extends ReqProjectionGen {
-  type OpFieldProjectionType <: AbstractOpFieldProjection[_, _, _, _]
+class ReqFieldProjectionGen(
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
+  fieldName: String,
+  protected val op: OpOutputFieldProjection,
+  baseNamespaceOpt: Option[Qn],
+  override protected val namespaceSuffix: Qn,
+  dataParentClassGenOpt: Option[ReqTypeProjectionGen],
+  protected val ctx: GenContext) extends ReqProjectionGen with AbstractReqFieldProjectionGen {
 
-  protected def op: OpFieldProjectionType
+  override type OpFieldProjectionType = OpOutputFieldProjection
 
-  def dataProjectionGen: ReqProjectionGen
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
-  // -----
+  override val shortClassName: String = s"$classNamePrefix${ up(fieldName) }Field$classNameSuffix"
 
-  override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
+  override lazy val dataProjectionGen: ReqProjectionGen =
+    ReqEntityProjectionGen.dataProjectionGen(
+      baseNamespaceProvider,
+      op.varProjection(),
+      baseNamespaceOpt,
+      namespaceSuffix,
+      dataParentClassGenOpt,
+      ctx
+    )
 
-  protected def generate(fieldName: String, reqFieldProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
-//    val params =
-//      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
+  override protected def generate: String = generate(
+    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.ReqFieldProjection")
+  )
 
-    val imports: Set[String] = /*params.imports ++*/ Set(
-      "org.jetbrains.annotations.NotNull",
-      reqFieldProjectionFqn.toString,
-      dataProjectionGen.fullClassName
-    ) ++ extra.imports
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${JavaGenUtils.generateImports(imports)}
-
-/**
- * Request projection for {@code $fieldName} field
- */
-${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqFieldProjectionFqn.last()} raw;
-
-  public $shortClassName(@NotNull ${reqFieldProjectionFqn.last()} raw) { this.raw = raw; }
-
-  /**
-   * @return field data projection
-   */
-  public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
-    return new ${dataProjectionGen.shortClassName}(raw.varProjection());
-  }
-${/*params.code*/""}\
-${extra.code}\
-
-  public @NotNull ${reqFieldProjectionFqn.last()} _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
-}
-
-object ReqFieldProjectionGen {
-  val generateFieldProjections = false // take from settings?
 }

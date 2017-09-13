@@ -23,7 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -40,14 +40,14 @@ public final class RequestUrlPsiParserUtil {
 
   private RequestUrlPsiParserUtil() {}
 
-  static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseOutputProjection(
+  static @NotNull StepsAndProjection<ReqFieldProjection> parseOutputProjection(
       final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection;
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection;
 
     ReqOutputReferenceContext reqOutputReferenceContext =
         new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
@@ -57,7 +57,7 @@ public final class RequestUrlPsiParserUtil {
     if (psi == null) {
       stepsAndProjection = new StepsAndProjection<>(
           0,
-          new ReqOutputFieldProjection(
+          new ReqFieldProjection(
 //              ReqParams.EMPTY,
 //              Annotations.EMPTY,
               ReqOutputProjectionsPsiParser.createDefaultVarProjection(
@@ -72,7 +72,7 @@ public final class RequestUrlPsiParserUtil {
           )
       );
     } else {
-      final StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
+      final StepsAndProjection<ReqFieldProjection> fieldStepsAndProjection =
           ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
               dataType,
               false, // ?

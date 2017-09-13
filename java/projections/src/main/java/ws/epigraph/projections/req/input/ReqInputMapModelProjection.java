@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.ReqKeyProjection;
+import ws.epigraph.projections.req.AbstractReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
@@ -100,7 +100,7 @@ public class ReqInputMapModelProjection
       mergedKeys = null;
     } else {
       //noinspection ConstantConditions
-      mergedKeys = ReqKeyProjection.merge(
+      mergedKeys = AbstractReqKeyProjection.merge(
           modelProjections.stream().flatMap(projection -> projection.keys().stream()),
           (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
               new ReqInputKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -268,7 +268,7 @@ public class UpdateOperationRouterTest {
       assertEquals(expectedInputProjection, TestUtil.printReqUpdateVarProjection(inputProjection.varProjection()));
     }
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = updateRequestUrl.outputProjection();
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection = updateRequestUrl.outputProjection();
 
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(

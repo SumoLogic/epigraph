@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
@@ -24,24 +24,24 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputFieldProjection
+public class ReqFieldProjectionEntry extends AbstractFieldProjectionEntry<
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqFieldProjection
     > {
-  public ReqOutputFieldProjectionEntry(
+  public ReqFieldProjectionEntry(
       @NotNull FieldApi field,
-      @NotNull ReqOutputFieldProjection projection,
+      @NotNull ReqFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
   }
 
   @Override
-  public @NotNull ReqOutputFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
-    return new ReqOutputFieldProjectionEntry(
+  public @NotNull ReqFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
+    return new ReqFieldProjectionEntry(
         overridingField,
-        new ReqOutputFieldProjection(
+        new ReqFieldProjection(
             fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
             TextLocation.UNKNOWN
         ),

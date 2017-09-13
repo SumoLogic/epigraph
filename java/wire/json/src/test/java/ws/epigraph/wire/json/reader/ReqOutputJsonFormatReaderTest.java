@@ -24,7 +24,7 @@ import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.DataComparator;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
@@ -282,7 +282,7 @@ public class ReqOutputJsonFormatReaderTest {
     );
 
     String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
-    final @NotNull ReqOutputVarProjection reqProjection =
+    final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
@@ -474,14 +474,14 @@ public class ReqOutputJsonFormatReaderTest {
       @NotNull Data expectedData)
       throws IOException {
 
-    final @NotNull ReqOutputVarProjection reqProjection =
+    final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRead(reqProjection, json, expectedData);
   }
 
   private void testRead(
-      @NotNull ReqOutputVarProjection reqProjection,
+      @NotNull ReqEntityProjection reqProjection,
       @NotNull String json,
       @NotNull Data expectedData)
       throws IOException {
@@ -543,7 +543,7 @@ public class ReqOutputJsonFormatReaderTest {
       @NotNull String json,
       @Nullable String errorMessageSubstring) throws IOException {
 
-    final @NotNull ReqOutputVarProjection reqProjection =
+    final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     JsonParser parser = new JsonFactory().createParser(json);

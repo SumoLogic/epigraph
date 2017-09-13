@@ -16,79 +16,30 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.{CDatumType, CMapType}
-import ws.epigraph.java.JavaGenNames.{ln, lqn2}
-import ws.epigraph.java.JavaGenUtils
-import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.compiler.CMapType
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.service.projections.req.ReqProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.OpKeyProjection
+import ws.epigraph.projections.op.output.OpOutputKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqMapKeyProjectionGen extends ReqProjectionGen {
-  type OpKeyProjectionType <: OpKeyProjection
+class ReqMapKeyProjectionGen(
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
+  protected val cMapType: CMapType,
+  val op: OpOutputKeyProjection,
+  baseNamespaceOpt: Option[Qn],
+  override protected val namespaceSuffix: Qn,
+  protected val ctx: GenContext) extends ReqProjectionGen with AbstractReqMapKeyProjectionGen {
 
-  protected def op: OpKeyProjectionType
+  override type OpKeyProjectionType = OpOutputKeyProjection
 
-  protected def cMapType: CMapType
+  override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
-  // ------
+  override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 
-  protected val mapTypeShortName: String = ln(cMapType)
-
-  protected def generate(reqKeyProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
-    val params = ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
-    val keyType: CDatumType = cMapType.keyTypeRef.resolved.asInstanceOf[CDatumType]
-    val keyTypeShortName = ln(keyType)
-
-    def genPrimitiveKey(nativeType: String): String = /*@formatter:off*/sn"""\
-  public @NotNull $nativeType value() {
-    $keyTypeShortName key = ($keyTypeShortName) raw.value();
-    return key.getVal();
-  }
-"""/*@formatter:on*/
-
-    def genNonPrimitiveKey: String = /*@formatter:off*/sn"""\
-  public @NotNull $keyTypeShortName.Imm value() {
-    return (($keyTypeShortName) raw.value()).toImmutable();
-  }
-"""/*@formatter:on*/
-
-    // unwrap built-in primitives
-
-    val keyCode = CodeChunk(JavaGenUtils.builtInPrimitives.get(keyType.name.name).map(genPrimitiveKey).getOrElse(genNonPrimitiveKey))
-
-    val imports: Set[String] = Set(
-      "org.jetbrains.annotations.NotNull",
-      reqKeyProjectionFqn.toString,
-      lqn2(keyType, namespace.toString)
-    ) ++ params.imports ++ extra.imports
-
-    /*@formatter:off*/sn"""\
-${JavaGenUtils.topLevelComment}
-$packageStatement
-
-${JavaGenUtils.generateImports(imports)}
-
-/**
- * Request projection for {@code $mapTypeShortName} keys
- */
-${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName {
-  private final @NotNull ${reqKeyProjectionFqn.last()} raw;
-
-  public $shortClassName(@NotNull ${reqKeyProjectionFqn.last()} raw) {
-    this.raw = raw;
-  }
-
-  /**
-   * @return key value
-   */
-${(keyCode + params + extra).code}\
-
-  public @NotNull ${reqKeyProjectionFqn.last()} _raw() { return raw; }
-}"""/*@formatter:on*/
-  }
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqKeyProjection")
+  )
 }

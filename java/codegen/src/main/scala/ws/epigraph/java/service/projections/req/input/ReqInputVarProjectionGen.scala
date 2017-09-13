@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqProjectionGen, ReqTypeProjectionGenCache, AbstractReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.TypeKind
@@ -33,18 +33,18 @@ class ReqInputVarProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputVarProjectionGen],
-  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with AbstractReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
   override protected type GenType = ReqInputVarProjectionGen
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
@@ -57,12 +57,12 @@ class ReqInputVarProjectionGen(
       Some(this),
       ctx
     ) {
-      override lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpInputVarProjection, AbstractReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(
-    pgo: Option[ReqVarProjectionGen],
-    tpe: OpInputTagProjectionEntry): ReqProjectionGen =
+    pgo: Option[AbstractReqVarProjectionGen],
+    tpe: OpInputTagProjectionEntry): AbstractReqProjectionGen =
     tagGenerator(
       tpe,
       pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqInputModelProjectionGen]))
@@ -70,7 +70,7 @@ class ReqInputVarProjectionGen(
 
   protected def tagGenerator(
     tpe: OpInputTagProjectionEntry,
-    parentTagGenOpt: Option[ReqInputModelProjectionGen]): ReqProjectionGen =
+    parentTagGenOpt: Option[ReqInputModelProjectionGen]): AbstractReqProjectionGen =
     ReqInputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

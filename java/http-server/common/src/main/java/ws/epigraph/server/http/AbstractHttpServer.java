@@ -22,11 +22,11 @@ import ws.epigraph.data.Data;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -195,12 +195,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private static final class ReadResult {
     final @Nullable Data data;
     final int pathSteps;
-    final @NotNull ReqOutputVarProjection projection;
+    final @NotNull ReqEntityProjection projection;
 
     ReadResult(
         final @Nullable Data data,
         final int steps,
-        final @NotNull ReqOutputVarProjection projection) {
+        final @NotNull ReqEntityProjection projection) {
       this.data = data;
       pathSteps = steps;
       this.projection = projection;
@@ -252,7 +252,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         urlPsi,
         operationSearchResult -> {
           ReadRequestUrl requestUrl = operationSearchResult.requestUrl();
-          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+          StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           ReadOperation<Data> operation = operationSearchResult.operation();
 
@@ -432,7 +432,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationSearchResult -> {
           @NotNull CreateRequestUrl requestUrl = operationSearchResult.requestUrl();
           ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
-          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+          StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull CreateOperation<Data> operation = operationSearchResult.operation();
 
@@ -585,7 +585,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationSearchResult -> {
           @NotNull UpdateRequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable ReqUpdateFieldProjection updateProjection = requestUrl.updateProjection();
-          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+          StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull UpdateOperation<Data> operation = operationSearchResult.operation();
 
@@ -738,7 +738,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationSearchResult -> {
           @NotNull DeleteRequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
-          StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+          StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull DeleteOperation<Data> operation = operationSearchResult.operation();
 
@@ -889,7 +889,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     assert requestUrl != null;
 
     @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
-    StepsAndProjection<ReqOutputFieldProjection> outputProjection = requestUrl.outputProjection();
+    StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
     final Data body;
     try {
@@ -957,7 +957,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private void writeData(
       final @NotNull OperationKind operationKind,
       final int pathSteps,
-      @NotNull ReqOutputVarProjection reqProjection,
+      @NotNull ReqEntityProjection reqProjection,
       @Nullable Data data,
       @NotNull C context,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -969,8 +969,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
         if (noPathResult.error == null) {
-          final @Nullable ReqOutputVarProjection varProjection = noPathResult.dataProjection;
-          final @Nullable ReqOutputModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
+          final @Nullable ReqEntityProjection varProjection = noPathResult.dataProjection;
+          final @Nullable ReqModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
 
           if (varProjection != null) {
             serverProtocol.writeDataResponse(

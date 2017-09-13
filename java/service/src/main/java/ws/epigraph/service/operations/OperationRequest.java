@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package ws.epigraph.service.operations;
 
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,11 +26,11 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class OperationRequest {
   private final @Nullable ReqFieldPath path;
-  private final @NotNull ReqOutputFieldProjection outputProjection;
+  private final @NotNull ReqFieldProjection outputProjection;
 
   protected OperationRequest(
       final @Nullable ReqFieldPath path,
-      final @NotNull ReqOutputFieldProjection outputProjection) {
+      final @NotNull ReqFieldProjection outputProjection) {
 
     this.path = path;
     this.outputProjection = outputProjection;
@@ -38,5 +38,5 @@ public abstract class OperationRequest {
 
   public @Nullable ReqFieldPath path() { return path; }
 
-  public @NotNull ReqOutputFieldProjection outputProjection() { return outputProjection; }
+  public @NotNull ReqFieldProjection outputProjection() { return outputProjection; }
 }

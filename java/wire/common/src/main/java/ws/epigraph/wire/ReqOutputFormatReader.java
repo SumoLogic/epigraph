@@ -16,10 +16,10 @@
 
 package ws.epigraph.wire;
 
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface ReqOutputFormatReader extends FormatReader<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> {}
+public interface ReqOutputFormatReader extends FormatReader<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {}

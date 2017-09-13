@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
@@ -37,7 +37,7 @@ import ws.epigraph.url.projections.req.ReqProjectionTransformationMap;
 public final class ReqOutputProjectionsPsiParser {
   private ReqOutputProjectionsPsiParser() {}
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseTrunkVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -45,14 +45,14 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = ReqProjectionsPsiParser.parseTrunkVarProjection(
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqProjectionsPsiParser.parseTrunkVarProjection(
         dataType, flagged, op, psi, resolver, context
     );
 
     return transformEntityProjection(stepsAndProjection, context);
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseComaVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseComaVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpOutputVarProjection op,
@@ -60,14 +60,14 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqOutputVarProjection> stepsAndProjection = ReqProjectionsPsiParser.parseComaVarProjection(
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqProjectionsPsiParser.parseComaVarProjection(
         dataType, flagged, op, psi, resolver, context
     );
 
     return transformEntityProjection(stepsAndProjection, context);
   }
 
-  public static @NotNull ReqOutputVarProjection createDefaultVarProjection(
+  public static @NotNull ReqEntityProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
       @NotNull OpOutputVarProjection op,
       boolean required,
@@ -79,7 +79,7 @@ public final class ReqOutputProjectionsPsiParser {
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseTrunkFieldProjection(
+  public static @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull OpOutputFieldProjection op,
@@ -87,26 +87,26 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = ReqProjectionsPsiParser.parseTrunkFieldProjection(
+    StepsAndProjection<ReqFieldProjection> stepsAndProjection = ReqProjectionsPsiParser.parseTrunkFieldProjection(
         fieldType, flagged, op, psi, resolver, context
     );
 
-    ReqOutputFieldProjection fieldProjection = stepsAndProjection.projection();
-    ReqOutputVarProjection ep = fieldProjection.varProjection();
+    ReqFieldProjection fieldProjection = stepsAndProjection.projection();
+    ReqEntityProjection ep = fieldProjection.varProjection();
 
-    ReqOutputVarProjection transformedEp = transformEntityProjection(ep, context);
+    ReqEntityProjection transformedEp = transformEntityProjection(ep, context);
 
     return new StepsAndProjection<>(
         stepsAndProjection.pathSteps(),
-        new ReqOutputFieldProjection(
+        new ReqFieldProjection(
             transformedEp,
             fieldProjection.location()
         )
     );
   }
 
-  private static @NotNull StepsAndProjection<ReqOutputVarProjection> transformEntityProjection(
-      @NotNull StepsAndProjection<ReqOutputVarProjection> s,
+  private static @NotNull StepsAndProjection<ReqEntityProjection> transformEntityProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> s,
       @NotNull ReqOutputPsiProcessingContext context) {
 
     return new StepsAndProjection<>(
@@ -119,8 +119,8 @@ public final class ReqOutputProjectionsPsiParser {
   }
 
 
-  private static @NotNull ReqOutputVarProjection transformEntityProjection(
-      @NotNull ReqOutputVarProjection ep,
+  private static @NotNull ReqEntityProjection transformEntityProjection(
+      @NotNull ReqEntityProjection ep,
       @NotNull ReqOutputPsiProcessingContext context) {
 
     // easy on/off switch for debugging
@@ -129,7 +129,7 @@ public final class ReqOutputProjectionsPsiParser {
 
     if (enabled) {
       ReqProjectionTransformationMap transformationMap = new ReqProjectionTransformationMap();
-      ReqOutputVarProjection transformedEp =
+      ReqEntityProjection transformedEp =
           new ReqOutputProjectionPostProcessor(context).transform(transformationMap, ep, null);
 
       context.referenceContext().transform(transformationMap);

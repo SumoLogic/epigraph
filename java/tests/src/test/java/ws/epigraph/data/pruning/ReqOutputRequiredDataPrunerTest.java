@@ -24,7 +24,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.tests.PersonId;
@@ -244,7 +244,7 @@ public class ReqOutputRequiredDataPrunerTest {
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqOutputVarProjection> req =
+    StepsAndProjection<ReqEntityProjection> req =
         EpigraphTestUtil.parseReqOutputVarProjection(
             (DataType) data.type().dataType(),
             op,
@@ -266,7 +266,7 @@ public class ReqOutputRequiredDataPrunerTest {
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqOutputVarProjection> req =
+    StepsAndProjection<ReqEntityProjection> req =
         EpigraphTestUtil.parseReqOutputVarProjection(
             datum.type().dataType(),
             op,

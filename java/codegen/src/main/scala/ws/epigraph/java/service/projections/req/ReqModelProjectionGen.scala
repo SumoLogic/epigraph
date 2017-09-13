@@ -16,183 +16,120 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.CDatumType
-import ws.epigraph.java.JavaGenNames.lqn2
-import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
-import ws.epigraph.java.JavaGenUtils.{lo, toCType}
+import ws.epigraph.java.GenContext
+import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.service.projections.req.ReqProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.AbstractOpModelProjection
-import ws.epigraph.types.DatumTypeApi
-
-import scala.collection.JavaConversions._
+import ws.epigraph.projections.op.output._
+import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqModelProjectionGen extends ReqTypeProjectionGen {
-  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
-  type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
-  override protected type GenType <: ReqModelProjectionGen
+abstract class ReqModelProjectionGen(
+  protected val baseNamespaceProvider: BaseNamespaceProvider,
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _], // todo unused
+  baseNamespaceOpt: Option[Qn],
+  _namespaceSuffix: Qn,
+  override protected val parentClassGenOpt: Option[ReqModelProjectionGen],
+  protected val ctx: GenContext) extends ReqTypeProjectionGen with AbstractReqModelProjectionGen {
 
-  override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
+  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpMetaProjectionType = OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type GenType = ReqModelProjectionGen
 
-  protected def reqVarProjectionFqn: Qn
+//  referenceName.foreach(ref => ctx.reqOutputProjections.put(ref, this)) // todo rest
 
-  protected def reqModelProjectionFqn: Qn
-
-  protected def reqModelProjectionParams: String
-
-  protected def metaGenerator(metaOp: OpMetaProjectionType): ReqModelProjectionGen =
-    throw new RuntimeException("meta projections not supported")
-
-  protected def tailGenerator(parentGen: GenType, op: OpProjectionType, normalized: Boolean): GenType =
-    throw new RuntimeException("tail projections not supported")
-
-  override def description: String = "[M] " + super.description
-
-  // -----------
-
-  protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
-
-  override def children: Iterable[JavaGen] =
-    super.children ++ metaGeneratorOpt.iterator ++ /*tailGenerators.values ++*/
-    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/.values // filter out named generators
-
-  protected lazy val params: CodeChunk =
-    ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
-
-  lazy val metaGeneratorOpt: Option[ReqModelProjectionGen] = {
-    val metaOp: OpMetaProjectionType = op.metaProjection().asInstanceOf[OpMetaProjectionType]
-    Option(metaOp).map(metaGenerator)
-  }
-
-  protected lazy val meta: CodeChunk = metaGeneratorOpt match {
-    case Some(g) => CodeChunk(/*@formatter:off*/sn"""\
-  public @Nullable ${g.fullClassName} meta() {
-    return raw.metaProjection() == null ? null : new ${g.fullClassName} (raw.metaProjection());
-  }
-"""/*@formatter:on*/ , Set("org.jetbrains.annotations.Nullable")
-    )
-    case None => CodeChunk.empty
-  }
-
-//  protected val buildTails = true
-
-  protected val buildNormalizedTails = true
-
-//  protected lazy val tails: CodeChunk = if (!buildTails) CodeChunk.empty else tailGenerators
-//    .map { case (tail, gen) => genTail(tail, gen) }
-//    .foldLeft(CodeChunk.empty)(_ + _)
-
-  protected lazy val tails: CodeChunk = CodeChunk.empty
-
-  protected lazy val normalizedTails: CodeChunk = CodeChunk.empty
-//    if (!buildNormalizedTails) CodeChunk.empty else normalizedTailGenerators
-//    .map { case (tail, gen) => genNormalizedTail(tail, gen) }
-//    .foldLeft(CodeChunk.empty)(_ + _)
-
-//  protected lazy val tailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
-//    Option(op.polymorphicTails()).map(
-//      _.asInstanceOf[java.util.List[OpProjectionType]] // can't set SMP to OpProjectionType, Scala doesn't allow cyclic types
-//        .map { t: OpProjectionType => t -> tailGenerator(this.asInstanceOf[GenType], t, normalized = false) }.toMap
-//    ).getOrElse(Map())
-
-  lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
-    Option(op.polymorphicTails()).map(
-      _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
-        t -> tailGenerator(this.asInstanceOf[GenType], op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
-      }.toListMap
-    ).getOrElse(Map())
-
-  private def genTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = CodeChunk.empty
-//  {
-//    val tailCtype = JavaGenUtils.toCType(tail.`type`())
-//    CodeChunk(
-//      /*@formatter:off*/sn"""\
-//  /**
-//   * @return ${JavaGenUtils.javadocLink(tailCtype, namespace)} tail projection
-//   */
-//  public @Nullable ${tailGenerator.fullClassName} ${tailMethodPrefix(false)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(false)}() {
-//    ${reqModelProjectionFqn.last()} tail = raw.tailByType(${lqn2(tailCtype, namespace.toString)}.Type.instance());
-//    return tail == null ? null : new ${tailGenerator.fullClassName}(tail);
-//  }
-//"""/*@formatter:on*/ ,
-//      Set(
-//        "org.jetbrains.annotations.Nullable"
-//      )
-//    )
-//  }
-
-  def genNormalizedTail(tail: OpProjectionType, tailGenerator: ReqModelProjectionGen): CodeChunk = CodeChunk.empty
-//  {
-//    val tailCtype = JavaGenUtils.toCType(tail.`type`())
-//    val tailTypeExpr = lqn2(tailCtype, namespace.toString)
-//    CodeChunk(
-//      /*@formatter:off*/sn"""\
-//  /**
-//   * @return model projection normalized for ${JavaGenUtils.javadocLink(tailCtype, namespace)} type
-//   *
-//   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic-tails#normalized-projections">normalized projections</a>
-//   */
-//  public @NotNull ${tailGenerator.fullClassName} ${tailMethodPrefix(true)}${typeNameToMethodName(tailCtype)}${tailMethodSuffix(true)}() {
-//    return new ${tailGenerator.fullClassName}(raw.normalizedForType($tailTypeExpr.Type.instance()));
-//  }
-//"""/*@formatter:on*/ ,
-//      Set()
-//    )
-//  }
-
-
-  //                                                                                                   dispatcher code
-  protected lazy val dispatcher: CodeChunk = if (normalizedTailGenerators.isEmpty) CodeChunk.empty else new CodeChunk(
-    /*@formatter:off*/sn"""\
-  public static final @NotNull Dispatcher dispatcher = Dispatcher.INSTANCE;
-
-  public static final class Dispatcher {
-    static final Dispatcher INSTANCE = new Dispatcher();
-
-    private Dispatcher() {}
-
-    public <T> T dispatch(
-      @NotNull $shortClassName projection,
-      @NotNull Type actualType,
-${normalizedTailGenerators.map{
-  case (t,g) => s"      @NotNull Function<${g.fullClassName}, T> ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer,"
-}.mkString("\n")}
-      @NotNull Supplier<T> _default) {
-
-${normalizedTailGenerators.map{ case (t,g) =>
-  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
-  s"        return ${lo(typeNameToMethodName(toCType(t.`type`())))}Producer.apply(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
-}.mkString("      ","\n      else ","")}
-      else
-        return _default.get();
-    }
-
-    public void dispatch(
-      @NotNull $shortClassName projection,
-      @NotNull Type actualType,
-${normalizedTailGenerators.map{
-  case (t,g) => s"      @NotNull Consumer<${g.fullClassName}> ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer,"
-}.mkString("\n")}
-      @NotNull Runnable _default) {
-
-${normalizedTailGenerators.map{ case (t,g) =>
-  s"if (actualType.equals(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance()))\n" +
-  s"        ${lo(typeNameToMethodName(toCType(t.`type`())))}Consumer.accept(new ${g.fullClassName}(projection.raw.normalizedForType(${lqn2(toCType(t.`type`()), namespace.toString)}.Type.instance())));"
-}.mkString("      ","\n      else ", "")}
-      else
-        _default.run();
-    }
-  }\n"""/*@formatter:on*/ ,
-    Set("ws.epigraph.types.Type", "java.util.function.Function", "java.util.function.Supplier", "java.util.function.Consumer")
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
+    referenceNameOpt,
+    baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  protected def classJavadoc =/*@formatter:off*/sn"""\
-/**
- * Request output projection for ${JavaGenUtils.javadocLink(cType, namespace)} type
- */
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
+
+  override protected def reqVarProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqEntityProjection")
+
+  override protected def reqModelProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqModelProjection")
+
+  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
+
+  protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  public boolean flagged() { return raw.flagged(); }
 """/*@formatter:on*/
+  )
+
+  override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqModelProjectionGen =
+    ReqModelProjectionGen.dataProjectionGen(
+      baseNamespaceProvider,
+      metaOp,
+      Some(baseNamespace),
+      namespaceSuffix.append("meta"),
+      parentClassGenOpt.flatMap(_.metaGeneratorOpt.map(_.asInstanceOf[ReqModelProjectionGen])),
+      ctx
+    )
+}
+
+object ReqModelProjectionGen {
+  def dataProjectionGen(
+    baseNamespaceProvider: BaseNamespaceProvider,
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
+    baseNamespaceOpt: Option[Qn],
+    namespaceSuffix: Qn,
+    parentClassGenOpt: Option[ReqModelProjectionGen],
+    ctx: GenContext): ReqModelProjectionGen =
+
+    ReqTypeProjectionGenCache.lookup(
+      Option(op.referenceName()),
+      parentClassGenOpt.isDefined,
+      op.normalizedFrom() != null,
+      ctx.reqOutputProjections,
+
+      op.`type`().kind() match {
+
+        case TypeKind.RECORD =>
+          new ReqRecordModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputRecordModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.MAP =>
+          new ReqMapModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputMapModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.LIST =>
+          new ReqListModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputListModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case TypeKind.PRIMITIVE =>
+          new ReqPrimitiveModelProjectionGen(
+            baseNamespaceProvider,
+            op.asInstanceOf[OpOutputPrimitiveModelProjection],
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt,
+            ctx
+          )
+        case x => throw new RuntimeException(s"Unsupported projection kind: $x")
+
+      }
+
+    )
 }

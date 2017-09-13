@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
@@ -292,7 +292,7 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
-    final @NotNull ReqOutputVarProjection reqProjection =
+    final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
@@ -380,7 +380,7 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     testRender(
-        (ReqOutputVarProjection) null,
+        (ReqEntityProjection) null,
         pb,
         "{\"record\":{" +
         "\"id\":11," +
@@ -404,7 +404,7 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     testRender(
-        (ReqOutputVarProjection) null,
+        (ReqEntityProjection) null,
         pb,
         "{\"record\":{\"friendRecords\":[" +
         "{\"firstName\":\"fn1\"}," +
@@ -416,7 +416,7 @@ public class ReqOutputJsonFormatWriterTest {
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
       throws IOException {
 
-    final @NotNull ReqOutputVarProjection reqProjection =
+    final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputVarProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRender(reqProjection, data, expectedJson);
@@ -424,7 +424,7 @@ public class ReqOutputJsonFormatWriterTest {
   }
 
   private void testRender(
-      @Nullable ReqOutputVarProjection reqProjection,
+      @Nullable ReqEntityProjection reqProjection,
       @NotNull Data data,
       @NotNull String expectedJson)
       throws IOException {

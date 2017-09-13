@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,20 +32,20 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputVarProjection extends AbstractVarProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>
+public class ReqEntityProjection extends AbstractVarProjection<
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>
     > {
 
   protected /*final*/ boolean flagged;
 
-  public ReqOutputVarProjection(
+  public ReqEntityProjection(
       @NotNull TypeApi type,
       boolean flagged,
-      @NotNull Map<String, ReqOutputTagProjectionEntry> tagProjections,
+      @NotNull Map<String, ReqTagProjectionEntry> tagProjections,
       boolean parenthesized,
-      @Nullable List<ReqOutputVarProjection> polymorphicTails,
+      @Nullable List<ReqEntityProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
 
@@ -56,22 +56,22 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
   }
 
-  public ReqOutputVarProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
+  public ReqEntityProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
   }
 
   public boolean flagged() { return flagged; }
 
   @Override
-  protected ReqOutputVarProjection merge(
+  protected ReqEntityProjection merge(
       final @NotNull TypeApi effectiveType,
-      final @NotNull List<ReqOutputVarProjection> varProjections,
-      final @NotNull Map<String, ReqOutputTagProjectionEntry> mergedTags,
+      final @NotNull List<ReqEntityProjection> varProjections,
+      final @NotNull Map<String, ReqTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
-      final List<ReqOutputVarProjection> mergedTails) {
+      final List<ReqEntityProjection> mergedTails) {
 
-    boolean mergedFlagged = varProjections.stream().anyMatch(ReqOutputVarProjection::flagged);
-    return new ReqOutputVarProjection(
+    boolean mergedFlagged = varProjections.stream().anyMatch(ReqEntityProjection::flagged);
+    return new ReqEntityProjection(
         effectiveType,
         mergedFlagged,
         mergedTags,
@@ -81,14 +81,14 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
   }
 
   @Override
-  protected @NotNull VarNormalizationContext<ReqOutputVarProjection> newNormalizationContext() {
+  protected @NotNull VarNormalizationContext<ReqEntityProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(
-        t -> new ReqOutputVarProjection(t, location())
+        t -> new ReqEntityProjection(t, location())
     );
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputVarProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqEntityProjection value) {
     preResolveCheck(value);
     this.flagged = value.flagged();
     super.resolve(name, value);
@@ -99,7 +99,7 @@ public class ReqOutputVarProjection extends AbstractVarProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final ReqOutputVarProjection that = (ReqOutputVarProjection) o;
+    final ReqEntityProjection that = (ReqEntityProjection) o;
     return flagged == that.flagged;
   }
 

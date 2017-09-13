@@ -19,7 +19,7 @@ package ws.epigraph.federator.transformers;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.schema.TransformerDeclaration;
 
 import java.util.concurrent.CompletableFuture;
@@ -65,7 +65,7 @@ public abstract class Transformer<B> {
    */
   public abstract @NotNull CompletableFuture<InvocationResult<Data>> transform(
       @NotNull Data input,
-      @NotNull ReqOutputVarProjection outputProjection,
+      @NotNull ReqEntityProjection outputProjection,
       @NotNull B batch
   );
 

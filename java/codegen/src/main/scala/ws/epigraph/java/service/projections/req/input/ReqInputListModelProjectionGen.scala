@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input.OpInputListModelProjection
 
@@ -38,7 +38,7 @@ class ReqInputListModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with ReqListModelProjectionGen {
+  ) with AbstractReqListModelProjectionGen {
 
   override type OpProjectionType = OpInputListModelProjection
 

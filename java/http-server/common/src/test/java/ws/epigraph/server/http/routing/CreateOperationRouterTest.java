@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -268,7 +268,7 @@ public class CreateOperationRouterTest {
       assertEquals(expectedInputProjection, TestUtil.printReqInputVarProjection(inputProjection.varProjection()));
     }
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = createRequestUrl.outputProjection();
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection = createRequestUrl.outputProjection();
 
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(

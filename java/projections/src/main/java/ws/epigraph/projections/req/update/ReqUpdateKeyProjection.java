@@ -20,13 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.req.Directives;
-import ws.epigraph.projections.req.ReqKeyProjection;
+import ws.epigraph.projections.req.AbstractReqKeyProjection;
 import ws.epigraph.projections.req.ReqParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateKeyProjection extends ReqKeyProjection {
+public class ReqUpdateKeyProjection extends AbstractReqKeyProjection {
   public ReqUpdateKeyProjection(
       final @NotNull Datum value,
       final @NotNull ReqParams params,

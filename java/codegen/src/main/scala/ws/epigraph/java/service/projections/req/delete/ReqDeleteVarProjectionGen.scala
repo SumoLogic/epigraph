@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqProjectionGen, ReqTypeProjectionGenCache, AbstractReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete._
 import ws.epigraph.types.TypeKind
@@ -33,18 +33,18 @@ class ReqDeleteVarProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqDeleteVarProjectionGen],
-  protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with AbstractReqVarProjectionGen {
 
   override type OpProjectionType = OpDeleteVarProjection
   override type OpTagProjectionEntryType = OpDeleteTagProjectionEntry
   override protected type GenType = ReqDeleteVarProjectionGen
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
@@ -57,13 +57,13 @@ class ReqDeleteVarProjectionGen(
       Some(this),
       ctx
     ) {
-      override lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpDeleteVarProjection, AbstractReqProjectionGen] = Map()
     }
 
 
   override protected def tagGenerator(
-    pgo: Option[ReqVarProjectionGen],
-    tpe: OpDeleteTagProjectionEntry): ReqProjectionGen =
+    pgo: Option[AbstractReqVarProjectionGen],
+    tpe: OpDeleteTagProjectionEntry): AbstractReqProjectionGen =
     tagGenerator(
       tpe,
       pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqDeleteModelProjectionGen]))
@@ -71,7 +71,7 @@ class ReqDeleteVarProjectionGen(
 
   protected def tagGenerator(
     tpe: OpDeleteTagProjectionEntry,
-    parentTagGenOpt: Option[ReqDeleteModelProjectionGen]): ReqProjectionGen =
+    parentTagGenOpt: Option[ReqDeleteModelProjectionGen]): AbstractReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -31,7 +31,7 @@ abstract class ReqPathModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   op: OpModelPath[_, _, _ <: DatumTypeApi],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with AbstractReqModelProjectionGen {
 
   override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]
   override type OpMetaProjectionType = OpModelPath[_, _, _ <: DatumTypeApi]

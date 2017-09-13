@@ -34,17 +34,17 @@ abstract class ReqUpdateModelProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
-  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with AbstractReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqUpdateModelProjectionGen
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 

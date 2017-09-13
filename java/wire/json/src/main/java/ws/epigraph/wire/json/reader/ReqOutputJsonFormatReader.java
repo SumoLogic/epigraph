@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.ReqOutputFormatReader;
@@ -43,14 +43,14 @@ import java.util.Set;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection,
-    ReqOutputMapModelProjection,
-    ReqOutputListModelProjection
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection,
+    ReqMapModelProjection,
+    ReqListModelProjection
     > implements ReqOutputFormatReader {
 
   public ReqOutputJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typesResolver) {
@@ -61,36 +61,36 @@ public class ReqOutputJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
-  protected GenProjectionsComparator<ReqOutputVarProjection, ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?, ?>, ReqOutputRecordModelProjection, ReqOutputMapModelProjection, ReqOutputListModelProjection, ?, ReqOutputFieldProjectionEntry, ReqOutputFieldProjection> projectionsComparator() {
-    return new ReqOutputProjectionsComparator(false, false);
+  protected GenProjectionsComparator<ReqEntityProjection, ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>, ReqRecordModelProjection, ReqMapModelProjection, ReqListModelProjection, ?, ReqFieldProjectionEntry, ReqFieldProjection> projectionsComparator() {
+    return new ReqProjectionsComparator(false, false);
   }
 
   @Override
-  protected boolean tagRequired(@NotNull ReqOutputTagProjectionEntry tagProjection) {
+  protected boolean tagRequired(@NotNull ReqTagProjectionEntry tagProjection) {
     return tagProjection.projection().flagged();
   }
 
   @Override
-  protected boolean fieldRequired(@NotNull ReqOutputFieldProjectionEntry fieldEntry) {
+  protected boolean fieldRequired(@NotNull ReqFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().flagged();
   }
 
   @Override
   protected @Nullable Set<Datum> getExpectedKeys(
-      @NotNull Collection<@NotNull ReqOutputMapModelProjection> projections
+      @NotNull Collection<@NotNull ReqMapModelProjection> projections
   ) {
     Set<Datum> expectedKeys = null;
-    for (final ReqOutputMapModelProjection projection : projections) {
-      final @Nullable List<ReqOutputKeyProjection> keyProjections = projection.keys();
+    for (final ReqMapModelProjection projection : projections) {
+      final @Nullable List<ReqKeyProjection> keyProjections = projection.keys();
       if (keyProjections == null) return null; //'*' : all keys allowed
       if (expectedKeys == null) expectedKeys = new HashSet<>();
-      for (ReqOutputKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
+      for (ReqKeyProjection keyProjection : keyProjections) { expectedKeys.add(keyProjection.value()); }
     }
     return expectedKeys;
   }
 
   @Override
-  protected @Nullable ReqOutputModelProjection<?, ?, ?> getMetaProjection(final @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+  protected @Nullable ReqModelProjection<?, ?, ?> getMetaProjection(final @NotNull ReqModelProjection<?, ?, ?> projection) {
     return projection.metaProjection();
   }
 

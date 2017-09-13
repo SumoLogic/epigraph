@@ -22,7 +22,7 @@ import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
+import ws.epigraph.java.service.projections.req.ReqModelProjectionGen
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputModelProjection
 import ws.epigraph.types.DatumTypeApi
@@ -33,7 +33,7 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ModelAsmGen extends AsmGen {
-  protected type G <: ReqOutputModelProjectionGen
+  protected type G <: ReqModelProjectionGen
 
   protected def g: G
 
@@ -53,7 +53,7 @@ trait ModelAsmGen extends AsmGen {
 
   importManager.use(namespace.append(shortClassName))
 
-  case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
+  case class TailParts(tailProjectionGen: ReqModelProjectionGen) {
     def `type`: CDatumType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
 
     val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
@@ -68,7 +68,7 @@ trait ModelAsmGen extends AsmGen {
   }
 
   protected val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-    TailParts(tg.asInstanceOf[ReqOutputModelProjectionGen])
+    TailParts(tg.asInstanceOf[ReqModelProjectionGen])
   }.toSeq
 
   protected val hasTails: Boolean = g.normalizedTailGenerators.nonEmpty

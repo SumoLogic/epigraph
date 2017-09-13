@@ -24,8 +24,8 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -101,7 +101,7 @@ public final class ReadRequestUrlPsiParser {
     final UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
 
     final int steps;
-    final @NotNull ReqOutputVarProjection varProjection;
+    final @NotNull ReqEntityProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
     ReqOutputReferenceContext reqOutputReferenceContext =
@@ -110,7 +110,7 @@ public final class ReadRequestUrlPsiParser {
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
     if (trunkVarProjection != null) {
-      @NotNull StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
@@ -123,7 +123,7 @@ public final class ReadRequestUrlPsiParser {
       varProjection = r.projection();
       fieldLocation = EpigraphPsiUtil.getLocation(trunkVarProjection);
     } else if (comaVarProjection != null) {
-      StepsAndProjection<ReqOutputVarProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
+      StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
@@ -136,7 +136,7 @@ public final class ReadRequestUrlPsiParser {
       fieldLocation = EpigraphPsiUtil.getLocation(comaVarProjection);
     } else {
       steps = 0;
-      varProjection = new ReqOutputVarProjection(
+      varProjection = new ReqEntityProjection(
           pathTipType.type(),
           false,
           Collections.emptyMap(),
@@ -153,7 +153,7 @@ public final class ReadRequestUrlPsiParser {
         reqPath,
         new StepsAndProjection<>(
             steps,
-            new ReqOutputFieldProjection(
+            new ReqFieldProjection(
 //                ReqParams.EMPTY,
 //                Annotations.EMPTY,
                 varProjection,
@@ -182,7 +182,7 @@ public final class ReadRequestUrlPsiParser {
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection =
+    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection =
         ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
             resourceType, //op.outputType() ? same for reads
             false,  // ?

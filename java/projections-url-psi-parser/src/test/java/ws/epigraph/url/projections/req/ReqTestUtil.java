@@ -31,9 +31,9 @@ import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.projections.op.path.OpVarPath;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -118,7 +118,7 @@ public final class ReqTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
       @NotNull OpOutputVarProjection op,
       @NotNull String projectionString,
@@ -141,7 +141,7 @@ public final class ReqTestUtil {
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
           type,
           false,
           op,
@@ -243,6 +243,7 @@ public final class ReqTestUtil {
     });
   }
 
+  @Deprecated
   public static @NotNull ReqInputVarProjection parseReqInputVarProjection(
       @NotNull DataType type,
       @NotNull OpInputVarProjection op,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
@@ -26,23 +26,23 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputTagProjectionEntry
-    extends AbstractTagProjectionEntry<ReqOutputTagProjectionEntry, ReqOutputModelProjection<?, ?, ?>> {
+public class ReqTagProjectionEntry
+    extends AbstractTagProjectionEntry<ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>> {
 
-  public ReqOutputTagProjectionEntry(
+  public ReqTagProjectionEntry(
       @NotNull TagApi tag,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection,
+      @NotNull ReqModelProjection<?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(tag, projection, location);
   }
 
   @Override
-  protected @NotNull ReqOutputTagProjectionEntry mergeTags(
+  protected @NotNull ReqTagProjectionEntry mergeTags(
       final @NotNull TagApi tag,
-      final @NotNull List<ReqOutputTagProjectionEntry> tagsEntries,
-      final @NotNull ReqOutputModelProjection<?, ?, ?> mergedModel) {
+      final @NotNull List<ReqTagProjectionEntry> tagsEntries,
+      final @NotNull ReqModelProjection<?, ?, ?> mergedModel) {
 
-    return new ReqOutputTagProjectionEntry(
+    return new ReqTagProjectionEntry(
         tag,
         mergedModel,
         TextLocation.UNKNOWN
@@ -50,7 +50,7 @@ public class ReqOutputTagProjectionEntry
   }
 
   @Override
-  public @NotNull ReqOutputTagProjectionEntry setModelProjection(final @NotNull ReqOutputModelProjection<?, ?, ?> modelProjection) {
-    return new ReqOutputTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
+  public @NotNull ReqTagProjectionEntry setModelProjection(final @NotNull ReqModelProjection<?, ?, ?> modelProjection) {
+    return new ReqTagProjectionEntry(tag(), modelProjection, TextLocation.UNKNOWN);
   }
 }

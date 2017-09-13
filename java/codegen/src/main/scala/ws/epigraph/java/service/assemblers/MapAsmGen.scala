@@ -19,24 +19,24 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output._
+import ws.epigraph.java.service.projections.req.{ReqMapModelProjectionGen, ReqModelProjectionGen, ReqEntityProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class MapAsmGen(
-  override protected val g: ReqOutputMapModelProjectionGen,
+  override protected val g: ReqMapModelProjectionGen,
   val ctx: GenContext) extends JavaGen with ModelAsmGen {
 
-  override protected type G = ReqOutputMapModelProjectionGen
+  override protected type G = ReqMapModelProjectionGen
 
   val keyCType: CDatumType = JavaGenUtils.toCType(g.op.`type`().keyType())
 
   val itemCType: CType = JavaGenUtils.toCType(
     g.elementGen match {
-      case eg: ReqOutputVarProjectionGen => eg.op.`type`()
-      case mg: ReqOutputModelProjectionGen => mg.op.`type`()
+      case eg: ReqEntityProjectionGen => eg.op.`type`()
+      case mg: ReqModelProjectionGen => mg.op.`type`()
     }
   )
 

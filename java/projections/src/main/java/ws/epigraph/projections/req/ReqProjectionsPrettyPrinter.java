@@ -14,74 +14,73 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.AbstractReqProjectionsPrettyPrinter;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
+public class ReqProjectionsPrettyPrinter<E extends Exception>
     extends AbstractReqProjectionsPrettyPrinter<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection,
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection,
     E> {
 
   // todo: take var projection's 'parenthesized' into account
 
-  public ReqOutputProjectionsPrettyPrinter(
+  public ReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<ReqOutputVarProjection, ReqOutputModelProjection<?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> context) {
     super(layouter, context);
   }
 
-  public ReqOutputProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
+  public ReqProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
     this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override
   protected void printTagName(
       final @NotNull String tagName,
-      final @NotNull ReqOutputModelProjection<?, ?, ?> projection) throws E {
+      final @NotNull ReqModelProjection<?, ?, ?> projection) throws E {
     if (projection.flagged()) l.print("+");
     super.printTagName(tagName, projection);
   }
 
   @Override
-  protected void printModelMeta(final @NotNull ReqOutputModelProjection<?, ?, ?> metaProjection) throws E {
+  protected void printModelMeta(final @NotNull ReqModelProjection<?, ?, ?> metaProjection) throws E {
     l.print("@");
     if (metaProjection.flagged()) l.print("+");
     printModel(metaProjection, 0);
   }
 
   @Override
-  public void printModelOnly(@NotNull ReqOutputModelProjection<?, ?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof ReqOutputRecordModelProjection)
-      print((ReqOutputRecordModelProjection) mp, pathSteps);
-    else if (mp instanceof ReqOutputMapModelProjection)
-      printModelOnly((ReqOutputMapModelProjection) mp, pathSteps);
-    else if (mp instanceof ReqOutputListModelProjection)
-      printModelOnly((ReqOutputListModelProjection) mp, pathSteps);
+  public void printModelOnly(@NotNull ReqModelProjection<?, ?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof ReqRecordModelProjection)
+      print((ReqRecordModelProjection) mp, pathSteps);
+    else if (mp instanceof ReqMapModelProjection)
+      printModelOnly((ReqMapModelProjection) mp, pathSteps);
+    else if (mp instanceof ReqListModelProjection)
+      printModelOnly((ReqListModelProjection) mp, pathSteps);
   }
 
   @Override
-  protected String fieldNamePrefix(final @NotNull ReqOutputFieldProjection fieldProjection) {
+  protected String fieldNamePrefix(final @NotNull ReqFieldProjection fieldProjection) {
     return fieldProjection.flagged() ? "+" : "";
   }
 
-  private void printModelOnly(ReqOutputMapModelProjection mp, int pathSteps) throws E {
-    @Nullable List<ReqOutputKeyProjection> keys = mp.keys();
+  private void printModelOnly(ReqMapModelProjection mp, int pathSteps) throws E {
+    @Nullable List<ReqKeyProjection> keys = mp.keys();
 
     if (pathSteps > 0) {
       l.beginIInd();
@@ -112,7 +111,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
         brk().print("*");
       } else {
         boolean first = true;
-        for (ReqOutputKeyProjection key : keys) {
+        for (ReqKeyProjection key : keys) {
           if (first) {
             brk();
             first = false;
@@ -137,7 +136,7 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
     }
   }
 
-  private void printModelOnly(ReqOutputListModelProjection mp, int pathSteps) throws E {
+  private void printModelOnly(ReqListModelProjection mp, int pathSteps) throws E {
     if (pathSteps > 0) throw new IllegalArgumentException(
         String.format("Encountered list projection while still having %d path steps", pathSteps)
     );
@@ -149,15 +148,15 @@ public class ReqOutputProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected String modelTailTypeNamePrefix(final @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+  protected String modelTailTypeNamePrefix(final @NotNull ReqModelProjection<?, ?, ?> projection) {
     return projection.flagged() ? "+" : super.modelTailTypeNamePrefix(projection);
   }
 
   @Override
-  public boolean isPrintoutNoParamsEmpty(@NotNull ReqOutputModelProjection<?, ?, ?> mp) {
-    if (mp instanceof ReqOutputMapModelProjection) {
-      ReqOutputMapModelProjection mapModelProjection = (ReqOutputMapModelProjection) mp;
-      /*@Nullable*/ List<ReqOutputKeyProjection> keys = mapModelProjection.keys();
+  public boolean isPrintoutNoParamsEmpty(@NotNull ReqModelProjection<?, ?, ?> mp) {
+    if (mp instanceof ReqMapModelProjection) {
+      ReqMapModelProjection mapModelProjection = (ReqMapModelProjection) mp;
+      /*@Nullable*/ List<ReqKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
       return super.isPrintoutNoParamsEmpty(mp);

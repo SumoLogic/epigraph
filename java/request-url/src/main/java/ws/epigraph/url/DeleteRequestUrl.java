@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 
@@ -37,7 +37,7 @@ public class DeleteRequestUrl extends RequestUrl {
       final @NotNull String fieldName,
       final @Nullable ReqFieldPath path,
       @NotNull ReqDeleteFieldProjection deleteProjection,
-      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
 

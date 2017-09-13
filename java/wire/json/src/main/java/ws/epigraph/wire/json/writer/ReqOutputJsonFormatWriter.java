@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.wire.FormatWriter;
 import ws.epigraph.wire.ReqOutputFormatWriter;
 import ws.epigraph.wire.WireFormat;
@@ -39,16 +39,16 @@ import java.util.List;
 
 @NotThreadSafe
 public class ReqOutputJsonFormatWriter extends AbstractJsonFormatWriter<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection,
-    ReqOutputMapModelProjection,
-    ReqOutputListModelProjection,
-    ReqOutputPrimitiveModelProjection,
-    ReqOutputKeyProjection
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection,
+    ReqMapModelProjection,
+    ReqListModelProjection,
+    ReqPrimitiveModelProjection,
+    ReqKeyProjection
     > implements ReqOutputFormatWriter {
 
   public ReqOutputJsonFormatWriter(@NotNull OutputStream out) {
@@ -60,7 +60,7 @@ public class ReqOutputJsonFormatWriter extends AbstractJsonFormatWriter<
   }
 
   @Override
-  protected @NotNull Datum keyDatum(final @NotNull ReqOutputKeyProjection keyProjection) {
+  protected @NotNull Datum keyDatum(final @NotNull ReqKeyProjection keyProjection) {
     return keyProjection.value();
   }
 
@@ -68,8 +68,8 @@ public class ReqOutputJsonFormatWriter extends AbstractJsonFormatWriter<
    * Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately.
    */
   @Override
-  protected @Nullable List<ReqOutputKeyProjection> keyProjections(
-      @NotNull Deque<ReqOutputMapModelProjection> projections // non-empty
+  protected @Nullable List<ReqKeyProjection> keyProjections(
+      @NotNull Deque<ReqMapModelProjection> projections // non-empty
   ) {
     switch (projections.size()) {
       case 0:
@@ -77,9 +77,9 @@ public class ReqOutputJsonFormatWriter extends AbstractJsonFormatWriter<
       case 1:
         return projections.peek().keys();
       default:
-        List<ReqOutputKeyProjection> keys = null;
-        for (ReqOutputMapModelProjection projection : projections) {
-          List<ReqOutputKeyProjection> projectionKeys = projection.keys();
+        List<ReqKeyProjection> keys = null;
+        for (ReqMapModelProjection projection : projections) {
+          List<ReqKeyProjection> projectionKeys = projection.keys();
           if (projectionKeys == null) return null;
           if (keys == null) keys = new ArrayList<>(projectionKeys);
           else keys.addAll(projectionKeys);

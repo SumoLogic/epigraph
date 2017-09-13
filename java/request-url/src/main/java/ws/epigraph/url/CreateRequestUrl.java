@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public class CreateRequestUrl extends RequestUrl {
       final @NotNull String fieldName,
       final @Nullable ReqFieldPath path,
       @Nullable ReqInputFieldProjection inputProjection,
-      final @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
     this.inputProjection = inputProjection;

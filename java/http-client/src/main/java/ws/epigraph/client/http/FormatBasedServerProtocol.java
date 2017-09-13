@@ -36,7 +36,7 @@ import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -169,7 +169,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public InvocationResult<ReadOperationResponse<Data>> readResponse(
-      final @NotNull ReqOutputVarProjection projection,
+      final @NotNull ReqEntityProjection projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse,
       final int okStatusCode) {

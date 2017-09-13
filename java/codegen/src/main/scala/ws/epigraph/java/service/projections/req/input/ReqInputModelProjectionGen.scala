@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqModelProjectionGen, AbstractReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.input._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
@@ -33,17 +33,17 @@ abstract class ReqInputModelProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqInputModelProjectionGen],
-  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with ReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with AbstractReqModelProjectionGen {
 
   override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqInputModelProjectionGen
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 

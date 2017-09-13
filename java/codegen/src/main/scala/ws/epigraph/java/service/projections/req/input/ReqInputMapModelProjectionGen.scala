@@ -18,7 +18,7 @@ package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.OpKeyPresence
 import ws.epigraph.projections.op.input.OpInputMapModelProjection
@@ -40,7 +40,7 @@ class ReqInputMapModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with ReqMapModelProjectionGen {
+  ) with AbstractReqMapModelProjectionGen {
 
   override type OpProjectionType = OpInputMapModelProjection
 

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.req.output;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
@@ -38,28 +36,28 @@ import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqOutputRecordModelProjection
-    extends ReqOutputModelProjection<ReqOutputModelProjection<?, ?, ?>, ReqOutputRecordModelProjection, RecordTypeApi>
+public class ReqRecordModelProjection
+    extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection,
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection,
     RecordTypeApi
     > {
 
-  private /*final*/ @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, ReqFieldProjectionEntry> fieldProjections;
 
-  public ReqOutputRecordModelProjection(
+  public ReqRecordModelProjection(
       @NotNull RecordTypeApi model,
       boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @Nullable ReqOutputModelProjection<?, ?, ?> metaProjection,
-      @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections,
-      @Nullable List<ReqOutputRecordModelProjection> tails,
+      @Nullable ReqModelProjection<?, ?, ?> metaProjection,
+      @NotNull Map<String, ReqFieldProjectionEntry> fieldProjections,
+      @Nullable List<ReqRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
     super(model, flagged, params, directives, metaProjection, tails, location);
@@ -68,40 +66,40 @@ public class ReqOutputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
-  public ReqOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+  public ReqRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
   }
 
   @Override
-  public @NotNull Map<String, ReqOutputFieldProjectionEntry> fieldProjections() {
+  public @NotNull Map<String, ReqFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
   }
 
   @Override
-  public @Nullable ReqOutputFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
+  public @Nullable ReqFieldProjectionEntry fieldProjection(@NotNull String fieldName) {
     return fieldProjections().get(fieldName);
   }
 
   @Override
-  protected ReqOutputRecordModelProjection merge(
+  protected ReqRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
       final boolean mergedFlagged,
-      final @NotNull List<ReqOutputRecordModelProjection> modelProjections,
+      final @NotNull List<ReqRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
-      final @Nullable ReqOutputModelProjection<?, ?, ?> mergedMetaProjection,
-      final @Nullable List<ReqOutputRecordModelProjection> mergedTails) {
+      final @Nullable ReqModelProjection<?, ?, ?> mergedMetaProjection,
+      final @Nullable List<ReqRecordModelProjection> mergedTails) {
 
-    Map<FieldApi, ReqOutputFieldProjection> mergedFieldProjections =
+    Map<FieldApi, ReqFieldProjection> mergedFieldProjections =
         RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
-    Map<String, ReqOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
-    for (final Map.Entry<FieldApi, ReqOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+    Map<String, ReqFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, ReqFieldProjection> entry : mergedFieldProjections.entrySet()) {
       mergedFieldEntries.put(
           entry.getKey().name(),
-          new ReqOutputFieldProjectionEntry(
+          new ReqFieldProjectionEntry(
               entry.getKey(),
               entry.getValue(),
               TextLocation.UNKNOWN
@@ -109,7 +107,7 @@ public class ReqOutputRecordModelProjection
       );
     }
 
-    return new ReqOutputRecordModelProjection(
+    return new ReqRecordModelProjection(
         model,
         mergedFlagged,
         mergedParams,
@@ -122,21 +120,21 @@ public class ReqOutputRecordModelProjection
   }
 
   @Override
-  protected @NotNull ReqOutputRecordModelProjection postNormalizedForType(
+  protected @NotNull ReqRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final @NotNull ReqOutputRecordModelProjection n) {
+      final @NotNull ReqRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 
-    final Map<String, ReqOutputFieldProjection> normalizedFields =
+    final Map<String, ReqFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 
-    final Map<String, ReqOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+    final Map<String, ReqFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,
         normalizedFields,
-        ReqOutputFieldProjectionEntry::new
+        ReqFieldProjectionEntry::new
     );
 
-    return new ReqOutputRecordModelProjection(
+    return new ReqRecordModelProjection(
         n.type(),
         n.flagged(),
         n.params(),
@@ -149,7 +147,7 @@ public class ReqOutputRecordModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqOutputRecordModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqRecordModelProjection value) {
     preResolveCheck(value);
     fieldProjections = value.fieldProjections();
     super.resolve(name, value);

@@ -34,18 +34,18 @@ class ReqUpdateVarProjectionGen(
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqUpdateVarProjectionGen],
-  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with AbstractReqVarProjectionGen {
 
   override type OpProjectionType = OpInputVarProjection
   override type OpTagProjectionEntryType = OpInputTagProjectionEntry
   override protected type GenType = ReqUpdateVarProjectionGen
 
-  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
@@ -58,12 +58,12 @@ class ReqUpdateVarProjectionGen(
       Some(this),
       ctx
     ) {
-      override lazy val normalizedTailGenerators: Map[OpInputVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpInputVarProjection, AbstractReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(
-    pgo: Option[ReqVarProjectionGen],
-    tpe: OpInputTagProjectionEntry): ReqProjectionGen =
+    pgo: Option[AbstractReqVarProjectionGen],
+    tpe: OpInputTagProjectionEntry): AbstractReqProjectionGen =
     tagGenerator(
       tpe,
       pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqUpdateModelProjectionGen]))
@@ -71,7 +71,7 @@ class ReqUpdateVarProjectionGen(
 
   protected def tagGenerator(
     tpe: OpInputTagProjectionEntry,
-    parentTagGenOpt: Option[ReqUpdateModelProjectionGen]): ReqProjectionGen =
+    parentTagGenOpt: Option[ReqUpdateModelProjectionGen]): AbstractReqProjectionGen =
     ReqUpdateModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
