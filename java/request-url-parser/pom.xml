@@ -67,7 +67,7 @@
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>process-sources</phase>
+            <phase>process-sources</phase><!-- FIXME why not (default) generate-sources? -->
             <goals>
               <goal>add-source</goal>
             </goals>

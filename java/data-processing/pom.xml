@@ -46,74 +46,8 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- test dependencies -->
-
     <!-- tests are in java/tests -->
 
-    <!--<dependency>-->
-      <!--<groupId>${project.parent.groupId}</groupId>-->
-      <!--<artifactId>epigraph-java-projections-schema-psi-parser</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>${project.parent.groupId}</groupId>-->
-      <!--<artifactId>epigraph-java-projections-url-psi-parser</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>${project.parent.groupId}</groupId>-->
-      <!--<artifactId>epigraph-java-request-url-parser</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>${project.parent.groupId}</groupId>-->
-      <!--<artifactId>epigraph-java-test-util</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>ws.epigraph.tests</groupId>-->
-      <!--<artifactId>tests-schema-java</artifactId>-->
-      <!--<version>${project.parent.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>junit</groupId>-->
-      <!--<artifactId>junit</artifactId>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>com.io7m.jpplib</groupId>-->
-      <!--<artifactId>io7m-jpplib-core</artifactId>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-
   </dependencies>
-
-  <build>
-
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-
-    </plugins>
-
-  </build>
 
 </project>

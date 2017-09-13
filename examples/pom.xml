@@ -27,7 +27,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-maven-plugin</artifactId>
-          <version>${revision}</version>
+          <version>${project.parent.version}</version>
           <executions>
             <execution>
               <goals>
@@ -41,7 +41,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-java-maven-plugin</artifactId>
-          <version>${revision}</version>
+          <version>${project.parent.version}</version>
           <executions>
             <execution>
               <goals>
@@ -55,7 +55,7 @@
         <plugin>
           <groupId>ws.epigraph</groupId>
           <artifactId>epigraph-scala-maven-plugin</artifactId>
-          <version>${revision}</version>
+          <version>${project.parent.version}</version>
           <executions>
             <execution>
               <goals>

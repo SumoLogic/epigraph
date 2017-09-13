@@ -23,6 +23,11 @@
   <packaging>pom</packaging>
   <version>${revision}</version>
 
+  <!--
+   Note: This module has no parent (to avoid pollution with the parent's dependencyManagement)
+   hence there is some duplication of content (properties, pluginManagement).
+  -->
+
   <description>Bill Of Materials for Epigraph artifacts</description>
 
   <properties>
