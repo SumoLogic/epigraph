@@ -81,9 +81,8 @@ public final class OpPathPsiParser {
     }
 
     final TagApi tag = getTag(
-        type,
+        dataType,
         psi.getTagName(),
-        dataType.defaultTag(),
         psi,
         context
     );

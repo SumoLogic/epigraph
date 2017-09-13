@@ -124,8 +124,8 @@ public final class ReqOutputProjectionsPsiParser {
       @NotNull ReqOutputPsiProcessingContext context) {
 
     // easy on/off switch for debugging
-//    boolean enabled = true;
-    boolean enabled = false;
+    final boolean enabled = true;
+//    final boolean enabled = false;
 
     if (enabled) {
       ReqProjectionTransformationMap transformationMap = new ReqProjectionTransformationMap();

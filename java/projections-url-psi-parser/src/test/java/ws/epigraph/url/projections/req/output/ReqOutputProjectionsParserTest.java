@@ -23,10 +23,7 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqParam;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.output.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -87,7 +84,7 @@ public class ReqOutputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ) ) :~ws.epigraph.tests.User : profile ,",
-          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend2 $bf2 = :( id, `record` ( id, bestFriend2 $bf2 ) ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
@@ -290,7 +287,7 @@ public class ReqOutputProjectionsParserTest {
             "  firstName,",
             "  middleName,",
             "  bestFriend :(),",
-            "  bestFriend2 :(),",
+            "  bestFriend2 :( id ),",
             "  bestFriend3 :(),",
             "  friends *( :() ),",
             "  friendRecords,",
@@ -472,6 +469,53 @@ public class ReqOutputProjectionsParserTest {
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage().contains("Required parameter 'param' is missing"));
     }
+  }
+
+  @Test
+  public void testRetro() throws PsiProcessingException {
+    testParse(":record ( bestFriend :() )", 1); // no retro - no tags
+//    testParse(":record ( bestFriend2 )", ":record ( bestFriend2:id )", 1); // bestFriend2: Person retro id
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessor() throws PsiProcessingException {
+    // check that model gets flagged when field/var is flagged
+    ReqOutputVarProjection p = testParse(":record ( +id )", 1);
+    ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) p.singleTagProjection().projection();
+    @NotNull ReqOutputFieldProjection fp = rmp.fieldProjection("id").fieldProjection();
+    assertTrue(fp.flagged());
+    ReqOutputVarProjection ep = fp.varProjection();
+    assertTrue(ep.flagged());
+    ReqOutputModelProjection<?, ?, ?> mp = ep.singleTagProjection().projection();
+    assertTrue(mp.flagged());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessorWithRetro() throws PsiProcessingException {
+    // bestFriend2 has retro :id
+    ReqOutputVarProjection p = testParse(
+        ":record( +bestFriend2 )",
+        ":record ( +bestFriend2 :+id )",
+        1
+    );
+    ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) p.singleTagProjection().projection();
+    @NotNull ReqOutputFieldProjection fp = rmp.fieldProjection("bestFriend2").fieldProjection();
+    assertTrue(fp.flagged());
+    @NotNull ReqOutputVarProjection ep = fp.varProjection();
+    assertTrue(ep.flagged());
+    ReqOutputTagProjectionEntry tpe = ep.tagProjection("id");
+    assertNotNull(tpe);
+    ReqOutputModelProjection<?, ?, ?> mp = tpe.projection();
+    assertTrue(mp.flagged());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessorNoTags() throws PsiProcessingException {
+    // no retro and no tags
+    testParse(":record ( +bestFriend :() )", 1); // should be an error?
   }
 
   // todo negative test cases too

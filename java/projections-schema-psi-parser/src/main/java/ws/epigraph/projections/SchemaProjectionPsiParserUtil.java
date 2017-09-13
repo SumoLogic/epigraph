@@ -17,6 +17,7 @@
 package ws.epigraph.projections;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
@@ -35,6 +36,7 @@ import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
@@ -49,35 +51,54 @@ import java.util.stream.Stream;
 public final class SchemaProjectionPsiParserUtil {
   private SchemaProjectionPsiParserUtil() {}
 
-  public static @NotNull TagApi getTag(
-      @NotNull TypeApi type,
-      @Nullable SchemaTagName tagName,
-      @Nullable TagApi defaultTag,
+  public static
+  @NotNull TagApi getTag(
+      @NotNull DataTypeApi type,
+      @Nullable SchemaTagName tagNamePsi,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, context);
+    return ProjectionsParsingUtil.getTag(type, getTagName(tagNamePsi), null, location, context);
   }
 
-  public static @Nullable TagApi findTag(
-      @NotNull TypeApi type,
-      @Nullable SchemaTagName tagName,
-      @Nullable TagApi defaultTag,
+  public static
+  @Nullable TagApi findTag(
+      @NotNull DataTypeApi type,
+      @Nullable SchemaTagName tagNamePsi,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, context);
+    return ProjectionsParsingUtil.findTag(type, getTagName(tagNamePsi), null, location, context);
   }
 
-  private static @Nullable String getTagNameString(final @Nullable SchemaTagName tagName) {
+  private static @Nullable String getTagName(final @Nullable SchemaTagName tagNamePsi) {
     String tagNameStr = null;
 
-    if (tagName != null) {
-      final @Nullable SchemaQid qid = tagName.getQid();
+    if (tagNamePsi != null) {
+      final @Nullable SchemaQid qid = tagNamePsi.getQid();
       if (qid != null)
         tagNameStr = qid.getCanonicalName();
     }
     return tagNameStr;
+  }
+
+  @Contract("_, _, _ -> fail")
+  public static
+  void raiseNoTagsError(
+      @NotNull DataTypeApi type,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    throw new PsiProcessingException(
+        String.format(
+            "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+            type.name(),
+            ProjectionsParsingUtil.listTags(type.type())
+        ),
+        location,
+        context
+    );
+
   }
 
   public static @Nullable OpInputModelProjection<?, ?, ?, ?> parseKeyProjection(

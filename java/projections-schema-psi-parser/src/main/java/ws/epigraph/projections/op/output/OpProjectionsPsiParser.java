@@ -48,7 +48,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
-import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.getTag;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
 
@@ -234,26 +233,21 @@ public final class OpProjectionsPsiParser {
       assert multiTagProjection != null;
       tagProjections = parseMultiTagProjection(dataType, multiTagProjection, typesResolver, context);
     } else {
-      // todo (here and other parsers): simplify this tag logic
       tagProjections = new LinkedHashMap<>();
-      TagApi defaultTag = dataType.defaultTag();
 
       TagApi tag = findTag(
-          type,
+          dataType,
           singleTagProjectionPsi.getTagName(),
-          defaultTag,
           singleTagProjectionPsi,
           context
       );
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        if (tag == null) // will throw proper error
-          tag = getTag(
-              type,
-              singleTagProjectionPsi.getTagName(),
-              defaultTag,
-              singleTagProjectionPsi,
-              context
-          );
+
+      if (tag == null && !singleTagProjectionPsi.getText().isEmpty()) {
+        // can't deduce the tag but there's a projection specified for it
+        raiseNoTagsError(dataType, singleTagProjectionPsi, context);
+      }
+
+      if (tag != null) {
 
         tagProjections.put(
             tag.name(),
@@ -306,8 +300,12 @@ public final class OpProjectionsPsiParser {
         multiTagProjection.getOpOutputMultiTagProjectionItemList();
 
     for (SchemaOpOutputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-      final TagApi tag =
-          getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+      @NotNull TagApi tag = getTag(
+          dataType,
+          tagProjectionPsi.getTagName(),
+          tagProjectionPsi,
+          context
+      );
 
       tagProjections.put(
           tag.name(),

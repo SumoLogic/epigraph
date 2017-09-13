@@ -219,22 +219,17 @@ public final class OpInputProjectionsPsiParser {
       // todo (here and other parsers): simplify this tag logic
       tagProjections = new LinkedHashMap<>();
       TagApi tag = findTag(
-          type,
+          dataType,
           singleTagProjectionPsi.getTagName(),
-          dataType.defaultTag(),
           singleTagProjectionPsi,
           context
       );
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
+      if (tag == null && !singleTagProjectionPsi.getText().isEmpty()) {
+        // can't deduce the tag but there's a projection specified for it
+        raiseNoTagsError(dataType, singleTagProjectionPsi, context);
+      }
+      if (tag != null) {
         final OpInputModelProjection<?, ?, ?, ?> parsedModelProjection;
-        if (tag == null) // will throw proper error
-          tag = getTag(
-              type,
-              singleTagProjectionPsi.getTagName(),
-              dataType.defaultTag(),
-              singleTagProjectionPsi,
-              context
-          );
 
         parsedModelProjection = parseModelProjection(
             tag.type(),
@@ -288,8 +283,12 @@ public final class OpInputProjectionsPsiParser {
         multiTagProjection.getOpInputMultiTagProjectionItemList();
 
     for (SchemaOpInputMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-      final TagApi tag =
-          getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+      @NotNull TagApi tag = getTag(
+          dataType,
+          tagProjectionPsi.getTagName(),
+          tagProjectionPsi,
+          context
+      );
 
       tagProjections.put(
           tag.name(),

@@ -80,7 +80,7 @@ class ReqOutputProjectionPostProcessor extends ReqProjectionTransformer {
     if (modelProjection.flagged()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);
-      if (epd == null) return false;
+      if (epd == null || !epd.ep.flagged()) return false;
       else {
         ReqOutputVarProjection entityProjection = epd.ep;
         DataTypeApi dataType = epd.dataType;

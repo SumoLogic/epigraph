@@ -200,7 +200,7 @@ public final class ReqProjectionsPsiParser {
       final ReqOutputModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
-      final @NotNull TagApi tag = getTagOrSelfTag(type, tagNamePsi, op, tagLocation, context);
+      final @NotNull TagApi tag = getTag(dataType, getTagName(tagNamePsi), op, tagLocation, context);
       @NotNull OpOutputTagProjectionEntry opTagProjection =
           getTagProjection(tag.name(), op, tagLocation, context);
 
@@ -482,10 +482,20 @@ public final class ReqProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
 
       PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
-      TagApi tag = findTagOrSelfTag(type, singleTagProjectionPsi.getTagName(), op, tagLocation, context);
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        if (tag == null) tag =
-            getTagOrSelfTag(type, null, op, singleTagProjectionPsi, context); // will throw proper error
+      TagApi tag = ProjectionsParsingUtil.findTag(
+          dataType,
+          UrlProjectionsPsiParserUtil.getTagName(singleTagProjectionPsi.getTagName()),
+          op,
+          tagLocation,
+          context
+      );
+
+      if (tag == null && !singleTagProjectionPsi.getText().isEmpty()) {
+        // can't deduce the tag but there's a projection specified for it
+        raiseNoTagsError(dataType, op, singleTagProjectionPsi, context);
+      }
+
+      if (tag != null) {
         @NotNull OpOutputTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, singleTagProjectionPsi, context);
 
@@ -592,8 +602,14 @@ public final class ReqProjectionsPsiParser {
 
     for (UrlReqOutputComaMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
-        @NotNull TagApi tag =
-            UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, context);
+        @NotNull TagApi tag = getTag(
+            dataType,
+            getTagName(tagProjectionPsi.getTagName()),
+            op,
+            tagProjectionPsi,
+            context
+        );
+
         @NotNull OpOutputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
 
         OpOutputModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
@@ -783,21 +799,6 @@ public final class ReqProjectionsPsiParser {
     );
   }
 
-  private static @NotNull ReqOutputVarProjection createDefaultVarProjection(
-      @NotNull TypeApi type,
-      @NotNull OpOutputVarProjection op,
-      boolean required,
-      @NotNull PsiElement locationPsi,
-      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
-
-    @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, context);
-    Iterable<TagApi> tags = defaultTag == null ?
-                            Collections.emptyList() :
-                            Collections.singletonList(defaultTag);
-    return createDefaultVarProjection(type, tags, op, required, locationPsi, context);
-  }
-
-
   protected static @NotNull ReqOutputVarProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
       @NotNull OpOutputVarProjection op,
@@ -805,7 +806,11 @@ public final class ReqProjectionsPsiParser {
       @NotNull PsiElement locationPsi,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    return createDefaultVarProjection(type.type(), op, required, locationPsi, context);
+    @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(type, null, op, locationPsi, context);
+    Iterable<TagApi> tags = defaultTag == null ?
+                            Collections.emptyList() :
+                            Collections.singletonList(defaultTag);
+    return createDefaultVarProjection(type.type(), tags, op, required, locationPsi, context);
   }
 
   @SuppressWarnings("unchecked")
@@ -1401,7 +1406,7 @@ public final class ReqProjectionsPsiParser {
         ), psi, context);
 
       @NotNull ReqOutputVarProjection varProjection = createDefaultVarProjection(
-          fieldType.type(),
+          fieldType,
           opFieldProjection.varProjection(),
           fieldFlagged,
           psi,
@@ -1752,7 +1757,7 @@ public final class ReqProjectionsPsiParser {
     final @NotNull ReqOutputVarProjection valueProjection;
     if (valueProjectionPsi == null) {
       valueProjection = createDefaultVarProjection(
-          op.type().valueType().type(),
+          op.type().valueType(),
           op.itemsProjection(),
           false,
           psi,

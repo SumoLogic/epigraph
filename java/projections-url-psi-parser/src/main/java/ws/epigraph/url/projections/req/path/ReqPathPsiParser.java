@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.path.*;
@@ -31,6 +32,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.url.projections.UrlProjectionsPsiParserUtil;
 
 import java.text.MessageFormat;
 
@@ -73,7 +75,13 @@ public final class ReqPathPsiParser {
 
     @NotNull UrlReqModelPath modelPathPsi = psi.getReqModelPath();
 
-    final @NotNull TagApi reqTag = getTag(type, tagNamePsi, dataType.defaultTag(), psi, context);
+    final @NotNull TagApi reqTag = ProjectionsParsingUtil.getTag(
+        dataType,
+        UrlProjectionsPsiParserUtil.getTagName(tagNamePsi),
+        op,
+        psi,
+        context
+    );
     final TagApi opTag = opTagPath.tag();
 
     if (!reqTag.equals(opTag)) {

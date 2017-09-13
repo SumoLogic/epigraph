@@ -229,21 +229,18 @@ public final class OpDeleteProjectionsPsiParser {
       tagProjections = new LinkedHashMap<>();
 
       TagApi tag = findTag(
-          type,
+          dataType,
           singleTagProjectionPsi.getTagName(),
-          dataType.defaultTag(),
           singleTagProjectionPsi,
           context
       );
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) { // todo use isLeaf instead?
-        if (tag == null) // will throw proper error
-          tag = getTag(
-              type,
-              singleTagProjectionPsi.getTagName(),
-              dataType.defaultTag(),
-              singleTagProjectionPsi,
-              context
-          );
+
+      if (tag == null && !singleTagProjectionPsi.getText().isEmpty()) {
+        // can't deduce the tag but there's a projection specified for it
+        raiseNoTagsError(dataType, singleTagProjectionPsi, context);
+      }
+
+      if (tag != null) { // todo use isLeaf instead?
 
         tagProjections.put(
             tag.name(),
@@ -295,8 +292,12 @@ public final class OpDeleteProjectionsPsiParser {
         multiTagProjection.getOpDeleteMultiTagProjectionItemList();
 
     for (SchemaOpDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
-      final TagApi tag =
-          getTag(dataType.type(), tagProjectionPsi.getTagName(), dataType.defaultTag(), tagProjectionPsi, context);
+      @NotNull TagApi tag = getTag(
+          dataType,
+          tagProjectionPsi.getTagName(),
+          tagProjectionPsi,
+          context
+      );
 
       tagProjections.put(
           tag.name(),

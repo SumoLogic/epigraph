@@ -39,79 +39,122 @@ public final class ProjectionsParsingUtil {
 
   private ProjectionsParsingUtil() {}
 
-  public static @NotNull TagApi getTag(
-      @NotNull TypeApi type,
+  /**
+   * Gets tag instance looking for it in the following order:
+   * <ul>
+   * <li>if {@code tagName} is not null: look up by tag name</li>
+   * <li>else if retro tag is present: use it</li>
+   * <li>else if this is a datum type: use self tag</li>
+   * <li>else raise an error</li>
+   * </ul>
+   *
+   * @param dataType data type with optional retro tag
+   * @param tagName  optional tag name
+   * @param op       optional operation projection for extra checks
+   * @param location location for error message
+   * @param context  psi processing context
+   *
+   * @return tag instance
+   * @throws PsiProcessingException in case tag can't be found
+   */
+  public static <
+      MP extends GenModelProjection<?, ?, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      VP extends GenVarProjection<VP, TP, MP>
+      >
+  @NotNull TagApi getTag(
+      @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable TagApi defaultTag,
+      @Nullable VP op,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final TagApi tag = findTag(type, tagName, defaultTag, location, context);
+    final TagApi tag = findTag(dataType, tagName, op, location, context);
 
     if (tag == null)
       throw new PsiProcessingException(
-          String.format("Can't parse retro tag projection for '%s', retro tag not specified", type.name()),
+          String.format("Can't parse retro tag projection for '%s', retro tag not specified", dataType.name()),
           location,
           context
       );
     return tag;
   }
 
-  public static @Nullable TagApi findTag(
-      @NotNull TypeApi type,
+  /**
+   * Finds tag instance looking for it in the following order:
+   * <ul>
+   * <li>if {@code tagName} is not null: look up by tag name</li>
+   * <li>else if retro tag is present: use it</li>
+   * <li>else if this is a datum type: use self tag</li>
+   * <li>else return null</li>
+   * </ul>
+   *
+   * @param dataType data type with optional retro tag
+   * @param tagName  optional tag name
+   * @param op       optional operation projection for extra checks
+   * @param location location for error message
+   * @param context  psi processing context
+   *
+   * @return tag instance or null if not found
+   */
+  public static @Nullable <
+      MP extends GenModelProjection<?, ?, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      VP extends GenVarProjection<VP, TP, MP>
+      >
+  TagApi findTag(
+      @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable TagApi defaultTag,
+      @Nullable VP op,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     final TagApi tag;
+    final TypeApi type = dataType.type();
 
     if (tagName == null) {
       // get self tag
-      if (defaultTag == null) {
-        TagApi selfTag = findSelfTag(type, null, location, context);
-
-        if (selfTag == null)
-          return null;
-
-        tag = selfTag;
+      TagApi retroTag = dataType.defaultTag();
+      if (retroTag == null) {
+        if (type.kind() == TypeKind.ENTITY) return null;
+        else tag = ((DatumTypeApi) type).self();
       } else
-        tag = defaultTag;
+        tag = retroTag;
 
-      verifyTag(type, tag, location, context);
-    } else tag = getTag(type, tagName, location, context);
+    } else {
+      tag = type.tagsMap().get(tagName);
+      if (tag == null)
+        throw new PsiProcessingException(
+            String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tagName, type.name(), listTags(type)),
+            location, context
+        );
+    }
+
+    verifyTag(type, tag, op, location, context);
     return tag;
   }
 
-  public static @NotNull TagApi getTag(
-      @NotNull TypeApi type,
-      @NotNull String tagName,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    TagApi tag = type.tagsMap().get(tagName);
-    if (tag == null)
-      throw new PsiProcessingException(
-          String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tagName, type.name(), listTags(type)),
-          location, context
-      );
-    return tag;
-  }
-
-  public static void verifyTag(
+  public static <
+      MP extends GenModelProjection<?, ?, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, MP>,
+      VP extends GenVarProjection<VP, TP, MP>
+      >
+  void verifyTag(
       @NotNull TypeApi type,
       @NotNull TagApi tag,
+      @Nullable VP op,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (!type.tags().contains(tag))
       throw new PsiProcessingException(
-          String.format(
-              "Tag '%s' doesn't belong to type '%s', known tags: (%s)",
-              tag.name(),
-              type.name(),
-              listTags(type)
-          ), location, context);
+          String.format("Unknown tag '%s' in type '%s', known tags: (%s)", tag.name(), type.name(), listTags(type)),
+          location,
+          context
+      );
+
+    if (op != null)
+      getTagProjection(tag.name(), op, location, context);
   }
 
   public static <VP extends GenVarProjection<VP, ?, ?>> void verifyData(
@@ -140,7 +183,7 @@ public final class ProjectionsParsingUtil {
     }
   }
 
-  private static String listTags(@NotNull TypeApi type) {
+  public static String listTags(@NotNull TypeApi type) {
     return type.tags().stream().map(TagApi::name).collect(Collectors.joining(","));
   }
 
@@ -209,7 +252,10 @@ public final class ProjectionsParsingUtil {
     final TP tagProjection = op.tagProjections().get(tagName);
     if (tagProjection == null) {
       throw new PsiProcessingException(
-          String.format("Tag '%s' is not supported, supported tags: {%s}", tagName, listTags(op)), location, context);
+          String.format("Tag '%s' is not supported by operation, supported tags: {%s}", tagName, listTags(op)),
+          location,
+          context
+      );
     }
     return tagProjection;
   }
@@ -224,12 +270,17 @@ public final class ProjectionsParsingUtil {
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>
       >
-  TagApi findSelfTag(
-      @NotNull TypeApi type,
+  TagApi findSelfOrRetroTag(
+      @NotNull DataTypeApi dataType,
       @Nullable VP op,
       @NotNull PsiElement locationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
+    TagApi retroTag = dataType.defaultTag();
+    if (retroTag != null)
+      return retroTag;
+
+    TypeApi type = dataType.type();
     if (type.kind() != TypeKind.ENTITY) {
       DatumTypeApi datumType = (DatumTypeApi) type;
       final @NotNull TagApi self = datumType.self();

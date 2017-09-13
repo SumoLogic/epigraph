@@ -193,11 +193,20 @@ public final class ReqDeleteProjectionsPsiParser {
 
       tagProjections = new LinkedHashMap<>();
 
-      final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
-      TagApi tag = findTagOrSelfTag(type, tagNamePsi, op, tagLocation, context);
-      if (tag != null || !singleTagProjectionPsi.getText().isEmpty()) {
-        if (tag == null) tag = getTagOrSelfTag(type, null, op, tagLocation, context); // will throw proper error
+      TagApi tag = ProjectionsParsingUtil.findTag(
+          dataType,
+          UrlProjectionsPsiParserUtil.getTagName(singleTagProjectionPsi.getTagName()),
+          op,
+          tagLocation,
+          context
+      );
 
+      if (tag == null && !singleTagProjectionPsi.getText().isEmpty()) {
+        // can't deduce the tag but there's a projection specified for it
+        raiseNoTagsError(dataType, op, singleTagProjectionPsi, context);
+      }
+
+      if (tag != null) {
         @NotNull OpDeleteTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, tagLocation, context);
 
@@ -293,8 +302,13 @@ public final class ReqDeleteProjectionsPsiParser {
 
     for (UrlReqDeleteMultiTagProjectionItem tagProjectionPsi : tagProjectionPsiList) {
       try {
-        @NotNull TagApi tag =
-            UrlProjectionsPsiParserUtil.getTag(tagProjectionPsi.getTagName(), op, tagProjectionPsi, context);
+        @NotNull TagApi tag = getTag(
+            dataType,
+            getTagName(tagProjectionPsi.getTagName()),
+            op,
+            tagProjectionPsi,
+            context
+        );
         @NotNull OpDeleteTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
 
         OpDeleteModelProjection<?, ?, ?> opTagProjection = opTag.projection();
@@ -763,20 +777,11 @@ public final class ReqDeleteProjectionsPsiParser {
       @NotNull PsiElement locationPsi,
       @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
 
-    return createDefaultVarProjection(type.type(), op, locationPsi, context);
-  }
-
-  private static @NotNull ReqDeleteVarProjection createDefaultVarProjection(
-      @NotNull TypeApi type,
-      @NotNull OpDeleteVarProjection op,
-      @NotNull PsiElement locationPsi,
-      @NotNull ReqDeletePsiProcessingContext context) throws PsiProcessingException {
-
-    @Nullable TagApi defaultTag = findSelfTag(type, op, locationPsi, context);
+    @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(type, null, op, locationPsi, context);
     List<TagApi> tags = defaultTag == null ?
                         Collections.emptyList() :
                         Collections.singletonList(defaultTag);
-    return createDefaultVarProjection(type, tags, op, locationPsi, context);
+    return createDefaultVarProjection(type.type(), tags, op, locationPsi, context);
   }
 
   /**
