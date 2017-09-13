@@ -39,14 +39,6 @@
 
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>epigraph-java-core</artifactId>
-            <version>${project.parent.version}</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
             <artifactId>epigraph-java-test-util</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>

@@ -37,7 +37,7 @@
     <dependency>
       <groupId>ws.epigraph</groupId>
       <artifactId>epigraph-java-http-server-undertow</artifactId>
-      <version>${revision}</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
     <dependency>
