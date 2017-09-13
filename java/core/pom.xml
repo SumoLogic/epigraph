@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <scope>compile</scope><!-- provide to (generated) dependencies -->
+      <scope>compile</scope><!-- to pass it to (generated) dependencies so they can compile -->
     </dependency>
 
     <dependency>

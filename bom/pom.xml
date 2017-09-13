@@ -543,7 +543,7 @@
             <goals>
               <goal>flatten</goal>
             </goals>
-            <phase>verify</phase>
+            <phase>prepare-package</phase>
           </execution>
           <execution>
             <id>clean</id>

@@ -58,6 +58,7 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -74,6 +75,7 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.compat.version}</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
