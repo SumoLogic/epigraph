@@ -1,6 +1,6 @@
 # Epigraph
 [![Build Status](https://travis-ci.org/SumoLogic/epigraph.svg?branch=master)](https://travis-ci.org/SumoLogic/epigraph/branches)
-[![codecov.io](https://codecov.io/github/SumoLogic/epigraph/coverage.svg)](https://codecov.io/github/SumoLogic/epigraph)
+[![codecov.io](https://codecov.io/gh/SumoLogic/epigraph/branch/master/graphs/badge.svg)](https://codecov.io/gh/SumoLogic/epigraph/branch/master)
 [![License](https://img.shields.io/github/license/SumoLogic/epigraph.svg)](LICENSE.md)
 
 Under construction

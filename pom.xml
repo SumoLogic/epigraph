@@ -669,7 +669,7 @@
             </excludes>
             <includes>
               <!-- instrument/report only ws.epigraph.* classes (otherwise we exceed codecov upload size limit) -->
-              <include>ws/epigraph/*</include>
+              <include>ws/epigraph/**/*</include>
             </includes>
           </configuration>
         </plugin>
