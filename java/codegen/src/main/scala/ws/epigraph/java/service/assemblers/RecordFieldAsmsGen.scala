@@ -19,18 +19,19 @@ package ws.epigraph.java.service.assemblers
 import java.nio.file.Path
 
 import ws.epigraph.compiler.{CDatumType, CField, CType, CTypeKind}
-import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
-import ws.epigraph.lang.Qn
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen, ReqRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output.ReqOutputRecordModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen}
+import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.lang.Qn
 
 // currently unused: can't figure out correct type variance
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class RecordFieldAsmsGen(
-  projectionGen: ReqRecordModelProjectionGen,
+  projectionGen: ReqOutputRecordModelProjectionGen,
   override val ctx: GenContext) extends JavaGen {
 
   private val namespace: Qn = projectionGen.namespace
@@ -64,14 +65,14 @@ class RecordFieldAsmsGen(
 """/*@formatter:on*/
   }
 
-  private def fieldGenerators(g: ReqRecordModelProjectionGen): Map[String, (CField, ReqFieldProjectionGen)] =
+  private def fieldGenerators(g: ReqOutputRecordModelProjectionGen): Map[String, (CField, ReqFieldProjectionGen)] =
 //    g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[ReqOutputRecordModelProjectionGen])).getOrElse(Map()) ++
     g.fieldGenerators.map { case (f, p) => f.name -> (f, p) }
 
 
   override protected def generate: String = {
     val parentGenOpt: Option[RecordFieldAsmsGen] = projectionGen
-      .parentClassGenOpt.map(_.asInstanceOf[ReqRecordModelProjectionGen].assemblerGen.asInstanceOf[RecordAsmGen2].fieldAsmsGen) // second `asInstanceOf` can be removed after switching to RecordAsmGen2
+      .parentClassGenOpt.map(_.asInstanceOf[ReqOutputRecordModelProjectionGen].assemblerGen.asInstanceOf[RecordAsmGen2].fieldAsmsGen) // second `asInstanceOf` can be removed after switching to RecordAsmGen2
 
     val extendsClause = parentGenOpt.map(pg => "extends " + pg.fullClassName + "<D> ").getOrElse("")
 

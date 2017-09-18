@@ -22,7 +22,7 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,7 +31,7 @@ public class OpPathKeyProjection extends OpKeyProjection {
   public OpPathKeyProjection(
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> projection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> projection,
       @NotNull TextLocation location) {
 
     super(params, annotations, projection, location);

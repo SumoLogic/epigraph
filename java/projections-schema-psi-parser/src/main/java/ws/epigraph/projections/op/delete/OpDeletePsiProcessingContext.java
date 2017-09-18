@@ -17,7 +17,7 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -25,19 +25,19 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeletePsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext;
+  private final @NotNull OpOutputPsiProcessingContext inputPsiProcessingContext;
   private final @NotNull OpDeleteReferenceContext referenceContext;
 
   public OpDeletePsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull OpInputPsiProcessingContext inputPsiProcessingContext,
+      final @NotNull OpOutputPsiProcessingContext inputPsiProcessingContext,
       final @NotNull OpDeleteReferenceContext referenceContext) {
     super(psiProcessingContext);
     this.inputPsiProcessingContext = inputPsiProcessingContext;
     this.referenceContext = referenceContext;
   }
 
-  public OpInputPsiProcessingContext inputPsiProcessingContext() {
+  public OpOutputPsiProcessingContext inputPsiProcessingContext() {
     return inputPsiProcessingContext;
   }
 

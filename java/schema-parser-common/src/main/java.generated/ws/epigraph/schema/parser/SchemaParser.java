@@ -1679,7 +1679,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' qid ':' typeRef '=' opInputUnnamedOrRefVarProjection
+  // 'inputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection
   public static boolean inputProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjectionDef")) return false;
     if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
@@ -1691,7 +1691,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
-    r = p && opInputUnnamedOrRefVarProjection(b, l + 1) && r;
+    r = p && opOutputUnnamedOrRefVarProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -3934,7 +3934,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'projection' ':' opInputModelProjection
+  // 'projection' ':' opOutputModelProjection
   public static boolean opKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opKeyProjection")) return false;
     if (!nextTokenIs(b, S_PROJECTION)) return false;
@@ -3942,7 +3942,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_OP_KEY_PROJECTION, null);
     r = consumeTokens(b, 1, S_PROJECTION, S_COLON);
     p = r; // pin = 1
-    r = r && opInputModelProjection(b, l + 1);
+    r = r && opOutputModelProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -4916,7 +4916,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ';' '+'? qid ':' typeRef opInputModelProjection
+  // ';' '+'? qid ':' typeRef opOutputModelProjection
   public static boolean opParam(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opParam")) return false;
     if (!nextTokenIs(b, S_SEMICOLON)) return false;
@@ -4928,7 +4928,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = p && report_error_(b, qid(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
-    r = p && opInputModelProjection(b, l + 1) && r;
+    r = p && opOutputModelProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -5192,7 +5192,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' opInputFieldProjection
+  // 'inputProjection' opOutputFieldProjection
   public static boolean operationInputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationInputProjection")) return false;
     if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
@@ -5200,7 +5200,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_OPERATION_INPUT_PROJECTION, null);
     r = consumeToken(b, S_INPUT_PROJECTION);
     p = r; // pin = 1
-    r = r && opInputFieldProjection(b, l + 1);
+    r = r && opOutputFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -6253,7 +6253,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' opInputFieldProjection
+  // 'inputProjection' opOutputFieldProjection
   public static boolean transformerInputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerInputProjection")) return false;
     if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
@@ -6261,7 +6261,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_INPUT_PROJECTION, null);
     r = consumeToken(b, S_INPUT_PROJECTION);
     p = r; // pin = 1
-    r = r && opInputFieldProjection(b, l + 1);
+    r = r && opOutputFieldProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }

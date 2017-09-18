@@ -25,19 +25,20 @@ import ws.epigraph.data.Val;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
+import ws.epigraph.gdata.validation.GDataValidationError;
+import ws.epigraph.gdata.validation.OpInputGDataValidator;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.projections.req.Directive;
-import ws.epigraph.projections.req.Directives;
-import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.req.Directive;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -48,12 +49,10 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.*;
-import ws.epigraph.gdata.validation.GDataValidationError;
-import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionsParsingUtil.*;
+import static ws.epigraph.projections.ProjectionsParsingUtil.listTags;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -228,7 +227,7 @@ public final class UrlProjectionsPsiParserUtil {
 
   public static @Nullable Datum getDatum(
       @NotNull UrlDatum datumPsi,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> projection,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> projection,
       @NotNull TypesResolver resolver,
       @NotNull String errorMessagePrefix,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -342,13 +341,13 @@ public final class UrlProjectionsPsiParserUtil {
     for (final Map.Entry<String, OpParam> entry : opParams.asMap().entrySet()) {
       String paramName = entry.getKey();
       if ((paramMap == null || !paramMap.containsKey(paramName))) {
-        final OpInputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
+        final OpOutputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
 
         GDatum defaultValue = opModelProjection.defaultValue();
         if (defaultValue == null) {
           defaultValue = opModelProjection.defaultValue();
 
-          if (defaultValue == null && opModelProjection.required()) {
+          if (defaultValue == null && opModelProjection.flagged()) {
             context.addError(
                 String.format("Required parameter '%s' is missing", paramName),
                 paramsLocation
@@ -403,7 +402,7 @@ public final class UrlProjectionsPsiParserUtil {
       }
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
-      OpInputModelProjection<?, ?, ?, ?> projection = opParam.projection();
+      OpOutputModelProjection<?, ?, ?, ?> projection = opParam.projection();
       final DatumTypeApi model = projection.type();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
@@ -419,7 +418,7 @@ public final class UrlProjectionsPsiParserUtil {
           }
       }
 
-      if (value == null && opParam.projection().required())
+      if (value == null && opParam.projection().flagged())
         context.addError("Required parameter '" + opParam.name() + "' value is missing", reqParamPsi.getQid());
 
       reqParamsMap.put(name, new ReqParam(name, value, EpigraphPsiUtil.getLocation(reqParamPsi)));

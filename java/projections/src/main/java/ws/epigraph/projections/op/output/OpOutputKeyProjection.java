@@ -16,14 +16,13 @@
 
 package ws.epigraph.projections.op.output;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
 
 import java.util.Objects;
 
@@ -37,7 +36,7 @@ public class OpOutputKeyProjection extends OpKeyProjection {
       @NotNull OpKeyPresence presence,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> projection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> projection,
       @NotNull TextLocation location) {
 
     super(params, annotations, projection, location);

@@ -19,21 +19,22 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{ReqListModelProjectionGen, ReqModelProjectionGen, ReqEntityProjectionGen}
+import ws.epigraph.java.service.projections.req.output.ReqOutputListModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqModelProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ListAsmGen(
-  override protected val g: ReqListModelProjectionGen,
+  override protected val g: ReqOutputListModelProjectionGen,
   val ctx: GenContext) extends JavaGen with ModelAsmGen {
 
-  override protected type G = ReqListModelProjectionGen
+  override protected type G = ReqOutputListModelProjectionGen
 
   val itemCType: CType = JavaGenUtils.toCType(
     g.elementGen match {
-      case eg: ReqEntityProjectionGen => eg.op.`type`()
+      case eg: ReqVarProjectionGen => eg.op.`type`()
       case mg: ReqModelProjectionGen => mg.op.`type`()
     }
   )

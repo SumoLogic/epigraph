@@ -19,7 +19,8 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CField, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen, ReqRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output.ReqOutputRecordModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 import scala.collection.immutable.ListMap
@@ -28,10 +29,10 @@ import scala.collection.immutable.ListMap
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class RecordAsmGen(
-  override protected val g: ReqRecordModelProjectionGen,
+  override protected val g: ReqOutputRecordModelProjectionGen,
   val ctx: GenContext) extends JavaGen with ModelAsmGen {
 
-  override protected type G = ReqRecordModelProjectionGen
+  override protected type G = ReqOutputRecordModelProjectionGen
 
   import Imports._
 

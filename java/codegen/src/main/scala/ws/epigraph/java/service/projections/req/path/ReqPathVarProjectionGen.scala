@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqProjectionGen, AbstractReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.TypeKind
@@ -31,7 +31,7 @@ class ReqPathVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpVarPath,
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with AbstractReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqVarProjectionGen {
 
   override type OpProjectionType = OpVarPath
   override type OpTagProjectionEntryType = OpTagPath
@@ -40,9 +40,9 @@ class ReqPathVarProjectionGen(
 
   override protected def tailGenerator(
     op: OpVarPath,
-    normalized: Boolean): AbstractReqProjectionGen = throw new RuntimeException("paths have no tails")
+    normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")
 
-  override protected def tagGenerator(pgo: Option[AbstractReqVarProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),

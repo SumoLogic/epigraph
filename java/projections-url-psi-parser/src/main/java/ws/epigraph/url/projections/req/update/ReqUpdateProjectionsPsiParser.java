@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionsParsingUtil;
-import ws.epigraph.projections.op.input.*;
+import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.update.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -52,7 +52,7 @@ public final class ReqUpdateProjectionsPsiParser {
   public static @NotNull ReqUpdateVarProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       boolean replace,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       @NotNull UrlReqUpdateVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -106,9 +106,9 @@ public final class ReqUpdateProjectionsPsiParser {
       context.referenceContext()
           .resolveEntityRef(projectionName, value, EpigraphPsiUtil.getLocation(unnamedOrRefVarProjection));
 
-      final Queue<OpInputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
+      final Queue<OpOutputVarProjection> unverifiedOps = context.unverifiedRefOps(projectionName);
       while (unverifiedOps != null && !unverifiedOps.isEmpty()) {
-        final OpInputVarProjection unverifiedOp = unverifiedOps.poll();
+        final OpOutputVarProjection unverifiedOp = unverifiedOps.poll();
         context.addVerifiedRefOp(projectionName, unverifiedOp);
 
         parseUnnamedOrRefVarProjection(
@@ -129,7 +129,7 @@ public final class ReqUpdateProjectionsPsiParser {
   public static @NotNull ReqUpdateVarProjection parseUnnamedOrRefVarProjection(
       final @NotNull DataTypeApi dataType,
       final boolean replace,
-      final @NotNull OpInputVarProjection op,
+      final @NotNull OpOutputVarProjection op,
       final @NotNull UrlReqUpdateUnnamedOrRefVarProjection psi,
       final @NotNull TypesResolver resolver,
       final @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -162,7 +162,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
       final String referenceName = varProjectionRefPsi.getCanonicalName();
 
-      final Collection<OpInputVarProjection> verifiedOps = context.verifiedRefOps(referenceName);
+      final Collection<OpOutputVarProjection> verifiedOps = context.verifiedRefOps(referenceName);
       if (verifiedOps == null || !verifiedOps.contains(op))
         context.addUnverifiedRefOp(referenceName, op);
 
@@ -175,7 +175,7 @@ public final class ReqUpdateProjectionsPsiParser {
   public static @NotNull ReqUpdateVarProjection parseUnnamedVarProjection(
       @NotNull DataTypeApi dataType,
       boolean replace,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       @NotNull UrlReqUpdateUnnamedVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -210,8 +210,8 @@ public final class ReqUpdateProjectionsPsiParser {
       }
 
       if (tag != null) {
-        @NotNull OpInputTagProjectionEntry opTagProjection = getTagProjection(tag.name(), op, tagLocation, context);
-        @NotNull OpInputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpOutputTagProjectionEntry opTagProjection = getTagProjection(tag.name(), op, tagLocation, context);
+        @NotNull OpOutputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
         @NotNull UrlReqUpdateModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqUpdateModelProjection();
 
         final boolean replaceModel = singleTagProjectionPsi.getPlus() != null || isLeaf(singleTagProjectionPsi)
@@ -246,8 +246,8 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     // check that all required tags are present
-    for (final Map.Entry<String, OpInputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
-      if (entry.getValue().projection().required() && !tagProjections.containsKey(entry.getKey()))
+    for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : op.tagProjections().entrySet()) {
+      if (entry.getValue().projection().flagged() && !tagProjections.containsKey(entry.getKey()))
         context.addError(
             String.format("Required tag '%s' is missing", entry.getKey()), psi
         );
@@ -295,7 +295,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   private static @NotNull LinkedHashMap<String, ReqUpdateTagProjectionEntry> parseMultiTagProjection(
       @NotNull DataTypeApi dataType,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       @NotNull UrlReqUpdateMultiTagProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -324,9 +324,9 @@ public final class ReqUpdateProjectionsPsiParser {
             tagProjectionPsi,
             context
         );
-        @NotNull OpInputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
+        @NotNull OpOutputTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
 
-        OpInputModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
+        OpOutputModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
 
         @NotNull UrlReqUpdateModelProjection modelProjection = tagProjectionPsi.getReqUpdateModelProjection();
 
@@ -382,7 +382,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static @Nullable List<ReqUpdateVarProjection> parseTails(
       @NotNull DataTypeApi dataType,
       boolean replace,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       @Nullable UrlReqUpdateVarPolymorphicTail tailPsi,
       @NotNull TypesResolver resolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -431,7 +431,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static @NotNull ReqUpdateVarProjection buildTailProjection(
       @NotNull DataTypeApi dataType,
       boolean replace,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqUpdateVarProjection tailProjectionPsi,
       @NotNull TypesResolver typesResolver,
@@ -441,7 +441,7 @@ public final class ReqUpdateProjectionsPsiParser {
     @NotNull EntityTypeApi tailType = getEntityType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
     checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
-    @Nullable OpInputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
+    @Nullable OpOutputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseVarProjection(
         tailType.dataType(dataType.defaultTag()),
@@ -454,7 +454,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdateModelProjection<?, ?, ?> parseModelProjection(
-      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean replace,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -478,7 +478,7 @@ public final class ReqUpdateProjectionsPsiParser {
   @SuppressWarnings("unchecked")
   public static <MP extends ReqUpdateModelProjection<?, ?, ?>> @NotNull MP parseModelProjection(
       @NotNull Class<MP> modelClass,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean replace,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -494,7 +494,7 @@ public final class ReqUpdateProjectionsPsiParser {
         assert modelClass.isAssignableFrom(ReqUpdateRecordModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.RECORD, psi, context);
 
-        final OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
+        final OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
 
         @Nullable UrlReqUpdateRecordModelProjection recordModelProjectionPsi =
             psi.getReqUpdateRecordModelProjection();
@@ -525,7 +525,7 @@ public final class ReqUpdateProjectionsPsiParser {
         assert modelClass.isAssignableFrom(ReqUpdateMapModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.MAP, psi, context);
 
-        final OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
+        final OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
         @Nullable UrlReqUpdateMapModelProjection mapModelProjectionPsi = psi.getReqUpdateMapModelProjection();
 
         if (mapModelProjectionPsi == null) {
@@ -554,7 +554,7 @@ public final class ReqUpdateProjectionsPsiParser {
         assert modelClass.isAssignableFrom(ReqUpdateListModelProjection.class);
         ensureModelKind(findProjectionKind(psi), TypeKind.LIST, psi, context);
 
-        final OpInputListModelProjection opList = (OpInputListModelProjection) op;
+        final OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         @Nullable UrlReqUpdateListModelProjection listModelProjectionPsi =
             psi.getReqUpdateListModelProjection();
 
@@ -586,7 +586,7 @@ public final class ReqUpdateProjectionsPsiParser {
       case PRIMITIVE:
         assert modelClass.isAssignableFrom(ReqUpdatePrimitiveModelProjection.class);
         return (MP) parsePrimitiveModelProjection(
-            (OpInputPrimitiveModelProjection) op,
+            (OpOutputPrimitiveModelProjection) op,
             params,
             directives,
             parseModelTails(
@@ -633,7 +633,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static <MP extends ReqUpdateModelProjection<?, ?, ?>>
   @Nullable List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @Nullable UrlReqUpdateModelPolymorphicTail tailPsi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -687,7 +687,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static <MP extends ReqUpdateModelProjection<?, ?, ?>>
   @NotNull MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       boolean update,
       @NotNull UrlTypeRef tailTypeRefPsi,
       @NotNull UrlReqUpdateModelProjection modelProjectionPsi,
@@ -700,7 +700,7 @@ public final class ReqUpdateProjectionsPsiParser {
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
     @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
 
-    final @NotNull OpInputModelProjection<?, ?, ?, ?> opTail =
+    final @NotNull OpOutputModelProjection<?, ?, ?, ?> opTail =
         ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseModelProjection(
@@ -718,7 +718,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static @NotNull ReqUpdateModelProjection<?, ?, ?> createDefaultModelProjection(
       @NotNull DatumTypeApi type,
       boolean update,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> op,
+      @NotNull OpOutputModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @NotNull PsiElement locationPsi,
@@ -728,8 +728,8 @@ public final class ReqUpdateProjectionsPsiParser {
 
     switch (type.kind()) {
       case RECORD:
-        OpInputRecordModelProjection opRecord = (OpInputRecordModelProjection) op;
-        final Map<String, OpInputFieldProjectionEntry> opFields = opRecord.fieldProjections();
+        OpOutputRecordModelProjection opRecord = (OpOutputRecordModelProjection) op;
+        final Map<String, OpOutputFieldProjectionEntry> opFields = opRecord.fieldProjections();
 
         final @NotNull Map<String, ReqUpdateFieldProjectionEntry> fields;
 
@@ -745,7 +745,7 @@ public final class ReqUpdateProjectionsPsiParser {
             location
         );
       case MAP:
-        OpInputMapModelProjection opMap = (OpInputMapModelProjection) op;
+        OpOutputMapModelProjection opMap = (OpOutputMapModelProjection) op;
 
         MapTypeApi mapType = (MapTypeApi) type;
         final ReqUpdateVarProjection valueVarProjection = createDefaultVarProjection(
@@ -767,7 +767,7 @@ public final class ReqUpdateProjectionsPsiParser {
             location
         );
       case LIST:
-        OpInputListModelProjection opList = (OpInputListModelProjection) op;
+        OpOutputListModelProjection opList = (OpOutputListModelProjection) op;
         ListTypeApi listType = (ListTypeApi) type;
 
         final ReqUpdateVarProjection itemVarProjection = createDefaultVarProjection(
@@ -811,7 +811,7 @@ public final class ReqUpdateProjectionsPsiParser {
 
   private static @NotNull ReqUpdateVarProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -829,7 +829,7 @@ public final class ReqUpdateProjectionsPsiParser {
   private static ReqUpdateVarProjection createDefaultVarProjection(
       @NotNull TypeApi type,
       @NotNull Iterable<TagApi> tags,
-      @NotNull OpInputVarProjection op,
+      @NotNull OpOutputVarProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull ReqUpdatePsiProcessingContext context) throws PsiProcessingException {
@@ -837,7 +837,7 @@ public final class ReqUpdateProjectionsPsiParser {
     LinkedHashMap<String, ReqUpdateTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     for (TagApi tag : tags) {
-      final OpInputTagProjectionEntry opInputTagProjection = op.tagProjections().get(tag.name());
+      final OpOutputTagProjectionEntry opInputTagProjection = op.tagProjections().get(tag.name());
       if (opInputTagProjection != null) {
         tagProjections.put(
             tag.name(),
@@ -876,7 +876,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdateRecordModelProjection parseRecordModelProjection(
-      @NotNull OpInputRecordModelProjection op,
+      @NotNull OpOutputRecordModelProjection op,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -890,7 +890,7 @@ public final class ReqUpdateProjectionsPsiParser {
     for (final UrlReqUpdateFieldProjectionEntry entryPsi : psi.getReqUpdateFieldProjectionEntryList()) {
       final @NotNull String fieldName = entryPsi.getQid().getCanonicalName();
 
-      final @Nullable OpInputFieldProjectionEntry opFieldProjectionEntry = op.fieldProjection(fieldName);
+      final @Nullable OpOutputFieldProjectionEntry opFieldProjectionEntry = op.fieldProjection(fieldName);
       if (opFieldProjectionEntry == null) {
         context.addError(
             String.format(
@@ -902,7 +902,7 @@ public final class ReqUpdateProjectionsPsiParser {
       } else {
         try {
           final FieldApi field = opFieldProjectionEntry.field();
-          final @NotNull OpInputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
+          final @NotNull OpOutputFieldProjection opFieldProjection = opFieldProjectionEntry.fieldProjection();
           final @NotNull UrlReqUpdateFieldProjection fieldProjectionPsi = entryPsi.getReqUpdateFieldProjection();
           final @NotNull DataTypeApi fieldType = field.dataType();
 
@@ -930,8 +930,8 @@ public final class ReqUpdateProjectionsPsiParser {
     }
 
     // check that all required fields are specified
-    for (final Map.Entry<String, OpInputFieldProjectionEntry> entry : op.fieldProjections().entrySet()) {
-      if (entry.getValue().fieldProjection().required() && !fieldProjections.containsKey(entry.getKey())) {
+    for (final Map.Entry<String, OpOutputFieldProjectionEntry> entry : op.fieldProjections().entrySet()) {
+      if (entry.getValue().fieldProjection().flagged() && !fieldProjections.containsKey(entry.getKey())) {
         context.addError(String.format("Required field '%s' is missing", entry.getKey()), psi);
       }
     }
@@ -950,7 +950,7 @@ public final class ReqUpdateProjectionsPsiParser {
   public static @NotNull ReqUpdateFieldProjection parseFieldProjection(
       final DataTypeApi fieldType,
       boolean replace,
-      final @NotNull OpInputFieldProjection op,
+      final @NotNull OpOutputFieldProjection op,
       final @NotNull UrlReqUpdateFieldProjection psi,
       final @NotNull TypesResolver resolver, final @NotNull ReqUpdatePsiProcessingContext context)
       throws PsiProcessingException {
@@ -981,7 +981,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdateMapModelProjection parseMapModelProjection(
-      @NotNull OpInputMapModelProjection op,
+      @NotNull OpOutputMapModelProjection op,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -1047,7 +1047,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdateListModelProjection parseListModelProjection(
-      @NotNull OpInputListModelProjection op,
+      @NotNull OpOutputListModelProjection op,
       boolean update,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -1085,7 +1085,7 @@ public final class ReqUpdateProjectionsPsiParser {
   }
 
   public static @NotNull ReqUpdatePrimitiveModelProjection parsePrimitiveModelProjection(
-      @NotNull OpInputPrimitiveModelProjection op,
+      @NotNull OpOutputPrimitiveModelProjection op,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable List<ReqUpdatePrimitiveModelProjection> tails,

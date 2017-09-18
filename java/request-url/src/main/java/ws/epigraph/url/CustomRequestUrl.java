@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
@@ -31,21 +30,19 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CustomRequestUrl extends RequestUrl {
-  @Nullable
-  private final ReqInputFieldProjection inputProjection;
+  private final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection;
 
   public CustomRequestUrl(
-      @NotNull final String fieldName,
-      @Nullable final ReqFieldPath path,
-      @Nullable ReqInputFieldProjection inputProjection,
-      @NotNull final StepsAndProjection<ReqFieldProjection> outputProjection,
-      @NotNull final Map<String, GDatum> parameters) {
+      final @NotNull String fieldName,
+      final @Nullable ReqFieldPath path,
+      final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
+      final @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
     this.inputProjection = inputProjection;
   }
 
-  @Nullable
-  public ReqInputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable StepsAndProjection<ReqFieldProjection> inputProjection() { return inputProjection; }
 
   @Override
   public boolean equals(final Object o) {

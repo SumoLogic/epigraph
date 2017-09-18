@@ -16,66 +16,68 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.service.assemblers.ListAsmGen
-import ws.epigraph.java.{GenContext, JavaGen}
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputListModelProjection
+import ws.epigraph.projections.gen.GenListModelProjection
+import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqListModelProjectionGen(
-  baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpOutputListModelProjection,
-  baseNamespaceOpt: Option[Qn],
-  _namespaceSuffix: Qn,
-  override val parentClassGenOpt: Option[ReqModelProjectionGen],
-  ctx: GenContext)
-  extends ReqModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with AbstractReqListModelProjectionGen {
+trait ReqListModelProjectionGen extends ReqModelProjectionGen {
+  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenListModelProjection[_, _, _, _, _ <: DatumTypeApi]
 
-  override type OpProjectionType = OpOutputListModelProjection
+  protected val elementsNamespaceSuffix = "elements"
 
-  val elementGen: ReqTypeProjectionGen = ReqEntityProjectionGen.dataProjectionGen(
-      baseNamespaceProvider,
-      op.itemsProjection(),
-      Some(baseNamespace),
-      namespaceSuffix.append(elementsNamespaceSuffix),
-      parentClassGenOpt match {
-        case Some(lmpg: ReqListModelProjectionGen) => Some(lmpg.elementGen)
-        case _ => None
-      },
-      ctx
-    )
+  def elementGen: ReqTypeProjectionGen
 
-  override protected def tailGenerator(
-    parentGen: ReqModelProjectionGen,
-    op: OpOutputListModelProjection,
-    normalized: Boolean) =
-    new ReqListModelProjectionGen(
-      baseNamespaceProvider,
-      op,
-      Some(baseNamespace),
-      tailNamespaceSuffix(op.`type`(), normalized),
-      Some(parentGen),
-      ctx
-    )
-//    {
-//      override protected val buildTails: Boolean = !normalized
-//      override protected val buildNormalizedTails: Boolean = normalized
-//    }
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(elementGen)
 
-  override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAsmGen(this, ctx))
+  protected def generate(reqListModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+    val elementProjectionClass = elementGen.shortClassName
+
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      reqVarProjectionFqn.toString,
+      reqModelProjectionFqn.toString,
+      reqListModelProjectionFqn.toString,
+      elementGen.fullClassName
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
+
+    /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
+$packageStatement
+
+${JavaGenUtils.generateImports(imports)}
+
+$classJavadoc\
+${JavaGenUtils.generatedAnnotation(this)}
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqListModelProjectionFqn.last()} raw;\n" else ""}\
+
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqListModelProjectionFqn.last()}) raw" else "super(raw)"};
+  }
+
+  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
+    this(selfVar.singleTagProjection().projection());
+  }
+
+  /**
+   * @return items projection
+   */
+  public @NotNull $elementProjectionClass itemsProjection() {
+    return new $elementProjectionClass(raw.itemsProjection());
+  }\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
+}"""/*@formatter:on*/
+  }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqListModelProjection"),
     flagged
   )
-
 }

@@ -22,7 +22,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -1168,13 +1167,10 @@ public class OpOutputProjectionsTest {
       OpInputReferenceContext inputReferenceContext = config.inputReferenceContext(context);
       OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext(context);
 
-      OpInputPsiProcessingContext inputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputReferenceContext);
-
       OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, inputPsiProcessingContext, outputReferenceContext);
+          new OpOutputPsiProcessingContext(context, outputReferenceContext);
 
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           config.dataType(),
           false,
           psiVarProjection,

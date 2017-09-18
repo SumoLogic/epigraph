@@ -362,7 +362,7 @@ transformerBodyPart ::= transformerInputProjection | transformerOutputProjection
   recoverWhile = transformerBodyRecover
 }
 
-transformerInputProjection ::= 'inputProjection' opInputFieldProjection {pin=1}
+transformerInputProjection ::= 'inputProjection' opOutputFieldProjection {pin=1}
 transformerOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
 
 private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | '@' )
@@ -384,7 +384,7 @@ private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
 // projection def
 projectionDef ::= outputProjectionDef | inputProjectionDef | deleteProjectionDef
 outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection {pin=1}
-inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opInputUnnamedOrRefVarProjection {pin=1}
+inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection {pin=1}
 deleteProjectionDef ::= 'deleteProjection' qid ':' typeRef '=' '+'? opDeleteUnnamedOrRefVarProjection {pin=1}
 
 // operation def parts
@@ -392,7 +392,7 @@ operationName ::= 'default' | qid
 operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') {pin=1}// add 'PATCH' too?
 operationPath ::= 'path' opFieldPath {pin=1}
 operationInputType ::= 'inputType' typeRef {pin=1}
-operationInputProjection ::= 'inputProjection' opInputFieldProjection {pin=1}
+operationInputProjection ::= 'inputProjection' opOutputFieldProjection {pin=1}
 operationOutputType ::= 'outputType' valueTypeRef {pin=1}
 operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
 operationDeleteProjection ::= 'deleteProjection' '+'? opDeleteFieldProjection {pin=1}
@@ -464,14 +464,14 @@ customOperationBodyPart ::= operationMethod |
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opInputModelProjection /*opParamDefault?*/ /* opParamBody? */ { pin = 1 }
-//private opParamDefault ::= '=' datum { pin=1 }    // default is part of opInputModelProjection now
+opParam ::= ';' '+'? qid ':' typeRef opOutputModelProjection /*opParamDefault?*/ /* opParamBody? */ { pin = 1 }
+//private opParamDefault ::= '=' datum { pin=1 }    // default is part of projection now
 //private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 //private opParamBodyPart ::= opParam | annotation
 
 private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
-opKeyProjection ::= 'projection' ':' opInputModelProjection { pin=1 }
+opKeyProjection ::= 'projection' ':' opOutputModelProjection { pin=1 }
 
 // ---------------------------------------------------------------------------------------------------------------- path
 

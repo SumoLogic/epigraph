@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.List;
@@ -35,13 +35,13 @@ import java.util.stream.Stream;
 public class OpKeyProjection implements Annotated {
   private final @NotNull OpParams params;
   private final @NotNull Annotations annotations;
-  private final @Nullable OpInputModelProjection<?, ?, ?, ?> projection;
+  private final @Nullable OpOutputModelProjection<?, ?, ?, ?> projection;
   private final @NotNull TextLocation location;
 
   public OpKeyProjection(
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> projection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> projection,
       @NotNull TextLocation location) {
 
     this.params = params;
@@ -55,15 +55,15 @@ public class OpKeyProjection implements Annotated {
   @Override
   public @NotNull Annotations annotations() { return annotations; }
 
-  public @Nullable OpInputModelProjection<?, ?, ?, ?> projection() { return projection; }
+  public @Nullable OpOutputModelProjection<?, ?, ?, ?> projection() { return projection; }
 
   public @NotNull TextLocation location() { return location; }
 
-  public static @Nullable OpInputModelProjection<?, ?, ?, ?> mergeProjections(
+  public static @Nullable OpOutputModelProjection<?, ?, ?, ?> mergeProjections(
       @NotNull DatumTypeApi model,
-      @NotNull Stream<OpInputModelProjection<?, ?, ?, ?>> projectionStream) {
+      @NotNull Stream<OpOutputModelProjection<?, ?, ?, ?>> projectionStream) {
 
-    List<OpInputModelProjection<?, ?, ?, ?>> projections =
+    List<OpOutputModelProjection<?, ?, ?, ?>> projections =
         projectionStream.filter(Objects::nonNull).collect(Collectors.toList());
 
     if (projections.isEmpty()) return null;
@@ -71,10 +71,10 @@ public class OpKeyProjection implements Annotated {
   }
 
   @SuppressWarnings("unchecked")
-  private static <SMP extends OpInputModelProjection<?, SMP, M, ?>, M extends DatumTypeApi>
-  @Nullable OpInputModelProjection<?, ?, ?, ?> merge(
+  private static <SMP extends OpOutputModelProjection<?, SMP, M, ?>, M extends DatumTypeApi>
+  @Nullable OpOutputModelProjection<?, ?, ?, ?> merge(
       DatumTypeApi model,
-      List<OpInputModelProjection<?, ?, ?, ?>> projections) {
+      List<OpOutputModelProjection<?, ?, ?, ?>> projections) {
 
     List<SMP> l = (List<SMP>) projections;
     return l.get(0).merge((M) model, l);

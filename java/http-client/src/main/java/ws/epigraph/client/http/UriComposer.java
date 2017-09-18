@@ -24,11 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
@@ -82,7 +80,7 @@ public final class UriComposer {
   public static @NotNull String composeCreateUri(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
-      @Nullable ReqInputFieldProjection inputProjection,
+      @Nullable ReqFieldProjection inputProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
@@ -146,7 +144,7 @@ public final class UriComposer {
   public static @NotNull String composeCustomUri(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
-      @Nullable ReqInputFieldProjection inputProjection,
+      @Nullable ReqFieldProjection inputProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
     return composeCreateUri(fieldName, path, inputProjection, outputProjection); // same
@@ -232,13 +230,13 @@ public final class UriComposer {
     return sb.getString();
   }
 
-  private static @NotNull String printReqInputProjection(@NotNull ReqInputFieldProjection projection) {
+  private static @NotNull String printReqInputProjection(@NotNull ReqFieldProjection projection) {
 
     StringBackend sb = new StringBackend(2000);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ReqInputProjectionsPrettyPrinter<NoExceptions> printer =
-        new ReqInputProjectionsPrettyPrinter<NoExceptions>(layouter) {
+    ReqProjectionsPrettyPrinter<NoExceptions> printer =
+        new ReqProjectionsPrettyPrinter<NoExceptions>(layouter) {
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 

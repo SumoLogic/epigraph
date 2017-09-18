@@ -29,9 +29,9 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,10 +40,11 @@ public final class RequestUrlPsiParserUtil {
 
   private RequestUrlPsiParserUtil() {}
 
-  static @NotNull StepsAndProjection<ReqFieldProjection> parseOutputProjection(
+  static @NotNull StepsAndProjection<ReqFieldProjection> parseProjection(
       final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
+      final @NotNull ReqProjectionPsiParser psiParser,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -58,22 +59,19 @@ public final class RequestUrlPsiParserUtil {
       stepsAndProjection = new StepsAndProjection<>(
           0,
           new ReqFieldProjection(
-//              ReqParams.EMPTY,
-//              Annotations.EMPTY,
-              ReqOutputProjectionsPsiParser.createDefaultVarProjection(
+              psiParser.createDefaultVarProjection(
                   dataType,
                   op.varProjection(),
                   false,
                   PsiUtil.NULL_PSI_ELEMENT,
                   reqOutputPsiProcessingContext
               ),
-//              false,
               TextLocation.UNKNOWN
           )
       );
     } else {
       final StepsAndProjection<ReqFieldProjection> fieldStepsAndProjection =
-          ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
+          psiParser.parseTrunkFieldProjection(
               dataType,
               false, // ?
               op,

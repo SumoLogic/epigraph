@@ -23,7 +23,6 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -46,7 +45,7 @@ public abstract class OperationDeclaration implements Annotated {
   protected final @Nullable String name;
   protected final @NotNull Annotations annotations;
   protected final @Nullable OpFieldPath path;
-  protected final @Nullable OpInputFieldProjection inputProjection;
+  protected final @Nullable OpOutputFieldProjection inputProjection;
   protected final @NotNull OpOutputFieldProjection outputProjection;
   protected final @NotNull TextLocation location;
 
@@ -56,7 +55,7 @@ public abstract class OperationDeclaration implements Annotated {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpInputFieldProjection inputProjection,
+      @Nullable OpOutputFieldProjection inputProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
@@ -91,7 +90,7 @@ public abstract class OperationDeclaration implements Annotated {
     return inputProjection == null ? null : inputProjection.varProjection().type();
   }
 
-  public @Nullable OpInputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable OpOutputFieldProjection inputProjection() { return inputProjection; }
 
   public @NotNull TypeApi outputType() { return outputProjection.varProjection().type(); }
 

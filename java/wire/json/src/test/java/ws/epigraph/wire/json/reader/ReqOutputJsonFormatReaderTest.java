@@ -29,7 +29,7 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqJsonFormatWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -487,7 +487,7 @@ public class ReqOutputJsonFormatReaderTest {
       throws IOException {
 
     JsonParser parser = new JsonFactory().createParser(json);
-    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
+    ReqJsonFormatReader jsonReader = new ReqJsonFormatReader(parser, resolver);
 
     final Data data;
     try {
@@ -507,7 +507,7 @@ public class ReqOutputJsonFormatReaderTest {
       throws IOException {
 
     JsonParser parser = new JsonFactory().createParser(json);
-    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
+    ReqJsonFormatReader jsonReader = new ReqJsonFormatReader(parser, resolver);
 
     final Data data;
     try {
@@ -523,13 +523,13 @@ public class ReqOutputJsonFormatReaderTest {
   private void compareData(final @NotNull Data expectedData, final Data data) throws IOException {
     if (!DataComparator.equals(expectedData, data)) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
+      ReqJsonFormatWriter jsonWriter = new ReqJsonFormatWriter(baos);
       jsonWriter.writeData(data.type(), data);
       jsonWriter.close();
       String dataStr = baos.toString();
 
       baos = new ByteArrayOutputStream();
-      jsonWriter = new ReqOutputJsonFormatWriter(baos);
+      jsonWriter = new ReqJsonFormatWriter(baos);
       jsonWriter.writeData(data.type(), expectedData);
       jsonWriter.close();
       String expectedDataStr = baos.toString();
@@ -547,7 +547,7 @@ public class ReqOutputJsonFormatReaderTest {
         parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     JsonParser parser = new JsonFactory().createParser(json);
-    ReqOutputJsonFormatReader jsonReader = new ReqOutputJsonFormatReader(parser, resolver);
+    ReqJsonFormatReader jsonReader = new ReqJsonFormatReader(parser, resolver);
 
     try {
       jsonReader.readData(reqProjection);

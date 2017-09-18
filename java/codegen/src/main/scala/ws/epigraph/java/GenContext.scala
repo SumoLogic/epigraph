@@ -19,7 +19,7 @@ package ws.epigraph.java
 import java.util.concurrent.ConcurrentHashMap
 
 import ws.epigraph.compiler.CTypeName
-import ws.epigraph.java.service.projections.req.AbstractReqTypeProjectionGen
+import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
@@ -31,11 +31,11 @@ class GenContext(val settings: Settings) {
   // type name -> Java type class FQN
   val generatedTypes: ConcurrentHashMap[CTypeName, Qn] = new ConcurrentHashMap
 
-  val reqOutputProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = new ConcurrentHashMap()
-  val reqInputProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = new ConcurrentHashMap()
-  val reqUpdateProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = new ConcurrentHashMap()
-  val reqDeleteProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = new ConcurrentHashMap()
-  val reqPaths: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = new ConcurrentHashMap()
+  val reqOutputProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
+  val reqInputProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
+  val reqUpdateProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
+  val reqDeleteProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
+  val reqPaths: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
 
   /** Returns `true` if java 8 annotations are enabled. */
   def java8Annotations: Boolean = settings.java8Annotations()

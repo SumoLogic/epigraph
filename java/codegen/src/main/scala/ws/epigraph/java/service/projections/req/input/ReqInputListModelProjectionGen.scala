@@ -17,16 +17,16 @@
 package ws.epigraph.java.service.projections.req.input
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqListModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputListModelProjection
+import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputListModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpInputListModelProjection,
+  val op: OpOutputListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
@@ -38,9 +38,9 @@ class ReqInputListModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with AbstractReqListModelProjectionGen {
+  ) with ReqListModelProjectionGen {
 
-  override type OpProjectionType = OpInputListModelProjection
+  override type OpProjectionType = OpOutputListModelProjection
 
   val elementGen: ReqInputTypeProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
@@ -56,7 +56,7 @@ class ReqInputListModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqInputModelProjectionGen,
-    op: OpInputListModelProjection,
+    op: OpOutputListModelProjection,
     normalized: Boolean) =
     new ReqInputListModelProjectionGen(
       baseNamespaceProvider,
@@ -71,8 +71,8 @@ class ReqInputListModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputListModelProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputListModelProjection")
+//  )
 
 }

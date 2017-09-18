@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package ws.epigraph.projections.op;
 
-import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpParam {
   private final @NotNull String name;
-  private final @NotNull OpInputModelProjection<?, ?, ?, ?> projection;
+  private final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection;
   private final @NotNull TextLocation location;
 
   public OpParam(@NotNull String name,
-                 @NotNull OpInputModelProjection<?, ?, ?, ?> projection,
+                 @NotNull OpOutputModelProjection<?, ?, ?, ?> projection,
                  @NotNull TextLocation location) {
     this.name = name;
     this.projection = projection;
@@ -42,7 +42,7 @@ public class OpParam {
 
   public @NotNull String name() { return name; }
 
-  public @NotNull OpInputModelProjection<?, ?, ?, ?> projection() { return projection; }
+  public @NotNull OpOutputModelProjection<?, ?, ?, ?> projection() { return projection; }
 
   public @NotNull TextLocation location() { return location; }
 

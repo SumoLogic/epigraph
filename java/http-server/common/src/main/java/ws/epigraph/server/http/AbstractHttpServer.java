@@ -21,12 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
+import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -431,7 +430,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         urlPsi,
         operationSearchResult -> {
           @NotNull CreateRequestUrl requestUrl = operationSearchResult.requestUrl();
-          ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+          @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull CreateOperation<Data> operation = operationSearchResult.operation();
@@ -440,7 +439,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           try {
             body = serverProtocol.readInput(
                 operation.declaration().inputProjection().varProjection(),
-                inputProjection == null ? null : inputProjection.varProjection(),
+                inputProjection == null ? null : inputProjection.projection().varProjection(),
                 context,
                 operationInvocationContext
             );
@@ -469,7 +468,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new CreateOperationRequest(
                   requestUrl.path(),
                   body,
-                  inputProjection,
+                  inputProjection == null ? null : inputProjection.projection(),
                   outputProjection.projection()
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
@@ -888,17 +887,17 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     assert requestUrl != null;
 
-    @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+    @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
     final Data body;
     try {
-      final OpInputFieldProjection opInputProjection = operation.declaration().inputProjection();
+      final @Nullable OpOutputFieldProjection opInputProjection = operation.declaration().inputProjection();
       body = opInputProjection == null
              ? null
              : serverProtocol.readInput(
                  opInputProjection.varProjection(),
-                 inputProjection == null ? null : inputProjection.varProjection(),
+                 inputProjection == null ? null : inputProjection.projection().varProjection(),
                  context,
                  operationInvocationContext
              );
@@ -921,7 +920,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         new CustomOperationRequest(
             requestUrl.path(),
             body,
-            inputProjection,
+            inputProjection == null ? null : inputProjection.projection(),
             outputProjection.projection()
         ), operationInvocationContext
     ).thenApply(result -> result.mapSuccess(success ->

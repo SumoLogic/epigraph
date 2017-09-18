@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -260,12 +259,18 @@ public class CreateOperationRouterTest {
       assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
     }
 
-    final @Nullable ReqInputFieldProjection inputProjection = createRequestUrl.inputProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection = createRequestUrl.inputProjection();
     if (expectedInputProjection == null)
-      assertNull(inputProjection);
+      assertNull(inputStepsAndProjection);
     else {
-      assertNotNull(inputProjection);
-      assertEquals(expectedInputProjection, TestUtil.printReqInputVarProjection(inputProjection.varProjection()));
+      assertNotNull(inputStepsAndProjection);
+      assertEquals(
+          expectedInputProjection,
+          TestUtil.printReqEntityProjection(
+              inputStepsAndProjection.projection().varProjection(),
+              inputStepsAndProjection.pathSteps()
+          )
+      );
     }
 
     final StepsAndProjection<ReqFieldProjection> stepsAndProjection = createRequestUrl.outputProjection();
@@ -273,7 +278,7 @@ public class CreateOperationRouterTest {
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedOutputSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().varProjection(), expectedOutputSteps)
     );
   }
 

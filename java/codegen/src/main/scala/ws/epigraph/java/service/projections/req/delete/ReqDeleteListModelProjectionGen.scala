@@ -17,7 +17,7 @@
 package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqListModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeleteListModelProjection
 
@@ -38,7 +38,7 @@ class ReqDeleteListModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with AbstractReqListModelProjectionGen {
+  ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpDeleteListModelProjection
 

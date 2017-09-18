@@ -17,6 +17,7 @@
 package ws.epigraph.projections.op.input;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -24,13 +25,20 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputPsiProcessingContext extends DelegatingPsiProcessingContext {
+  private final @NotNull OpOutputPsiProcessingContext inputPsiProcessingContext;
   private final @NotNull OpInputReferenceContext referenceContext;
 
   public OpInputPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
+      final @NotNull OpOutputPsiProcessingContext inputContext,
       final @NotNull OpInputReferenceContext referenceContext) {
     super(psiProcessingContext);
+    inputPsiProcessingContext = inputContext;
     this.referenceContext = referenceContext;
+  }
+
+  public OpOutputPsiProcessingContext inputPsiProcessingContext() {
+    return inputPsiProcessingContext;
   }
 
   public @NotNull OpInputReferenceContext referenceContext() {

@@ -38,7 +38,7 @@ import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
@@ -109,8 +109,10 @@ public final class ReadRequestUrlPsiParser {
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
+    ReqOutputProjectionPsiParser psiParser = ReqOutputProjectionPsiParser.INSTANCE;
+
     if (trunkVarProjection != null) {
-      @NotNull StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> r = psiParser.parseTrunkVarProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
@@ -123,7 +125,7 @@ public final class ReadRequestUrlPsiParser {
       varProjection = r.projection();
       fieldLocation = EpigraphPsiUtil.getLocation(trunkVarProjection);
     } else if (comaVarProjection != null) {
-      StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionsPsiParser.parseComaVarProjection(
+      StepsAndProjection<ReqEntityProjection> r = psiParser.parseComaVarProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
@@ -183,7 +185,7 @@ public final class ReadRequestUrlPsiParser {
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection =
-        ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
+        ReqOutputProjectionPsiParser.INSTANCE.parseTrunkFieldProjection(
             resourceType, //op.outputType() ? same for reads
             false,  // ?
             op.outputProjection(),

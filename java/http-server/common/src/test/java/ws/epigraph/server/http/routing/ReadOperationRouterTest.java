@@ -172,7 +172,7 @@ public class ReadOperationRouterTest {
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().varProjection(), expectedSteps)
     );
   }
 

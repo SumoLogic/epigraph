@@ -19,9 +19,9 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqModelProjectionGen, AbstractReqProjectionGen, ReqTypeProjectionGenCache}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input._
+import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
@@ -29,29 +29,29 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqInputModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqInputModelProjectionGen],
-  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with AbstractReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqInputModelProjectionGen
 
-  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-  override protected def reqVarProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection")
-
-  override protected def reqModelProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
+//  override protected def reqVarProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection")
+//
+//  override protected def reqModelProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
@@ -59,7 +59,7 @@ abstract class ReqInputModelProjectionGen(
 object ReqInputModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqInputModelProjectionGen],
@@ -76,7 +76,7 @@ object ReqInputModelProjectionGen {
         case TypeKind.RECORD =>
           new ReqInputRecordModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputRecordModelProjection],
+            op.asInstanceOf[OpOutputRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -85,7 +85,7 @@ object ReqInputModelProjectionGen {
         case TypeKind.MAP =>
           new ReqInputMapModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputMapModelProjection],
+            op.asInstanceOf[OpOutputMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -94,7 +94,7 @@ object ReqInputModelProjectionGen {
         case TypeKind.LIST =>
           new ReqInputListModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputListModelProjection],
+            op.asInstanceOf[OpOutputListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -103,7 +103,7 @@ object ReqInputModelProjectionGen {
         case TypeKind.PRIMITIVE =>
           new ReqInputPrimitiveModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputPrimitiveModelProjection],
+            op.asInstanceOf[OpOutputPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,

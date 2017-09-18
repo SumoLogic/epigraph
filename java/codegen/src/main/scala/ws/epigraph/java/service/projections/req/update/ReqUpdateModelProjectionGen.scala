@@ -22,7 +22,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input._
+import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
@@ -30,21 +30,21 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqUpdateModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
-  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with AbstractReqModelProjectionGen {
+  protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpInputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqUpdateModelProjectionGen
 
-  override protected def baseNamespace: Qn = AbstractReqProjectionGen.baseNamespace(
+  override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
   )
 
-  override protected def namespaceSuffix: Qn = AbstractReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
+  override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
@@ -71,7 +71,7 @@ abstract class ReqUpdateModelProjectionGen(
 object ReqUpdateModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpInputModelProjection[_, _, _ <: DatumTypeApi, _],
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
@@ -88,7 +88,7 @@ object ReqUpdateModelProjectionGen {
         case TypeKind.RECORD =>
           new ReqUpdateRecordModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputRecordModelProjection],
+            op.asInstanceOf[OpOutputRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -97,7 +97,7 @@ object ReqUpdateModelProjectionGen {
         case TypeKind.MAP =>
           new ReqUpdateMapModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputMapModelProjection],
+            op.asInstanceOf[OpOutputMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -106,7 +106,7 @@ object ReqUpdateModelProjectionGen {
         case TypeKind.LIST =>
           new ReqUpdateListModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputListModelProjection],
+            op.asInstanceOf[OpOutputListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -115,7 +115,7 @@ object ReqUpdateModelProjectionGen {
         case TypeKind.PRIMITIVE =>
           new ReqUpdatePrimitiveModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpInputPrimitiveModelProjection],
+            op.asInstanceOf[OpOutputPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,

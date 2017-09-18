@@ -16,76 +16,107 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.CMapType
-import ws.epigraph.java.service.assemblers.MapAsmGen
-import ws.epigraph.java.{GenContext, JavaGen}
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.OpKeyPresence
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
+import ws.epigraph.projections.gen.GenMapModelProjection
+import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqMapModelProjectionGen(
-  baseNamespaceProvider: BaseNamespaceProvider,
-  override val op: OpOutputMapModelProjection,
-  baseNamespaceOpt: Option[Qn],
-  _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqModelProjectionGen],
-  ctx: GenContext)
-  extends ReqModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with AbstractReqMapModelProjectionGen {
+trait ReqMapModelProjectionGen extends ReqModelProjectionGen {
+  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenMapModelProjection[_, _, _, _, _ <: DatumTypeApi]
 
-  override type OpProjectionType = OpOutputMapModelProjection
+  protected val elementsNamespaceSuffix = "elements"
 
-  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
+  def keyGen: ReqMapKeyProjectionGen
 
-  override val keyGen: ReqMapKeyProjectionGen = new ReqMapKeyProjectionGen(
-    baseNamespaceProvider,
-    cType.asInstanceOf[CMapType],
-    op.keyProjection(),
-    Some(baseNamespace),
-    namespaceSuffix,
-    ctx
-  )
+  def elementGen: ReqTypeProjectionGen
 
-  override val elementGen: ReqTypeProjectionGen = ReqEntityProjectionGen.dataProjectionGen(
-    baseNamespaceProvider,
-    op.itemsProjection(),
-    Some(baseNamespace),
-    namespaceSuffix.append(elementsNamespaceSuffix),
-    parentClassGenOpt match {
-      case Some(mmpg: ReqMapModelProjectionGen) => Some(mmpg.elementGen)
-      case _ => None
-    },
-    ctx
-  )
+  protected def keysNullable: Boolean = true
 
-  override protected def tailGenerator(
-    parentGen: ReqModelProjectionGen,
-    op: OpOutputMapModelProjection,
-    normalized: Boolean) =
-    new ReqMapModelProjectionGen(
-      baseNamespaceProvider,
-      op,
-      Some(baseNamespace),
-      tailNamespaceSuffix(op.`type`(), normalized),
-      Some(parentGen),
-      ctx
-    )
-//    {
-//      override protected val buildTails: Boolean = !normalized
-//      override protected val buildNormalizedTails: Boolean = normalized
-//    }
+  // -------
 
+  override def children: Iterable[JavaGen] = super.children ++ Iterable(keyGen, elementGen)
 
-  override def children: Iterable[JavaGen] = super.children ++ Iterable(new MapAsmGen(this, ctx))
+  protected def keys: CodeChunk = {
+    val keyProjectionClass = keyGen.shortClassName
+
+    if (keysNullable) {
+      CodeChunk(
+        /*@formatter:off*/sn"""\
+  /**
+   * @return key projections
+   */
+  public @Nullable List<$keyProjectionClass> keys() {
+    return raw.keys() == null ? null : raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
+  }
+"""/*@formatter:on*/
+      )
+    } else {
+      CodeChunk(
+        /*@formatter:off*/sn"""\
+  /**
+   * @return key projections
+   */
+  public @NotNull List<$keyProjectionClass> keys() {
+    assert raw.keys() != null;
+    return raw.keys().stream().map(key -> new $keyProjectionClass(key)).collect(Collectors.toList());
+  }
+"""/*@formatter:on*/
+      )
+    }
+  }
+
+  protected def generate(reqMapModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+    val elementProjectionClass = elementGen.shortClassName
+    val _keys = keys
+
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      "org.jetbrains.annotations.Nullable",
+      "java.util.List",
+      "java.util.stream.Collectors",
+      reqVarProjectionFqn.toString,
+      reqModelProjectionFqn.toString,
+      reqMapModelProjectionFqn.toString,
+      elementGen.fullClassName,
+      keyGen.fullClassName
+    ) ++ params.imports ++ meta.imports ++ extra.imports ++ _keys.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports
+
+    /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
+$packageStatement
+
+${JavaGenUtils.generateImports(imports)}
+
+$classJavadoc\
+${JavaGenUtils.generatedAnnotation(this)}
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqMapModelProjectionFqn.last()} raw;\n" else ""}\
+
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqMapModelProjectionFqn.last()}) raw" else "super(raw)"};
+  }
+
+  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
+    this(selfVar.singleTagProjection().projection());
+  }
+
+${keys.code}\
+
+  /**
+   * @return items projection
+   */
+  public @NotNull $elementProjectionClass itemsProjection() {
+    return new $elementProjectionClass(raw.itemsProjection());
+  }\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqMapModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
+}"""/*@formatter:on*/
+  }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqMapModelProjection"),

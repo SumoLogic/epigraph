@@ -22,9 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
@@ -45,21 +44,21 @@ public interface ServerProtocol {
       @NotNull HttpResponse httpResponse,
       int okStatusCode);
 
-  @NotNull HttpContentProducer createRequestContentProducer(
-      @Nullable ReqInputVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+  HttpContentProducer createRequestContentProducer(
+      @Nullable ReqEntityProjection reqInputProjection,
+      @NotNull OpOutputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  @NotNull HttpContentProducer updateRequestContentProducer(
+  HttpContentProducer updateRequestContentProducer(
       @Nullable ReqUpdateVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+      @NotNull OpOutputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  @NotNull HttpContentProducer customRequestContentProducer(
-      @Nullable ReqInputVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+  HttpContentProducer customRequestContentProducer(
+      @Nullable ReqEntityProjection reqInputProjection,
+      @NotNull OpOutputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 }

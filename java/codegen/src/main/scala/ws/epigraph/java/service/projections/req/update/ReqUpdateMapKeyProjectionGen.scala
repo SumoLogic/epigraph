@@ -19,9 +19,9 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqMapKeyProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputKeyProjection
+import ws.epigraph.projections.op.output.OpOutputKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,12 +29,12 @@ import ws.epigraph.projections.op.input.OpInputKeyProjection
 class ReqUpdateMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
-  protected val op: OpInputKeyProjection,
+  protected val op: OpOutputKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqUpdateProjectionGen with AbstractReqMapKeyProjectionGen {
+  protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqMapKeyProjectionGen {
 
-  override type OpKeyProjectionType = OpInputKeyProjection
+  override type OpKeyProjectionType = OpOutputKeyProjection
 
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 

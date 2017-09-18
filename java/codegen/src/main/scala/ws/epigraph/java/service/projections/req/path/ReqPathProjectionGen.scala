@@ -18,20 +18,20 @@ package ws.epigraph.java.service.projections.req.path
 
 import java.util
 
-import ws.epigraph.java.service.projections.req.{AbstractReqProjectionGen, AbstractReqTypeProjectionGen}
+import ws.epigraph.java.service.projections.req.{ReqProjectionGen, ReqTypeProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqPathProjectionGen extends AbstractReqProjectionGen {
+trait ReqPathProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("path")
 
-  protected def generatedProjections: util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = ctx.reqPaths
+  protected def generatedProjections: util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = ctx.reqPaths
 }
 
 object ReqPathProjectionGen {
-  val classNamePrefix: String = AbstractReqProjectionGen.classNamePrefix // + "Path"
+  val classNamePrefix: String = ReqProjectionGen.classNamePrefix // + "Path"
   val classNameSuffix: String = "Path" // ReqProjectionGen.classNameSuffix
 }

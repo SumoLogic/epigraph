@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqMapKeyProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.OpPathKeyProjection
 
@@ -32,7 +32,7 @@ class ReqPathMapKeyProjectionGen(
   protected val op: OpPathKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathProjectionGen with AbstractReqMapKeyProjectionGen {
+  protected val ctx: GenContext) extends ReqPathProjectionGen with ReqMapKeyProjectionGen {
 
   override type OpKeyProjectionType = OpPathKeyProjection
 

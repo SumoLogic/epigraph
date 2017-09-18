@@ -44,8 +44,8 @@ public class SchemaTransformerInputProjectionImpl extends ASTWrapperPsiElement i
 
   @Override
   @Nullable
-  public SchemaOpInputFieldProjection getOpInputFieldProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputFieldProjection.class);
+  public SchemaOpOutputFieldProjection getOpOutputFieldProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputFieldProjection.class);
   }
 
   @Override

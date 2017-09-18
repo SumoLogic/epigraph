@@ -147,6 +147,14 @@ public abstract class GenProjectionTransformer<
     }
   }
 
+  public @NotNull MP transform(
+      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
+      @NotNull MP projection) {
+
+    this.transformationMap = transformationMap;
+    return transform(projection);
+  }
+
   @SuppressWarnings("unchecked")
   protected @NotNull MP transform(@NotNull MP projection) {
     MP cached = transformedModelsCache.get(projection);

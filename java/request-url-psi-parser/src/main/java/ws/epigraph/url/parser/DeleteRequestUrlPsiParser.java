@@ -37,6 +37,7 @@ import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
 import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
 import ws.epigraph.url.projections.req.delete.ReqDeleteReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 
@@ -94,10 +95,11 @@ public final class DeleteRequestUrlPsiParser {
     @NotNull DataTypeApi deleteDataType = op.deleteProjection().varProjection().type().dataType();
 
     final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
+        RequestUrlPsiParserUtil.parseProjection(
             opOutputType.dataType(),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
+            ReqOutputProjectionPsiParser.INSTANCE,
             newResolver,
             context
         );
@@ -142,10 +144,11 @@ public final class DeleteRequestUrlPsiParser {
     final @Nullable UrlReqDeleteFieldProjection deleteProjectionPsi = psi.getReqDeleteFieldProjection();
 
     final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
+        RequestUrlPsiParserUtil.parseProjection(
             op.outputType().dataType(),
             op.outputProjection(),
             fieldProjectionPsi,
+            ReqOutputProjectionPsiParser.INSTANCE,
             newResolver,
             context
         );

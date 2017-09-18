@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.op.input.*;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.wire.OpInputFormatWriter;
 import ws.epigraph.wire.WireFormat;
 import ws.epigraph.wire.json.JsonFormat;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @NotThreadSafe
+@Deprecated
 public class OpInputJsonFormatWriter extends AbstractJsonFormatWriter<
     OpInputVarProjection,
     OpInputTagProjectionEntry,
@@ -73,14 +75,16 @@ public class OpInputJsonFormatWriter extends AbstractJsonFormatWriter<
   @Override
   protected @Nullable Deque<? extends OpInputModelProjection<?, ?, ?, ?>>
   getKeyModelProjections(@NotNull Collection<OpInputMapModelProjection> projections) {
-    Deque<? extends OpInputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
-        .map(mp -> mp.keyProjection().projection())
-        .filter(Objects::nonNull)
-        .collect(Collectors.toCollection(ArrayDeque::new));
-    return keyProjections.isEmpty() ? null : keyProjections;
+    return null;
+//    Deque<? extends OpOutputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
+//        .map(mp -> mp.keyProjection().projection())
+//        .filter(Objects::nonNull)
+//        .collect(Collectors.toCollection(ArrayDeque::new));
+//    return keyProjections.isEmpty() ? null : keyProjections;
   }
 
   @ThreadSafe
+  @Deprecated
   public static final class OpInputJsonFormatWriterFactory
       implements Factory<OpInputJsonFormatWriter> {
 
@@ -91,6 +95,7 @@ public class OpInputJsonFormatWriter extends AbstractJsonFormatWriter<
     }
 
     @Override
+    @Deprecated
     public @NotNull OpInputJsonFormatWriter newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
       return new OpInputJsonFormatWriter(out, charset);
     }

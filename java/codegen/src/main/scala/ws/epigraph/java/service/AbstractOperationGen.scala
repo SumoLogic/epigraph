@@ -22,9 +22,10 @@ import ws.epigraph.compiler.{CDatumType, CEntityTypeDef, CType}
 import ws.epigraph.java.JavaGenNames.lqdrn2
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.projections.req.{OperationInfo, OperationInfoBaseNamespaceProvider, ReqFieldProjectionGen}
-import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
 import ws.epigraph.java._
+import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
+import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
+import ws.epigraph.java.service.projections.req.{OperationInfo, OperationInfoBaseNamespaceProvider}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations.OperationDeclaration
@@ -57,7 +58,7 @@ trait AbstractOperationGen extends JavaGen {
       )
     }
 
-  protected val outputFieldProjectionGen = new ReqFieldProjectionGen(
+  protected val outputFieldProjectionGen = new ReqOutputFieldProjectionGen(
     new OperationInfoBaseNamespaceProvider(operationInfo),
     rd.fieldName,
     op.outputProjection,

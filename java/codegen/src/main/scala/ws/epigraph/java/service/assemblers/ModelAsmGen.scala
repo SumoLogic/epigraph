@@ -23,6 +23,7 @@ import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.ReqModelProjectionGen
+import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output.OpOutputModelProjection
 import ws.epigraph.types.DatumTypeApi
@@ -33,7 +34,7 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ModelAsmGen extends AsmGen {
-  protected type G <: ReqModelProjectionGen
+  protected type G <: ReqOutputModelProjectionGen
 
   protected def g: G
 
@@ -67,9 +68,7 @@ trait ModelAsmGen extends AsmGen {
     def javadoc: String = s"$assembler {@code ${ ln(`type`) }} value assembler"
   }
 
-  protected val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-    TailParts(tg.asInstanceOf[ReqModelProjectionGen])
-  }.toSeq
+  protected val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg => TailParts(tg) }.toSeq
 
   protected val hasTails: Boolean = g.normalizedTailGenerators.nonEmpty
 

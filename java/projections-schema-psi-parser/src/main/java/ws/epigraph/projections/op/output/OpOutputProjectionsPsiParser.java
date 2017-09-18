@@ -16,61 +16,16 @@
 
 package ws.epigraph.projections.op.output;
 
-import org.jetbrains.annotations.NotNull;
-import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputFieldProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputUnnamedOrRefVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
-import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
+import ws.epigraph.projections.op.postprocess.RequiredNotSupportedChecker;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @SuppressWarnings("ConstantConditions")
-public final class OpOutputProjectionsPsiParser {
-  private OpOutputProjectionsPsiParser() {}
+public final class OpOutputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
+  public static final OpOutputProjectionsPsiParser INSTANCE = new OpOutputProjectionsPsiParser();
 
-  public static @NotNull OpOutputVarProjection parseVarProjection(
-      @NotNull DataTypeApi dataType,
-      boolean flagged,
-      @NotNull SchemaOpOutputVarProjection psi,
-      @NotNull TypesResolver typesResolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+  private OpOutputProjectionsPsiParser() { super(RequiredNotSupportedChecker::new, null);}
 
-    OpOutputVarProjection res =
-        OpProjectionsPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
-
-    new OpOutputProjectionPostProcessor(context).traverse(res);
-    return res;
-  }
-
-  public static @NotNull OpOutputFieldProjection parseFieldProjection(
-      @NotNull DataTypeApi fieldType,
-      boolean flagged,
-      @NotNull SchemaOpOutputFieldProjection psi,
-      @NotNull TypesResolver resolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
-
-    OpOutputFieldProjection res =
-        OpProjectionsPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
-
-    new OpOutputProjectionPostProcessor(context).traverse(res);
-    return res;
-  }
-
-  public static OpOutputVarProjection parseUnnamedOrRefVarProjection(
-      @NotNull DataTypeApi dataType,
-      boolean flagged,
-      @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
-      @NotNull TypesResolver typesResolver,
-      @NotNull OpOutputPsiProcessingContext context)
-      throws PsiProcessingException {
-
-    OpOutputVarProjection res =
-        OpProjectionsPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
-
-    new OpOutputProjectionPostProcessor(context).traverse(res);
-    return res;
-  }
 }

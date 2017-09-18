@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.types.Type;
@@ -58,7 +58,7 @@ public class RemoteCustomOperationInvocation
       final @NotNull CustomOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    @Nullable ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
 
     String uri = UriComposer.composeCustomUri(
         resourceName,
@@ -89,10 +89,10 @@ public class RemoteCustomOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull CustomOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+    ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
-    OpInputFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
+    @Nullable OpOutputFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
     if (data == null || opInputFieldProjection == null)
       return null;
 

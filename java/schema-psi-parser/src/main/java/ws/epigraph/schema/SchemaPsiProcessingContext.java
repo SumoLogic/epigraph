@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -36,7 +35,7 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
     implements ReferenceAwarePsiProcessingContext {
 
   private final @NotNull Qn namespace;
-  private final @NotNull OpInputReferenceContext inputReferenceContext;
+  private final @NotNull OpOutputReferenceContext inputReferenceContext;
   private final @NotNull OpOutputReferenceContext outputReferenceContext;
   private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
 
@@ -53,7 +52,7 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
 
     final Namespaces namespaces = new Namespaces(namespace);
 
-    inputReferenceContext = new OpInputReferenceContext(
+    inputReferenceContext = new OpOutputReferenceContext(
         ProjectionReferenceName.fromQn(namespaces.inputProjectionsNamespace()),
         null,
         psiProcessingContext
@@ -75,7 +74,7 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
   public @NotNull Qn namespace() { return namespace; }
 
   @Override
-  public @NotNull OpInputReferenceContext inputReferenceContext() { return inputReferenceContext; }
+  public @NotNull OpOutputReferenceContext inputReferenceContext() { return inputReferenceContext; }
 
   @Override
   public @NotNull OpOutputReferenceContext outputReferenceContext() { return outputReferenceContext; }

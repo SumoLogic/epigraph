@@ -17,14 +17,15 @@
 package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.OpInputDataValidator;
 import ws.epigraph.invocation.AbstractOperationInvocationFilter;
+import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
+import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
@@ -49,7 +50,7 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
 
     OpInputDataValidator validator = new OpInputDataValidator();
     Data data = request.data();
-    OpInputFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
+    @Nullable OpOutputFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
 
     if (data == null || inputProjection == null)
       return invocation.invoke(request, context);

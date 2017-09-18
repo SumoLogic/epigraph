@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaTransformerInputProjection extends PsiElement {
 
   @Nullable
-  SchemaOpInputFieldProjection getOpInputFieldProjection();
+  SchemaOpOutputFieldProjection getOpOutputFieldProjection();
 
   @NotNull
   PsiElement getInputProjection();

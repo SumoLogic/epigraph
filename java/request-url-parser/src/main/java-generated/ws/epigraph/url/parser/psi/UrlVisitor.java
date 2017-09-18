@@ -71,6 +71,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitDatum(o);
   }
 
+  public void visitInputProjection(@NotNull UrlInputProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitListDatum(@NotNull UrlListDatum o) {
     visitDatum(o);
   }
@@ -85,6 +89,10 @@ public class UrlVisitor extends PsiElementVisitor {
 
   public void visitNullDatum(@NotNull UrlNullDatum o) {
     visitDatum(o);
+  }
+
+  public void visitOutputProjection(@NotNull UrlOutputProjection o) {
+    visitPsiElement(o);
   }
 
   public void visitPrimitiveDatum(@NotNull UrlPrimitiveDatum o) {
@@ -224,102 +232,6 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqFieldPathEntry(@NotNull UrlReqFieldPathEntry o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputFieldProjection(@NotNull UrlReqInputFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputFieldProjectionEntry(@NotNull UrlReqInputFieldProjectionEntry o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputKeyProjection(@NotNull UrlReqInputKeyProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputKeysProjection(@NotNull UrlReqInputKeysProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputListModelProjection(@NotNull UrlReqInputListModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputMapModelProjection(@NotNull UrlReqInputMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputModelMultiTail(@NotNull UrlReqInputModelMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputModelMultiTailItem(@NotNull UrlReqInputModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputModelPolymorphicTail(@NotNull UrlReqInputModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputModelProjection(@NotNull UrlReqInputModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputModelSingleTail(@NotNull UrlReqInputModelSingleTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputMultiTagProjection(@NotNull UrlReqInputMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputMultiTagProjectionItem(@NotNull UrlReqInputMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputNamedVarProjection(@NotNull UrlReqInputNamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputRecordModelProjection(@NotNull UrlReqInputRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputSingleTagProjection(@NotNull UrlReqInputSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputUnnamedOrRefVarProjection(@NotNull UrlReqInputUnnamedOrRefVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputUnnamedVarProjection(@NotNull UrlReqInputUnnamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarMultiTail(@NotNull UrlReqInputVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarMultiTailItem(@NotNull UrlReqInputVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarPolymorphicTail(@NotNull UrlReqInputVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarProjection(@NotNull UrlReqInputVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarProjectionRef(@NotNull UrlReqInputVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqInputVarSingleTail(@NotNull UrlReqInputVarSingleTail o) {
     visitPsiElement(o);
   }
 

@@ -16,52 +16,52 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.GenContext
+import ws.epigraph.java.JavaGenUtils
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
+import ws.epigraph.projections.gen.GenPrimitiveModelProjection
+import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqPrimitiveModelProjectionGen(
-  baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpOutputPrimitiveModelProjection,
-  baseNamespaceOpt: Option[Qn],
-  _namespaceSuffix: Qn,
-  override protected val parentClassGenOpt: Option[ReqModelProjectionGen],
-  ctx: GenContext)
-  extends ReqModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with AbstractReqPrimitiveModelProjectionGen {
+trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
+  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenPrimitiveModelProjection[_, _, _ <: DatumTypeApi]
 
-  override type OpProjectionType = OpOutputPrimitiveModelProjection
+  protected def generate(reqPrimitiveModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+    val imports: Set[String] = Set(
+      "org.jetbrains.annotations.NotNull",
+      reqVarProjectionFqn.toString,
+      reqModelProjectionFqn.toString,
+      reqPrimitiveModelProjectionFqn.toString
+    ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
+    /*@formatter:off*/sn"""\
+${JavaGenUtils.topLevelComment}
+package $namespace;
 
-  override protected def tailGenerator(
-    parentGen: ReqModelProjectionGen,
-    op: OpOutputPrimitiveModelProjection,
-    normalized: Boolean) =
-    new ReqPrimitiveModelProjectionGen(
-      baseNamespaceProvider,
-      op,
-      Some(baseNamespace),
-      tailNamespaceSuffix(op.`type`(), normalized),
-      Some(parentGen),
-      ctx
-    )
-//    {
-//      override protected val buildTails: Boolean = !normalized
-//      override protected val buildNormalizedTails: Boolean = normalized
-//    }
+${JavaGenUtils.generateImports(imports)}
+
+$classJavadoc\
+${JavaGenUtils.generatedAnnotation(this)}
+public class $shortClassName $extendsClause{
+${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;\n" else ""}\
+
+  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+    ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqPrimitiveModelProjectionFqn.last()}) raw" else "super(raw)"};
+  }
+
+  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
+    this(selfVar.singleTagProjection().projection());
+  }\
+\s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
+${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
+}"""/*@formatter:on*/
+  }
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqPrimitiveModelProjection"),
     flagged
   )
-
 }

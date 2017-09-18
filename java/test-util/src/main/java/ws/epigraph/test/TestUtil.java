@@ -28,6 +28,7 @@ import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
@@ -40,9 +41,6 @@ import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -313,7 +311,11 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqOutputVarProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
+  public static @NotNull String printReqEntityProjection(@NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection) {
+    return printReqEntityProjection(stepsAndProjection.projection(), stepsAndProjection.pathSteps());
+  }
+
+  public static @NotNull String printReqEntityProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqProjectionsPrettyPrinter<NoExceptions> printer = new ReqProjectionsPrettyPrinter<>(layouter);
@@ -326,27 +328,6 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printReqInputFieldProjection(
-      String fieldName,
-      @NotNull ReqInputFieldProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
-    printer.print(fieldName, projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  @Deprecated
-  public static @NotNull String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
     printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();

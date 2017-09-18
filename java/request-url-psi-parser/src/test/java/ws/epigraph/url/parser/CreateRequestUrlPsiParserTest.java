@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -123,9 +122,10 @@ public class CreateRequestUrlPsiParserTest {
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.varProjection()));
+    else
+      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().varProjection(), 0));
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

@@ -34,8 +34,7 @@ import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
@@ -54,10 +53,11 @@ import java.util.function.Function;
 public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
-  private final @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory;
-  private final @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory;
+  private final @NotNull FormatReader.Factory<? extends ReqFormatReader> reqOutputReaderFactory;
+  private final @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqInputWriterFactory;
   private final @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory;
   private final @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory;
+  private final @NotNull FormatWriter.Factory<? extends OpFormatWriter> opWriterFactory;
 
   private final @NotNull Charset requestCharset; //charset to be used for requests
   private final @NotNull TypesResolver typesResolver;
@@ -73,6 +73,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     reqInputWriterFactory = formatFactories.reqInputWriterFactory();
     reqUpdateWriterFactory = formatFactories.reqUpdateWriterFactory();
     opInputWriterFactory = formatFactories.opInputWriterFactory();
+    opWriterFactory = formatFactories.opWriterFactory();
     typesResolver = resolver;
   }
 
@@ -86,9 +87,9 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull HttpContentProducer createRequestContentProducer(
-      final @Nullable ReqInputVarProjection reqInputProjection,
-      final @NotNull OpInputVarProjection opInputProjection,
+  public HttpContentProducer createRequestContentProducer(
+      final @Nullable ReqEntityProjection reqInputProjection,
+      final @NotNull OpOutputVarProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -99,7 +100,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       mimeType = opInputWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
-        OpInputFormatWriter writer = opInputWriterFactory.newFormatWriter(cos, requestCharset);
+        OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(opInputProjection, inputData);
         writer.close();
         cos.close();
@@ -108,7 +109,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       mimeType = reqInputWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
-        ReqInputFormatWriter writer = reqInputWriterFactory.newFormatWriter(cos, requestCharset);
+        ReqFormatWriter writer = reqInputWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(reqInputProjection, inputData);
         writer.close();
         cos.close();
@@ -122,9 +123,9 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull HttpContentProducer updateRequestContentProducer(
+  public HttpContentProducer updateRequestContentProducer(
       final @Nullable ReqUpdateVarProjection reqUpdateProjection,
-      final @NotNull OpInputVarProjection opInputProjection,
+      final @NotNull OpOutputVarProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -135,7 +136,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       mimeType = opInputWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
-        OpInputFormatWriter writer = opInputWriterFactory.newFormatWriter(cos, requestCharset);
+        OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(opInputProjection, inputData);
         writer.close();
         cos.close();
@@ -158,9 +159,9 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   }
 
   @Override
-  public @NotNull HttpContentProducer customRequestContentProducer(
-      final @Nullable ReqInputVarProjection reqInputProjection,
-      final @NotNull OpInputVarProjection opInputProjection,
+  public HttpContentProducer customRequestContentProducer(
+      final @Nullable ReqEntityProjection reqInputProjection,
+      final @NotNull OpOutputVarProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -183,7 +184,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     try {
       if (statusCode == okStatusCode) { // should we support multiple options here? Or accept any 2xx?
         try (InputStream inputStream = httpResponse.getEntity().getContent()) {
-          ReqOutputFormatReader formatReader =
+          ReqFormatReader formatReader =
               reqOutputReaderFactory.newFormatReader(inputStream, charset, typesResolver);
 
           Data data = formatReader.readData(projection);
@@ -241,7 +242,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
     String string = textBuilder.toString();
     try {
-      ReqOutputFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
+      ReqFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
           new ByteArrayInputStream(string.getBytes(charset)), charset, typesResolver
       );
       return formatReader.readError();

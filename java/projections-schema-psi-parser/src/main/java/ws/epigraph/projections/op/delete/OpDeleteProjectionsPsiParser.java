@@ -29,7 +29,7 @@ import ws.epigraph.projections.gen.GenProjectionReference;
 import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -1152,7 +1152,7 @@ public final class OpDeleteProjectionsPsiParser {
       annotationsMap = parseAnnotation(annotationsMap, keyPart.getAnnotation(), context, resolver);
     }
 
-    OpInputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
+    OpOutputModelProjection<?, ?, ?, ?> keyProjection = SchemaProjectionPsiParserUtil.parseKeyProjection(
         keyType,
         keyProjectionPsi.getOpDeleteKeyProjectionPartList()
             .stream()

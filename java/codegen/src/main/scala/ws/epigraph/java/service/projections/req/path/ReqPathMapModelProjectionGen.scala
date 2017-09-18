@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, CodeChunk, AbstractReqMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, CodeChunk, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path.OpMapModelPath
 
@@ -31,7 +31,7 @@ class ReqPathMapModelProjectionGen(
   override val op: OpMapModelPath,
   namespaceSuffix: Qn,
   ctx: GenContext)
-  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with AbstractReqMapModelProjectionGen {
+  extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelPath
 

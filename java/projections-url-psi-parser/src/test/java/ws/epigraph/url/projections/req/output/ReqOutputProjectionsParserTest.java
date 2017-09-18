@@ -26,6 +26,7 @@ import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
@@ -35,7 +36,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
+import static ws.epigraph.test.TestUtil.printReqEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
@@ -527,7 +528,7 @@ public class ReqOutputProjectionsParserTest {
     ReqEntityProjection varProjection = stepsAndProjection.projection();
     final @NotNull ReqEntityProjection normalized = varProjection.normalizedForType(type);
 
-    String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
+    String actual = TestUtil.printReqEntityProjection(normalized, stepsAndProjection.pathSteps());
     assertEquals(expected, actual);
   }
 
@@ -553,7 +554,7 @@ public class ReqOutputProjectionsParserTest {
         varProjection.parenthesized(), null,
         TextLocation.UNKNOWN
     );
-    String actual = printReqOutputVarProjection(normalizedVar, 0);
+    String actual = TestUtil.printReqEntityProjection(normalizedVar, 0);
     assertEquals(expected, actual);
   }
 
@@ -579,7 +580,7 @@ public class ReqOutputProjectionsParserTest {
 
     assertEquals(steps, stepsAndProjection.pathSteps());
 
-    String s = printReqOutputVarProjection(stepsAndProjection.projection(), steps);
+    String s = TestUtil.printReqEntityProjection(stepsAndProjection.projection(), steps);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs

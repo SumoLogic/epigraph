@@ -431,7 +431,7 @@ public class ReqOutputJsonFormatWriterTest {
 
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
+    final ReqJsonFormatWriter jsonWriter = new ReqJsonFormatWriter(baos);
 
     if (reqProjection == null)
       jsonWriter.writeData(data.type(), data);

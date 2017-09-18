@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqFieldProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
 
@@ -28,12 +28,12 @@ import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
  */
 class ReqDeleteFieldProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  fieldName: String,
+  protected val fieldName: String,
   protected val op: OpDeleteFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   dataParentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
-  protected val ctx: GenContext) extends ReqDeleteProjectionGen with AbstractReqFieldProjectionGen {
+  protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqFieldProjectionGen {
 
   override type OpFieldProjectionType = OpDeleteFieldProjection
 
@@ -52,7 +52,7 @@ class ReqDeleteFieldProjectionGen(
     )
 
   override protected def generate: String = generate(
-    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjection")
+    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjection")
   )
 
 }

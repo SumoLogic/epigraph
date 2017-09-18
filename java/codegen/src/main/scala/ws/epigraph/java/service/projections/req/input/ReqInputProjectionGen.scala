@@ -18,20 +18,20 @@ package ws.epigraph.java.service.projections.req.input
 
 import java.util
 
-import ws.epigraph.java.service.projections.req.{AbstractReqProjectionGen, AbstractReqTypeProjectionGen}
+import ws.epigraph.java.service.projections.req.{ReqProjectionGen, ReqTypeProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqInputProjectionGen extends AbstractReqProjectionGen {
+trait ReqInputProjectionGen extends ReqProjectionGen {
   override protected def baseNamespace: Qn = super.baseNamespace.append("input")
 
-  protected def generatedProjections: util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen] = ctx.reqInputProjections
+  protected def generatedProjections: util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = ctx.reqInputProjections
 }
 
 object ReqInputProjectionGen {
-  val classNamePrefix: String = AbstractReqProjectionGen.classNamePrefix + "Input"
-  val classNameSuffix: String = AbstractReqProjectionGen.classNameSuffix
+  val classNamePrefix: String = ReqProjectionGen.classNamePrefix + "Input"
+  val classNameSuffix: String = ReqProjectionGen.classNameSuffix
 }

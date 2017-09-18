@@ -19,23 +19,23 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqFieldProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputFieldProjection
+import ws.epigraph.projections.op.output.OpOutputFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputFieldProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  fieldName: String,
-  protected val op: OpInputFieldProjection,
+  protected val fieldName: String,
+  protected val op: OpOutputFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   dataParentClassGenOpt: Option[ReqInputTypeProjectionGen],
-  protected val ctx: GenContext) extends ReqInputProjectionGen with AbstractReqFieldProjectionGen {
+  protected val ctx: GenContext) extends ReqInputProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpInputFieldProjection
+  override type OpFieldProjectionType = OpOutputFieldProjection
 
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
@@ -51,8 +51,8 @@ class ReqInputFieldProjectionGen(
       ctx
     )
 
-  override protected def generate: String = generate(
-    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputFieldProjection")
-  )
+//  override protected def generate: String = generate(
+//    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputFieldProjection")
+//  )
 
 }

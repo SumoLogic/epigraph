@@ -25,9 +25,8 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
@@ -36,7 +35,7 @@ import ws.epigraph.util.HttpStatusCode;
 import ws.epigraph.wire.FormatException;
 import ws.epigraph.wire.FormatFactories;
 import ws.epigraph.wire.FormatWriter;
-import ws.epigraph.wire.ReqOutputFormatWriter;
+import ws.epigraph.wire.ReqFormatWriter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -67,9 +66,9 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   }
 
   @Override
-  public @Nullable Data readInput(
-      @NotNull OpInputVarProjection opInputProjection,
-      @Nullable ReqInputVarProjection reqInputProjection,
+  public Data readInput(
+      @NotNull OpOutputVarProjection opInputProjection,
+      @Nullable ReqEntityProjection reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
@@ -80,10 +79,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
 
       return reqInputProjection == null
-             ? factories.opInputReaderFactory()
+             ? factories.opReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(opInputProjection)
-             : factories.reqInputReaderFactory()
+             : factories.reqReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(reqInputProjection);
     } catch (FormatException e) {
@@ -92,8 +91,8 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   }
 
   @Override
-  public @Nullable Data readUpdateInput(
-      @NotNull OpInputVarProjection opInputProjection,
+  public Data readUpdateInput(
+      @NotNull OpOutputVarProjection opInputProjection,
       @Nullable ReqUpdateVarProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
@@ -105,7 +104,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
 
       return reqUpdateProjection == null
-             ? factories.opInputReaderFactory()
+             ? factories.opReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(opInputProjection)
              : factories.reqUpdateReaderFactory()
@@ -223,7 +222,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
     try {
       FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
-      FormatWriter.Factory<? extends ReqOutputFormatWriter> writerFactory = factories.reqOutputWriterFactory();
+      FormatWriter.Factory<? extends ReqFormatWriter> writerFactory = factories.reqOutputWriterFactory();
 
       httpExchange.setStatusCode(statusCode);
       httpExchange.setHeaders(Collections.singletonMap(
@@ -231,7 +230,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
           ContentType.get(writerFactory.format().mimeType(), charset).toString()
       ));
 
-      try (ReqOutputFormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream(), charset)) {
+      try (ReqFormatWriter formatWriter = writerFactory.newFormatWriter(httpExchange.getOutputStream(), charset)) {
         formatResponseWriter.write(formatWriter);
       }
 
@@ -265,7 +264,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   }
 
   protected interface FormatResponseWriter {
-    void write(@NotNull ReqOutputFormatWriter formatWriter) throws IOException;
+    void write(@NotNull ReqFormatWriter formatWriter) throws IOException;
   }
 
   private static boolean htmlAccepted(@NotNull HttpExchange exchange) {

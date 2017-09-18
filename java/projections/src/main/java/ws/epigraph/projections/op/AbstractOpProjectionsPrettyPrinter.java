@@ -32,6 +32,8 @@ import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
@@ -131,16 +133,16 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public void printOpParam(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?, ?, ?> projection = p.projection();
+    OpOutputModelProjection<?, ?, ?, ?> projection = p.projection();
 
     l.beginIInd();
     l.print(";");
-    if (projection.required()) l.print("+");
+    if (projection.flagged()) l.print("+");
     l.print(escape(p.name())).print(":");
     brk();
     l.print(projection.type().name().toString());
 
-    OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
+    OpOutputProjectionsPrettyPrinter<E> ipp = new OpOutputProjectionsPrettyPrinter<>(l);
     if (!ipp.modelParamsEmpty(projection) || !ipp.isPrintoutNoParamsEmpty(projection)) {
       brk();
       ipp.printModel(projection, 0);
@@ -250,7 +252,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         first = printAnnotations(keyAnnotations, true, first);
       }
 
-      OpInputModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
+      OpOutputModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
       if (keyModelProjection != null) {
         if (!first) {
           l.print(",");
@@ -260,8 +262,8 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         l.beginCInd(0);
         l.print("projection:");
         brk();
-        OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
-        ipp.printModel(keyModelProjection, 0);
+        OpOutputProjectionsPrettyPrinter<E> opp = new OpOutputProjectionsPrettyPrinter<>(l);
+        opp.printModel(keyModelProjection, 0);
         l.end();
 
         first = false;

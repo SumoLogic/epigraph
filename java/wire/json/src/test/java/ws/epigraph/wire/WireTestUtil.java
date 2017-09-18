@@ -19,9 +19,11 @@ package ws.epigraph.wire;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
 import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
@@ -30,7 +32,7 @@ import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 
@@ -64,12 +66,10 @@ public final class WireTestUtil {
       OpOutputReferenceContext outputReferenceContext =
           new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputReferenceContext);
       OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, opInputPsiProcessingContext, outputReferenceContext);
+          new OpOutputPsiProcessingContext(context, outputReferenceContext);
 
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -105,7 +105,7 @@ public final class WireTestUtil {
           new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
           type,
           false,
           op,

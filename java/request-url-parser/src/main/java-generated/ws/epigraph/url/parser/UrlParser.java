@@ -75,6 +75,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_ENUM_DATUM) {
       r = enumDatum(b, 0);
     }
+    else if (t == U_INPUT_PROJECTION) {
+      r = inputProjection(b, 0);
+    }
     else if (t == U_LIST_DATUM) {
       r = listDatum(b, 0);
     }
@@ -86,6 +89,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_NULL_DATUM) {
       r = nullDatum(b, 0);
+    }
+    else if (t == U_OUTPUT_PROJECTION) {
+      r = outputProjection(b, 0);
     }
     else if (t == U_PRIMITIVE_DATUM) {
       r = primitiveDatum(b, 0);
@@ -191,78 +197,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_FIELD_PATH_ENTRY) {
       r = reqFieldPathEntry(b, 0);
-    }
-    else if (t == U_REQ_INPUT_FIELD_PROJECTION) {
-      r = reqInputFieldProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_FIELD_PROJECTION_ENTRY) {
-      r = reqInputFieldProjectionEntry(b, 0);
-    }
-    else if (t == U_REQ_INPUT_KEY_PROJECTION) {
-      r = reqInputKeyProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_KEYS_PROJECTION) {
-      r = reqInputKeysProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_LIST_MODEL_PROJECTION) {
-      r = reqInputListModelProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MAP_MODEL_PROJECTION) {
-      r = reqInputMapModelProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MODEL_MULTI_TAIL) {
-      r = reqInputModelMultiTail(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM) {
-      r = reqInputModelMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL) {
-      r = reqInputModelPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MODEL_PROJECTION) {
-      r = reqInputModelProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MODEL_SINGLE_TAIL) {
-      r = reqInputModelSingleTail(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MULTI_TAG_PROJECTION) {
-      r = reqInputMultiTagProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM) {
-      r = reqInputMultiTagProjectionItem(b, 0);
-    }
-    else if (t == U_REQ_INPUT_NAMED_VAR_PROJECTION) {
-      r = reqInputNamedVarProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_RECORD_MODEL_PROJECTION) {
-      r = reqInputRecordModelProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_SINGLE_TAG_PROJECTION) {
-      r = reqInputSingleTagProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
-      r = reqInputUnnamedOrRefVarProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_UNNAMED_VAR_PROJECTION) {
-      r = reqInputUnnamedVarProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_MULTI_TAIL) {
-      r = reqInputVarMultiTail(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_MULTI_TAIL_ITEM) {
-      r = reqInputVarMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_POLYMORPHIC_TAIL) {
-      r = reqInputVarPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_PROJECTION) {
-      r = reqInputVarProjection(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_PROJECTION_REF) {
-      r = reqInputVarProjectionRef(b, 0);
-    }
-    else if (t == U_REQ_INPUT_VAR_SINGLE_TAIL) {
-      r = reqInputVarSingleTail(b, 0);
     }
     else if (t == U_REQ_MAP_MODEL_PATH) {
       r = reqMapModelPath(b, 0);
@@ -544,7 +478,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
   public static boolean createUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -560,44 +494,22 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('<' reqInputFieldProjection)?
+  // inputProjection?
   private static boolean createUrl_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl_3")) return false;
-    createUrl_3_0(b, l + 1);
+    inputProjection(b, l + 1);
     return true;
   }
 
-  // '<' reqInputFieldProjection
-  private static boolean createUrl_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createUrl_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && reqInputFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ('>' reqOutputTrunkFieldProjection)?
+  // outputProjection?
   private static boolean createUrl_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createUrl_4")) return false;
-    createUrl_4_0(b, l + 1);
+    outputProjection(b, l + 1);
     return true;
-  }
-
-  // '>' reqOutputTrunkFieldProjection
-  private static boolean createUrl_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createUrl_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_RIGHT);
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
-  // '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
+  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
   public static boolean customUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -613,40 +525,18 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ('<' reqInputFieldProjection)?
+  // inputProjection?
   private static boolean customUrl_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customUrl_3")) return false;
-    customUrl_3_0(b, l + 1);
+    inputProjection(b, l + 1);
     return true;
   }
 
-  // '<' reqInputFieldProjection
-  private static boolean customUrl_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customUrl_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && reqInputFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ('>' reqOutputTrunkFieldProjection)?
+  // outputProjection?
   private static boolean customUrl_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customUrl_4")) return false;
-    customUrl_4_0(b, l + 1);
+    outputProjection(b, l + 1);
     return true;
-  }
-
-  // '>' reqOutputTrunkFieldProjection
-  private static boolean customUrl_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customUrl_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_RIGHT);
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -833,6 +723,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '<' reqOutputTrunkFieldProjection
+  public static boolean inputProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inputProjection")) return false;
+    if (!nextTokenIs(b, U_ANGLE_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_INPUT_PROJECTION, null);
+    r = consumeToken(b, U_ANGLE_LEFT);
+    p = r; // pin = 1
+    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // dataTypeSpec? '[' (dataValue ','?)* ']'
   public static boolean listDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listDatum")) return false;
@@ -968,6 +872,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, U_AT);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '>' reqOutputTrunkFieldProjection
+  public static boolean outputProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "outputProjection")) return false;
+    if (!nextTokenIs(b, U_ANGLE_RIGHT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_OUTPUT_PROJECTION, null);
+    r = consumeToken(b, U_ANGLE_RIGHT);
+    p = r; // pin = 1
+    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -1823,640 +1741,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = qid(b, l + 1);
     r = r && reqFieldPath(b, l + 1);
     exit_section_(b, m, U_REQ_FIELD_PATH_ENTRY, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '(' reqInputVarProjection ')'
-  static boolean reqInputBracedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputBracedVarProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqInputVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqInputVarProjection
-  public static boolean reqInputFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputFieldProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_FIELD_PROJECTION, "<req input field projection>");
-    r = reqInputVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // qid reqInputFieldProjection
-  public static boolean reqInputFieldProjectionEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputFieldProjectionEntry")) return false;
-    if (!nextTokenIs(b, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = qid(b, l + 1);
-    r = r && reqInputFieldProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_INPUT_FIELD_PROJECTION_ENTRY, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // datum reqParamsAndAnnotations
-  public static boolean reqInputKeyProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeyProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_KEY_PROJECTION, "<req input key projection>");
-    r = datum(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']'
-  public static boolean reqInputKeysProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeysProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_KEYS_PROJECTION, null);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqInputKeysProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '*' | ( ( reqInputKeyProjection ','? )* )
-  private static boolean reqInputKeysProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeysProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_STAR);
-    if (!r) r = reqInputKeysProjection_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ( reqInputKeyProjection ','? )*
-  private static boolean reqInputKeysProjection_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeysProjection_1_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqInputKeysProjection_1_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqInputKeysProjection_1_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqInputKeyProjection ','?
-  private static boolean reqInputKeysProjection_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeysProjection_1_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputKeyProjection(b, l + 1);
-    r = r && reqInputKeysProjection_1_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqInputKeysProjection_1_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputKeysProjection_1_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '*' ( ( reqInputBracedVarProjection | reqInputVarProjection ) )?
-  public static boolean reqInputListModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputListModelProjection")) return false;
-    if (!nextTokenIs(b, U_STAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_LIST_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_STAR);
-    p = r; // pin = 1
-    r = r && reqInputListModelProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // ( ( reqInputBracedVarProjection | reqInputVarProjection ) )?
-  private static boolean reqInputListModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputListModelProjection_1")) return false;
-    reqInputListModelProjection_1_0(b, l + 1);
-    return true;
-  }
-
-  // reqInputBracedVarProjection | reqInputVarProjection
-  private static boolean reqInputListModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputListModelProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputBracedVarProjection(b, l + 1);
-    if (!r) r = reqInputVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqInputKeysProjection ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
-  public static boolean reqInputMapModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMapModelProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputKeysProjection(b, l + 1);
-    r = r && reqInputMapModelProjection_1(b, l + 1);
-    exit_section_(b, m, U_REQ_INPUT_MAP_MODEL_PROJECTION, r);
-    return r;
-  }
-
-  // ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
-  private static boolean reqInputMapModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMapModelProjection_1")) return false;
-    reqInputMapModelProjection_1_0(b, l + 1);
-    return true;
-  }
-
-  // reqInputBracedVarProjection |  reqInputVarProjection
-  private static boolean reqInputMapModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMapModelProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputBracedVarProjection(b, l + 1);
-    if (!r) r = reqInputVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqInputModelMultiTailItem ','?)* ')'
-  public static boolean reqInputModelMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqInputModelMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqInputModelMultiTailItem ','?)*
-  private static boolean reqInputModelMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqInputModelMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqInputModelMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqInputModelMultiTailItem ','?
-  private static boolean reqInputModelMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputModelMultiTailItem(b, l + 1);
-    r = r && reqInputModelMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqInputModelMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqInputModelProjectionWithProperties
-  public static boolean reqInputModelMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_MULTI_TAIL_ITEM, "<req input model multi tail item>");
-    r = typeRef(b, l + 1);
-    r = r && reqInputModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '~' ( reqInputModelSingleTail | reqInputModelMultiTail )
-  public static boolean reqInputModelPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelPolymorphicTail")) return false;
-    if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_TILDA);
-    r = r && reqInputModelPolymorphicTail_1(b, l + 1);
-    exit_section_(b, m, U_REQ_INPUT_MODEL_POLYMORPHIC_TAIL, r);
-    return r;
-  }
-
-  // reqInputModelSingleTail | reqInputModelMultiTail
-  private static boolean reqInputModelPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelPolymorphicTail_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputModelSingleTail(b, l + 1);
-    if (!r) r = reqInputModelMultiTail(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( ( reqInputRecordModelProjection
-  //                               | reqInputListModelProjection
-  //                               | reqInputMapModelProjection
-  //                               ) reqInputModelPolymorphicTail?
-  //                             )?
-  public static boolean reqInputModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelProjection")) return false;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_PROJECTION, "<req input model projection>");
-    reqInputModelProjection_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // ( reqInputRecordModelProjection
-  //                               | reqInputListModelProjection
-  //                               | reqInputMapModelProjection
-  //                               ) reqInputModelPolymorphicTail?
-  private static boolean reqInputModelProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputModelProjection_0_0(b, l + 1);
-    r = r && reqInputModelProjection_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqInputRecordModelProjection
-  //                               | reqInputListModelProjection
-  //                               | reqInputMapModelProjection
-  private static boolean reqInputModelProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputRecordModelProjection(b, l + 1);
-    if (!r) r = reqInputListModelProjection(b, l + 1);
-    if (!r) r = reqInputMapModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqInputModelPolymorphicTail?
-  private static boolean reqInputModelProjection_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelProjection_0_1")) return false;
-    reqInputModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqInputModelProjection
-  static boolean reqInputModelProjectionWithProperties(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelProjectionWithProperties")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqInputModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqInputModelProjectionWithProperties
-  public static boolean reqInputModelSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputModelSingleTail")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MODEL_SINGLE_TAIL, "<req input model single tail>");
-    r = typeRef(b, l + 1);
-    r = r && reqInputModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ':' '(' (reqInputMultiTagProjectionItem ','?)* ')'
-  public static boolean reqInputMultiTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMultiTagProjection")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_MULTI_TAG_PROJECTION, null);
-    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, reqInputMultiTagProjection_2(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqInputMultiTagProjectionItem ','?)*
-  private static boolean reqInputMultiTagProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMultiTagProjection_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqInputMultiTagProjection_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqInputMultiTagProjection_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqInputMultiTagProjectionItem ','?
-  private static boolean reqInputMultiTagProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMultiTagProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputMultiTagProjectionItem(b, l + 1);
-    r = r && reqInputMultiTagProjection_2_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqInputMultiTagProjection_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMultiTagProjection_2_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // tagName reqInputModelProjectionWithProperties
-  public static boolean reqInputMultiTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputMultiTagProjectionItem")) return false;
-    if (!nextTokenIs(b, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = tagName(b, l + 1);
-    r = r && reqInputModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, m, U_REQ_INPUT_MULTI_TAG_PROJECTION_ITEM, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '$' qid '=' reqInputUnnamedOrRefVarProjection
-  public static boolean reqInputNamedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputNamedVarProjection")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_NAMED_VAR_PROJECTION, null);
-    r = consumeToken(b, U_DOLLAR);
-    r = r && qid(b, l + 1);
-    r = r && consumeToken(b, U_EQ);
-    p = r; // pin = 3
-    r = r && reqInputUnnamedOrRefVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqInputFieldProjectionEntry ','?)* ')'
-  public static boolean reqInputRecordModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputRecordModelProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_RECORD_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqInputRecordModelProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqInputFieldProjectionEntry ','?)*
-  private static boolean reqInputRecordModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputRecordModelProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqInputRecordModelProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqInputRecordModelProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqInputFieldProjectionEntry ','?
-  private static boolean reqInputRecordModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputRecordModelProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputFieldProjectionEntry(b, l + 1);
-    r = r && reqInputRecordModelProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqInputRecordModelProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputRecordModelProjection_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ( ':' tagName)? reqInputModelProjectionWithProperties
-  public static boolean reqInputSingleTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputSingleTagProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_SINGLE_TAG_PROJECTION, "<req input single tag projection>");
-    r = reqInputSingleTagProjection_0(b, l + 1);
-    r = r && reqInputModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ':' tagName)?
-  private static boolean reqInputSingleTagProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputSingleTagProjection_0")) return false;
-    reqInputSingleTagProjection_0_0(b, l + 1);
-    return true;
-  }
-
-  // ':' tagName
-  private static boolean reqInputSingleTagProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputSingleTagProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqInputVarProjectionRef | reqInputUnnamedVarProjection
-  public static boolean reqInputUnnamedOrRefVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputUnnamedOrRefVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_UNNAMED_OR_REF_VAR_PROJECTION, "<req input unnamed or ref var projection>");
-    r = reqInputVarProjectionRef(b, l + 1);
-    if (!r) r = reqInputUnnamedVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
-  public static boolean reqInputUnnamedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputUnnamedVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_UNNAMED_VAR_PROJECTION, "<req input unnamed var projection>");
-    r = reqInputUnnamedVarProjection_0(b, l + 1);
-    r = r && reqInputUnnamedVarProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // reqInputMultiTagProjection | reqInputSingleTagProjection
-  private static boolean reqInputUnnamedVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputUnnamedVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputMultiTagProjection(b, l + 1);
-    if (!r) r = reqInputSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqInputVarPolymorphicTail?
-  private static boolean reqInputUnnamedVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputUnnamedVarProjection_1")) return false;
-    reqInputVarPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqInputVarMultiTailItem ','?)* ')'
-  public static boolean reqInputVarMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqInputVarMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqInputVarMultiTailItem ','?)*
-  private static boolean reqInputVarMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqInputVarMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqInputVarMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqInputVarMultiTailItem ','?
-  private static boolean reqInputVarMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputVarMultiTailItem(b, l + 1);
-    r = r && reqInputVarMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqInputVarMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqInputVarProjection
-  public static boolean reqInputVarMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_MULTI_TAIL_ITEM, "<req input var multi tail item>");
-    r = typeRef(b, l + 1);
-    r = r && reqInputVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ':' '~' ( reqInputVarSingleTail | reqInputVarMultiTail )
-  public static boolean reqInputVarPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_COLON, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqInputVarPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // reqInputVarSingleTail | reqInputVarMultiTail
-  private static boolean reqInputVarPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarPolymorphicTail_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqInputVarSingleTail(b, l + 1);
-    if (!r) r = reqInputVarMultiTail(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqInputNamedVarProjection | reqInputUnnamedOrRefVarProjection
-  public static boolean reqInputVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_PROJECTION, "<req input var projection>");
-    r = reqInputNamedVarProjection(b, l + 1);
-    if (!r) r = reqInputUnnamedOrRefVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '$' qid
-  public static boolean reqInputVarProjectionRef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarProjectionRef")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_PROJECTION_REF, null);
-    r = consumeToken(b, U_DOLLAR);
-    p = r; // pin = 1
-    r = r && qid(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqInputVarProjection
-  public static boolean reqInputVarSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqInputVarSingleTail")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_INPUT_VAR_SINGLE_TAIL, "<req input var single tail>");
-    r = typeRef(b, l + 1);
-    r = r && reqInputVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.types.Type;
@@ -54,7 +54,7 @@ public class RemoteCreateOperationInvocation
       final @NotNull CreateOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    @Nullable ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
 
     String uri = UriComposer.composeCreateUri(
         resourceName,
@@ -70,7 +70,7 @@ public class RemoteCreateOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+    @Nullable ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
     Type dataType = data.type();

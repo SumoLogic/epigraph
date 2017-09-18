@@ -126,8 +126,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
       printTransformer(
           namespaces,
           transformer,
-          globalOutputProjectionsContext,
-          globalInputProjectionsContext
+          globalOutputProjectionsContext
       );
     }
 
@@ -161,8 +160,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   private void printTransformer(
       @NotNull Namespaces namespaces,
       @NotNull TransformerDeclaration transformer,
-      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> globalOutputProjections,
-      ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> globalInputProjections
+      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> globalOutputProjections
   ) throws E {
 
     l.beginCInd(0); //1
@@ -190,13 +188,13 @@ public class SchemaPrettyPrinter<E extends Exception> {
     l.beginIInd();
     l.print("inputProjection").brk();
 
-    ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> ipc =
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> ipc =
         new ProjectionsPrettyPrinterContext<>(
             ProjectionReferenceName.fromQn(namespaces.projectionsNamespace()),
-            globalInputProjections
+            globalOutputProjections
         );
 
-    new OpInputProjectionsPrettyPrinter<>(l, ipc).printVar(transformer.inputProjection(), 0);
+    new OpOutputProjectionsPrettyPrinter<>(l, ipc).printVar(transformer.inputProjection(), 0);
     l.end();
 
 

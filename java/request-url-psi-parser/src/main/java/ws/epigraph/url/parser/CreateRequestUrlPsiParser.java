@@ -20,11 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -34,11 +31,10 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.CreateRequestUrl;
 import ws.epigraph.url.parser.psi.UrlCreateUrl;
-import ws.epigraph.url.parser.psi.UrlReqInputFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.input.ReqInputPsiProcessingContext;
-import ws.epigraph.url.projections.req.input.ReqInputReferenceContext;
+import ws.epigraph.url.parser.psi.UrlInputProjection;
+import ws.epigraph.url.parser.psi.UrlOutputProjection;
+import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 
@@ -65,86 +61,41 @@ public final class CreateRequestUrlPsiParser {
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), context);
 
-    if (opPath == null)
-      return parseCreateRequestUrlWithoutPath(resourceType, requestParams, op, psi, typesResolver, context);
-    else
-      return parseCreateRequestUrlWithPath(resourceType, requestParams, op, opPath, psi, typesResolver, context);
-  }
+    if (opPath == null) {
 
-  private static @NotNull CreateRequestUrl parseCreateRequestUrlWithPath(
-      final @NotNull DataTypeApi resourceType,
-      final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull CreateOperationDeclaration op,
-      final @NotNull OpFieldPath opPath,
-      final @NotNull UrlCreateUrl psi,
-      final @NotNull TypesResolver typesResolver,
-      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    final @NotNull ReqFieldPath reqPath =
-        ReqPathPsiParser.parseFieldPath(
-            resourceType,
-            opPath,
-            psi.getReqFieldPath(),
-            typesResolver,
-            new ReqPathPsiProcessingContext(context)
-        );
-
-    final @NotNull TypeApi opOutputType =
-        op.outputType(); // already calculated based on outputType/path declared in idl
-    TypesResolver newResolver = addTypeNamespace(opOutputType, typesResolver);
-
-    final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
-            opOutputType.dataType(),
-            op.outputProjection(),
-            psi.getReqOutputTrunkFieldProjection(),
-            newResolver,
-            context
-        );
-
-    return new CreateRequestUrl(
-        psi.getQid().getCanonicalName(),
-        reqPath,
-        getInputProjection(op, psi, typesResolver, context),
-        outputStepsAndProjection,
-        requestParams
-    );
-
-  }
-
-  private static @Nullable ReqInputFieldProjection getInputProjection(
-      final @NotNull CreateOperationDeclaration op,
-      final @NotNull UrlCreateUrl psi,
-      final @NotNull TypesResolver typesResolver,
-      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
-    final ReqInputFieldProjection inputProjection;
-    final @Nullable UrlReqInputFieldProjection inputProjectionPsi = psi.getReqInputFieldProjection();
-    if (inputProjectionPsi == null) inputProjection = null;
-    else {
-      final @Nullable OpInputFieldProjection opInputProjection = op.inputProjection();
-
-      final TypeApi inputType = op.inputType();
-
-      ReqInputReferenceContext reqInputReferenceContext =
-          new ReqInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      ReqInputPsiProcessingContext reqInputPsiProcessingContext =
-          new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
-
-      inputProjection = ReqInputProjectionsPsiParser.parseFieldProjection(
-          inputType.dataType(),
-          opInputProjection,
-          inputProjectionPsi,
+      return parseCreateRequestUrl(
+          null,
+          requestParams,
+          op,
+          psi,
           typesResolver,
-          reqInputPsiProcessingContext
+          context
       );
 
-      reqInputReferenceContext.ensureAllReferencesResolved();
+    } else {
+
+      @NotNull ReqFieldPath reqPath = ReqPathPsiParser.parseFieldPath(
+          resourceType,
+          opPath,
+          psi.getReqFieldPath(),
+          typesResolver,
+          new ReqPathPsiProcessingContext(context)
+      );
+
+      return parseCreateRequestUrl(
+          reqPath,
+          requestParams,
+          op,
+          psi,
+          typesResolver,
+          context
+      );
+
     }
-    return inputProjection;
   }
 
-  private static @NotNull CreateRequestUrl parseCreateRequestUrlWithoutPath(
-      final @NotNull DataTypeApi resourceType,
+  private static @NotNull CreateRequestUrl parseCreateRequestUrl(
+      final @Nullable ReqFieldPath reqFieldPath,
       final Map<String, GDatum> requestParams,
       final @NotNull CreateOperationDeclaration op,
       final @NotNull UrlCreateUrl psi,
@@ -152,22 +103,41 @@ public final class CreateRequestUrlPsiParser {
       final @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
-    final @Nullable UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
-    TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
+    // already calculated based on outputType/path declared in idl
+    final @NotNull TypeApi opInputType = op.inputType();
+    TypesResolver inputResolver = addTypeNamespace(opInputType, typesResolver);
 
-    final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
-            op.outputType().dataType(),
+    final @NotNull TypeApi opOutputType = op.outputType();
+    TypesResolver outputResolver = addTypeNamespace(opOutputType, typesResolver);
+
+    UrlInputProjection inputProjectionPsi = psi.getInputProjection();
+    UrlOutputProjection outputProjectionPsi = psi.getOutputProjection();
+
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection =
+        inputProjectionPsi == null ? null :
+        RequestUrlPsiParserUtil.parseProjection(
+            opInputType.dataType(),
+            op.inputProjection(),
+            inputProjectionPsi.getReqOutputTrunkFieldProjection(),
+            ReqInputProjectionPsiParser.INSTANCE,
+            inputResolver,
+            context
+        );
+
+    final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
+        RequestUrlPsiParserUtil.parseProjection(
+            opOutputType.dataType(),
             op.outputProjection(),
-            fieldProjectionPsi,
-            newResolver,
+            outputProjectionPsi == null ? null : outputProjectionPsi.getReqOutputTrunkFieldProjection(),
+            ReqOutputProjectionPsiParser.INSTANCE,
+            outputResolver,
             context
         );
 
     return new CreateRequestUrl(
         psi.getQid().getCanonicalName(),
-        null,
-        getInputProjection(op, psi, typesResolver, context),
+        reqFieldPath,
+        inputStepsAndProjection,
         outputStepsAndProjection,
         requestParams
     );

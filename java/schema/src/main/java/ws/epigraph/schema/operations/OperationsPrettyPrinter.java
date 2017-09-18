@@ -25,10 +25,10 @@ import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
@@ -150,7 +150,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printInputProjection(@NotNull OperationDeclaration operation, boolean first) throws E {
-    @Nullable OpInputFieldProjection projection = operation.inputProjection();
+    @Nullable OpOutputFieldProjection projection = operation.inputProjection();
 
     if (projection != null) {
       if (first) first = false;
@@ -160,7 +160,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.beginIInd();
       l.print("inputProjection").brk();
-      opInputPrinter.print(projection);
+      opOutputPrinter.print(projection);
       l.end();
     }
 

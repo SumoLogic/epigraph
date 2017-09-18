@@ -17,16 +17,16 @@
 package ws.epigraph.java.service.projections.req.update
 
 import ws.epigraph.java.GenContext
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, AbstractReqListModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputListModelProjection
+import ws.epigraph.projections.op.output.OpOutputListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateListModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpInputListModelProjection,
+  val op: OpOutputListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
@@ -38,9 +38,9 @@ class ReqUpdateListModelProjectionGen(
     _namespaceSuffix,
     parentClassGenOpt,
     ctx
-  ) with AbstractReqListModelProjectionGen {
+  ) with ReqListModelProjectionGen {
 
-  override type OpProjectionType = OpInputListModelProjection
+  override type OpProjectionType = OpOutputListModelProjection
 
   val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
@@ -56,7 +56,7 @@ class ReqUpdateListModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqUpdateModelProjectionGen,
-    op: OpInputListModelProjection,
+    op: OpOutputListModelProjection,
     normalized: Boolean) =
     new ReqUpdateListModelProjectionGen(
       baseNamespaceProvider,

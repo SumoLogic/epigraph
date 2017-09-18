@@ -111,11 +111,13 @@ url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
 
 // todo get rid of requestParms?
 
+// todo rename reqOutput* to req*
+
 // real entry points:
 readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
   extends = "url"
 }
-createUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+createUrl ::= '/' qid reqFieldPath inputProjection? outputProjection? requestParams {
   extends = "url"
 }
 updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
@@ -124,9 +126,14 @@ updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' req
 deleteUrl ::= '/' qid reqFieldPath '<' reqDeleteFieldProjection ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
-customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+customUrl ::= '/' qid reqFieldPath inputProjection? outputProjection? requestParams {
   extends = "url"
 }
+
+// todo parse '+'
+// url parts to make parser code easier
+inputProjection ::= '<' '+'? reqOutputTrunkFieldProjection { pin = 1}
+outputProjection ::= '>' '+'? reqOutputTrunkFieldProjection { pin = 1 }
 
 // todo do we actually need them?
 private requestParams ::= requestParam*
@@ -341,50 +348,50 @@ reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( ( reqDeleteBracedVarPr
 reqDeleteKeysProjection ::= '['( '*' | ( ( reqDeleteKeyProjection ','? )* ) ) ']' {pin=1}
 reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
-// req input --------------------------------------------------------
-
-// reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
-
-reqInputVarProjection ::= reqInputNamedVarProjection | reqInputUnnamedOrRefVarProjection
-reqInputUnnamedOrRefVarProjection ::= reqInputVarProjectionRef | reqInputUnnamedVarProjection
-reqInputNamedVarProjection ::= '$' qid '=' reqInputUnnamedOrRefVarProjection {pin = 3}
-reqInputVarProjectionRef ::= '$' qid {pin = 1}
-reqInputUnnamedVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
-private reqInputBracedVarProjection ::= '(' reqInputVarProjection ')'
-
-reqInputSingleTagProjection ::= ( ':' tagName)? reqInputModelProjectionWithProperties
-reqInputMultiTagProjection ::= ':' '(' (reqInputMultiTagProjectionItem ','?)* ')' {pin=2}
-reqInputMultiTagProjectionItem ::= tagName reqInputModelProjectionWithProperties
-
-reqInputVarPolymorphicTail ::= ':' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
-reqInputVarSingleTail ::= typeRef reqInputVarProjection
-reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
-reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
+//// req input --------------------------------------------------------
 //
-reqInputModelPolymorphicTail ::= '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) // {pin=1}
-reqInputModelSingleTail ::= typeRef reqInputModelProjectionWithProperties
-reqInputModelMultiTail ::= '(' (reqInputModelMultiTailItem ','?)* ')' {pin=1}
-reqInputModelMultiTailItem ::= typeRef reqInputModelProjectionWithProperties
-
-private reqInputModelProjectionWithProperties ::= reqParamsAndAnnotations reqInputModelProjection // reqInputModelMeta?
-
+//// reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
 //
-
-reqInputModelProjection ::= ( ( reqInputRecordModelProjection
-                              | reqInputListModelProjection
-                              | reqInputMapModelProjection
-                              ) reqInputModelPolymorphicTail?
-                            )?
-
-reqInputRecordModelProjection ::= '(' (reqInputFieldProjectionEntry ','?)* ')' { pin=1 }
-reqInputFieldProjectionEntry ::= qid reqInputFieldProjection
-reqInputFieldProjection ::= /* reqParamsAndAnnotations */ reqInputVarProjection
-
-reqInputListModelProjection ::= '*' ( ( reqInputBracedVarProjection | reqInputVarProjection ) )? { pin=1 }
-
-reqInputMapModelProjection ::= reqInputKeysProjection ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
-reqInputKeysProjection ::= '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']' {pin=1}
-reqInputKeyProjection ::= datum reqParamsAndAnnotations
+//reqInputVarProjection ::= reqInputNamedVarProjection | reqInputUnnamedOrRefVarProjection
+//reqInputUnnamedOrRefVarProjection ::= reqInputVarProjectionRef | reqInputUnnamedVarProjection
+//reqInputNamedVarProjection ::= '$' qid '=' reqInputUnnamedOrRefVarProjection {pin = 3}
+//reqInputVarProjectionRef ::= '$' qid {pin = 1}
+//reqInputUnnamedVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
+//private reqInputBracedVarProjection ::= '(' reqInputVarProjection ')'
+//
+//reqInputSingleTagProjection ::= ( ':' tagName)? reqInputModelProjectionWithProperties
+//reqInputMultiTagProjection ::= ':' '(' (reqInputMultiTagProjectionItem ','?)* ')' {pin=2}
+//reqInputMultiTagProjectionItem ::= tagName reqInputModelProjectionWithProperties
+//
+//reqInputVarPolymorphicTail ::= ':' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
+//reqInputVarSingleTail ::= typeRef reqInputVarProjection
+//reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
+//reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
+////
+//reqInputModelPolymorphicTail ::= '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) // {pin=1}
+//reqInputModelSingleTail ::= typeRef reqInputModelProjectionWithProperties
+//reqInputModelMultiTail ::= '(' (reqInputModelMultiTailItem ','?)* ')' {pin=1}
+//reqInputModelMultiTailItem ::= typeRef reqInputModelProjectionWithProperties
+//
+//private reqInputModelProjectionWithProperties ::= reqParamsAndAnnotations reqInputModelProjection // reqInputModelMeta?
+//
+////
+//
+//reqInputModelProjection ::= ( ( reqInputRecordModelProjection
+//                              | reqInputListModelProjection
+//                              | reqInputMapModelProjection
+//                              ) reqInputModelPolymorphicTail?
+//                            )?
+//
+//reqInputRecordModelProjection ::= '(' (reqInputFieldProjectionEntry ','?)* ')' { pin=1 }
+//reqInputFieldProjectionEntry ::= qid reqInputFieldProjection
+//reqInputFieldProjection ::= /* reqParamsAndAnnotations */ reqInputVarProjection
+//
+//reqInputListModelProjection ::= '*' ( ( reqInputBracedVarProjection | reqInputVarProjection ) )? { pin=1 }
+//
+//reqInputMapModelProjection ::= reqInputKeysProjection ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
+//reqInputKeysProjection ::= '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']' {pin=1}
+//reqInputKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
 // please keep in sync with data language from schema.bnf

@@ -23,9 +23,8 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.schema.operations.OperationKind;
@@ -38,14 +37,14 @@ import java.io.IOException;
 public interface ServerProtocol<C extends HttpInvocationContext> {
   // server-side counterpart of ws.epigraph.client.http.ServerProtocol
 
-  @Nullable Data readInput(
-      @NotNull OpInputVarProjection opInputProjection,
-      @Nullable ReqInputVarProjection reqInputProjection,
+  Data readInput(
+      @NotNull OpOutputVarProjection opInputProjection,
+      @Nullable ReqEntityProjection reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
-  @Nullable Data readUpdateInput(
-      @NotNull OpInputVarProjection opInputProjection,
+  Data readUpdateInput(
+      @NotNull OpOutputVarProjection opInputProjection,
       @Nullable ReqUpdateVarProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;

@@ -24,6 +24,7 @@ import ws.epigraph.projections.op.OpKeyPresence;
 import ws.epigraph.projections.op.OpKeyProjection;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.output.OpOutputModelProjection;
 
 import java.util.Objects;
 
@@ -37,7 +38,7 @@ public class OpDeleteKeyProjection extends OpKeyProjection {
       @NotNull OpKeyPresence presence,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> projection,
+      @Nullable OpOutputModelProjection<?, ?, ?, ?> projection,
       @NotNull TextLocation location) {
     super(params, annotations, projection, location);
     this.presence = presence;

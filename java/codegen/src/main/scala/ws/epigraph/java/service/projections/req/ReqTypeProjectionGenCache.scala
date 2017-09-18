@@ -55,11 +55,11 @@ object ReqTypeProjectionGenCache {
    *
    * @return generator instance
    */
-  def lookup[G <: AbstractReqTypeProjectionGen](
+  def lookup[G <: ReqTypeProjectionGen](
     refOpt: Option[ProjectionReferenceName],
     hasParentGen: Boolean,
     isNormalized: Boolean,
-    generatedProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen],
+    generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen],
     default: => G): G = {
 
     refOpt.map { ref =>

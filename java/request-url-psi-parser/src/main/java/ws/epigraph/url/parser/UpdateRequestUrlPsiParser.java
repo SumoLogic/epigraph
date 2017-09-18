@@ -32,9 +32,8 @@ import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.UpdateRequestUrl;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqUpdateFieldProjection;
-import ws.epigraph.url.parser.psi.UrlUpdateUrl;
+import ws.epigraph.url.parser.psi.*;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
@@ -96,10 +95,11 @@ public final class UpdateRequestUrlPsiParser {
     @NotNull DataTypeApi inputDataType = opInputType.dataType();
 
     final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
+        RequestUrlPsiParserUtil.parseProjection(
             opOutputType.dataType(),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
+            ReqOutputProjectionPsiParser.INSTANCE,
             newResolver,
             context
         );
@@ -164,10 +164,11 @@ public final class UpdateRequestUrlPsiParser {
     TypesResolver outputResolver = addTypeNamespace(resourceType.type(), typesResolver);
     final @Nullable UrlReqOutputTrunkFieldProjection outputProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection =
-        RequestUrlPsiParserUtil.parseOutputProjection(
+        RequestUrlPsiParserUtil.parseProjection(
             op.outputType().dataType(),
             op.outputProjection(),
             outputProjectionPsi,
+            ReqOutputProjectionPsiParser.INSTANCE,
             outputResolver,
             context
         );

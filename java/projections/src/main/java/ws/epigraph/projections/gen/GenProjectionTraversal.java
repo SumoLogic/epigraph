@@ -35,6 +35,8 @@ public abstract class GenProjectionTraversal<
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
 
+  // NB keep code in sync with GenGuidedProjectionTraversal
+
   private final Set<VP> visitedEntities = Collections.newSetFromMap(new IdentityHashMap<>());
   private final Set<MP> visitedModels = Collections.newSetFromMap(new IdentityHashMap<>());
 
@@ -51,7 +53,7 @@ public abstract class GenProjectionTraversal<
     }
   }
 
-  public boolean traverse0(final @NotNull VP projection) {
+  private boolean traverse0(final @NotNull VP projection) {
     if (visitVarProjection(projection)) {
       for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
         final TP tagProjection = entry.getValue();
@@ -153,7 +155,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits var projection
    *
-   * @param varProjection visited instance
+   * @param varProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -164,7 +166,7 @@ public abstract class GenProjectionTraversal<
    *
    * @param varProjection var projection
    * @param tagName       tag name
-   * @param tagProjection visited instance
+   * @param tagProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -175,7 +177,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits model projection
    *
-   * @param modelProjection visited instance
+   * @param modelProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -184,7 +186,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits record model projection
    *
-   * @param recordModelProjection visited instance
+   * @param recordModelProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -194,7 +196,7 @@ public abstract class GenProjectionTraversal<
    * Visits field projection entry
    *
    * @param modelProjection      record model projection
-   * @param fieldProjectionEntry visited instance
+   * @param fieldProjectionEntry instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -214,7 +216,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits map model projection
    *
-   * @param mapModelProjection visited instance
+   * @param mapModelProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -223,7 +225,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits list model projection
    *
-   * @param listModelProjection visited instance
+   * @param listModelProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
@@ -232,7 +234,7 @@ public abstract class GenProjectionTraversal<
   /**
    * Visits primitive model projection
    *
-   * @param primitiveModelProjection visited instance
+   * @param primitiveModelProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */

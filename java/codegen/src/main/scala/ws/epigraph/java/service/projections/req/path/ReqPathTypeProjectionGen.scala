@@ -16,11 +16,11 @@
 
 package ws.epigraph.java.service.projections.req.path
 
-import ws.epigraph.java.service.projections.req.AbstractReqTypeProjectionGen
+import ws.epigraph.java.service.projections.req.ReqTypeProjectionGen
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqPathTypeProjectionGen extends AbstractReqTypeProjectionGen with ReqPathProjectionGen {
+trait ReqPathTypeProjectionGen extends ReqTypeProjectionGen with ReqPathProjectionGen {
 
 }

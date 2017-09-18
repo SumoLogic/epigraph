@@ -23,8 +23,8 @@ import ws.epigraph.projections.gen.ProjectionReferenceName
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqProjectionShouldRunStrategy(
-  gen: AbstractReqTypeProjectionGen,
-  generatedProjections: java.util.Map[ProjectionReferenceName, AbstractReqTypeProjectionGen]
+  gen: ReqTypeProjectionGen,
+  generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen]
 ) extends ShouldRunStrategy {
 
   override def checkAndMark: Boolean = generatedProjections.synchronized {

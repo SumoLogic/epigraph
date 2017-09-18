@@ -90,6 +90,17 @@
 
 # Operations
 
+# Projections refactoring
+- [ ] sort out 'path steps' for input/output projections
+- [ ] format factories: remove duplicating ones
+- [ ] fix todo in
+  - [x] SchemaProjectionPsiParserUtil
+  - [ ] OperationsPsiParser
+  - [ ] ResourcesSchemaPsiParser
+  - [ ] OpInputProjectionsPsiParser
+- [ ] clean up *ProcessingContext classes | don't bother, they're going away?
+- [ ] unify req projections codegens
+
 # Service
 
 # Build
@@ -103,6 +114,7 @@
   - [x] gradle
 
 - Cleanup
+  - [ ] check out artifactory-tools to clean up old light-psi versions
   - [x] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
         Because, e.g. map[Foo, Bar] extends map[Foo, BarSuper1], map[Foo, BarSuper2], etc.
   - [ ] DataType(Api): type should be EntityType ?
