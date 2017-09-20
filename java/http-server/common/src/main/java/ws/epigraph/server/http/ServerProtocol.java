@@ -26,7 +26,6 @@ import ws.epigraph.invocation.InvocationError;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.schema.operations.OperationKind;
 
 import java.io.IOException;
@@ -45,7 +44,7 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
 
   Data readUpdateInput(
       @NotNull OpOutputVarProjection opInputProjection,
-      @Nullable ReqUpdateVarProjection reqUpdateProjection,
+      @Nullable ReqEntityProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 

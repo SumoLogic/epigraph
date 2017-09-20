@@ -36,7 +36,6 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.printReqEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 

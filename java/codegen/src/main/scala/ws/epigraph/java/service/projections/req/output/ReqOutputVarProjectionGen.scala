@@ -19,7 +19,8 @@ package ws.epigraph.java.service.projections.req.output
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.assemblers.EntityAsmGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqVarProjectionGen}
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.output._
@@ -49,7 +50,7 @@ class ReqOutputVarProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
-  override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean) =
+  override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean): ReqOutputVarProjectionGen =
     new ReqOutputVarProjectionGen(
       baseNamespaceProvider,
       op,
@@ -84,6 +85,16 @@ class ReqOutputVarProjectionGen(
   override lazy val children: Iterable[JavaGen] =
     if (tagGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/ ) super.children
     else super.children ++ Iterable(new EntityAsmGen(this, ctx))
+
+  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  /**
+   * @return {@code true} if entity is requried
+   */
+  public boolean required() {
+    return raw.flagged();
+  }
+"""/*@formatter:on*/
+  )
 
 }
 

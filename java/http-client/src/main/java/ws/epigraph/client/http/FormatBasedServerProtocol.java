@@ -36,7 +36,6 @@ import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.IOUtil;
@@ -53,10 +52,8 @@ import java.util.function.Function;
 public class FormatBasedServerProtocol implements ServerProtocol {
   private static final Logger LOG = LoggerFactory.getLogger(FormatBasedServerProtocol.class);
 
-  private final @NotNull FormatReader.Factory<? extends ReqFormatReader> reqOutputReaderFactory;
-  private final @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqInputWriterFactory;
-  private final @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory;
-  private final @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory;
+  private final @NotNull FormatReader.Factory<? extends ReqFormatReader> reqReaderFactory;
+  private final @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqWriterFactory;
   private final @NotNull FormatWriter.Factory<? extends OpFormatWriter> opWriterFactory;
 
   private final @NotNull Charset requestCharset; //charset to be used for requests
@@ -69,10 +66,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
     this.requestCharset = requestCharset;
 
-    reqOutputReaderFactory = formatFactories.reqOutputReaderFactory();
-    reqInputWriterFactory = formatFactories.reqInputWriterFactory();
-    reqUpdateWriterFactory = formatFactories.reqUpdateWriterFactory();
-    opInputWriterFactory = formatFactories.opInputWriterFactory();
+    reqReaderFactory = formatFactories.reqReaderFactory();
+    reqWriterFactory = formatFactories.reqWriterFactory();
     opWriterFactory = formatFactories.opWriterFactory();
     typesResolver = resolver;
   }
@@ -81,7 +76,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   public @NotNull String[] mimeTypes() {
     // here we assume that all formatFactories use the same format, i.e. we don't mix json/xml
     return new String[]{
-        reqOutputReaderFactory.format().mimeType(),
+        reqReaderFactory.format().mimeType(),
         MimeTypes.TEXT // for plain text messages
     };
   }
@@ -97,7 +92,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     final String mimeType;
 
     if (reqInputProjection == null) {
-      mimeType = opInputWriterFactory.format().mimeType();
+      mimeType = opWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
@@ -106,10 +101,10 @@ public class FormatBasedServerProtocol implements ServerProtocol {
         cos.close();
       };
     } else {
-      mimeType = reqInputWriterFactory.format().mimeType();
+      mimeType = reqWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
-        ReqFormatWriter writer = reqInputWriterFactory.newFormatWriter(cos, requestCharset);
+        ReqFormatWriter writer = reqWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(reqInputProjection, inputData);
         writer.close();
         cos.close();
@@ -124,7 +119,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer updateRequestContentProducer(
-      final @Nullable ReqUpdateVarProjection reqUpdateProjection,
+      final @Nullable ReqEntityProjection reqUpdateProjection,
       final @NotNull OpOutputVarProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
@@ -133,7 +128,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
     final String mimeType;
 
     if (reqUpdateProjection == null) {
-      mimeType = opInputWriterFactory.format().mimeType();
+      mimeType = opWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
@@ -142,10 +137,10 @@ public class FormatBasedServerProtocol implements ServerProtocol {
         cos.close();
       };
     } else {
-      mimeType = reqUpdateWriterFactory.format().mimeType();
+      mimeType = reqWriterFactory.format().mimeType();
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
-        ReqUpdateFormatWriter writer = reqUpdateWriterFactory.newFormatWriter(cos, requestCharset);
+        ReqFormatWriter writer = reqWriterFactory.newFormatWriter(cos, requestCharset);
         writer.writeData(reqUpdateProjection, inputData);
         writer.close();
         cos.close();
@@ -185,7 +180,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       if (statusCode == okStatusCode) { // should we support multiple options here? Or accept any 2xx?
         try (InputStream inputStream = httpResponse.getEntity().getContent()) {
           ReqFormatReader formatReader =
-              reqOutputReaderFactory.newFormatReader(inputStream, charset, typesResolver);
+              reqReaderFactory.newFormatReader(inputStream, charset, typesResolver);
 
           Data data = formatReader.readData(projection);
           return InvocationResult.success(new ReadOperationResponse<>(data));
@@ -242,7 +237,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
     String string = textBuilder.toString();
     try {
-      ReqFormatReader formatReader = reqOutputReaderFactory.newFormatReader(
+      ReqFormatReader formatReader = reqReaderFactory.newFormatReader(
           new ByteArrayInputStream(string.getBytes(charset)), charset, typesResolver
       );
       return formatReader.readError();

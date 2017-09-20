@@ -26,7 +26,6 @@ import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -408,7 +407,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlCreateUrl urlPsi = parseCreateUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -429,7 +428,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          @NotNull CreateRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
@@ -483,16 +482,16 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull UrlCreateUrl parseCreateUrlPsi(
+  private @NotNull UrlNonReadUrl parseNonReadUrlPsi(
       @NotNull String urlString,
       @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
       @NotNull C context) {
 
-    UrlCreateUrl urlPsi = EpigraphPsiUtil.parseText(
+    UrlNonReadUrl urlPsi = EpigraphPsiUtil.parseText(
         urlString,
-        UrlSubParserDefinitions.CREATE_URL.rootElementType(),
-        UrlCreateUrl.class,
-        UrlSubParserDefinitions.CREATE_URL,
+        UrlSubParserDefinitions.NON_READ_URL.rootElementType(),
+        UrlNonReadUrl.class,
+        UrlSubParserDefinitions.NON_READ_URL,
         errorsAccumulator
     );
 
@@ -507,8 +506,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlCreateUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>, CreateRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlNonReadUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>, NonReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -561,7 +560,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlUpdateUrl urlPsi = parseUpdateUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -582,8 +581,11 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          @NotNull UpdateRequestUrl requestUrl = operationSearchResult.requestUrl();
-          @Nullable ReqUpdateFieldProjection updateProjection = requestUrl.updateProjection();
+          @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection = requestUrl.inputProjection();
+          @Nullable ReqFieldProjection updateProjection =
+              updateStepsAndProjection == null ? null : updateStepsAndProjection.projection();
+
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull UpdateOperation<Data> operation = operationSearchResult.operation();
@@ -636,32 +638,13 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull UrlUpdateUrl parseUpdateUrlPsi(
-      @NotNull String urlString,
-      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
-      @NotNull C context) {
-
-    UrlUpdateUrl urlPsi = EpigraphPsiUtil.parseText(
-        urlString,
-        UrlSubParserDefinitions.UPDATE_URL.rootElementType(),
-        UrlUpdateUrl.class,
-        UrlSubParserDefinitions.UPDATE_URL,
-        errorsAccumulator
-    );
-
-    if (context.isDebug())
-      context.logger().info(Util.dumpUrl(urlPsi));
-
-    return urlPsi;
-  }
-
   @SuppressWarnings("unchecked")
   private <R> CompletionStage<InvocationResult<R>> withUpdateOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlUpdateUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, UpdateRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlNonReadUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, NonReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -842,7 +825,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlCustomUrl urlPsi = parseCustomUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -857,10 +840,10 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           )
       );
 
-    CustomRequestUrl requestUrl = null;
+    NonReadRequestUrl requestUrl = null;
     PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
     try {
-      requestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
+      requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
           resource.declaration().fieldType(),
           operation.declaration(),
           urlPsi,
@@ -930,25 +913,6 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
             outputProjection.projection().varProjection()
         )
     ));
-  }
-
-  private @NotNull UrlCustomUrl parseCustomUrlPsi(
-      @NotNull String urlString,
-      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
-      @NotNull C context) {
-
-    UrlCustomUrl urlPsi = EpigraphPsiUtil.parseText(
-        urlString,
-        UrlSubParserDefinitions.CUSTOM_URL.rootElementType(),
-        UrlCustomUrl.class,
-        UrlSubParserDefinitions.CUSTOM_URL,
-        errorsAccumulator
-    );
-
-    if (context.isDebug())
-      context.logger().info(Util.dumpUrl(urlPsi));
-
-    return urlPsi;
   }
 
   // ---------------------------------

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.update;
+package ws.epigraph.url.projections.req.input;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -35,16 +35,14 @@ import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdateProjectionsParserTest {
+public class ReqInputProjectionParserTest {
   private final DataType dataType = new DataType(Person.type, Person.id);
   private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
@@ -61,7 +59,7 @@ public class ReqUpdateProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String,",
+          "      ;param1 : epigraph.String",
           "    },",
           "    bestFriend :(+id, `record` (",
           "      +id,",
@@ -72,9 +70,8 @@ public class ReqUpdateProjectionsParserTest {
           "    )),",
           "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
-          "    worstEnemy ( id ),",
           "    friends *( :id ),",
-          "    friendsMap [ ;param: epigraph.String ]( :(id, `record` (id, firstName) ) )",
+          "    friendsMap []( :(id, `record` (id, firstName) ) )",
           "  ) ~ws.epigraph.tests.UserRecord (profile)",
           ") :~ws.epigraph.tests.User :`record` (profile)"
       )
@@ -82,38 +79,37 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseIdTag() {
-    testParse(":id", ":+id");
+    testParse(":id");
   }
 
   @Test
   public void testParseRecordTag() {
-    testParse(":record", ":record");
+    testParse(":record");
   }
 
   @Test
   public void testParseMultiTag() {
-    testParse(":(id,record)", ":( +id, record )");
+    testParse(":(id,record)", ":( id, record )");
   }
 
   @Test
   public void testParseRecord() {
-    testParse(":record ( +id ;param1 = 'foo' )");
+    testParse(":record ( id ;param1 = 'foo', friends *( :id ) )");
   }
 
   @Test
   public void testParseMap() {
-    testParse(
-        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )",
-        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )"
-    );
+    testParse(":record ( friendsMap [ '1', '2', '3' ]( :id ) )");
+  }
+
+  @Test
+  public void testParseMapEmptyKeys() {
+    testParse(":record ( friendsMap []( :id ) )");
   }
 
   @Test
   public void testParseList() {
-    testParse(
-        ":record ( friends *( :id ) )",
-        ":record ( friends *( :+id ) )"
-    );
+    testParse(":record ( friends *( :id ) )");
   }
 
   @Test
@@ -130,54 +126,27 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseRecursive() {
-    testParse(
-        ":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )",
-        ":( +id, record ( +id, bestFriend2 $bf2 = :record ( +id, bestFriend2 $bf2 ) ) )"
-    );
+    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )");
   }
 
   @Test
   public void testParseRecursiveDifferentOpRecursion() {
-    testParse(
-        ":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )",
-        ":( +id, record ( +id, bestFriend3 $bf3 = :record ( +id, bestFriend3 $bf3 ) ) )"
-    );
-  }
-
-  @Test
-  public void testUpdateField() {
-    testParse(":record ( +bestFriend :id )");
-  }
-
-  @Test
-  public void testUpdateModel() {
-    testParse(
-        ":+record ( id )",
-        ":+record ( id )"
-    );
-  }
-
-  @Test
-  public void testUpdateDefaultModel() {
-    testParse(
-        ":record ( worstEnemy ( id ) )",
-        ":record ( worstEnemy ( +id ) )"
-    );
+    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )");
   }
 
   @Test
   public void testParseTail() {
     testParse(
         ":id :~User :record ( profile )",
-        ":+id :~ws.epigraph.tests.User :record ( +profile )"
+        ":id :~ws.epigraph.tests.User :record ( profile )"
     );
   }
 
   @Test
   public void testParseModelTail() {
     testParse(
-        ":record (id) ~+UserRecord (profile)",
-        ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( profile )"
+        ":record (id) ~UserRecord (profile)",
+        ":record ( id ) ~ws.epigraph.tests.UserRecord ( profile )"
     );
   }
 
@@ -195,10 +164,7 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testRequiredPresent() {
-    testParse(
-        ":record ( bestFriend :( id, record ( id ) ) )",
-        ":record ( bestFriend :( +id, record ( +id ) ) )"
-    );
+    testParse(":record ( bestFriend :( id, record ( id ) ) )");
   }
 
   private void testParse(String expr) {
@@ -218,6 +184,7 @@ public class ReqUpdateProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
+
         ReqOutputReferenceContext referenceContext = new ReqOutputReferenceContext(
             ProjectionReferenceName.EMPTY, null, context
         );
@@ -225,7 +192,7 @@ public class ReqUpdateProjectionsParserTest {
         ReqOutputPsiProcessingContext psiProcessingContext =
             new ReqOutputPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqUpdateProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqInputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
             dataType,
             false,
             personOpProjection,
@@ -237,9 +204,7 @@ public class ReqUpdateProjectionsParserTest {
         referenceContext.ensureAllReferencesResolved();
 
         return vp;
-
       });
-
       fail();
     } catch (PsiProcessingException ignored) {
     }
@@ -247,7 +212,7 @@ public class ReqUpdateProjectionsParserTest {
 
   private void testParse(String expr, String expectedProjection) {
     final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
-        ReqTestUtil.parseReqUpdateVarProjection(dataType, personOpProjection, expr, resolver);
+        ReqTestUtil.parseReqInputVarProjection(dataType, personOpProjection, expr, resolver);
 
     String s = TestUtil.printReqEntityProjection(varProjection);
 

@@ -30,16 +30,5 @@ public interface FormatFactories {
 
   @NotNull FormatReader.Factory<? extends ReqFormatReader> reqReaderFactory();
 
-  @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory();
-
-  @NotNull FormatReader.Factory<? extends ReqFormatReader> reqOutputReaderFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqOutputWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqInputWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory();
-
+  @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqWriterFactory();
 }

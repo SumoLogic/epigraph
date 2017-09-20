@@ -28,7 +28,6 @@ import ws.epigraph.invocation.InvocationError;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
@@ -93,7 +92,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public Data readUpdateInput(
       @NotNull OpOutputVarProjection opInputProjection,
-      @Nullable ReqUpdateVarProjection reqUpdateProjection,
+      @Nullable ReqEntityProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
@@ -107,7 +106,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
              ? factories.opReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(opInputProjection)
-             : factories.reqUpdateReaderFactory()
+             : factories.reqReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
                  .readData(reqUpdateProjection);
     } catch (FormatException e) {
@@ -222,7 +221,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
     try {
       FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
-      FormatWriter.Factory<? extends ReqFormatWriter> writerFactory = factories.reqOutputWriterFactory();
+      FormatWriter.Factory<? extends ReqFormatWriter> writerFactory = factories.reqWriterFactory();
 
       httpExchange.setStatusCode(statusCode);
       httpExchange.setHeaders(Collections.singletonMap(

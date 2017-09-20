@@ -49,7 +49,7 @@ class ReqUpdateVarProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
-  override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean) =
+  override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean): ReqUpdateVarProjectionGen =
     new ReqUpdateVarProjectionGen(
       baseNamespaceProvider,
       op,
@@ -81,19 +81,14 @@ class ReqUpdateVarProjectionGen(
       ctx
     )
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateVarProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateTagProjectionEntry"),
-
-    CodeChunk(/*@formatter:off*/sn"""\
+  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if entity must be replaced (updated), and {@code false} if it must be patched
    */
   public boolean replace() {
-    return raw.replace();
+    return raw.flagged();
   }
 """/*@formatter:on*/
-    )
   )
 }
 

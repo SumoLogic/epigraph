@@ -210,7 +210,7 @@ public final class ReqBasicProjectionPsiParser {
 
       StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
           opModelProjection,
-          flagged || singleTagProjectionPsi.getPlus() != null,
+          singleTagProjectionPsi.getPlus() != null,
           parseReqParams(
               singleTagProjectionPsi.getReqParamList(),
               opModelProjection.params(),
@@ -507,7 +507,7 @@ public final class ReqBasicProjectionPsiParser {
         final ReqModelProjection<?, ?, ?> parsedModelProjection = parseComaModelProjection(
             ReqModelProjection.class,
             opModelProjection,
-            flagged || singleTagProjectionPsi.getPlus() != null,
+            singleTagProjectionPsi.getPlus() != null,
             parseReqParams(
                 singleTagProjectionPsi.getReqParamList(),
                 opModelProjection.params(),
@@ -560,7 +560,7 @@ public final class ReqBasicProjectionPsiParser {
           )
       );
     } catch (Exception e) {
-      throw new PsiProcessingException(e, psi, context);
+      throw new PsiProcessingException(e.toString(), psi, context);
     }
   }
 

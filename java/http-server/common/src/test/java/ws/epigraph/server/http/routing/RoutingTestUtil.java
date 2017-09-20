@@ -26,6 +26,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.service.operations.Operation;
+import ws.epigraph.url.parser.UrlSubParserDefinitions;
+import ws.epigraph.url.parser.psi.UrlNonReadUrl;
 
 import java.util.List;
 import java.util.Map;
@@ -84,5 +86,19 @@ public final class RoutingTestUtil {
 
       fail(msg.toString());
     }
+  }
+
+  static @NotNull UrlNonReadUrl parseNonReadUrl(@NotNull String url) {
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    UrlNonReadUrl urlPsi = EpigraphPsiUtil.parseText(
+        url,
+        UrlSubParserDefinitions.NON_READ_URL,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(urlPsi, errorsAccumulator);
+
+    return urlPsi;
   }
 }

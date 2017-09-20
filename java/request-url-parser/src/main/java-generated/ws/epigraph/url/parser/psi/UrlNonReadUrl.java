@@ -21,12 +21,24 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqUpdateUnnamedOrRefVarProjection extends PsiElement {
+public interface UrlNonReadUrl extends UrlUrl {
 
   @Nullable
-  UrlReqUpdateUnnamedVarProjection getReqUpdateUnnamedVarProjection();
+  UrlInputProjection getInputProjection();
 
   @Nullable
-  UrlReqUpdateVarProjectionRef getReqUpdateVarProjectionRef();
+  UrlOutputProjection getOutputProjection();
+
+  @NotNull
+  UrlQid getQid();
+
+  @NotNull
+  UrlReqFieldPath getReqFieldPath();
+
+  @NotNull
+  List<UrlRequestParam> getRequestParamList();
+
+  @NotNull
+  PsiElement getSlash();
 
 }

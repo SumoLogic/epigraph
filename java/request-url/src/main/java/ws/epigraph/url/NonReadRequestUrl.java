@@ -29,10 +29,10 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateRequestUrl extends RequestUrl {
+public class NonReadRequestUrl extends RequestUrl {
   private final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection;
 
-  public CreateRequestUrl(
+  public NonReadRequestUrl(
       final @NotNull String fieldName,
       final @Nullable ReqFieldPath path,
       final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection,
@@ -49,7 +49,7 @@ public class CreateRequestUrl extends RequestUrl {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final CreateRequestUrl url = (CreateRequestUrl) o;
+    final NonReadRequestUrl url = (NonReadRequestUrl) o;
     return Objects.equals(inputProjection, url.inputProjection);
   }
 

@@ -85,9 +85,9 @@ class ReqUpdateRecordModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateRecordModelProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateFieldProjectionEntry"),
-    replace
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateRecordModelProjection"),
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateFieldProjectionEntry"),
+//    replace
+//  )
 }

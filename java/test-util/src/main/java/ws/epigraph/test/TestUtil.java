@@ -32,8 +32,6 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
@@ -46,8 +44,6 @@ import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqVarPath;
-import ws.epigraph.projections.req.update.ReqUpdateProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.psi.*;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemaPrettyPrinter;
@@ -324,29 +320,11 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqUpdateVarProjection(@NotNull ReqUpdateVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
   public static @NotNull String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer = new ReqDeleteProjectionsPrettyPrinter<>(layouter);
     printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printOpInputVarProjection(@NotNull OpInputVarProjection projection, int pathSteps) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, pathSteps);
     layouter.close();
     return sb.getString();
   }

@@ -99,6 +99,7 @@ public final class DeleteRequestUrlPsiParser {
             opOutputType.dataType(),
             op.outputProjection(),
             psi.getReqOutputTrunkFieldProjection(),
+            false,
             ReqOutputProjectionPsiParser.INSTANCE,
             newResolver,
             context
@@ -148,6 +149,7 @@ public final class DeleteRequestUrlPsiParser {
             op.outputType().dataType(),
             op.outputProjection(),
             fieldProjectionPsi,
+            false,
             ReqOutputProjectionPsiParser.INSTANCE,
             newResolver,
             context

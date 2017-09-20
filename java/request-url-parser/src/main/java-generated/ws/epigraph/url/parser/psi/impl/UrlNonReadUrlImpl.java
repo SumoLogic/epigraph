@@ -24,17 +24,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static ws.epigraph.url.lexer.UrlElementTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqUpdateUnnamedOrRefVarProjectionImpl extends ASTWrapperPsiElement implements UrlReqUpdateUnnamedOrRefVarProjection {
+public class UrlNonReadUrlImpl extends UrlUrlImpl implements UrlNonReadUrl {
 
-  public UrlReqUpdateUnnamedOrRefVarProjectionImpl(ASTNode node) {
+  public UrlNonReadUrlImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqUpdateUnnamedOrRefVarProjection(this);
+    visitor.visitNonReadUrl(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,14 +43,38 @@ public class UrlReqUpdateUnnamedOrRefVarProjectionImpl extends ASTWrapperPsiElem
 
   @Override
   @Nullable
-  public UrlReqUpdateUnnamedVarProjection getReqUpdateUnnamedVarProjection() {
-    return findChildByClass(UrlReqUpdateUnnamedVarProjection.class);
+  public UrlInputProjection getInputProjection() {
+    return findChildByClass(UrlInputProjection.class);
   }
 
   @Override
   @Nullable
-  public UrlReqUpdateVarProjectionRef getReqUpdateVarProjectionRef() {
-    return findChildByClass(UrlReqUpdateVarProjectionRef.class);
+  public UrlOutputProjection getOutputProjection() {
+    return findChildByClass(UrlOutputProjection.class);
+  }
+
+  @Override
+  @NotNull
+  public UrlQid getQid() {
+    return findNotNullChildByClass(UrlQid.class);
+  }
+
+  @Override
+  @NotNull
+  public UrlReqFieldPath getReqFieldPath() {
+    return findNotNullChildByClass(UrlReqFieldPath.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlRequestParam> getRequestParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlRequestParam.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getSlash() {
+    return findNotNullChildByType(U_SLASH);
   }
 
 }

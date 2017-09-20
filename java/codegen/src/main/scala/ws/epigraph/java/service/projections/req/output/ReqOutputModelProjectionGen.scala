@@ -18,6 +18,7 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.ln
+import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
@@ -57,6 +58,16 @@ abstract class ReqOutputModelProjectionGen(
 //    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
+
+  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  /**
+   * @return {@code true} if model is required
+   */
+  public boolean requried() {
+    return raw.flagged();
+  }
+"""/*@formatter:on*/
+  )
 
   override protected def metaGenerator(metaOp: OpMetaProjectionType): ReqOutputModelProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(

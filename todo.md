@@ -34,8 +34,9 @@
         }
     ```
     Figure out injections: how to add annotations to existing types/fields.
-- [ ] req output projections codegen: use `ImportManager` to get more readable projections code
-- [ ] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
+- [ ] codegen: need better framework for generating imports and imported names
+- [x] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
+- [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 
 
 # Type system
@@ -94,6 +95,7 @@
 - [ ] sort out 'path steps' for input/output projections
 - [ ] format factories: remove duplicating ones
 - [ ] fix todo in
+  - [ ] url.bnf (`+` in request)
   - [x] SchemaProjectionPsiParserUtil
   - [ ] OperationsPsiParser
   - [ ] ResourcesSchemaPsiParser

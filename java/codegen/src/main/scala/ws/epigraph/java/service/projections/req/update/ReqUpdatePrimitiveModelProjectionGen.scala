@@ -59,9 +59,9 @@ class ReqUpdatePrimitiveModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdatePrimitiveModelProjection"),
-    replace
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdatePrimitiveModelProjection"),
+//    replace
+//  )
 
 }

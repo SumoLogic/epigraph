@@ -20,11 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.wire.*;
 import ws.epigraph.wire.json.reader.OpJsonFormatReader;
 import ws.epigraph.wire.json.reader.ReqJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.OpInputJsonFormatWriter;
 import ws.epigraph.wire.json.writer.OpJsonFormatWriter;
 import ws.epigraph.wire.json.writer.ReqJsonFormatWriter;
-import ws.epigraph.wire.json.writer.ReqUpdateJsonFormatWriter;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -48,33 +45,8 @@ public class JsonFormatFactories implements FormatFactories {
   }
 
   @Override
-  public @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory() {
-    return new ReqUpdateJsonFormatReader.Factory();
-  }
-
-  @Override
-  public @NotNull FormatReader.Factory<? extends ReqFormatReader> reqOutputReaderFactory() {
-    return new ReqJsonFormatReader.Factory();
-  }
-
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqOutputWriterFactory() {
+  public @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqWriterFactory() {
     return new ReqJsonFormatWriter.ReqJsonFormatWriterFactory();
   }
 
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqInputWriterFactory() {
-    return new ReqJsonFormatWriter.ReqJsonFormatWriterFactory();
-  }
-
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory() {
-    return new ReqUpdateJsonFormatWriter.ReqUpdateJsonFormatWriterFactory();
-  }
-
-  @Override
-  @Deprecated
-  public @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory() {
-    return new OpInputJsonFormatWriter.OpInputJsonFormatWriterFactory();
-  }
 }

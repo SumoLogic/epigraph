@@ -29,4 +29,7 @@ public interface UrlInputProjection extends PsiElement {
   @NotNull
   PsiElement getAngleLeft();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

@@ -51,8 +51,8 @@ class ReqUpdateFieldProjectionGen(
       ctx
     )
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateFieldProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateFieldProjection")
+//  )
 
 }

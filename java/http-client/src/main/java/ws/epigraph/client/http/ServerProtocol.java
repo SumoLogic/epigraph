@@ -24,7 +24,6 @@ import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
 /**
@@ -51,7 +50,7 @@ public interface ServerProtocol {
       @NotNull OperationInvocationContext operationInvocationContext);
 
   HttpContentProducer updateRequestContentProducer(
-      @Nullable ReqUpdateVarProjection reqInputProjection,
+      @Nullable ReqEntityProjection reqInputProjection,
       @NotNull OpOutputVarProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);

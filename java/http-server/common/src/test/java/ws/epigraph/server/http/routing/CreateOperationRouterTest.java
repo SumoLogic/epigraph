@@ -22,7 +22,6 @@ import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -37,9 +36,7 @@ import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.CreateRequestUrl;
-import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlCreateUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,9 +44,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.*;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.failIfSearchFailure;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.parseIdl;
-import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.server.http.routing.RoutingTestUtil.*;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -245,11 +240,11 @@ public class CreateOperationRouterTest {
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull CreateRequestUrl createRequestUrl = s.requestUrl();
+    final @NotNull NonReadRequestUrl createRequestUrl = s.requestUrl();
     final ReqFieldPath path = createRequestUrl.path();
 
     if (expectedPath == null)
@@ -283,17 +278,17 @@ public class CreateOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl>
+  private OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
     final @NotNull OperationSearchResult<CreateOperation<?>> oss = CreateOperationRouter.INSTANCE.findOperation(
         null,
-        parseCreateUrl(url),
+        parseNonReadUrl(url),
         resource, resolver
     );
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends CreateOperation<?>, CreateRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl>) oss;
   }
 
   private class OpImpl extends CreateOperation<PersonId_Person_Map.Data> {
@@ -314,17 +309,4 @@ public class CreateOperationRouterTest {
     }
   }
 
-  private static @NotNull UrlCreateUrl parseCreateUrl(@NotNull String url) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlCreateUrl urlPsi = EpigraphPsiUtil.parseText(
-        url,
-        UrlSubParserDefinitions.CREATE_URL,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
-  }
 }

@@ -45,7 +45,7 @@ public abstract class GenProjectionTransformer<
 
   private GenProjectionTransformationMap<VP, MP> transformationMap = null;
 
-  void reset() {
+  public void reset() {
     transformedEntitiesCache.clear();
     transformedModelsCache.clear();
     visited.clear();

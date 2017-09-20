@@ -41,7 +41,7 @@ import java.util.Map;
 public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   // logic here is similar to OpRequiredSynchronizer, keep them in sync todo extract common code
 
-  private final @NotNull PsiProcessingContext context;
+  protected final @NotNull PsiProcessingContext context;
 
   private final Map<ReqModelProjection<?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
@@ -73,12 +73,52 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       );
     }
 
-    // todo should we also mark entity as required if self- or retro- tag is marked as requried?
-
     return super.transformResolved(projection, dataType);
   }
 
-  private boolean flagModel(@NotNull ReqModelProjection<?, ?, ?> modelProjection) {
+  @Override
+  protected ReqEntityProjection transformVarProjection(
+      final @NotNull ReqEntityProjection varProjection,
+      final @Nullable DataTypeApi dataType,
+      final @NotNull Map<String, ReqTagProjectionEntry> transformedTagProjections,
+      final @Nullable List<ReqEntityProjection> transformedTails,
+      final boolean mustRebuild) {
+
+    TagApi retroTag = dataType == null ? null : dataType.defaultTag();
+    @Nullable ReqTagProjectionEntry tp = null;
+    if (retroTag != null)
+      tp = varProjection.tagProjection(retroTag.name());
+    else if (varProjection.type().kind() != TypeKind.ENTITY)
+      tp = varProjection.singleTagProjection();
+
+    // this is either a self-var and model projection is flagged
+    // or we have a retro tag and it's model is flagged
+    boolean modelFlagged = tp != null && tp.projection().flagged();
+
+    if (!varProjection.flagged() && modelFlagged) {
+      ReqEntityProjection newProjection = new ReqEntityProjection(
+          varProjection.type(),
+          true,
+          transformedTagProjections,
+          varProjection.parenthesized(),
+          transformedTails,
+          varProjection.location()
+      );
+
+      fixTransformedEntity(varProjection, newProjection);
+      return newProjection;
+    } else {
+      return super.transformVarProjection(
+          varProjection,
+          dataType,
+          transformedTagProjections,
+          transformedTails,
+          mustRebuild
+      );
+    }
+  }
+
+  protected boolean flagModel(@NotNull ReqModelProjection<?, ?, ?> modelProjection) {
     if (modelProjection.flagged()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);

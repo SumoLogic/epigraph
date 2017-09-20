@@ -29,8 +29,6 @@ import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
-import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
-import ws.epigraph.projections.req.update.ReqUpdateProjectionsPrettyPrinter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -64,12 +62,12 @@ public final class UriComposer {
     final String decodedUri;
 
     if (path == null)
-      decodedUri = printReqOutputProjection(fieldName, projection);
+      decodedUri = printReqProjection(fieldName, projection);
     else {
       // see ReadRequestUrlPsiParser::parseReadRequestUrlWithPath
 
       String pathStr = printReqPath(fieldName, path);
-      String varStr = printReqOutputProjection(projection.varProjection());
+      String varStr = printReqProjection(projection.varProjection());
 
       decodedUri = pathStr + varStr;
     }
@@ -91,10 +89,10 @@ public final class UriComposer {
       decodedUri.append(printReqPath(fieldName, path));
 
     if (inputProjection != null) {
-      decodedUri.append('<').append(printReqInputProjection(inputProjection));
+      decodedUri.append('<').append(printReqProjection(inputProjection));
     }
 
-    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -102,7 +100,7 @@ public final class UriComposer {
   public static @NotNull String composeUpdateUri(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
-      @Nullable ReqUpdateFieldProjection updateProjection,
+      @Nullable ReqFieldProjection updateProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
@@ -113,10 +111,10 @@ public final class UriComposer {
       decodedUri.append(printReqPath(fieldName, path));
 
     if (updateProjection != null) {
-      decodedUri.append('<').append(printReqUpdateProjection(updateProjection));
+      decodedUri.append('<').append(printReqProjection(updateProjection));
     }
 
-    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -136,7 +134,7 @@ public final class UriComposer {
 
     decodedUri.append('<').append(printReqDeleteProjection(deleteProjection));
 
-    decodedUri.append('>').append(printReqOutputProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -155,11 +153,11 @@ public final class UriComposer {
     return "/" + new String(urlBytes, StandardCharsets.UTF_8);
   }
 
-  private static @NotNull String printReqOutputProjection(@NotNull ReqFieldProjection projection) {
-    return printReqOutputProjection(projection.varProjection());
+  private static @NotNull String printReqProjection(@NotNull ReqFieldProjection projection) {
+    return printReqProjection(projection.varProjection());
   }
 
-  private static @NotNull String printReqOutputProjection(
+  private static @NotNull String printReqProjection(
       @NotNull String fieldName,
       @NotNull ReqFieldProjection projection) {
 
@@ -183,7 +181,7 @@ public final class UriComposer {
     return sb.getString();
   }
 
-  private static @NotNull String printReqOutputProjection(
+  private static @NotNull String printReqProjection(
       @NotNull ReqEntityProjection projection) {
 
     StringBackend sb = new StringBackend(2000);
@@ -226,50 +224,6 @@ public final class UriComposer {
         };
 
     printer.print(fieldName, path);
-
-    return sb.getString();
-  }
-
-  private static @NotNull String printReqInputProjection(@NotNull ReqFieldProjection projection) {
-
-    StringBackend sb = new StringBackend(2000);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-
-    ReqProjectionsPrettyPrinter<NoExceptions> printer =
-        new ReqProjectionsPrettyPrinter<NoExceptions>(layouter) {
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
-        };
-
-    printer.printVar(projection.varProjection(), 0);
-
-    return sb.getString();
-  }
-
-  private static @NotNull String printReqUpdateProjection(@NotNull ReqUpdateFieldProjection projection) {
-
-    StringBackend sb = new StringBackend(2000);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-
-    ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer =
-        new ReqUpdateProjectionsPrettyPrinter<NoExceptions>(layouter) {
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
-        };
-
-    printer.printVar(projection.varProjection(), 0);
 
     return sb.getString();
   }

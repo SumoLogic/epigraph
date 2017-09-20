@@ -52,8 +52,9 @@ public class ReqEntityProjection extends AbstractVarProjection<
     if (tagProjections.size() > 1 && !parenthesized)
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
 
-    //noinspection ConstantConditions
-    this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
+    ReqTagProjectionEntry singleTagProjection = singleTagProjection();
+    this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection != null &&
+                               singleTagProjection.projection().flagged());
   }
 
   public ReqEntityProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {

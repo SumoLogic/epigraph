@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-// This is a generated file. Not intended for manual editing.
-package ws.epigraph.url.parser.psi;
+package ws.epigraph.url.projections.req.update;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
+import ws.epigraph.url.projections.req.postprocess.ReqRequiredChecker;
 
-public interface UrlReqUpdateUnnamedVarProjection extends PsiElement {
+/**
+ * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ */
+public final class ReqUpdateProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
+  public static final ReqUpdateProjectionPsiParser INSTANCE = new ReqUpdateProjectionPsiParser();
 
-  @Nullable
-  UrlReqUpdateMultiTagProjection getReqUpdateMultiTagProjection();
-
-  @Nullable
-  UrlReqUpdateSingleTagProjection getReqUpdateSingleTagProjection();
-
-  @Nullable
-  UrlReqUpdateVarPolymorphicTail getReqUpdateVarPolymorphicTail();
-
+  private ReqUpdateProjectionPsiParser() {
+    super(ReqRequiredChecker::new, ReqUpdatePostProcessor::new);
+  }
 }

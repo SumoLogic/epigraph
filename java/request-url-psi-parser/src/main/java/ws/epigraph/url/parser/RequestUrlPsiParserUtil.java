@@ -44,6 +44,7 @@ public final class RequestUrlPsiParserUtil {
       final @NotNull DataTypeApi dataType,
       final @NotNull OpOutputFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
+      final boolean flagged,
       final @NotNull ReqProjectionPsiParser psiParser,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -62,7 +63,7 @@ public final class RequestUrlPsiParserUtil {
               psiParser.createDefaultVarProjection(
                   dataType,
                   op.varProjection(),
-                  false,
+                  flagged,
                   PsiUtil.NULL_PSI_ELEMENT,
                   reqOutputPsiProcessingContext
               ),
@@ -73,7 +74,7 @@ public final class RequestUrlPsiParserUtil {
       final StepsAndProjection<ReqFieldProjection> fieldStepsAndProjection =
           psiParser.parseTrunkFieldProjection(
               dataType,
-              false, // ?
+              flagged,
               op,
               psi,
               resolver,

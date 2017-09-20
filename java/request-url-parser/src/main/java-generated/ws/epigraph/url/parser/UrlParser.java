@@ -48,12 +48,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_ANON_MAP) {
       r = anonMap(b, 0);
     }
-    else if (t == U_CREATE_URL) {
-      r = createUrl(b, 0);
-    }
-    else if (t == U_CUSTOM_URL) {
-      r = customUrl(b, 0);
-    }
     else if (t == U_DATA) {
       r = data(b, 0);
     }
@@ -86,6 +80,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_MAP_DATUM_ENTRY) {
       r = mapDatumEntry(b, 0);
+    }
+    else if (t == U_NON_READ_URL) {
+      r = nonReadUrl(b, 0);
     }
     else if (t == U_NULL_DATUM) {
       r = nullDatum(b, 0);
@@ -315,78 +312,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_RECORD_MODEL_PATH) {
       r = reqRecordModelPath(b, 0);
     }
-    else if (t == U_REQ_UPDATE_FIELD_PROJECTION) {
-      r = reqUpdateFieldProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_FIELD_PROJECTION_ENTRY) {
-      r = reqUpdateFieldProjectionEntry(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_KEY_PROJECTION) {
-      r = reqUpdateKeyProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_KEYS_PROJECTION) {
-      r = reqUpdateKeysProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_LIST_MODEL_PROJECTION) {
-      r = reqUpdateListModelProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MAP_MODEL_PROJECTION) {
-      r = reqUpdateMapModelProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MODEL_MULTI_TAIL) {
-      r = reqUpdateModelMultiTail(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM) {
-      r = reqUpdateModelMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL) {
-      r = reqUpdateModelPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MODEL_PROJECTION) {
-      r = reqUpdateModelProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MODEL_SINGLE_TAIL) {
-      r = reqUpdateModelSingleTail(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MULTI_TAG_PROJECTION) {
-      r = reqUpdateMultiTagProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM) {
-      r = reqUpdateMultiTagProjectionItem(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_NAMED_VAR_PROJECTION) {
-      r = reqUpdateNamedVarProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_RECORD_MODEL_PROJECTION) {
-      r = reqUpdateRecordModelProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_SINGLE_TAG_PROJECTION) {
-      r = reqUpdateSingleTagProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_UNNAMED_OR_REF_VAR_PROJECTION) {
-      r = reqUpdateUnnamedOrRefVarProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_UNNAMED_VAR_PROJECTION) {
-      r = reqUpdateUnnamedVarProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_MULTI_TAIL) {
-      r = reqUpdateVarMultiTail(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_MULTI_TAIL_ITEM) {
-      r = reqUpdateVarMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL) {
-      r = reqUpdateVarPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_PROJECTION) {
-      r = reqUpdateVarProjection(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_PROJECTION_REF) {
-      r = reqUpdateVarProjectionRef(b, 0);
-    }
-    else if (t == U_REQ_UPDATE_VAR_SINGLE_TAIL) {
-      r = reqUpdateVarSingleTail(b, 0);
-    }
     else if (t == U_REQ_VAR_PATH) {
       r = reqVarPath(b, 0);
     }
@@ -398,9 +323,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_TYPE_REF) {
       r = typeRef(b, 0);
-    }
-    else if (t == U_UPDATE_URL) {
-      r = updateUrl(b, 0);
     }
     else if (t == U_URL) {
       r = url(b, 0);
@@ -424,8 +346,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(U_REQ_OUTPUT_COMA_MODEL_PROJECTION, U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION),
     create_token_set_(U_ANON_LIST, U_ANON_MAP, U_QN_TYPE_REF, U_TYPE_REF),
-    create_token_set_(U_CREATE_URL, U_CUSTOM_URL, U_DELETE_URL, U_READ_URL,
-      U_UPDATE_URL, U_URL),
+    create_token_set_(U_DELETE_URL, U_NON_READ_URL, U_READ_URL, U_URL),
     create_token_set_(U_DATUM, U_ENUM_DATUM, U_LIST_DATUM, U_MAP_DATUM,
       U_NULL_DATUM, U_PRIMITIVE_DATUM, U_RECORD_DATUM),
   };
@@ -475,68 +396,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  /* ********************************************************** */
-  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
-  public static boolean createUrl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createUrl")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqFieldPath(b, l + 1);
-    r = r && createUrl_3(b, l + 1);
-    r = r && createUrl_4(b, l + 1);
-    r = r && requestParams(b, l + 1);
-    exit_section_(b, m, U_CREATE_URL, r);
-    return r;
-  }
-
-  // inputProjection?
-  private static boolean createUrl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createUrl_3")) return false;
-    inputProjection(b, l + 1);
-    return true;
-  }
-
-  // outputProjection?
-  private static boolean createUrl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "createUrl_4")) return false;
-    outputProjection(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
-  public static boolean customUrl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customUrl")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqFieldPath(b, l + 1);
-    r = r && customUrl_3(b, l + 1);
-    r = r && customUrl_4(b, l + 1);
-    r = r && requestParams(b, l + 1);
-    exit_section_(b, m, U_CUSTOM_URL, r);
-    return r;
-  }
-
-  // inputProjection?
-  private static boolean customUrl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customUrl_3")) return false;
-    inputProjection(b, l + 1);
-    return true;
-  }
-
-  // outputProjection?
-  private static boolean customUrl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "customUrl_4")) return false;
-    outputProjection(b, l + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -723,17 +582,25 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '<' reqOutputTrunkFieldProjection
+  // '<' '+'? reqOutputTrunkFieldProjection
   public static boolean inputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjection")) return false;
     if (!nextTokenIs(b, U_ANGLE_LEFT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_INPUT_PROJECTION, null);
+    Marker m = enter_section_(b, l, _NONE_, U_INPUT_PROJECTION, "<input projection>");
     r = consumeToken(b, U_ANGLE_LEFT);
     p = r; // pin = 1
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    r = r && report_error_(b, inputProjection_1(b, l + 1));
+    r = p && reqOutputTrunkFieldProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean inputProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inputProjection_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -845,6 +712,37 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
+  public static boolean nonReadUrl(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nonReadUrl")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_SLASH);
+    r = r && qid(b, l + 1);
+    r = r && reqFieldPath(b, l + 1);
+    r = r && nonReadUrl_3(b, l + 1);
+    r = r && nonReadUrl_4(b, l + 1);
+    r = r && requestParams(b, l + 1);
+    exit_section_(b, m, U_NON_READ_URL, r);
+    return r;
+  }
+
+  // inputProjection?
+  private static boolean nonReadUrl_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nonReadUrl_3")) return false;
+    inputProjection(b, l + 1);
+    return true;
+  }
+
+  // outputProjection?
+  private static boolean nonReadUrl_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "nonReadUrl_4")) return false;
+    outputProjection(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // (dataTypeSpec '@')? 'null'
   public static boolean nullDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "nullDatum")) return false;
@@ -875,17 +773,25 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '>' reqOutputTrunkFieldProjection
+  // '>' '+'? reqOutputTrunkFieldProjection
   public static boolean outputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "outputProjection")) return false;
     if (!nextTokenIs(b, U_ANGLE_RIGHT)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_OUTPUT_PROJECTION, null);
+    Marker m = enter_section_(b, l, _NONE_, U_OUTPUT_PROJECTION, "<output projection>");
     r = consumeToken(b, U_ANGLE_RIGHT);
     p = r; // pin = 1
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    r = r && report_error_(b, outputProjection_1(b, l + 1));
+    r = p && reqOutputTrunkFieldProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean outputProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "outputProjection_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2898,692 +2804,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' reqUpdateVarProjection ')'
-  static boolean reqUpdateBracedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateBracedVarProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqUpdateVarProjection
-  public static boolean reqUpdateFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateFieldProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_FIELD_PROJECTION, "<req update field projection>");
-    r = reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '+'? qid reqUpdateFieldProjection
-  public static boolean reqUpdateFieldProjectionEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateFieldProjectionEntry")) return false;
-    if (!nextTokenIs(b, "<req update field projection entry>", U_PLUS, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_FIELD_PROJECTION_ENTRY, "<req update field projection entry>");
-    r = reqUpdateFieldProjectionEntry_0(b, l + 1);
-    r = r && qid(b, l + 1);
-    r = r && reqUpdateFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateFieldProjectionEntry_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateFieldProjectionEntry_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // datum reqParamsAndAnnotations
-  public static boolean reqUpdateKeyProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeyProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEY_PROJECTION, "<req update key projection>");
-    r = datum(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '[' ( reqUpdateKeyProjection ','? )* ']'
-  public static boolean reqUpdateKeysProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_KEYS_PROJECTION, null);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqUpdateKeysProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // ( reqUpdateKeyProjection ','? )*
-  private static boolean reqUpdateKeysProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqUpdateKeysProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateKeysProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqUpdateKeyProjection ','?
-  private static boolean reqUpdateKeysProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateKeyProjection(b, l + 1);
-    r = r && reqUpdateKeysProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqUpdateKeysProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateKeysProjection_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '*' '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-  public static boolean reqUpdateListModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateListModelProjection")) return false;
-    if (!nextTokenIs(b, U_STAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_LIST_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_STAR);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqUpdateListModelProjection_1(b, l + 1));
-    r = p && reqUpdateListModelProjection_2(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean reqUpdateListModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-  private static boolean reqUpdateListModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_2")) return false;
-    reqUpdateListModelProjection_2_0(b, l + 1);
-    return true;
-  }
-
-  // reqUpdateBracedVarProjection | reqUpdateVarProjection
-  private static boolean reqUpdateListModelProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateListModelProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateBracedVarProjection(b, l + 1);
-    if (!r) r = reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqUpdateKeysProjection '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-  public static boolean reqUpdateMapModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateKeysProjection(b, l + 1);
-    r = r && reqUpdateMapModelProjection_1(b, l + 1);
-    r = r && reqUpdateMapModelProjection_2(b, l + 1);
-    exit_section_(b, m, U_REQ_UPDATE_MAP_MODEL_PROJECTION, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateMapModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-  private static boolean reqUpdateMapModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_2")) return false;
-    reqUpdateMapModelProjection_2_0(b, l + 1);
-    return true;
-  }
-
-  // reqUpdateBracedVarProjection | reqUpdateVarProjection
-  private static boolean reqUpdateMapModelProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMapModelProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateBracedVarProjection(b, l + 1);
-    if (!r) r = reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqUpdateModelMultiTailItem ','?)* ')'
-  public static boolean reqUpdateModelMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqUpdateModelMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqUpdateModelMultiTailItem ','?)*
-  private static boolean reqUpdateModelMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqUpdateModelMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateModelMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqUpdateModelMultiTailItem ','?
-  private static boolean reqUpdateModelMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateModelMultiTailItem(b, l + 1);
-    r = r && reqUpdateModelMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqUpdateModelMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '+'? typeRef reqUpdateModelProjectionWithProperties
-  public static boolean reqUpdateModelMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_MULTI_TAIL_ITEM, "<req update model multi tail item>");
-    r = reqUpdateModelMultiTailItem_0(b, l + 1);
-    r = r && typeRef(b, l + 1);
-    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateModelMultiTailItem_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelMultiTailItem_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail )
-  public static boolean reqUpdateModelPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelPolymorphicTail")) return false;
-    if (!nextTokenIs(b, U_TILDA)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_TILDA);
-    r = r && reqUpdateModelPolymorphicTail_1(b, l + 1);
-    exit_section_(b, m, U_REQ_UPDATE_MODEL_POLYMORPHIC_TAIL, r);
-    return r;
-  }
-
-  // reqUpdateModelSingleTail | reqUpdateModelMultiTail
-  private static boolean reqUpdateModelPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelPolymorphicTail_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateModelSingleTail(b, l + 1);
-    if (!r) r = reqUpdateModelMultiTail(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( ( reqUpdateRecordModelProjection
-  //                                | reqUpdateMapModelProjection
-  //                                | reqUpdateListModelProjection
-  //                                ) reqUpdateModelPolymorphicTail?
-  //                              )?
-  public static boolean reqUpdateModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelProjection")) return false;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_PROJECTION, "<req update model projection>");
-    reqUpdateModelProjection_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // ( reqUpdateRecordModelProjection
-  //                                | reqUpdateMapModelProjection
-  //                                | reqUpdateListModelProjection
-  //                                ) reqUpdateModelPolymorphicTail?
-  private static boolean reqUpdateModelProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateModelProjection_0_0(b, l + 1);
-    r = r && reqUpdateModelProjection_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqUpdateRecordModelProjection
-  //                                | reqUpdateMapModelProjection
-  //                                | reqUpdateListModelProjection
-  private static boolean reqUpdateModelProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateRecordModelProjection(b, l + 1);
-    if (!r) r = reqUpdateMapModelProjection(b, l + 1);
-    if (!r) r = reqUpdateListModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqUpdateModelPolymorphicTail?
-  private static boolean reqUpdateModelProjection_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelProjection_0_1")) return false;
-    reqUpdateModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqUpdateModelProjection
-  static boolean reqUpdateModelProjectionWithProperties(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelProjectionWithProperties")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqUpdateModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '+'? typeRef reqUpdateModelProjectionWithProperties
-  public static boolean reqUpdateModelSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelSingleTail")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MODEL_SINGLE_TAIL, "<req update model single tail>");
-    r = reqUpdateModelSingleTail_0(b, l + 1);
-    r = r && typeRef(b, l + 1);
-    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateModelSingleTail_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateModelSingleTail_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')'
-  public static boolean reqUpdateMultiTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjection")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MULTI_TAG_PROJECTION, null);
-    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, reqUpdateMultiTagProjection_2(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqUpdateMultiTagProjectionItem ','?)*
-  private static boolean reqUpdateMultiTagProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjection_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqUpdateMultiTagProjection_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateMultiTagProjection_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqUpdateMultiTagProjectionItem ','?
-  private static boolean reqUpdateMultiTagProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateMultiTagProjectionItem(b, l + 1);
-    r = r && reqUpdateMultiTagProjection_2_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqUpdateMultiTagProjection_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjection_2_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '+'? tagName reqUpdateModelProjectionWithProperties
-  public static boolean reqUpdateMultiTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjectionItem")) return false;
-    if (!nextTokenIs(b, "<req update multi tag projection item>", U_PLUS, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_MULTI_TAG_PROJECTION_ITEM, "<req update multi tag projection item>");
-    r = reqUpdateMultiTagProjectionItem_0(b, l + 1);
-    r = r && tagName(b, l + 1);
-    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateMultiTagProjectionItem_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateMultiTagProjectionItem_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '$' qid '=' reqUpdateUnnamedOrRefVarProjection
-  public static boolean reqUpdateNamedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateNamedVarProjection")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_NAMED_VAR_PROJECTION, null);
-    r = consumeToken(b, U_DOLLAR);
-    r = r && qid(b, l + 1);
-    r = r && consumeToken(b, U_EQ);
-    p = r; // pin = 3
-    r = r && reqUpdateUnnamedOrRefVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqUpdateFieldProjectionEntry ','?)* ')'
-  public static boolean reqUpdateRecordModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_RECORD_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqUpdateRecordModelProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqUpdateFieldProjectionEntry ','?)*
-  private static boolean reqUpdateRecordModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqUpdateRecordModelProjection_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateRecordModelProjection_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqUpdateFieldProjectionEntry ','?
-  private static boolean reqUpdateRecordModelProjection_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateFieldProjectionEntry(b, l + 1);
-    r = r && reqUpdateRecordModelProjection_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqUpdateRecordModelProjection_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateRecordModelProjection_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ( ':' '+'? tagName?)? reqUpdateModelProjectionWithProperties
-  public static boolean reqUpdateSingleTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_SINGLE_TAG_PROJECTION, "<req update single tag projection>");
-    r = reqUpdateSingleTagProjection_0(b, l + 1);
-    r = r && reqUpdateModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ':' '+'? tagName?)?
-  private static boolean reqUpdateSingleTagProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0")) return false;
-    reqUpdateSingleTagProjection_0_0(b, l + 1);
-    return true;
-  }
-
-  // ':' '+'? tagName?
-  private static boolean reqUpdateSingleTagProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && reqUpdateSingleTagProjection_0_0_1(b, l + 1);
-    r = r && reqUpdateSingleTagProjection_0_0_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqUpdateSingleTagProjection_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // tagName?
-  private static boolean reqUpdateSingleTagProjection_0_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateSingleTagProjection_0_0_2")) return false;
-    tagName(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqUpdateVarProjectionRef | reqUpdateUnnamedVarProjection
-  public static boolean reqUpdateUnnamedOrRefVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateUnnamedOrRefVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_UNNAMED_OR_REF_VAR_PROJECTION, "<req update unnamed or ref var projection>");
-    r = reqUpdateVarProjectionRef(b, l + 1);
-    if (!r) r = reqUpdateUnnamedVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
-  public static boolean reqUpdateUnnamedVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_UNNAMED_VAR_PROJECTION, "<req update unnamed var projection>");
-    r = reqUpdateUnnamedVarProjection_0(b, l + 1);
-    r = r && reqUpdateUnnamedVarProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // reqUpdateMultiTagProjection | reqUpdateSingleTagProjection
-  private static boolean reqUpdateUnnamedVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateMultiTagProjection(b, l + 1);
-    if (!r) r = reqUpdateSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqUpdateVarPolymorphicTail?
-  private static boolean reqUpdateUnnamedVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateUnnamedVarProjection_1")) return false;
-    reqUpdateVarPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqUpdateVarMultiTailItem ','?)* ')'
-  public static boolean reqUpdateVarMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqUpdateVarMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqUpdateVarMultiTailItem ','?)*
-  private static boolean reqUpdateVarMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqUpdateVarMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqUpdateVarMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqUpdateVarMultiTailItem ','?
-  private static boolean reqUpdateVarMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateVarMultiTailItem(b, l + 1);
-    r = r && reqUpdateVarMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqUpdateVarMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqUpdateVarProjection
-  public static boolean reqUpdateVarMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_MULTI_TAIL_ITEM, "<req update var multi tail item>");
-    r = typeRef(b, l + 1);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ':' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail )
-  public static boolean reqUpdateVarPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_COLON, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqUpdateVarPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // reqUpdateVarSingleTail | reqUpdateVarMultiTail
-  private static boolean reqUpdateVarPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarPolymorphicTail_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqUpdateVarSingleTail(b, l + 1);
-    if (!r) r = reqUpdateVarMultiTail(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqUpdateNamedVarProjection | reqUpdateUnnamedOrRefVarProjection
-  public static boolean reqUpdateVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_PROJECTION, "<req update var projection>");
-    r = reqUpdateNamedVarProjection(b, l + 1);
-    if (!r) r = reqUpdateUnnamedOrRefVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '$' qid
-  public static boolean reqUpdateVarProjectionRef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarProjectionRef")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_PROJECTION_REF, null);
-    r = consumeToken(b, U_DOLLAR);
-    p = r; // pin = 1
-    r = r && qid(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqUpdateVarProjection
-  public static boolean reqUpdateVarSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqUpdateVarSingleTail")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_UPDATE_VAR_SINGLE_TAIL, "<req update var single tail>");
-    r = typeRef(b, l + 1);
-    r = r && reqUpdateVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
   // ( ':' tagName)? reqParamsAndAnnotations reqModelPath
   public static boolean reqVarPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqVarPath")) return false;
@@ -3706,78 +2926,15 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams
-  public static boolean updateUrl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqFieldPath(b, l + 1);
-    r = r && updateUrl_3(b, l + 1);
-    r = r && updateUrl_4(b, l + 1);
-    r = r && requestParams(b, l + 1);
-    exit_section_(b, m, U_UPDATE_URL, r);
-    return r;
-  }
-
-  // ('<' '+'? reqUpdateFieldProjection)?
-  private static boolean updateUrl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl_3")) return false;
-    updateUrl_3_0(b, l + 1);
-    return true;
-  }
-
-  // '<' '+'? reqUpdateFieldProjection
-  private static boolean updateUrl_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_LEFT);
-    r = r && updateUrl_3_0_1(b, l + 1);
-    r = r && reqUpdateFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean updateUrl_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl_3_0_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // ('>' reqOutputTrunkFieldProjection)?
-  private static boolean updateUrl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl_4")) return false;
-    updateUrl_4_0(b, l + 1);
-    return true;
-  }
-
-  // '>' reqOutputTrunkFieldProjection
-  private static boolean updateUrl_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "updateUrl_4_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_ANGLE_RIGHT);
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // readUrl | createUrl | updateUrl | deleteUrl | customUrl
+  // readUrl | nonReadUrl | deleteUrl
   public static boolean url(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "url")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, U_URL, null);
     r = readUrl(b, l + 1);
-    if (!r) r = createUrl(b, l + 1);
-    if (!r) r = updateUrl(b, l + 1);
+    if (!r) r = nonReadUrl(b, l + 1);
     if (!r) r = deleteUrl(b, l + 1);
-    if (!r) r = customUrl(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

@@ -54,4 +54,10 @@ public class UrlInputProjectionImpl extends ASTWrapperPsiElement implements UrlI
     return findNotNullChildByType(U_ANGLE_LEFT);
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(U_PLUS);
+  }
+
 }

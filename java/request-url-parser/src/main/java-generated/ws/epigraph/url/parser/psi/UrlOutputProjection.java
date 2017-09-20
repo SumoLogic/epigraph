@@ -29,4 +29,7 @@ public interface UrlOutputProjection extends PsiElement {
   @NotNull
   PsiElement getAngleRight();
 
+  @Nullable
+  PsiElement getPlus();
+
 }
