@@ -157,26 +157,42 @@ public abstract class AbstractModelProjection<
   /**
    * Sets entity projection reference for datum type projections
    *
-   * @param entityProjection entity projection corresponding to this model projeciton (there should be a 1-1 relation)
+   * @param entityProjection entity projection corresponding to this model projection (there should be a 1-1 relation)
+   *
+   * @return model projection with entity projection reference set up correctly
    */
-  public void setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    if (entityProjection == this.entityProjection) return;
-    if (this.entityProjection != null)
-      throw new IllegalStateException("Entity projection can only be set once");
-    this.entityProjection = entityProjection;
+  public SMP setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    if (entityProjection == this.entityProjection) return self();
+    if (this.entityProjection == null) {
+      this.entityProjection = entityProjection;
 
-    // entity projection's `normalizedTailNames` is the source of truth now
-    entityProjection.normalizedTailNames.putAll(normalizedTailNames);
-    normalizedTailNames.clear();
+      // entity projection's `normalizedTailNames` is the source of truth now
+      entityProjection.normalizedTailNames.putAll(normalizedTailNames);
+      normalizedTailNames.clear();
 
-    if (!Objects.equals(referenceName(), entityProjection.referenceName()))
-      throw new IllegalStateException(String.format(
-          "[%s] {%s} != {%s}",
-          type().name().toString(),
-          name,
-          entityProjection.referenceName()
-      ));
+      if (!Objects.equals(referenceName(), entityProjection.referenceName()))
+        throw new IllegalStateException(String.format(
+            "[%s] {%s} != {%s}",
+            type().name().toString(),
+            name,
+            entityProjection.referenceName()
+        ));
+      return self();
+    } else {
+      SMP clone = clone();
+      clone.setReferenceName0(referenceName());
+      return clone.setEntityProjection(entityProjection);
+    }
   }
+
+  /**
+   * Clones all but reference name and entity projection reference
+   *
+   * @return cloned object
+   */
+  @SuppressWarnings("CloneDoesntDeclareCloneNotSupportedException")
+  @Override
+  protected abstract SMP clone();
 
   public @Nullable AbstractVarProjection<?, ?, ?> entityProjection() { return entityProjection; }
 

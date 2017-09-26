@@ -83,6 +83,17 @@ public class ReqRecordModelProjection
   }
 
   @Override
+  protected ReqRecordModelProjection clone() {
+    if (isResolved()) {
+      return new ReqRecordModelProjection(
+          model, flagged, params, directives, metaProjection, fieldProjections, polymorphicTails, location()
+      );
+    } else {
+      return new ReqRecordModelProjection(model, location());
+    }
+  }
+
+  @Override
   protected ReqRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
       final boolean mergedFlagged,

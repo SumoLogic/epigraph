@@ -16,15 +16,11 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.service.projections.op.delete._
-import ws.epigraph.java.service.projections.op.input._
 import ws.epigraph.java.service.projections.op.output._
 import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.{ObjectGenContext, ObjectGenerators}
 import ws.epigraph.projections.gen.ProjectionReferenceName
-import ws.epigraph.projections.op.delete._
-import ws.epigraph.projections.op.input._
 import ws.epigraph.projections.op.output._
 import ws.epigraph.projections.op.path._
 import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
@@ -54,14 +50,6 @@ object ServiceObjectGenerators extends ObjectGenerators {
         case opkp: OpPathKeyProjection => new OpPathKeyProjectionGen(opkp).generate(ctx)
         case opmp: OpPrimitiveModelPath => new OpPrimitiveModelPathGen(opmp).generate(ctx)
 
-        case oivp: OpInputVarProjection => new OpInputVarProjectionGen(oivp).generate(ctx)
-        case oirmp: OpInputRecordModelProjection => new OpInputRecordModelProjectionGen(oirmp).generate(ctx)
-        case oifp: OpInputFieldProjection => new OpInputFieldProjectionGen(oifp).generate(ctx)
-        case oimmp: OpInputMapModelProjection => new OpInputMapModelProjectionGen(oimmp).generate(ctx)
-        case oikp: OpInputKeyProjection => new OpInputKeyProjectionGen(oikp).generate(ctx)
-        case oilmp: OpInputListModelProjection => new OpInputListModelProjectionGen(oilmp).generate(ctx)
-        case oipmp: OpInputPrimitiveModelProjection => new OpInputPrimitiveModelProjectionGen(oipmp).generate(ctx)
-
         case oovp: OpOutputVarProjection => new OpOutputVarProjectionGen(oovp).generate(ctx)
         case oormp: OpOutputRecordModelProjection => new OpOutputRecordModelProjectionGen(oormp).generate(ctx)
         case oofp: OpOutputFieldProjection => new OpOutputFieldProjectionGen(oofp).generate(ctx)
@@ -69,14 +57,6 @@ object ServiceObjectGenerators extends ObjectGenerators {
         case ookp: OpOutputKeyProjection => new OpOutputKeyProjectionGen(ookp).generate(ctx)
         case oolmp: OpOutputListModelProjection => new OpOutputListModelProjectionGen(oolmp).generate(ctx)
         case oopmp: OpOutputPrimitiveModelProjection => new OpOutputPrimitiveModelProjectionGen(oopmp).generate(ctx)
-
-        case odvp: OpDeleteVarProjection => new OpDeleteVarProjectionGen(odvp).generate(ctx)
-        case odrmp: OpDeleteRecordModelProjection => new OpDeleteRecordModelProjectionGen(odrmp).generate(ctx)
-        case odfp: OpDeleteFieldProjection => new OpDeleteFieldProjectionGen(odfp).generate(ctx)
-        case odmmp: OpDeleteMapModelProjection => new OpDeleteMapModelProjectionGen(odmmp).generate(ctx)
-        case odkp: OpDeleteKeyProjection => new OpDeleteKeyProjectionGen(odkp).generate(ctx)
-        case odlmp: OpDeleteListModelProjection => new OpDeleteListModelProjectionGen(odlmp).generate(ctx)
-        case odpmp: OpDeletePrimitiveModelProjection => new OpDeletePrimitiveModelProjectionGen(odpmp).generate(ctx)
 
         case rod: ReadOperationDeclaration => new ReadOperationDeclarationGen(rod).generate(ctx)
         case cod: CreateOperationDeclaration => new CreateOperationDeclarationGen(cod).generate(ctx)

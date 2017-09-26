@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -38,9 +36,7 @@ import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.DeleteRequestUrl;
-import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlDeleteUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,9 +44,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.*;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.failIfSearchFailure;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.parseIdl;
-import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.server.http.routing.RoutingTestUtil.*;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -187,11 +181,11 @@ public class DeleteOperationRouterTest {
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull DeleteRequestUrl deleteRequestUrl = s.requestUrl();
+    final @NotNull NonReadRequestUrl deleteRequestUrl = s.requestUrl();
     final ReqFieldPath path = deleteRequestUrl.path();
 
     if (expectedPath == null)
@@ -201,12 +195,19 @@ public class DeleteOperationRouterTest {
       assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
     }
 
-    final @Nullable ReqDeleteFieldProjection deleteProjection = deleteRequestUrl.deleteProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> deleteStepsAndProjection =
+        deleteRequestUrl.inputProjection();
     if (expectedDeleteProjection == null)
-      assertNull(deleteProjection);
+      assertNull(deleteStepsAndProjection);
     else {
-      assertNotNull(deleteProjection);
-      assertEquals(expectedDeleteProjection, TestUtil.printReqDeleteVarProjection(deleteProjection.varProjection()));
+      assertNotNull(deleteStepsAndProjection);
+      assertEquals(
+          expectedDeleteProjection,
+          TestUtil.printReqEntityProjection(
+              deleteStepsAndProjection.projection().varProjection(),
+              deleteStepsAndProjection.pathSteps()
+          )
+      );
     }
 
     final StepsAndProjection<ReqFieldProjection> stepsAndProjection = deleteRequestUrl.outputProjection();
@@ -219,17 +220,17 @@ public class DeleteOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl> getTargetOpId(final @NotNull String url)
+  private OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl> getTargetOpId(final @NotNull String url)
       throws PsiProcessingException {
     final @NotNull OperationSearchResult<DeleteOperation<?>> oss = DeleteOperationRouter.INSTANCE.findOperation(
         null,
-        parseDeleteUrl(url),
+        parseNonReadUrl(url),
         resource, resolver
     );
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends DeleteOperation<?>, DeleteRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl>) oss;
   }
 
   private class OpImpl extends DeleteOperation<PersonId_Person_Map.Data> {
@@ -250,17 +251,4 @@ public class DeleteOperationRouterTest {
     }
   }
 
-  private static @NotNull UrlDeleteUrl parseDeleteUrl(@NotNull String url) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlDeleteUrl urlPsi = EpigraphPsiUtil.parseText(
-        url,
-        UrlSubParserDefinitions.DELETE_URL,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
-  }
 }

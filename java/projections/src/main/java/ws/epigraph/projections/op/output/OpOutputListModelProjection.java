@@ -72,6 +72,27 @@ public class OpOutputListModelProjection
   }
 
   @Override
+  protected OpOutputListModelProjection clone() {
+    if (isResolved) {
+      return new OpOutputListModelProjection(
+          model,
+          flagged,
+          defaultValue,
+          params,
+          annotations,
+          metaProjection,
+          itemsProjection(),
+          polymorphicTails,
+          location()
+      );
+    } else {
+      return new OpOutputListModelProjection(
+          model, location()
+      );
+    }
+  }
+
+  @Override
   protected OpOutputListModelProjection merge(
       final @NotNull ListTypeApi model,
       final boolean mergedFlagged,

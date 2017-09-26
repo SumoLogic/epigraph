@@ -131,7 +131,7 @@ public class ReadRequestUrlPsiParserTest {
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedProjection,
-        printReqOutputFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));

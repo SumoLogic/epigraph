@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -29,28 +28,24 @@ import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.types.TypeApi;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationDeclaration extends OperationDeclaration {
 //  public static final @NotNull String DEFAULT_NAME = "_delete";
-  private final @NotNull OpDeleteFieldProjection deleteProjection;
 
   public DeleteOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @NotNull OpDeleteFieldProjection deleteProjection,
+      @NotNull OpOutputFieldProjection deleteProjection,
       @NotNull OpOutputFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     super(OperationKind.DELETE, HttpMethod.DELETE, name, annotations,
-          path, null, outputProjection, location
+        path, deleteProjection, outputProjection, location
     );
-
-    this.deleteProjection = deleteProjection;
 
     if (path != null) {
       TypeApi tipType = ProjectionUtils.tipType(path.varProjection()).type();
@@ -68,7 +63,11 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
 //  @Override
 //  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
-  public @NotNull OpDeleteFieldProjection deleteProjection() { return deleteProjection; }
+  public @NotNull OpOutputFieldProjection deleteProjection() {
+    OpOutputFieldProjection inputProjection = inputProjection();
+    assert inputProjection != null;
+    return inputProjection;
+  }
 
   @Override
   public void validate(@NotNull ResourceDeclaration resource, @NotNull List<ResourceDeclarationError> errors) {
@@ -82,17 +81,4 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
     );
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    DeleteOperationDeclaration that = (DeleteOperationDeclaration) o;
-    return Objects.equals(deleteProjection, that.deleteProjection);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), deleteProjection);
-  }
 }

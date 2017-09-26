@@ -19,8 +19,6 @@
 package ws.epigraph.wire;
 
 import net.jcip.annotations.NotThreadSafe;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 

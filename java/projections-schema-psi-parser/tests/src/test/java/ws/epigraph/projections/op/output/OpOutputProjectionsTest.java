@@ -22,7 +22,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -318,8 +317,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext =
-        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+    final OpReferenceContext referenceContext =
+        new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.entityReference(Person.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", personProjection, TextLocation.UNKNOWN);
@@ -332,7 +331,7 @@ public class OpOutputProjectionsTest {
       }
 
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -366,8 +365,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext =
-        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+    final OpReferenceContext referenceContext =
+        new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
 
     referenceContext.entityReference(PersonRecord.type, "ref", false, TextLocation.UNKNOWN);
 //    referenceContext.resolve("ref", personRecordVarProjection, TextLocation.UNKNOWN, ppc);
@@ -380,7 +379,7 @@ public class OpOutputProjectionsTest {
       }
 
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -402,8 +401,8 @@ public class OpOutputProjectionsTest {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext =
-        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+    final OpReferenceContext referenceContext =
+        new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
     referenceContext.entityReference(PaginationInfo.type, "ref", false, TextLocation.UNKNOWN);
 
     referenceContext.resolveEntityRef("ref", paginationProjection, TextLocation.UNKNOWN);
@@ -411,7 +410,7 @@ public class OpOutputProjectionsTest {
 
     TestConfig testConfig = new TestConfig() {
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -706,8 +705,8 @@ public class OpOutputProjectionsTest {
   public void testNamedEntityTail() throws PsiProcessingException {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext =
-        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+    final OpReferenceContext referenceContext =
+        new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
 
     failIfHasErrors(true, ppc.messages());
 
@@ -716,7 +715,7 @@ public class OpOutputProjectionsTest {
       @NotNull DataType dataType() { return new DataType(Person.type, null); }
 
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -747,8 +746,8 @@ public class OpOutputProjectionsTest {
   public void testNamedModelTail() throws PsiProcessingException {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
-    final OpOutputReferenceContext referenceContext =
-        new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
+    final OpReferenceContext referenceContext =
+        new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ppc);
 
     failIfHasErrors(true, ppc.messages());
 
@@ -757,7 +756,7 @@ public class OpOutputProjectionsTest {
       @NotNull DataType dataType() { return new DataType(Person.type, null); }
 
       @Override
-      @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
         return referenceContext;
       }
     };
@@ -1164,11 +1163,10 @@ public class OpOutputProjectionsTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(config.failOnWarnings(), context -> {
-      OpInputReferenceContext inputReferenceContext = config.inputReferenceContext(context);
-      OpOutputReferenceContext outputReferenceContext = config.outputReferenceContext(context);
+      OpReferenceContext outputReferenceContext = config.outputReferenceContext(context);
 
-      OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, outputReferenceContext);
+      OpPsiProcessingContext outputPsiProcessingContext =
+          new OpPsiProcessingContext(context, outputReferenceContext);
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           config.dataType(),
@@ -1180,7 +1178,6 @@ public class OpOutputProjectionsTest {
 
       if (config.ensureReferencesResolved()) {
         outputReferenceContext.ensureAllReferencesResolved();
-        inputReferenceContext.ensureAllReferencesResolved();
       }
 
       return vp;
@@ -1214,12 +1211,8 @@ public class OpOutputProjectionsTest {
       );
     }
 
-    @NotNull OpInputReferenceContext inputReferenceContext(PsiProcessingContext ctx) {
-      return new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, ctx);
-    }
-
-    @NotNull OpOutputReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
-      return new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, ctx);
+    @NotNull OpReferenceContext outputReferenceContext(PsiProcessingContext ctx) {
+      return new OpReferenceContext(ProjectionReferenceName.EMPTY, null, ctx);
     }
 
     boolean ensureReferencesResolved() { return true; }

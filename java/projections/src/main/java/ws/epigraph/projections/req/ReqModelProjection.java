@@ -79,15 +79,16 @@ public abstract class ReqModelProjection<
   }
 
   @Override
-  public void setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    super.setEntityProjection(entityProjection);
+  public SMP setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    SMP res = super.setEntityProjection(entityProjection);
     if (entityProjection instanceof ReqEntityProjection) {
       ReqEntityProjection r = (ReqEntityProjection) entityProjection;
       if (r.flagged())
-        flagged = true;
+        res.flagged = true;
       else if (flagged())
         r.flagged = true;
     }
+    return res;
   }
 
   @Override

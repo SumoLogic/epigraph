@@ -55,10 +55,6 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitDeleteUrl(@NotNull UrlDeleteUrl o) {
-    visitUrl(o);
-  }
-
   public void visitEnumDatum(@NotNull UrlEnumDatum o) {
     visitDatum(o);
   }
@@ -124,102 +120,6 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqAnnotation(@NotNull UrlReqAnnotation o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteFieldProjection(@NotNull UrlReqDeleteFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteFieldProjectionEntry(@NotNull UrlReqDeleteFieldProjectionEntry o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteKeyProjection(@NotNull UrlReqDeleteKeyProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteKeysProjection(@NotNull UrlReqDeleteKeysProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteListModelProjection(@NotNull UrlReqDeleteListModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteMapModelProjection(@NotNull UrlReqDeleteMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteModelMultiTail(@NotNull UrlReqDeleteModelMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteModelMultiTailItem(@NotNull UrlReqDeleteModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteModelPolymorphicTail(@NotNull UrlReqDeleteModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteModelProjection(@NotNull UrlReqDeleteModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteModelSingleTail(@NotNull UrlReqDeleteModelSingleTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteMultiTagProjection(@NotNull UrlReqDeleteMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteMultiTagProjectionItem(@NotNull UrlReqDeleteMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteNamedVarProjection(@NotNull UrlReqDeleteNamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteRecordModelProjection(@NotNull UrlReqDeleteRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteSingleTagProjection(@NotNull UrlReqDeleteSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteUnnamedOrRefVarProjection(@NotNull UrlReqDeleteUnnamedOrRefVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteUnnamedVarProjection(@NotNull UrlReqDeleteUnnamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarMultiTail(@NotNull UrlReqDeleteVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarMultiTailItem(@NotNull UrlReqDeleteVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarPolymorphicTail(@NotNull UrlReqDeleteVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarProjection(@NotNull UrlReqDeleteVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarProjectionRef(@NotNull UrlReqDeleteVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqDeleteVarSingleTail(@NotNull UrlReqDeleteVarSingleTail o) {
     visitPsiElement(o);
   }
 

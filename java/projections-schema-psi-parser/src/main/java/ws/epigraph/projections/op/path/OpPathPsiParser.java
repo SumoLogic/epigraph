@@ -268,7 +268,7 @@ public final class OpPathPsiParser {
             );
 
         @NotNull DataTypeApi valueType = mapType.valueType();
-        @Nullable TagApi defaultValuesTag = valueType.defaultTag();
+        @Nullable TagApi defaultValuesTag = valueType.retroTag();
 
         if (defaultValuesTag == null)
           throw new PsiProcessingException(String.format(

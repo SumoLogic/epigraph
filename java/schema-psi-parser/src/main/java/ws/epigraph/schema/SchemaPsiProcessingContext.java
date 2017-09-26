@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -35,9 +34,9 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
     implements ReferenceAwarePsiProcessingContext {
 
   private final @NotNull Qn namespace;
-  private final @NotNull OpOutputReferenceContext inputReferenceContext;
-  private final @NotNull OpOutputReferenceContext outputReferenceContext;
-  private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
+  private final @NotNull OpReferenceContext inputReferenceContext;
+  private final @NotNull OpReferenceContext outputReferenceContext;
+  private final @NotNull OpReferenceContext deleteReferenceContext;
 
   private final @NotNull Map<String, ResourceDeclaration> resources = new LinkedHashMap<>();
   private final @NotNull Map<String, TransformerDeclaration> transformers = new LinkedHashMap<>();
@@ -52,19 +51,19 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
 
     final Namespaces namespaces = new Namespaces(namespace);
 
-    inputReferenceContext = new OpOutputReferenceContext(
+    inputReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(namespaces.inputProjectionsNamespace()),
         null,
         psiProcessingContext
     );
 
-    outputReferenceContext = new OpOutputReferenceContext(
+    outputReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace()),
         null,
         psiProcessingContext
     );
 
-    deleteReferenceContext = new OpDeleteReferenceContext(
+    deleteReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(namespaces.deleteProjectionsNamespace()),
         null,
         psiProcessingContext
@@ -74,13 +73,13 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
   public @NotNull Qn namespace() { return namespace; }
 
   @Override
-  public @NotNull OpOutputReferenceContext inputReferenceContext() { return inputReferenceContext; }
+  public @NotNull OpReferenceContext inputReferenceContext() { return inputReferenceContext; }
 
   @Override
-  public @NotNull OpOutputReferenceContext outputReferenceContext() { return outputReferenceContext; }
+  public @NotNull OpReferenceContext outputReferenceContext() { return outputReferenceContext; }
 
   @Override
-  public @NotNull OpDeleteReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
+  public @NotNull OpReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
 
   public @Nullable ResourceDeclaration resource(@NotNull String name) { return resources.get(name); }
 

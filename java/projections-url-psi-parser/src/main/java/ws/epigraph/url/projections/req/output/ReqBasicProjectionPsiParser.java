@@ -23,13 +23,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.req.*;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpKeyPresence;
-//import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -43,6 +42,8 @@ import java.util.*;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 import static ws.epigraph.url.projections.UrlProjectionsPsiParserUtil.*;
+
+//import ws.epigraph.projections.op.OpParams;
 
 /**
  * Basic projections parser that does no further post-processing.
@@ -200,49 +201,65 @@ public final class ReqBasicProjectionPsiParser {
       final ReqModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
-      final @NotNull TagApi tag = getTag(dataType, getTagName(tagNamePsi), op, tagLocation, context);
-      @NotNull OpOutputTagProjectionEntry opTagProjection =
-          getTagProjection(tag.name(), op, tagLocation, context);
+      @Nullable TagApi tag = findTag(dataType, getTagName(tagNamePsi), op, tagLocation, context);
 
-      @NotNull OpOutputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
-      @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
-          singleTagProjectionPsi.getReqOutputTrunkModelProjection();
+      if (tag == null) {
+        // no retro of self tag found
+        // will be OK in only one case: if singleTagProjectionPsi is empty
+        // we want to treat `( bestFriend )` as `( bestFriend:() )`
+        if (singleTagProjectionPsi.getText().trim().isEmpty()) {
+          // tagProjections stay empty
+          parenthesized = false;
+          steps = 0;
+        }  else {
+          throw noRetroTagError(dataType, tagLocation, context);
+        }
 
-      StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
-          opModelProjection,
-          singleTagProjectionPsi.getPlus() != null,
-          parseReqParams(
-              singleTagProjectionPsi.getReqParamList(),
-              opModelProjection.params(),
-              subResolver,
-              singleTagProjectionPsi,
-              context
-          ),
-          parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
-          parseModelMetaProjection(
-              opModelProjection,
-              singleTagProjectionPsi.getReqOutputModelMeta(),
-              subResolver,
-              context
-          ),
-          modelProjectionPsi,
-          subResolver,
-          context
-      );
+      } else {
 
-      parsedModelProjection = stepsAndProjection.projection();
-      steps = stepsAndProjection.pathSteps() + 1;
+        @NotNull OpOutputTagProjectionEntry opTagProjection =
+            getTagProjection(tag.name(), op, tagLocation, context);
 
-      tagProjections.put(
-          tag.name(),
-          new ReqTagProjectionEntry(
-              tag,
-              parsedModelProjection,
-              EpigraphPsiUtil.getLocation(tagLocation)
-          )
-      );
+        @NotNull OpOutputModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull UrlReqOutputTrunkModelProjection modelProjectionPsi =
+            singleTagProjectionPsi.getReqOutputTrunkModelProjection();
 
-      parenthesized = false;
+        StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
+            opModelProjection,
+            singleTagProjectionPsi.getPlus() != null,
+            parseReqParams(
+                singleTagProjectionPsi.getReqParamList(),
+                opModelProjection.params(),
+                subResolver,
+                singleTagProjectionPsi,
+                context
+            ),
+            parseAnnotations(singleTagProjectionPsi.getReqAnnotationList(), context),
+            parseModelMetaProjection(
+                opModelProjection,
+                singleTagProjectionPsi.getReqOutputModelMeta(),
+                subResolver,
+                context
+            ),
+            modelProjectionPsi,
+            subResolver,
+            context
+        );
+
+        parsedModelProjection = stepsAndProjection.projection();
+        steps = stepsAndProjection.pathSteps() + 1;
+
+        tagProjections.put(
+            tag.name(),
+            new ReqTagProjectionEntry(
+                tag,
+                parsedModelProjection,
+                EpigraphPsiUtil.getLocation(tagLocation)
+            )
+        );
+
+        parenthesized = false;
+      }
 
     } else {
       @Nullable UrlReqOutputComaMultiTagProjection multiTagProjection = psi.getReqOutputComaMultiTagProjection();
@@ -746,7 +763,7 @@ public final class ReqBasicProjectionPsiParser {
     @NotNull OpOutputVarProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseComaVarProjection(
-        tailType.dataType(dataType.defaultTag()),
+        tailType.dataType(dataType.retroTag()),
         flagged, // todo allow flags on tails
         opTail,
         tailProjectionPsi,
@@ -1397,7 +1414,7 @@ public final class ReqBasicProjectionPsiParser {
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 
     if (fieldProjectionPsi == null) {
-      @Nullable TagApi defaultFieldTag = fieldType.defaultTag();
+      @Nullable TagApi defaultFieldTag = fieldType.retroTag();
       if (defaultFieldTag == null)
         throw new PsiProcessingException(String.format(
             "Can't construct default projection for field '%s', as it's type '%s' has no default tag",

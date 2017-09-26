@@ -21,7 +21,7 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.delete._
+import ws.epigraph.projections.op.output._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
@@ -29,13 +29,13 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqDeleteModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
+  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpDeleteModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqDeleteModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
@@ -47,11 +47,11 @@ abstract class ReqDeleteModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-  override protected def reqVarProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection")
-
-  override protected def reqModelProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
+//  override protected def reqVarProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection")
+//
+//  override protected def reqModelProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
@@ -59,7 +59,7 @@ abstract class ReqDeleteModelProjectionGen(
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpDeleteModelProjection[_, _, _ <: DatumTypeApi],
+    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
@@ -76,7 +76,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.RECORD =>
           new ReqDeleteRecordModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpDeleteRecordModelProjection],
+            op.asInstanceOf[OpOutputRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -85,7 +85,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.MAP =>
           new ReqDeleteMapModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpDeleteMapModelProjection],
+            op.asInstanceOf[OpOutputMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -94,7 +94,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.LIST =>
           new ReqDeleteListModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpDeleteListModelProjection],
+            op.asInstanceOf[OpOutputListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -103,7 +103,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.PRIMITIVE =>
           new ReqDeletePrimitiveModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpDeletePrimitiveModelProjection],
+            op.asInstanceOf[OpOutputPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,

@@ -69,15 +69,16 @@ public abstract class OpOutputModelProjection<
   public @Nullable D defaultValue() { return defaultValue; }
 
   @Override
-  public void setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    super.setEntityProjection(entityProjection);
+  public SMP setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    SMP res = super.setEntityProjection(entityProjection);
     if (entityProjection instanceof OpOutputVarProjection) {
       OpOutputVarProjection o = (OpOutputVarProjection) entityProjection;
       if (o.flagged())
-        flagged = true;
+        res.flagged = true;
       else if (flagged())
         o.flagged = true;
     }
+    return res;
   }
 
   @SuppressWarnings("unchecked")

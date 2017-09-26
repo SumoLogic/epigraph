@@ -30,10 +30,8 @@ import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
@@ -142,7 +140,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     brk();
     l.print(projection.type().name().toString());
 
-    OpOutputProjectionsPrettyPrinter<E> ipp = new OpOutputProjectionsPrettyPrinter<>(l);
+    OpProjectionsPrettyPrinter<E> ipp = new OpProjectionsPrettyPrinter<>(l);
     if (!ipp.modelParamsEmpty(projection) || !ipp.isPrintoutNoParamsEmpty(projection)) {
       brk();
       ipp.printModel(projection, 0);
@@ -262,7 +260,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         l.beginCInd(0);
         l.print("projection:");
         brk();
-        OpOutputProjectionsPrettyPrinter<E> opp = new OpOutputProjectionsPrettyPrinter<>(l);
+        OpProjectionsPrettyPrinter<E> opp = new OpProjectionsPrettyPrinter<>(l);
         opp.printModel(keyModelProjection, 0);
         l.end();
 

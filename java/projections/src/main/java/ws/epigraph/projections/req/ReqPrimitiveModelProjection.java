@@ -48,6 +48,13 @@ public class ReqPrimitiveModelProjection
     super(model, location);
   }
 
+  @Override
+  protected ReqPrimitiveModelProjection clone() {
+    return new ReqPrimitiveModelProjection(
+        model, flagged, params, directives, metaProjection, polymorphicTails, location()
+    );
+  }
+
   /* static */
   @Override
   protected ReqPrimitiveModelProjection merge(

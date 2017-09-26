@@ -64,6 +64,7 @@ public abstract class AbstractVarProjection<
 
   private final Throwable allocationTrace = new Throwable();
 
+  @SuppressWarnings("unchecked")
   protected AbstractVarProjection(
       @NotNull TypeApi type,
       @NotNull Map<String, TP> tagProjections,
@@ -88,15 +89,10 @@ public abstract class AbstractVarProjection<
       if (tp != null) {
         MP mp = tp.projection();
         setReferenceName0(mp.referenceName());
-        //noinspection ThisEscapedInObjectConstruction
-        mp.setEntityProjection(this);
-
-//        mp.runOnResolved(
-//            () -> {
-//              if (name == null)
-//                name = mp.referenceName();
-//            }
-//        );
+        @SuppressWarnings("ThisEscapedInObjectConstruction")
+        MP mp2 = (MP) mp.setEntityProjection(this);
+        if (mp != mp2)
+          tagProjections.put(tagProjections.keySet().iterator().next(), tp.setModelProjection(mp2));
       }
     }
   }

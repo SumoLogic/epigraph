@@ -21,26 +21,22 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
-import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.SimpleTypesResolver;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.tests.*;
+import ws.epigraph.tests.String_Person_Map;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.DeleteRequestUrl;
-import ws.epigraph.url.parser.psi.UrlDeleteUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static ws.epigraph.test.TestUtil.*;
 import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.parseIdl;
 import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters;
@@ -48,17 +44,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class DeleteRequestUrlPsiParserTest {
-  private final TypesResolver resolver = new SimpleTypesResolver(
-      PersonId.type,
-      Person.type,
-      User.type,
-      UserId.type,
-      UserRecord.type,
-      String_Person_Map.type,
-      epigraph.String.type,
-      epigraph.Boolean.type
-  );
+public class DeleteRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTest {
 
   private final String idlText = lines(
       "namespace test",
@@ -109,7 +95,7 @@ public class DeleteRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull DeleteRequestUrl requestUrl = DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
+    final @NotNull NonReadRequestUrl requestUrl = DeleteRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -121,29 +107,20 @@ public class DeleteRequestUrlPsiParserTest {
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqDeleteFieldProjection deleteProjection = requestUrl.deleteProjection();
-    assertEquals(expectedDeleteProjection, printReqDeleteVarProjection(deleteProjection.varProjection()));
+    StepsAndProjection<ReqFieldProjection> deleteStepsAndProjection = requestUrl.inputProjection();
+    assertNotNull(deleteStepsAndProjection);
+    assertNotNull(deleteStepsAndProjection.projection());
+    final @Nullable ReqFieldProjection deleteProjection = deleteStepsAndProjection.projection();
+    assertEquals(expectedDeleteProjection, printReqEntityProjection(deleteProjection.varProjection(), 0));
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        printReqOutputFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));
-  }
-
-
-  private static UrlDeleteUrl parseUrlPsi(@NotNull String text) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    @NotNull UrlDeleteUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.DELETE_URL, errorsAccumulator);
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
   }
 
 }

@@ -19,8 +19,8 @@ package ws.epigraph.projections.op.path;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -155,11 +155,11 @@ public class OpOutputPathTest {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpOutputReferenceContext referenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      OpReferenceContext referenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
       OpPathPsiProcessingContext pathPsiProcessingContext =
-          new OpPathPsiProcessingContext(context, new OpOutputPsiProcessingContext(context, referenceContext));
+          new OpPathPsiProcessingContext(context, new OpPsiProcessingContext(context, referenceContext));
 
       OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, pathPsiProcessingContext);
 

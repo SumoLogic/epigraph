@@ -19,10 +19,9 @@ package ws.epigraph.wire;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -34,7 +33,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -61,13 +60,11 @@ public final class WireTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(true, context -> {
-      OpInputReferenceContext inputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpOutputReferenceContext outputReferenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      OpReferenceContext outputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, outputReferenceContext);
+      OpPsiProcessingContext outputPsiProcessingContext =
+          new OpPsiProcessingContext(context, outputReferenceContext);
 
       OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           varDataType,
@@ -78,7 +75,6 @@ public final class WireTestUtil {
       );
 
       outputReferenceContext.ensureAllReferencesResolved();
-      inputReferenceContext.ensureAllReferencesResolved();
       return vp;
 
     });
@@ -101,8 +97,8 @@ public final class WireTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(true, context -> {
-      ReqOutputReferenceContext referenceContext =
-          new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      ReqReferenceContext referenceContext =
+          new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
       StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(

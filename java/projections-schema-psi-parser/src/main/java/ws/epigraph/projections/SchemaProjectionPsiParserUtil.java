@@ -28,7 +28,7 @@ import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpBasicProjectionPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -107,7 +107,7 @@ public final class SchemaProjectionPsiParserUtil {
       @Nullable OpOutputModelProjection<?, ?, ?, ?> keyProjection,
       @Nullable SchemaOpKeyProjection projectionPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     if (projectionPsi == null) return keyProjection;
 
@@ -134,7 +134,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParams parseParams(
       @NotNull Stream<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     return parseParams(paramsPsi.collect(Collectors.toList()), resolver, context);
   }
@@ -142,7 +142,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParams parseParams(
       @NotNull Iterable<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
 
@@ -160,7 +160,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParam parseParameter(
       @NotNull SchemaOpParam paramPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, context.messages());
@@ -220,7 +220,7 @@ public final class SchemaProjectionPsiParserUtil {
       @NotNull DatumTypeApi keyType,
       @NotNull Stream<SchemaOpKeyProjection> projectionPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull OpOutputPsiProcessingContext context) {
+      @NotNull OpPsiProcessingContext context) {
 
     return projectionPsi.reduce(
         null,

@@ -30,7 +30,7 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 
 /**
@@ -51,8 +51,8 @@ public final class RequestUrlPsiParserUtil {
 
     final StepsAndProjection<ReqFieldProjection> stepsAndProjection;
 
-    ReqOutputReferenceContext reqOutputReferenceContext =
-        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    ReqReferenceContext reqOutputReferenceContext =
+        new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 

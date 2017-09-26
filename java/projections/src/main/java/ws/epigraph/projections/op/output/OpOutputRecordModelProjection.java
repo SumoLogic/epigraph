@@ -82,6 +82,25 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
+  protected OpOutputRecordModelProjection clone() {
+    if (isResolved) {
+      return new OpOutputRecordModelProjection(
+          model,
+          flagged,
+          defaultValue,
+          params,
+          annotations,
+          metaProjection,
+          fieldProjections,
+          polymorphicTails,
+          location()
+      );
+    } else {
+      return new OpOutputRecordModelProjection(model, location());
+    }
+  }
+
+  @Override
   protected OpOutputRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
       final boolean mergedFlagged,

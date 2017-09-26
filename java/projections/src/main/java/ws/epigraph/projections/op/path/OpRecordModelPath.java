@@ -71,6 +71,17 @@ public class OpRecordModelPath
   public @Nullable OpFieldPathEntry fieldPathEntry() { return fieldPathEntry; }
 
   @Override
+  protected OpRecordModelPath clone() {
+    return new OpRecordModelPath(
+        model,
+        params,
+        annotations,
+        fieldPathEntry,
+        location()
+    );
+  }
+
+  @Override
   public boolean equals(Object o) {
     return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }

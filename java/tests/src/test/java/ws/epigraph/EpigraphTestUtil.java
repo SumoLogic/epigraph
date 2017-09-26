@@ -30,7 +30,6 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -46,7 +45,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -101,12 +100,10 @@ public final class EpigraphTestUtil {
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
     return runPsiParser(true, context -> {
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpOutputReferenceContext opOutputReferenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      OpReferenceContext opOutputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpOutputPsiProcessingContext opOutputPsiProcessingContext = new OpOutputPsiProcessingContext(
+      OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
           context,
           opOutputReferenceContext
       );
@@ -115,11 +112,10 @@ public final class EpigraphTestUtil {
           false,
           psiVarProjection,
           resolver,
-          opOutputPsiProcessingContext
+          opPsiProcessingContext
       );
 
       opOutputReferenceContext.ensureAllReferencesResolved();
-      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
@@ -143,8 +139,8 @@ public final class EpigraphTestUtil {
     failIfHasErrors(psi, errorsAccumulator);
 
     return runPsiParser(true, context -> {
-      ReqOutputReferenceContext reqOutputReferenceContext =
-          new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      ReqReferenceContext reqOutputReferenceContext =
+          new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
@@ -179,7 +175,7 @@ public final class EpigraphTestUtil {
           }
         };
 
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter, pctx);
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
     printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();

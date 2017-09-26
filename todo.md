@@ -37,6 +37,9 @@
 - [ ] codegen: need better framework for generating imports and imported names
 - [x] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
+- [ ] codegen: `_resources/*` package name should be in lower case
+- [ ] codegen: primitive `String` setters should accept `CharSequence`
+- [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 
 
 # Type system
@@ -88,6 +91,11 @@
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 - [ ] op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`
+- [ ] paths: add entity params, make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
+- [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
+- [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
+- [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
+- [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 
 # Operations
 

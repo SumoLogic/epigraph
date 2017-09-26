@@ -60,6 +60,11 @@ public class ReqMapModelPath
   public @NotNull ReqPathKeyProjection key() { return key; }
 
   @Override
+  protected ReqMapModelPath clone() {
+    return new ReqMapModelPath(model, params, directives, key, valuesProjection, location());
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

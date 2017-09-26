@@ -67,6 +67,24 @@ public class ReqListModelProjection
     return itemsProjection;
   }
 
+  @Override
+  protected ReqListModelProjection clone() {
+    if (isResolved) {
+      return new ReqListModelProjection(
+          model,
+          flagged,
+          params,
+          directives,
+          metaProjection,
+          itemsProjection(),
+          polymorphicTails,
+          location()
+      );
+    } else {
+      return new ReqListModelProjection(model, location());
+    }
+  }
+
   /* static */
   @Override
   protected ReqListModelProjection merge(

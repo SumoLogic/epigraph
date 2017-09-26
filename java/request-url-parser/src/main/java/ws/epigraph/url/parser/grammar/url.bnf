@@ -106,8 +106,8 @@ tagName ::= qid
 
 // ============= url =============
 
-// this one isn't used actually, sub-parsers for read/create/... are used instead
-url ::= readUrl | nonReadUrl | deleteUrl
+// this one isn't used actually, sub-parsers for read/non-read URLs are used instead
+url ::= readUrl | nonReadUrl
 
 // todo get rid of requestParms?
 
@@ -119,9 +119,6 @@ readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPat
 }
 
 nonReadUrl ::= '/' qid reqFieldPath inputProjection? outputProjection? requestParams {
-  extends = "url"
-}
-deleteUrl ::= '/' qid reqFieldPath '<' reqDeleteFieldProjection ('>' reqOutputTrunkFieldProjection)? requestParams {
   extends = "url"
 }
 
@@ -252,50 +249,6 @@ reqOutputComaListModelProjection ::= '*' '+'? ( ( reqOutputBracedComaVarProjecti
 reqOutputComaMapModelProjection ::= reqOutputComaKeysProjection '+'? ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
 reqOutputComaKeysProjection ::= '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
-
-// req delete --------------------------------------------------------
-
-// reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
-
-reqDeleteVarProjection ::= reqDeleteNamedVarProjection | reqDeleteUnnamedOrRefVarProjection
-reqDeleteUnnamedOrRefVarProjection ::= reqDeleteVarProjectionRef | reqDeleteUnnamedVarProjection
-reqDeleteNamedVarProjection ::= '$' qid '=' reqDeleteUnnamedOrRefVarProjection {pin = 3}
-reqDeleteVarProjectionRef ::= '$' qid {pin = 1}
-reqDeleteUnnamedVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
-private reqDeleteBracedVarProjection ::= '(' reqDeleteVarProjection ')'
-
-reqDeleteSingleTagProjection ::= ( ':' tagName)? reqDeleteModelProjectionWithProperties
-reqDeleteMultiTagProjection ::= ':' '(' (reqDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
-reqDeleteMultiTagProjectionItem ::= tagName reqDeleteModelProjectionWithProperties
-
-reqDeleteVarPolymorphicTail ::= ':' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=2}
-reqDeleteVarSingleTail ::= typeRef reqDeleteVarProjection
-reqDeleteVarMultiTail ::= '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=1}
-reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
-//
-reqDeleteModelPolymorphicTail ::= '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) // {pin=1}
-reqDeleteModelSingleTail ::= typeRef reqDeleteModelProjectionWithProperties
-reqDeleteModelMultiTail ::= '(' (reqDeleteModelMultiTailItem ','?)* ')' {pin=1}
-reqDeleteModelMultiTailItem ::= typeRef reqDeleteModelProjectionWithProperties
-
-private reqDeleteModelProjectionWithProperties ::= reqParamsAndAnnotations reqDeleteModelProjection // reqDeleteModelMeta?
-//
-
-reqDeleteModelProjection ::= ( ( reqDeleteRecordModelProjection
-                               | reqDeleteListModelProjection
-                               | reqDeleteMapModelProjection
-                               ) reqDeleteModelPolymorphicTail?
-                             )?
-
-reqDeleteRecordModelProjection ::= '(' (reqDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
-reqDeleteFieldProjectionEntry ::= qid reqDeleteFieldProjection
-reqDeleteFieldProjection ::= /* reqParamsAndAnnotations */ reqDeleteVarProjection
-
-reqDeleteListModelProjection ::= '*' ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )? { pin=1 }
-
-reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
-reqDeleteKeysProjection ::= '['( '*' | ( ( reqDeleteKeyProjection ','? )* ) ) ']' {pin=1}
-reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
 // please keep in sync with data language from schema.bnf

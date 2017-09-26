@@ -18,16 +18,13 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.DeleteOperation;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.DeleteRequestUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 import ws.epigraph.url.parser.DeleteRequestUrlPsiParser;
-import ws.epigraph.url.parser.psi.UrlDeleteUrl;
 
 import java.util.Collection;
 
@@ -35,11 +32,11 @@ import java.util.Collection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class DeleteOperationRouter
-    extends AbstractOperationRouter<UrlDeleteUrl, DeleteOperationDeclaration, DeleteOperation<?>, DeleteRequestUrl> {
+    extends AbstractNonReadOperationRouter<DeleteOperationDeclaration, DeleteOperation<?>> {
 
   public static final DeleteOperationRouter INSTANCE = new DeleteOperationRouter();
 
-  private DeleteOperationRouter() {}
+  private DeleteOperationRouter() { super(DeleteRequestUrlPsiParser.INSTANCE); }
 
   @Override
   protected @Nullable DeleteOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
@@ -52,19 +49,13 @@ public final class DeleteOperationRouter
   }
 
   @Override
-  protected @NotNull DeleteRequestUrl parseUrl(
-      final @NotNull DataTypeApi resourceType,
-      final @NotNull DeleteOperationDeclaration opDecl,
-      final @NotNull UrlDeleteUrl urlPsi,
-      final @NotNull TypesResolver resolver,
-      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
-    return DeleteRequestUrlPsiParser.parseDeleteRequestUrl(
-        resourceType,
-        opDecl,
-        urlPsi,
-        resolver,
-        context
-    );
-  }
+  protected void validateMatchingRequest(
+      final @NotNull NonReadRequestUrl request,
+      final @NotNull PsiProcessingContext context) {
 
+    if (request.inputProjection() == null)
+      context.addError("Delete projection must be specified", TextLocation.UNKNOWN);
+
+    super.validateMatchingRequest(request, context);
+  }
 }

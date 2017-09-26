@@ -17,7 +17,7 @@
 package ws.epigraph.projections.op.output;
 
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
-import ws.epigraph.projections.op.postprocess.RequiredNotSupportedChecker;
+import ws.epigraph.projections.op.postprocess.OpFlaggedNotSupportedChecker;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -26,6 +26,6 @@ import ws.epigraph.projections.op.postprocess.RequiredNotSupportedChecker;
 public final class OpOutputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
   public static final OpOutputProjectionsPsiParser INSTANCE = new OpOutputProjectionsPsiParser();
 
-  private OpOutputProjectionsPsiParser() { super(RequiredNotSupportedChecker::new, null);}
+  private OpOutputProjectionsPsiParser() { super(OpFlaggedNotSupportedChecker::new, null);}
 
 }

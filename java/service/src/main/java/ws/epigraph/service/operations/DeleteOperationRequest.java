@@ -18,7 +18,6 @@ package ws.epigraph.service.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 
@@ -26,16 +25,16 @@ import ws.epigraph.projections.req.path.ReqFieldPath;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class DeleteOperationRequest extends OperationRequest {
-  private final @NotNull ReqDeleteFieldProjection DeleteProjection;
+  private final @NotNull ReqFieldProjection DeleteProjection;
 
   public DeleteOperationRequest(
       final @Nullable ReqFieldPath path,
-      final @NotNull ReqDeleteFieldProjection deleteProjection,
+      final @NotNull ReqFieldProjection deleteProjection,
       final @NotNull ReqFieldProjection outputProjection) {
 
     super(path, outputProjection);
     this.DeleteProjection = deleteProjection;
   }
 
-  public @NotNull ReqDeleteFieldProjection deleteProjection() { return DeleteProjection; }
+  public @NotNull ReqFieldProjection deleteProjection() { return DeleteProjection; }
 }

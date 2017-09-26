@@ -46,7 +46,7 @@ public final class DataType implements DataTypeApi { // rename to ValueType?
   public @NotNull Type type() { return type; }
 
   @Override
-  public @Nullable Tag defaultTag() { return defaultTag; }
+  public @Nullable Tag retroTag() { return defaultTag; }
 
   @Override
   public @NotNull DataTypeName name() { return name; }

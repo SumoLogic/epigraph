@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,6 @@ public final class SchemaSubParserDefinitions {
 
   public static final SchemaSubParserDefinition<SchemaOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
       new SchemaSubParserDefinition<>(S_OP_OUTPUT_VAR_PROJECTION, SchemaOpOutputVarProjection.class);
-
-  public static final SchemaSubParserDefinition<SchemaOpInputVarProjection> OP_INPUT_VAR_PROJECTION =
-      new SchemaSubParserDefinition<>(S_OP_INPUT_VAR_PROJECTION, SchemaOpInputVarProjection.class);
-
-  public static final SchemaSubParserDefinition<SchemaOpDeleteVarProjection> OP_DELETE_VAR_PROJECTION =
-      new SchemaSubParserDefinition<>(S_OP_DELETE_VAR_PROJECTION, SchemaOpDeleteVarProjection.class);
 
   public static final SchemaSubParserDefinition<SchemaDataValue> DATA_VALUE =
       new SchemaSubParserDefinition<>(S_DATA_VALUE, SchemaDataValue.class);

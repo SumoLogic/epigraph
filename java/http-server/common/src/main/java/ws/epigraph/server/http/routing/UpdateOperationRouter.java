@@ -38,7 +38,7 @@ public final class UpdateOperationRouter
 
   @Override
   protected @Nullable UpdateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedUpdateOperation(DeleteOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
+    return resource.namedUpdateOperation(UpdateOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override

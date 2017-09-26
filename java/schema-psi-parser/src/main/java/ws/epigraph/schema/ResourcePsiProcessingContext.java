@@ -19,8 +19,7 @@ package ws.epigraph.schema;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 
 /**
@@ -31,9 +30,9 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
   private final @NotNull Qn namespace;
   private final @NotNull String resourceName;
-  private final @NotNull OpOutputReferenceContext inputReferenceContext;
-  private final @NotNull OpOutputReferenceContext outputReferenceContext;
-  private final @NotNull OpDeleteReferenceContext deleteReferenceContext;
+  private final @NotNull OpReferenceContext inputReferenceContext;
+  private final @NotNull OpReferenceContext outputReferenceContext;
+  private final @NotNull OpReferenceContext deleteReferenceContext;
 
   public ResourcePsiProcessingContext(
       @NotNull SchemaPsiProcessingContext psiProcessingContext,
@@ -47,7 +46,7 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
     final Namespaces namespaces = new Namespaces(namespace);
 
-    inputReferenceContext = new OpOutputReferenceContext(
+    inputReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(
             namespaces.inputProjectionsNamespace(resourceName)
         ),
@@ -55,7 +54,7 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
         psiProcessingContext
     );
 
-    outputReferenceContext = new OpOutputReferenceContext(
+    outputReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(
             namespaces.outputProjectionsNamespace(resourceName)
         ),
@@ -63,7 +62,7 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
         psiProcessingContext
     );
 
-    deleteReferenceContext = new OpDeleteReferenceContext(
+    deleteReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(
             namespaces.deleteProjectionsNamespace(resourceName)
         ),
@@ -77,11 +76,11 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
   public @NotNull String resourceName() { return resourceName; }
 
   @Override
-  public @NotNull OpOutputReferenceContext inputReferenceContext() { return inputReferenceContext; }
+  public @NotNull OpReferenceContext inputReferenceContext() { return inputReferenceContext; }
 
   @Override
-  public @NotNull OpOutputReferenceContext outputReferenceContext() { return outputReferenceContext; }
+  public @NotNull OpReferenceContext outputReferenceContext() { return outputReferenceContext; }
 
   @Override
-  public @NotNull OpDeleteReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
+  public @NotNull OpReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
 }

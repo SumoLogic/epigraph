@@ -40,7 +40,7 @@ import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
@@ -104,8 +104,8 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull ReqEntityProjection varProjection;
     final @NotNull TextLocation fieldLocation;
 
-    ReqOutputReferenceContext reqOutputReferenceContext =
-        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    ReqReferenceContext reqOutputReferenceContext =
+        new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -179,8 +179,8 @@ public final class ReadRequestUrlPsiParser {
     final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
-    ReqOutputReferenceContext reqOutputReferenceContext =
-        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    ReqReferenceContext reqOutputReferenceContext =
+        new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 

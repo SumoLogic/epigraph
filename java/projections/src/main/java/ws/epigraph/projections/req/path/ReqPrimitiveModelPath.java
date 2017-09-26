@@ -37,4 +37,9 @@ public class ReqPrimitiveModelPath
       @NotNull TextLocation location) {
     super(model, params, directives, location);
   }
+
+  @Override
+  protected ReqPrimitiveModelPath clone() {
+    return new ReqPrimitiveModelPath(model, params, directives, location());
+  }
 }

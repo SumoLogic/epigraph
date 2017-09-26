@@ -85,6 +85,27 @@ public class ReqMapModelProjection
   }
 
   @Override
+  protected ReqMapModelProjection clone() {
+    if (isResolved()) {
+      return new ReqMapModelProjection(
+          model,
+          flagged,
+          params,
+          directives,
+          metaProjection,
+          keys(),
+          keysRequired,
+          itemsProjection(),
+          polymorphicTails,
+          location()
+      );
+    } else {
+      return new ReqMapModelProjection(model, location());
+    }
+
+  }
+
+  @Override
   protected ReqMapModelProjection merge(
       final @NotNull MapTypeApi model,
       final boolean mergedFlagged,

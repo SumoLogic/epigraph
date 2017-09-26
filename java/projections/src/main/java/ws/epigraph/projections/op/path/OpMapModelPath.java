@@ -60,6 +60,18 @@ public class OpMapModelPath
   public @NotNull OpPathKeyProjection keyProjection() { return keyProjection; }
 
   @Override
+  protected OpMapModelPath clone() {
+    return new OpMapModelPath(
+        model,
+        params,
+        annotations,
+        keyProjection,
+        itemsProjection,
+        location()
+    );
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

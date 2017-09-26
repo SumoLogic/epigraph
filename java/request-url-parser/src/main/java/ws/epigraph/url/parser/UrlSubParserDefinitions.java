@@ -36,9 +36,6 @@ public final class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlNonReadUrl> NON_READ_URL =
       new UrlSubParserDefinition<>(U_NON_READ_URL, UrlNonReadUrl.class);
 
-  public static final UrlSubParserDefinition<UrlDeleteUrl> DELETE_URL =
-      new UrlSubParserDefinition<>(U_DELETE_URL, UrlDeleteUrl.class);
-
   public static final UrlSubParserDefinition<UrlReqVarPath> REQ_VAR_PATH =
       new UrlSubParserDefinition<>(U_REQ_VAR_PATH, UrlReqVarPath.class);
 
@@ -47,9 +44,6 @@ public final class UrlSubParserDefinitions {
 
   public static final UrlSubParserDefinition<UrlReqOutputTrunkFieldProjection> REQ_OUTPUT_FIELD_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, UrlReqOutputTrunkFieldProjection.class);
-
-  public static final UrlSubParserDefinition<UrlReqDeleteVarProjection> REQ_DELETE_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_DELETE_VAR_PROJECTION, UrlReqDeleteVarProjection.class);
 
   private UrlSubParserDefinitions() {}
 

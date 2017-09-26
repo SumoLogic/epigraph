@@ -51,6 +51,20 @@ public class OpOutputPrimitiveModelProjection
   }
 
   @Override
+  protected OpOutputPrimitiveModelProjection clone() {
+    return new OpOutputPrimitiveModelProjection(
+        model,
+        flagged,
+        defaultValue,
+        params,
+        annotations,
+        metaProjection,
+        polymorphicTails,
+        location()
+    );
+  }
+
+  @Override
   protected OpOutputPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
       final boolean mergedFlagged,

@@ -52,7 +52,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final boolean flagged,
       final @NotNull SchemaOpOutputVarProjection psi,
       final @NotNull TypesResolver typesResolver,
-      final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpOutputVarProjection res =
         OpBasicProjectionPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
@@ -66,7 +66,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final boolean flagged,
       final @NotNull SchemaOpOutputFieldProjection psi,
       final @NotNull TypesResolver resolver,
-      final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpOutputFieldProjection res =
         OpBasicProjectionPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
@@ -82,7 +82,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final boolean flagged,
       final @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
       final @NotNull TypesResolver typesResolver,
-      final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpOutputVarProjection res =
         OpBasicProjectionPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
@@ -96,7 +96,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final boolean flagged,
       final @NotNull SchemaOpOutputModelProjection psi,
       final @NotNull TypesResolver typesResolver,
-      final @NotNull OpOutputPsiProcessingContext context) throws PsiProcessingException {
+      final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpOutputModelProjection<?,?,?,?> res =
         OpBasicProjectionPsiParser.parseModelProjection(type, flagged, psi, typesResolver, context);
@@ -106,7 +106,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
 
   private @NotNull OpOutputVarProjection processEntityProjection(
       @NotNull OpOutputVarProjection ep,
-      @NotNull OpOutputPsiProcessingContext context) {
+      @NotNull OpPsiProcessingContext context) {
 
     if (traversalFactory != null) {
       OpProjectionTraversal traversal = traversalFactory.apply(context);
@@ -127,7 +127,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
 
   private @NotNull OpOutputModelProjection<?,?,?,?> processModelProjection(
       @NotNull OpOutputModelProjection<?,?,?,?> mp,
-      @NotNull OpOutputPsiProcessingContext context) {
+      @NotNull OpPsiProcessingContext context) {
 
     if (traversalFactory != null) {
       OpProjectionTraversal traversal = traversalFactory.apply(context);

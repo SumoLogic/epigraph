@@ -51,7 +51,7 @@ public final class ProjectionsParsingUtil {
    * @param dataType data type with optional retro tag
    * @param tagName  optional tag name
    * @param op       optional operation projection for extra checks
-   * @param location location for error message
+   * @param locationPsi location for error message
    * @param context  psi processing context
    *
    * @return tag instance
@@ -66,18 +66,26 @@ public final class ProjectionsParsingUtil {
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
       @Nullable VP op,
-      @NotNull PsiElement location,
+      @NotNull PsiElement locationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final TagApi tag = findTag(dataType, tagName, op, location, context);
+    final TagApi tag = findTag(dataType, tagName, op, locationPsi, context);
 
     if (tag == null)
-      throw new PsiProcessingException(
-          String.format("Can't parse retro tag projection for '%s', retro tag not specified", dataType.name()),
-          location,
-          context
-      );
+      throw noRetroTagError(dataType, locationPsi, context);
     return tag;
+  }
+
+  public static PsiProcessingException noRetroTagError(
+      final @NotNull DataTypeApi dataType,
+      final @NotNull PsiElement locationPsi,
+      final @NotNull PsiProcessingContext context) {
+
+    return new PsiProcessingException(
+        String.format("Can't parse projection for '%s', retro tag not specified", dataType.name()),
+        locationPsi,
+        context
+    );
   }
 
   /**
@@ -114,7 +122,7 @@ public final class ProjectionsParsingUtil {
 
     if (tagName == null) {
       // get self tag
-      TagApi retroTag = dataType.defaultTag();
+      TagApi retroTag = dataType.retroTag();
       if (retroTag == null) {
         if (type.kind() == TypeKind.ENTITY) return null;
         else tag = ((DatumTypeApi) type).self();
@@ -276,7 +284,7 @@ public final class ProjectionsParsingUtil {
       @NotNull PsiElement locationPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    TagApi retroTag = dataType.defaultTag();
+    TagApi retroTag = dataType.retroTag();
     if (retroTag != null)
       return retroTag;
 

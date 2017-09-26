@@ -26,15 +26,12 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.output.OpOutputFieldProjection;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.*;
@@ -44,14 +41,15 @@ import ws.epigraph.service.operations.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.*;
-import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
-import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
-import ws.epigraph.url.projections.req.delete.ReqDeleteReferenceContext;
+import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
+import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqVarPath;
+import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
@@ -107,8 +105,8 @@ public final class RequestFactory {
     try {
       if (opPath == null) {
         reqPath = null;
-        ReqOutputReferenceContext reqOutputReferenceContext =
-            new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+        ReqReferenceContext reqOutputReferenceContext =
+            new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
         ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
         StepsAndProjection<ReqFieldProjection> stepsAndProjection =
@@ -139,8 +137,8 @@ public final class RequestFactory {
         UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
         UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
 
-        ReqOutputReferenceContext reqOutputReferenceContext =
-            new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+        ReqReferenceContext reqOutputReferenceContext =
+            new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
         ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
@@ -392,13 +390,13 @@ public final class RequestFactory {
         TextLocation.UNKNOWN
     );
 
-    ReqDeleteFieldProjection reqDeleteFieldProjection = new ReqDeleteFieldProjection(
+    ReqFieldProjection reqDeleteFieldProjection = new ReqFieldProjection(
         parseReqDeleteProjection(
             deleteRequestString,
             operationDeclaration.deleteProjection().varProjection().type().dataType(),
             operationDeclaration.deleteProjection().varProjection(),
             typesResolver
-        ),
+        ).projection(),
         TextLocation.UNKNOWN
     );
 
@@ -543,6 +541,15 @@ public final class RequestFactory {
     return parseReqProjection(ReqOutputProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
   }
 
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteProjection(
+      @NotNull String projection,
+      @NotNull DataTypeApi type,
+      @NotNull OpOutputVarProjection op,
+      @NotNull TypesResolver resolver) throws IllegalArgumentException {
+
+    return parseReqProjection(ReqDeleteProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
+  }
+
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqProjection(
       @NotNull ReqProjectionPsiParser parser,
       boolean flagged,
@@ -554,8 +561,8 @@ public final class RequestFactory {
     UrlReqOutputTrunkVarProjection psi = getReqOutputProjectionPsi(projection);
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
-    ReqOutputReferenceContext referenceContext =
-        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    ReqReferenceContext referenceContext =
+        new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
     ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
         new ReqOutputPsiProcessingContext(context, referenceContext);
 
@@ -614,56 +621,6 @@ public final class RequestFactory {
         op,
         resolver
     ).projection();
-  }
-
-  private static @NotNull ReqDeleteVarProjection parseReqDeleteProjection(
-      @NotNull String projection,
-      @NotNull DataTypeApi dataType,
-      @NotNull OpDeleteVarProjection op,
-      @NotNull TypesResolver resolver) throws IllegalArgumentException {
-
-    UrlReqDeleteVarProjection psi = getReqDeleteProjectionPsi(projection);
-
-    PsiProcessingContext context = new DefaultPsiProcessingContext();
-    ReqDeleteReferenceContext referenceContext =
-        new ReqDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-    ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
-        new ReqDeletePsiProcessingContext(context, referenceContext);
-    try {
-      ReqDeleteVarProjection res = ReqDeleteProjectionsPsiParser.parseVarProjection(
-          dataType,
-          op,
-          psi,
-          resolver,
-          reqDeletePsiProcessingContext
-      );
-
-      referenceContext.ensureAllReferencesResolved();
-      throwErrors(context.messages());
-
-      return res;
-
-    } catch (PsiProcessingException e) {
-      context.setErrors(e.messages());
-    }
-
-    throw new IllegalArgumentException(dumpErrors(context.messages()));
-  }
-
-  private static @NotNull UrlReqDeleteVarProjection getReqDeleteProjectionPsi(@NotNull String projection)
-      throws IllegalArgumentException {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqDeleteVarProjection psi = EpigraphPsiUtil.parseText(
-        projection,
-        UrlSubParserDefinitions.REQ_DELETE_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    throwErrors(psi, errorsAccumulator);
-
-    return psi;
   }
 
   private static void throwErrors(

@@ -27,14 +27,8 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteModelProjection;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.OperationsPrettyPrinter;
@@ -75,12 +69,14 @@ public class SchemaPrettyPrinter<E extends Exception> {
         ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace()),
         null
     );
-    ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>>
+
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
         globalInputProjectionsContext = new ProjectionsPrettyPrinterContext<>(
         ProjectionReferenceName.fromQn(namespaces.inputProjectionsNamespace()),
         null
     );
-    ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+
+    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
         globalDeleteProjectionsContext = new ProjectionsPrettyPrinterContext<>(
         ProjectionReferenceName.fromQn(namespaces.deleteProjectionsNamespace()),
         null
@@ -98,15 +94,17 @@ public class SchemaPrettyPrinter<E extends Exception> {
           ProjectionReferenceName.fromQn(namespaces.outputProjectionsNamespace(resource.fieldName())),
           globalOutputProjectionsContext
       );
-      ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>>
+
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           resourceInputProjectionsContext = new ProjectionsPrettyPrinterContext<>(
           ProjectionReferenceName.fromQn(namespaces.inputProjectionsNamespace(resource.fieldName())),
-          globalInputProjectionsContext
+          globalOutputProjectionsContext
       );
-      ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           resourceDeleteProjectionsContext = new ProjectionsPrettyPrinterContext<>(
           ProjectionReferenceName.fromQn(namespaces.deleteProjectionsNamespace(resource.fieldName())),
-          globalDeleteProjectionsContext
+          globalOutputProjectionsContext
       );
 
       printResource(
@@ -179,7 +177,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
     Annotations annotations = transformer.annotations();
     if (!annotations.isEmpty()) {
       l.brk();
-      first = new OpOutputProjectionsPrettyPrinter<>(l).printAnnotations(annotations, true, true);
+      first = new OpProjectionsPrettyPrinter<>(l).printAnnotations(annotations, true, true);
     }
 
     if (!first) l.print(",");
@@ -194,7 +192,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             globalOutputProjections
         );
 
-    new OpOutputProjectionsPrettyPrinter<>(l, ipc).printVar(transformer.inputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, ipc).printVar(transformer.inputProjection(), 0);
     l.end();
 
 
@@ -208,7 +206,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ProjectionReferenceName.fromQn(namespaces.projectionsNamespace()),
             globalOutputProjections
         );
-    new OpOutputProjectionsPrettyPrinter<>(l, opc).printVar(transformer.outputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, opc).printVar(transformer.outputProjection(), 0);
     l.end();
 
     l.end(); //2
@@ -220,8 +218,8 @@ public class SchemaPrettyPrinter<E extends Exception> {
       @NotNull Namespaces namespaces,
       @NotNull ResourceDeclaration resource,
       @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> resourceOutputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> resourceInputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> resourceDeleteProjectionsPrinterContext
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> resourceInputProjectionsPrinterContext,
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> resourceDeleteProjectionsPrinterContext
   ) throws E {
     l.beginCInd(0);
     l.beginIInd(0);
@@ -233,7 +231,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
     @NotNull DataTypeApi fieldType = resource.fieldType();
     l.print(fieldType.type().name().toString()).brk();
 
-    @Nullable TagApi defaultTag = fieldType.defaultTag();
+    @Nullable TagApi defaultTag = fieldType.retroTag();
     if (defaultTag != null && !(fieldType.type() instanceof DatumType)) {
       l.print("default").brk();
       l.print(defaultTag.name()).brk();
@@ -258,7 +256,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
               resourceOutputProjectionsPrinterContext
           );
 
-      ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>>
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           operationInputProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               ProjectionReferenceName.fromQn(
@@ -271,7 +269,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
               resourceInputProjectionsPrinterContext
           );
 
-      ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>>
+      ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>
           operationDeleteProjectionsContext =
           new ProjectionsPrettyPrinterContext<>(
               ProjectionReferenceName.fromQn(
@@ -340,15 +338,15 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ),
             parent
         ),
-        context -> new OpOutputProjectionsPrettyPrinter<>(l, context)
+        context -> new OpProjectionsPrettyPrinter<>(l, context)
     );
   }
 
   private void printInputProjections(
       final @Nullable String resourceName,
-      final @Nullable ProjectionsPrettyPrinterContext<OpInputVarProjection, OpInputModelProjection<?, ?, ?, ?>> parent,
-      final @NotNull Collection<OpInputVarProjection> globalInputVarProjections,
-      final @NotNull Collection<OpInputModelProjection<?, ?, ?, ?>> globalInputModelProjections,
+      final @Nullable ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> parent,
+      final @NotNull Collection<OpOutputVarProjection> globalInputVarProjections,
+      final @NotNull Collection<OpOutputModelProjection<?, ?, ?, ?>> globalInputModelProjections,
       final @NotNull Namespaces namespaces) throws E {
 
     printGlobalProjections(
@@ -363,15 +361,15 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ),
             parent
         ),
-        context -> new OpInputProjectionsPrettyPrinter<>(l, context)
+        context -> new OpProjectionsPrettyPrinter<>(l, context)
     );
   }
 
   private void printDeleteProjections(
       final @Nullable String resourceName,
-      final @Nullable ProjectionsPrettyPrinterContext<OpDeleteVarProjection, OpDeleteModelProjection<?, ?, ?>> parent,
-      final @NotNull Collection<OpDeleteVarProjection> globalDeleteVarProjections,
-      final @NotNull Collection<OpDeleteModelProjection<?, ?, ?>> globalDeleteModelProjections,
+      final @Nullable ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> parent,
+      final @NotNull Collection<OpOutputVarProjection> globalDeleteVarProjections,
+      final @NotNull Collection<OpOutputModelProjection<?, ?, ?, ?>> globalDeleteModelProjections,
       final @NotNull Namespaces namespaces) throws E {
 
     printGlobalProjections(
@@ -386,7 +384,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ),
             parent
         ),
-        context -> new OpDeleteProjectionsPrettyPrinter<>(l, context)
+        context -> new OpProjectionsPrettyPrinter<>(l, context)
     );
   }
 

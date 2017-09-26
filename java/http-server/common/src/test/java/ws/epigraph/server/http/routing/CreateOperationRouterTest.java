@@ -50,8 +50,7 @@ import static ws.epigraph.test.TestUtil.lines;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateOperationRouterTest {
-  private final TypesResolver resolver = new SimpleTypesResolver(
+public class CreateOperationRouterTest { private final TypesResolver resolver = new SimpleTypesResolver(
       PersonId.type,
       Person.type,
       User.type,

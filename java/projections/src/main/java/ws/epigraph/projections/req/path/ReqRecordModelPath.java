@@ -68,6 +68,17 @@ public class ReqRecordModelPath
   }
 
   @Override
+  protected ReqRecordModelPath clone() {
+    return new ReqRecordModelPath(
+        model,
+        params,
+        directives,
+        fieldProjections.entrySet().iterator().next().getValue(),
+        location()
+    );
+  }
+
+  @Override
   public boolean equals(Object o) {
     return super.equals(o) && RecordModelProjectionHelper.equals(this, o);
   }

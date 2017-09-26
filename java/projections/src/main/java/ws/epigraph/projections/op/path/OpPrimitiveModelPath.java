@@ -37,4 +37,14 @@ public class OpPrimitiveModelPath
       @NotNull TextLocation location) {
     super(model, params, annotations, location);
   }
+
+  @Override
+  protected OpPrimitiveModelPath clone() {
+    return new OpPrimitiveModelPath(
+        model,
+        params,
+        annotations,
+        location()
+    );
+  }
 }

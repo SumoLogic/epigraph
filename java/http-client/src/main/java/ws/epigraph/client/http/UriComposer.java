@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.delete.ReqDeleteFieldProjection;
-import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 
@@ -122,7 +120,7 @@ public final class UriComposer {
   public static @NotNull String composeDeleteUri(
       @NotNull String fieldName,
       @Nullable ReqFieldPath path,
-      @NotNull ReqDeleteFieldProjection deleteProjection,
+      @NotNull ReqFieldProjection deleteProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
@@ -132,7 +130,7 @@ public final class UriComposer {
     else
       decodedUri.append(printReqPath(fieldName, path));
 
-    decodedUri.append('<').append(printReqDeleteProjection(deleteProjection));
+    decodedUri.append('<').append(printReqProjection(deleteProjection));
 
     decodedUri.append('>').append(printReqProjection(outputProjection));
 
@@ -228,25 +226,4 @@ public final class UriComposer {
     return sb.getString();
   }
 
-  private static @NotNull String printReqDeleteProjection(@NotNull ReqDeleteFieldProjection projection) {
-
-    StringBackend sb = new StringBackend(2000);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-
-    ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer =
-        new ReqDeleteProjectionsPrettyPrinter<NoExceptions>(layouter) {
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
-
-          @Override
-          protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
-        };
-
-    printer.printVar(projection.varProjection(), 0);
-
-    return sb.getString();
-  }
 }

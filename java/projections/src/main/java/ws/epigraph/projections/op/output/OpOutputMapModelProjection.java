@@ -82,6 +82,28 @@ public class OpOutputMapModelProjection
     return itemsProjection;
   }
 
+  @Override
+  protected OpOutputMapModelProjection clone() {
+    if (isResolved) {
+      return new OpOutputMapModelProjection(
+          model,
+          flagged,
+          defaultValue,
+          params,
+          annotations,
+          metaProjection,
+          keyProjection(),
+          itemsProjection(),
+          polymorphicTails,
+          location()
+      );
+    } else {
+      return new OpOutputMapModelProjection(
+          model, location()
+      );
+    }
+  }
+
   /* static */
 
   @Override
@@ -110,7 +132,8 @@ public class OpOutputMapModelProjection
 
       if (mergedKeysPresence == null) mergedKeysPresence = presence;
       else {
-        /*@Nullable*/ OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        /*@Nullable*/
+        OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
         if (newKeysPresence == null)
           throw new IllegalArgumentException(
               String.format(

@@ -30,18 +30,14 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.*;
@@ -294,7 +290,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqOutputFieldProjection(
+  public static @NotNull String printReqFieldProjection(
       String fieldName,
       @NotNull ReqFieldProjection projection,
       int pathSteps) {
@@ -320,15 +316,6 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer = new ReqDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
   public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
@@ -344,7 +331,7 @@ public final class TestUtil {
           }
         };
 
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter, pctx);
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
     printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
@@ -353,17 +340,8 @@ public final class TestUtil {
   public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter);
     printer.printModel(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printOpDeleteVarProjection(OpDeleteVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }

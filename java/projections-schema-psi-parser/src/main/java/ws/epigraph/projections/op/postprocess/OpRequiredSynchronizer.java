@@ -56,7 +56,7 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
     if (projection.flagged()
         && projection.type().kind() != TypeKind.ENTITY
         && dataType != null
-        && dataType.defaultTag() == null) {
+        && dataType.retroTag() == null) {
 
       context.addError(
           String.format(
@@ -86,7 +86,7 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
         else if (dataType == null) // nothing known about entity container type, can only guess
           return false;
         else {
-          TagApi retroTag = dataType.defaultTag();
+          TagApi retroTag = dataType.retroTag();
           return retroTag != null && retroTag.type().equals(modelProjection.type());
         }
       }

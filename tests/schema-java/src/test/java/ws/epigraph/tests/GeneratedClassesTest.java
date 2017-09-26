@@ -28,8 +28,8 @@ import ws.epigraph.data.ListDatum;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
+import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
 import ws.epigraph.refs.QnTypeRef;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.schema.Namespaces;
@@ -90,7 +90,7 @@ public class GeneratedClassesTest {
 
   @Test
   public void testRecursiveOpProjection() {
-    final OpDeleteVarProjection varProjection =
+    final @NotNull OpOutputVarProjection varProjection =
         UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
 
     assertEquals(
@@ -144,11 +144,11 @@ public class GeneratedClassesTest {
       Qn namespace,
       String resourceName,
       String operationName,
-      OpDeleteVarProjection projection) {
+      OpOutputVarProjection projection) {
 
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(
         layouter,
         new ProjectionsPrettyPrinterContext<>(
             ProjectionReferenceName.fromQn(

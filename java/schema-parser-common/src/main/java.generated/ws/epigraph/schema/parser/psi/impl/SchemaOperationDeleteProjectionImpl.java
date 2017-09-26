@@ -44,8 +44,8 @@ public class SchemaOperationDeleteProjectionImpl extends ASTWrapperPsiElement im
 
   @Override
   @Nullable
-  public SchemaOpDeleteFieldProjection getOpDeleteFieldProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteFieldProjection.class);
+  public SchemaOpOutputFieldProjection getOpOutputFieldProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputFieldProjection.class);
   }
 
   @Override

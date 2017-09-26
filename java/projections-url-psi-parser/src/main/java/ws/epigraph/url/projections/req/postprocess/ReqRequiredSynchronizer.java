@@ -62,7 +62,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
     if (projection.flagged()
         && projection.type().kind() != TypeKind.ENTITY
         && dataType != null
-        && dataType.defaultTag() == null) {
+        && dataType.retroTag() == null) {
 
       context.addError(
           String.format(
@@ -84,7 +84,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final @Nullable List<ReqEntityProjection> transformedTails,
       final boolean mustRebuild) {
 
-    TagApi retroTag = dataType == null ? null : dataType.defaultTag();
+    TagApi retroTag = dataType == null ? null : dataType.retroTag();
     @Nullable ReqTagProjectionEntry tp = null;
     if (retroTag != null)
       tp = varProjection.tagProjection(retroTag.name());
@@ -132,7 +132,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
         else if (dataType == null) // nothing known about entity container type, can only guess
           return false;
         else {
-          TagApi retroTag = dataType.defaultTag();
+          TagApi retroTag = dataType.retroTag();
           return retroTag != null && retroTag.type().equals(modelProjection.type());
         }
       }

@@ -33,7 +33,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
@@ -185,7 +185,7 @@ public class ReqInputProjectionParserTest {
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
 
-        ReqOutputReferenceContext referenceContext = new ReqOutputReferenceContext(
+        ReqReferenceContext referenceContext = new ReqReferenceContext(
             ProjectionReferenceName.EMPTY, null, context
         );
 
