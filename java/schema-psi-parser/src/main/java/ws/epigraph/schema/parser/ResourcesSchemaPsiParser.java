@@ -26,8 +26,8 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpProjectionPsiParser;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -220,8 +220,8 @@ public final class ResourcesSchemaPsiParser {
         resolver
     );
 
-    OpOutputVarProjection inputProjection = null;
-    OpOutputVarProjection outputProjection = null;
+    OpEntityProjection inputProjection = null;
+    OpEntityProjection outputProjection = null;
 
     for (final SchemaTransformerBodyPart bodyPart : psi.getTransformerBodyPartList()) {
 
@@ -590,7 +590,7 @@ public final class ResourcesSchemaPsiParser {
             );
 
             final OpReferenceContext innerReferenceContext = innerReferenceContextFactory.apply(projectionName);
-            final OpOutputVarProjection value = psiParser.parse(
+            final OpEntityProjection value = psiParser.parse(
                 type.dataType(),
                 unnamedPsi,
                 resolver,
@@ -609,7 +609,7 @@ public final class ResourcesSchemaPsiParser {
   private abstract static class UnnamedEntityParser {
     protected abstract @NotNull OpProjectionPsiParser baseParser();
 
-    OpOutputVarProjection parse(
+    OpEntityProjection parse(
         @NotNull DataTypeApi type,
         @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
         @NotNull TypesResolver resolver,

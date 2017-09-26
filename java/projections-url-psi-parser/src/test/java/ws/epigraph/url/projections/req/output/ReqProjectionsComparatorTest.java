@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqProjectionsComparator;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
@@ -60,7 +60,7 @@ public class ReqProjectionsComparatorTest {
 
   @Test
   public void testRec1() {
-    OpOutputVarProjection op = parsePersonOpOutputVarProjection(
+    OpEntityProjection op = parsePersonOpOutputVarProjection(
         "$rec = :`record`(firstName, lastName, bestFriend $rec)"
     );
 
@@ -85,11 +85,11 @@ public class ReqProjectionsComparatorTest {
     assertTrue(comparator.equals(vp1_1, vp2));
   }
 
-  private @NotNull ReqEntityProjection parseReqVarProjection(@NotNull OpOutputVarProjection op, String s) {
+  private @NotNull ReqEntityProjection parseReqVarProjection(@NotNull OpEntityProjection op, String s) {
     return parseReqOutputVarProjection(dataType, op, s, resolver).projection();
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 

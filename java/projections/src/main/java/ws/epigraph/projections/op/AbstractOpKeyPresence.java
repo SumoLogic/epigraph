@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public enum OpKeyPresence {
+public enum AbstractOpKeyPresence {
   OPTIONAL, REQUIRED, FORBIDDEN;
 
   @Contract(pure = true)
@@ -33,7 +33,7 @@ public enum OpKeyPresence {
   }
 
   @Contract(pure = true)
-  public static @Nullable OpKeyPresence merge(OpKeyPresence p1, OpKeyPresence p2) {
+  public static @Nullable AbstractOpKeyPresence merge(AbstractOpKeyPresence p1, AbstractOpKeyPresence p2) {
     if (p1 == OPTIONAL) return p2;
     if (p2 == OPTIONAL) return p1;
     if (p1 == p2) return p1;

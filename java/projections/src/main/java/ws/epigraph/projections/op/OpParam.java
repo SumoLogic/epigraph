@@ -18,7 +18,6 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
 
 import java.util.Objects;
 
@@ -27,11 +26,11 @@ import java.util.Objects;
  */
 public class OpParam {
   private final @NotNull String name;
-  private final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection;
+  private final @NotNull OpModelProjection<?, ?, ?, ?> projection;
   private final @NotNull TextLocation location;
 
   public OpParam(@NotNull String name,
-                 @NotNull OpOutputModelProjection<?, ?, ?, ?> projection,
+                 @NotNull OpModelProjection<?, ?, ?, ?> projection,
                  @NotNull TextLocation location) {
     this.name = name;
     this.projection = projection;
@@ -42,7 +41,7 @@ public class OpParam {
 
   public @NotNull String name() { return name; }
 
-  public @NotNull OpOutputModelProjection<?, ?, ?, ?> projection() { return projection; }
+  public @NotNull OpModelProjection<?, ?, ?, ?> projection() { return projection; }
 
   public @NotNull TextLocation location() { return location; }
 

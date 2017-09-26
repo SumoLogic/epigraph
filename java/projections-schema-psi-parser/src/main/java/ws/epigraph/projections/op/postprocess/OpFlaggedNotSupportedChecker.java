@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.postprocess;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.op.OpProjectionTraversal;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 
 /**
@@ -35,14 +35,14 @@ public class OpFlaggedNotSupportedChecker extends OpProjectionTraversal {
   public OpFlaggedNotSupportedChecker(final @NotNull PsiProcessingContext context) {this.context = context;}
 
   @Override
-  protected boolean visitVarProjection(final @NotNull OpOutputVarProjection projection) {
+  protected boolean visitVarProjection(final @NotNull OpEntityProjection projection) {
     if (projection.flagged())
       context.addWarning("flag is not supported on output projections, ignoring", projection.location());
     return super.visitVarProjection(projection);
   }
 
   @Override
-  protected boolean visitModelProjection(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
+  protected boolean visitModelProjection(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {
     if (projection.flagged())
       context.addWarning("flag is not supported on output projections, ignoring", projection.location());
     return super.visitModelProjection(projection);

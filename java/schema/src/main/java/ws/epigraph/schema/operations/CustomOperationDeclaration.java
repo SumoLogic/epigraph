@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 
 /**
@@ -33,8 +33,8 @@ public class CustomOperationDeclaration extends OperationDeclaration {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpOutputFieldProjection inputProjection,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @Nullable OpFieldProjection inputProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     super(OperationKind.CUSTOM, method, name, annotations,

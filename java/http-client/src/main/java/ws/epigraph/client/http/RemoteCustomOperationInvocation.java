@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
@@ -92,7 +92,7 @@ public class RemoteCustomOperationInvocation
     ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
-    @Nullable OpOutputFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
+    @Nullable OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
     if (data == null || opInputFieldProjection == null)
       return null;
 

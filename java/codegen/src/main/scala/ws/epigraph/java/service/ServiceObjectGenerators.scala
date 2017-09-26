@@ -16,14 +16,12 @@
 
 package ws.epigraph.java.service
 
-import ws.epigraph.java.service.projections.op.output._
+import ws.epigraph.java.service.projections.op._
 import ws.epigraph.java.service.projections.op.path._
-import ws.epigraph.java.service.projections.op.{OpKeyPresenceGen, OpParamGen, OpParamsGen}
 import ws.epigraph.java.{ObjectGenContext, ObjectGenerators}
 import ws.epigraph.projections.gen.ProjectionReferenceName
-import ws.epigraph.projections.op.output._
+import ws.epigraph.projections.op._
 import ws.epigraph.projections.op.path._
-import ws.epigraph.projections.op.{OpKeyPresence, OpParam, OpParams}
 import ws.epigraph.schema.operations._
 
 object ServiceObjectGenerators extends ObjectGenerators {
@@ -41,7 +39,7 @@ object ServiceObjectGenerators extends ObjectGenerators {
 
         case param: OpParam => new OpParamGen(param).generate(ctx)
         case params: OpParams => new OpParamsGen(params).generate(ctx)
-        case kp: OpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
+        case kp: AbstractOpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
 
         case ovp: OpVarPath => new OpVarPathGen(ovp).generate(ctx)
         case ormp: OpRecordModelPath => new OpRecordModelPathGen(ormp).generate(ctx)
@@ -50,13 +48,13 @@ object ServiceObjectGenerators extends ObjectGenerators {
         case opkp: OpPathKeyProjection => new OpPathKeyProjectionGen(opkp).generate(ctx)
         case opmp: OpPrimitiveModelPath => new OpPrimitiveModelPathGen(opmp).generate(ctx)
 
-        case oovp: OpOutputVarProjection => new OpOutputVarProjectionGen(oovp).generate(ctx)
-        case oormp: OpOutputRecordModelProjection => new OpOutputRecordModelProjectionGen(oormp).generate(ctx)
-        case oofp: OpOutputFieldProjection => new OpOutputFieldProjectionGen(oofp).generate(ctx)
-        case oommp: OpOutputMapModelProjection => new OpOutputMapModelProjectionGen(oommp).generate(ctx)
-        case ookp: OpOutputKeyProjection => new OpOutputKeyProjectionGen(ookp).generate(ctx)
-        case oolmp: OpOutputListModelProjection => new OpOutputListModelProjectionGen(oolmp).generate(ctx)
-        case oopmp: OpOutputPrimitiveModelProjection => new OpOutputPrimitiveModelProjectionGen(oopmp).generate(ctx)
+        case oovp: OpEntityProjection => new OpEntityProjectionGen(oovp).generate(ctx)
+        case oormp: OpRecordModelProjection => new OpRecordModelProjectionGen(oormp).generate(ctx)
+        case oofp: OpFieldProjection => new OpFieldProjectionGen(oofp).generate(ctx)
+        case oommp: OpMapModelProjection => new OpMapModelProjectionGen(oommp).generate(ctx)
+        case ookp: OpKeyProjection => new OpKeyProjectionGen(ookp).generate(ctx)
+        case oolmp: OpListModelProjection => new OpListModelProjectionGen(oolmp).generate(ctx)
+        case oopmp: OpPrimitiveModelProjection => new OpPrimitiveModelProjectionGen(oopmp).generate(ctx)
 
         case rod: ReadOperationDeclaration => new ReadOperationDeclarationGen(rod).generate(ctx)
         case cod: CreateOperationDeclaration => new CreateOperationDeclarationGen(cod).generate(ctx)

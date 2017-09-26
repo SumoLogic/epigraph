@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
@@ -60,7 +60,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   public @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull UrlReqOutputTrunkVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -76,7 +76,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   public @NotNull StepsAndProjection<ReqEntityProjection> parseComaVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull UrlReqOutputComaVarProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -91,7 +91,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   @Override
   public @NotNull ReqEntityProjection createDefaultVarProjection(
       @NotNull DataTypeApi type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -105,7 +105,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   public @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
-      @NotNull OpOutputFieldProjection op,
+      @NotNull OpFieldProjection op,
       @NotNull UrlReqOutputTrunkFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
@@ -130,7 +130,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
 
   private @NotNull StepsAndProjection<ReqEntityProjection> processEntityProjection(
       @NotNull StepsAndProjection<ReqEntityProjection> s,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull ReqOutputPsiProcessingContext context) {
 
     return new StepsAndProjection<>(
@@ -145,7 +145,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
 
   private @NotNull ReqEntityProjection processEntityProjection(
       @NotNull ReqEntityProjection ep,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull ReqOutputPsiProcessingContext context) {
 
     if (traversalFactory != null) {

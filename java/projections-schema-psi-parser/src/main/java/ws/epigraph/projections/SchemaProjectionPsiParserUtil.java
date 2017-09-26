@@ -27,7 +27,7 @@ import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpBasicProjectionPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -102,9 +102,9 @@ public final class SchemaProjectionPsiParserUtil {
 
   }
 
-  public static @Nullable OpOutputModelProjection<?, ?, ?, ?> parseKeyProjection(
+  public static @Nullable OpModelProjection<?, ?, ?, ?> parseKeyProjection(
       @NotNull DatumTypeApi keyType,
-      @Nullable OpOutputModelProjection<?, ?, ?, ?> keyProjection,
+      @Nullable OpModelProjection<?, ?, ?, ?> keyProjection,
       @Nullable SchemaOpKeyProjection projectionPsi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
@@ -193,7 +193,7 @@ public final class SchemaProjectionPsiParserUtil {
 //                                    ? null
 //                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, context);
 
-    final OpOutputModelProjection<?, ?, ?, ?> paramModelProjection;
+    final OpModelProjection<?, ?, ?, ?> paramModelProjection;
 
     if (paramModelProjectionPsi == null)
       paramModelProjection = OpBasicProjectionPsiParser.createDefaultModelProjection(
@@ -216,7 +216,7 @@ public final class SchemaProjectionPsiParserUtil {
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }
 
-  public static @Nullable OpOutputModelProjection<?, ?, ?, ?> parseKeyProjection(
+  public static @Nullable OpModelProjection<?, ?, ?, ?> parseKeyProjection(
       @NotNull DatumTypeApi keyType,
       @NotNull Stream<SchemaOpKeyProjection> projectionPsi,
       @NotNull TypesResolver typesResolver,

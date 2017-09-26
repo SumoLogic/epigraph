@@ -24,6 +24,8 @@ import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.*;
@@ -106,7 +108,7 @@ public final class OperationsPsiParser {
         parsePath(operationNameOrDefaultName, OperationKind.READ, resourceType, pathPsi, resolver, context);
 //    @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
-    final OpOutputFieldProjection outputProjection = parseOutputProjection(
+    final OpFieldProjection outputProjection = parseOutputProjection(
         operationNameOrDefaultName,
         OperationKind.READ,
         resolveOutputType(
@@ -194,7 +196,7 @@ public final class OperationsPsiParser {
         referenceContext
     );
 
-    final OpOutputFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
+    final OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
@@ -280,7 +282,7 @@ public final class OperationsPsiParser {
         referenceContext
     );
 
-    final @NotNull OpOutputFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
+    final @NotNull OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
@@ -362,7 +364,7 @@ public final class OperationsPsiParser {
         referenceContext
     );
 
-    final OpOutputFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.INSTANCE.parseFieldProjection(
+    final OpFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.varProjection()),
         deleteProjectionPsi.getPlus() != null,
         deleteFieldProjectionPsi,
@@ -448,7 +450,7 @@ public final class OperationsPsiParser {
     @Nullable OpFieldPath opPath =
         parsePath(operationName, OperationKind.CUSTOM, resourceType, pathPsi, resolver, context);
 
-    final OpOutputFieldProjection fieldProjection =
+    final OpFieldProjection fieldProjection =
         inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
             resolveInputType(
                 resourceType,
@@ -486,7 +488,7 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull OpOutputFieldProjection parseOutputProjection(
+  private static @NotNull OpFieldProjection parseOutputProjection(
       final @NotNull String operationNameOrDefaultName,
       final @NotNull OperationKind operationKind,
       final @NotNull DataTypeApi outputType,
@@ -511,15 +513,15 @@ public final class OperationsPsiParser {
         context, outputReferenceContext // todo (null)
     );
 
-    final OpOutputFieldProjection fieldProjection;
+    final OpFieldProjection fieldProjection;
 
     // todo add context
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
-      final @NotNull OpOutputVarProjection varProjection =
+      final @NotNull OpEntityProjection varProjection =
           OpBasicProjectionPsiParser.createDefaultVarProjection(outputType, location, psiProcessingContext);
 
-      fieldProjection = new OpOutputFieldProjection(
+      fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,
 //          Annotations.EMPTY,
           varProjection,

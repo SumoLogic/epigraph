@@ -18,13 +18,13 @@ package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CField, CFieldApiWrapper, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenFieldProjectionEntry, GenRecordModelProjection}
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
-import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 
 import scala.collection.JavaConversions._
 

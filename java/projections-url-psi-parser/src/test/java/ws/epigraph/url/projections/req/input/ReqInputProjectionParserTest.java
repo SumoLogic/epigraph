@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -53,7 +53,7 @@ public class ReqInputProjectionParserTest {
       epigraph.String.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpInputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpInputVarProjection(
       lines(
           ":(",
           "  id,",
@@ -221,7 +221,7 @@ public class ReqInputProjectionParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
     return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver);
   }
 }

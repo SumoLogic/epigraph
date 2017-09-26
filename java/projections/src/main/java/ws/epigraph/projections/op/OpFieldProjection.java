@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.AbstractOpFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -27,39 +25,39 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputFieldProjection extends AbstractOpFieldProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputFieldProjection
+public class OpFieldProjection extends AbstractOpFieldProjection<
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpFieldProjection
     > {
 
   // private final boolean flagged; // flagged field = flagged field retro model | var = all models flagged
 
-  public OpOutputFieldProjection(
+  public OpFieldProjection(
 //      @NotNull OpParams params,
 //      @NotNull Annotations annotations,
-      @NotNull OpOutputVarProjection projection,
+      @NotNull OpEntityProjection projection,
       @NotNull TextLocation location) {
     super(/*params, annotations, */projection, location);
   }
 
   @Override
-  public @NotNull OpOutputFieldProjection setVarProjection(final @NotNull OpOutputVarProjection varProjection) {
-    return new OpOutputFieldProjection(varProjection, TextLocation.UNKNOWN);
+  public @NotNull OpFieldProjection setVarProjection(final @NotNull OpEntityProjection varProjection) {
+    return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
   public boolean flagged() { return varProjection().flagged(); }
 
   @Override
-  protected @NotNull OpOutputFieldProjection merge(
+  protected @NotNull OpFieldProjection merge(
       final @NotNull DataTypeApi type,
-      final @NotNull List<OpOutputFieldProjection> fieldProjections,
+      final @NotNull List<OpFieldProjection> fieldProjections,
 //      final @NotNull OpParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull OpOutputVarProjection mergedVarProjection) {
+      final @NotNull OpEntityProjection mergedVarProjection) {
 
-    return new OpOutputFieldProjection(
+    return new OpFieldProjection(
 //        mergedParams,
 //        mergedAnnotations,
         mergedVarProjection,

@@ -17,12 +17,11 @@
 package ws.epigraph.url.projections.req.postprocess;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.url.projections.req.AbstractReqTraversal;
-
-import java.util.Map;
 
 /**
  * Checks that nothing is marked as flagged in the projection
@@ -39,7 +38,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
   @Override
   protected boolean visitVarProjection(
       final @NotNull ReqEntityProjection varProjection,
-      final @NotNull OpOutputVarProjection guide) {
+      final @NotNull OpEntityProjection guide) {
 
     if (varProjection.flagged())
       context.addWarning("flag is not supported on output projections, ignoring", varProjection.location());
@@ -49,7 +48,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
   @Override
   protected boolean visitModelProjection(
       final @NotNull ReqModelProjection<?, ?, ?> modelProjection,
-      final @NotNull OpOutputModelProjection<?, ?, ?, ?> guide) {
+      final @NotNull OpModelProjection<?, ?, ?, ?> guide) {
 
     if (modelProjection.flagged())
       context.addWarning("flag is not supported on output projections, ignoring", modelProjection.location());

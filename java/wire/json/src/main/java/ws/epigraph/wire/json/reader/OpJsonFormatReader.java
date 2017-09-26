@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.projections.gen.GenProjectionsComparator;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.wire.FormatReader;
 import ws.epigraph.wire.OpFormatReader;
@@ -44,18 +44,18 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpJsonFormatReader extends AbstractJsonFormatReader<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection,
-    OpOutputMapModelProjection,
-    OpOutputListModelProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection,
+    OpMapModelProjection,
+    OpListModelProjection
     > implements OpFormatReader {
 
   @Override
-  protected GenProjectionsComparator<OpOutputVarProjection, OpOutputTagProjectionEntry, OpOutputModelProjection<?, ?, ?, ?>, OpOutputRecordModelProjection, OpOutputMapModelProjection, OpOutputListModelProjection, ?, OpOutputFieldProjectionEntry, OpOutputFieldProjection> projectionsComparator() {
+  protected GenProjectionsComparator<OpEntityProjection, OpTagProjectionEntry, OpModelProjection<?, ?, ?, ?>, OpRecordModelProjection, OpMapModelProjection, OpListModelProjection, ?, OpFieldProjectionEntry, OpFieldProjection> projectionsComparator() {
     return new GenProjectionsComparator<>();
   }
 
@@ -67,19 +67,19 @@ public class OpJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
-  protected boolean tagRequired(final @NotNull OpOutputTagProjectionEntry tagProjection) {
+  protected boolean tagRequired(final @NotNull OpTagProjectionEntry tagProjection) {
     return tagProjection.projection().flagged();
   }
 
   @Override
-  protected boolean fieldRequired(final @NotNull OpOutputFieldProjectionEntry fieldEntry) {
+  protected boolean fieldRequired(final @NotNull OpFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().flagged();
   }
 
   @Override
-  protected @Nullable List<? extends OpOutputModelProjection<?, ?, ?, ?>>
-  getKeyProjections(@NotNull Collection<OpOutputMapModelProjection> projections) {
-    List<? extends OpOutputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
+  protected @Nullable List<? extends OpModelProjection<?, ?, ?, ?>>
+  getKeyProjections(@NotNull Collection<OpMapModelProjection> projections) {
+    List<? extends OpModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
         .map(mp -> mp.keyProjection().projection())
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
@@ -87,12 +87,12 @@ public class OpJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
-  protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<OpOutputMapModelProjection> projections) {
+  protected @Nullable Set<Datum> getExpectedKeys(final @NotNull Collection<OpMapModelProjection> projections) {
     return null;
   }
 
   @Override
-  protected @Nullable OpOutputModelProjection<?, ?, ?, ?> getMetaProjection(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
+  protected @Nullable OpModelProjection<?, ?, ?, ?> getMetaProjection(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {
     return projection.metaProjection();
   }
 

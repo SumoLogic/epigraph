@@ -16,10 +16,10 @@
 
 package ws.epigraph.wire;
 
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OpFormatReader extends FormatReader<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> {}
+public interface OpFormatReader extends FormatReader<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {}

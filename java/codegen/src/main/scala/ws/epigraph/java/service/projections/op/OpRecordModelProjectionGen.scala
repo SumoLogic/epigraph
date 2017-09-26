@@ -14,37 +14,54 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
+import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.OpOutputListModelProjection
-import ws.epigraph.types.{ListType, TypeApi}
+import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
+import ws.epigraph.types.{RecordTypeApi, TypeApi}
 
 import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputListModelProjectionGen(p: OpOutputListModelProjection)
-  extends ObjectGen[OpOutputListModelProjection](p) {
+class OpRecordModelProjectionGen(p: OpRecordModelProjection)
+  extends ObjectGen[OpRecordModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[ListType].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[RecordType].getName)
+    val fpe = ctx.use(classOf[OpFieldProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputListModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.flagged().toString},
   ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(gen(p.itemsProjection(), ctx))},
+  ${i(genLinkedMap("java.lang.String", fpe.toString, p.fieldProjections().entrySet().map{e =>
+      ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
+)"""/*@formatter:on*/
+  }
+
+  private def genFieldProjectionEntry(
+    t: RecordTypeApi,
+    fpe: OpFieldProjectionEntry,
+    ctx: ObjectGenContext): String = {
+
+    val fpes = ctx.use(classOf[OpFieldProjectionEntry].getName)
+
+    /*@formatter:off*/sn"""\
+new $fpes(
+  ${genFieldExpr(t.asInstanceOf[TypeApi], fpe.field().name(), ctx.gctx)},
+  ${i(gen(fpe.fieldProjection(), ctx))},
+  ${gen(fpe.location(), ctx)}
 )"""/*@formatter:on*/
   }
 }

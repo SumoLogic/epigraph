@@ -21,7 +21,7 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output._
+import ws.epigraph.projections.op._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
@@ -29,13 +29,13 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqDeleteModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
+  op: OpModelProjection[_, _, _ <: DatumTypeApi, _],
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqDeleteModelProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
@@ -59,7 +59,7 @@ abstract class ReqDeleteModelProjectionGen(
 object ReqDeleteModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpOutputModelProjection[_, _, _ <: DatumTypeApi, _],
+    op: OpModelProjection[_, _, _ <: DatumTypeApi, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
@@ -76,7 +76,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.RECORD =>
           new ReqDeleteRecordModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpOutputRecordModelProjection],
+            op.asInstanceOf[OpRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -85,7 +85,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.MAP =>
           new ReqDeleteMapModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpOutputMapModelProjection],
+            op.asInstanceOf[OpMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -94,7 +94,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.LIST =>
           new ReqDeleteListModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpOutputListModelProjection],
+            op.asInstanceOf[OpListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,
@@ -103,7 +103,7 @@ object ReqDeleteModelProjectionGen {
         case TypeKind.PRIMITIVE =>
           new ReqDeletePrimitiveModelProjectionGen(
             baseNamespaceProvider,
-            op.asInstanceOf[OpOutputPrimitiveModelProjection],
+            op.asInstanceOf[OpPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt,

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.ObjectGenUtils._
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.{OpOutputTagProjectionEntry, OpOutputVarProjection}
+import ws.epigraph.projections.op.{OpEntityProjection, OpTagProjectionEntry}
 import ws.epigraph.types.TypeApi
 
 import scala.collection.JavaConversions._
@@ -28,16 +28,16 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputVarProjectionGen(p: OpOutputVarProjection) extends ObjectGen[OpOutputVarProjection](p) {
+class OpEntityProjectionGen(p: OpEntityProjection) extends ObjectGen[OpEntityProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
 
     val opName = p.referenceName()
     if (opName != null) {
       val opNameString = p.referenceName().toString
 
       val visitedKey = "projections.op.output.output." + opNameString
-      val methodName = "constructOutputVarProjectionFor$" + opNameString.replace(".", "_")
+      val methodName = "constructEntityProjectionFor$" + opNameString.replace(".", "_")
 
       if (!ctx.visited(visitedKey)) {
 
@@ -45,23 +45,23 @@ class OpOutputVarProjectionGen(p: OpOutputVarProjection) extends ObjectGen[OpOut
         ctx.use("java.util.Map")
         ctx.use("java.util.HashMap")
 
-        if (ctx.addField("private static Map<String, OpOutputVarProjection> outputProjectionRefs = new HashMap<>();"))
+        if (ctx.addField(s"private static Map<String, $o> outputProjectionRefs = new HashMap<>();"))
           ctx.addStatic("outputProjectionRefs = null;")
         ctx.addMethod(
           /*@formatter:off*/sn"""\
-private static OpOutputVarProjection $methodName() {
-  OpOutputVarProjection ref = outputProjectionRefs.get("$opNameString");
+private static $o $methodName() {
+  $o ref = outputProjectionRefs.get("$opNameString");
   if (ref != null && ref.isResolved()) return ref;
   if (ref == null) {
-    ref = new OpOutputVarProjection(
+    ref = new $o(
       ${genTypeExpr(p.`type`(), ctx.gctx)},
       ${gen(p.location(), ctx)}
     );
     outputProjectionRefs.put("$opNameString", ref);
-    OpOutputVarProjection value = new OpOutputVarProjection(
+    $o value = new $o(
       ${genTypeExpr(p.`type`(), ctx.gctx)},
       ${p.flagged().toString},
-      ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+      ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
         (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
       ${p.parenthesized().toString},
       ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
@@ -80,10 +80,10 @@ private static OpOutputVarProjection $methodName() {
     } else {
 
       /*@formatter:off*/sn"""\
-new OpOutputVarProjection(
+new $o(
   ${genTypeExpr(p.`type`(), ctx.gctx)},
   ${p.flagged().toString},
-  ${i(genLinkedMap("String", "OpOutputTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+  ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
     (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
@@ -96,13 +96,13 @@ new OpOutputVarProjection(
 
   private def genTagProjectionEntry(
     t: TypeApi,
-    tpe: OpOutputTagProjectionEntry,
+    tpe: OpTagProjectionEntry,
     ctx: ObjectGenContext): String = {
 
-    ctx.use(classOf[OpOutputTagProjectionEntry].getName)
+    ctx.use(classOf[OpTagProjectionEntry].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputTagProjectionEntry(
+new OpTagProjectionEntry(
   ${genTagExpr(t, tpe.tag().name(), ctx.gctx)},
   ${i(gen(tpe.projection(), ctx))},
   ${gen(tpe.location(), ctx)}

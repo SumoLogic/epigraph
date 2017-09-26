@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.types.TypeApi;
 
@@ -34,8 +34,8 @@ public class CreateOperationDeclaration extends OperationDeclaration {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @NotNull OpOutputFieldProjection inputProjection,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @NotNull OpFieldProjection inputProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
     super(
         OperationKind.CREATE, HttpMethod.POST, name, annotations,
@@ -47,8 +47,8 @@ public class CreateOperationDeclaration extends OperationDeclaration {
 //  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   @Override
-  public @NotNull OpOutputFieldProjection inputProjection() {
-    final OpOutputFieldProjection projection = super.inputProjection();
+  public @NotNull OpFieldProjection inputProjection() {
+    final OpFieldProjection projection = super.inputProjection();
     assert projection != null;
     return projection;
   }

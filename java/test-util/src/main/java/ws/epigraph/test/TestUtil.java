@@ -30,9 +30,9 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -316,12 +316,12 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
+  public static @NotNull String printOpOutputVarProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {
@@ -337,7 +337,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
+  public static @NotNull String printOpOutputModelProjection(@NotNull OpModelProjection<?, ?, ?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter);

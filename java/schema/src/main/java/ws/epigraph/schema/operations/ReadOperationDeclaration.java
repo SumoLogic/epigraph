@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
@@ -37,7 +37,7 @@ public class ReadOperationDeclaration extends OperationDeclaration {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     super(OperationKind.READ, HttpMethod.GET, name, annotations,

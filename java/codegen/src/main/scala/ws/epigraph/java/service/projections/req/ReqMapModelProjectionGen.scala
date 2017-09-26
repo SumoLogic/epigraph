@@ -16,8 +16,8 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenMapModelProjection
 import ws.epigraph.projections.op.AbstractOpModelProjection

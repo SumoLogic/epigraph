@@ -20,15 +20,14 @@ import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.OpKeyPresence
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
+import ws.epigraph.projections.op.{AbstractOpKeyPresence, OpMapModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override val op: OpOutputMapModelProjection,
+  override val op: OpMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
@@ -42,9 +41,9 @@ class ReqDeleteMapModelProjectionGen(
     ctx
   ) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpOutputMapModelProjection
+  override type OpProjectionType = OpMapModelProjection
 
-  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
+  override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 
   override val keyGen: ReqDeleteMapKeyProjectionGen = new ReqDeleteMapKeyProjectionGen(
     baseNamespaceProvider,
@@ -69,7 +68,7 @@ class ReqDeleteMapModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqDeleteModelProjectionGen,
-    op: OpOutputMapModelProjection,
+    op: OpMapModelProjection,
     normalized: Boolean) =
     new ReqDeleteMapModelProjectionGen(
       baseNamespaceProvider,

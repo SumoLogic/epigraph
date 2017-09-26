@@ -22,10 +22,10 @@ import org.junit.Test;
 import ws.epigraph.EpigraphTestUtil;
 import ws.epigraph.projections.op.OpProjectionTransformationMap;
 import ws.epigraph.projections.op.OpProjectionTransformer;
-import ws.epigraph.projections.op.output.OpOutputFieldProjectionEntry;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputRecordModelProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjectionEntry;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpRecordModelProjection;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.types.DataType;
@@ -47,7 +47,7 @@ public class ProjectionsTransformerTest {
 
     OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
 
-    OpOutputVarProjection vp = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection vp = EpigraphTestUtil.parseOpOutputVarProjection(
         (DataType) Person.type.dataType(),
         projection,
         StaticTypesResolver.instance()
@@ -56,24 +56,24 @@ public class ProjectionsTransformerTest {
     String s = EpigraphTestUtil.printOpOutputVarProjection(vp);
     assertEquals(projection, s);
 
-    OpOutputVarProjection oPersonProjection = vp;
+    OpEntityProjection oPersonProjection = vp;
 
-    OpOutputRecordModelProjection oPersonRecordProjection =
-        (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection oPersonRecordProjection =
+        (OpRecordModelProjection) vp.singleTagProjection().projection();
 
-    OpOutputVarProjection oBfProjection =
+    OpEntityProjection oBfProjection =
         oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().varProjection();
 
-    OpOutputRecordModelProjection oBfRecordProjection =
-        (OpOutputRecordModelProjection) oBfProjection.singleTagProjection().projection();
+    OpRecordModelProjection oBfRecordProjection =
+        (OpRecordModelProjection) oBfProjection.singleTagProjection().projection();
 
     OpProjectionTransformer t = new OpProjectionTransformer() {
       @Override
-      protected @NotNull OpOutputRecordModelProjection transformRecordModelProjection(
-          final @NotNull OpOutputRecordModelProjection recordModelProjection,
-          final @NotNull Map<String, OpOutputFieldProjectionEntry> transformedFields,
-          final @Nullable List<OpOutputRecordModelProjection> transformedTails,
-          final @Nullable OpOutputModelProjection<?, ?, ?, ?> transformedMeta,
+      protected @NotNull OpRecordModelProjection transformRecordModelProjection(
+          final @NotNull OpRecordModelProjection recordModelProjection,
+          final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
+          final @Nullable List<OpRecordModelProjection> transformedTails,
+          final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
           final boolean mustRebuild) {
 
         transformedFields.remove("id");
@@ -95,16 +95,16 @@ public class ProjectionsTransformerTest {
 
     // check transformation map
 
-    OpOutputVarProjection nPersonProjection = vp;
+    OpEntityProjection nPersonProjection = vp;
 
-    OpOutputRecordModelProjection nPersonRecordProjection =
-        (OpOutputRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection nPersonRecordProjection =
+        (OpRecordModelProjection) vp.singleTagProjection().projection();
 
-    OpOutputVarProjection nBfProjection =
+    OpEntityProjection nBfProjection =
         nPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().varProjection();
 
-    OpOutputRecordModelProjection nBfRecordProjection =
-        (OpOutputRecordModelProjection) nBfProjection.singleTagProjection().projection();
+    OpRecordModelProjection nBfRecordProjection =
+        (OpRecordModelProjection) nBfProjection.singleTagProjection().projection();
 
     assertEquals(4, transformationMap.size());
     assertTrue(transformationMap.getEntityMapping(oPersonProjection) == nPersonProjection);

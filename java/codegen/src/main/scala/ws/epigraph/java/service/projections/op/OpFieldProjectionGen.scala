@@ -14,29 +14,21 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.OpOutputFieldProjection
+import ws.epigraph.projections.op.OpFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputFieldProjectionGen(fp: OpOutputFieldProjection) extends ObjectGen[OpOutputFieldProjection](fp) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
+class OpFieldProjectionGen(fp: OpFieldProjection) extends ObjectGen[OpFieldProjection](fp) {
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new OpOutputFieldProjection(
+new $o(
   ${i(gen(fp.varProjection(), ctx))},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
-
-//  /*@formatter:off*/sn"""\
-//new OpOutputFieldProjection(
-//  ${i(gen(fp.params(), ctx))},
-//  ${i(gen(fp.annotations(), ctx))},
-//  ${i(gen(fp.varProjection(), ctx))},
-//  ${gen(fp.location(), ctx)}
-//)"""/*@formatter:on*/
 }

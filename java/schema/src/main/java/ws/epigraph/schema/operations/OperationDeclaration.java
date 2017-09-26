@@ -23,7 +23,7 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
@@ -45,8 +45,8 @@ public abstract class OperationDeclaration implements Annotated {
   protected final @Nullable String name;
   protected final @NotNull Annotations annotations;
   protected final @Nullable OpFieldPath path;
-  protected final @Nullable OpOutputFieldProjection inputProjection;
-  protected final @NotNull OpOutputFieldProjection outputProjection;
+  protected final @Nullable OpFieldProjection inputProjection;
+  protected final @NotNull OpFieldProjection outputProjection;
   protected final @NotNull TextLocation location;
 
   protected OperationDeclaration(
@@ -55,8 +55,8 @@ public abstract class OperationDeclaration implements Annotated {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @Nullable OpOutputFieldProjection inputProjection,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @Nullable OpFieldProjection inputProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     this.type = type;
@@ -90,11 +90,11 @@ public abstract class OperationDeclaration implements Annotated {
     return inputProjection == null ? null : inputProjection.varProjection().type();
   }
 
-  public @Nullable OpOutputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable OpFieldProjection inputProjection() { return inputProjection; }
 
   public @NotNull TypeApi outputType() { return outputProjection.varProjection().type(); }
 
-  public @NotNull OpOutputFieldProjection outputProjection() { return outputProjection; }
+  public @NotNull OpFieldProjection outputProjection() { return outputProjection; }
 
   public @NotNull TextLocation location() { return location; }
 

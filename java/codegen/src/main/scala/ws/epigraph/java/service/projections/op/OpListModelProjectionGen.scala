@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
-import ws.epigraph.types.{MapType, TypeApi}
+import ws.epigraph.projections.op.OpListModelProjection
+import ws.epigraph.types.TypeApi
 
 import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputMapModelProjectionGen(p: OpOutputMapModelProjection) extends ObjectGen[OpOutputMapModelProjection](p) {
+class OpListModelProjectionGen(p: OpListModelProjection)
+  extends ObjectGen[OpListModelProjection](p) {
 
   override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
-//    ctx.use(classOf[MapType].getName)
+//    ctx.use(classOf[ListType].getName)
 
     /*@formatter:off*/sn"""\
 new $o(
@@ -41,7 +42,6 @@ new $o(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(gen(p.keyProjection(), ctx))},
   ${i(gen(p.itemsProjection(), ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}

@@ -25,7 +25,7 @@ import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.projections.req.ReqModelProjectionGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 /**
@@ -90,8 +90,8 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
 
   // meta stuff
 
-  protected lazy val metaProjection: OpOutputModelProjection[_, _, _, _] =
-    g.op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _, _]]
+  protected lazy val metaProjection: OpModelProjection[_, _, _, _] =
+    g.op.metaProjection().asInstanceOf[OpModelProjection[_, _, _, _]]
 
   protected lazy val hasMeta: Boolean = g.metaGeneratorOpt.isDefined
 

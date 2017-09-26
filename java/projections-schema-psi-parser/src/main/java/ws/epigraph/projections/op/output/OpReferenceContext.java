@@ -22,6 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
 
@@ -29,58 +30,58 @@ import ws.epigraph.types.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpReferenceContext
-    extends ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> {
+    extends ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 
   public OpReferenceContext(
       final @NotNull ProjectionReferenceName referencesNamespace,
-      final @Nullable ReferenceContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> parent,
+      final @Nullable ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);
   }
 
   @Override
-  protected @NotNull OpOutputVarProjection newVarReference(
+  protected @NotNull OpEntityProjection newVarReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
-    return new OpOutputVarProjection(type, location);
+    return new OpEntityProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?, ?> newRecordModelReference(
+  protected OpModelProjection<?, ?, ?, ?> newRecordModelReference(
       final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
-    return new OpOutputRecordModelProjection(type, location);
+    return new OpRecordModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?, ?> newMapModelReference(
+  protected OpModelProjection<?, ?, ?, ?> newMapModelReference(
       final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
-    return new OpOutputMapModelProjection(type, location);
+    return new OpMapModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?, ?> newListModelReference(
+  protected OpModelProjection<?, ?, ?, ?> newListModelReference(
       final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
-    return new OpOutputListModelProjection(type, location);
+    return new OpListModelProjection(type, location);
   }
 
   @Override
-  protected OpOutputModelProjection<?, ?, ?, ?> newPrimitiveModelReference(
+  protected OpModelProjection<?, ?, ?, ?> newPrimitiveModelReference(
       final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
-    return new OpOutputPrimitiveModelProjection(type, location);
+    return new OpPrimitiveModelProjection(type, location);
   }
 
   @Override
-  protected @NotNull OpOutputVarProjection toSelfVar(final @NotNull OpOutputModelProjection<?, ?, ?, ?> mRef) {
+  protected @NotNull OpEntityProjection toSelfVar(final @NotNull OpModelProjection<?, ?, ?, ?> mRef) {
     assert mRef.isResolved();
-    OpOutputVarProjection ep = (OpOutputVarProjection) mRef.entityProjection();
+    OpEntityProjection ep = (OpEntityProjection) mRef.entityProjection();
     if (ep == null) {
       final DatumTypeApi modelType = mRef.type();
-      return new OpOutputVarProjection(
+      return new OpEntityProjection(
           modelType,
           mRef.flagged(),
           ProjectionUtils.singletonLinkedHashMap(
               modelType.self().name(),
-              new OpOutputTagProjectionEntry(
+              new OpTagProjectionEntry(
                   modelType.self(),
                   mRef,
                   TextLocation.UNKNOWN
@@ -95,8 +96,8 @@ public class OpReferenceContext
   }
 
   @Override
-  protected @NotNull OpOutputModelProjection<?, ?, ?, ?> fromSelfVar(final @NotNull OpOutputVarProjection eRef) {
-    OpOutputModelProjection<?, ?, ?, ?> res = super.fromSelfVar(eRef);
+  protected @NotNull OpModelProjection<?, ?, ?, ?> fromSelfVar(final @NotNull OpEntityProjection eRef) {
+    OpModelProjection<?, ?, ?, ?> res = super.fromSelfVar(eRef);
     assert res.flagged() == eRef.flagged();
     return res;
   }

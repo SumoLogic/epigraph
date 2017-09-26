@@ -25,7 +25,7 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.TypesResolver;
@@ -66,7 +66,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public Data readInput(
-      @NotNull OpOutputVarProjection opInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @Nullable ReqEntityProjection reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
@@ -91,7 +91,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public Data readUpdateInput(
-      @NotNull OpOutputVarProjection opInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @Nullable ReqEntityProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {

@@ -22,7 +22,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output._
+import ws.epigraph.projections.op._
 import ws.epigraph.types.TypeKind
 
 /**
@@ -30,14 +30,14 @@ import ws.epigraph.types.TypeKind
  */
 class ReqUpdateVarProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpOutputVarProjection,
+  val op: OpEntityProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqUpdateVarProjectionGen],
   protected val ctx: GenContext) extends ReqUpdateTypeProjectionGen with ReqVarProjectionGen {
 
-  override type OpProjectionType = OpOutputVarProjection
-  override type OpTagProjectionEntryType = OpOutputTagProjectionEntry
+  override type OpProjectionType = OpEntityProjection
+  override type OpTagProjectionEntryType = OpTagProjectionEntry
   override protected type GenType = ReqUpdateVarProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
@@ -49,7 +49,7 @@ class ReqUpdateVarProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
-  override protected def tailGenerator(op: OpOutputVarProjection, normalized: Boolean): ReqUpdateVarProjectionGen =
+  override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqUpdateVarProjectionGen =
     new ReqUpdateVarProjectionGen(
       baseNamespaceProvider,
       op,
@@ -58,19 +58,19 @@ class ReqUpdateVarProjectionGen(
       Some(this),
       ctx
     ) {
-      override lazy val normalizedTailGenerators: Map[OpOutputVarProjection, ReqProjectionGen] = Map()
+      override lazy val normalizedTailGenerators: Map[OpEntityProjection, ReqProjectionGen] = Map()
     }
 
   override protected def tagGenerator(
     pgo: Option[ReqVarProjectionGen],
-    tpe: OpOutputTagProjectionEntry): ReqProjectionGen =
+    tpe: OpTagProjectionEntry): ReqProjectionGen =
     tagGenerator(
       tpe,
       pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqUpdateModelProjectionGen]))
     )
 
   protected def tagGenerator(
-    tpe: OpOutputTagProjectionEntry,
+    tpe: OpTagProjectionEntry,
     parentTagGenOpt: Option[ReqUpdateModelProjectionGen]): ReqProjectionGen =
     ReqUpdateModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
@@ -95,7 +95,7 @@ class ReqUpdateVarProjectionGen(
 object ReqUpdateVarProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpOutputVarProjection,
+    op: OpEntityProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqUpdateTypeProjectionGen],
@@ -122,7 +122,7 @@ object ReqUpdateVarProjectionGen {
         case TypeKind.RECORD =>
           new ReqUpdateRecordModelProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpOutputRecordModelProjection],
+            op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
@@ -131,7 +131,7 @@ object ReqUpdateVarProjectionGen {
         case TypeKind.MAP =>
           new ReqUpdateMapModelProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpOutputMapModelProjection],
+            op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
@@ -140,7 +140,7 @@ object ReqUpdateVarProjectionGen {
         case TypeKind.LIST =>
           new ReqUpdateListModelProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpOutputListModelProjection],
+            op.singleTagProjection().projection().asInstanceOf[OpListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
@@ -149,7 +149,7 @@ object ReqUpdateVarProjectionGen {
         case TypeKind.PRIMITIVE =>
           new ReqUpdatePrimitiveModelProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpOutputPrimitiveModelProjection],
+            op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),

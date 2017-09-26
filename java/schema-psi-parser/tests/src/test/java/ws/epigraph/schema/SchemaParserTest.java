@@ -19,7 +19,7 @@ package ws.epigraph.schema;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -261,13 +261,13 @@ public class SchemaParserTest {
     // check operation projection namespaces
     ResourceDeclaration users = schema.resources().get("users");
     for (final OperationDeclaration op : users.operations()) {
-      OpOutputFieldProjection outputProjection = op.outputProjection();
+      OpFieldProjection outputProjection = op.outputProjection();
       ProjectionReferenceName referenceName = outputProjection.varProjection().referenceName();
       if (referenceName != null) {
         assertTrue(referenceName.toString(), referenceName.toString().contains("projections.output"));
       }
 
-      OpOutputFieldProjection inputProjection = op.inputProjection();
+      OpFieldProjection inputProjection = op.inputProjection();
       if (inputProjection != null && inputProjection.varProjection().referenceName() != null) {
         referenceName = inputProjection.varProjection().referenceName();
         assertNotNull(referenceName);

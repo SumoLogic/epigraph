@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
@@ -862,7 +862,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     final Data body;
     try {
-      final @Nullable OpOutputFieldProjection opInputProjection = operation.declaration().inputProjection();
+      final @Nullable OpFieldProjection opInputProjection = operation.declaration().inputProjection();
       body = opInputProjection == null
              ? null
              : serverProtocol.readInput(

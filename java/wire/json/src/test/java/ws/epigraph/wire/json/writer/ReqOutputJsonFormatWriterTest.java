@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -59,7 +59,7 @@ public class ReqOutputJsonFormatWriterTest {
   );
 
   private final DataType personDataType = new DataType(Person.type, Person.id);
-  private final OpOutputVarProjection personOpProjection = parseOpOutputVarProjection(personDataType, lines(
+  private final OpEntityProjection personOpProjection = parseOpOutputVarProjection(personDataType, lines(
       ":(",
       "  id,",
       "  `record` (",
@@ -287,7 +287,7 @@ public class ReqOutputJsonFormatWriterTest {
   @Test
   public void testRenderMeta() throws IOException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
-    final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+    final OpEntityProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 

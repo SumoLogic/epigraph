@@ -47,65 +47,65 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   }
 
   @Override
-  public @NotNull OpOutputVarProjection parseVarProjection(
+  public @NotNull OpEntityProjection parseVarProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull SchemaOpOutputVarProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpOutputVarProjection res =
+    OpEntityProjection res =
         OpBasicProjectionPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
 
     return processEntityProjection(res, context);
   }
 
   @Override
-  public @NotNull OpOutputFieldProjection parseFieldProjection(
+  public @NotNull OpFieldProjection parseFieldProjection(
       final @NotNull DataTypeApi fieldType,
       final boolean flagged,
       final @NotNull SchemaOpOutputFieldProjection psi,
       final @NotNull TypesResolver resolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpOutputFieldProjection res =
+    OpFieldProjection res =
         OpBasicProjectionPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
 
-    OpOutputVarProjection transformedEp = processEntityProjection(res.varProjection(), context);
+    OpEntityProjection transformedEp = processEntityProjection(res.varProjection(), context);
 
-    return new OpOutputFieldProjection(transformedEp, res.location());
+    return new OpFieldProjection(transformedEp, res.location());
   }
 
   @Override
-  public @NotNull OpOutputVarProjection parseUnnamedOrRefVarProjection(
+  public @NotNull OpEntityProjection parseUnnamedOrRefVarProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpOutputVarProjection res =
+    OpEntityProjection res =
         OpBasicProjectionPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
 
     return processEntityProjection(res, context);
   }
 
   @Override
-  public @NotNull OpOutputModelProjection<?, ?, ?, ?> parseModelProjection(
+  public @NotNull OpModelProjection<?, ?, ?, ?> parseModelProjection(
       final @NotNull DatumTypeApi type,
       final boolean flagged,
       final @NotNull SchemaOpOutputModelProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpOutputModelProjection<?,?,?,?> res =
+    OpModelProjection<?,?,?,?> res =
         OpBasicProjectionPsiParser.parseModelProjection(type, flagged, psi, typesResolver, context);
 
     return processModelProjection(res, context);
   }
 
-  private @NotNull OpOutputVarProjection processEntityProjection(
-      @NotNull OpOutputVarProjection ep,
+  private @NotNull OpEntityProjection processEntityProjection(
+      @NotNull OpEntityProjection ep,
       @NotNull OpPsiProcessingContext context) {
 
     if (traversalFactory != null) {
@@ -118,15 +118,15 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
     else {
       OpProjectionTransformer transformer = transformerFactory.apply(context);
       OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
-      OpOutputVarProjection transformedMp = transformer.transform(transformationMap, ep, null);
+      OpEntityProjection transformedMp = transformer.transform(transformationMap, ep, null);
 
       context.referenceContext().transform(transformationMap);
       return transformedMp;
     }
   }
 
-  private @NotNull OpOutputModelProjection<?,?,?,?> processModelProjection(
-      @NotNull OpOutputModelProjection<?,?,?,?> mp,
+  private @NotNull OpModelProjection<?,?,?,?> processModelProjection(
+      @NotNull OpModelProjection<?,?,?,?> mp,
       @NotNull OpPsiProcessingContext context) {
 
     if (traversalFactory != null) {
@@ -139,7 +139,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
     else {
       OpProjectionTransformer transformer = transformerFactory.apply(context);
       OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
-      OpOutputModelProjection<?, ?, ?, ?> transformedMp = transformer.transform(transformationMap, mp);
+      OpModelProjection<?, ?, ?, ?> transformedMp = transformer.transform(transformationMap, mp);
 
       context.referenceContext().transform(transformationMap);
       return transformedMp;

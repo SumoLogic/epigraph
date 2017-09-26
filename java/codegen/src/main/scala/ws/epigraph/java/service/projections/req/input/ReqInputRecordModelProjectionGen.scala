@@ -22,14 +22,14 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.{OpOutputFieldProjectionEntry, OpOutputRecordModelProjection}
+import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpOutputRecordModelProjection,
+  val op: OpRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
@@ -43,8 +43,8 @@ class ReqInputRecordModelProjectionGen(
     ctx
   ) with ReqRecordModelProjectionGen {
 
-  override type OpProjectionType = OpOutputRecordModelProjection
-  override type OpFieldProjectionType = OpOutputFieldProjectionEntry
+  override type OpProjectionType = OpRecordModelProjection
+  override type OpFieldProjectionType = OpFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqInputFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
@@ -70,7 +70,7 @@ class ReqInputRecordModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqInputModelProjectionGen,
-    op: OpOutputRecordModelProjection,
+    op: OpRecordModelProjection,
     normalized: Boolean) =
     new ReqInputRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,

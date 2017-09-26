@@ -17,19 +17,18 @@
 package ws.epigraph.projections.op;
 
 import ws.epigraph.projections.gen.GenProjectionTraversal;
-import ws.epigraph.projections.op.output.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpProjectionTraversal extends GenProjectionTraversal<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputMapModelProjection,
-    OpOutputListModelProjection,
-    OpOutputPrimitiveModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpMapModelProjection,
+    OpListModelProjection,
+    OpPrimitiveModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection
     > {}

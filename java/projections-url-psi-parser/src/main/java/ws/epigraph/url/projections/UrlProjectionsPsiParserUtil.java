@@ -36,7 +36,7 @@ import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.req.Directive;
 import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.req.ReqParam;
@@ -227,7 +227,7 @@ public final class UrlProjectionsPsiParserUtil {
 
   public static @Nullable Datum getDatum(
       @NotNull UrlDatum datumPsi,
-      @NotNull OpOutputModelProjection<?, ?, ?, ?> projection,
+      @NotNull OpModelProjection<?, ?, ?, ?> projection,
       @NotNull TypesResolver resolver,
       @NotNull String errorMessagePrefix,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -341,7 +341,7 @@ public final class UrlProjectionsPsiParserUtil {
     for (final Map.Entry<String, OpParam> entry : opParams.asMap().entrySet()) {
       String paramName = entry.getKey();
       if ((paramMap == null || !paramMap.containsKey(paramName))) {
-        final OpOutputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
+        final OpModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
 
         GDatum defaultValue = opModelProjection.defaultValue();
         if (defaultValue == null) {
@@ -402,7 +402,7 @@ public final class UrlProjectionsPsiParserUtil {
       }
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
-      OpOutputModelProjection<?, ?, ?, ?> projection = opParam.projection();
+      OpModelProjection<?, ?, ?, ?> projection = opParam.projection();
       final DatumTypeApi model = projection.type();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 

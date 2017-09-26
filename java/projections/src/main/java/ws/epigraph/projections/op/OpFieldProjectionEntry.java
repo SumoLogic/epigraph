@@ -14,36 +14,35 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjectionEntry;
 import ws.epigraph.types.FieldApi;
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.types.TagApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputFieldProjection
+public class OpFieldProjectionEntry extends AbstractFieldProjectionEntry<
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpFieldProjection
     > {
 
-  public OpOutputFieldProjectionEntry(
+  public OpFieldProjectionEntry(
       @NotNull FieldApi field,
-      @NotNull OpOutputFieldProjection projection,
+      @NotNull OpFieldProjection projection,
       @NotNull TextLocation location) {
     super(field, projection, location);
   }
 
   @Override
-  public @NotNull OpOutputFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
-    return new OpOutputFieldProjectionEntry(
+  public @NotNull OpFieldProjectionEntry overridenFieldProjection(@NotNull FieldApi overridingField) {
+    return new OpFieldProjectionEntry(
         overridingField,
-        new OpOutputFieldProjection(
+        new OpFieldProjection(
             fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
             TextLocation.UNKNOWN
         ),

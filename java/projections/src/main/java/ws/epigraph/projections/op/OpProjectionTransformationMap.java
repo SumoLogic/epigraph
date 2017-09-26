@@ -17,12 +17,10 @@
 package ws.epigraph.projections.op;
 
 import ws.epigraph.projections.gen.GenProjectionTransformationMap;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpProjectionTransformationMap
-    extends GenProjectionTransformationMap<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> {
+    extends GenProjectionTransformationMap<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 }

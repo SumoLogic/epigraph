@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
 import ws.epigraph.types.TypeApi;
@@ -47,9 +47,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
   public void printOperation(
       @NotNull OperationDeclaration operation,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> outputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> inputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> deleteProjectionsPrinterContext
+      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> outputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> inputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> deleteProjectionsPrinterContext
   ) throws E {
     opOutputPrinter = new OpProjectionsPrettyPrinter<>(l, outputProjectionsPrinterContext);
     opInputPrinter = new OpProjectionsPrettyPrinter<>(l, inputProjectionsPrinterContext);
@@ -145,7 +145,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printInputProjection(@NotNull OperationDeclaration operation, boolean first) throws E {
-    @Nullable OpOutputFieldProjection projection = operation.inputProjection();
+    @Nullable OpFieldProjection projection = operation.inputProjection();
 
     if (projection != null) {
       if (first) first = false;
@@ -204,7 +204,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       l.brk();
 
-      final OpOutputFieldProjection deleteFieldProjection = deleteOperation.deleteProjection();
+      final OpFieldProjection deleteFieldProjection = deleteOperation.deleteProjection();
 
       opDeletePrinter.printFieldProjection(
           "deleteProjection",

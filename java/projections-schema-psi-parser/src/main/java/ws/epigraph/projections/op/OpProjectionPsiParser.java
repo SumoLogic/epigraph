@@ -17,10 +17,7 @@
 package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
 import ws.epigraph.projections.op.output.OpPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.psi.SchemaOpOutputFieldProjection;
@@ -35,28 +32,28 @@ import ws.epigraph.types.DatumTypeApi;
  */
 public interface OpProjectionPsiParser {
 
-  @NotNull OpOutputVarProjection parseVarProjection(
+  @NotNull OpEntityProjection parseVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpOutputVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull OpOutputFieldProjection parseFieldProjection(
+  @NotNull OpFieldProjection parseFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull SchemaOpOutputFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull OpOutputVarProjection parseUnnamedOrRefVarProjection(
+  @NotNull OpEntityProjection parseUnnamedOrRefVarProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull OpOutputModelProjection<?, ?, ?, ?> parseModelProjection(
+  @NotNull OpModelProjection<?, ?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
       boolean flagged,
       @NotNull SchemaOpOutputModelProjection psi,

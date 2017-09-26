@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
@@ -121,7 +121,7 @@ public abstract class NonReadRequestUrlPsiParser {
     @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection;
 
     @Nullable TypeApi opInputType = op.inputType();
-    @Nullable OpOutputFieldProjection inputProjection = op.inputProjection();
+    @Nullable OpFieldProjection inputProjection = op.inputProjection();
 
     if (opInputType == null || inputProjection == null) {
       if (inputProjectionPsi != null)

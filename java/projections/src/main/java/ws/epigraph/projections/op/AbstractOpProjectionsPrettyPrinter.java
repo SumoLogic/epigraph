@@ -30,8 +30,6 @@ import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpProjectionsPrettyPrinter;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
@@ -131,7 +129,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public void printOpParam(@NotNull OpParam p) throws E {
-    OpOutputModelProjection<?, ?, ?, ?> projection = p.projection();
+    OpModelProjection<?, ?, ?, ?> projection = p.projection();
 
     l.beginIInd();
     l.print(";");
@@ -211,7 +209,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   protected void printMapModelProjection(
       @Nullable String keysProjectionPrefix,
-      @NotNull OpKeyProjection keyProjection,
+      @NotNull AbstractOpKeyProjection keyProjection,
       VP itemsProjection) throws E {
 
     printMapModelProjection(keysProjectionPrefix, keyProjection, "", itemsProjection);
@@ -219,7 +217,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   protected void printMapModelProjection(
       @Nullable String keysProjectionPrefix,
-      @NotNull OpKeyProjection keyProjection,
+      @NotNull AbstractOpKeyProjection keyProjection,
       @NotNull String itemsProjectionPrefix,
       VP itemsProjection) throws E {
 
@@ -250,7 +248,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         first = printAnnotations(keyAnnotations, true, first);
       }
 
-      OpOutputModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
+      OpModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
       if (keyModelProjection != null) {
         if (!first) {
           l.print(",");

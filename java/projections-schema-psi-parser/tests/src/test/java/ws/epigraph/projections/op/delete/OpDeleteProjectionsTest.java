@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import org.junit.Test;
 import ws.epigraph.projections.op.OpTestUtil;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -204,7 +204,7 @@ public class OpDeleteProjectionsTest {
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected) {
 
-    OpOutputVarProjection varProjection = parseOpDeleteVarProjection(varDataType, projectionString);
+    OpEntityProjection varProjection = parseOpDeleteVarProjection(varDataType, projectionString);
 
     String actual = OpTestUtil.printOpEntityProjection(varProjection);
 
@@ -212,7 +212,7 @@ public class OpDeleteProjectionsTest {
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  private OpOutputVarProjection parseOpDeleteVarProjection(DataType varDataType, String projectionString) {
+  private OpEntityProjection parseOpDeleteVarProjection(DataType varDataType, String projectionString) {
     TypesResolver
         resolver = new SimpleTypesResolver(
         PersonId.type,

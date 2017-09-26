@@ -30,6 +30,9 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -84,7 +87,7 @@ public final class EpigraphTestUtil {
     }
   }
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -107,7 +110,7 @@ public final class EpigraphTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -124,7 +127,7 @@ public final class EpigraphTestUtil {
 
   public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
@@ -160,12 +163,12 @@ public final class EpigraphTestUtil {
     });
   }
 
-  public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
+  public static @NotNull String printOpOutputVarProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {

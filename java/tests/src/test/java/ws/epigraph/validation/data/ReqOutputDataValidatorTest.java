@@ -22,7 +22,7 @@ import ws.epigraph.EpigraphTestUtil;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.ReqOutputDataValidator;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -84,7 +84,7 @@ public class ReqOutputDataValidatorTest {
       String... expectedErrorMessages) {
 
     final DataType dataType = (DataType) type.dataType();
-    final OpOutputVarProjection varProjection = EpigraphTestUtil.parseOpOutputVarProjection(dataType, op, resolver);
+    final OpEntityProjection varProjection = EpigraphTestUtil.parseOpOutputVarProjection(dataType, op, resolver);
     final ReqEntityProjection reqProjection =
         EpigraphTestUtil.parseReqOutputVarProjection(dataType, varProjection, req, resolver).projection();
     final Data d = EpigraphTestUtil.makeData(type, data, resolver);

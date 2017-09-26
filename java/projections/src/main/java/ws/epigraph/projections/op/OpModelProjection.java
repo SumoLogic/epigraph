@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,8 +24,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ModelNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.AbstractOpModelProjection;
-import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.*;
 
 import java.util.List;
@@ -34,9 +32,9 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class OpOutputModelProjection<
-    MP extends OpOutputModelProjection</*MP*/?, /*SMP*/?, /*M*/?, /*D*/?>,
-    SMP extends OpOutputModelProjection</*MP*/?, SMP, ?, ?>,
+public abstract class OpModelProjection<
+    MP extends OpModelProjection</*MP*/?, /*SMP*/?, /*M*/?, /*D*/?>,
+    SMP extends OpModelProjection</*MP*/?, SMP, ?, ?>,
     M extends DatumTypeApi,
     D extends GDatum
     > extends AbstractOpModelProjection<MP, SMP, M> {
@@ -44,7 +42,7 @@ public abstract class OpOutputModelProjection<
   protected /*final*/ boolean flagged;
   protected /*final*/ @Nullable D defaultValue;
 
-  protected OpOutputModelProjection(
+  protected OpModelProjection(
       @NotNull M model,
       boolean flagged,
       @Nullable D defaultValue,
@@ -60,7 +58,7 @@ public abstract class OpOutputModelProjection<
     // check that defaultValue is covered by the projection? (all required parts are present)
   }
 
-  protected OpOutputModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
+  protected OpModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
@@ -71,8 +69,8 @@ public abstract class OpOutputModelProjection<
   @Override
   public SMP setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
     SMP res = super.setEntityProjection(entityProjection);
-    if (entityProjection instanceof OpOutputVarProjection) {
-      OpOutputVarProjection o = (OpOutputVarProjection) entityProjection;
+    if (entityProjection instanceof OpEntityProjection) {
+      OpEntityProjection o = (OpEntityProjection) entityProjection;
       if (o.flagged())
         res.flagged = true;
       else if (flagged())
@@ -136,13 +134,13 @@ public abstract class OpOutputModelProjection<
     return new ModelNormalizationContext<>(m -> {
       switch (m.kind()) {
         case RECORD:
-          return (SMP) new OpOutputRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
+          return (SMP) new OpRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
         case MAP:
-          return (SMP) new OpOutputMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
+          return (SMP) new OpMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
         case LIST:
-          return (SMP) new OpOutputListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
+          return (SMP) new OpListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
         case PRIMITIVE:
-          return (SMP) new OpOutputPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
+          return (SMP) new OpPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
         default:
           throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
       }
@@ -154,7 +152,7 @@ public abstract class OpOutputModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputModelProjection<?, ?, ?, ?> that = (OpOutputModelProjection<?, ?, ?, ?>) o;
+    OpModelProjection<?, ?, ?, ?> that = (OpModelProjection<?, ?, ?, ?>) o;
     return flagged == that.flagged && Objects.equals(defaultValue, that.defaultValue);
   }
 

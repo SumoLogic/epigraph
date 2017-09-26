@@ -21,7 +21,7 @@ import org.junit.Test;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -61,7 +61,7 @@ public class ReqOutputProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpOutputVarProjection(
       lines(
           ":(",
           "  id,",
@@ -440,7 +440,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
-    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
 
     String projection = "[ 2 ]( :record ( id, firstName ) )@+( start, count )";
 
@@ -457,7 +457,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ ;+param: epigraph.String } [ ]( :id )";
-    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
 
     try {
       testParse(
@@ -531,7 +531,7 @@ public class ReqOutputProjectionsParserTest {
     assertEquals(expected, actual);
   }
 
-  private void testModelTailsNormalization(OpOutputVarProjection op, String str, DatumType type, String expected) {
+  private void testModelTailsNormalization(OpEntityProjection op, String str, DatumType type, String expected) {
     ReqEntityProjection varProjection = parseReqOutputVarProjection(dataType, op, str, resolver).projection();
     final ReqTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
@@ -559,7 +559,7 @@ public class ReqOutputProjectionsParserTest {
 
   private ReqEntityProjection testParse(String expr, int steps) { return testParse(expr, expr, steps); }
 
-  private void testParse(DataType dataType, OpOutputVarProjection opProjection, String expr, int steps) {
+  private void testParse(DataType dataType, OpEntityProjection opProjection, String expr, int steps) {
     testParse(dataType, opProjection, expr, expr, steps);
   }
 
@@ -569,7 +569,7 @@ public class ReqOutputProjectionsParserTest {
 
   private ReqEntityProjection testParse(
       DataType dataType,
-      OpOutputVarProjection opProjection,
+      OpEntityProjection opProjection,
       String expr,
       String expectedProjection,
       int steps) {
@@ -588,7 +588,7 @@ public class ReqOutputProjectionsParserTest {
     return stepsAndProjection.projection();
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 

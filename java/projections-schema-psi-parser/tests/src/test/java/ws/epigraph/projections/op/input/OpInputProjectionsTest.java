@@ -18,7 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import org.junit.Test;
 import ws.epigraph.projections.op.OpTestUtil;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -212,7 +212,7 @@ public class OpInputProjectionsTest {
         epigraph.annotations.Doc.type
     );
 
-    final OpOutputVarProjection varProjection = OpTestUtil.parseOpInputVarProjection(
+    final OpEntityProjection varProjection = OpTestUtil.parseOpInputVarProjection(
         varDataType,
         projectionString,
         resolver

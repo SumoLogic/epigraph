@@ -40,7 +40,7 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class OpTestUtil {
   private OpTestUtil() {}
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -48,7 +48,7 @@ public final class OpTestUtil {
     return parseOpEntityProjection(OpOutputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
   }
 
-  public static @NotNull OpOutputVarProjection parseOpInputVarProjection(
+  public static @NotNull OpEntityProjection parseOpInputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -56,7 +56,7 @@ public final class OpTestUtil {
     return parseOpEntityProjection(OpInputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
   }
 
-  public static @NotNull OpOutputVarProjection parseOpDeleteVarProjection(
+  public static @NotNull OpEntityProjection parseOpDeleteVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -64,7 +64,7 @@ public final class OpTestUtil {
     return parseOpEntityProjection(OpDeleteProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
   }
 
-  private static @NotNull OpOutputVarProjection parseOpEntityProjection(
+  private static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull OpProjectionPsiParser parser,
       @NotNull DataType varDataType,
       @NotNull String projectionString,
@@ -88,7 +88,7 @@ public final class OpTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpOutputVarProjection vp = parser.parseVarProjection(
+      OpEntityProjection vp = parser.parseVarProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -103,12 +103,12 @@ public final class OpTestUtil {
 
   }
 
-  public static @NotNull String printOpEntityProjection(@NotNull OpOutputVarProjection projection) {
+  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {

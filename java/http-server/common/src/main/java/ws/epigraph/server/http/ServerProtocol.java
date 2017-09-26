@@ -23,7 +23,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.schema.operations.OperationKind;
@@ -37,13 +37,13 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
   // server-side counterpart of ws.epigraph.client.http.ServerProtocol
 
   Data readInput(
-      @NotNull OpOutputVarProjection opInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @Nullable ReqEntityProjection reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
   Data readUpdateInput(
-      @NotNull OpOutputVarProjection opInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @Nullable ReqEntityProjection reqUpdateProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;

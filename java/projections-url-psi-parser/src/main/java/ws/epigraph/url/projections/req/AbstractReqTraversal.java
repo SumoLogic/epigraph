@@ -17,8 +17,8 @@
 package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpOutputRecordModelProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpRecordModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
@@ -36,7 +36,7 @@ public class AbstractReqTraversal extends ReqProjectionTraversal {
   @Override
   protected void registerMissingGuideTag(
       final @NotNull ReqEntityProjection projection,
-      final @NotNull OpOutputVarProjection projection2,
+      final @NotNull OpEntityProjection projection2,
       final @NotNull TagApi tag) {
 
     //noinspection ConstantConditions
@@ -49,7 +49,7 @@ public class AbstractReqTraversal extends ReqProjectionTraversal {
   @Override
   protected void registerMissingGuideTail(
       final @NotNull ReqEntityProjection projection,
-      final @NotNull OpOutputVarProjection projection2,
+      final @NotNull OpEntityProjection projection2,
       final @NotNull ReqEntityProjection tail) {
 
     context.addError("Tail is not supported", tail.location());
@@ -58,7 +58,7 @@ public class AbstractReqTraversal extends ReqProjectionTraversal {
   @Override
   protected void registerMissingGuideField(
       final @NotNull ReqRecordModelProjection mp,
-      final @NotNull OpOutputRecordModelProjection gmp,
+      final @NotNull OpRecordModelProjection gmp,
       final @NotNull String fieldName) {
 
     //noinspection ConstantConditions

@@ -21,15 +21,14 @@ import ws.epigraph.java.service.assemblers.MapAsmGen
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.OpKeyPresence
-import ws.epigraph.projections.op.output.OpOutputMapModelProjection
+import ws.epigraph.projections.op.{AbstractOpKeyPresence, OpMapModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override val op: OpOutputMapModelProjection,
+  override val op: OpMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
@@ -43,9 +42,9 @@ class ReqOutputMapModelProjectionGen(
     ctx
   ) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpOutputMapModelProjection
+  override type OpProjectionType = OpMapModelProjection
 
-  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
+  override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 
   override val keyGen: ReqOutputMapKeyProjectionGen = new ReqOutputMapKeyProjectionGen(
     baseNamespaceProvider,
@@ -70,7 +69,7 @@ class ReqOutputMapModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqOutputModelProjectionGen,
-    op: OpOutputMapModelProjection,
+    op: OpMapModelProjection,
     normalized: Boolean) =
     new ReqOutputMapModelProjectionGen(
       baseNamespaceProvider,

@@ -18,78 +18,41 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.types.DatumTypeApi;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpKeyProjection implements Annotated {
-  private final @NotNull OpParams params;
-  private final @NotNull Annotations annotations;
-  private final @Nullable OpOutputModelProjection<?, ?, ?, ?> projection;
-  private final @NotNull TextLocation location;
+public class OpKeyProjection extends AbstractOpKeyProjection {
+  private final @NotNull AbstractOpKeyPresence presence;
 
-  public OpKeyProjection(
+  public @NotNull OpKeyProjection(
+      @NotNull AbstractOpKeyPresence presence,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?, ?> projection,
+      @Nullable OpModelProjection<?, ?, ?, ?> projection,
       @NotNull TextLocation location) {
 
-    this.params = params;
-    this.annotations = annotations;
-    this.projection = projection;
-    this.location = location;
+    super(params, annotations, projection, location);
+    this.presence = presence;
   }
 
-  public @NotNull OpParams params() { return params; }
-
-  @Override
-  public @NotNull Annotations annotations() { return annotations; }
-
-  public @Nullable OpOutputModelProjection<?, ?, ?, ?> projection() { return projection; }
-
-  public @NotNull TextLocation location() { return location; }
-
-  public static @Nullable OpOutputModelProjection<?, ?, ?, ?> mergeProjections(
-      @NotNull DatumTypeApi model,
-      @NotNull Stream<OpOutputModelProjection<?, ?, ?, ?>> projectionStream) {
-
-    List<OpOutputModelProjection<?, ?, ?, ?>> projections =
-        projectionStream.filter(Objects::nonNull).collect(Collectors.toList());
-
-    if (projections.isEmpty()) return null;
-    return merge(model, projections);
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <SMP extends OpOutputModelProjection<?, SMP, M, ?>, M extends DatumTypeApi>
-  @Nullable OpOutputModelProjection<?, ?, ?, ?> merge(
-      DatumTypeApi model,
-      List<OpOutputModelProjection<?, ?, ?, ?>> projections) {
-
-    List<SMP> l = (List<SMP>) projections;
-    return l.get(0).merge((M) model, l);
-  }
+  public AbstractOpKeyPresence presence() { return presence; }
 
   @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
     final OpKeyProjection that = (OpKeyProjection) o;
-    return Objects.equals(params, that.params) &&
-           Objects.equals(projection, that.projection) &&
-           Objects.equals(annotations, that.annotations);
+    return presence == that.presence;
   }
 
   @Override
-  public int hashCode() { return Objects.hash(params, annotations, projection); }
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), presence);
+  }
 }

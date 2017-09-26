@@ -19,22 +19,22 @@ package ws.epigraph.gdata.validation;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GData;
 import ws.epigraph.gdata.GRecordDatum;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.TypesResolver;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputGDataValidator extends GenGDataValidator<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputMapModelProjection,
-    OpOutputListModelProjection,
-    OpOutputPrimitiveModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpMapModelProjection,
+    OpListModelProjection,
+    OpPrimitiveModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection
     > {
 
   public OpInputGDataValidator(final @NotNull TypesResolver resolver) {
@@ -42,7 +42,7 @@ public class OpInputGDataValidator extends GenGDataValidator<
   }
 
   @Override
-  protected void validateDataOnly(final @NotNull GData data, final @NotNull OpOutputVarProjection projection) {
+  protected void validateDataOnly(final @NotNull GData data, final @NotNull OpEntityProjection projection) {
     projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
@@ -54,7 +54,7 @@ public class OpInputGDataValidator extends GenGDataValidator<
   @Override
   protected void validateRecordDatumOnly(
       final @NotNull GRecordDatum datum,
-      final @NotNull OpOutputRecordModelProjection projection) {
+      final @NotNull OpRecordModelProjection projection) {
     projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
       final String fieldName = fp.field().name();
 

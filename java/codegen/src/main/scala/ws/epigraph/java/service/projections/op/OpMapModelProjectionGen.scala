@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.OpOutputPrimitiveModelProjection
-import ws.epigraph.types.{PrimitiveType, TypeApi}
+import ws.epigraph.projections.op.OpMapModelProjection
+import ws.epigraph.types.TypeApi
 
 import scala.collection.JavaConversions._
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputPrimitiveModelProjectionGen(p: OpOutputPrimitiveModelProjection)
-  extends ObjectGen[OpOutputPrimitiveModelProjection](p) {
+class OpMapModelProjectionGen(p: OpMapModelProjection) extends ObjectGen[OpMapModelProjection](p) {
 
-  override protected def generateObject(ctx: ObjectGenContext): String = {
-    ctx.use(classOf[PrimitiveType[_]].getName)
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+//    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\
-new OpOutputPrimitiveModelProjection(
+new $o(
   ${genTypeExpr(p.`type`().asInstanceOf[TypeApi], ctx.gctx)},
   ${p.flagged().toString},
   ${i(gen(p.defaultValue(), ctx))},
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
+  ${i(gen(p.keyProjection(), ctx))},
+  ${i(gen(p.itemsProjection(), ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/

@@ -17,7 +17,7 @@
 package ws.epigraph.projections.req;
 
 import ws.epigraph.projections.gen.GenGuidedProjectionTraversal;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -33,14 +33,14 @@ public abstract class ReqProjectionTraversal extends GenGuidedProjectionTraversa
     ReqFieldProjectionEntry,
     ReqFieldProjection,
 
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputMapModelProjection,
-    OpOutputListModelProjection,
-    OpOutputPrimitiveModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpMapModelProjection,
+    OpListModelProjection,
+    OpPrimitiveModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection
     > {
 }

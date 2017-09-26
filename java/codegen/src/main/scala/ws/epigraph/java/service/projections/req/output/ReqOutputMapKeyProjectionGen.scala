@@ -21,7 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.output.ReqOutputProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputKeyProjection
+import ws.epigraph.projections.op.OpKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,12 +29,12 @@ import ws.epigraph.projections.op.output.OpOutputKeyProjection
 class ReqOutputMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
-  val op: OpOutputKeyProjection,
+  val op: OpKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqMapKeyProjectionGen {
 
-  override type OpKeyProjectionType = OpOutputKeyProjection
+  override type OpKeyProjectionType = OpKeyProjection
 
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 

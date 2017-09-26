@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.DataComparator;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -65,7 +65,7 @@ public class ReqOutputJsonFormatReaderTest {
       epigraph.Boolean.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpOutputVarProjection(
       lines(
           ":(",
           "  id,",
@@ -277,7 +277,7 @@ public class ReqOutputJsonFormatReaderTest {
   @Test
   public void testReadMeta() throws IOException, JsonFormatException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
-    final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+    final OpEntityProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 
@@ -558,7 +558,7 @@ public class ReqOutputJsonFormatReaderTest {
     }
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
     return parseOpOutputVarProjection(dataType, projectionString, resolver);
   }
 }

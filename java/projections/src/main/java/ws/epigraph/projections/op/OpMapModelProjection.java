@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,9 +23,6 @@ import ws.epigraph.gdata.GMapDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpKeyProjection;
-import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
 
@@ -36,56 +33,56 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputMapModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputMapModelProjection, MapTypeApi, GMapDatum>
+public class OpMapModelProjection
+    extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpMapModelProjection, MapTypeApi, GMapDatum>
     implements GenMapModelProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputMapModelProjection,
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpMapModelProjection,
     MapTypeApi
     > {
 
-  private /*final @NotNull*/ @Nullable OpOutputKeyProjection keyProjection;
-  private /*final @NotNull*/ @Nullable OpOutputVarProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpKeyProjection keyProjection;
+  private /*final @NotNull*/ @Nullable OpEntityProjection itemsProjection;
 
-  public OpOutputMapModelProjection(
+  public OpMapModelProjection(
       @NotNull MapTypeApi model,
       boolean flagged,
       @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull OpOutputKeyProjection keyProjection,
-      @NotNull OpOutputVarProjection itemsProjection,
-      @Nullable List<OpOutputMapModelProjection> tails,
+      @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
+      @NotNull OpKeyProjection keyProjection,
+      @NotNull OpEntityProjection itemsProjection,
+      @Nullable List<OpMapModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
     this.keyProjection = keyProjection;
   }
 
-  public OpOutputMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
+  public OpMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
-  public @NotNull OpOutputKeyProjection keyProjection() {
+  public @NotNull OpKeyProjection keyProjection() {
     assert isResolved();
     assert keyProjection != null;
     return keyProjection;
   }
 
   @Override
-  public @NotNull OpOutputVarProjection itemsProjection() {
+  public @NotNull OpEntityProjection itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
   }
 
   @Override
-  protected OpOutputMapModelProjection clone() {
+  protected OpMapModelProjection clone() {
     if (isResolved) {
-      return new OpOutputMapModelProjection(
+      return new OpMapModelProjection(
           model,
           flagged,
           defaultValue,
@@ -98,7 +95,7 @@ public class OpOutputMapModelProjection
           location()
       );
     } else {
-      return new OpOutputMapModelProjection(
+      return new OpMapModelProjection(
           model, location()
       );
     }
@@ -107,33 +104,33 @@ public class OpOutputMapModelProjection
   /* static */
 
   @Override
-  protected OpOutputMapModelProjection merge(
+  protected OpMapModelProjection merge(
       final @NotNull MapTypeApi model,
       final boolean mergedFlagged,
       final @Nullable GMapDatum mergedDefault,
-      final @NotNull List<OpOutputMapModelProjection> modelProjections,
+      final @NotNull List<OpMapModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputMapModelProjection> mergedTails) {
+      final @Nullable OpModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpMapModelProjection> mergedTails) {
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
-    OpKeyPresence mergedKeysPresence = null;
-    List<OpOutputVarProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
+    AbstractOpKeyPresence mergedKeysPresence = null;
+    List<OpEntityProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
 
-    OpOutputMapModelProjection prevProjection = null;
-    for (final OpOutputMapModelProjection projection : modelProjections) {
+    OpMapModelProjection prevProjection = null;
+    for (final OpMapModelProjection projection : modelProjections) {
 
-      final /*@NotNull*/ OpOutputKeyProjection keyProjection = projection.keyProjection();
+      final /*@NotNull*/ OpKeyProjection keyProjection = projection.keyProjection();
       keysParams.add(keyProjection.params());
       keysAnnotations.add(keyProjection.annotations());
-      final OpKeyPresence presence = keyProjection.presence();
+      final AbstractOpKeyPresence presence = keyProjection.presence();
 
       if (mergedKeysPresence == null) mergedKeysPresence = presence;
       else {
         /*@Nullable*/
-        OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
+        AbstractOpKeyPresence newKeysPresence = AbstractOpKeyPresence.merge(mergedKeysPresence, presence);
         if (newKeysPresence == null)
           throw new IllegalArgumentException(
               String.format(
@@ -153,18 +150,18 @@ public class OpOutputMapModelProjection
     assert mergedKeysPresence != null; // modelProjections should have at least one element
     assert !itemsProjectionsToMerge.isEmpty();
 
-    return new OpOutputMapModelProjection(
+    return new OpMapModelProjection(
         model,
         mergedFlagged,
         mergedDefault,
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
-        new OpOutputKeyProjection(
+        new OpKeyProjection(
             mergedKeysPresence,
             OpParams.merge(keysParams),
             Annotations.merge(keysAnnotations),
-            OpKeyProjection.mergeProjections(
+            AbstractOpKeyProjection.mergeProjections(
                 model.keyType(),
                 modelProjections.stream().map(mp -> mp.keyProjection().projection())
             ),
@@ -177,11 +174,11 @@ public class OpOutputMapModelProjection
   }
 
   @Override
-  public @NotNull OpOutputMapModelProjection postNormalizedForType(
+  public @NotNull OpMapModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final @NotNull OpOutputMapModelProjection n) {
+      final @NotNull OpMapModelProjection n) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
-    return new OpOutputMapModelProjection(
+    return new OpMapModelProjection(
         n.type(),
         n.flagged(),
         n.defaultValue(),
@@ -196,7 +193,7 @@ public class OpOutputMapModelProjection
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpOutputMapModelProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpMapModelProjection value) {
     preResolveCheck(value);
     this.keyProjection = value.keyProjection();
     this.itemsProjection = value.itemsProjection();
@@ -208,7 +205,7 @@ public class OpOutputMapModelProjection
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    OpOutputMapModelProjection that = (OpOutputMapModelProjection) o;
+    OpMapModelProjection that = (OpMapModelProjection) o;
     return Objects.equals(itemsProjection, that.itemsProjection) &&
            Objects.equals(keyProjection, that.keyProjection);
   }

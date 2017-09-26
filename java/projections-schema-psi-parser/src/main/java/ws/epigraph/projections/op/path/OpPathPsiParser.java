@@ -26,7 +26,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -426,7 +426,7 @@ public final class OpPathPsiParser {
 
     Collection<OpParam> params = null;
     @Nullable Map<DatumTypeApi, Annotation> annotationsMap = null;
-    @Nullable OpOutputModelProjection<?, ?, ?, ?> projection = null;
+    @Nullable OpModelProjection<?, ?, ?, ?> projection = null;
 
     final @Nullable SchemaOpPathKeyProjectionBody body = keyProjectionPsi.getOpPathKeyProjectionBody();
     if (body != null) {

@@ -19,8 +19,8 @@ package ws.epigraph.projections.op.delete;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.op.OpProjectionTransformer;
-import ws.epigraph.projections.op.output.OpOutputTagProjectionEntry;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpTagProjectionEntry;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
@@ -38,11 +38,11 @@ public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransform
   MarkLeafsAsDeletableTransformer(final PsiProcessingContext context) { }
 
   @Override
-  protected OpOutputVarProjection transformVarProjection(
-      final @NotNull OpOutputVarProjection varProjection,
+  protected OpEntityProjection transformVarProjection(
+      final @NotNull OpEntityProjection varProjection,
       final @Nullable DataTypeApi dataType,
-      final @NotNull Map<String, OpOutputTagProjectionEntry> transformedTagProjections,
-      final @Nullable List<OpOutputVarProjection> transformedTails,
+      final @NotNull Map<String, OpTagProjectionEntry> transformedTagProjections,
+      final @Nullable List<OpEntityProjection> transformedTails,
       final boolean mustRebuild) {
 
     boolean markDeletable = false;
@@ -58,13 +58,13 @@ public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransform
         // questionable heuristic to keep things compatible when introducing retro tags:
         // mark entity projection is deletable if it's only tag is a retro tag
 
-        OpOutputTagProjectionEntry singleTagProjection = varProjection.singleTagProjection();
+        OpTagProjectionEntry singleTagProjection = varProjection.singleTagProjection();
         markDeletable = singleTagProjection != null && singleTagProjection.tag().equals(retroTag);
       }
     }
 
     if (!varProjection.flagged() && markDeletable) {
-      OpOutputVarProjection newProjection = new OpOutputVarProjection(
+      OpEntityProjection newProjection = new OpEntityProjection(
           varProjection.type(),
           true,
           transformedTagProjections,

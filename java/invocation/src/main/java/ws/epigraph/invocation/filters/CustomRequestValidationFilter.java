@@ -25,7 +25,7 @@ import ws.epigraph.invocation.AbstractOperationInvocationFilter;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.service.operations.OperationResponse;
@@ -50,7 +50,7 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
 
     OpInputDataValidator validator = new OpInputDataValidator();
     Data data = request.data();
-    @Nullable OpOutputFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
+    @Nullable OpFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
 
     if (data == null || inputProjection == null)
       return invocation.invoke(request, context);

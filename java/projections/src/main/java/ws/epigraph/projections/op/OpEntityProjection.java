@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,42 +32,42 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputVarProjection extends AbstractVarProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>
+public class OpEntityProjection extends AbstractVarProjection<
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>
     > {
 
   protected /*final*/ boolean flagged;
 
-  public OpOutputVarProjection(
+  public OpEntityProjection(
       @NotNull TypeApi type,
       boolean flagged,
-      @NotNull Map<String, OpOutputTagProjectionEntry> tagProjections,
+      @NotNull Map<String, OpTagProjectionEntry> tagProjections,
       boolean parenthesized,
-      @Nullable List<OpOutputVarProjection> polymorphicTails,
+      @Nullable List<OpEntityProjection> polymorphicTails,
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
     //noinspection ConstantConditions
     this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
   }
 
-  public OpOutputVarProjection(final TypeApi type, final TextLocation location) {
+  public OpEntityProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }
 
   public boolean flagged() { return flagged; }
 
   @Override
-  protected OpOutputVarProjection merge(
+  protected OpEntityProjection merge(
       final @NotNull TypeApi effectiveType,
-      final @NotNull List<OpOutputVarProjection> varProjections,
-      final @NotNull Map<String, OpOutputTagProjectionEntry> mergedTags,
+      final @NotNull List<OpEntityProjection> varProjections,
+      final @NotNull Map<String, OpTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
-      final List<OpOutputVarProjection> mergedTails) {
+      final List<OpEntityProjection> mergedTails) {
 
-    boolean mergedFlagged = varProjections.stream().anyMatch(OpOutputVarProjection::flagged);
-    return new OpOutputVarProjection(
+    boolean mergedFlagged = varProjections.stream().anyMatch(OpEntityProjection::flagged);
+    return new OpEntityProjection(
         effectiveType,
         mergedFlagged,
         mergedTags,
@@ -78,14 +78,14 @@ public class OpOutputVarProjection extends AbstractVarProjection<
   }
 
   @Override
-  protected @NotNull VarNormalizationContext<OpOutputVarProjection> newNormalizationContext() {
+  protected @NotNull VarNormalizationContext<OpEntityProjection> newNormalizationContext() {
     return new VarNormalizationContext<>(
-        t -> new OpOutputVarProjection(t, location())
+        t -> new OpEntityProjection(t, location())
     );
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpOutputVarProjection value) {
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpEntityProjection value) {
     preResolveCheck(value);
     this.flagged = value.flagged();
     super.resolve(name, value);
@@ -96,7 +96,7 @@ public class OpOutputVarProjection extends AbstractVarProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
-    final OpOutputVarProjection that = (OpOutputVarProjection) o;
+    final OpEntityProjection that = (OpEntityProjection) o;
     return flagged == that.flagged;
   }
 

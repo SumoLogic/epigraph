@@ -18,8 +18,7 @@ package ws.epigraph.projections.op.postprocess;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.op.OpProjectionTransformer;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
@@ -37,18 +36,18 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
 
   private final @NotNull PsiProcessingContext context;
 
-  private final Map<OpOutputModelProjection<?, ?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
+  private final Map<OpModelProjection<?, ?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
 
   public OpRequiredSynchronizer(final @NotNull PsiProcessingContext context) {this.context = context;}
 
   @Override
-  protected @NotNull OpOutputVarProjection transformResolved(
-      final @NotNull OpOutputVarProjection projection,
+  protected @NotNull OpEntityProjection transformResolved(
+      final @NotNull OpEntityProjection projection,
       final @Nullable DataTypeApi dataType) {
 
     // build model -> entity index
-    for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
+    for (final Map.Entry<String, OpTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
       modelToEntity.put(entry.getValue().projection(), new EntityProjectionAndDataType(projection, dataType));
     }
 
@@ -72,13 +71,13 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
     return super.transformResolved(projection, dataType);
   }
 
-  private boolean flagModel(@NotNull OpOutputModelProjection<?, ?, ?, ?> modelProjection) {
+  private boolean flagModel(@NotNull OpModelProjection<?, ?, ?, ?> modelProjection) {
     if (modelProjection.flagged()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);
       if (epd == null || !epd.ep.flagged()) return false;
       else {
-        OpOutputVarProjection entityProjection = epd.ep;
+        OpEntityProjection entityProjection = epd.ep;
         DataTypeApi dataType = epd.dataType;
 
         if (entityProjection.type().kind() != TypeKind.ENTITY) // we're the '$self' model
@@ -94,15 +93,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpOutputRecordModelProjection transformRecordModelProjection(
-      final @NotNull OpOutputRecordModelProjection recordModelProjection,
-      final @NotNull Map<String, OpOutputFieldProjectionEntry> transformedFields,
-      final @Nullable List<OpOutputRecordModelProjection> transformedTails,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> transformedMeta,
+  protected @NotNull OpRecordModelProjection transformRecordModelProjection(
+      final @NotNull OpRecordModelProjection recordModelProjection,
+      final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
+      final @Nullable List<OpRecordModelProjection> transformedTails,
+      final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(recordModelProjection)) {
-      OpOutputRecordModelProjection newProjection = new OpOutputRecordModelProjection(
+      OpRecordModelProjection newProjection = new OpRecordModelProjection(
           recordModelProjection.type(),
           true,
           recordModelProjection.defaultValue(),
@@ -126,15 +125,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpOutputMapModelProjection transformMapModelProjection(
-      final @NotNull OpOutputMapModelProjection mapModelProjection,
-      final @NotNull OpOutputVarProjection transformedItemsProjection,
-      final @Nullable List<OpOutputMapModelProjection> transformedTails,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> transformedMeta,
+  protected @NotNull OpMapModelProjection transformMapModelProjection(
+      final @NotNull OpMapModelProjection mapModelProjection,
+      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @Nullable List<OpMapModelProjection> transformedTails,
+      final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(mapModelProjection)) {
-      OpOutputMapModelProjection newProjection = new OpOutputMapModelProjection(
+      OpMapModelProjection newProjection = new OpMapModelProjection(
           mapModelProjection.type(),
           true,
           mapModelProjection.defaultValue(),
@@ -159,15 +158,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpOutputListModelProjection transformListModelProjection(
-      final @NotNull OpOutputListModelProjection listModelProjection,
-      final @NotNull OpOutputVarProjection transformedItemsProjection,
-      final @Nullable List<OpOutputListModelProjection> transformedTails,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> transformedMeta,
+  protected @NotNull OpListModelProjection transformListModelProjection(
+      final @NotNull OpListModelProjection listModelProjection,
+      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @Nullable List<OpListModelProjection> transformedTails,
+      final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(listModelProjection)) {
-      OpOutputListModelProjection newProjection = new OpOutputListModelProjection(
+      OpListModelProjection newProjection = new OpListModelProjection(
           listModelProjection.type(),
           true,
           listModelProjection.defaultValue(),
@@ -191,14 +190,14 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpOutputPrimitiveModelProjection transformPrimitiveModelProjection(
-      final @NotNull OpOutputPrimitiveModelProjection primitiveModelProjection,
-      final @Nullable List<OpOutputPrimitiveModelProjection> transformedTails,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> transformedMeta,
+  protected @NotNull OpPrimitiveModelProjection transformPrimitiveModelProjection(
+      final @NotNull OpPrimitiveModelProjection primitiveModelProjection,
+      final @Nullable List<OpPrimitiveModelProjection> transformedTails,
+      final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
     if (flagModel(primitiveModelProjection)) {
-      OpOutputPrimitiveModelProjection newProjection = new OpOutputPrimitiveModelProjection(
+      OpPrimitiveModelProjection newProjection = new OpPrimitiveModelProjection(
           primitiveModelProjection.type(),
           true,
           primitiveModelProjection.defaultValue(),
@@ -220,11 +219,11 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   private static final class EntityProjectionAndDataType {
-    public final @NotNull OpOutputVarProjection ep;
+    public final @NotNull OpEntityProjection ep;
     public final @Nullable DataTypeApi dataType;
 
     private EntityProjectionAndDataType(
-        final @NotNull OpOutputVarProjection ep,
+        final @NotNull OpEntityProjection ep,
         final @Nullable DataTypeApi type) {
 
       this.ep = ep;

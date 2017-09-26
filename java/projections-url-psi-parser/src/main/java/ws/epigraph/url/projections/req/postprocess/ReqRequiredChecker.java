@@ -17,10 +17,10 @@
 package ws.epigraph.url.projections.req.postprocess;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpOutputFieldProjectionEntry;
-import ws.epigraph.projections.op.output.OpOutputRecordModelProjection;
-import ws.epigraph.projections.op.output.OpOutputTagProjectionEntry;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpFieldProjectionEntry;
+import ws.epigraph.projections.op.OpRecordModelProjection;
+import ws.epigraph.projections.op.OpTagProjectionEntry;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -41,11 +41,11 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
   @Override
   protected boolean visitVarProjection(
       final @NotNull ReqEntityProjection projection,
-      final @NotNull OpOutputVarProjection guide) {
+      final @NotNull OpEntityProjection guide) {
 
-    for (final Map.Entry<String, OpOutputTagProjectionEntry> entry : guide.tagProjections().entrySet()) {
+    for (final Map.Entry<String, OpTagProjectionEntry> entry : guide.tagProjections().entrySet()) {
       String tagName = entry.getKey();
-      OpOutputTagProjectionEntry gtpe = entry.getValue();
+      OpTagProjectionEntry gtpe = entry.getValue();
 
       if (projection.tagProjection(tagName) == null && gtpe.projection().flagged()) {
         context.addError(String.format("Required tag '%s' is missing", tagName), projection.location());
@@ -60,11 +60,11 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
   @Override
   protected boolean visitRecordModelProjection(
       final @NotNull ReqRecordModelProjection projection,
-      final @NotNull OpOutputRecordModelProjection guide) {
+      final @NotNull OpRecordModelProjection guide) {
 
-    for (final Map.Entry<String, OpOutputFieldProjectionEntry> entry : guide.fieldProjections().entrySet()) {
+    for (final Map.Entry<String, OpFieldProjectionEntry> entry : guide.fieldProjections().entrySet()) {
       String fieldName = entry.getKey();
-      OpOutputFieldProjectionEntry gfpe = entry.getValue();
+      OpFieldProjectionEntry gfpe = entry.getValue();
 
       if (projection.fieldProjection(fieldName) == null && gfpe.fieldProjection().flagged()) {
         context.addError(String.format("Required field '%s' is missing", fieldName), projection.location());

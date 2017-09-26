@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
@@ -39,8 +39,8 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
       @Nullable String name,
       @NotNull Annotations annotations,
       @Nullable OpFieldPath path,
-      @NotNull OpOutputFieldProjection deleteProjection,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @NotNull OpFieldProjection deleteProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     super(OperationKind.DELETE, HttpMethod.DELETE, name, annotations,
@@ -63,8 +63,8 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
 //  @Override
 //  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
-  public @NotNull OpOutputFieldProjection deleteProjection() {
-    OpOutputFieldProjection inputProjection = inputProjection();
+  public @NotNull OpFieldProjection deleteProjection() {
+    OpFieldProjection inputProjection = inputProjection();
     assert inputProjection != null;
     return inputProjection;
   }

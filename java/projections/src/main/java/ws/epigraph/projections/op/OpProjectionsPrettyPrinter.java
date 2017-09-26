@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
@@ -22,21 +22,18 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.OpKeyPresence;
-import ws.epigraph.projections.op.OpParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpProjectionsPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection,
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection,
     E> {
 
   // todo + on tags/fields/maps/lists
@@ -44,7 +41,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
   public OpProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> context) {
     super(layouter, context);
   }
 
@@ -53,11 +50,11 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected boolean printModelParamsInBlock(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) throws E {
+  protected boolean printModelParamsInBlock(final @NotNull OpModelProjection<?, ?, ?, ?> projection) throws E {
     final OpParams params = projection.params();
     final Annotations annotations = projection.annotations();
     final GDatum defaultValue = projection.defaultValue();
-    final OpOutputModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
+    final OpModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
 
     boolean first = true;
     if (!params.isEmpty())
@@ -96,30 +93,30 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected void printTagName(@NotNull String tagName, @NotNull OpOutputModelProjection<?, ?, ?, ?> mp) throws E {
+  protected void printTagName(@NotNull String tagName, @NotNull OpModelProjection<?, ?, ?, ?> mp) throws E {
     if (mp.flagged()) l.print("+");
     l.print(escape(tagName));
   }
 
   @Override
-  protected String fieldNamePrefix(final @NotNull OpOutputFieldProjectionEntry fieldEntry) {
+  protected String fieldNamePrefix(final @NotNull OpFieldProjectionEntry fieldEntry) {
     return fieldEntry.fieldProjection().varProjection().flagged() ? "+" : "";
     // todo: don't print '+' for vars/models if printed for field
   }
 
   @Override
-  public void printModelOnly(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof OpOutputRecordModelProjection)
-      printRecordProjection((OpOutputRecordModelProjection) mp);
-    else if (mp instanceof OpOutputMapModelProjection)
-      printModelOnly((OpOutputMapModelProjection) mp);
-    else if (mp instanceof OpOutputListModelProjection)
-      printModelOnly((OpOutputListModelProjection) mp);
+  public void printModelOnly(@NotNull OpModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof OpRecordModelProjection)
+      printRecordProjection((OpRecordModelProjection) mp);
+    else if (mp instanceof OpMapModelProjection)
+      printModelOnly((OpMapModelProjection) mp);
+    else if (mp instanceof OpListModelProjection)
+      printModelOnly((OpListModelProjection) mp);
   }
 
-  private void printModelOnly(OpOutputMapModelProjection mp) throws E {
-    @NotNull OpOutputKeyProjection keyProjection = mp.keyProjection();
-    OpOutputVarProjection itemsProjection = mp.itemsProjection();
+  private void printModelOnly(OpMapModelProjection mp) throws E {
+    @NotNull OpKeyProjection keyProjection = mp.keyProjection();
+    OpEntityProjection itemsProjection = mp.itemsProjection();
 
     printMapModelProjection(
         keyProjection.presence().getPrettyPrinterString(),
@@ -130,7 +127,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
     );
   }
 
-  private void printModelOnly(OpOutputListModelProjection mp) throws E {
+  private void printModelOnly(OpListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*");
     if (mp.itemsProjection().flagged()) l.print("+");
@@ -142,13 +139,13 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean isPrintoutNoParamsEmpty(@NotNull OpOutputModelProjection<?, ?, ?, ?> mp) {
-    if (mp instanceof OpOutputMapModelProjection) {
-      OpOutputMapModelProjection mapModelProjection = (OpOutputMapModelProjection) mp;
+  public boolean isPrintoutNoParamsEmpty(@NotNull OpModelProjection<?, ?, ?, ?> mp) {
+    if (mp instanceof OpMapModelProjection) {
+      OpMapModelProjection mapModelProjection = (OpMapModelProjection) mp;
       /*@NotNull*/
-      OpOutputKeyProjection keyProjection = mapModelProjection.keyProjection();
+      OpKeyProjection keyProjection = mapModelProjection.keyProjection();
 
-      if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
+      if (keyProjection.presence() != AbstractOpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
       if (!keyProjection.annotations().isEmpty()) return false;
 
@@ -158,7 +155,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public boolean modelParamsEmpty(final @NotNull OpOutputModelProjection<?, ?, ?, ?> projection) {
+  public boolean modelParamsEmpty(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {
     return projection.defaultValue() == null && super.modelParamsEmpty(projection);
   }
 }

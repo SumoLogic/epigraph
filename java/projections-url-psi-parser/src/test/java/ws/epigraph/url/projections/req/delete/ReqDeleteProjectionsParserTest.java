@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -46,7 +46,7 @@ public class ReqDeleteProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpDeleteVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpDeleteVarProjection(
       lines(
           ":(",
           "  id,",
@@ -153,7 +153,7 @@ public class ReqDeleteProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpDeleteVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpDeleteVarProjection(@NotNull String projectionString) {
     return ReqTestUtil.parseOpDeleteVarProjection(dataType, projectionString, resolver);
   }
 }

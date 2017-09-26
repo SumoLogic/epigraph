@@ -22,7 +22,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
@@ -44,7 +44,7 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class WireTestUtil {
   private WireTestUtil() {}
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -66,7 +66,7 @@ public final class WireTestUtil {
       OpPsiProcessingContext outputPsiProcessingContext =
           new OpPsiProcessingContext(context, outputReferenceContext);
 
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -82,7 +82,7 @@ public final class WireTestUtil {
 
   public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 

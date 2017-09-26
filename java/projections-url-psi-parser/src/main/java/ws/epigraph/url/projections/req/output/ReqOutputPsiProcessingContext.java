@@ -17,7 +17,7 @@
 package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
@@ -25,7 +25,7 @@ import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputPsiProcessingContext extends ReqPsiProcessingContext<
-    OpOutputVarProjection,
+    OpEntityProjection,
     ReqReferenceContext
     > {
 

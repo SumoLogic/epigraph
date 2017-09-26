@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.op.output
+package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.output.OpOutputKeyProjection
+import ws.epigraph.projections.op.OpKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpOutputKeyProjectionGen(kp: OpOutputKeyProjection) extends ObjectGen[OpOutputKeyProjection](kp) {
-  override protected def generateObject(ctx: ObjectGenContext): String =
+class OpKeyProjectionGen(kp: OpKeyProjection) extends ObjectGen[OpKeyProjection](kp) {
+  override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
-new OpOutputKeyProjection(
+new $o(
   ${gen(kp.presence(), ctx)},
   ${i(gen(kp.params(), ctx))},
   ${i(gen(kp.annotations(), ctx))},

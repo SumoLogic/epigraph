@@ -34,7 +34,7 @@ import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -84,7 +84,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   @Override
   public HttpContentProducer createRequestContentProducer(
       final @Nullable ReqEntityProjection reqInputProjection,
-      final @NotNull OpOutputVarProjection opInputProjection,
+      final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -120,7 +120,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   @Override
   public HttpContentProducer updateRequestContentProducer(
       final @Nullable ReqEntityProjection reqUpdateProjection,
-      final @NotNull OpOutputVarProjection opInputProjection,
+      final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -156,7 +156,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
   @Override
   public HttpContentProducer customRequestContentProducer(
       final @Nullable ReqEntityProjection reqInputProjection,
-      final @NotNull OpOutputVarProjection opInputProjection,
+      final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 

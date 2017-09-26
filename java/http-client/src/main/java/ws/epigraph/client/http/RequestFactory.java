@@ -26,8 +26,8 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -461,7 +461,7 @@ public final class RequestFactory {
 
     ReqFieldProjection reqInputFieldProjection = null;
     if (inputRequestString != null) {
-      OpOutputFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
+      OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
       if (opInputFieldProjection == null)
         throw new IllegalArgumentException(
             String.format(
@@ -535,7 +535,7 @@ public final class RequestFactory {
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputProjection(
       @NotNull String projection,
       @NotNull DataTypeApi type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(ReqOutputProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
@@ -544,7 +544,7 @@ public final class RequestFactory {
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteProjection(
       @NotNull String projection,
       @NotNull DataTypeApi type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(ReqDeleteProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
@@ -555,7 +555,7 @@ public final class RequestFactory {
       boolean flagged,
       @NotNull String projection,
       @NotNull DataTypeApi type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     UrlReqOutputTrunkVarProjection psi = getReqOutputProjectionPsi(projection);
@@ -610,7 +610,7 @@ public final class RequestFactory {
       @NotNull String projection,
       boolean replace,
       @NotNull DataTypeApi dataType,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -42,7 +42,7 @@ public final class RequestUrlPsiParserUtil {
 
   static @NotNull StepsAndProjection<ReqFieldProjection> parseProjection(
       final @NotNull DataTypeApi dataType,
-      final @NotNull OpOutputFieldProjection op,
+      final @NotNull OpFieldProjection op,
       final @Nullable UrlReqOutputTrunkFieldProjection psi,
       final boolean flagged,
       final @NotNull ReqProjectionPsiParser psiParser,

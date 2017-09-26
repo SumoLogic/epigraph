@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,6 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GPrimitiveDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection;
-import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.PrimitiveTypeApi;
 
 import java.util.List;
@@ -30,29 +29,29 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputPrimitiveModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
-    implements GenPrimitiveModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputPrimitiveModelProjection, PrimitiveTypeApi> {
+public class OpPrimitiveModelProjection
+    extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
+    implements GenPrimitiveModelProjection<OpModelProjection<?, ?, ?, ?>, OpPrimitiveModelProjection, PrimitiveTypeApi> {
 
-  public OpOutputPrimitiveModelProjection(
+  public OpPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
       boolean flagged,
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
-      @Nullable List<OpOutputPrimitiveModelProjection> tails,
+      @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
+      @Nullable List<OpPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
   }
 
-  public OpOutputPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
+  public OpPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
 
   @Override
-  protected OpOutputPrimitiveModelProjection clone() {
-    return new OpOutputPrimitiveModelProjection(
+  protected OpPrimitiveModelProjection clone() {
+    return new OpPrimitiveModelProjection(
         model,
         flagged,
         defaultValue,
@@ -65,17 +64,17 @@ public class OpOutputPrimitiveModelProjection
   }
 
   @Override
-  protected OpOutputPrimitiveModelProjection merge(
+  protected OpPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
       final boolean mergedFlagged,
       final @Nullable GPrimitiveDatum mergedDefault,
-      final @NotNull List<OpOutputPrimitiveModelProjection> modelProjections,
+      final @NotNull List<OpPrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputPrimitiveModelProjection> mergedTails) {
+      final @Nullable OpModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpPrimitiveModelProjection> mergedTails) {
 
-    return new OpOutputPrimitiveModelProjection(
+    return new OpPrimitiveModelProjection(
         model,
         mergedFlagged,
         mergedDefault,

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
-import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.wire.OpFormatWriter;
 import ws.epigraph.wire.WireFormat;
 import ws.epigraph.wire.json.JsonFormat;
@@ -37,16 +37,16 @@ import java.util.stream.Collectors;
 
 @NotThreadSafe
 public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection,
-    OpOutputMapModelProjection,
-    OpOutputListModelProjection,
-    OpOutputPrimitiveModelProjection,
-    OpOutputKeyProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection,
+    OpMapModelProjection,
+    OpListModelProjection,
+    OpPrimitiveModelProjection,
+    OpKeyProjection
     > implements OpFormatWriter {
 
   public OpJsonFormatWriter(@NotNull OutputStream out) {
@@ -58,7 +58,7 @@ public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
   }
 
   @Override
-  protected @NotNull Datum keyDatum(final @NotNull OpOutputKeyProjection keyProjection) {
+  protected @NotNull Datum keyDatum(final @NotNull OpKeyProjection keyProjection) {
     throw new UnsupportedOperationException();
   }
 
@@ -66,14 +66,14 @@ public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
    * Builds a superset of all key projections. `null` is treated as wildcard and yields wildcard result immediately.
    */
   @Override
-  protected @Nullable List<OpOutputKeyProjection> keyProjections(
-      @NotNull Deque<OpOutputMapModelProjection> projections // non-empty
+  protected @Nullable List<OpKeyProjection> keyProjections(
+      @NotNull Deque<OpMapModelProjection> projections // non-empty
   ) { return null; }
 
   @Override
-  protected @Nullable Deque<? extends OpOutputModelProjection<?, ?, ?, ?>>
-  getKeyModelProjections(@NotNull Collection<OpOutputMapModelProjection> projections) {
-    Deque<? extends OpOutputModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
+  protected @Nullable Deque<? extends OpModelProjection<?, ?, ?, ?>>
+  getKeyModelProjections(@NotNull Collection<OpMapModelProjection> projections) {
+    Deque<? extends OpModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
         .map(mp -> mp.keyProjection().projection())
         .filter(Objects::nonNull)
         .collect(Collectors.toCollection(ArrayDeque::new));

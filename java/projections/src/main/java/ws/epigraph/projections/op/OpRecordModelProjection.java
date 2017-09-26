@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
@@ -39,29 +38,29 @@ import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpOutputRecordModelProjection
-    extends OpOutputModelProjection<OpOutputModelProjection<?, ?, ?, ?>, OpOutputRecordModelProjection, RecordTypeApi, GRecordDatum>
+public class OpRecordModelProjection
+    extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpRecordModelProjection, RecordTypeApi, GRecordDatum>
     implements GenRecordModelProjection<
-    OpOutputVarProjection,
-    OpOutputTagProjectionEntry,
-    OpOutputModelProjection<?, ?, ?, ?>,
-    OpOutputRecordModelProjection,
-    OpOutputFieldProjectionEntry,
-    OpOutputFieldProjection,
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection,
     RecordTypeApi
     > {
 
-  private /*final*/ @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections;
+  private /*final*/ @NotNull Map<String, OpFieldProjectionEntry> fieldProjections;
 
-  public OpOutputRecordModelProjection(
+  public OpRecordModelProjection(
       @NotNull RecordTypeApi model,
       boolean flagged,
       @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
-      @Nullable OpOutputModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections,
-      @Nullable List<OpOutputRecordModelProjection> tails,
+      @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
+      @NotNull Map<String, OpFieldProjectionEntry> fieldProjections,
+      @Nullable List<OpRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
     super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
@@ -70,21 +69,21 @@ public class OpOutputRecordModelProjection
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
   }
 
-  public OpOutputRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
+  public OpRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     this.fieldProjections = Collections.emptyMap();
   }
 
   @Override
-  public @NotNull Map<String, OpOutputFieldProjectionEntry> fieldProjections() {
+  public @NotNull Map<String, OpFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
   }
 
   @Override
-  protected OpOutputRecordModelProjection clone() {
+  protected OpRecordModelProjection clone() {
     if (isResolved) {
-      return new OpOutputRecordModelProjection(
+      return new OpRecordModelProjection(
           model,
           flagged,
           defaultValue,
@@ -96,29 +95,29 @@ public class OpOutputRecordModelProjection
           location()
       );
     } else {
-      return new OpOutputRecordModelProjection(model, location());
+      return new OpRecordModelProjection(model, location());
     }
   }
 
   @Override
-  protected OpOutputRecordModelProjection merge(
+  protected OpRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
       final boolean mergedFlagged,
       final @Nullable GRecordDatum mergedDefault,
-      final @NotNull List<OpOutputRecordModelProjection> modelProjections,
+      final @NotNull List<OpRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
       final @NotNull Annotations mergedAnnotations,
-      final @Nullable OpOutputModelProjection<?, ?, ?, ?> mergedMetaProjection,
-      final @Nullable List<OpOutputRecordModelProjection> mergedTails) {
+      final @Nullable OpModelProjection<?, ?, ?, ?> mergedMetaProjection,
+      final @Nullable List<OpRecordModelProjection> mergedTails) {
 
-    Map<FieldApi, OpOutputFieldProjection> mergedFieldProjections =
+    Map<FieldApi, OpFieldProjection> mergedFieldProjections =
         RecordModelProjectionHelper.mergeFieldProjections(modelProjections);
 
-    Map<String, OpOutputFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
-    for (final Map.Entry<FieldApi, OpOutputFieldProjection> entry : mergedFieldProjections.entrySet()) {
+    Map<String, OpFieldProjectionEntry> mergedFieldEntries = new LinkedHashMap<>();
+    for (final Map.Entry<FieldApi, OpFieldProjection> entry : mergedFieldProjections.entrySet()) {
       mergedFieldEntries.put(
           entry.getKey().name(),
-          new OpOutputFieldProjectionEntry(
+          new OpFieldProjectionEntry(
               entry.getKey(),
               entry.getValue(),
               TextLocation.UNKNOWN
@@ -126,7 +125,7 @@ public class OpOutputRecordModelProjection
       );
     }
 
-    return new OpOutputRecordModelProjection(
+    return new OpRecordModelProjection(
         model,
         mergedFlagged,
         mergedDefault,
@@ -140,21 +139,21 @@ public class OpOutputRecordModelProjection
   }
 
   @Override
-  public @NotNull OpOutputRecordModelProjection postNormalizedForType(
+  public @NotNull OpRecordModelProjection postNormalizedForType(
       final @NotNull DatumTypeApi targetType,
-      final @NotNull OpOutputRecordModelProjection n) {
+      final @NotNull OpRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 
-    final Map<String, OpOutputFieldProjection> normalizedFields =
+    final Map<String, OpFieldProjection> normalizedFields =
         RecordModelProjectionHelper.normalizeFields(targetRecordType, n);
 
-    final Map<String, OpOutputFieldProjectionEntry> normalizedFieldEntries = reattachFields(
+    final Map<String, OpFieldProjectionEntry> normalizedFieldEntries = reattachFields(
         targetRecordType,
         normalizedFields,
-        OpOutputFieldProjectionEntry::new
+        OpFieldProjectionEntry::new
     );
 
-    return new OpOutputRecordModelProjection(
+    return new OpRecordModelProjection(
         n.type(),
         n.flagged(),
         n.defaultValue(),
@@ -170,7 +169,7 @@ public class OpOutputRecordModelProjection
   @Override
   public void resolve(
       final @Nullable ProjectionReferenceName name,
-      final @NotNull OpOutputRecordModelProjection value) {
+      final @NotNull OpRecordModelProjection value) {
     preResolveCheck(value);
     this.fieldProjections = value.fieldProjections();
     super.resolve(name, value);
