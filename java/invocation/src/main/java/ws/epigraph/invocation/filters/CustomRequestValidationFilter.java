@@ -50,7 +50,8 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
 
     OpInputDataValidator validator = new OpInputDataValidator();
     Data data = request.data();
-    @Nullable OpFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ OpFieldProjection inputProjection = invocation.operationDeclaration().inputProjection();
 
     if (data == null || inputProjection == null)
       return invocation.invoke(request, context);

@@ -85,7 +85,8 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final boolean mustRebuild) {
 
     TagApi retroTag = dataType == null ? null : dataType.retroTag();
-    @Nullable ReqTagProjectionEntry tp = null;
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqTagProjectionEntry tp = null;
     if (retroTag != null)
       tp = varProjection.tagProjection(retroTag.name());
     else if (varProjection.type().kind() != TypeKind.ENTITY)

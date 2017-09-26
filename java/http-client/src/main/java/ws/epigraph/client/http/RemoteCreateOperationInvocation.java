@@ -54,7 +54,8 @@ public class RemoteCreateOperationInvocation
       final @NotNull CreateOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    @Nullable ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
 
     String uri = UriComposer.composeCreateUri(
         resourceName,
@@ -70,7 +71,8 @@ public class RemoteCreateOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull CreateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    @Nullable ReqFieldProjection inputFieldProjection = request.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
     Type dataType = data.type();

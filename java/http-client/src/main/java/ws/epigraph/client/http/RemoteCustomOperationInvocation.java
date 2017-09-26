@@ -58,7 +58,8 @@ public class RemoteCustomOperationInvocation
       final @NotNull CustomOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    @Nullable ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
 
     String uri = UriComposer.composeCustomUri(
         resourceName,
@@ -92,7 +93,8 @@ public class RemoteCustomOperationInvocation
     ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
-    @Nullable OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
     if (data == null || opInputFieldProjection == null)
       return null;
 

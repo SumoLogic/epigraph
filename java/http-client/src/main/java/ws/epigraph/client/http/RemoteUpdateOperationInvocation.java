@@ -70,7 +70,8 @@ public class RemoteUpdateOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull UpdateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    @Nullable ReqFieldProjection updateFieldProjection = request.updateProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqFieldProjection updateFieldProjection = request.updateProjection();
     Data data = request.data();
 
     Type dataType = data.type();
