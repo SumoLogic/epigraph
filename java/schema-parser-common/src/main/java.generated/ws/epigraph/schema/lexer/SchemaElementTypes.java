@@ -47,6 +47,7 @@ public interface SchemaElementTypes {
   IElementType S_DEFS = new SchemaElementType("S_DEFS");
   IElementType S_DELETE_OPERATION_BODY_PART = new SchemaElementType("S_DELETE_OPERATION_BODY_PART");
   IElementType S_DELETE_OPERATION_DEF = new SchemaElementType("S_DELETE_OPERATION_DEF");
+  IElementType S_DELETE_PROJECTION = new SchemaElementType("S_DELETE_PROJECTION");
   IElementType S_DELETE_PROJECTION_DEF = new SchemaElementType("S_DELETE_PROJECTION_DEF");
   IElementType S_ENTITY_TAG_DECL = new SchemaElementType("S_ENTITY_TAG_DECL");
   IElementType S_ENTITY_TAG_REF = new SchemaElementType("S_ENTITY_TAG_REF");
@@ -60,6 +61,7 @@ public interface SchemaElementTypes {
   IElementType S_FIELD_DECL = new SchemaElementType("S_FIELD_DECL");
   IElementType S_IMPORTS = new SchemaElementType("S_IMPORTS");
   IElementType S_IMPORT_STATEMENT = new SchemaElementType("S_IMPORT_STATEMENT");
+  IElementType S_INPUT_PROJECTION = new SchemaElementType("S_INPUT_PROJECTION");
   IElementType S_INPUT_PROJECTION_DEF = new SchemaElementType("S_INPUT_PROJECTION_DEF");
   IElementType S_LIST_DATUM = new SchemaElementType("S_LIST_DATUM");
   IElementType S_LIST_TYPE_BODY = new SchemaElementType("S_LIST_TYPE_BODY");
@@ -72,12 +74,9 @@ public interface SchemaElementTypes {
   IElementType S_NAMESPACE_DECL = new SchemaNamespaceDeclStubElementType("S_NAMESPACE_DECL");
   IElementType S_NULL_DATUM = new SchemaElementType("S_NULL_DATUM");
   IElementType S_OPERATION_DEF = new SchemaElementType("S_OPERATION_DEF");
-  IElementType S_OPERATION_DELETE_PROJECTION = new SchemaElementType("S_OPERATION_DELETE_PROJECTION");
-  IElementType S_OPERATION_INPUT_PROJECTION = new SchemaElementType("S_OPERATION_INPUT_PROJECTION");
   IElementType S_OPERATION_INPUT_TYPE = new SchemaElementType("S_OPERATION_INPUT_TYPE");
   IElementType S_OPERATION_METHOD = new SchemaElementType("S_OPERATION_METHOD");
   IElementType S_OPERATION_NAME = new SchemaElementType("S_OPERATION_NAME");
-  IElementType S_OPERATION_OUTPUT_PROJECTION = new SchemaElementType("S_OPERATION_OUTPUT_PROJECTION");
   IElementType S_OPERATION_OUTPUT_TYPE = new SchemaElementType("S_OPERATION_OUTPUT_TYPE");
   IElementType S_OPERATION_PATH = new SchemaElementType("S_OPERATION_PATH");
   IElementType S_OP_DEFAULT_VALUE = new SchemaElementType("S_OP_DEFAULT_VALUE");
@@ -121,6 +120,7 @@ public interface SchemaElementTypes {
   IElementType S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION");
   IElementType S_OP_UNNAMED_OR_REF_MODEL_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_MODEL_PROJECTION");
   IElementType S_OP_VAR_PATH = new SchemaElementType("S_OP_VAR_PATH");
+  IElementType S_OUTPUT_PROJECTION = new SchemaElementType("S_OUTPUT_PROJECTION");
   IElementType S_OUTPUT_PROJECTION_DEF = new SchemaElementType("S_OUTPUT_PROJECTION_DEF");
   IElementType S_PRIMITIVE_DATUM = new SchemaElementType("S_PRIMITIVE_DATUM");
   IElementType S_PRIMITIVE_TYPE_BODY = new SchemaElementType("S_PRIMITIVE_TYPE_BODY");
@@ -145,9 +145,7 @@ public interface SchemaElementTypes {
   IElementType S_TAG_NAME = new SchemaElementType("S_TAG_NAME");
   IElementType S_TRANSFORMER_BODY_PART = new SchemaElementType("S_TRANSFORMER_BODY_PART");
   IElementType S_TRANSFORMER_DEF = new SchemaElementType("S_TRANSFORMER_DEF");
-  IElementType S_TRANSFORMER_INPUT_PROJECTION = new SchemaElementType("S_TRANSFORMER_INPUT_PROJECTION");
   IElementType S_TRANSFORMER_NAME = new SchemaElementType("S_TRANSFORMER_NAME");
-  IElementType S_TRANSFORMER_OUTPUT_PROJECTION = new SchemaElementType("S_TRANSFORMER_OUTPUT_PROJECTION");
   IElementType S_TRANSFORMER_TYPE = new SchemaElementType("S_TRANSFORMER_TYPE");
   IElementType S_TYPE_DEF_WRAPPER = new SchemaTypeDefWrapperStubElementType("S_TYPE_DEF_WRAPPER");
   IElementType S_TYPE_REF = new SchemaElementType("S_TYPE_REF");
@@ -172,7 +170,7 @@ public interface SchemaElementTypes {
   IElementType S_CURLY_RIGHT = new SchemaElementType("}");
   IElementType S_DEFAULT = new SchemaElementType("default");
   IElementType S_DELETE = new SchemaElementType("DELETE");
-  IElementType S_DELETE_PROJECTION = new SchemaElementType("deleteProjection");
+  IElementType S_DELETE_PROJ = new SchemaElementType("deleteProjection");
   IElementType S_DOLLAR = new SchemaElementType("$");
   IElementType S_DOT = new SchemaElementType(".");
   IElementType S_DOUBLE_T = new SchemaElementType("double");
@@ -185,7 +183,7 @@ public interface SchemaElementTypes {
   IElementType S_HASH = new SchemaElementType("#");
   IElementType S_ID = new SchemaElementType("id");
   IElementType S_IMPORT = new SchemaElementType("import");
-  IElementType S_INPUT_PROJECTION = new SchemaElementType("inputProjection");
+  IElementType S_INPUT_PROJ = new SchemaElementType("inputProjection");
   IElementType S_INPUT_TYPE = new SchemaElementType("inputType");
   IElementType S_INTEGER_T = new SchemaElementType("integer");
   IElementType S_LIST = new SchemaElementType("list");
@@ -201,7 +199,7 @@ public interface SchemaElementTypes {
   IElementType S_OP_DELETE = new SchemaElementType("delete");
   IElementType S_OP_READ = new SchemaElementType("read");
   IElementType S_OP_UPDATE = new SchemaElementType("update");
-  IElementType S_OUTPUT_PROJECTION = new SchemaElementType("outputProjection");
+  IElementType S_OUTPUT_PROJ = new SchemaElementType("outputProjection");
   IElementType S_OUTPUT_TYPE = new SchemaElementType("outputType");
   IElementType S_OVERRIDE = new SchemaElementType("override");
   IElementType S_PAREN_LEFT = new SchemaElementType("(");
@@ -269,6 +267,9 @@ public interface SchemaElementTypes {
       else if (type == S_DELETE_OPERATION_DEF) {
         return new SchemaDeleteOperationDefImpl(node);
       }
+      else if (type == S_DELETE_PROJECTION) {
+        return new SchemaDeleteProjectionImpl(node);
+      }
       else if (type == S_DELETE_PROJECTION_DEF) {
         return new SchemaDeleteProjectionDefImpl(node);
       }
@@ -308,6 +309,9 @@ public interface SchemaElementTypes {
       else if (type == S_IMPORT_STATEMENT) {
         return new SchemaImportStatementImpl(node);
       }
+      else if (type == S_INPUT_PROJECTION) {
+        return new SchemaInputProjectionImpl(node);
+      }
       else if (type == S_INPUT_PROJECTION_DEF) {
         return new SchemaInputProjectionDefImpl(node);
       }
@@ -344,12 +348,6 @@ public interface SchemaElementTypes {
       else if (type == S_OPERATION_DEF) {
         return new SchemaOperationDefImpl(node);
       }
-      else if (type == S_OPERATION_DELETE_PROJECTION) {
-        return new SchemaOperationDeleteProjectionImpl(node);
-      }
-      else if (type == S_OPERATION_INPUT_PROJECTION) {
-        return new SchemaOperationInputProjectionImpl(node);
-      }
       else if (type == S_OPERATION_INPUT_TYPE) {
         return new SchemaOperationInputTypeImpl(node);
       }
@@ -358,9 +356,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OPERATION_NAME) {
         return new SchemaOperationNameImpl(node);
-      }
-      else if (type == S_OPERATION_OUTPUT_PROJECTION) {
-        return new SchemaOperationOutputProjectionImpl(node);
       }
       else if (type == S_OPERATION_OUTPUT_TYPE) {
         return new SchemaOperationOutputTypeImpl(node);
@@ -491,6 +486,9 @@ public interface SchemaElementTypes {
       else if (type == S_OP_VAR_PATH) {
         return new SchemaOpVarPathImpl(node);
       }
+      else if (type == S_OUTPUT_PROJECTION) {
+        return new SchemaOutputProjectionImpl(node);
+      }
       else if (type == S_OUTPUT_PROJECTION_DEF) {
         return new SchemaOutputProjectionDefImpl(node);
       }
@@ -563,14 +561,8 @@ public interface SchemaElementTypes {
       else if (type == S_TRANSFORMER_DEF) {
         return new SchemaTransformerDefImpl(node);
       }
-      else if (type == S_TRANSFORMER_INPUT_PROJECTION) {
-        return new SchemaTransformerInputProjectionImpl(node);
-      }
       else if (type == S_TRANSFORMER_NAME) {
         return new SchemaTransformerNameImpl(node);
-      }
-      else if (type == S_TRANSFORMER_OUTPUT_PROJECTION) {
-        return new SchemaTransformerOutputProjectionImpl(node);
       }
       else if (type == S_TRANSFORMER_TYPE) {
         return new SchemaTransformerTypeImpl(node);

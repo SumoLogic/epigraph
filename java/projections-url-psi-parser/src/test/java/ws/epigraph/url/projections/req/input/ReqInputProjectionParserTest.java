@@ -31,8 +31,8 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.ReqTestUtil;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static org.junit.Assert.*;
@@ -189,8 +189,8 @@ public class ReqInputProjectionParserTest {
             ProjectionReferenceName.EMPTY, null, context
         );
 
-        ReqOutputPsiProcessingContext psiProcessingContext =
-            new ReqOutputPsiProcessingContext(context, referenceContext);
+        ReqPsiProcessingContext psiProcessingContext =
+            new ReqPsiProcessingContext(context, referenceContext);
 
         @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqInputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
             dataType,

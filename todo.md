@@ -103,13 +103,13 @@
 # Projections refactoring
 - [ ] sort out 'path steps' for input/output projections
 - [x] format factories: remove duplicating ones
-- [ ] fix todo in
+- [x] fix todo in
   - [x] url.bnf (`+` in request)
   - [x] SchemaProjectionPsiParserUtil
   - [x] OperationsPsiParser
-  - [ ] ResourcesSchemaPsiParser
-  - [ ] OpInputProjectionsPsiParser
-- [ ] clean up *ProcessingContext classes | don't bother, they're going away?
+  - [x] ResourcesSchemaPsiParser
+  - [x] OpInputProjectionsPsiParser
+- [x] clean up *ProcessingContext classes | don't bother, they're going away?
 - [ ] unify req projections codegens
 
 # Service

@@ -31,8 +31,8 @@ import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
@@ -99,7 +99,7 @@ public final class WireTestUtil {
     return runPsiParser(true, context -> {
       ReqReferenceContext referenceContext =
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
+      ReqPsiProcessingContext psiProcessingContext = new ReqPsiProcessingContext(context, referenceContext);
 
       StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,

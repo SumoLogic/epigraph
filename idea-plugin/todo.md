@@ -8,7 +8,7 @@
 - Smart completion for `default <tag>`, `nodefault` on fields, list elements etc
   - [ ] Don't allow either on datum types (non-vartypes)
   - [ ] Changing default on vartypes is allowed. Defaults on fields (even implicit) must be compatible with parent fields:
-  Default on a field = field default > field type default > parent field default > parent field type default 
+  Default on a field = field default > field type default > parent field default > parent field type default
 - add SourceRootFinder to detect src/main/epigraph, test/epigraph etc
 - Rename on fields (**Incomplete**)
 - Rename on vartype tags
@@ -27,6 +27,7 @@
 - Highlight tag types that are vartypes themselve as errors
 - Completion: suggest out-of-scope types with auto-import (implementation: copy ref completion logic from `LegacyCompletionContributor` to `SchemaCompletionContributor`, move `SchemaFqnReference.getVariants` there as well, but now with invocation count logic. Add `autoImport` to `beforeCompletion`, see `JavaCompletionContributor:712`)
 - Type lookup by fully qualified name (e.g. `epigraph.projections.req.ReqOutputKeysProjection`) fails. Short local name (`ReqOutputKeysProjection`) lookup works.
+- UML: supplemented relationships not displayed
 
 ### Low
 - Option to auto optimize imports on code formatting

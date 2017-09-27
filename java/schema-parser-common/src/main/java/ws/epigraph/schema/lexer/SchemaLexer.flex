@@ -101,10 +101,10 @@ ID=([:letter:]([:letter:]|[:digit:])*)|(`[^`]*`)
   "custom"             { return S_OP_CUSTOM; }
   "method"             { return S_METHOD; }
   "inputType"          { return S_INPUT_TYPE; }
-  "inputProjection"    { return S_INPUT_PROJECTION; }
+  "inputProjection"    { return S_INPUT_PROJ; }
   "outputType"         { return S_OUTPUT_TYPE; }
-  "outputProjection"   { return S_OUTPUT_PROJECTION; }
-  "deleteProjection"   { return S_DELETE_PROJECTION; }
+  "outputProjection"   { return S_OUTPUT_PROJ; }
+  "deleteProjection"   { return S_DELETE_PROJ; }
   "path"               { return S_PATH; }
   "projection"         { return S_PROJECTION; }
 

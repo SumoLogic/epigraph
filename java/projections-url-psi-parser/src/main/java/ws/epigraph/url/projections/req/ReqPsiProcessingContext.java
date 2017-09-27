@@ -18,40 +18,41 @@ package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.ReferenceContext;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class ReqPsiProcessingContext<
-    OVP extends GenVarProjection<OVP, ?, ?>,
-    VRC extends ReferenceContext<?, ?>
-    > extends DelegatingPsiProcessingContext {
+public class ReqPsiProcessingContext extends DelegatingPsiProcessingContext {
 
-  private final @NotNull VRC varReferenceContext;
-  private final @NotNull Map<String, Queue<OVP>> verifiedRefOps = new HashMap<>();
-  private final @NotNull Map<String, Queue<OVP>> unverifiedRefOps = new HashMap<>();
+  private final @NotNull ReqReferenceContext varReferenceContext;
+  private final @NotNull Map<String, Queue<OpEntityProjection>> verifiedRefOps = new HashMap<>();
+  private final @NotNull Map<String, Queue<OpEntityProjection>> unverifiedRefOps = new HashMap<>();
 
-  protected ReqPsiProcessingContext(
+  public ReqPsiProcessingContext(
       final @NotNull PsiProcessingContext delegate,
-      final @NotNull VRC context) {
+      final @NotNull ReqReferenceContext context) {
+
     super(delegate);
     varReferenceContext = context;
   }
 
-  public @NotNull VRC referenceContext() { return varReferenceContext; }
+  public @NotNull ReqReferenceContext referenceContext() { return varReferenceContext; }
 
-  public @Nullable Queue<OVP> verifiedRefOps(@NotNull String name) {
+  public @Nullable Queue<OpEntityProjection> verifiedRefOps(@NotNull String name) {
     return verifiedRefOps.get(name);
   }
 
-  public void addVerifiedRefOp(@NotNull String name, OVP op) {
-    Queue<OVP> ops = verifiedRefOps(name);
+  public void addVerifiedRefOp(@NotNull String name, OpEntityProjection op) {
+    Queue<OpEntityProjection> ops = verifiedRefOps(name);
     if (ops == null) {
       ops = new ArrayDeque<>();
       verifiedRefOps.put(name, ops);
@@ -59,12 +60,12 @@ public abstract class ReqPsiProcessingContext<
     ops.add(op);
   }
 
-  public @Nullable Queue<OVP> unverifiedRefOps(@NotNull String name) {
+  public @Nullable Queue<OpEntityProjection> unverifiedRefOps(@NotNull String name) {
     return unverifiedRefOps.get(name);
   }
 
-  public void addUnverifiedRefOp(@NotNull String name, OVP op) {
-    Queue<OVP> ops = unverifiedRefOps(name);
+  public void addUnverifiedRefOp(@NotNull String name, OpEntityProjection op) {
+    Queue<OpEntityProjection> ops = unverifiedRefOps(name);
     if (ops == null) {
       ops = new ArrayDeque<>();
       unverifiedRefOps.put(name, ops);

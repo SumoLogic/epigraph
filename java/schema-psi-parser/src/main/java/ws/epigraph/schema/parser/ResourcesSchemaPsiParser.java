@@ -52,7 +52,6 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ResourcesSchemaPsiParser {
-  // todo transform projections after all references are resolved
   private ResourcesSchemaPsiParser() {}
 
   // currently we can get multiple ResourcesSchema instances for the same namespace (if there are multiple files for it)
@@ -225,32 +224,30 @@ public final class ResourcesSchemaPsiParser {
 
     for (final SchemaTransformerBodyPart bodyPart : psi.getTransformerBodyPartList()) {
 
-      SchemaTransformerInputProjection transformerInputProjectionPsi = bodyPart.getTransformerInputProjection();
-      if (transformerInputProjectionPsi != null) {
+      SchemaInputProjection inputProjectionPsi = bodyPart.getInputProjection();
+      if (inputProjectionPsi != null) {
 
         if (inputProjection == null) {
           @Nullable SchemaOpFieldProjection fieldProjectionPsi =
-              transformerInputProjectionPsi.getOpFieldProjection();
+              inputProjectionPsi.getOpFieldProjection();
           SchemaOpEntityProjection varProjectionPsi =
               fieldProjectionPsi == null ? null : fieldProjectionPsi.getOpEntityProjection();
 
           if (varProjectionPsi == null) {
             context.addError(
                 String.format("Input projection for transformer '%s' is not defined", transformerName),
-                transformerInputProjectionPsi
+                inputProjectionPsi
             );
           } else {
-            // todo remove
-            OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
-                context,
-                new OpReferenceContext(ProjectionReferenceName.EMPTY, context.outputReferenceContext(), context)
-            );
             inputProjection = OpInputProjectionsPsiParser.INSTANCE.parseEntityProjection(
                 transformerType.dataType(),
-                false, // todo add '+' to grammar?
+                inputProjectionPsi.getPlus() != null,
                 varProjectionPsi,
                 resolver,
-                outputPsiProcessingContext
+                new OpPsiProcessingContext(
+                    context,
+                    context.inputReferenceContext()
+                )
             );
           }
         } else {
@@ -258,12 +255,12 @@ public final class ResourcesSchemaPsiParser {
               String.format("Input projection is already defined for transformer '%s' at %s",
                   transformerName, inputProjection.location()
               ),
-              transformerInputProjectionPsi
+              inputProjectionPsi
           );
         }
       }
 
-      SchemaTransformerOutputProjection transformerOutputProjectionPsi = bodyPart.getTransformerOutputProjection();
+      SchemaOutputProjection transformerOutputProjectionPsi = bodyPart.getOutputProjection();
       if (transformerOutputProjectionPsi != null) {
 
         if (outputProjection == null) {

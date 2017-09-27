@@ -74,10 +74,10 @@
     //
     METHOD = 'method'
     INPUT_TYPE = 'inputType'
-    INPUT_PROJECTION = 'inputProjection'
     OUTPUT_TYPE = 'outputType'
-    OUTPUT_PROJECTION = 'outputProjection'
-    DELETE_PROJECTION = 'deleteProjection'
+    OUTPUT_PROJ = 'outputProjection'
+    INPUT_PROJ = 'inputProjection'
+    DELETE_PROJ = 'deleteProjection'
     PATH = 'path'
     PROJECTION = 'projection'
 
@@ -345,6 +345,7 @@ private partRecover ::= ! ('}' | '@' | qid ':' | 'abstract' | 'override' | ',' )
 
 // ============= idl language =============
 
+//                                                                                                          common parts
 tagName ::= qid | '_' // `_` is default tag
 
 //                                                                                                           transformer
@@ -358,12 +359,9 @@ transformerName ::= qid
 transformerType ::= ':' typeRef
 
 private transformerDefBody ::= '{' (transformerBodyPart ','?)* '}'
-transformerBodyPart ::= transformerInputProjection | transformerOutputProjection | annotation {
+transformerBodyPart ::= inputProjection | outputProjection | annotation {
   recoverWhile = transformerBodyRecover
 }
-
-transformerInputProjection ::= 'inputProjection' opFieldProjection {pin=1}
-transformerOutputProjection ::= 'outputProjection' opFieldProjection {pin=1}
 
 private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | '@' )
 
@@ -384,7 +382,7 @@ private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
 // projection def
 projectionDef ::= outputProjectionDef | inputProjectionDef | deleteProjectionDef
 outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection {pin=1}
-inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection {pin=1}
+inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' '+'? opUnnamedOrRefEntityProjection {pin=1}
 deleteProjectionDef ::= 'deleteProjection' qid ':' typeRef '=' '+'? opUnnamedOrRefEntityProjection {pin=1}
 
 // operation def parts
@@ -392,10 +390,7 @@ operationName ::= 'default' | qid
 operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') {pin=1}// add 'PATCH' too?
 operationPath ::= 'path' opFieldPath {pin=1}
 operationInputType ::= 'inputType' typeRef {pin=1}
-operationInputProjection ::= 'inputProjection' opFieldProjection {pin=1}
 operationOutputType ::= 'outputType' valueTypeRef {pin=1}
-operationOutputProjection ::= 'outputProjection' opFieldProjection {pin=1}
-operationDeleteProjection ::= 'deleteProjection' '+'? opFieldProjection {pin=1}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef {
   name = "Operation declaration"
@@ -409,14 +404,17 @@ private operationBodyRecover ::= ! ( '}' | ',' |
   'method' | 'inputType' | 'inputProjection' | 'outputType' | 'outputProjection' | 'deleteProjection' | 'path' |
   '@' | 'read' | 'create' | 'update' | 'delete' | 'custom' )
 
+outputProjection ::= 'outputProjection' opFieldProjection {pin=1}
+inputProjection ::= 'inputProjection' '+'? opFieldProjection {pin=1}
+deleteProjection ::= 'deleteProjection' '+'? opFieldProjection {pin=1}
 
 createOperationDef ::= 'create' operationName? createOperationBody {pin=1}
 private createOperationBody ::= '{' (createOperationBodyPart ','?)* '}'
 createOperationBodyPart ::= operationPath |
                             operationInputType |
-                            operationInputProjection |
+                            inputProjection |
                             operationOutputType |
-                            operationOutputProjection |
+                            outputProjection |
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -424,7 +422,7 @@ createOperationBodyPart ::= operationPath |
 readOperationDef ::= 'read' operationName? readOperationBody {pin=1}
 private readOperationBody ::= '{' (readOperationBodyPart ','?)* '}'
 readOperationBodyPart ::= operationPath |
-                          operationOutputProjection |
+                          outputProjection |
                           annotation {
   recoverWhile = operationBodyRecover
 }
@@ -433,9 +431,9 @@ updateOperationDef ::= 'update' operationName? updateOperationBody {pin=1}
 private updateOperationBody ::= '{' (updateOperationBodyPart ','?)* '}'
 updateOperationBodyPart ::= operationPath |
                             operationInputType |
-                            operationInputProjection |
+                            inputProjection |
                             operationOutputType |
-                            operationOutputProjection |
+                            outputProjection |
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -443,9 +441,9 @@ updateOperationBodyPart ::= operationPath |
 deleteOperationDef ::= 'delete' operationName? deleteOperationBody {pin=1}
 private deleteOperationBody ::= '{' (deleteOperationBodyPart ','?)* '}'
 deleteOperationBodyPart ::= operationPath |
-                            operationDeleteProjection |
+                            deleteProjection |
                             operationOutputType |
-                            operationOutputProjection |
+                            outputProjection |
                             annotation {
   recoverWhile = operationBodyRecover
 }
@@ -455,9 +453,9 @@ private customOperationBody ::= '{' (customOperationBodyPart ','?)* '}'
 customOperationBodyPart ::= operationMethod |
                             operationPath |
                             operationInputType |
-                            operationInputProjection |
+                            inputProjection |
                             operationOutputType |
-                            operationOutputProjection |
+                            outputProjection |
                             annotation {
   recoverWhile = operationBodyRecover
 }

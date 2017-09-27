@@ -38,8 +38,8 @@ import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
 import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
@@ -106,8 +106,8 @@ public final class ReadRequestUrlPsiParser {
 
     ReqReferenceContext reqOutputReferenceContext =
         new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+    ReqPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
     ReqOutputProjectionPsiParser psiParser = ReqOutputProjectionPsiParser.INSTANCE;
 
@@ -181,8 +181,8 @@ public final class ReadRequestUrlPsiParser {
 
     ReqReferenceContext reqOutputReferenceContext =
         new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+    ReqPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection =
         ReqOutputProjectionPsiParser.INSTANCE.parseTrunkFieldProjection(

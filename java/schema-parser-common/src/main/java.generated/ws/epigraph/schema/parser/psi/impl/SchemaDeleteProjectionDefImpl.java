@@ -68,8 +68,8 @@ public class SchemaDeleteProjectionDefImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @NotNull
-  public PsiElement getDeleteProjection() {
-    return notNullChild(findChildByType(S_DELETE_PROJECTION));
+  public PsiElement getDeleteProj() {
+    return notNullChild(findChildByType(S_DELETE_PROJ));
   }
 
   @Override

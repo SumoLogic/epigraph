@@ -89,7 +89,7 @@ public final class OperationsPsiParser {
     Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -98,7 +98,7 @@ public final class OperationsPsiParser {
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
@@ -140,9 +140,9 @@ public final class OperationsPsiParser {
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     for (SchemaCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
       annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
@@ -150,10 +150,10 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
@@ -218,9 +218,9 @@ public final class OperationsPsiParser {
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -230,10 +230,10 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
@@ -299,9 +299,9 @@ public final class OperationsPsiParser {
     Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
-    SchemaOperationDeleteProjection deleteProjectionPsi = null;
+    SchemaDeleteProjection deleteProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -310,10 +310,10 @@ public final class OperationsPsiParser {
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       deleteProjectionPsi =
-          getPsiPart(deleteProjectionPsi, part.getOperationDeleteProjection(), "delete projection", context);
+          getPsiPart(deleteProjectionPsi, part.getDeleteProjection(), "delete projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
@@ -380,9 +380,9 @@ public final class OperationsPsiParser {
     SchemaOperationMethod methodPsi = null;
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final @Nullable String operationName = parseOperationName(psi.getOperationName());
     if (operationName == null)
@@ -395,10 +395,10 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final HttpMethod method;
@@ -469,7 +469,7 @@ public final class OperationsPsiParser {
       final @NotNull String operationNameOrDefaultName,
       final @NotNull OperationKind operationKind,
       final @NotNull DataTypeApi outputType,
-      final @Nullable SchemaOperationOutputProjection outputProjectionPsi,
+      final @Nullable SchemaOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiElement location,
       final @NotNull ResourcePsiProcessingContext resourcePsiProcessingContext)

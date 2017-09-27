@@ -74,8 +74,14 @@ public class SchemaInputProjectionDefImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public PsiElement getInputProjection() {
-    return notNullChild(findChildByType(S_INPUT_PROJECTION));
+  public PsiElement getInputProj() {
+    return notNullChild(findChildByType(S_INPUT_PROJ));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
   }
 
 }

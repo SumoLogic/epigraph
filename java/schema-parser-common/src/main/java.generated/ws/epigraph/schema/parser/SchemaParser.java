@@ -81,6 +81,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_DELETE_OPERATION_DEF) {
       r = deleteOperationDef(b, 0);
     }
+    else if (t == S_DELETE_PROJECTION) {
+      r = deleteProjection(b, 0);
+    }
     else if (t == S_DELETE_PROJECTION_DEF) {
       r = deleteProjectionDef(b, 0);
     }
@@ -119,6 +122,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_IMPORTS) {
       r = imports(b, 0);
+    }
+    else if (t == S_INPUT_PROJECTION) {
+      r = inputProjection(b, 0);
     }
     else if (t == S_INPUT_PROJECTION_DEF) {
       r = inputProjectionDef(b, 0);
@@ -279,12 +285,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OPERATION_DEF) {
       r = operationDef(b, 0);
     }
-    else if (t == S_OPERATION_DELETE_PROJECTION) {
-      r = operationDeleteProjection(b, 0);
-    }
-    else if (t == S_OPERATION_INPUT_PROJECTION) {
-      r = operationInputProjection(b, 0);
-    }
     else if (t == S_OPERATION_INPUT_TYPE) {
       r = operationInputType(b, 0);
     }
@@ -294,14 +294,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OPERATION_NAME) {
       r = operationName(b, 0);
     }
-    else if (t == S_OPERATION_OUTPUT_PROJECTION) {
-      r = operationOutputProjection(b, 0);
-    }
     else if (t == S_OPERATION_OUTPUT_TYPE) {
       r = operationOutputType(b, 0);
     }
     else if (t == S_OPERATION_PATH) {
       r = operationPath(b, 0);
+    }
+    else if (t == S_OUTPUT_PROJECTION) {
+      r = outputProjection(b, 0);
     }
     else if (t == S_OUTPUT_PROJECTION_DEF) {
       r = outputProjectionDef(b, 0);
@@ -375,14 +375,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_TRANSFORMER_DEF) {
       r = transformerDef(b, 0);
     }
-    else if (t == S_TRANSFORMER_INPUT_PROJECTION) {
-      r = transformerInputProjection(b, 0);
-    }
     else if (t == S_TRANSFORMER_NAME) {
       r = transformerName(b, 0);
-    }
-    else if (t == S_TRANSFORMER_OUTPUT_PROJECTION) {
-      r = transformerOutputProjection(b, 0);
     }
     else if (t == S_TRANSFORMER_TYPE) {
       r = transformerType(b, 0);
@@ -422,7 +416,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // '@' qnTypeRef datum?
   public static boolean annotation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "annotation")) return false;
-    if (!nextTokenIs(b, S_AT)) return false;
+    if (!nextTokenIs(b, "<annotation>", S_AT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_ANNOTATION, "<annotation>");
     r = consumeToken(b, S_AT);
@@ -520,9 +514,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // operationPath |
   //                             operationInputType |
-  //                             operationInputProjection |
+  //                             inputProjection |
   //                             operationOutputType |
-  //                             operationOutputProjection |
+  //                             outputProjection |
   //                             annotation
   public static boolean createOperationBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "createOperationBodyPart")) return false;
@@ -530,9 +524,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_CREATE_OPERATION_BODY_PART, "<create operation body part>");
     r = operationPath(b, l + 1);
     if (!r) r = operationInputType(b, l + 1);
-    if (!r) r = operationInputProjection(b, l + 1);
+    if (!r) r = inputProjection(b, l + 1);
     if (!r) r = operationOutputType(b, l + 1);
-    if (!r) r = operationOutputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
     return r;
@@ -609,9 +603,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   // operationMethod |
   //                             operationPath |
   //                             operationInputType |
-  //                             operationInputProjection |
+  //                             inputProjection |
   //                             operationOutputType |
-  //                             operationOutputProjection |
+  //                             outputProjection |
   //                             annotation
   public static boolean customOperationBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "customOperationBodyPart")) return false;
@@ -620,9 +614,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = operationMethod(b, l + 1);
     if (!r) r = operationPath(b, l + 1);
     if (!r) r = operationInputType(b, l + 1);
-    if (!r) r = operationInputProjection(b, l + 1);
+    if (!r) r = inputProjection(b, l + 1);
     if (!r) r = operationOutputType(b, l + 1);
-    if (!r) r = operationOutputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
     return r;
@@ -820,9 +814,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
     if (!r) r = consumeToken(b, S_TRANSFORMER);
-    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJ);
+    if (!r) r = consumeToken(b, S_INPUT_PROJ);
+    if (!r) r = consumeToken(b, S_DELETE_PROJ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -889,18 +883,18 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // operationPath |
-  //                             operationDeleteProjection |
+  //                             deleteProjection |
   //                             operationOutputType |
-  //                             operationOutputProjection |
+  //                             outputProjection |
   //                             annotation
   public static boolean deleteOperationBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteOperationBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_DELETE_OPERATION_BODY_PART, "<delete operation body part>");
     r = operationPath(b, l + 1);
-    if (!r) r = operationDeleteProjection(b, l + 1);
+    if (!r) r = deleteProjection(b, l + 1);
     if (!r) r = operationOutputType(b, l + 1);
-    if (!r) r = operationOutputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
     return r;
@@ -929,13 +923,35 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'deleteProjection' '+'? opFieldProjection
+  public static boolean deleteProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteProjection")) return false;
+    if (!nextTokenIs(b, S_DELETE_PROJ)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_DELETE_PROJECTION, null);
+    r = consumeToken(b, S_DELETE_PROJ);
+    p = r; // pin = 1
+    r = r && report_error_(b, deleteProjection_1(b, l + 1));
+    r = p && opFieldProjection(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '+'?
+  private static boolean deleteProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "deleteProjection_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
   // 'deleteProjection' qid ':' typeRef '=' '+'? opUnnamedOrRefEntityProjection
   public static boolean deleteProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "deleteProjectionDef")) return false;
-    if (!nextTokenIs(b, S_DELETE_PROJECTION)) return false;
+    if (!nextTokenIs(b, S_DELETE_PROJ)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_DELETE_PROJECTION_DEF, null);
-    r = consumeToken(b, S_DELETE_PROJECTION);
+    r = consumeToken(b, S_DELETE_PROJ);
     p = r; // pin = 1
     r = r && report_error_(b, qid(b, l + 1));
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
@@ -1511,21 +1527,51 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection
+  // 'inputProjection' '+'? opFieldProjection
+  public static boolean inputProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inputProjection")) return false;
+    if (!nextTokenIs(b, S_INPUT_PROJ)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_INPUT_PROJECTION, null);
+    r = consumeToken(b, S_INPUT_PROJ);
+    p = r; // pin = 1
+    r = r && report_error_(b, inputProjection_1(b, l + 1));
+    r = p && opFieldProjection(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '+'?
+  private static boolean inputProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inputProjection_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // 'inputProjection' qid ':' typeRef '=' '+'? opUnnamedOrRefEntityProjection
   public static boolean inputProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjectionDef")) return false;
-    if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
+    if (!nextTokenIs(b, S_INPUT_PROJ)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_INPUT_PROJECTION_DEF, null);
-    r = consumeToken(b, S_INPUT_PROJECTION);
+    r = consumeToken(b, S_INPUT_PROJ);
     p = r; // pin = 1
     r = r && report_error_(b, qid(b, l + 1));
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
     r = p && report_error_(b, typeRef(b, l + 1)) && r;
     r = p && report_error_(b, consumeToken(b, S_EQ)) && r;
+    r = p && report_error_(b, inputProjectionDef_5(b, l + 1)) && r;
     r = p && opUnnamedOrRefEntityProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // '+'?
+  private static boolean inputProjectionDef_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inputProjectionDef_5")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1976,9 +2022,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_BOOLEAN_T);
     if (!r) r = consumeToken(b, S_RESOURCE);
     if (!r) r = consumeToken(b, S_TRANSFORMER);
-    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJ);
+    if (!r) r = consumeToken(b, S_INPUT_PROJ);
+    if (!r) r = consumeToken(b, S_DELETE_PROJ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -3237,10 +3283,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, S_COMMA);
     if (!r) r = consumeToken(b, S_METHOD);
     if (!r) r = consumeToken(b, S_INPUT_TYPE);
-    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_INPUT_PROJ);
     if (!r) r = consumeToken(b, S_OUTPUT_TYPE);
-    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJ);
+    if (!r) r = consumeToken(b, S_DELETE_PROJ);
     if (!r) r = consumeToken(b, S_PATH);
     if (!r) r = consumeToken(b, S_AT);
     if (!r) r = consumeToken(b, S_OP_READ);
@@ -3265,42 +3311,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = customOperationDef(b, l + 1);
     exit_section_(b, l, m, r, false, resourceDefBodyRecover_parser_);
     return r;
-  }
-
-  /* ********************************************************** */
-  // 'deleteProjection' '+'? opFieldProjection
-  public static boolean operationDeleteProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationDeleteProjection")) return false;
-    if (!nextTokenIs(b, S_DELETE_PROJECTION)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OPERATION_DELETE_PROJECTION, null);
-    r = consumeToken(b, S_DELETE_PROJECTION);
-    p = r; // pin = 1
-    r = r && report_error_(b, operationDeleteProjection_1(b, l + 1));
-    r = p && opFieldProjection(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean operationDeleteProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationDeleteProjection_1")) return false;
-    consumeToken(b, S_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // 'inputProjection' opFieldProjection
-  public static boolean operationInputProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationInputProjection")) return false;
-    if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OPERATION_INPUT_PROJECTION, null);
-    r = consumeToken(b, S_INPUT_PROJECTION);
-    p = r; // pin = 1
-    r = r && opFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
   }
 
   /* ********************************************************** */
@@ -3358,20 +3368,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'outputProjection' opFieldProjection
-  public static boolean operationOutputProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "operationOutputProjection")) return false;
-    if (!nextTokenIs(b, S_OUTPUT_PROJECTION)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_OPERATION_OUTPUT_PROJECTION, null);
-    r = consumeToken(b, S_OUTPUT_PROJECTION);
-    p = r; // pin = 1
-    r = r && opFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
   // 'outputType' valueTypeRef
   public static boolean operationOutputType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "operationOutputType")) return false;
@@ -3400,13 +3396,27 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'outputProjection' opFieldProjection
+  public static boolean outputProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "outputProjection")) return false;
+    if (!nextTokenIs(b, S_OUTPUT_PROJ)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, S_OUTPUT_PROJECTION, null);
+    r = consumeToken(b, S_OUTPUT_PROJ);
+    p = r; // pin = 1
+    r = r && opFieldProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // 'outputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection
   public static boolean outputProjectionDef(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "outputProjectionDef")) return false;
-    if (!nextTokenIs(b, S_OUTPUT_PROJECTION)) return false;
+    if (!nextTokenIs(b, S_OUTPUT_PROJ)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, S_OUTPUT_PROJECTION_DEF, null);
-    r = consumeToken(b, S_OUTPUT_PROJECTION);
+    r = consumeToken(b, S_OUTPUT_PROJ);
     p = r; // pin = 1
     r = r && report_error_(b, qid(b, l + 1));
     r = p && report_error_(b, consumeToken(b, S_COLON)) && r;
@@ -3755,14 +3765,14 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // operationPath |
-  //                           operationOutputProjection |
+  //                           outputProjection |
   //                           annotation
   public static boolean readOperationBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "readOperationBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_READ_OPERATION_BODY_PART, "<read operation body part>");
     r = operationPath(b, l + 1);
-    if (!r) r = operationOutputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
     return r;
@@ -4101,9 +4111,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "resourceDefBodyRecover_0_8_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, S_INPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_DELETE_PROJECTION);
+    r = consumeToken(b, S_INPUT_PROJ);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJ);
+    if (!r) r = consumeToken(b, S_DELETE_PROJ);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -4252,13 +4262,13 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // transformerInputProjection | transformerOutputProjection | annotation
+  // inputProjection | outputProjection | annotation
   public static boolean transformerBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerBodyPart")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_BODY_PART, "<transformer body part>");
-    r = transformerInputProjection(b, l + 1);
-    if (!r) r = transformerOutputProjection(b, l + 1);
+    r = inputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, transformerBodyRecover_parser_);
     return r;
@@ -4282,8 +4292,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, S_CURLY_RIGHT);
     if (!r) r = consumeToken(b, S_COMMA);
-    if (!r) r = consumeToken(b, S_INPUT_PROJECTION);
-    if (!r) r = consumeToken(b, S_OUTPUT_PROJECTION);
+    if (!r) r = consumeToken(b, S_INPUT_PROJ);
+    if (!r) r = consumeToken(b, S_OUTPUT_PROJ);
     if (!r) r = consumeToken(b, S_AT);
     exit_section_(b, m, null, r);
     return r;
@@ -4351,20 +4361,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'inputProjection' opFieldProjection
-  public static boolean transformerInputProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "transformerInputProjection")) return false;
-    if (!nextTokenIs(b, S_INPUT_PROJECTION)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_INPUT_PROJECTION, null);
-    r = consumeToken(b, S_INPUT_PROJECTION);
-    p = r; // pin = 1
-    r = r && opFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
   // qid
   public static boolean transformerName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "transformerName")) return false;
@@ -4374,20 +4370,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = qid(b, l + 1);
     exit_section_(b, m, S_TRANSFORMER_NAME, r);
     return r;
-  }
-
-  /* ********************************************************** */
-  // 'outputProjection' opFieldProjection
-  public static boolean transformerOutputProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "transformerOutputProjection")) return false;
-    if (!nextTokenIs(b, S_OUTPUT_PROJECTION)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, S_TRANSFORMER_OUTPUT_PROJECTION, null);
-    r = consumeToken(b, S_OUTPUT_PROJECTION);
-    p = r; // pin = 1
-    r = r && opFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
   }
 
   /* ********************************************************** */
@@ -4520,9 +4502,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   /* ********************************************************** */
   // operationPath |
   //                             operationInputType |
-  //                             operationInputProjection |
+  //                             inputProjection |
   //                             operationOutputType |
-  //                             operationOutputProjection |
+  //                             outputProjection |
   //                             annotation
   public static boolean updateOperationBodyPart(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "updateOperationBodyPart")) return false;
@@ -4530,9 +4512,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, S_UPDATE_OPERATION_BODY_PART, "<update operation body part>");
     r = operationPath(b, l + 1);
     if (!r) r = operationInputType(b, l + 1);
-    if (!r) r = operationInputProjection(b, l + 1);
+    if (!r) r = inputProjection(b, l + 1);
     if (!r) r = operationOutputType(b, l + 1);
-    if (!r) r = operationOutputProjection(b, l + 1);
+    if (!r) r = outputProjection(b, l + 1);
     if (!r) r = annotation(b, l + 1);
     exit_section_(b, l, m, r, false, operationBodyRecover_parser_);
     return r;

@@ -81,6 +81,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDeleteProjection(@NotNull SchemaDeleteProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitDeleteProjectionDef(@NotNull SchemaDeleteProjectionDef o) {
     visitPsiElement(o);
   }
@@ -133,6 +137,10 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitImports(@NotNull SchemaImports o) {
+    visitPsiElement(o);
+  }
+
+  public void visitInputProjection(@NotNull SchemaInputProjection o) {
     visitPsiElement(o);
   }
 
@@ -348,14 +356,6 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOperationDeleteProjection(@NotNull SchemaOperationDeleteProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOperationInputProjection(@NotNull SchemaOperationInputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOperationInputType(@NotNull SchemaOperationInputType o) {
     visitPsiElement(o);
   }
@@ -368,15 +368,15 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOperationOutputProjection(@NotNull SchemaOperationOutputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOperationOutputType(@NotNull SchemaOperationOutputType o) {
     visitPsiElement(o);
   }
 
   public void visitOperationPath(@NotNull SchemaOperationPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOutputProjection(@NotNull SchemaOutputProjection o) {
     visitPsiElement(o);
   }
 
@@ -476,15 +476,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTransformerInputProjection(@NotNull SchemaTransformerInputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitTransformerName(@NotNull SchemaTransformerName o) {
-    visitPsiElement(o);
-  }
-
-  public void visitTransformerOutputProjection(@NotNull SchemaTransformerOutputProjection o) {
     visitPsiElement(o);
   }
 

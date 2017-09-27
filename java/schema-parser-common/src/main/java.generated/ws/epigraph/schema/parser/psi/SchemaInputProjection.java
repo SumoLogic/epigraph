@@ -21,12 +21,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaTransformerOutputProjection extends PsiElement {
+public interface SchemaInputProjection extends PsiElement {
 
   @Nullable
   SchemaOpFieldProjection getOpFieldProjection();
 
   @NotNull
-  PsiElement getOutputProjection();
+  PsiElement getInputProj();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

@@ -29,6 +29,7 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,7 +41,7 @@ public interface ReqProjectionPsiParser {
       @NotNull OpEntityProjection op,
       @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
+      @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
       @NotNull DataTypeApi dataType,
@@ -48,14 +49,14 @@ public interface ReqProjectionPsiParser {
       @NotNull OpEntityProjection op,
       @NotNull UrlReqComaEntityProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
+      @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
-      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
+      @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
@@ -63,5 +64,5 @@ public interface ReqProjectionPsiParser {
       @NotNull OpFieldProjection op,
       @NotNull UrlReqTrunkFieldProjection psi,
       @NotNull TypesResolver resolver,
-      @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
+      @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 }

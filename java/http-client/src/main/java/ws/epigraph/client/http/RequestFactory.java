@@ -45,9 +45,9 @@ import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqVarPath;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
@@ -107,8 +107,8 @@ public final class RequestFactory {
         reqPath = null;
         ReqReferenceContext reqOutputReferenceContext =
             new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-        ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-            new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+        ReqPsiProcessingContext reqOutputPsiProcessingContext =
+            new ReqPsiProcessingContext(context, reqOutputReferenceContext);
         StepsAndProjection<ReqFieldProjection> stepsAndProjection =
             ReqOutputProjectionPsiParser.INSTANCE.parseTrunkFieldProjection(
                 resourceType,
@@ -139,8 +139,8 @@ public final class RequestFactory {
 
         ReqReferenceContext reqOutputReferenceContext =
             new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-        ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-            new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+        ReqPsiProcessingContext reqOutputPsiProcessingContext =
+            new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
         if (trunkEntityProjection != null) {
           StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
@@ -563,8 +563,8 @@ public final class RequestFactory {
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     ReqReferenceContext referenceContext =
         new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, referenceContext);
+    ReqPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqPsiProcessingContext(context, referenceContext);
 
     try {
       @NotNull StepsAndProjection<ReqEntityProjection> res =

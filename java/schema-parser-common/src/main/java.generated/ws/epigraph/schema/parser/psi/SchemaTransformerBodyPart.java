@@ -27,9 +27,9 @@ public interface SchemaTransformerBodyPart extends PsiElement {
   SchemaAnnotation getAnnotation();
 
   @Nullable
-  SchemaTransformerInputProjection getTransformerInputProjection();
+  SchemaInputProjection getInputProjection();
 
   @Nullable
-  SchemaTransformerOutputProjection getTransformerOutputProjection();
+  SchemaOutputProjection getOutputProjection();
 
 }

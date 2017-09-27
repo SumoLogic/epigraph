@@ -27,14 +27,14 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.schema.parser.psi.*;
 
-public class SchemaTransformerInputProjectionImpl extends ASTWrapperPsiElement implements SchemaTransformerInputProjection {
+public class SchemaDeleteProjectionImpl extends ASTWrapperPsiElement implements SchemaDeleteProjection {
 
-  public SchemaTransformerInputProjectionImpl(ASTNode node) {
+  public SchemaDeleteProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull SchemaVisitor visitor) {
-    visitor.visitTransformerInputProjection(this);
+    visitor.visitDeleteProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -50,8 +50,14 @@ public class SchemaTransformerInputProjectionImpl extends ASTWrapperPsiElement i
 
   @Override
   @NotNull
-  public PsiElement getInputProjection() {
-    return notNullChild(findChildByType(S_INPUT_PROJECTION));
+  public PsiElement getDeleteProj() {
+    return notNullChild(findChildByType(S_DELETE_PROJ));
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
   }
 
 }

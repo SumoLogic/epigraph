@@ -39,6 +39,9 @@ public interface SchemaInputProjectionDef extends PsiElement {
   PsiElement getEq();
 
   @NotNull
-  PsiElement getInputProjection();
+  PsiElement getInputProj();
+
+  @Nullable
+  PsiElement getPlus();
 
 }

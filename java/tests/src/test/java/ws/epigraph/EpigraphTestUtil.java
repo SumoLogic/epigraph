@@ -47,8 +47,8 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import java.io.IOException;
@@ -146,8 +146,8 @@ public final class EpigraphTestUtil {
       ReqReferenceContext reqOutputReferenceContext =
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-          new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+      ReqPsiProcessingContext reqOutputPsiProcessingContext =
+          new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
       @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,

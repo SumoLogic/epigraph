@@ -74,8 +74,8 @@ public class SchemaOutputProjectionDefImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @NotNull
-  public PsiElement getOutputProjection() {
-    return notNullChild(findChildByType(S_OUTPUT_PROJECTION));
+  public PsiElement getOutputProj() {
+    return notNullChild(findChildByType(S_OUTPUT_PROJ));
   }
 
 }

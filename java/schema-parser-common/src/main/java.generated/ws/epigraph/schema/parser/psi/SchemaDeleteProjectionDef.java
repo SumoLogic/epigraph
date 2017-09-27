@@ -36,7 +36,7 @@ public interface SchemaDeleteProjectionDef extends PsiElement {
   PsiElement getColon();
 
   @NotNull
-  PsiElement getDeleteProjection();
+  PsiElement getDeleteProj();
 
   @Nullable
   PsiElement getEq();
