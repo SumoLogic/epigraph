@@ -43,7 +43,7 @@ class ReqOutputListModelProjectionGen(
 
   override type OpProjectionType = OpListModelProjection
 
-  val elementGen: ReqOutputTypeProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqOutputTypeProjectionGen = ReqOutputEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.itemsProjection(),
       Some(baseNamespace),

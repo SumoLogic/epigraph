@@ -55,7 +55,7 @@ class ReqOutputMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqOutputTypeProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqOutputTypeProjectionGen = ReqOutputEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

@@ -42,7 +42,7 @@ class ReqUpdateListModelProjectionGen(
 
   override type OpProjectionType = OpListModelProjection
 
-  val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

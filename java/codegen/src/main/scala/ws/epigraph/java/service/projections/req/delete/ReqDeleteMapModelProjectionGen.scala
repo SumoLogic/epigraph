@@ -54,7 +54,7 @@ class ReqDeleteMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqDeleteTypeProjectionGen = ReqDeleteVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqDeleteTypeProjectionGen = ReqDeleteEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

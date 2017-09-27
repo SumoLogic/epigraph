@@ -44,7 +44,7 @@ class ReqPathMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqPathTypeProjectionGen = ReqPathVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqPathTypeProjectionGen = ReqPathEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),

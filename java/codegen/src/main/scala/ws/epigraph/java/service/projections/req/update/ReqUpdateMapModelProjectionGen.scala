@@ -54,7 +54,7 @@ class ReqUpdateMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),

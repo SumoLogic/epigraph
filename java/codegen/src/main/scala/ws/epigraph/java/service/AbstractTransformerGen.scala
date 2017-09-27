@@ -24,7 +24,7 @@ import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen}
 import ws.epigraph.java._
-import ws.epigraph.java.service.projections.req.output.ReqOutputVarProjectionGen
+import ws.epigraph.java.service.projections.req.output.ReqOutputEntityProjectionGen
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.TransformerDeclaration
 
@@ -38,7 +38,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
 
   override def relativeFilePath: Path = JavaGenUtils.fqnToPath(namespace).resolve(shortClassName + ".java")
 
-  protected val outputProjectionGen: ReqProjectionGen = ReqOutputVarProjectionGen.dataProjectionGen(
+  protected val outputProjectionGen: ReqProjectionGen = ReqOutputEntityProjectionGen.dataProjectionGen(
     new BaseNamespaceProvider {override def baseNamespace: Qn = namespace },
     td.outputProjection(),
     None,

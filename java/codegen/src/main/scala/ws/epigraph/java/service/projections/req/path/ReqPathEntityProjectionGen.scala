@@ -19,7 +19,7 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqEntityProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op.path._
 import ws.epigraph.types.TypeKind
@@ -27,11 +27,11 @@ import ws.epigraph.types.TypeKind
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqPathVarProjectionGen(
+class ReqPathEntityProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpVarPath,
   override protected val namespaceSuffix: Qn,
-  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqVarProjectionGen {
+  protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqEntityProjectionGen {
 
   override type OpProjectionType = OpVarPath
   override type OpTagProjectionEntryType = OpTagPath
@@ -42,7 +42,7 @@ class ReqPathVarProjectionGen(
     op: OpVarPath,
     normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")
 
-  override protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
@@ -56,7 +56,7 @@ class ReqPathVarProjectionGen(
   )
 }
 
-object ReqPathVarProjectionGen {
+object ReqPathEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpVarPath,
@@ -64,7 +64,7 @@ object ReqPathVarProjectionGen {
     ctx: GenContext): ReqPathTypeProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqPathVarProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
+      new ReqPathEntityProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
         baseNamespaceProvider,

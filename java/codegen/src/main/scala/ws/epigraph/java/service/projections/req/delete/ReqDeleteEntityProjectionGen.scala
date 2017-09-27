@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.java.service.projections.req.input
+package ws.epigraph.java.service.projections.req.delete
 
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqEntityProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op._
 import ws.epigraph.types.TypeKind
@@ -27,17 +27,17 @@ import ws.epigraph.types.TypeKind
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class ReqInputVarProjectionGen(
+class ReqDeleteEntityProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   val op: OpEntityProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
-  override val parentClassGenOpt: Option[ReqInputVarProjectionGen],
-  protected val ctx: GenContext) extends ReqInputTypeProjectionGen with ReqVarProjectionGen {
+  override val parentClassGenOpt: Option[ReqDeleteEntityProjectionGen],
+  protected val ctx: GenContext) extends ReqDeleteTypeProjectionGen with ReqEntityProjectionGen {
 
   override type OpProjectionType = OpEntityProjection
   override type OpTagProjectionEntryType = OpTagProjectionEntry
-  override protected type GenType = ReqInputVarProjectionGen
+  override protected type GenType = ReqDeleteEntityProjectionGen
 
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
@@ -48,8 +48,8 @@ class ReqInputVarProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
-  override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqInputVarProjectionGen =
-    new ReqInputVarProjectionGen(
+  override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqDeleteEntityProjectionGen =
+    new ReqDeleteEntityProjectionGen(
       baseNamespaceProvider,
       op,
       Some(baseNamespace),
@@ -60,18 +60,19 @@ class ReqInputVarProjectionGen(
       override lazy val normalizedTailGenerators: Map[OpEntityProjection, ReqProjectionGen] = Map()
     }
 
+
   override protected def tagGenerator(
-    pgo: Option[ReqVarProjectionGen],
+    pgo: Option[ReqEntityProjectionGen],
     tpe: OpTagProjectionEntry): ReqProjectionGen =
     tagGenerator(
       tpe,
-      pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqInputModelProjectionGen]))
+      pgo.flatMap(pg => pg.findTagGenerator(tpe.tag().name()).map(_.asInstanceOf[ReqDeleteModelProjectionGen]))
     )
 
   protected def tagGenerator(
     tpe: OpTagProjectionEntry,
-    parentTagGenOpt: Option[ReqInputModelProjectionGen]): ReqProjectionGen =
-    ReqInputModelProjectionGen.dataProjectionGen(
+    parentTagGenOpt: Option[ReqDeleteModelProjectionGen]): ReqProjectionGen =
+    ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
       Some(baseNamespace),
@@ -81,75 +82,76 @@ class ReqInputVarProjectionGen(
     )
 
 //  override protected def generate: String = generate(
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection"),
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputTagProjectionEntry")
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection"),
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteTagProjectionEntry")
 //  )
 }
 
-object ReqInputVarProjectionGen {
+object ReqDeleteEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
     op: OpEntityProjection,
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
-    parentClassGenOpt: Option[ReqInputTypeProjectionGen],
-    ctx: GenContext): ReqInputTypeProjectionGen =
+    parentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
+    ctx: GenContext): ReqDeleteTypeProjectionGen =
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
       op.normalizedFrom() != null,
-      ctx.reqInputProjections,
+      ctx.reqDeleteProjections,
 
       op.`type`().kind() match {
 
         case TypeKind.ENTITY =>
-          new ReqInputVarProjectionGen(
+          new ReqDeleteEntityProjectionGen(
             baseNamespaceProvider,
             op,
             baseNamespaceOpt,
             namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputVarProjectionGen]),
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteEntityProjectionGen]),
             ctx
           )
         case TypeKind.RECORD =>
-          new ReqInputRecordModelProjectionGen(
+          new ReqDeleteRecordModelProjectionGen(
             baseNamespaceProvider,
             op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
             ctx
           )
         case TypeKind.MAP =>
-          new ReqInputMapModelProjectionGen(
+          new ReqDeleteMapModelProjectionGen(
             baseNamespaceProvider,
             op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
             ctx
           )
         case TypeKind.LIST =>
-          new ReqInputListModelProjectionGen(
+          new ReqDeleteListModelProjectionGen(
             baseNamespaceProvider,
             op.singleTagProjection().projection().asInstanceOf[OpListModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
             ctx
           )
         case TypeKind.PRIMITIVE =>
-          new ReqInputPrimitiveModelProjectionGen(
+          new ReqDeletePrimitiveModelProjectionGen(
             baseNamespaceProvider,
             op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
             baseNamespaceOpt,
             namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
             ctx
           )
         case x => throw new RuntimeException(s"Unknown projection kind: $x")
 
       }
+
     )
 }

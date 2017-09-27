@@ -42,7 +42,7 @@ class ReqDeleteFieldProjectionGen(
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
   override lazy val dataProjectionGen: ReqDeleteProjectionGen =
-    ReqDeleteVarProjectionGen.dataProjectionGen(
+    ReqDeleteEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.varProjection(),
       baseNamespaceOpt,

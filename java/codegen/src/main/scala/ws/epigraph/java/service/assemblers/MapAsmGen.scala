@@ -20,7 +20,7 @@ import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.output.ReqOutputMapModelProjectionGen
-import ws.epigraph.java.service.projections.req.{ReqModelProjectionGen, ReqVarProjectionGen}
+import ws.epigraph.java.service.projections.req.{ReqModelProjectionGen, ReqEntityProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
@@ -36,7 +36,7 @@ class MapAsmGen(
 
   val itemCType: CType = JavaGenUtils.toCType(
     g.elementGen match {
-      case eg: ReqVarProjectionGen => eg.op.`type`()
+      case eg: ReqEntityProjectionGen => eg.op.`type`()
       case mg: ReqModelProjectionGen => mg.op.`type`()
     }
   )

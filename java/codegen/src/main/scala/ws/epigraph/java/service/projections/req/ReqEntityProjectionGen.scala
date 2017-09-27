@@ -30,12 +30,12 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-trait ReqVarProjectionGen extends ReqTypeProjectionGen {
+trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
   override type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
-  override protected type GenType <: ReqVarProjectionGen
+  override protected type GenType <: ReqEntityProjectionGen
 
-  protected def tagGenerator(pgo: Option[ReqVarProjectionGen], tpe: OpTagProjectionEntryType): ReqProjectionGen
+  protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagProjectionEntryType): ReqProjectionGen
 
   protected def tailGenerator(op: OpProjectionType, normalized: Boolean): ReqProjectionGen
 
@@ -55,13 +55,13 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
    * overriden tag, or None if field is not overriding anything
    */
   private def tagProjections(
-    g: ReqVarProjectionGen,
-    t: CEntityTypeDef): Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] = {
+    g: ReqEntityProjectionGen,
+    t: CEntityTypeDef): Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] = {
     val p = g.op
 
     g.parentClassGenOpt.map(
       pg => tagProjections(
-        pg.asInstanceOf[ReqVarProjectionGen], t
+        pg.asInstanceOf[ReqEntityProjectionGen], t
       )
     ).getOrElse(Map()) ++
     p.tagProjections().toSeq.toListMap
@@ -79,7 +79,7 @@ trait ReqVarProjectionGen extends ReqTypeProjectionGen {
   }
 
   /** tag projections: should only include new or overridden tags, should not include inherited */
-  lazy val tagProjections: Map[String, (Option[ReqVarProjectionGen], OpTagProjectionEntryType)] =
+  lazy val tagProjections: Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] =
     op.tagProjections().toSeq.toListMap
       .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
       .mapValues(p => (None, p)) ++
