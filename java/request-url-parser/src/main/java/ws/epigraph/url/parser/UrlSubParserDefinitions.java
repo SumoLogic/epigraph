@@ -39,11 +39,11 @@ public final class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlReqVarPath> REQ_VAR_PATH =
       new UrlSubParserDefinition<>(U_REQ_VAR_PATH, UrlReqVarPath.class);
 
-  public static final UrlSubParserDefinition<UrlReqOutputTrunkVarProjection> REQ_OUTPUT_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, UrlReqOutputTrunkVarProjection.class);
+  public static final UrlSubParserDefinition<UrlReqTrunkEntityProjection> REQ_ENTITY_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_TRUNK_ENTITY_PROJECTION, UrlReqTrunkEntityProjection.class);
 
-  public static final UrlSubParserDefinition<UrlReqOutputTrunkFieldProjection> REQ_OUTPUT_FIELD_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, UrlReqOutputTrunkFieldProjection.class);
+  public static final UrlSubParserDefinition<UrlReqTrunkFieldProjection> REQ_FIELD_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_TRUNK_FIELD_PROJECTION, UrlReqTrunkFieldProjection.class);
 
   private UrlSubParserDefinitions() {}
 

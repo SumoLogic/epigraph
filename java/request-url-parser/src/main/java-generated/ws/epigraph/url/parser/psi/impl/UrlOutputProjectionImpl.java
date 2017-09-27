@@ -44,8 +44,8 @@ public class UrlOutputProjectionImpl extends ASTWrapperPsiElement implements Url
 
   @Override
   @Nullable
-  public UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection() {
-    return findChildByClass(UrlReqOutputTrunkFieldProjection.class);
+  public UrlReqTrunkFieldProjection getReqTrunkFieldProjection() {
+    return findChildByClass(UrlReqTrunkFieldProjection.class);
   }
 
   @Override

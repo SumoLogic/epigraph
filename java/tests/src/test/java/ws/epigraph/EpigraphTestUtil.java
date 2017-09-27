@@ -46,7 +46,7 @@ import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -95,13 +95,13 @@ public final class EpigraphTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiEntityProjection = EpigraphPsiUtil.parseText(
         projectionString,
         SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(psiEntityProjection, errorsAccumulator);
 
     return runPsiParser(true, context -> {
       OpReferenceContext opOutputReferenceContext =
@@ -114,7 +114,7 @@ public final class EpigraphTestUtil {
       OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
           false,
-          psiVarProjection,
+          psiEntityProjection,
           resolver,
           opPsiProcessingContext
       );
@@ -126,7 +126,7 @@ public final class EpigraphTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
@@ -134,9 +134,9 @@ public final class EpigraphTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -149,7 +149,7 @@ public final class EpigraphTestUtil {
       ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,
           false,
           op,

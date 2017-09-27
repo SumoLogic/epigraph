@@ -41,9 +41,9 @@ import ws.epigraph.service.operations.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqVarPath;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
@@ -86,10 +86,10 @@ public final class RequestFactory {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkFieldProjection psi =
+    UrlReqTrunkFieldProjection psi =
         EpigraphPsiUtil.parseText(
             requestString,
-            UrlSubParserDefinitions.REQ_OUTPUT_FIELD_PROJECTION,
+            UrlSubParserDefinitions.REQ_FIELD_PROJECTION,
             errorsAccumulator
         );
 
@@ -134,31 +134,31 @@ public final class RequestFactory {
         reqPath = pathParsingResult.path();
         DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
 
-        UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
-        UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
+        UrlReqTrunkEntityProjection trunkEntityProjection = pathParsingResult.trunkProjectionPsi();
+        UrlReqComaEntityProjection comaEntityProjection = pathParsingResult.comaProjectionPsi();
 
         ReqReferenceContext reqOutputReferenceContext =
             new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
         ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
             new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
 
-        if (trunkVarProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+        if (trunkEntityProjection != null) {
+          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().varProjection(),
-              trunkVarProjection,
+              trunkEntityProjection,
               typesResolver,
               reqOutputPsiProcessingContext
           );
 
           reqFieldProjection = new ReqFieldProjection(r.projection(), r.projection().location());
-        } else if (comaVarProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseComaVarProjection(
+        } else if (comaEntityProjection != null) {
+          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseComaEntityProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().varProjection(),
-              comaVarProjection,
+              comaEntityProjection,
               typesResolver,
               reqOutputPsiProcessingContext
           );
@@ -558,7 +558,7 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    UrlReqOutputTrunkVarProjection psi = getReqOutputProjectionPsi(projection);
+    UrlReqTrunkEntityProjection psi = getReqOutputProjectionPsi(projection);
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     ReqReferenceContext referenceContext =
@@ -568,7 +568,7 @@ public final class RequestFactory {
 
     try {
       @NotNull StepsAndProjection<ReqEntityProjection> res =
-          parser.parseTrunkVarProjection(
+          parser.parseTrunkEntityProjection(
               type,
               flagged,
               op,
@@ -590,14 +590,14 @@ public final class RequestFactory {
     throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
-  private static @NotNull UrlReqOutputTrunkVarProjection getReqOutputProjectionPsi(@NotNull String projection)
+  private static @NotNull UrlReqTrunkEntityProjection getReqOutputProjectionPsi(@NotNull String projection)
       throws IllegalArgumentException {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projection,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 

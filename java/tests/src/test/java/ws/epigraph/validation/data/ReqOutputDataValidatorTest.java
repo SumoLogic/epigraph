@@ -86,7 +86,7 @@ public class ReqOutputDataValidatorTest {
     final DataType dataType = (DataType) type.dataType();
     final OpEntityProjection varProjection = EpigraphTestUtil.parseOpEntityProjection(dataType, op, resolver);
     final ReqEntityProjection reqProjection =
-        EpigraphTestUtil.parseReqOutputVarProjection(dataType, varProjection, req, resolver).projection();
+        EpigraphTestUtil.parseReqOutputEntityProjection(dataType, varProjection, req, resolver).projection();
     final Data d = EpigraphTestUtil.makeData(type, data, resolver);
 
     final ReqOutputDataValidator validator = new ReqOutputDataValidator();

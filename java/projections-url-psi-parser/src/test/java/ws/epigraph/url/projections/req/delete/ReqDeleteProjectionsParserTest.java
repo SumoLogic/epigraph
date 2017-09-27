@@ -46,7 +46,7 @@ public class ReqDeleteProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpDeleteVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpDeleteEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -153,7 +153,7 @@ public class ReqDeleteProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpDeleteVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpDeleteVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpDeleteEntityProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpDeleteEntityProjection(dataType, projectionString, resolver);
   }
 }

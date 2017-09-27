@@ -29,9 +29,9 @@ import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.output.ReqBasicProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
@@ -57,15 +57,15 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkVarProjection(
+  public @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
-      @NotNull UrlReqOutputTrunkVarProjection psi,
+      @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseTrunkVarProjection(
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseTrunkEntityProjection(
         dataType, flagged, op, psi, resolver, context
     );
 
@@ -73,15 +73,15 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull StepsAndProjection<ReqEntityProjection> parseComaVarProjection(
+  public @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
-      @NotNull UrlReqOutputComaVarProjection psi,
+      @NotNull UrlReqComaEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseComaVarProjection(
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseComaEntityProjection(
         dataType, flagged, op, psi, resolver, context
     );
 
@@ -89,14 +89,14 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull ReqEntityProjection createDefaultVarProjection(
+  public @NotNull ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
       @NotNull PsiElement locationPsi,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 
-    return ReqBasicProjectionPsiParser.createDefaultVarProjection(
+    return ReqBasicProjectionPsiParser.createDefaultEntityProjection(
         type, op, required, locationPsi, context
     );
   }
@@ -106,7 +106,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull OpFieldProjection op,
-      @NotNull UrlReqOutputTrunkFieldProjection psi,
+      @NotNull UrlReqTrunkFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException {
 

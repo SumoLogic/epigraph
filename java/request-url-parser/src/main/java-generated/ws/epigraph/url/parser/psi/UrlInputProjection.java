@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface UrlInputProjection extends PsiElement {
 
   @Nullable
-  UrlReqOutputTrunkFieldProjection getReqOutputTrunkFieldProjection();
+  UrlReqTrunkFieldProjection getReqTrunkFieldProjection();
 
   @NotNull
   PsiElement getAngleLeft();

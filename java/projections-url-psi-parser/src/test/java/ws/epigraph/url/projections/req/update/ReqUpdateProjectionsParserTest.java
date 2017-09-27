@@ -30,7 +30,7 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -55,7 +55,7 @@ public class ReqUpdateProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpInputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpInputEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -208,9 +208,9 @@ public class ReqUpdateProjectionsParserTest {
   private void testParseFail(String expr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         expr,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -225,7 +225,7 @@ public class ReqUpdateProjectionsParserTest {
         ReqOutputPsiProcessingContext psiProcessingContext =
             new ReqOutputPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqUpdateProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqUpdateProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
             dataType,
             false,
             personOpProjection,
@@ -247,7 +247,7 @@ public class ReqUpdateProjectionsParserTest {
 
   private void testParse(String expr, String expectedProjection) {
     final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
-        ReqTestUtil.parseReqUpdateVarProjection(dataType, personOpProjection, expr, resolver);
+        ReqTestUtil.parseReqUpdateEntityProjection(dataType, personOpProjection, expr, resolver);
 
     String s = TestUtil.printReqEntityProjection(varProjection);
 
@@ -256,7 +256,7 @@ public class ReqUpdateProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpInputEntityProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpInputEntityProjection(dataType, projectionString, resolver);
   }
 }

@@ -135,7 +135,7 @@ public abstract class NonReadRequestUrlPsiParser {
                                 : RequestUrlPsiParserUtil.parseProjection(
                                     opInputType.dataType(),
                                     inputProjection,
-                                    inputProjectionPsi.getReqOutputTrunkFieldProjection(),
+                                    inputProjectionPsi.getReqTrunkFieldProjection(),
                                     inputProjectionPsi.getPlus() != null,
                                     inputProjectionParser,
                                     inputResolver,
@@ -147,7 +147,7 @@ public abstract class NonReadRequestUrlPsiParser {
         RequestUrlPsiParserUtil.parseProjection(
             opOutputType.dataType(),
             op.outputProjection(),
-            outputProjectionPsi == null ? null : outputProjectionPsi.getReqOutputTrunkFieldProjection(),
+            outputProjectionPsi == null ? null : outputProjectionPsi.getReqTrunkFieldProjection(),
             outputProjectionPsi != null && outputProjectionPsi.getPlus() != null,
             outputProjectionParser,
             outputResolver,

@@ -30,7 +30,7 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -174,9 +174,9 @@ public class ReqInputProjectionParserTest {
   private void testParseFail(String expr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         expr,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -192,7 +192,7 @@ public class ReqInputProjectionParserTest {
         ReqOutputPsiProcessingContext psiProcessingContext =
             new ReqOutputPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqInputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqInputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
             dataType,
             false,
             personOpProjection,
@@ -222,6 +222,6 @@ public class ReqInputProjectionParserTest {
   }
 
   private @NotNull OpEntityProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver);
+    return ReqTestUtil.parseOpInputEntityProjection(dataType, projectionString, resolver);
   }
 }

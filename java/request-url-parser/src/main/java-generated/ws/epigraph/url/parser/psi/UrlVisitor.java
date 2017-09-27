@@ -123,6 +123,70 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqComaEntityProjection(@NotNull UrlReqComaEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaEntityProjectionRef(@NotNull UrlReqComaEntityProjectionRef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaFieldProjection(@NotNull UrlReqComaFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaKeyProjection(@NotNull UrlReqComaKeyProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaKeysProjection(@NotNull UrlReqComaKeysProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaListModelProjection(@NotNull UrlReqComaListModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaMapModelProjection(@NotNull UrlReqComaMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaModelProjection(@NotNull UrlReqComaModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaMultiTagProjection(@NotNull UrlReqComaMultiTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaMultiTagProjectionItem(@NotNull UrlReqComaMultiTagProjectionItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaRecordModelProjection(@NotNull UrlReqComaRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqComaSingleTagProjection(@NotNull UrlReqComaSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqEntityMultiTail(@NotNull UrlReqEntityMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqEntityMultiTailItem(@NotNull UrlReqEntityMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqEntityPolymorphicTail(@NotNull UrlReqEntityPolymorphicTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqEntitySingleTail(@NotNull UrlReqEntitySingleTail o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqFieldPath(@NotNull UrlReqFieldPath o) {
     visitPsiElement(o);
   }
@@ -135,147 +199,35 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqModelMeta(@NotNull UrlReqModelMeta o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqModelMultiTail(@NotNull UrlReqModelMultiTail o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqModelMultiTailItem(@NotNull UrlReqModelMultiTailItem o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqModelPath(@NotNull UrlReqModelPath o) {
     visitPsiElement(o);
   }
 
-  public void visitReqOutputComaFieldProjection(@NotNull UrlReqOutputComaFieldProjection o) {
+  public void visitReqModelPolymorphicTail(@NotNull UrlReqModelPolymorphicTail o) {
     visitPsiElement(o);
   }
 
-  public void visitReqOutputComaKeyProjection(@NotNull UrlReqOutputComaKeyProjection o) {
+  public void visitReqModelSingleTail(@NotNull UrlReqModelSingleTail o) {
     visitPsiElement(o);
   }
 
-  public void visitReqOutputComaKeysProjection(@NotNull UrlReqOutputComaKeysProjection o) {
+  public void visitReqNamedComaEntityProjection(@NotNull UrlReqNamedComaEntityProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitReqOutputComaListModelProjection(@NotNull UrlReqOutputComaListModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaMapModelProjection(@NotNull UrlReqOutputComaMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaModelProjection(@NotNull UrlReqOutputComaModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaMultiTagProjection(@NotNull UrlReqOutputComaMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaMultiTagProjectionItem(@NotNull UrlReqOutputComaMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaRecordModelProjection(@NotNull UrlReqOutputComaRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaSingleTagProjection(@NotNull UrlReqOutputComaSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaVarProjection(@NotNull UrlReqOutputComaVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputComaVarProjectionRef(@NotNull UrlReqOutputComaVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputModelMeta(@NotNull UrlReqOutputModelMeta o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputModelMultiTail(@NotNull UrlReqOutputModelMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputModelMultiTailItem(@NotNull UrlReqOutputModelMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputModelPolymorphicTail(@NotNull UrlReqOutputModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputModelSingleTail(@NotNull UrlReqOutputModelSingleTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputNamedComaVarProjection(@NotNull UrlReqOutputNamedComaVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputNamedTrunkVarProjection(@NotNull UrlReqOutputNamedTrunkVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputStarTagProjection(@NotNull UrlReqOutputStarTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkFieldProjection(@NotNull UrlReqOutputTrunkFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkMapModelProjection(@NotNull UrlReqOutputTrunkMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkModelProjection(@NotNull UrlReqOutputTrunkModelProjection o) {
-    visitReqOutputComaModelProjection(o);
-  }
-
-  public void visitReqOutputTrunkRecordModelProjection(@NotNull UrlReqOutputTrunkRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkSingleTagProjection(@NotNull UrlReqOutputTrunkSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkVarProjection(@NotNull UrlReqOutputTrunkVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputTrunkVarProjectionRef(@NotNull UrlReqOutputTrunkVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputUnnamedComaVarProjection(@NotNull UrlReqOutputUnnamedComaVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputUnnamedOrRefComaVarProjection(@NotNull UrlReqOutputUnnamedOrRefComaVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputUnnamedOrRefTrunkVarProjection(@NotNull UrlReqOutputUnnamedOrRefTrunkVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputUnnamedTrunkVarProjection(@NotNull UrlReqOutputUnnamedTrunkVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputVarMultiTail(@NotNull UrlReqOutputVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputVarMultiTailItem(@NotNull UrlReqOutputVarMultiTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputVarPolymorphicTail(@NotNull UrlReqOutputVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqOutputVarSingleTail(@NotNull UrlReqOutputVarSingleTail o) {
+  public void visitReqNamedTrunkEntityProjection(@NotNull UrlReqNamedTrunkEntityProjection o) {
     visitPsiElement(o);
   }
 
@@ -284,6 +236,54 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqRecordModelPath(@NotNull UrlReqRecordModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqStarTagProjection(@NotNull UrlReqStarTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkEntityProjection(@NotNull UrlReqTrunkEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkEntityProjectionRef(@NotNull UrlReqTrunkEntityProjectionRef o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkFieldProjection(@NotNull UrlReqTrunkFieldProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkMapModelProjection(@NotNull UrlReqTrunkMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkModelProjection(@NotNull UrlReqTrunkModelProjection o) {
+    visitReqComaModelProjection(o);
+  }
+
+  public void visitReqTrunkRecordModelProjection(@NotNull UrlReqTrunkRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqTrunkSingleTagProjection(@NotNull UrlReqTrunkSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUnnamedComaEntityProjection(@NotNull UrlReqUnnamedComaEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUnnamedOrRefComaEntityProjection(@NotNull UrlReqUnnamedOrRefComaEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUnnamedOrRefTrunkEntityProjection(@NotNull UrlReqUnnamedOrRefTrunkEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUnnamedTrunkEntityProjection(@NotNull UrlReqUnnamedTrunkEntityProjection o) {
     visitPsiElement(o);
   }
 

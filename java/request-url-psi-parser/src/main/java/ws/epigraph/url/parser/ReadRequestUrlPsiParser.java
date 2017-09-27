@@ -35,9 +35,9 @@ import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -88,7 +88,7 @@ public final class ReadRequestUrlPsiParser {
     @NotNull ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
         resourceType,
         opPath,
-        psi.getReqOutputTrunkFieldProjection(),
+        psi.getReqTrunkFieldProjection(),
         typesResolver,
         new ReqPathPsiProcessingContext(context)
     );
@@ -97,8 +97,8 @@ public final class ReadRequestUrlPsiParser {
     DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
     TypesResolver newResolver = addTypeNamespace(pathTipType.type(), typesResolver);
 
-    final UrlReqOutputTrunkVarProjection trunkVarProjection = pathParsingResult.trunkProjectionPsi();
-    final UrlReqOutputComaVarProjection comaVarProjection = pathParsingResult.comaProjectionPsi();
+    final UrlReqTrunkEntityProjection trunkEntityProjection = pathParsingResult.trunkProjectionPsi();
+    final UrlReqComaEntityProjection comaEntityProjection = pathParsingResult.comaProjectionPsi();
 
     final int steps;
     final @NotNull ReqEntityProjection varProjection;
@@ -111,31 +111,31 @@ public final class ReadRequestUrlPsiParser {
 
     ReqOutputProjectionPsiParser psiParser = ReqOutputProjectionPsiParser.INSTANCE;
 
-    if (trunkVarProjection != null) {
-      @NotNull StepsAndProjection<ReqEntityProjection> r = psiParser.parseTrunkVarProjection(
+    if (trunkEntityProjection != null) {
+      @NotNull StepsAndProjection<ReqEntityProjection> r = psiParser.parseTrunkEntityProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
-          trunkVarProjection,
+          trunkEntityProjection,
           newResolver,
           reqOutputPsiProcessingContext
       );
 
       steps = r.pathSteps();
       varProjection = r.projection();
-      fieldLocation = EpigraphPsiUtil.getLocation(trunkVarProjection);
-    } else if (comaVarProjection != null) {
-      StepsAndProjection<ReqEntityProjection> r = psiParser.parseComaVarProjection(
+      fieldLocation = EpigraphPsiUtil.getLocation(trunkEntityProjection);
+    } else if (comaEntityProjection != null) {
+      StepsAndProjection<ReqEntityProjection> r = psiParser.parseComaEntityProjection(
           pathTipType,
           false,
           op.outputProjection().varProjection(),
-          comaVarProjection,
+          comaEntityProjection,
           newResolver,
           reqOutputPsiProcessingContext
       );
       steps = r.pathSteps();
       varProjection = r.projection();
-      fieldLocation = EpigraphPsiUtil.getLocation(comaVarProjection);
+      fieldLocation = EpigraphPsiUtil.getLocation(comaEntityProjection);
     } else {
       steps = 0;
       varProjection = new ReqEntityProjection(
@@ -176,7 +176,7 @@ public final class ReadRequestUrlPsiParser {
       final @NotNull PsiProcessingContext context)
       throws PsiProcessingException {
 
-    final @NotNull UrlReqOutputTrunkFieldProjection fieldProjectionPsi = psi.getReqOutputTrunkFieldProjection();
+    final @NotNull UrlReqTrunkFieldProjection fieldProjectionPsi = psi.getReqTrunkFieldProjection();
     TypesResolver newResolver = addTypeNamespace(resourceType.type(), typesResolver);
 
     ReqReferenceContext reqOutputReferenceContext =

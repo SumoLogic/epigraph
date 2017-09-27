@@ -50,47 +50,47 @@ public interface UrlElementTypes {
   IElementType U_RECORD_DATUM_ENTRY = new UrlElementType("U_RECORD_DATUM_ENTRY");
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
   IElementType U_REQ_ANNOTATION = new UrlElementType("U_REQ_ANNOTATION");
+  IElementType U_REQ_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_COMA_ENTITY_PROJECTION");
+  IElementType U_REQ_COMA_ENTITY_PROJECTION_REF = new UrlElementType("U_REQ_COMA_ENTITY_PROJECTION_REF");
+  IElementType U_REQ_COMA_FIELD_PROJECTION = new UrlElementType("U_REQ_COMA_FIELD_PROJECTION");
+  IElementType U_REQ_COMA_KEYS_PROJECTION = new UrlElementType("U_REQ_COMA_KEYS_PROJECTION");
+  IElementType U_REQ_COMA_KEY_PROJECTION = new UrlElementType("U_REQ_COMA_KEY_PROJECTION");
+  IElementType U_REQ_COMA_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_LIST_MODEL_PROJECTION");
+  IElementType U_REQ_COMA_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_COMA_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_MODEL_PROJECTION");
+  IElementType U_REQ_COMA_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_COMA_MULTI_TAG_PROJECTION");
+  IElementType U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM");
+  IElementType U_REQ_COMA_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_RECORD_MODEL_PROJECTION");
+  IElementType U_REQ_COMA_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_COMA_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_ENTITY_MULTI_TAIL = new UrlElementType("U_REQ_ENTITY_MULTI_TAIL");
+  IElementType U_REQ_ENTITY_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_ENTITY_MULTI_TAIL_ITEM");
+  IElementType U_REQ_ENTITY_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_ENTITY_POLYMORPHIC_TAIL");
+  IElementType U_REQ_ENTITY_SINGLE_TAIL = new UrlElementType("U_REQ_ENTITY_SINGLE_TAIL");
   IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
   IElementType U_REQ_FIELD_PATH_ENTRY = new UrlElementType("U_REQ_FIELD_PATH_ENTRY");
   IElementType U_REQ_MAP_MODEL_PATH = new UrlElementType("U_REQ_MAP_MODEL_PATH");
+  IElementType U_REQ_MODEL_META = new UrlElementType("U_REQ_MODEL_META");
+  IElementType U_REQ_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_MODEL_MULTI_TAIL");
+  IElementType U_REQ_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_MODEL_MULTI_TAIL_ITEM");
   IElementType U_REQ_MODEL_PATH = new UrlElementType("U_REQ_MODEL_PATH");
-  IElementType U_REQ_OUTPUT_COMA_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_FIELD_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_KEYS_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_KEYS_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_KEY_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_KEY_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM");
-  IElementType U_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_COMA_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF = new UrlElementType("U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF");
-  IElementType U_REQ_OUTPUT_MODEL_META = new UrlElementType("U_REQ_OUTPUT_MODEL_META");
-  IElementType U_REQ_OUTPUT_MODEL_MULTI_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_MULTI_TAIL");
-  IElementType U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM");
-  IElementType U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL");
-  IElementType U_REQ_OUTPUT_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_OUTPUT_MODEL_SINGLE_TAIL");
-  IElementType U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_STAR_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_STAR_TAG_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_TRUNK_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF = new UrlElementType("U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF");
-  IElementType U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION = new UrlElementType("U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION");
-  IElementType U_REQ_OUTPUT_VAR_MULTI_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_MULTI_TAIL");
-  IElementType U_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM");
-  IElementType U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL");
-  IElementType U_REQ_OUTPUT_VAR_SINGLE_TAIL = new UrlElementType("U_REQ_OUTPUT_VAR_SINGLE_TAIL");
+  IElementType U_REQ_MODEL_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_MODEL_POLYMORPHIC_TAIL");
+  IElementType U_REQ_MODEL_SINGLE_TAIL = new UrlElementType("U_REQ_MODEL_SINGLE_TAIL");
+  IElementType U_REQ_NAMED_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_NAMED_COMA_ENTITY_PROJECTION");
+  IElementType U_REQ_NAMED_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_NAMED_TRUNK_ENTITY_PROJECTION");
   IElementType U_REQ_PARAM = new UrlElementType("U_REQ_PARAM");
   IElementType U_REQ_RECORD_MODEL_PATH = new UrlElementType("U_REQ_RECORD_MODEL_PATH");
+  IElementType U_REQ_STAR_TAG_PROJECTION = new UrlElementType("U_REQ_STAR_TAG_PROJECTION");
+  IElementType U_REQ_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_TRUNK_ENTITY_PROJECTION");
+  IElementType U_REQ_TRUNK_ENTITY_PROJECTION_REF = new UrlElementType("U_REQ_TRUNK_ENTITY_PROJECTION_REF");
+  IElementType U_REQ_TRUNK_FIELD_PROJECTION = new UrlElementType("U_REQ_TRUNK_FIELD_PROJECTION");
+  IElementType U_REQ_TRUNK_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_TRUNK_MAP_MODEL_PROJECTION");
+  IElementType U_REQ_TRUNK_MODEL_PROJECTION = new UrlElementType("U_REQ_TRUNK_MODEL_PROJECTION");
+  IElementType U_REQ_TRUNK_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_TRUNK_RECORD_MODEL_PROJECTION");
+  IElementType U_REQ_TRUNK_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_TRUNK_SINGLE_TAG_PROJECTION");
+  IElementType U_REQ_UNNAMED_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_COMA_ENTITY_PROJECTION");
+  IElementType U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION");
+  IElementType U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION");
+  IElementType U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION");
   IElementType U_REQ_VAR_PATH = new UrlElementType("U_REQ_VAR_PATH");
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
   IElementType U_TYPE_REF = new UrlElementType("U_TYPE_REF");
@@ -211,6 +211,54 @@ public interface UrlElementTypes {
       else if (type == U_REQ_ANNOTATION) {
         return new UrlReqAnnotationImpl(node);
       }
+      else if (type == U_REQ_COMA_ENTITY_PROJECTION) {
+        return new UrlReqComaEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_ENTITY_PROJECTION_REF) {
+        return new UrlReqComaEntityProjectionRefImpl(node);
+      }
+      else if (type == U_REQ_COMA_FIELD_PROJECTION) {
+        return new UrlReqComaFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_KEYS_PROJECTION) {
+        return new UrlReqComaKeysProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_KEY_PROJECTION) {
+        return new UrlReqComaKeyProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_LIST_MODEL_PROJECTION) {
+        return new UrlReqComaListModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_MAP_MODEL_PROJECTION) {
+        return new UrlReqComaMapModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_MODEL_PROJECTION) {
+        return new UrlReqComaModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_MULTI_TAG_PROJECTION) {
+        return new UrlReqComaMultiTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM) {
+        return new UrlReqComaMultiTagProjectionItemImpl(node);
+      }
+      else if (type == U_REQ_COMA_RECORD_MODEL_PROJECTION) {
+        return new UrlReqComaRecordModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_COMA_SINGLE_TAG_PROJECTION) {
+        return new UrlReqComaSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_ENTITY_MULTI_TAIL) {
+        return new UrlReqEntityMultiTailImpl(node);
+      }
+      else if (type == U_REQ_ENTITY_MULTI_TAIL_ITEM) {
+        return new UrlReqEntityMultiTailItemImpl(node);
+      }
+      else if (type == U_REQ_ENTITY_POLYMORPHIC_TAIL) {
+        return new UrlReqEntityPolymorphicTailImpl(node);
+      }
+      else if (type == U_REQ_ENTITY_SINGLE_TAIL) {
+        return new UrlReqEntitySingleTailImpl(node);
+      }
       else if (type == U_REQ_FIELD_PATH) {
         return new UrlReqFieldPathImpl(node);
       }
@@ -220,119 +268,71 @@ public interface UrlElementTypes {
       else if (type == U_REQ_MAP_MODEL_PATH) {
         return new UrlReqMapModelPathImpl(node);
       }
+      else if (type == U_REQ_MODEL_META) {
+        return new UrlReqModelMetaImpl(node);
+      }
+      else if (type == U_REQ_MODEL_MULTI_TAIL) {
+        return new UrlReqModelMultiTailImpl(node);
+      }
+      else if (type == U_REQ_MODEL_MULTI_TAIL_ITEM) {
+        return new UrlReqModelMultiTailItemImpl(node);
+      }
       else if (type == U_REQ_MODEL_PATH) {
         return new UrlReqModelPathImpl(node);
       }
-      else if (type == U_REQ_OUTPUT_COMA_FIELD_PROJECTION) {
-        return new UrlReqOutputComaFieldProjectionImpl(node);
+      else if (type == U_REQ_MODEL_POLYMORPHIC_TAIL) {
+        return new UrlReqModelPolymorphicTailImpl(node);
       }
-      else if (type == U_REQ_OUTPUT_COMA_KEYS_PROJECTION) {
-        return new UrlReqOutputComaKeysProjectionImpl(node);
+      else if (type == U_REQ_MODEL_SINGLE_TAIL) {
+        return new UrlReqModelSingleTailImpl(node);
       }
-      else if (type == U_REQ_OUTPUT_COMA_KEY_PROJECTION) {
-        return new UrlReqOutputComaKeyProjectionImpl(node);
+      else if (type == U_REQ_NAMED_COMA_ENTITY_PROJECTION) {
+        return new UrlReqNamedComaEntityProjectionImpl(node);
       }
-      else if (type == U_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION) {
-        return new UrlReqOutputComaListModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION) {
-        return new UrlReqOutputComaMapModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_MODEL_PROJECTION) {
-        return new UrlReqOutputComaModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION) {
-        return new UrlReqOutputComaMultiTagProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM) {
-        return new UrlReqOutputComaMultiTagProjectionItemImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION) {
-        return new UrlReqOutputComaRecordModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION) {
-        return new UrlReqOutputComaSingleTagProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_VAR_PROJECTION) {
-        return new UrlReqOutputComaVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF) {
-        return new UrlReqOutputComaVarProjectionRefImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_MODEL_META) {
-        return new UrlReqOutputModelMetaImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_MODEL_MULTI_TAIL) {
-        return new UrlReqOutputModelMultiTailImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM) {
-        return new UrlReqOutputModelMultiTailItemImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL) {
-        return new UrlReqOutputModelPolymorphicTailImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_MODEL_SINGLE_TAIL) {
-        return new UrlReqOutputModelSingleTailImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION) {
-        return new UrlReqOutputNamedComaVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION) {
-        return new UrlReqOutputNamedTrunkVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
-        return new UrlReqOutputStarTagProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
-        return new UrlReqOutputTrunkFieldProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION) {
-        return new UrlReqOutputTrunkMapModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION) {
-        return new UrlReqOutputTrunkModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION) {
-        return new UrlReqOutputTrunkRecordModelProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION) {
-        return new UrlReqOutputTrunkSingleTagProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION) {
-        return new UrlReqOutputTrunkVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF) {
-        return new UrlReqOutputTrunkVarProjectionRefImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION) {
-        return new UrlReqOutputUnnamedComaVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION) {
-        return new UrlReqOutputUnnamedOrRefComaVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION) {
-        return new UrlReqOutputUnnamedOrRefTrunkVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION) {
-        return new UrlReqOutputUnnamedTrunkVarProjectionImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_VAR_MULTI_TAIL) {
-        return new UrlReqOutputVarMultiTailImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM) {
-        return new UrlReqOutputVarMultiTailItemImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL) {
-        return new UrlReqOutputVarPolymorphicTailImpl(node);
-      }
-      else if (type == U_REQ_OUTPUT_VAR_SINGLE_TAIL) {
-        return new UrlReqOutputVarSingleTailImpl(node);
+      else if (type == U_REQ_NAMED_TRUNK_ENTITY_PROJECTION) {
+        return new UrlReqNamedTrunkEntityProjectionImpl(node);
       }
       else if (type == U_REQ_PARAM) {
         return new UrlReqParamImpl(node);
       }
       else if (type == U_REQ_RECORD_MODEL_PATH) {
         return new UrlReqRecordModelPathImpl(node);
+      }
+      else if (type == U_REQ_STAR_TAG_PROJECTION) {
+        return new UrlReqStarTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_ENTITY_PROJECTION) {
+        return new UrlReqTrunkEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_ENTITY_PROJECTION_REF) {
+        return new UrlReqTrunkEntityProjectionRefImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_FIELD_PROJECTION) {
+        return new UrlReqTrunkFieldProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_MAP_MODEL_PROJECTION) {
+        return new UrlReqTrunkMapModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_MODEL_PROJECTION) {
+        return new UrlReqTrunkModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_RECORD_MODEL_PROJECTION) {
+        return new UrlReqTrunkRecordModelProjectionImpl(node);
+      }
+      else if (type == U_REQ_TRUNK_SINGLE_TAG_PROJECTION) {
+        return new UrlReqTrunkSingleTagProjectionImpl(node);
+      }
+      else if (type == U_REQ_UNNAMED_COMA_ENTITY_PROJECTION) {
+        return new UrlReqUnnamedComaEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION) {
+        return new UrlReqUnnamedOrRefComaEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION) {
+        return new UrlReqUnnamedOrRefTrunkEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION) {
+        return new UrlReqUnnamedTrunkEntityProjectionImpl(node);
       }
       else if (type == U_REQ_VAR_PATH) {
         return new UrlReqVarPathImpl(node);

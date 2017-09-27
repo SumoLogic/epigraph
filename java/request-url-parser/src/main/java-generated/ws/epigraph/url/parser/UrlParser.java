@@ -114,6 +114,54 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_ANNOTATION) {
       r = reqAnnotation(b, 0);
     }
+    else if (t == U_REQ_COMA_ENTITY_PROJECTION) {
+      r = reqComaEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_ENTITY_PROJECTION_REF) {
+      r = reqComaEntityProjectionRef(b, 0);
+    }
+    else if (t == U_REQ_COMA_FIELD_PROJECTION) {
+      r = reqComaFieldProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_KEY_PROJECTION) {
+      r = reqComaKeyProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_KEYS_PROJECTION) {
+      r = reqComaKeysProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_LIST_MODEL_PROJECTION) {
+      r = reqComaListModelProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_MAP_MODEL_PROJECTION) {
+      r = reqComaMapModelProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_MODEL_PROJECTION) {
+      r = reqComaModelProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_MULTI_TAG_PROJECTION) {
+      r = reqComaMultiTagProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM) {
+      r = reqComaMultiTagProjectionItem(b, 0);
+    }
+    else if (t == U_REQ_COMA_RECORD_MODEL_PROJECTION) {
+      r = reqComaRecordModelProjection(b, 0);
+    }
+    else if (t == U_REQ_COMA_SINGLE_TAG_PROJECTION) {
+      r = reqComaSingleTagProjection(b, 0);
+    }
+    else if (t == U_REQ_ENTITY_MULTI_TAIL) {
+      r = reqEntityMultiTail(b, 0);
+    }
+    else if (t == U_REQ_ENTITY_MULTI_TAIL_ITEM) {
+      r = reqEntityMultiTailItem(b, 0);
+    }
+    else if (t == U_REQ_ENTITY_POLYMORPHIC_TAIL) {
+      r = reqEntityPolymorphicTail(b, 0);
+    }
+    else if (t == U_REQ_ENTITY_SINGLE_TAIL) {
+      r = reqEntitySingleTail(b, 0);
+    }
     else if (t == U_REQ_FIELD_PATH) {
       r = reqFieldPath(b, 0);
     }
@@ -123,119 +171,71 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_MAP_MODEL_PATH) {
       r = reqMapModelPath(b, 0);
     }
+    else if (t == U_REQ_MODEL_META) {
+      r = reqModelMeta(b, 0);
+    }
+    else if (t == U_REQ_MODEL_MULTI_TAIL) {
+      r = reqModelMultiTail(b, 0);
+    }
+    else if (t == U_REQ_MODEL_MULTI_TAIL_ITEM) {
+      r = reqModelMultiTailItem(b, 0);
+    }
     else if (t == U_REQ_MODEL_PATH) {
       r = reqModelPath(b, 0);
     }
-    else if (t == U_REQ_OUTPUT_COMA_FIELD_PROJECTION) {
-      r = reqOutputComaFieldProjection(b, 0);
+    else if (t == U_REQ_MODEL_POLYMORPHIC_TAIL) {
+      r = reqModelPolymorphicTail(b, 0);
     }
-    else if (t == U_REQ_OUTPUT_COMA_KEY_PROJECTION) {
-      r = reqOutputComaKeyProjection(b, 0);
+    else if (t == U_REQ_MODEL_SINGLE_TAIL) {
+      r = reqModelSingleTail(b, 0);
     }
-    else if (t == U_REQ_OUTPUT_COMA_KEYS_PROJECTION) {
-      r = reqOutputComaKeysProjection(b, 0);
+    else if (t == U_REQ_NAMED_COMA_ENTITY_PROJECTION) {
+      r = reqNamedComaEntityProjection(b, 0);
     }
-    else if (t == U_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION) {
-      r = reqOutputComaListModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION) {
-      r = reqOutputComaMapModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_MODEL_PROJECTION) {
-      r = reqOutputComaModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION) {
-      r = reqOutputComaMultiTagProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM) {
-      r = reqOutputComaMultiTagProjectionItem(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION) {
-      r = reqOutputComaRecordModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION) {
-      r = reqOutputComaSingleTagProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_VAR_PROJECTION) {
-      r = reqOutputComaVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF) {
-      r = reqOutputComaVarProjectionRef(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_MODEL_META) {
-      r = reqOutputModelMeta(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_MODEL_MULTI_TAIL) {
-      r = reqOutputModelMultiTail(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM) {
-      r = reqOutputModelMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL) {
-      r = reqOutputModelPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_MODEL_SINGLE_TAIL) {
-      r = reqOutputModelSingleTail(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION) {
-      r = reqOutputNamedComaVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION) {
-      r = reqOutputNamedTrunkVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_STAR_TAG_PROJECTION) {
-      r = reqOutputStarTagProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION) {
-      r = reqOutputTrunkFieldProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION) {
-      r = reqOutputTrunkMapModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION) {
-      r = reqOutputTrunkModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION) {
-      r = reqOutputTrunkRecordModelProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION) {
-      r = reqOutputTrunkSingleTagProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION) {
-      r = reqOutputTrunkVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF) {
-      r = reqOutputTrunkVarProjectionRef(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION) {
-      r = reqOutputUnnamedComaVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION) {
-      r = reqOutputUnnamedOrRefComaVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION) {
-      r = reqOutputUnnamedOrRefTrunkVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION) {
-      r = reqOutputUnnamedTrunkVarProjection(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_VAR_MULTI_TAIL) {
-      r = reqOutputVarMultiTail(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM) {
-      r = reqOutputVarMultiTailItem(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL) {
-      r = reqOutputVarPolymorphicTail(b, 0);
-    }
-    else if (t == U_REQ_OUTPUT_VAR_SINGLE_TAIL) {
-      r = reqOutputVarSingleTail(b, 0);
+    else if (t == U_REQ_NAMED_TRUNK_ENTITY_PROJECTION) {
+      r = reqNamedTrunkEntityProjection(b, 0);
     }
     else if (t == U_REQ_PARAM) {
       r = reqParam(b, 0);
     }
     else if (t == U_REQ_RECORD_MODEL_PATH) {
       r = reqRecordModelPath(b, 0);
+    }
+    else if (t == U_REQ_STAR_TAG_PROJECTION) {
+      r = reqStarTagProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_ENTITY_PROJECTION) {
+      r = reqTrunkEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_ENTITY_PROJECTION_REF) {
+      r = reqTrunkEntityProjectionRef(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_FIELD_PROJECTION) {
+      r = reqTrunkFieldProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_MAP_MODEL_PROJECTION) {
+      r = reqTrunkMapModelProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_MODEL_PROJECTION) {
+      r = reqTrunkModelProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_RECORD_MODEL_PROJECTION) {
+      r = reqTrunkRecordModelProjection(b, 0);
+    }
+    else if (t == U_REQ_TRUNK_SINGLE_TAG_PROJECTION) {
+      r = reqTrunkSingleTagProjection(b, 0);
+    }
+    else if (t == U_REQ_UNNAMED_COMA_ENTITY_PROJECTION) {
+      r = reqUnnamedComaEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION) {
+      r = reqUnnamedOrRefComaEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION) {
+      r = reqUnnamedOrRefTrunkEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION) {
+      r = reqUnnamedTrunkEntityProjection(b, 0);
     }
     else if (t == U_REQ_VAR_PATH) {
       r = reqVarPath(b, 0);
@@ -269,7 +269,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(U_REQ_OUTPUT_COMA_MODEL_PROJECTION, U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION),
+    create_token_set_(U_REQ_COMA_MODEL_PROJECTION, U_REQ_TRUNK_MODEL_PROJECTION),
     create_token_set_(U_NON_READ_URL, U_READ_URL, U_URL),
     create_token_set_(U_ANON_LIST, U_ANON_MAP, U_QN_TYPE_REF, U_TYPE_REF),
     create_token_set_(U_DATUM, U_ENUM_DATUM, U_LIST_DATUM, U_MAP_DATUM,
@@ -471,7 +471,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '<' '+'? reqOutputTrunkFieldProjection
+  // '<' '+'? reqTrunkFieldProjection
   public static boolean inputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjection")) return false;
     if (!nextTokenIs(b, U_ANGLE_LEFT)) return false;
@@ -480,7 +480,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_ANGLE_LEFT);
     p = r; // pin = 1
     r = r && report_error_(b, inputProjection_1(b, l + 1));
-    r = p && reqOutputTrunkFieldProjection(b, l + 1) && r;
+    r = p && reqTrunkFieldProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -662,7 +662,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '>' '+'? reqOutputTrunkFieldProjection
+  // '>' '+'? reqTrunkFieldProjection
   public static boolean outputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "outputProjection")) return false;
     if (!nextTokenIs(b, U_ANGLE_RIGHT)) return false;
@@ -671,7 +671,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_ANGLE_RIGHT);
     p = r; // pin = 1
     r = r && report_error_(b, outputProjection_1(b, l + 1));
-    r = p && reqOutputTrunkFieldProjection(b, l + 1) && r;
+    r = p && reqTrunkFieldProjection(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -798,7 +798,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' qid reqOutputTrunkFieldProjection requestParams
+  // '/' qid reqTrunkFieldProjection requestParams
   public static boolean readUrl(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "readUrl")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -806,7 +806,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, U_SLASH);
     r = r && qid(b, l + 1);
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
+    r = r && reqTrunkFieldProjection(b, l + 1);
     r = r && requestParams(b, l + 1);
     exit_section_(b, m, U_READ_URL, r);
     return r;
@@ -882,6 +882,548 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '(' reqComaEntityProjection ')'
+  static boolean reqBracedComaEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqBracedComaEntityProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqComaEntityProjection(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqNamedComaEntityProjection | reqUnnamedOrRefComaEntityProjection
+  public static boolean reqComaEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_ENTITY_PROJECTION, "<req coma entity projection>");
+    r = reqNamedComaEntityProjection(b, l + 1);
+    if (!r) r = reqUnnamedOrRefComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqComaEntityProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaEntityProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_ENTITY_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // '+'? qid /* reqParamsAndAnnotations */ reqComaEntityProjection
+  public static boolean reqComaFieldProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaFieldProjection")) return false;
+    if (!nextTokenIs(b, "<req coma field projection>", U_PLUS, U_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_FIELD_PROJECTION, "<req coma field projection>");
+    r = reqComaFieldProjection_0(b, l + 1);
+    r = r && qid(b, l + 1);
+    r = r && reqComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqComaFieldProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaFieldProjection_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // datum reqParamsAndAnnotations
+  public static boolean reqComaKeyProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeyProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_KEY_PROJECTION, "<req coma key projection>");
+    r = datum(b, l + 1);
+    r = r && reqParamsAndAnnotations(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '[' ( '*' | ( ( reqComaKeyProjection ','? )* ) ) ']'
+  public static boolean reqComaKeysProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeysProjection")) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_KEYS_PROJECTION, null);
+    r = consumeToken(b, U_BRACKET_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqComaKeysProjection_1(b, l + 1));
+    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '*' | ( ( reqComaKeyProjection ','? )* )
+  private static boolean reqComaKeysProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeysProjection_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_STAR);
+    if (!r) r = reqComaKeysProjection_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ( reqComaKeyProjection ','? )*
+  private static boolean reqComaKeysProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeysProjection_1_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqComaKeysProjection_1_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqComaKeysProjection_1_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqComaKeyProjection ','?
+  private static boolean reqComaKeysProjection_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeysProjection_1_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaKeyProjection(b, l + 1);
+    r = r && reqComaKeysProjection_1_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqComaKeysProjection_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaKeysProjection_1_1_0_1")) return false;
+    consumeToken(b, U_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '*' '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
+  public static boolean reqComaListModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaListModelProjection")) return false;
+    if (!nextTokenIs(b, U_STAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_LIST_MODEL_PROJECTION, null);
+    r = consumeToken(b, U_STAR);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqComaListModelProjection_1(b, l + 1));
+    r = p && reqComaListModelProjection_2(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '+'?
+  private static boolean reqComaListModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaListModelProjection_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
+  private static boolean reqComaListModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaListModelProjection_2")) return false;
+    reqComaListModelProjection_2_0(b, l + 1);
+    return true;
+  }
+
+  // reqBracedComaEntityProjection | reqComaEntityProjection
+  private static boolean reqComaListModelProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaListModelProjection_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqBracedComaEntityProjection(b, l + 1);
+    if (!r) r = reqComaEntityProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqComaKeysProjection '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
+  public static boolean reqComaMapModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMapModelProjection")) return false;
+    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaKeysProjection(b, l + 1);
+    r = r && reqComaMapModelProjection_1(b, l + 1);
+    r = r && reqComaMapModelProjection_2(b, l + 1);
+    exit_section_(b, m, U_REQ_COMA_MAP_MODEL_PROJECTION, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqComaMapModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMapModelProjection_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
+  private static boolean reqComaMapModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMapModelProjection_2")) return false;
+    reqComaMapModelProjection_2_0(b, l + 1);
+    return true;
+  }
+
+  // reqBracedComaEntityProjection | reqComaEntityProjection
+  private static boolean reqComaMapModelProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMapModelProjection_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqBracedComaEntityProjection(b, l + 1);
+    if (!r) r = reqComaEntityProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( ( reqComaRecordModelProjection
+  //                              | reqComaListModelProjection
+  //                              | reqComaMapModelProjection
+  //                              ) reqModelPolymorphicTail ?
+  //                            )?
+  public static boolean reqComaModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjection")) return false;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_MODEL_PROJECTION, "<req coma model projection>");
+    reqComaModelProjection_0(b, l + 1);
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  // ( reqComaRecordModelProjection
+  //                              | reqComaListModelProjection
+  //                              | reqComaMapModelProjection
+  //                              ) reqModelPolymorphicTail ?
+  private static boolean reqComaModelProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaModelProjection_0_0(b, l + 1);
+    r = r && reqComaModelProjection_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqComaRecordModelProjection
+  //                              | reqComaListModelProjection
+  //                              | reqComaMapModelProjection
+  private static boolean reqComaModelProjection_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjection_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaRecordModelProjection(b, l + 1);
+    if (!r) r = reqComaListModelProjection(b, l + 1);
+    if (!r) r = reqComaMapModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqModelPolymorphicTail ?
+  private static boolean reqComaModelProjection_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjection_0_1")) return false;
+    reqModelPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // reqParamsAndAnnotations reqComaModelProjection reqModelMeta?
+  static boolean reqComaModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqComaModelProjection(b, l + 1);
+    r = r && reqComaModelProjectionWithProperties_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqModelMeta?
+  private static boolean reqComaModelProjectionWithProperties_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjectionWithProperties_2")) return false;
+    reqModelMeta(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ':' '(' (reqComaMultiTagProjectionItem ','?)* ')'
+  public static boolean reqComaMultiTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjection")) return false;
+    if (!nextTokenIs(b, U_COLON)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_MULTI_TAG_PROJECTION, null);
+    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
+    p = r; // pin = 2
+    r = r && report_error_(b, reqComaMultiTagProjection_2(b, l + 1));
+    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (reqComaMultiTagProjectionItem ','?)*
+  private static boolean reqComaMultiTagProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjection_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqComaMultiTagProjection_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqComaMultiTagProjection_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqComaMultiTagProjectionItem ','?
+  private static boolean reqComaMultiTagProjection_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjection_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaMultiTagProjectionItem(b, l + 1);
+    r = r && reqComaMultiTagProjection_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqComaMultiTagProjection_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjection_2_0_1")) return false;
+    consumeToken(b, U_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '+'? tagName reqComaModelProjectionWithProperties
+  public static boolean reqComaMultiTagProjectionItem(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjectionItem")) return false;
+    if (!nextTokenIs(b, "<req coma multi tag projection item>", U_PLUS, U_ID)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM, "<req coma multi tag projection item>");
+    r = reqComaMultiTagProjectionItem_0(b, l + 1);
+    r = r && tagName(b, l + 1);
+    r = r && reqComaModelProjectionWithProperties(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqComaMultiTagProjectionItem_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaMultiTagProjectionItem_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' ( '*' | ( (reqComaFieldProjection ','?)* ) ) ')'
+  public static boolean reqComaRecordModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaRecordModelProjection")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_RECORD_MODEL_PROJECTION, null);
+    r = consumeToken(b, U_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqComaRecordModelProjection_1(b, l + 1));
+    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '*' | ( (reqComaFieldProjection ','?)* )
+  private static boolean reqComaRecordModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaRecordModelProjection_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_STAR);
+    if (!r) r = reqComaRecordModelProjection_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (reqComaFieldProjection ','?)*
+  private static boolean reqComaRecordModelProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaRecordModelProjection_1_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqComaRecordModelProjection_1_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqComaRecordModelProjection_1_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqComaFieldProjection ','?
+  private static boolean reqComaRecordModelProjection_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaRecordModelProjection_1_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaFieldProjection(b, l + 1);
+    r = r && reqComaRecordModelProjection_1_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqComaRecordModelProjection_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaRecordModelProjection_1_1_0_1")) return false;
+    consumeToken(b, U_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ( ( ':' '+'? tagName) | '+' )? reqComaModelProjectionWithProperties
+  public static boolean reqComaSingleTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaSingleTagProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_SINGLE_TAG_PROJECTION, "<req coma single tag projection>");
+    r = reqComaSingleTagProjection_0(b, l + 1);
+    r = r && reqComaModelProjectionWithProperties(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( ( ':' '+'? tagName) | '+' )?
+  private static boolean reqComaSingleTagProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaSingleTagProjection_0")) return false;
+    reqComaSingleTagProjection_0_0(b, l + 1);
+    return true;
+  }
+
+  // ( ':' '+'? tagName) | '+'
+  private static boolean reqComaSingleTagProjection_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaSingleTagProjection_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaSingleTagProjection_0_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, U_PLUS);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ':' '+'? tagName
+  private static boolean reqComaSingleTagProjection_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaSingleTagProjection_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_COLON);
+    r = r && reqComaSingleTagProjection_0_0_0_1(b, l + 1);
+    r = r && tagName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqComaSingleTagProjection_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaSingleTagProjection_0_0_0_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' (reqEntityMultiTailItem ','?)* ')'
+  public static boolean reqEntityMultiTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityMultiTail")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ENTITY_MULTI_TAIL, null);
+    r = consumeToken(b, U_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqEntityMultiTail_1(b, l + 1));
+    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (reqEntityMultiTailItem ','?)*
+  private static boolean reqEntityMultiTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityMultiTail_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqEntityMultiTail_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqEntityMultiTail_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqEntityMultiTailItem ','?
+  private static boolean reqEntityMultiTail_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityMultiTail_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqEntityMultiTailItem(b, l + 1);
+    r = r && reqEntityMultiTail_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqEntityMultiTail_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityMultiTail_1_0_1")) return false;
+    consumeToken(b, U_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // typeRef reqComaEntityProjection
+  public static boolean reqEntityMultiTailItem(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityMultiTailItem")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ENTITY_MULTI_TAIL_ITEM, "<req entity multi tail item>");
+    r = typeRef(b, l + 1);
+    r = r && reqComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ':' '~' ( reqEntitySingleTail | reqEntityMultiTail )
+  public static boolean reqEntityPolymorphicTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityPolymorphicTail")) return false;
+    if (!nextTokenIs(b, U_COLON)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ENTITY_POLYMORPHIC_TAIL, null);
+    r = consumeTokens(b, 2, U_COLON, U_TILDA);
+    p = r; // pin = 2
+    r = r && reqEntityPolymorphicTail_2(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // reqEntitySingleTail | reqEntityMultiTail
+  private static boolean reqEntityPolymorphicTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityPolymorphicTail_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqEntitySingleTail(b, l + 1);
+    if (!r) r = reqEntityMultiTail(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // typeRef reqComaEntityProjection
+  public static boolean reqEntitySingleTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntitySingleTail")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ENTITY_SINGLE_TAIL, "<req entity single tail>");
+    r = typeRef(b, l + 1);
+    r = r && reqComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // reqVarPath
   public static boolean reqFieldPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqFieldPath")) return false;
@@ -906,18 +1448,104 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' reqOutputTrunkKeyProjection reqVarPath
+  // '/' reqTrunkKeyProjection reqVarPath
   public static boolean reqMapModelPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqMapModelPath")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_MAP_MODEL_PATH, null);
     r = consumeToken(b, U_SLASH);
-    r = r && reqOutputTrunkKeyProjection(b, l + 1);
+    r = r && reqTrunkKeyProjection(b, l + 1);
     p = r; // pin = 2
     r = r && reqVarPath(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // '@' '+'? reqComaModelProjection
+  public static boolean reqModelMeta(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMeta")) return false;
+    if (!nextTokenIs(b, U_AT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_AT);
+    r = r && reqModelMeta_1(b, l + 1);
+    r = r && reqComaModelProjection(b, l + 1);
+    exit_section_(b, m, U_REQ_MODEL_META, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqModelMeta_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMeta_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '(' (reqModelMultiTailItem ','?)* ')'
+  public static boolean reqModelMultiTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTail")) return false;
+    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_MULTI_TAIL, null);
+    r = consumeToken(b, U_PAREN_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, reqModelMultiTail_1(b, l + 1));
+    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (reqModelMultiTailItem ','?)*
+  private static boolean reqModelMultiTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTail_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!reqModelMultiTail_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "reqModelMultiTail_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // reqModelMultiTailItem ','?
+  private static boolean reqModelMultiTail_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTail_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqModelMultiTailItem(b, l + 1);
+    r = r && reqModelMultiTail_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean reqModelMultiTail_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTail_1_0_1")) return false;
+    consumeToken(b, U_COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // '+'? typeRef reqComaModelProjectionWithProperties
+  public static boolean reqModelMultiTailItem(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTailItem")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_MULTI_TAIL_ITEM, "<req model multi tail item>");
+    r = reqModelMultiTailItem_0(b, l + 1);
+    r = r && typeRef(b, l + 1);
+    r = r && reqComaModelProjectionWithProperties(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqModelMultiTailItem_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelMultiTailItem_0")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -945,1065 +1573,79 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' reqOutputComaVarProjection ')'
-  static boolean reqOutputBracedComaVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputBracedComaVarProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_PAREN_LEFT);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    r = r && consumeToken(b, U_PAREN_RIGHT);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '+'? qid /* reqParamsAndAnnotations */ reqOutputComaVarProjection
-  public static boolean reqOutputComaFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaFieldProjection")) return false;
-    if (!nextTokenIs(b, "<req output coma field projection>", U_PLUS, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_FIELD_PROJECTION, "<req output coma field projection>");
-    r = reqOutputComaFieldProjection_0(b, l + 1);
-    r = r && qid(b, l + 1);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaFieldProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaFieldProjection_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // datum reqParamsAndAnnotations
-  public static boolean reqOutputComaKeyProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeyProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_KEY_PROJECTION, "<req output coma key projection>");
-    r = datum(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']'
-  public static boolean reqOutputComaKeysProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_KEYS_PROJECTION, null);
-    r = consumeToken(b, U_BRACKET_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqOutputComaKeysProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_BRACKET_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '*' | ( ( reqOutputComaKeyProjection ','? )* )
-  private static boolean reqOutputComaKeysProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_STAR);
-    if (!r) r = reqOutputComaKeysProjection_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ( reqOutputComaKeyProjection ','? )*
-  private static boolean reqOutputComaKeysProjection_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqOutputComaKeysProjection_1_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaKeysProjection_1_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqOutputComaKeyProjection ','?
-  private static boolean reqOutputComaKeysProjection_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaKeyProjection(b, l + 1);
-    r = r && reqOutputComaKeysProjection_1_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqOutputComaKeysProjection_1_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaKeysProjection_1_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '*' '+'? ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
-  public static boolean reqOutputComaListModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection")) return false;
-    if (!nextTokenIs(b, U_STAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_LIST_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_STAR);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqOutputComaListModelProjection_1(b, l + 1));
-    r = p && reqOutputComaListModelProjection_2(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaListModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
-  private static boolean reqOutputComaListModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_2")) return false;
-    reqOutputComaListModelProjection_2_0(b, l + 1);
-    return true;
-  }
-
-  // reqOutputBracedComaVarProjection | reqOutputComaVarProjection
-  private static boolean reqOutputComaListModelProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaListModelProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputBracedComaVarProjection(b, l + 1);
-    if (!r) r = reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqOutputComaKeysProjection '+'? ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
-  public static boolean reqOutputComaMapModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection")) return false;
-    if (!nextTokenIs(b, U_BRACKET_LEFT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaKeysProjection(b, l + 1);
-    r = r && reqOutputComaMapModelProjection_1(b, l + 1);
-    r = r && reqOutputComaMapModelProjection_2(b, l + 1);
-    exit_section_(b, m, U_REQ_OUTPUT_COMA_MAP_MODEL_PROJECTION, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaMapModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
-  private static boolean reqOutputComaMapModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_2")) return false;
-    reqOutputComaMapModelProjection_2_0(b, l + 1);
-    return true;
-  }
-
-  // reqOutputBracedComaVarProjection | reqOutputComaVarProjection
-  private static boolean reqOutputComaMapModelProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMapModelProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputBracedComaVarProjection(b, l + 1);
-    if (!r) r = reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( ( reqOutputComaRecordModelProjection
-  //                                    | reqOutputComaListModelProjection
-  //                                    | reqOutputComaMapModelProjection
-  //                                    ) reqOutputModelPolymorphicTail ?
-  //                                  )?
-  public static boolean reqOutputComaModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjection")) return false;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MODEL_PROJECTION, "<req output coma model projection>");
-    reqOutputComaModelProjection_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // ( reqOutputComaRecordModelProjection
-  //                                    | reqOutputComaListModelProjection
-  //                                    | reqOutputComaMapModelProjection
-  //                                    ) reqOutputModelPolymorphicTail ?
-  private static boolean reqOutputComaModelProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaModelProjection_0_0(b, l + 1);
-    r = r && reqOutputComaModelProjection_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputComaRecordModelProjection
-  //                                    | reqOutputComaListModelProjection
-  //                                    | reqOutputComaMapModelProjection
-  private static boolean reqOutputComaModelProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaRecordModelProjection(b, l + 1);
-    if (!r) r = reqOutputComaListModelProjection(b, l + 1);
-    if (!r) r = reqOutputComaMapModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelPolymorphicTail ?
-  private static boolean reqOutputComaModelProjection_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjection_0_1")) return false;
-    reqOutputModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
-  static boolean reqOutputComaModelProjectionWithProperties(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjectionWithProperties")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqOutputComaModelProjection(b, l + 1);
-    r = r && reqOutputComaModelProjectionWithProperties_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelMeta?
-  private static boolean reqOutputComaModelProjectionWithProperties_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaModelProjectionWithProperties_2")) return false;
-    reqOutputModelMeta(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')'
-  public static boolean reqOutputComaMultiTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjection")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION, null);
-    r = consumeTokens(b, 2, U_COLON, U_PAREN_LEFT);
-    p = r; // pin = 2
-    r = r && report_error_(b, reqOutputComaMultiTagProjection_2(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqOutputComaMultiTagProjectionItem ','?)*
-  private static boolean reqOutputComaMultiTagProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjection_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqOutputComaMultiTagProjection_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaMultiTagProjection_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqOutputComaMultiTagProjectionItem ','?
-  private static boolean reqOutputComaMultiTagProjection_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjection_2_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaMultiTagProjectionItem(b, l + 1);
-    r = r && reqOutputComaMultiTagProjection_2_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqOutputComaMultiTagProjection_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjection_2_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '+'? tagName reqOutputComaModelProjectionWithProperties
-  public static boolean reqOutputComaMultiTagProjectionItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjectionItem")) return false;
-    if (!nextTokenIs(b, "<req output coma multi tag projection item>", U_PLUS, U_ID)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_MULTI_TAG_PROJECTION_ITEM, "<req output coma multi tag projection item>");
-    r = reqOutputComaMultiTagProjectionItem_0(b, l + 1);
-    r = r && tagName(b, l + 1);
-    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaMultiTagProjectionItem_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaMultiTagProjectionItem_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '(' ( '*' | ( (reqOutputComaFieldProjection ','?)* ) ) ')'
-  public static boolean reqOutputComaRecordModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_RECORD_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqOutputComaRecordModelProjection_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '*' | ( (reqOutputComaFieldProjection ','?)* )
-  private static boolean reqOutputComaRecordModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_STAR);
-    if (!r) r = reqOutputComaRecordModelProjection_1_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (reqOutputComaFieldProjection ','?)*
-  private static boolean reqOutputComaRecordModelProjection_1_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqOutputComaRecordModelProjection_1_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputComaRecordModelProjection_1_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqOutputComaFieldProjection ','?
-  private static boolean reqOutputComaRecordModelProjection_1_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaFieldProjection(b, l + 1);
-    r = r && reqOutputComaRecordModelProjection_1_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqOutputComaRecordModelProjection_1_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaRecordModelProjection_1_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ( ( ':' '+'? tagName) | '+' )? reqOutputComaModelProjectionWithProperties
-  public static boolean reqOutputComaSingleTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_SINGLE_TAG_PROJECTION, "<req output coma single tag projection>");
-    r = reqOutputComaSingleTagProjection_0(b, l + 1);
-    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ( ':' '+'? tagName) | '+' )?
-  private static boolean reqOutputComaSingleTagProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection_0")) return false;
-    reqOutputComaSingleTagProjection_0_0(b, l + 1);
-    return true;
-  }
-
-  // ( ':' '+'? tagName) | '+'
-  private static boolean reqOutputComaSingleTagProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaSingleTagProjection_0_0_0(b, l + 1);
-    if (!r) r = consumeToken(b, U_PLUS);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ':' '+'? tagName
-  private static boolean reqOutputComaSingleTagProjection_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection_0_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && reqOutputComaSingleTagProjection_0_0_0_1(b, l + 1);
-    r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputComaSingleTagProjection_0_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaSingleTagProjection_0_0_0_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqOutputNamedComaVarProjection | reqOutputUnnamedOrRefComaVarProjection
-  public static boolean reqOutputComaVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_VAR_PROJECTION, "<req output coma var projection>");
-    r = reqOutputNamedComaVarProjection(b, l + 1);
-    if (!r) r = reqOutputUnnamedOrRefComaVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '$' qid
-  public static boolean reqOutputComaVarProjectionRef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputComaVarProjectionRef")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_COMA_VAR_PROJECTION_REF, null);
-    r = consumeToken(b, U_DOLLAR);
-    p = r; // pin = 1
-    r = r && qid(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // '@' '+'? reqOutputComaModelProjection
-  public static boolean reqOutputModelMeta(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMeta")) return false;
-    if (!nextTokenIs(b, U_AT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_AT);
-    r = r && reqOutputModelMeta_1(b, l + 1);
-    r = r && reqOutputComaModelProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_OUTPUT_MODEL_META, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputModelMeta_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMeta_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqOutputModelMultiTailItem ','?)* ')'
-  public static boolean reqOutputModelMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqOutputModelMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqOutputModelMultiTailItem ','?)*
-  private static boolean reqOutputModelMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqOutputModelMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputModelMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqOutputModelMultiTailItem ','?
-  private static boolean reqOutputModelMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputModelMultiTailItem(b, l + 1);
-    r = r && reqOutputModelMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqOutputModelMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '+'? typeRef reqOutputComaModelProjectionWithProperties
-  public static boolean reqOutputModelMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_MULTI_TAIL_ITEM, "<req output model multi tail item>");
-    r = reqOutputModelMultiTailItem_0(b, l + 1);
-    r = r && typeRef(b, l + 1);
-    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputModelMultiTailItem_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelMultiTailItem_0")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail )
-  public static boolean reqOutputModelPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelPolymorphicTail")) return false;
+  // '~' ( reqModelSingleTail | reqModelMultiTail )
+  public static boolean reqModelPolymorphicTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPolymorphicTail")) return false;
     if (!nextTokenIs(b, U_TILDA)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, U_TILDA);
-    r = r && reqOutputModelPolymorphicTail_1(b, l + 1);
-    exit_section_(b, m, U_REQ_OUTPUT_MODEL_POLYMORPHIC_TAIL, r);
+    r = r && reqModelPolymorphicTail_1(b, l + 1);
+    exit_section_(b, m, U_REQ_MODEL_POLYMORPHIC_TAIL, r);
     return r;
   }
 
-  // reqOutputModelSingleTail | reqOutputModelMultiTail
-  private static boolean reqOutputModelPolymorphicTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelPolymorphicTail_1")) return false;
+  // reqModelSingleTail | reqModelMultiTail
+  private static boolean reqModelPolymorphicTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPolymorphicTail_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = reqOutputModelSingleTail(b, l + 1);
-    if (!r) r = reqOutputModelMultiTail(b, l + 1);
+    r = reqModelSingleTail(b, l + 1);
+    if (!r) r = reqModelMultiTail(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '+'? typeRef reqOutputComaModelProjectionWithProperties
-  public static boolean reqOutputModelSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelSingleTail")) return false;
+  // '+'? typeRef reqComaModelProjectionWithProperties
+  public static boolean reqModelSingleTail(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelSingleTail")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_MODEL_SINGLE_TAIL, "<req output model single tail>");
-    r = reqOutputModelSingleTail_0(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_SINGLE_TAIL, "<req model single tail>");
+    r = reqModelSingleTail_0(b, l + 1);
     r = r && typeRef(b, l + 1);
-    r = r && reqOutputComaModelProjectionWithProperties(b, l + 1);
+    r = r && reqComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // '+'?
-  private static boolean reqOutputModelSingleTail_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputModelSingleTail_0")) return false;
+  private static boolean reqModelSingleTail_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelSingleTail_0")) return false;
     consumeToken(b, U_PLUS);
     return true;
   }
 
   /* ********************************************************** */
-  // '$' qid '=' reqOutputUnnamedOrRefComaVarProjection
-  public static boolean reqOutputNamedComaVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputNamedComaVarProjection")) return false;
+  // '$' qid '=' reqUnnamedOrRefComaEntityProjection
+  public static boolean reqNamedComaEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqNamedComaEntityProjection")) return false;
     if (!nextTokenIs(b, U_DOLLAR)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_NAMED_COMA_VAR_PROJECTION, null);
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_NAMED_COMA_ENTITY_PROJECTION, null);
     r = consumeToken(b, U_DOLLAR);
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, U_EQ);
     p = r; // pin = 3
-    r = r && reqOutputUnnamedOrRefComaVarProjection(b, l + 1);
+    r = r && reqUnnamedOrRefComaEntityProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   /* ********************************************************** */
-  // '$' qid '=' reqOutputUnnamedOrRefTrunkVarProjection
-  public static boolean reqOutputNamedTrunkVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputNamedTrunkVarProjection")) return false;
+  // '$' qid '=' reqUnnamedOrRefTrunkEntityProjection
+  public static boolean reqNamedTrunkEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqNamedTrunkEntityProjection")) return false;
     if (!nextTokenIs(b, U_DOLLAR)) return false;
     boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_NAMED_TRUNK_VAR_PROJECTION, null);
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_NAMED_TRUNK_ENTITY_PROJECTION, null);
     r = consumeToken(b, U_DOLLAR);
     r = r && qid(b, l + 1);
     r = r && consumeToken(b, U_EQ);
     p = r; // pin = 3
-    r = r && reqOutputUnnamedOrRefTrunkVarProjection(b, l + 1);
+    r = r && reqUnnamedOrRefTrunkEntityProjection(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
-  }
-
-  /* ********************************************************** */
-  // ':' '*'
-  public static boolean reqOutputStarTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputStarTagProjection")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, U_COLON, U_STAR);
-    exit_section_(b, m, U_REQ_OUTPUT_STAR_TAG_PROJECTION, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqOutputTrunkVarProjection
-  public static boolean reqOutputTrunkFieldProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkFieldProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, "<req output trunk field projection>");
-    r = reqOutputTrunkVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // datum reqParamsAndAnnotations
-  static boolean reqOutputTrunkKeyProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkKeyProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = datum(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '/' reqOutputTrunkKeyProjection '+'? reqOutputTrunkVarProjection
-  public static boolean reqOutputTrunkMapModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkMapModelProjection")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && reqOutputTrunkKeyProjection(b, l + 1);
-    r = r && reqOutputTrunkMapModelProjection_2(b, l + 1);
-    r = r && reqOutputTrunkVarProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_OUTPUT_TRUNK_MAP_MODEL_PROJECTION, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputTrunkMapModelProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkMapModelProjection_2")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ( reqOutputTrunkRecordModelProjection // no tails on paths
-  //                                   | reqOutputTrunkMapModelProjection
-  //                                   | ( reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail? )
-  //                                   | ( reqOutputComaMapModelProjection reqOutputModelPolymorphicTail? )
-  //                                   | ( reqOutputComaListModelProjection reqOutputModelPolymorphicTail? )
-  //                                   )?
-  public static boolean reqOutputTrunkModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection")) return false;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_MODEL_PROJECTION, "<req output trunk model projection>");
-    reqOutputTrunkModelProjection_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // reqOutputTrunkRecordModelProjection // no tails on paths
-  //                                   | reqOutputTrunkMapModelProjection
-  //                                   | ( reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail? )
-  //                                   | ( reqOutputComaMapModelProjection reqOutputModelPolymorphicTail? )
-  //                                   | ( reqOutputComaListModelProjection reqOutputModelPolymorphicTail? )
-  private static boolean reqOutputTrunkModelProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputTrunkRecordModelProjection(b, l + 1);
-    if (!r) r = reqOutputTrunkMapModelProjection(b, l + 1);
-    if (!r) r = reqOutputTrunkModelProjection_0_2(b, l + 1);
-    if (!r) r = reqOutputTrunkModelProjection_0_3(b, l + 1);
-    if (!r) r = reqOutputTrunkModelProjection_0_4(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaRecordModelProjection(b, l + 1);
-    r = r && reqOutputTrunkModelProjection_0_2_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_2_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_2_1")) return false;
-    reqOutputModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  // reqOutputComaMapModelProjection reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_3")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaMapModelProjection(b, l + 1);
-    r = r && reqOutputTrunkModelProjection_0_3_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_3_1")) return false;
-    reqOutputModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  // reqOutputComaListModelProjection reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputComaListModelProjection(b, l + 1);
-    r = r && reqOutputTrunkModelProjection_0_4_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputModelPolymorphicTail?
-  private static boolean reqOutputTrunkModelProjection_0_4_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjection_0_4_1")) return false;
-    reqOutputModelPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqParamsAndAnnotations reqOutputTrunkModelProjection
-  static boolean reqOutputTrunkModelProjectionWithProperties(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkModelProjectionWithProperties")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqParamsAndAnnotations(b, l + 1);
-    r = r && reqOutputTrunkModelProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '/' '+'? qid reqOutputTrunkFieldProjection
-  public static boolean reqOutputTrunkRecordModelProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkRecordModelProjection")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_RECORD_MODEL_PROJECTION, null);
-    r = consumeToken(b, U_SLASH);
-    r = r && reqOutputTrunkRecordModelProjection_1(b, l + 1);
-    r = r && qid(b, l + 1);
-    p = r; // pin = 3
-    r = r && reqOutputTrunkFieldProjection(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean reqOutputTrunkRecordModelProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkRecordModelProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // ( ( ':' '+'? tagName ) | '+' )? reqOutputTrunkModelProjectionWithProperties reqOutputModelMeta?
-  public static boolean reqOutputTrunkSingleTagProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_SINGLE_TAG_PROJECTION, "<req output trunk single tag projection>");
-    r = reqOutputTrunkSingleTagProjection_0(b, l + 1);
-    r = r && reqOutputTrunkModelProjectionWithProperties(b, l + 1);
-    r = r && reqOutputTrunkSingleTagProjection_2(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ( ':' '+'? tagName ) | '+' )?
-  private static boolean reqOutputTrunkSingleTagProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_0")) return false;
-    reqOutputTrunkSingleTagProjection_0_0(b, l + 1);
-    return true;
-  }
-
-  // ( ':' '+'? tagName ) | '+'
-  private static boolean reqOutputTrunkSingleTagProjection_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputTrunkSingleTagProjection_0_0_0(b, l + 1);
-    if (!r) r = consumeToken(b, U_PLUS);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ':' '+'? tagName
-  private static boolean reqOutputTrunkSingleTagProjection_0_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_0_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && reqOutputTrunkSingleTagProjection_0_0_0_1(b, l + 1);
-    r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '+'?
-  private static boolean reqOutputTrunkSingleTagProjection_0_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_0_0_0_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  // reqOutputModelMeta?
-  private static boolean reqOutputTrunkSingleTagProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkSingleTagProjection_2")) return false;
-    reqOutputModelMeta(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqOutputNamedTrunkVarProjection | reqOutputUnnamedOrRefTrunkVarProjection
-  public static boolean reqOutputTrunkVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, "<req output trunk var projection>");
-    r = reqOutputNamedTrunkVarProjection(b, l + 1);
-    if (!r) r = reqOutputUnnamedOrRefTrunkVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '$' qid
-  public static boolean reqOutputTrunkVarProjectionRef(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputTrunkVarProjectionRef")) return false;
-    if (!nextTokenIs(b, U_DOLLAR)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_TRUNK_VAR_PROJECTION_REF, null);
-    r = consumeToken(b, U_DOLLAR);
-    p = r; // pin = 1
-    r = r && qid(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  /* ********************************************************** */
-  // ( reqOutputStarTagProjection
-  //                                       | reqOutputComaMultiTagProjection
-  //                                       | reqOutputComaSingleTagProjection
-  //                                       ) reqOutputVarPolymorphicTail?
-  public static boolean reqOutputUnnamedComaVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_COMA_VAR_PROJECTION, "<req output unnamed coma var projection>");
-    r = reqOutputUnnamedComaVarProjection_0(b, l + 1);
-    r = r && reqOutputUnnamedComaVarProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // reqOutputStarTagProjection
-  //                                       | reqOutputComaMultiTagProjection
-  //                                       | reqOutputComaSingleTagProjection
-  private static boolean reqOutputUnnamedComaVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputStarTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputVarPolymorphicTail?
-  private static boolean reqOutputUnnamedComaVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedComaVarProjection_1")) return false;
-    reqOutputVarPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // reqOutputComaVarProjectionRef | reqOutputUnnamedComaVarProjection
-  public static boolean reqOutputUnnamedOrRefComaVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedOrRefComaVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_OR_REF_COMA_VAR_PROJECTION, "<req output unnamed or ref coma var projection>");
-    r = reqOutputComaVarProjectionRef(b, l + 1);
-    if (!r) r = reqOutputUnnamedComaVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // reqOutputTrunkVarProjectionRef | reqOutputUnnamedTrunkVarProjection
-  public static boolean reqOutputUnnamedOrRefTrunkVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedOrRefTrunkVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_OR_REF_TRUNK_VAR_PROJECTION, "<req output unnamed or ref trunk var projection>");
-    r = reqOutputTrunkVarProjectionRef(b, l + 1);
-    if (!r) r = reqOutputUnnamedTrunkVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ( reqOutputStarTagProjection
-  //                                 | reqOutputComaMultiTagProjection
-  //                                 | reqOutputTrunkSingleTagProjection
-  //                                 ) reqOutputVarPolymorphicTail?
-  public static boolean reqOutputUnnamedTrunkVarProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_UNNAMED_TRUNK_VAR_PROJECTION, "<req output unnamed trunk var projection>");
-    r = reqOutputUnnamedTrunkVarProjection_0(b, l + 1);
-    r = r && reqOutputUnnamedTrunkVarProjection_1(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // reqOutputStarTagProjection
-  //                                 | reqOutputComaMultiTagProjection
-  //                                 | reqOutputTrunkSingleTagProjection
-  private static boolean reqOutputUnnamedTrunkVarProjection_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputStarTagProjection(b, l + 1);
-    if (!r) r = reqOutputComaMultiTagProjection(b, l + 1);
-    if (!r) r = reqOutputTrunkSingleTagProjection(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // reqOutputVarPolymorphicTail?
-  private static boolean reqOutputUnnamedTrunkVarProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputUnnamedTrunkVarProjection_1")) return false;
-    reqOutputVarPolymorphicTail(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '(' (reqOutputVarMultiTailItem ','?)* ')'
-  public static boolean reqOutputVarMultiTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarMultiTail")) return false;
-    if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_MULTI_TAIL, null);
-    r = consumeToken(b, U_PAREN_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, reqOutputVarMultiTail_1(b, l + 1));
-    r = p && consumeToken(b, U_PAREN_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (reqOutputVarMultiTailItem ','?)*
-  private static boolean reqOutputVarMultiTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarMultiTail_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!reqOutputVarMultiTail_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "reqOutputVarMultiTail_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // reqOutputVarMultiTailItem ','?
-  private static boolean reqOutputVarMultiTail_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarMultiTail_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputVarMultiTailItem(b, l + 1);
-    r = r && reqOutputVarMultiTail_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean reqOutputVarMultiTail_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarMultiTail_1_0_1")) return false;
-    consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqOutputComaVarProjection
-  public static boolean reqOutputVarMultiTailItem(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarMultiTailItem")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_MULTI_TAIL_ITEM, "<req output var multi tail item>");
-    r = typeRef(b, l + 1);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // ':' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail )
-  public static boolean reqOutputVarPolymorphicTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarPolymorphicTail")) return false;
-    if (!nextTokenIs(b, U_COLON)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_POLYMORPHIC_TAIL, null);
-    r = consumeTokens(b, 2, U_COLON, U_TILDA);
-    p = r; // pin = 2
-    r = r && reqOutputVarPolymorphicTail_2(b, l + 1);
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // reqOutputVarSingleTail | reqOutputVarMultiTail
-  private static boolean reqOutputVarPolymorphicTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarPolymorphicTail_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = reqOutputVarSingleTail(b, l + 1);
-    if (!r) r = reqOutputVarMultiTail(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // typeRef reqOutputComaVarProjection
-  public static boolean reqOutputVarSingleTail(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqOutputVarSingleTail")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_OUTPUT_VAR_SINGLE_TAIL, "<req output var single tail>");
-    r = typeRef(b, l + 1);
-    r = r && reqOutputComaVarProjection(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
   }
 
   /* ********************************************************** */
@@ -2056,6 +1698,364 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = r && reqFieldPathEntry(b, l + 1);
     exit_section_(b, m, U_REQ_RECORD_MODEL_PATH, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // ':' '*'
+  public static boolean reqStarTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqStarTagProjection")) return false;
+    if (!nextTokenIs(b, U_COLON)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, U_COLON, U_STAR);
+    exit_section_(b, m, U_REQ_STAR_TAG_PROJECTION, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqNamedTrunkEntityProjection | reqUnnamedOrRefTrunkEntityProjection
+  public static boolean reqTrunkEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_ENTITY_PROJECTION, "<req trunk entity projection>");
+    r = reqNamedTrunkEntityProjection(b, l + 1);
+    if (!r) r = reqUnnamedOrRefTrunkEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '$' qid
+  public static boolean reqTrunkEntityProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkEntityProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_ENTITY_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
+  // reqTrunkEntityProjection
+  public static boolean reqTrunkFieldProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkFieldProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_FIELD_PROJECTION, "<req trunk field projection>");
+    r = reqTrunkEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // datum reqParamsAndAnnotations
+  static boolean reqTrunkKeyProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkKeyProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = datum(b, l + 1);
+    r = r && reqParamsAndAnnotations(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '/' reqTrunkKeyProjection '+'? reqTrunkEntityProjection
+  public static boolean reqTrunkMapModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkMapModelProjection")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_SLASH);
+    r = r && reqTrunkKeyProjection(b, l + 1);
+    r = r && reqTrunkMapModelProjection_2(b, l + 1);
+    r = r && reqTrunkEntityProjection(b, l + 1);
+    exit_section_(b, m, U_REQ_TRUNK_MAP_MODEL_PROJECTION, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqTrunkMapModelProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkMapModelProjection_2")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ( reqTrunkRecordModelProjection // no tails on paths
+  //                             | reqTrunkMapModelProjection
+  //                             | ( reqComaRecordModelProjection reqModelPolymorphicTail? )
+  //                             | ( reqComaMapModelProjection reqModelPolymorphicTail? )
+  //                             | ( reqComaListModelProjection reqModelPolymorphicTail? )
+  //                             )?
+  public static boolean reqTrunkModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection")) return false;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_MODEL_PROJECTION, "<req trunk model projection>");
+    reqTrunkModelProjection_0(b, l + 1);
+    exit_section_(b, l, m, true, false, null);
+    return true;
+  }
+
+  // reqTrunkRecordModelProjection // no tails on paths
+  //                             | reqTrunkMapModelProjection
+  //                             | ( reqComaRecordModelProjection reqModelPolymorphicTail? )
+  //                             | ( reqComaMapModelProjection reqModelPolymorphicTail? )
+  //                             | ( reqComaListModelProjection reqModelPolymorphicTail? )
+  private static boolean reqTrunkModelProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqTrunkRecordModelProjection(b, l + 1);
+    if (!r) r = reqTrunkMapModelProjection(b, l + 1);
+    if (!r) r = reqTrunkModelProjection_0_2(b, l + 1);
+    if (!r) r = reqTrunkModelProjection_0_3(b, l + 1);
+    if (!r) r = reqTrunkModelProjection_0_4(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqComaRecordModelProjection reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaRecordModelProjection(b, l + 1);
+    r = r && reqTrunkModelProjection_0_2_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_2_1")) return false;
+    reqModelPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  // reqComaMapModelProjection reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaMapModelProjection(b, l + 1);
+    r = r && reqTrunkModelProjection_0_3_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_3_1")) return false;
+    reqModelPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  // reqComaListModelProjection reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqComaListModelProjection(b, l + 1);
+    r = r && reqTrunkModelProjection_0_4_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqModelPolymorphicTail?
+  private static boolean reqTrunkModelProjection_0_4_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjection_0_4_1")) return false;
+    reqModelPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // reqParamsAndAnnotations reqTrunkModelProjection
+  static boolean reqTrunkModelProjectionWithProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkModelProjectionWithProperties")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqParamsAndAnnotations(b, l + 1);
+    r = r && reqTrunkModelProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '/' '+'? qid reqTrunkFieldProjection
+  public static boolean reqTrunkRecordModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkRecordModelProjection")) return false;
+    if (!nextTokenIs(b, U_SLASH)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_RECORD_MODEL_PROJECTION, null);
+    r = consumeToken(b, U_SLASH);
+    r = r && reqTrunkRecordModelProjection_1(b, l + 1);
+    r = r && qid(b, l + 1);
+    p = r; // pin = 3
+    r = r && reqTrunkFieldProjection(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '+'?
+  private static boolean reqTrunkRecordModelProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkRecordModelProjection_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ( ( ':' '+'? tagName ) | '+' )? reqTrunkModelProjectionWithProperties reqModelMeta?
+  public static boolean reqTrunkSingleTagProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_SINGLE_TAG_PROJECTION, "<req trunk single tag projection>");
+    r = reqTrunkSingleTagProjection_0(b, l + 1);
+    r = r && reqTrunkModelProjectionWithProperties(b, l + 1);
+    r = r && reqTrunkSingleTagProjection_2(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( ( ':' '+'? tagName ) | '+' )?
+  private static boolean reqTrunkSingleTagProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_0")) return false;
+    reqTrunkSingleTagProjection_0_0(b, l + 1);
+    return true;
+  }
+
+  // ( ':' '+'? tagName ) | '+'
+  private static boolean reqTrunkSingleTagProjection_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqTrunkSingleTagProjection_0_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, U_PLUS);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ':' '+'? tagName
+  private static boolean reqTrunkSingleTagProjection_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_COLON);
+    r = r && reqTrunkSingleTagProjection_0_0_0_1(b, l + 1);
+    r = r && tagName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean reqTrunkSingleTagProjection_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_0_0_0_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // reqModelMeta?
+  private static boolean reqTrunkSingleTagProjection_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_2")) return false;
+    reqModelMeta(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // ( reqStarTagProjection
+  //                                       | reqComaMultiTagProjection
+  //                                       | reqComaSingleTagProjection
+  //                                       ) reqEntityPolymorphicTail?
+  public static boolean reqUnnamedComaEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedComaEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_COMA_ENTITY_PROJECTION, "<req unnamed coma entity projection>");
+    r = reqUnnamedComaEntityProjection_0(b, l + 1);
+    r = r && reqUnnamedComaEntityProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqStarTagProjection
+  //                                       | reqComaMultiTagProjection
+  //                                       | reqComaSingleTagProjection
+  private static boolean reqUnnamedComaEntityProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedComaEntityProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqStarTagProjection(b, l + 1);
+    if (!r) r = reqComaMultiTagProjection(b, l + 1);
+    if (!r) r = reqComaSingleTagProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqEntityPolymorphicTail?
+  private static boolean reqUnnamedComaEntityProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedComaEntityProjection_1")) return false;
+    reqEntityPolymorphicTail(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // reqComaEntityProjectionRef | reqUnnamedComaEntityProjection
+  public static boolean reqUnnamedOrRefComaEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedOrRefComaEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION, "<req unnamed or ref coma entity projection>");
+    r = reqComaEntityProjectionRef(b, l + 1);
+    if (!r) r = reqUnnamedComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqTrunkEntityProjectionRef | reqUnnamedTrunkEntityProjection
+  public static boolean reqUnnamedOrRefTrunkEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedOrRefTrunkEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION, "<req unnamed or ref trunk entity projection>");
+    r = reqTrunkEntityProjectionRef(b, l + 1);
+    if (!r) r = reqUnnamedTrunkEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ( reqStarTagProjection
+  //                                     | reqComaMultiTagProjection
+  //                                     | reqTrunkSingleTagProjection
+  //                                     ) reqEntityPolymorphicTail?
+  public static boolean reqUnnamedTrunkEntityProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedTrunkEntityProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION, "<req unnamed trunk entity projection>");
+    r = reqUnnamedTrunkEntityProjection_0(b, l + 1);
+    r = r && reqUnnamedTrunkEntityProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqStarTagProjection
+  //                                     | reqComaMultiTagProjection
+  //                                     | reqTrunkSingleTagProjection
+  private static boolean reqUnnamedTrunkEntityProjection_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedTrunkEntityProjection_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqStarTagProjection(b, l + 1);
+    if (!r) r = reqComaMultiTagProjection(b, l + 1);
+    if (!r) r = reqTrunkSingleTagProjection(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // reqEntityPolymorphicTail?
+  private static boolean reqUnnamedTrunkEntityProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedTrunkEntityProjection_1")) return false;
+    reqEntityPolymorphicTail(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

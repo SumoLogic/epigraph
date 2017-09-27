@@ -30,7 +30,7 @@ import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -51,13 +51,13 @@ public final class WireTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiEntityProjection = EpigraphPsiUtil.parseText(
         projectionString,
         SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(psiEntityProjection, errorsAccumulator);
 
     return runPsiParser(true, context -> {
       OpReferenceContext outputReferenceContext =
@@ -69,7 +69,7 @@ public final class WireTestUtil {
       OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
           false,
-          psiVarProjection,
+          psiEntityProjection,
           resolver,
           outputPsiProcessingContext
       );
@@ -88,9 +88,9 @@ public final class WireTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -101,7 +101,7 @@ public final class WireTestUtil {
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkVarProjection(
+      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,
           false,
           op,

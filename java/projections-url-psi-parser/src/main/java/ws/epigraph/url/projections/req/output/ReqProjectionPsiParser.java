@@ -26,31 +26,31 @@ import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface ReqProjectionPsiParser {
-  @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkVarProjection(
+  @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
-      @NotNull UrlReqOutputTrunkVarProjection psi,
+      @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull StepsAndProjection<ReqEntityProjection> parseComaVarProjection(
+  @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
-      @NotNull UrlReqOutputComaVarProjection psi,
+      @NotNull UrlReqComaEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull ReqEntityProjection createDefaultVarProjection(
+  @NotNull ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
@@ -61,7 +61,7 @@ public interface ReqProjectionPsiParser {
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull OpFieldProjection op,
-      @NotNull UrlReqOutputTrunkFieldProjection psi,
+      @NotNull UrlReqTrunkFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqOutputPsiProcessingContext context) throws PsiProcessingException;
 }
