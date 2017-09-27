@@ -229,10 +229,10 @@ public final class ResourcesSchemaPsiParser {
       if (transformerInputProjectionPsi != null) {
 
         if (inputProjection == null) {
-          @Nullable SchemaOpOutputFieldProjection fieldProjectionPsi =
-              transformerInputProjectionPsi.getOpOutputFieldProjection();
-          SchemaOpOutputVarProjection varProjectionPsi =
-              fieldProjectionPsi == null ? null : fieldProjectionPsi.getOpOutputVarProjection();
+          @Nullable SchemaOpFieldProjection fieldProjectionPsi =
+              transformerInputProjectionPsi.getOpFieldProjection();
+          SchemaOpEntityProjection varProjectionPsi =
+              fieldProjectionPsi == null ? null : fieldProjectionPsi.getOpEntityProjection();
 
           if (varProjectionPsi == null) {
             context.addError(
@@ -245,7 +245,7 @@ public final class ResourcesSchemaPsiParser {
                 context,
                 new OpReferenceContext(ProjectionReferenceName.EMPTY, context.outputReferenceContext(), context)
             );
-            inputProjection = OpInputProjectionsPsiParser.INSTANCE.parseVarProjection(
+            inputProjection = OpInputProjectionsPsiParser.INSTANCE.parseEntityProjection(
                 transformerType.dataType(),
                 false, // todo add '+' to grammar?
                 varProjectionPsi,
@@ -267,10 +267,10 @@ public final class ResourcesSchemaPsiParser {
       if (transformerOutputProjectionPsi != null) {
 
         if (outputProjection == null) {
-          SchemaOpOutputFieldProjection fieldProjectionPsi =
-              transformerOutputProjectionPsi.getOpOutputFieldProjection();
-          SchemaOpOutputVarProjection varProjectionPsi =
-              fieldProjectionPsi == null ? null : fieldProjectionPsi.getOpOutputVarProjection();
+          SchemaOpFieldProjection fieldProjectionPsi =
+              transformerOutputProjectionPsi.getOpFieldProjection();
+          SchemaOpEntityProjection varProjectionPsi =
+              fieldProjectionPsi == null ? null : fieldProjectionPsi.getOpEntityProjection();
 
           if (varProjectionPsi == null) {
             context.addError(
@@ -278,7 +278,7 @@ public final class ResourcesSchemaPsiParser {
                 transformerOutputProjectionPsi
             );
           } else {
-            outputProjection = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
+            outputProjection = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
                 transformerType.dataType(),
                 false,
                 varProjectionPsi,
@@ -461,7 +461,7 @@ public final class ResourcesSchemaPsiParser {
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
+        projectionDefPsi.getOpUnnamedOrRefEntityProjection(),
         resolver,
         context.outputReferenceContext(),
         projectionName -> new OpReferenceContext(
@@ -491,7 +491,7 @@ public final class ResourcesSchemaPsiParser {
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
+        projectionDefPsi.getOpUnnamedOrRefEntityProjection(),
         resolver,
         context.outputReferenceContext(),
         projectionName -> new OpReferenceContext(
@@ -521,7 +521,7 @@ public final class ResourcesSchemaPsiParser {
         projectionDefPsi,
         projectionDefPsi.getQid(),
         projectionDefPsi.getTypeRef(),
-        projectionDefPsi.getOpOutputUnnamedOrRefVarProjection(),
+        projectionDefPsi.getOpUnnamedOrRefEntityProjection(),
         resolver,
         context.deleteReferenceContext(),
         projectionName -> new OpReferenceContext(
@@ -544,7 +544,7 @@ public final class ResourcesSchemaPsiParser {
       @NotNull PsiElement projectionDefPsi,
       @Nullable SchemaQid projectionNamePsi,
       @Nullable SchemaTypeRef typeRefPsi,
-      @Nullable SchemaOpOutputUnnamedOrRefVarProjection unnamedPsi,
+      @Nullable SchemaOpUnnamedOrRefEntityProjection unnamedPsi,
       @NotNull TypesResolver resolver,
       @NotNull OpReferenceContext referenceContext,
       @NotNull Function<String, OpReferenceContext> innerReferenceContextFactory,
@@ -611,12 +611,12 @@ public final class ResourcesSchemaPsiParser {
 
     OpEntityProjection parse(
         @NotNull DataTypeApi type,
-        @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
+        @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
         @NotNull TypesResolver resolver,
         @NotNull OpReferenceContext referenceContext,
         @NotNull ReferenceAwarePsiProcessingContext context) throws PsiProcessingException {
 
-      return baseParser().parseUnnamedOrRefVarProjection(
+      return baseParser().parseUnnamedOrRefEntityProjection(
           type,
           false,
           psi,

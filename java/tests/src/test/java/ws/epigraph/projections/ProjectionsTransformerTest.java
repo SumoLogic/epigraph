@@ -20,12 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.EpigraphTestUtil;
-import ws.epigraph.projections.op.OpProjectionTransformationMap;
-import ws.epigraph.projections.op.OpProjectionTransformer;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.OpFieldProjectionEntry;
-import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.projections.op.OpRecordModelProjection;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.types.DataType;
@@ -47,13 +42,13 @@ public class ProjectionsTransformerTest {
 
     OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
 
-    OpEntityProjection vp = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection vp = EpigraphTestUtil.parseOpEntityProjection(
         (DataType) Person.type.dataType(),
         projection,
         StaticTypesResolver.instance()
     );
 
-    String s = EpigraphTestUtil.printOpOutputVarProjection(vp);
+    String s = EpigraphTestUtil.printOpEntityProjection(vp);
     assertEquals(projection, s);
 
     OpEntityProjection oPersonProjection = vp;
@@ -90,7 +85,7 @@ public class ProjectionsTransformerTest {
 
     vp = t.transform(transformationMap, vp, null);
 
-    s = EpigraphTestUtil.printOpOutputVarProjection(vp);
+    s = EpigraphTestUtil.printOpEntityProjection(vp);
     assertEquals(transformedProjection, s);
 
     // check transformation map

@@ -112,7 +112,7 @@ public final class SchemaProjectionPsiParserUtil {
     if (projectionPsi == null) return keyProjection;
 
     if (keyProjection == null) {
-      @Nullable SchemaOpOutputModelProjection inputModelProjectionPsi = projectionPsi.getOpOutputModelProjection();
+      @Nullable SchemaOpModelProjection inputModelProjectionPsi = projectionPsi.getOpModelProjection();
       if (inputModelProjectionPsi == null) {
         context.addError("Missing key projection definition", projectionPsi);
         return null;
@@ -183,7 +183,7 @@ public final class SchemaProjectionPsiParserUtil {
           context.messages()
       );
 
-    @Nullable SchemaOpOutputModelProjection paramModelProjectionPsi = paramPsi.getOpOutputModelProjection();
+    @Nullable SchemaOpModelProjection paramModelProjectionPsi = paramPsi.getOpModelProjection();
 
 //    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, context);
 //    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), context);

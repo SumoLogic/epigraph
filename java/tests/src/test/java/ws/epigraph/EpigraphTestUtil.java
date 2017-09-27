@@ -22,6 +22,7 @@ import de.uka.ilkd.pp.StringBackend;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.gdata.GData;
@@ -41,7 +42,7 @@ import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaData;
 import ws.epigraph.schema.parser.psi.SchemaDataValue;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
@@ -87,16 +88,16 @@ public final class EpigraphTestUtil {
     }
   }
 
-  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -110,7 +111,7 @@ public final class EpigraphTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -163,7 +164,7 @@ public final class EpigraphTestUtil {
     });
   }
 
-  public static @NotNull String printOpOutputVarProjection(@NotNull OpEntityProjection projection) {
+  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
@@ -173,7 +174,7 @@ public final class EpigraphTestUtil {
             null
         ) {
           @Override
-          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+          public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
             return true;
           }
         };

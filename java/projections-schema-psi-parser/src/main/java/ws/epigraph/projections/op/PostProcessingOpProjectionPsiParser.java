@@ -22,10 +22,10 @@ import ws.epigraph.projections.op.output.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputFieldProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputModelProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputUnnamedOrRefVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpFieldProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpModelProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpUnnamedOrRefEntityProjection;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 
@@ -47,15 +47,15 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   }
 
   @Override
-  public @NotNull OpEntityProjection parseVarProjection(
+  public @NotNull OpEntityProjection parseEntityProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
-      final @NotNull SchemaOpOutputVarProjection psi,
+      final @NotNull SchemaOpEntityProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpEntityProjection res =
-        OpBasicProjectionPsiParser.parseVarProjection(dataType, flagged, psi, typesResolver, context);
+        OpBasicProjectionPsiParser.parseEntityProjection(dataType, flagged, psi, typesResolver, context);
 
     return processEntityProjection(res, context);
   }
@@ -64,7 +64,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   public @NotNull OpFieldProjection parseFieldProjection(
       final @NotNull DataTypeApi fieldType,
       final boolean flagged,
-      final @NotNull SchemaOpOutputFieldProjection psi,
+      final @NotNull SchemaOpFieldProjection psi,
       final @NotNull TypesResolver resolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
@@ -77,15 +77,15 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   }
 
   @Override
-  public @NotNull OpEntityProjection parseUnnamedOrRefVarProjection(
+  public @NotNull OpEntityProjection parseUnnamedOrRefEntityProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
-      final @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
+      final @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpEntityProjection res =
-        OpBasicProjectionPsiParser.parseUnnamedOrRefVarProjection(dataType, flagged, psi, typesResolver, context);
+        OpBasicProjectionPsiParser.parseUnnamedOrRefEntityProjection(dataType, flagged, psi, typesResolver, context);
 
     return processEntityProjection(res, context);
   }
@@ -94,7 +94,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   public @NotNull OpModelProjection<?, ?, ?, ?> parseModelProjection(
       final @NotNull DatumTypeApi type,
       final boolean flagged,
-      final @NotNull SchemaOpOutputModelProjection psi,
+      final @NotNull SchemaOpModelProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 

@@ -44,8 +44,8 @@ public class SchemaOutputProjectionDefImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public SchemaOpOutputUnnamedOrRefVarProjection getOpOutputUnnamedOrRefVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpOutputUnnamedOrRefVarProjection.class);
+  public SchemaOpUnnamedOrRefEntityProjection getOpUnnamedOrRefEntityProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpUnnamedOrRefEntityProjection.class);
   }
 
   @Override

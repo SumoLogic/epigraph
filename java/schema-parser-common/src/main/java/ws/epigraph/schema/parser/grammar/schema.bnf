@@ -362,8 +362,8 @@ transformerBodyPart ::= transformerInputProjection | transformerOutputProjection
   recoverWhile = transformerBodyRecover
 }
 
-transformerInputProjection ::= 'inputProjection' opOutputFieldProjection {pin=1}
-transformerOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
+transformerInputProjection ::= 'inputProjection' opFieldProjection {pin=1}
+transformerOutputProjection ::= 'outputProjection' opFieldProjection {pin=1}
 
 private transformerBodyRecover ::= ! ( '}' | ',' | 'inputProjection' | 'outputProjection' | '@' )
 
@@ -383,19 +383,19 @@ private resourceDefBody ::= '{' ( ( operationDef | projectionDef ) ','?)* '}' {
 
 // projection def
 projectionDef ::= outputProjectionDef | inputProjectionDef | deleteProjectionDef
-outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection {pin=1}
-inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opOutputUnnamedOrRefVarProjection {pin=1}
-deleteProjectionDef ::= 'deleteProjection' qid ':' typeRef '=' '+'? opOutputUnnamedOrRefVarProjection {pin=1}
+outputProjectionDef ::= 'outputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection {pin=1}
+inputProjectionDef ::= 'inputProjection' qid ':' typeRef '=' opUnnamedOrRefEntityProjection {pin=1}
+deleteProjectionDef ::= 'deleteProjection' qid ':' typeRef '=' '+'? opUnnamedOrRefEntityProjection {pin=1}
 
 // operation def parts
 operationName ::= 'default' | qid
 operationMethod ::= 'method' ('GET' | 'POST' | 'PUT' | 'DELETE') {pin=1}// add 'PATCH' too?
 operationPath ::= 'path' opFieldPath {pin=1}
 operationInputType ::= 'inputType' typeRef {pin=1}
-operationInputProjection ::= 'inputProjection' opOutputFieldProjection {pin=1}
+operationInputProjection ::= 'inputProjection' opFieldProjection {pin=1}
 operationOutputType ::= 'outputType' valueTypeRef {pin=1}
-operationOutputProjection ::= 'outputProjection' opOutputFieldProjection {pin=1}
-operationDeleteProjection ::= 'deleteProjection' '+'? opOutputFieldProjection {pin=1}
+operationOutputProjection ::= 'outputProjection' opFieldProjection {pin=1}
+operationDeleteProjection ::= 'deleteProjection' '+'? opFieldProjection {pin=1}
 
 operationDef ::= createOperationDef | readOperationDef | updateOperationDef | deleteOperationDef | customOperationDef {
   name = "Operation declaration"
@@ -464,14 +464,14 @@ customOperationBodyPart ::= operationMethod |
 
 // ============= op projections =============
 
-opParam ::= ';' '+'? qid ':' typeRef opOutputModelProjection /*opParamDefault?*/ /* opParamBody? */ { pin = 1 }
+opParam ::= ';' '+'? qid ':' typeRef opModelProjection /*opParamDefault?*/ /* opParamBody? */ { pin = 1 }
 //private opParamDefault ::= '=' datum { pin=1 }    // default is part of projection now
 //private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 //private opParamBodyPart ::= opParam | annotation
 
 private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
-opKeyProjection ::= 'projection' ':' opOutputModelProjection { pin=1 }
+opKeyProjection ::= 'projection' ':' opModelProjection { pin=1 }
 
 // ---------------------------------------------------------------------------------------------------------------- path
 
@@ -505,65 +505,61 @@ opPathKeyProjectionPart ::= opKeyProjection | opParam | annotation
 
 // -------------------------------------------------------------------------------------------------------------- output
 
-opOutputVarProjection ::= opOutputNamedVarProjection | opOutputUnnamedOrRefVarProjection
-opOutputUnnamedOrRefVarProjection ::= opOutputVarProjectionRef | opOutputUnnamedVarProjection
-opOutputNamedVarProjection ::= '$' qid '=' opOutputUnnamedOrRefVarProjection {pin = 3}
-opOutputVarProjectionRef ::= '$' qid {pin = 1}
-opOutputUnnamedVarProjection ::= ( opOutputMultiTagProjection | opOutputSingleTagProjection ) opOutputVarPolymorphicTail?
-private opOutputBracedVarProjection ::= '(' opOutputVarProjection ')'
+opEntityProjection ::= opNamedEntityProjection | opUnnamedOrRefEntityProjection
+opUnnamedOrRefEntityProjection ::= opEntityProjectionRef | opUnnamedEntityProjection
+opNamedEntityProjection ::= '$' qid '=' opUnnamedOrRefEntityProjection {pin = 3}
+opEntityProjectionRef ::= '$' qid {pin = 1}
+opUnnamedEntityProjection ::= ( opMultiTagProjection | opSingleTagProjection ) opEntityPolymorphicTail?
+private opBracedEntityProjection ::= '(' opEntityProjection ')'
 
-opOutputMultiTagProjection ::= ':' '(' (opOutputMultiTagProjectionItem ','?)* ')' {pin=2}
-opOutputSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? opOutputModelProjection
-opOutputMultiTagProjectionItem ::= '+'? tagName opOutputModelProjection
+opMultiTagProjection ::= ':' '(' (opMultiTagProjectionItem ','?)* ')' {pin=2}
+opSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? opModelProjection
+opMultiTagProjectionItem ::= '+'? tagName opModelProjection
 
-opOutputVarPolymorphicTail ::= ':' '~' ( opOutputVarTailItem | opOutputVarMultiTail ) {pin=2}
-opOutputVarMultiTail ::= '(' (opOutputVarTailItem ','?)* ')' {pin=1}
-opOutputVarTailItem ::= typeRef opOutputVarProjection
+opEntityPolymorphicTail ::= ':' '~' ( opEntityTailItem | opEntityMultiTail ) {pin=2}
+opEntityMultiTail ::= '(' (opEntityTailItem ','?)* ')' {pin=1}
+opEntityTailItem ::= typeRef opEntityProjection
 
-opOutputModelPolymorphicTail ::= '~' ( opOutputModelTailItem | opOutputModelMultiTail ) // {pin=1}
-opOutputModelMultiTail ::= '(' (opOutputModelTailItem ','?)* ')' {pin=1}
-opOutputModelTailItem ::= typeRef opOutputModelProjection
+opModelPolymorphicTail ::= '~' ( opModelTailItem | opModelMultiTail ) // {pin=1}
+opModelMultiTail ::= '(' (opModelTailItem ','?)* ')' {pin=1}
+opModelTailItem ::= typeRef opModelProjection
 
-opOutputModelProjection ::= opOutputNamedModelProjection | opOutputUnnamedOrRefModelProjection
-opOutputUnnamedOrRefModelProjection ::= opOutputModelProjectionRef | opOutputUnnamedModelProjection
-opOutputNamedModelProjection ::= '$' qid '=' opOutputUnnamedOrRefModelProjection {pin = 3}
-opOutputModelProjectionRef ::= '$' qid {pin = 1}
-opOutputUnnamedModelProjection ::= opOutputModelProjectionProperties ?
-                                   ( ( opOutputRecordModelProjection
-                                     | opOutputListModelProjection
-                                     | opOutputMapModelProjection
-                                     ) opOutputModelPolymorphicTail?
+opModelProjection ::= opNamedModelProjection | opUnnamedOrRefModelProjection
+opUnnamedOrRefModelProjection ::= opModelProjectionRef | opUnnamedModelProjection
+opNamedModelProjection ::= '$' qid '=' opUnnamedOrRefModelProjection {pin = 3}
+opModelProjectionRef ::= '$' qid {pin = 1}
+opUnnamedModelProjection ::= opModelProjectionProperties ?
+                                   ( ( opRecordModelProjection
+                                     | opListModelProjection
+                                     | opMapModelProjection
+                                     ) opModelPolymorphicTail?
                                    )?
 
-private opOutputModelProjectionProperties ::= '{' (opOutputModelProperty ','?)* '}' {pin=1}
-opOutputModelProperty ::= opOutputDefaultValue | opParam | annotation | opOutputModelMeta {
-  recoverWhile = opOutputModelPropertyRecover
+private opModelProjectionProperties ::= '{' (opModelProperty ','?)* '}' {pin=1}
+opModelProperty ::= opDefaultValue | opParam | annotation | opModelMeta {
+  recoverWhile = opModelPropertyRecover
 }
-private opOutputModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
-opOutputDefaultValue ::= 'default' ':' datum {pin=1}
+private opModelPropertyRecover ::= ! ( '}' | ',' | 'default' | ';' | '@' | 'meta' )
+opDefaultValue ::= 'default' ':' datum {pin=1}
 
-opOutputModelMeta ::= 'meta' ':' '+'? opOutputModelProjection
-
+opModelMeta ::= 'meta' ':' '+'? opModelProjection
 
 // op output record
-opOutputRecordModelProjection ::= '(' (opOutputFieldProjectionEntry ','?)* ')' { pin=1 }
-opOutputFieldProjectionEntry ::= '+'? qid opOutputFieldProjection { pin=2 recoverWhile=recordModelProjectionRecover}
-opOutputFieldProjection ::= /* opOutputComplexFieldProjection | */ opOutputSimpleFieldProjection
-//private opOutputComplexFieldProjection ::= '{' (opOutputFieldProjectionBodyPart ','? )* '}' opOutputVarProjection
-private opOutputSimpleFieldProjection ::= opOutputVarProjection
-//opOutputFieldProjectionBodyPart ::= opParam | annotation
+opRecordModelProjection ::= '(' (opFieldProjectionEntry ','?)* ')' { pin=1 }
+opFieldProjectionEntry ::= '+'? qid opFieldProjection { pin=2 recoverWhile=recordModelProjectionRecover}
+opFieldProjection ::= opEntityProjection
 
 // op output list
-opOutputListModelProjection ::= '*' '+'? ( opOutputBracedVarProjection | opOutputVarProjection ) { pin=1 }
+opListModelProjection ::= '*' '+'? ( opBracedEntityProjection | opEntityProjection ) { pin=1 }
 
 // op output map
-opOutputMapModelProjection ::= opOutputKeyProjection '+'? ( opOutputBracedVarProjection | opOutputVarProjection )  { pin=1 }
-opOutputKeyProjection ::= '[' opOutputKeyProjectionInt ']' {pin=1}
-private opOutputKeyProjectionInt ::= ('required' ','?| 'forbidden' ','?)? (opOutputKeyProjectionPart ','?)*
-opOutputKeyProjectionPart ::= opKeyProjection | opParam | annotation {
-  recoverWhile = opOutputKeyProjectionRecover
+opMapModelProjection ::= opKeySpec '+'? ( opBracedEntityProjection | opEntityProjection )  { pin=1 }
+opKeySpec ::= '[' opKeySpecInt ']' {pin=1}
+private opKeySpecInt ::= ('required' ','?| 'forbidden' ','?)? (opKeySpecPart ','?)*
+opKeySpecPart ::= opKeyProjection | opParam | annotation {
+  recoverWhile = opKeySpecRecover
 }
-private opOutputKeyProjectionRecover ::= ! ( ']' | ',' | ';' | 'projection' )
+private opKeySpecRecover ::= ! ( ']' | ',' | ';' | 'projection' )
 
 // ============= data language =============
 // please keep in sync with data language from url.bnf

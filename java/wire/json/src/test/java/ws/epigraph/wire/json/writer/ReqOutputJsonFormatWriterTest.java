@@ -32,8 +32,8 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.wire.WireTestUtil.parseOpOutputVarProjection;
-import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
+import static ws.epigraph.wire.WireTestUtil.parseOpEntityProjection;
+import static ws.epigraph.wire.WireTestUtil.parseReqOutputEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -59,7 +59,7 @@ public class ReqOutputJsonFormatWriterTest {
   );
 
   private final DataType personDataType = new DataType(Person.type, Person.id);
-  private final OpEntityProjection personOpProjection = parseOpOutputVarProjection(personDataType, lines(
+  private final OpEntityProjection personOpProjection = parseOpEntityProjection(personDataType, lines(
       ":(",
       "  id,",
       "  `record` (",
@@ -287,13 +287,13 @@ public class ReqOutputJsonFormatWriterTest {
   @Test
   public void testRenderMeta() throws IOException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
-    final OpEntityProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+    final OpEntityProjection personMapOpProjection = parseOpEntityProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 
     String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
     personMap.put$(
@@ -417,7 +417,7 @@ public class ReqOutputJsonFormatWriterTest {
       throws IOException {
 
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputVarProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRender(reqProjection, data, expectedJson);
 

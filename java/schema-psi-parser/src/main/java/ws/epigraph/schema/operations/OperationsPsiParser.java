@@ -123,10 +123,10 @@ public final class OperationsPsiParser {
 //    if (outputProjectionPsi == null)
 //      throw new PsiProcessingException("Output projection must be specified", psi, context);
 //
-//    OpOutputFieldProjection outputProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
+//    OpFieldProjection outputProjection = OpProjectionsPsiParser.parseFieldProjection(
 //        resolveOutputType(resourceType, varPath, null, resolver, context),
 //        true,
-//        outputProjectionPsi.getOpOutputFieldProjection(),
+//        outputProjectionPsi.getOpFieldProjection(),
 //        resolver,
 //        context
 //    );
@@ -178,8 +178,8 @@ public final class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
 
-    final @Nullable SchemaOpOutputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi.getOpFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
@@ -262,8 +262,8 @@ public final class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
 
-    final @Nullable SchemaOpOutputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi.getOpFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
@@ -346,8 +346,8 @@ public final class OperationsPsiParser {
     if (deleteProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", psi, context);
 
-    final @Nullable SchemaOpOutputFieldProjection deleteFieldProjectionPsi =
-        deleteProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection deleteFieldProjectionPsi =
+        deleteProjectionPsi.getOpFieldProjection();
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
@@ -436,8 +436,8 @@ public final class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, context);
     }
 
-    final @Nullable SchemaOpOutputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi == null ? null : inputProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi == null ? null : inputProjectionPsi.getOpFieldProjection();
 
     OpReferenceContext inputReferenceContext =
         createInputReferenceContext(operationName, context.inputReferenceContext(), OperationKind.CUSTOM, context);
@@ -498,8 +498,8 @@ public final class OperationsPsiParser {
       final @NotNull ResourcePsiProcessingContext context)
       throws PsiProcessingException {
 
-    final @Nullable SchemaOpOutputFieldProjection outputFieldProjectionPsi =
-        outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection outputFieldProjectionPsi =
+        outputProjectionPsi == null ? null : outputProjectionPsi.getOpFieldProjection();
 
     OpReferenceContext outputReferenceContext =
         createOutputReferenceContext(
@@ -519,7 +519,7 @@ public final class OperationsPsiParser {
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
       final @NotNull OpEntityProjection varProjection =
-          OpBasicProjectionPsiParser.createDefaultVarProjection(outputType, location, psiProcessingContext);
+          OpBasicProjectionPsiParser.createDefaultEntityProjection(outputType, location, psiProcessingContext);
 
       fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,

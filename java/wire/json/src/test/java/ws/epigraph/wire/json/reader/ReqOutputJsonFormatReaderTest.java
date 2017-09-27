@@ -37,8 +37,8 @@ import java.io.IOException;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.wire.WireTestUtil.parseOpOutputVarProjection;
-import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
+import static ws.epigraph.wire.WireTestUtil.parseOpEntityProjection;
+import static ws.epigraph.wire.WireTestUtil.parseReqOutputEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -65,7 +65,7 @@ public class ReqOutputJsonFormatReaderTest {
       epigraph.Boolean.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -277,13 +277,13 @@ public class ReqOutputJsonFormatReaderTest {
   @Test
   public void testReadMeta() throws IOException, JsonFormatException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
-    final OpEntityProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+    final OpEntityProjection personMapOpProjection = parseOpEntityProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 
     String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
     personMap.put$(
@@ -475,7 +475,7 @@ public class ReqOutputJsonFormatReaderTest {
       throws IOException {
 
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRead(reqProjection, json, expectedData);
   }
@@ -544,7 +544,7 @@ public class ReqOutputJsonFormatReaderTest {
       @Nullable String errorMessageSubstring) throws IOException {
 
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputVarProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(dataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     JsonParser parser = new JsonFactory().createParser(json);
     ReqJsonFormatReader jsonReader = new ReqJsonFormatReader(parser, resolver);
@@ -558,7 +558,7 @@ public class ReqOutputJsonFormatReaderTest {
     }
   }
 
-  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
-    return parseOpOutputVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
+    return parseOpEntityProjection(dataType, projectionString, resolver);
   }
 }

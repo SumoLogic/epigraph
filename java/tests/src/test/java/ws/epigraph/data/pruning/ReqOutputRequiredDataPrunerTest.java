@@ -238,7 +238,7 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpEntityProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection op = EpigraphTestUtil.parseOpEntityProjection(
         (DataType) data.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()
@@ -260,7 +260,7 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpEntityProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection op = EpigraphTestUtil.parseOpEntityProjection(
         datum.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()

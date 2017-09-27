@@ -20,6 +20,7 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -28,7 +29,7 @@ import ws.epigraph.projections.op.output.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
@@ -72,9 +73,9 @@ public final class OpTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -88,7 +89,7 @@ public final class OpTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = parser.parseVarProjection(
+      OpEntityProjection vp = parser.parseEntityProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -113,7 +114,7 @@ public final class OpTestUtil {
             null
         ) {
           @Override
-          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+          public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
             return true;
           }
         };

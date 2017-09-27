@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputFieldProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputModelProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputUnnamedOrRefVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpFieldProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpModelProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpUnnamedOrRefEntityProjection;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 
@@ -32,31 +32,31 @@ import ws.epigraph.types.DatumTypeApi;
  */
 public interface OpProjectionPsiParser {
 
-  @NotNull OpEntityProjection parseVarProjection(
+  @NotNull OpEntityProjection parseEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull SchemaOpOutputVarProjection psi,
+      @NotNull SchemaOpEntityProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull OpFieldProjection parseFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
-      @NotNull SchemaOpOutputFieldProjection psi,
+      @NotNull SchemaOpFieldProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull OpEntityProjection parseUnnamedOrRefVarProjection(
+  @NotNull OpEntityProjection parseUnnamedOrRefEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull SchemaOpOutputUnnamedOrRefVarProjection psi,
+      @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull OpModelProjection<?, ?, ?, ?> parseModelProjection(
       @NotNull DatumTypeApi type,
       boolean flagged,
-      @NotNull SchemaOpOutputModelProjection psi,
+      @NotNull SchemaOpModelProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException;

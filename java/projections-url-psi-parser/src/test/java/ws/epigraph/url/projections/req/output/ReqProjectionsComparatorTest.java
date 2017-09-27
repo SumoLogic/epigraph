@@ -28,11 +28,8 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
@@ -60,7 +57,7 @@ public class ReqProjectionsComparatorTest {
 
   @Test
   public void testRec1() {
-    OpEntityProjection op = parsePersonOpOutputVarProjection(
+    OpEntityProjection op = parsePersonOpEntityProjection(
         "$rec = :`record`(firstName, lastName, bestFriend $rec)"
     );
 
@@ -89,8 +86,8 @@ public class ReqProjectionsComparatorTest {
     return parseReqOutputVarProjection(dataType, op, s, resolver).projection();
   }
 
-  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
-    return parseOpOutputVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
+    return parseOpEntityProjection(dataType, projectionString, resolver);
   }
 
   // todo more tests

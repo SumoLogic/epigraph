@@ -34,7 +34,7 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.schema.parser.psi.SchemaOpVarPath;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
@@ -58,7 +58,7 @@ import static ws.epigraph.test.TestUtil.*;
 public final class ReqTestUtil {
   private ReqTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -90,9 +90,9 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -106,7 +106,7 @@ public final class ReqTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = parser.parseVarProjection(
+      OpEntityProjection vp = parser.parseEntityProjection(
           varDataType,
           false,
           psiVarProjection,

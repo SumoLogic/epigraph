@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOperationDeleteProjection extends PsiElement {
 
   @Nullable
-  SchemaOpOutputFieldProjection getOpOutputFieldProjection();
+  SchemaOpFieldProjection getOpFieldProjection();
 
   @NotNull
   PsiElement getDeleteProjection();

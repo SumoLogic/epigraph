@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpKeyProjection extends PsiElement {
 
   @Nullable
-  SchemaOpOutputModelProjection getOpOutputModelProjection();
+  SchemaOpModelProjection getOpModelProjection();
 
   @Nullable
   PsiElement getColon();

@@ -233,13 +233,13 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitOpOutputVarProjectionRef(final @NotNull SchemaOpOutputVarProjectionRef o) {
+      public void visitOpEntityProjectionRef(final @NotNull SchemaOpEntityProjectionRef o) {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }
 
       @Override
-      public void visitOpOutputModelProjectionRef(final @NotNull SchemaOpOutputModelProjectionRef o) {
+      public void visitOpModelProjectionRef(final @NotNull SchemaOpModelProjectionRef o) {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }

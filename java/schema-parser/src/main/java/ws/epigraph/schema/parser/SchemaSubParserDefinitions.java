@@ -33,8 +33,8 @@ public final class SchemaSubParserDefinitions {
   public static final SchemaSubParserDefinition<SchemaOpVarPath> OP_VAR_PATH =
       new SchemaSubParserDefinition<>(S_OP_VAR_PATH, SchemaOpVarPath.class);
 
-  public static final SchemaSubParserDefinition<SchemaOpOutputVarProjection> OP_OUTPUT_VAR_PROJECTION =
-      new SchemaSubParserDefinition<>(S_OP_OUTPUT_VAR_PROJECTION, SchemaOpOutputVarProjection.class);
+  public static final SchemaSubParserDefinition<SchemaOpEntityProjection> OP_ENTITY_PROJECTION =
+      new SchemaSubParserDefinition<>(S_OP_ENTITY_PROJECTION, SchemaOpEntityProjection.class);
 
   public static final SchemaSubParserDefinition<SchemaDataValue> DATA_VALUE =
       new SchemaSubParserDefinition<>(S_DATA_VALUE, SchemaDataValue.class);

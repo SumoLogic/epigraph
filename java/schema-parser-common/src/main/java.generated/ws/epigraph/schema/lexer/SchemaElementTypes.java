@@ -80,46 +80,46 @@ public interface SchemaElementTypes {
   IElementType S_OPERATION_OUTPUT_PROJECTION = new SchemaElementType("S_OPERATION_OUTPUT_PROJECTION");
   IElementType S_OPERATION_OUTPUT_TYPE = new SchemaElementType("S_OPERATION_OUTPUT_TYPE");
   IElementType S_OPERATION_PATH = new SchemaElementType("S_OPERATION_PATH");
+  IElementType S_OP_DEFAULT_VALUE = new SchemaElementType("S_OP_DEFAULT_VALUE");
+  IElementType S_OP_ENTITY_MULTI_TAIL = new SchemaElementType("S_OP_ENTITY_MULTI_TAIL");
+  IElementType S_OP_ENTITY_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_ENTITY_POLYMORPHIC_TAIL");
+  IElementType S_OP_ENTITY_PROJECTION = new SchemaElementType("S_OP_ENTITY_PROJECTION");
+  IElementType S_OP_ENTITY_PROJECTION_REF = new SchemaElementType("S_OP_ENTITY_PROJECTION_REF");
+  IElementType S_OP_ENTITY_TAIL_ITEM = new SchemaElementType("S_OP_ENTITY_TAIL_ITEM");
   IElementType S_OP_FIELD_PATH = new SchemaElementType("S_OP_FIELD_PATH");
   IElementType S_OP_FIELD_PATH_ENTRY = new SchemaElementType("S_OP_FIELD_PATH_ENTRY");
+  IElementType S_OP_FIELD_PROJECTION = new SchemaElementType("S_OP_FIELD_PROJECTION");
+  IElementType S_OP_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_FIELD_PROJECTION_ENTRY");
   IElementType S_OP_KEY_PROJECTION = new SchemaElementType("S_OP_KEY_PROJECTION");
+  IElementType S_OP_KEY_SPEC = new SchemaElementType("S_OP_KEY_SPEC");
+  IElementType S_OP_KEY_SPEC_PART = new SchemaElementType("S_OP_KEY_SPEC_PART");
+  IElementType S_OP_LIST_MODEL_PROJECTION = new SchemaElementType("S_OP_LIST_MODEL_PROJECTION");
   IElementType S_OP_MAP_MODEL_PATH = new SchemaElementType("S_OP_MAP_MODEL_PATH");
+  IElementType S_OP_MAP_MODEL_PROJECTION = new SchemaElementType("S_OP_MAP_MODEL_PROJECTION");
+  IElementType S_OP_MODEL_META = new SchemaElementType("S_OP_MODEL_META");
+  IElementType S_OP_MODEL_MULTI_TAIL = new SchemaElementType("S_OP_MODEL_MULTI_TAIL");
   IElementType S_OP_MODEL_PATH = new SchemaElementType("S_OP_MODEL_PATH");
   IElementType S_OP_MODEL_PATH_PROPERTY = new SchemaElementType("S_OP_MODEL_PATH_PROPERTY");
-  IElementType S_OP_OUTPUT_DEFAULT_VALUE = new SchemaElementType("S_OP_OUTPUT_DEFAULT_VALUE");
-  IElementType S_OP_OUTPUT_FIELD_PROJECTION = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION");
-  IElementType S_OP_OUTPUT_FIELD_PROJECTION_ENTRY = new SchemaElementType("S_OP_OUTPUT_FIELD_PROJECTION_ENTRY");
-  IElementType S_OP_OUTPUT_KEY_PROJECTION = new SchemaElementType("S_OP_OUTPUT_KEY_PROJECTION");
-  IElementType S_OP_OUTPUT_KEY_PROJECTION_PART = new SchemaElementType("S_OP_OUTPUT_KEY_PROJECTION_PART");
-  IElementType S_OP_OUTPUT_LIST_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_LIST_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_MAP_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_MAP_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_MODEL_META = new SchemaElementType("S_OP_OUTPUT_MODEL_META");
-  IElementType S_OP_OUTPUT_MODEL_MULTI_TAIL = new SchemaElementType("S_OP_OUTPUT_MODEL_MULTI_TAIL");
-  IElementType S_OP_OUTPUT_MODEL_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_OUTPUT_MODEL_POLYMORPHIC_TAIL");
-  IElementType S_OP_OUTPUT_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_MODEL_PROJECTION_REF = new SchemaElementType("S_OP_OUTPUT_MODEL_PROJECTION_REF");
-  IElementType S_OP_OUTPUT_MODEL_PROPERTY = new SchemaElementType("S_OP_OUTPUT_MODEL_PROPERTY");
-  IElementType S_OP_OUTPUT_MODEL_TAIL_ITEM = new SchemaElementType("S_OP_OUTPUT_MODEL_TAIL_ITEM");
-  IElementType S_OP_OUTPUT_MULTI_TAG_PROJECTION = new SchemaElementType("S_OP_OUTPUT_MULTI_TAG_PROJECTION");
-  IElementType S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM = new SchemaElementType("S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM");
-  IElementType S_OP_OUTPUT_NAMED_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_NAMED_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_NAMED_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_NAMED_VAR_PROJECTION");
-  IElementType S_OP_OUTPUT_RECORD_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_RECORD_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_SINGLE_TAG_PROJECTION = new SchemaElementType("S_OP_OUTPUT_SINGLE_TAG_PROJECTION");
-  IElementType S_OP_OUTPUT_UNNAMED_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_UNNAMED_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_UNNAMED_OR_REF_MODEL_PROJECTION = new SchemaElementType("S_OP_OUTPUT_UNNAMED_OR_REF_MODEL_PROJECTION");
-  IElementType S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION");
-  IElementType S_OP_OUTPUT_UNNAMED_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_UNNAMED_VAR_PROJECTION");
-  IElementType S_OP_OUTPUT_VAR_MULTI_TAIL = new SchemaElementType("S_OP_OUTPUT_VAR_MULTI_TAIL");
-  IElementType S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL");
-  IElementType S_OP_OUTPUT_VAR_PROJECTION = new SchemaElementType("S_OP_OUTPUT_VAR_PROJECTION");
-  IElementType S_OP_OUTPUT_VAR_PROJECTION_REF = new SchemaElementType("S_OP_OUTPUT_VAR_PROJECTION_REF");
-  IElementType S_OP_OUTPUT_VAR_TAIL_ITEM = new SchemaElementType("S_OP_OUTPUT_VAR_TAIL_ITEM");
+  IElementType S_OP_MODEL_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_MODEL_POLYMORPHIC_TAIL");
+  IElementType S_OP_MODEL_PROJECTION = new SchemaElementType("S_OP_MODEL_PROJECTION");
+  IElementType S_OP_MODEL_PROJECTION_REF = new SchemaElementType("S_OP_MODEL_PROJECTION_REF");
+  IElementType S_OP_MODEL_PROPERTY = new SchemaElementType("S_OP_MODEL_PROPERTY");
+  IElementType S_OP_MODEL_TAIL_ITEM = new SchemaElementType("S_OP_MODEL_TAIL_ITEM");
+  IElementType S_OP_MULTI_TAG_PROJECTION = new SchemaElementType("S_OP_MULTI_TAG_PROJECTION");
+  IElementType S_OP_MULTI_TAG_PROJECTION_ITEM = new SchemaElementType("S_OP_MULTI_TAG_PROJECTION_ITEM");
+  IElementType S_OP_NAMED_ENTITY_PROJECTION = new SchemaElementType("S_OP_NAMED_ENTITY_PROJECTION");
+  IElementType S_OP_NAMED_MODEL_PROJECTION = new SchemaElementType("S_OP_NAMED_MODEL_PROJECTION");
   IElementType S_OP_PARAM = new SchemaElementType("S_OP_PARAM");
   IElementType S_OP_PATH_KEY_PROJECTION = new SchemaElementType("S_OP_PATH_KEY_PROJECTION");
   IElementType S_OP_PATH_KEY_PROJECTION_BODY = new SchemaElementType("S_OP_PATH_KEY_PROJECTION_BODY");
   IElementType S_OP_PATH_KEY_PROJECTION_PART = new SchemaElementType("S_OP_PATH_KEY_PROJECTION_PART");
   IElementType S_OP_RECORD_MODEL_PATH = new SchemaElementType("S_OP_RECORD_MODEL_PATH");
+  IElementType S_OP_RECORD_MODEL_PROJECTION = new SchemaElementType("S_OP_RECORD_MODEL_PROJECTION");
+  IElementType S_OP_SINGLE_TAG_PROJECTION = new SchemaElementType("S_OP_SINGLE_TAG_PROJECTION");
+  IElementType S_OP_UNNAMED_ENTITY_PROJECTION = new SchemaElementType("S_OP_UNNAMED_ENTITY_PROJECTION");
+  IElementType S_OP_UNNAMED_MODEL_PROJECTION = new SchemaElementType("S_OP_UNNAMED_MODEL_PROJECTION");
+  IElementType S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION");
+  IElementType S_OP_UNNAMED_OR_REF_MODEL_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_MODEL_PROJECTION");
   IElementType S_OP_VAR_PATH = new SchemaElementType("S_OP_VAR_PATH");
   IElementType S_OUTPUT_PROJECTION_DEF = new SchemaElementType("S_OUTPUT_PROJECTION_DEF");
   IElementType S_PRIMITIVE_DATUM = new SchemaElementType("S_PRIMITIVE_DATUM");
@@ -368,17 +368,59 @@ public interface SchemaElementTypes {
       else if (type == S_OPERATION_PATH) {
         return new SchemaOperationPathImpl(node);
       }
+      else if (type == S_OP_DEFAULT_VALUE) {
+        return new SchemaOpDefaultValueImpl(node);
+      }
+      else if (type == S_OP_ENTITY_MULTI_TAIL) {
+        return new SchemaOpEntityMultiTailImpl(node);
+      }
+      else if (type == S_OP_ENTITY_POLYMORPHIC_TAIL) {
+        return new SchemaOpEntityPolymorphicTailImpl(node);
+      }
+      else if (type == S_OP_ENTITY_PROJECTION) {
+        return new SchemaOpEntityProjectionImpl(node);
+      }
+      else if (type == S_OP_ENTITY_PROJECTION_REF) {
+        return new SchemaOpEntityProjectionRefImpl(node);
+      }
+      else if (type == S_OP_ENTITY_TAIL_ITEM) {
+        return new SchemaOpEntityTailItemImpl(node);
+      }
       else if (type == S_OP_FIELD_PATH) {
         return new SchemaOpFieldPathImpl(node);
       }
       else if (type == S_OP_FIELD_PATH_ENTRY) {
         return new SchemaOpFieldPathEntryImpl(node);
       }
+      else if (type == S_OP_FIELD_PROJECTION) {
+        return new SchemaOpFieldProjectionImpl(node);
+      }
+      else if (type == S_OP_FIELD_PROJECTION_ENTRY) {
+        return new SchemaOpFieldProjectionEntryImpl(node);
+      }
       else if (type == S_OP_KEY_PROJECTION) {
         return new SchemaOpKeyProjectionImpl(node);
       }
+      else if (type == S_OP_KEY_SPEC) {
+        return new SchemaOpKeySpecImpl(node);
+      }
+      else if (type == S_OP_KEY_SPEC_PART) {
+        return new SchemaOpKeySpecPartImpl(node);
+      }
+      else if (type == S_OP_LIST_MODEL_PROJECTION) {
+        return new SchemaOpListModelProjectionImpl(node);
+      }
       else if (type == S_OP_MAP_MODEL_PATH) {
         return new SchemaOpMapModelPathImpl(node);
+      }
+      else if (type == S_OP_MAP_MODEL_PROJECTION) {
+        return new SchemaOpMapModelProjectionImpl(node);
+      }
+      else if (type == S_OP_MODEL_META) {
+        return new SchemaOpModelMetaImpl(node);
+      }
+      else if (type == S_OP_MODEL_MULTI_TAIL) {
+        return new SchemaOpModelMultiTailImpl(node);
       }
       else if (type == S_OP_MODEL_PATH) {
         return new SchemaOpModelPathImpl(node);
@@ -386,92 +428,32 @@ public interface SchemaElementTypes {
       else if (type == S_OP_MODEL_PATH_PROPERTY) {
         return new SchemaOpModelPathPropertyImpl(node);
       }
-      else if (type == S_OP_OUTPUT_DEFAULT_VALUE) {
-        return new SchemaOpOutputDefaultValueImpl(node);
+      else if (type == S_OP_MODEL_POLYMORPHIC_TAIL) {
+        return new SchemaOpModelPolymorphicTailImpl(node);
       }
-      else if (type == S_OP_OUTPUT_FIELD_PROJECTION) {
-        return new SchemaOpOutputFieldProjectionImpl(node);
+      else if (type == S_OP_MODEL_PROJECTION) {
+        return new SchemaOpModelProjectionImpl(node);
       }
-      else if (type == S_OP_OUTPUT_FIELD_PROJECTION_ENTRY) {
-        return new SchemaOpOutputFieldProjectionEntryImpl(node);
+      else if (type == S_OP_MODEL_PROJECTION_REF) {
+        return new SchemaOpModelProjectionRefImpl(node);
       }
-      else if (type == S_OP_OUTPUT_KEY_PROJECTION) {
-        return new SchemaOpOutputKeyProjectionImpl(node);
+      else if (type == S_OP_MODEL_PROPERTY) {
+        return new SchemaOpModelPropertyImpl(node);
       }
-      else if (type == S_OP_OUTPUT_KEY_PROJECTION_PART) {
-        return new SchemaOpOutputKeyProjectionPartImpl(node);
+      else if (type == S_OP_MODEL_TAIL_ITEM) {
+        return new SchemaOpModelTailItemImpl(node);
       }
-      else if (type == S_OP_OUTPUT_LIST_MODEL_PROJECTION) {
-        return new SchemaOpOutputListModelProjectionImpl(node);
+      else if (type == S_OP_MULTI_TAG_PROJECTION) {
+        return new SchemaOpMultiTagProjectionImpl(node);
       }
-      else if (type == S_OP_OUTPUT_MAP_MODEL_PROJECTION) {
-        return new SchemaOpOutputMapModelProjectionImpl(node);
+      else if (type == S_OP_MULTI_TAG_PROJECTION_ITEM) {
+        return new SchemaOpMultiTagProjectionItemImpl(node);
       }
-      else if (type == S_OP_OUTPUT_MODEL_META) {
-        return new SchemaOpOutputModelMetaImpl(node);
+      else if (type == S_OP_NAMED_ENTITY_PROJECTION) {
+        return new SchemaOpNamedEntityProjectionImpl(node);
       }
-      else if (type == S_OP_OUTPUT_MODEL_MULTI_TAIL) {
-        return new SchemaOpOutputModelMultiTailImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MODEL_POLYMORPHIC_TAIL) {
-        return new SchemaOpOutputModelPolymorphicTailImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MODEL_PROJECTION) {
-        return new SchemaOpOutputModelProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MODEL_PROJECTION_REF) {
-        return new SchemaOpOutputModelProjectionRefImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MODEL_PROPERTY) {
-        return new SchemaOpOutputModelPropertyImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MODEL_TAIL_ITEM) {
-        return new SchemaOpOutputModelTailItemImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MULTI_TAG_PROJECTION) {
-        return new SchemaOpOutputMultiTagProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_MULTI_TAG_PROJECTION_ITEM) {
-        return new SchemaOpOutputMultiTagProjectionItemImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_NAMED_MODEL_PROJECTION) {
-        return new SchemaOpOutputNamedModelProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_NAMED_VAR_PROJECTION) {
-        return new SchemaOpOutputNamedVarProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_RECORD_MODEL_PROJECTION) {
-        return new SchemaOpOutputRecordModelProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_SINGLE_TAG_PROJECTION) {
-        return new SchemaOpOutputSingleTagProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_UNNAMED_MODEL_PROJECTION) {
-        return new SchemaOpOutputUnnamedModelProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_UNNAMED_OR_REF_MODEL_PROJECTION) {
-        return new SchemaOpOutputUnnamedOrRefModelProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_UNNAMED_OR_REF_VAR_PROJECTION) {
-        return new SchemaOpOutputUnnamedOrRefVarProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_UNNAMED_VAR_PROJECTION) {
-        return new SchemaOpOutputUnnamedVarProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_VAR_MULTI_TAIL) {
-        return new SchemaOpOutputVarMultiTailImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_VAR_POLYMORPHIC_TAIL) {
-        return new SchemaOpOutputVarPolymorphicTailImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_VAR_PROJECTION) {
-        return new SchemaOpOutputVarProjectionImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_VAR_PROJECTION_REF) {
-        return new SchemaOpOutputVarProjectionRefImpl(node);
-      }
-      else if (type == S_OP_OUTPUT_VAR_TAIL_ITEM) {
-        return new SchemaOpOutputVarTailItemImpl(node);
+      else if (type == S_OP_NAMED_MODEL_PROJECTION) {
+        return new SchemaOpNamedModelProjectionImpl(node);
       }
       else if (type == S_OP_PARAM) {
         return new SchemaOpParamImpl(node);
@@ -487,6 +469,24 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_RECORD_MODEL_PATH) {
         return new SchemaOpRecordModelPathImpl(node);
+      }
+      else if (type == S_OP_RECORD_MODEL_PROJECTION) {
+        return new SchemaOpRecordModelProjectionImpl(node);
+      }
+      else if (type == S_OP_SINGLE_TAG_PROJECTION) {
+        return new SchemaOpSingleTagProjectionImpl(node);
+      }
+      else if (type == S_OP_UNNAMED_ENTITY_PROJECTION) {
+        return new SchemaOpUnnamedEntityProjectionImpl(node);
+      }
+      else if (type == S_OP_UNNAMED_MODEL_PROJECTION) {
+        return new SchemaOpUnnamedModelProjectionImpl(node);
+      }
+      else if (type == S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION) {
+        return new SchemaOpUnnamedOrRefEntityProjectionImpl(node);
+      }
+      else if (type == S_OP_UNNAMED_OR_REF_MODEL_PROJECTION) {
+        return new SchemaOpUnnamedOrRefModelProjectionImpl(node);
       }
       else if (type == S_OP_VAR_PATH) {
         return new SchemaOpVarPathImpl(node);

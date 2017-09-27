@@ -27,7 +27,7 @@ import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
@@ -44,16 +44,16 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class WireTestUtil {
   private WireTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -66,7 +66,7 @@ public final class WireTestUtil {
       OpPsiProcessingContext outputPsiProcessingContext =
           new OpPsiProcessingContext(context, outputReferenceContext);
 
-      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -80,7 +80,7 @@ public final class WireTestUtil {
     });
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
