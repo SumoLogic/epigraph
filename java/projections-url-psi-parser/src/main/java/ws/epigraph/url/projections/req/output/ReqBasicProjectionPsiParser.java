@@ -1696,7 +1696,7 @@ public final class ReqBasicProjectionPsiParser {
             directives,
             metaProjection,
             Collections.singletonList(keyProjection),
-            true,
+            psi.getPlus() != null,
             valueProjection,
             tails,
             EpigraphPsiUtil.getLocation(psi)
@@ -1706,7 +1706,7 @@ public final class ReqBasicProjectionPsiParser {
 
   private static @NotNull ReqMapModelProjection parseComaMapModelProjection(
       @NotNull OpMapModelProjection op,
-      boolean required,
+      boolean flagged,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
@@ -1772,7 +1772,7 @@ public final class ReqBasicProjectionPsiParser {
       valueProjection = createDefaultEntityProjection(
           op.type().valueType(),
           op.itemsProjection(),
-          false,
+          psi.getPlus() != null,
           psi,
           context
       );
@@ -1790,7 +1790,7 @@ public final class ReqBasicProjectionPsiParser {
 
     return new ReqMapModelProjection(
         op.type(),
-        required,
+        flagged,
         params,
         directives,
         metaProjection,

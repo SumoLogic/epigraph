@@ -239,11 +239,9 @@ reqComaRecordModelProjection ::= '(' ( '*' | ( (reqComaFieldProjection ','?)* ) 
 reqComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqComaEntityProjection
 
 // req output list
-// todo parser +
 reqComaListModelProjection ::= '*' '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )? { pin=1 }
 
 // req output map
-// todo parser +
 reqComaMapModelProjection ::= reqComaKeysProjection '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
 reqComaKeysProjection ::= '[' ( '*' | ( ( reqComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqComaKeyProjection ::= datum reqParamsAndAnnotations

@@ -96,16 +96,17 @@
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
+- [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
 
 # Operations
 
 # Projections refactoring
 - [ ] sort out 'path steps' for input/output projections
-- [ ] format factories: remove duplicating ones
+- [x] format factories: remove duplicating ones
 - [ ] fix todo in
-  - [ ] url.bnf (`+` in request)
+  - [x] url.bnf (`+` in request)
   - [x] SchemaProjectionPsiParserUtil
-  - [ ] OperationsPsiParser
+  - [x] OperationsPsiParser
   - [ ] ResourcesSchemaPsiParser
   - [ ] OpInputProjectionsPsiParser
 - [ ] clean up *ProcessingContext classes | don't bother, they're going away?

@@ -106,7 +106,6 @@ public final class OperationsPsiParser {
 
     @Nullable OpFieldPath fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.READ, resourceType, pathPsi, resolver, context);
-//    @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
     final OpFieldProjection outputProjection = parseOutputProjection(
         operationNameOrDefaultName,
@@ -119,17 +118,6 @@ public final class OperationsPsiParser {
             context
         ), outputProjectionPsi, resolver, psi, context
     );
-
-//    if (outputProjectionPsi == null)
-//      throw new PsiProcessingException("Output projection must be specified", psi, context);
-//
-//    OpFieldProjection outputProjection = OpProjectionsPsiParser.parseFieldProjection(
-//        resolveOutputType(resourceType, varPath, null, resolver, context),
-//        true,
-//        outputProjectionPsi.getOpFieldProjection(),
-//        resolver,
-//        context
-//    );
 
     return new ReadOperationDeclaration(
         operationName,
@@ -178,30 +166,25 @@ public final class OperationsPsiParser {
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
 
-    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi.getOpFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
     OpReferenceContext referenceContext =
-        createInputReferenceContext(
+        createReferenceContext(
             operationNameOrDefaultName,
             context.inputReferenceContext(),
             OperationKind.CREATE,
+            Namespaces.INPUT_SEGMENT,
             context
         );
-
-    OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
-        context,
-        referenceContext
-    );
 
     final OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
         resolver,
-        outputPsiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
     referenceContext.ensureAllReferencesResolved();
 
@@ -270,24 +253,20 @@ public final class OperationsPsiParser {
     final @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
 
     OpReferenceContext referenceContext =
-        createInputReferenceContext(
+        createReferenceContext(
             operationNameOrDefaultName,
             context.inputReferenceContext(),
             OperationKind.UPDATE,
+            Namespaces.INPUT_SEGMENT,
             context
         );
-
-    OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
-        context,
-        referenceContext
-    );
 
     final @NotNull OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
         resolver,
-        outputPsiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
     referenceContext.ensureAllReferencesResolved();
 
@@ -352,25 +331,22 @@ public final class OperationsPsiParser {
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
     OpReferenceContext referenceContext =
-        createDeleteReferenceContext(
+        createReferenceContext(
             operationNameOrDefaultName,
             context.deleteReferenceContext(),
             OperationKind.DELETE,
+            Namespaces.DELETE_SEGMENT,
             context
         );
-
-    OpPsiProcessingContext psiProcessingContext = new OpPsiProcessingContext(
-        context,
-        referenceContext
-    );
 
     final OpFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.INSTANCE.parseFieldProjection(
         resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.varProjection()),
         deleteProjectionPsi.getPlus() != null,
         deleteFieldProjectionPsi,
         resolver,
-        psiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
+
     referenceContext.ensureAllReferencesResolved();
 
     return new DeleteOperationDeclaration(
@@ -440,12 +416,13 @@ public final class OperationsPsiParser {
         inputProjectionPsi == null ? null : inputProjectionPsi.getOpFieldProjection();
 
     OpReferenceContext inputReferenceContext =
-        createInputReferenceContext(operationName, context.inputReferenceContext(), OperationKind.CUSTOM, context);
-
-    OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
-        context,
-        inputReferenceContext
-    );
+        createReferenceContext(
+            operationName,
+            context.inputReferenceContext(),
+            OperationKind.CUSTOM,
+            Namespaces.INPUT_SEGMENT,
+            context
+        );
 
     @Nullable OpFieldPath opPath =
         parsePath(operationName, OperationKind.CUSTOM, resourceType, pathPsi, resolver, context);
@@ -462,7 +439,7 @@ public final class OperationsPsiParser {
             true,
             inputFieldProjectionPsi,
             resolver,
-            outputPsiProcessingContext
+            new OpPsiProcessingContext(context, inputReferenceContext)
         );
 
     inputReferenceContext.ensureAllReferencesResolved();
@@ -495,22 +472,23 @@ public final class OperationsPsiParser {
       final @Nullable SchemaOperationOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiElement location,
-      final @NotNull ResourcePsiProcessingContext context)
+      final @NotNull ResourcePsiProcessingContext resourcePsiProcessingContext)
       throws PsiProcessingException {
 
     final @Nullable SchemaOpFieldProjection outputFieldProjectionPsi =
         outputProjectionPsi == null ? null : outputProjectionPsi.getOpFieldProjection();
 
     OpReferenceContext outputReferenceContext =
-        createOutputReferenceContext(
+        createReferenceContext(
             operationNameOrDefaultName,
-            context.outputReferenceContext(),
+            resourcePsiProcessingContext.outputReferenceContext(),
             operationKind,
-            context
+            Namespaces.OUTPUT_SEGMENT,
+            resourcePsiProcessingContext
         );
 
-    OpPsiProcessingContext psiProcessingContext = new OpPsiProcessingContext(
-        context, outputReferenceContext // todo (null)
+    OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
+        resourcePsiProcessingContext, outputReferenceContext
     );
 
     final OpFieldProjection fieldProjection;
@@ -519,7 +497,7 @@ public final class OperationsPsiParser {
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
       final @NotNull OpEntityProjection varProjection =
-          OpBasicProjectionPsiParser.createDefaultEntityProjection(outputType, location, psiProcessingContext);
+          OpBasicProjectionPsiParser.createDefaultEntityProjection(outputType, location, opPsiProcessingContext);
 
       fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,
@@ -535,7 +513,7 @@ public final class OperationsPsiParser {
           false,
           outputFieldProjectionPsi,
           resolver,
-          psiProcessingContext
+          opPsiProcessingContext
       );
     }
     outputReferenceContext.ensureAllReferencesResolved();
@@ -552,7 +530,7 @@ public final class OperationsPsiParser {
 
     if (cur != null) {
       if (prev != null) {
-        context.addError("Operation " + name + " specified twice", cur);
+        context.addError("Operation '" + name + "' specified twice", cur);
       }
 
       return cur;
@@ -609,7 +587,9 @@ public final class OperationsPsiParser {
 
         @NotNull TypeApi rtt = resourceType.type();
 
-        if (rtt instanceof DatumTypeApi) return ((DatumTypeApi) rtt).dataType();
+        if (rtt instanceof DatumTypeApi)
+          //noinspection RedundantCast
+          return ((DatumTypeApi) rtt).dataType();
 
         return resourceType;
 
@@ -654,10 +634,14 @@ public final class OperationsPsiParser {
         return null;
       }
 
-      // todo which reference context should be used here?
-
       OpReferenceContext referenceContext =
-          createOutputReferenceContext(operationNameOrDefaultName, null/*?*/, operationKind, context);
+          createReferenceContext(
+              operationNameOrDefaultName,
+              context.inputReferenceContext(),
+              operationKind,
+              Namespaces.PATH_SEGMENT,
+              context
+          );
 
       OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
           context,
@@ -683,62 +667,20 @@ public final class OperationsPsiParser {
     return qid.getCanonicalName();
   }
 
-  private static @NotNull OpReferenceContext createOutputReferenceContext(
+  private static @NotNull OpReferenceContext createReferenceContext(
       final @NotNull String operationNameOrDefaultName,
       final @Nullable OpReferenceContext parentReferenceContext,
       final @NotNull OperationKind operationKind,
+      final @NotNull String projectionsNamespaceSegment,
       final @NotNull ResourcePsiProcessingContext context) {
 
     return new OpReferenceContext(
         ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationOutputProjectionsNamespace(
-                    context.resourceName(),
-                    operationKind,
-                    operationNameOrDefaultName
-                )
-        ),
-        parentReferenceContext,
-        context
-    );
-
-  }
-
-  private static @NotNull OpReferenceContext createInputReferenceContext(
-      final @NotNull String operationNameOrDefaultName,
-      final @Nullable OpReferenceContext parentReferenceContext,
-      final @NotNull OperationKind operationKind,
-      final @NotNull ResourcePsiProcessingContext context) {
-
-    return new OpReferenceContext(
-        ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationInputProjectionsNamespace(
-                    context.resourceName(),
-                    operationKind,
-                    operationNameOrDefaultName
-                )
-        ),
-        parentReferenceContext,
-        context
-    );
-
-  }
-
-  private static @NotNull OpReferenceContext createDeleteReferenceContext(
-      final @NotNull String operationNameOrDefaultName,
-      final @Nullable OpReferenceContext parentReferenceContext,
-      final @NotNull OperationKind operationKind,
-      final @NotNull ResourcePsiProcessingContext context) {
-
-    return new OpReferenceContext(
-        ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationDeleteProjectionsNamespace(
-                    context.resourceName(),
-                    operationKind,
-                    operationNameOrDefaultName
-                )
+            new Namespaces(context.namespace()).operationProjectionsNamespace(
+                context.resourceName(),
+                operationKind,
+                operationNameOrDefaultName
+            ).append(projectionsNamespaceSegment)
         ),
         parentReferenceContext,
         context
