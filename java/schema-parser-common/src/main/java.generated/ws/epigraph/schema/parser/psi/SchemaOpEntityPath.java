@@ -21,15 +21,18 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SchemaOpMapModelPath extends PsiElement {
+public interface SchemaOpEntityPath extends PsiElement {
+
+  @NotNull
+  SchemaOpModelPath getOpModelPath();
 
   @Nullable
-  SchemaOpEntityPath getOpEntityPath();
+  SchemaTagName getTagName();
 
-  @NotNull
-  SchemaOpPathKeyProjection getOpPathKeyProjection();
+  @Nullable
+  PsiElement getColon();
 
-  @NotNull
-  PsiElement getSlash();
+  @Nullable
+  PsiElement getPlus();
 
 }

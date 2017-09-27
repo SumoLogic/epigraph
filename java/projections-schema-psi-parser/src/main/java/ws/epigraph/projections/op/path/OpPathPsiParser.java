@@ -52,7 +52,7 @@ public final class OpPathPsiParser {
 
   public static @NotNull OpVarPath parseVarPath(
       @NotNull DataTypeApi dataType,
-      @NotNull SchemaOpVarPath psi,
+      @NotNull SchemaOpEntityPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPathPsiProcessingContext context)
       throws PsiProcessingException {
@@ -61,11 +61,8 @@ public final class OpPathPsiParser {
 
     @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
 
-    @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
-    final OpParams modelParams = parseModelParams(modelPropertiesPsi, typesResolver, context);
-    final Annotations modelAnnotations = parseModelAnnotations(modelPropertiesPsi, context, typesResolver);
 
-    if (isModelPathEmpty(modelProjection) && modelParams.isEmpty() && modelAnnotations.isEmpty()) {
+    if (isModelPathEmpty(modelProjection) ) {
       if (psi.getTagName() != null)
         throw new PsiProcessingException(
             "Path can't end with a tag (path tip type must be a data type)",
@@ -90,8 +87,6 @@ public final class OpPathPsiParser {
 
     final OpModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
         tag.type(),
-        modelParams,
-        modelAnnotations,
         modelProjection,
         typesResolver,
         context
@@ -163,17 +158,20 @@ public final class OpPathPsiParser {
   private static boolean isModelPathEmpty(@Nullable SchemaOpModelPath pathPsi) {
     return pathPsi == null || (
         pathPsi.getOpRecordModelPath() == null &&
-        pathPsi.getOpMapModelPath() == null
+        pathPsi.getOpMapModelPath() == null &&
+        pathPsi.getOpModelPathPropertyList().isEmpty()
     );
   }
 
-  public static @NotNull OpModelPath<?, ?, ?> parseModelPath(
+  private static @NotNull OpModelPath<?, ?, ?> parseModelPath(
       @NotNull DatumTypeApi type,
-      @NotNull OpParams params,
-      @NotNull Annotations annotations,
       @NotNull SchemaOpModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
+
+    @NotNull Collection<SchemaOpModelPathProperty> modelPropertiesPsi = psi.getOpModelPathPropertyList();
+    final OpParams params = parseModelParams(modelPropertiesPsi, typesResolver, context);
+    final Annotations annotations = parseModelAnnotations(modelPropertiesPsi, context, typesResolver);
 
     switch (type.kind()) {
       case RECORD:
@@ -378,7 +376,7 @@ public final class OpPathPsiParser {
 
     final OpVarPath varProjection;
 
-    @Nullable SchemaOpVarPath varPathPsi = psi.getOpVarPath();
+    @Nullable SchemaOpEntityPath varPathPsi = psi.getOpEntityPath();
 
     varProjection = parseVarPath(fieldType, varPathPsi, resolver, context);
 
@@ -401,7 +399,7 @@ public final class OpPathPsiParser {
     @NotNull OpPathKeyProjection keyProjection =
         parseKeyProjection(type.keyType(), psi.getOpPathKeyProjection(), resolver, context);
 
-    @Nullable SchemaOpVarPath valueProjectionPsi = psi.getOpVarPath();
+    @Nullable SchemaOpEntityPath valueProjectionPsi = psi.getOpEntityPath();
 
     if (valueProjectionPsi == null)
       throw new PsiProcessingException("Map value projection not specified", psi, context);

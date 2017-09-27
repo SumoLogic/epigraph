@@ -30,8 +30,8 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.*;
  */
 public final class SchemaSubParserDefinitions {
 
-  public static final SchemaSubParserDefinition<SchemaOpVarPath> OP_VAR_PATH =
-      new SchemaSubParserDefinition<>(S_OP_VAR_PATH, SchemaOpVarPath.class);
+  public static final SchemaSubParserDefinition<SchemaOpEntityPath> OP_ENTITY_PATH =
+      new SchemaSubParserDefinition<>(S_OP_ENTITY_PATH, SchemaOpEntityPath.class);
 
   public static final SchemaSubParserDefinition<SchemaOpEntityProjection> OP_ENTITY_PROJECTION =
       new SchemaSubParserDefinition<>(S_OP_ENTITY_PROJECTION, SchemaOpEntityProjection.class);

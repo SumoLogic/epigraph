@@ -165,6 +165,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     else if (t == S_OP_ENTITY_MULTI_TAIL) {
       r = opEntityMultiTail(b, 0);
     }
+    else if (t == S_OP_ENTITY_PATH) {
+      r = opEntityPath(b, 0);
+    }
     else if (t == S_OP_ENTITY_POLYMORPHIC_TAIL) {
       r = opEntityPolymorphicTail(b, 0);
     }
@@ -278,9 +281,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     }
     else if (t == S_OP_UNNAMED_OR_REF_MODEL_PROJECTION) {
       r = opUnnamedOrRefModelProjection(b, 0);
-    }
-    else if (t == S_OP_VAR_PATH) {
-      r = opVarPath(b, 0);
     }
     else if (t == S_OPERATION_DEF) {
       r = operationDef(b, 0);
@@ -2133,6 +2133,55 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ( ( ':' '+'? tagName) | '+' )? opModelPath
+  public static boolean opEntityPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityPath")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, S_OP_ENTITY_PATH, "<op entity path>");
+    r = opEntityPath_0(b, l + 1);
+    r = r && opModelPath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( ( ':' '+'? tagName) | '+' )?
+  private static boolean opEntityPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityPath_0")) return false;
+    opEntityPath_0_0(b, l + 1);
+    return true;
+  }
+
+  // ( ':' '+'? tagName) | '+'
+  private static boolean opEntityPath_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityPath_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opEntityPath_0_0_0(b, l + 1);
+    if (!r) r = consumeToken(b, S_PLUS);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ':' '+'? tagName
+  private static boolean opEntityPath_0_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityPath_0_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, S_COLON);
+    r = r && opEntityPath_0_0_0_1(b, l + 1);
+    r = r && tagName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '+'?
+  private static boolean opEntityPath_0_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityPath_0_0_0_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
+  }
+
+  /* ********************************************************** */
   // ':' '~' ( opEntityTailItem | opEntityMultiTail )
   public static boolean opEntityPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opEntityPolymorphicTail")) return false;
@@ -2196,12 +2245,12 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // opVarPath
+  // opEntityPath
   public static boolean opFieldPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opFieldPath")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_FIELD_PATH, "<op field path>");
-    r = opVarPath(b, l + 1);
+    r = opEntityPath(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2447,7 +2496,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' opPathKeyProjection opVarPath
+  // '/' opPathKeyProjection opEntityPath
   public static boolean opMapModelPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opMapModelPath")) return false;
     if (!nextTokenIs(b, S_SLASH)) return false;
@@ -2456,7 +2505,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_SLASH);
     r = r && opPathKeyProjection(b, l + 1);
     p = r; // pin = 2
-    r = r && opVarPath(b, l + 1);
+    r = r && opEntityPath(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -2561,27 +2610,85 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( opRecordModelPath
-  //                 | opMapModelPath
-  //                 )?
+  // opModelPathProperties? ( opRecordModelPath | opMapModelPath )?
   public static boolean opModelPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opModelPath")) return false;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_MODEL_PATH, "<op model path>");
-    opModelPath_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
+    r = opModelPath_0(b, l + 1);
+    r = r && opModelPath_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // opModelPathProperties?
+  private static boolean opModelPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPath_0")) return false;
+    opModelPathProperties(b, l + 1);
     return true;
   }
 
-  // opRecordModelPath
-  //                 | opMapModelPath
-  private static boolean opModelPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opModelPath_0")) return false;
+  // ( opRecordModelPath | opMapModelPath )?
+  private static boolean opModelPath_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPath_1")) return false;
+    opModelPath_1_0(b, l + 1);
+    return true;
+  }
+
+  // opRecordModelPath | opMapModelPath
+  private static boolean opModelPath_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPath_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = opRecordModelPath(b, l + 1);
     if (!r) r = opMapModelPath(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '{' (opModelPathProperty ','?)* '}'
+  static boolean opModelPathProperties(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPathProperties")) return false;
+    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, S_CURLY_LEFT);
+    p = r; // pin = 1
+    r = r && report_error_(b, opModelPathProperties_1(b, l + 1));
+    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (opModelPathProperty ','?)*
+  private static boolean opModelPathProperties_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPathProperties_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!opModelPathProperties_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "opModelPathProperties_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // opModelPathProperty ','?
+  private static boolean opModelPathProperties_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPathProperties_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = opModelPathProperty(b, l + 1);
+    r = r && opModelPathProperties_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean opModelPathProperties_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelPathProperties_1_0_1")) return false;
+    consumeToken(b, S_COMMA);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3084,11 +3191,11 @@ public class SchemaParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // opModelProjectionProperties ?
-  //                                    ( ( opRecordModelProjection
-  //                                      | opListModelProjection
-  //                                      | opMapModelProjection
-  //                                      ) opModelPolymorphicTail?
-  //                                    )?
+  //                              ( ( opRecordModelProjection
+  //                                | opListModelProjection
+  //                                | opMapModelProjection
+  //                                ) opModelPolymorphicTail?
+  //                              )?
   public static boolean opUnnamedModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opUnnamedModelProjection")) return false;
     boolean r;
@@ -3107,10 +3214,10 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   // ( ( opRecordModelProjection
-  //                                      | opListModelProjection
-  //                                      | opMapModelProjection
-  //                                      ) opModelPolymorphicTail?
-  //                                    )?
+  //                                | opListModelProjection
+  //                                | opMapModelProjection
+  //                                ) opModelPolymorphicTail?
+  //                              )?
   private static boolean opUnnamedModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opUnnamedModelProjection_1")) return false;
     opUnnamedModelProjection_1_0(b, l + 1);
@@ -3118,9 +3225,9 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   // ( opRecordModelProjection
-  //                                      | opListModelProjection
-  //                                      | opMapModelProjection
-  //                                      ) opModelPolymorphicTail?
+  //                                | opListModelProjection
+  //                                | opMapModelProjection
+  //                                ) opModelPolymorphicTail?
   private static boolean opUnnamedModelProjection_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opUnnamedModelProjection_1_0")) return false;
     boolean r;
@@ -3132,8 +3239,8 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   // opRecordModelProjection
-  //                                      | opListModelProjection
-  //                                      | opMapModelProjection
+  //                                | opListModelProjection
+  //                                | opMapModelProjection
   private static boolean opUnnamedModelProjection_1_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opUnnamedModelProjection_1_0_0")) return false;
     boolean r;
@@ -3174,89 +3281,6 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     if (!r) r = opUnnamedModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
-  }
-
-  /* ********************************************************** */
-  // ( ':' tagName)? opVarPathBody? opModelPath
-  public static boolean opVarPath(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPath")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, S_OP_VAR_PATH, "<op var path>");
-    r = opVarPath_0(b, l + 1);
-    r = r && opVarPath_1(b, l + 1);
-    r = r && opModelPath(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ':' tagName)?
-  private static boolean opVarPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPath_0")) return false;
-    opVarPath_0_0(b, l + 1);
-    return true;
-  }
-
-  // ':' tagName
-  private static boolean opVarPath_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPath_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, S_COLON);
-    r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // opVarPathBody?
-  private static boolean opVarPath_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPath_1")) return false;
-    opVarPathBody(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '{' (opModelPathProperty ','?)* '}'
-  static boolean opVarPathBody(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPathBody")) return false;
-    if (!nextTokenIs(b, S_CURLY_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, S_CURLY_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, opVarPathBody_1(b, l + 1));
-    r = p && consumeToken(b, S_CURLY_RIGHT) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // (opModelPathProperty ','?)*
-  private static boolean opVarPathBody_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPathBody_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!opVarPathBody_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "opVarPathBody_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // opModelPathProperty ','?
-  private static boolean opVarPathBody_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPathBody_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = opModelPathProperty(b, l + 1);
-    r = r && opVarPathBody_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean opVarPathBody_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "opVarPathBody_1_0_1")) return false;
-    consumeToken(b, S_COMMA);
-    return true;
   }
 
   /* ********************************************************** */

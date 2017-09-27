@@ -26,7 +26,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpVarPath;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityPath;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
@@ -146,13 +146,13 @@ public class OpOutputPathTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityPath entityPathPsi = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_VAR_PATH,
+        SchemaSubParserDefinitions.OP_ENTITY_PATH,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(entityPathPsi, errorsAccumulator);
 
     final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
       OpReferenceContext referenceContext =
@@ -161,7 +161,7 @@ public class OpOutputPathTest {
       OpPathPsiProcessingContext pathPsiProcessingContext =
           new OpPathPsiProcessingContext(context, new OpPsiProcessingContext(context, referenceContext));
 
-      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, pathPsiProcessingContext);
+      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, entityPathPsi, resolver, pathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 

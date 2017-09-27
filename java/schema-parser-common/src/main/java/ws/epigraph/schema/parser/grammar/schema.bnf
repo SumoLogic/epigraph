@@ -478,25 +478,22 @@ opKeyProjection ::= 'projection' ':' opModelProjection { pin=1 }
 // :tag / field / * / field
 // :tag { ;foo:String } / field { ;foo:String } / * { ;foo:String }
 
-opVarPath ::= ( ':' tagName)? opVarPathBody? opModelPath
-private opVarPathBody ::= '{' (opModelPathProperty ','?)* '}' {pin=1}
+opEntityPath ::= ( ( ':' '+'? tagName) | '+' )? opModelPath
 
+opModelPath ::= opModelPathProperties? ( opRecordModelPath | opMapModelPath )?
+
+private opModelPathProperties ::= '{' (opModelPathProperty ','?)* '}' {pin=1}
 opModelPathProperty ::= opParam | annotation
-
-// todo: missing body here
-opModelPath ::= ( opRecordModelPath
-                | opMapModelPath
-                )?
 
 // op record path
 opRecordModelPath ::= '/' opFieldPathEntry
 opFieldPathEntry ::= qid opFieldPath
-opFieldPath ::= /* opFieldPathBody? */ opVarPath // {pin=1}
+opFieldPath ::= /* opFieldPathBody? */ opEntityPath // {pin=1}
 //private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
 //opFieldPathBodyPart ::= opParam | annotation
 
 // op map path
-opMapModelPath ::= '/' opPathKeyProjection opVarPath {pin=2}
+opMapModelPath ::= '/' opPathKeyProjection opEntityPath {pin=2}
 opPathKeyProjection ::= '.' opPathKeyProjectionBody? {pin=1}
 opPathKeyProjectionBody ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
 opPathKeyProjectionPart ::= opKeyProjection | opParam | annotation
@@ -527,11 +524,11 @@ opUnnamedOrRefModelProjection ::= opModelProjectionRef | opUnnamedModelProjectio
 opNamedModelProjection ::= '$' qid '=' opUnnamedOrRefModelProjection {pin = 3}
 opModelProjectionRef ::= '$' qid {pin = 1}
 opUnnamedModelProjection ::= opModelProjectionProperties ?
-                                   ( ( opRecordModelProjection
-                                     | opListModelProjection
-                                     | opMapModelProjection
-                                     ) opModelPolymorphicTail?
-                                   )?
+                             ( ( opRecordModelProjection
+                               | opListModelProjection
+                               | opMapModelProjection
+                               ) opModelPolymorphicTail?
+                             )?
 
 private opModelProjectionProperties ::= '{' (opModelProperty ','?)* '}' {pin=1}
 opModelProperty ::= opDefaultValue | opParam | annotation | opModelMeta {

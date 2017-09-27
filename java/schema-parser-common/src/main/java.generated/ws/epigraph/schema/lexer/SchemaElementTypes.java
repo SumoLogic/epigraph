@@ -81,6 +81,7 @@ public interface SchemaElementTypes {
   IElementType S_OPERATION_PATH = new SchemaElementType("S_OPERATION_PATH");
   IElementType S_OP_DEFAULT_VALUE = new SchemaElementType("S_OP_DEFAULT_VALUE");
   IElementType S_OP_ENTITY_MULTI_TAIL = new SchemaElementType("S_OP_ENTITY_MULTI_TAIL");
+  IElementType S_OP_ENTITY_PATH = new SchemaElementType("S_OP_ENTITY_PATH");
   IElementType S_OP_ENTITY_POLYMORPHIC_TAIL = new SchemaElementType("S_OP_ENTITY_POLYMORPHIC_TAIL");
   IElementType S_OP_ENTITY_PROJECTION = new SchemaElementType("S_OP_ENTITY_PROJECTION");
   IElementType S_OP_ENTITY_PROJECTION_REF = new SchemaElementType("S_OP_ENTITY_PROJECTION_REF");
@@ -119,7 +120,6 @@ public interface SchemaElementTypes {
   IElementType S_OP_UNNAMED_MODEL_PROJECTION = new SchemaElementType("S_OP_UNNAMED_MODEL_PROJECTION");
   IElementType S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_ENTITY_PROJECTION");
   IElementType S_OP_UNNAMED_OR_REF_MODEL_PROJECTION = new SchemaElementType("S_OP_UNNAMED_OR_REF_MODEL_PROJECTION");
-  IElementType S_OP_VAR_PATH = new SchemaElementType("S_OP_VAR_PATH");
   IElementType S_OUTPUT_PROJECTION = new SchemaElementType("S_OUTPUT_PROJECTION");
   IElementType S_OUTPUT_PROJECTION_DEF = new SchemaElementType("S_OUTPUT_PROJECTION_DEF");
   IElementType S_PRIMITIVE_DATUM = new SchemaElementType("S_PRIMITIVE_DATUM");
@@ -369,6 +369,9 @@ public interface SchemaElementTypes {
       else if (type == S_OP_ENTITY_MULTI_TAIL) {
         return new SchemaOpEntityMultiTailImpl(node);
       }
+      else if (type == S_OP_ENTITY_PATH) {
+        return new SchemaOpEntityPathImpl(node);
+      }
       else if (type == S_OP_ENTITY_POLYMORPHIC_TAIL) {
         return new SchemaOpEntityPolymorphicTailImpl(node);
       }
@@ -482,9 +485,6 @@ public interface SchemaElementTypes {
       }
       else if (type == S_OP_UNNAMED_OR_REF_MODEL_PROJECTION) {
         return new SchemaOpUnnamedOrRefModelProjectionImpl(node);
-      }
-      else if (type == S_OP_VAR_PATH) {
-        return new SchemaOpVarPathImpl(node);
       }
       else if (type == S_OUTPUT_PROJECTION) {
         return new SchemaOutputProjectionImpl(node);

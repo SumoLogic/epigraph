@@ -196,6 +196,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpEntityPath(@NotNull SchemaOpEntityPath o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpEntityPolymorphicTail(@NotNull SchemaOpEntityPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -345,10 +349,6 @@ public class SchemaVisitor extends PsiElementVisitor {
   }
 
   public void visitOpUnnamedOrRefModelProjection(@NotNull SchemaOpUnnamedOrRefModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpVarPath(@NotNull SchemaOpVarPath o) {
     visitPsiElement(o);
   }
 
