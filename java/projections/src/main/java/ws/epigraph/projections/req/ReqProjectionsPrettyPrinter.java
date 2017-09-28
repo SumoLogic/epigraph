@@ -101,7 +101,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
         );
 
       brk();
-      printVar(mp.itemsProjection(), decSteps(pathSteps));
+      printEntity(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
       l.beginIInd();
@@ -132,7 +132,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
         brk();
-        printVar(mp.itemsProjection(), 0);
+        printEntity(mp.itemsProjection(), 0);
       }
       brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -145,7 +145,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
     l.beginIInd();
     l.print("*(");
     brk();
-    printVar(mp.itemsProjection(), 0);
+    printEntity(mp.itemsProjection(), 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

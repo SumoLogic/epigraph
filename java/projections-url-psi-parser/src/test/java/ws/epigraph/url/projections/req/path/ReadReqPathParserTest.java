@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.path.ReqVarPath;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -142,7 +142,7 @@ public class ReadReqPathParserTest {
   private void testParse(OpEntityProjection opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
 
     UrlReqTrunkEntityProjection psi = getPsi(expr);
-    final ReadReqPathParsingResult<ReqVarPath> result =
+    final ReadReqPathParsingResult<ReqEntityProjection> result =
         TestUtil.runPsiParser(true, context -> ReadReqPathPsiParser.parseEntityPath(
             opPath,
             Person.type.dataType(null),
@@ -151,7 +151,7 @@ public class ReadReqPathParserTest {
             new ReqPathPsiProcessingContext(context)
         ));
 
-    String s = TestUtil.printReqVarPath(result.path());
+    String s = TestUtil.printReqEntityPath(result.path());
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
 import java.util.Objects;
@@ -33,13 +32,13 @@ import java.util.Objects;
  */
 public abstract class RequestUrl {
   private final @NotNull String fieldName;
-  private final @Nullable ReqFieldPath path;
+  private final @Nullable ReqFieldProjection path;
   private final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection;
   private final @NotNull Map<String, GDatum> parameters;
 
   protected RequestUrl(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
 
@@ -51,7 +50,7 @@ public abstract class RequestUrl {
 
   public @NotNull String fieldName() { return fieldName; }
 
-  public @Nullable ReqFieldPath path() { return path; }
+  public @Nullable ReqFieldProjection path() { return path; }
 
   public @NotNull StepsAndProjection<ReqFieldProjection> outputProjection() { return outputProjection; }
 

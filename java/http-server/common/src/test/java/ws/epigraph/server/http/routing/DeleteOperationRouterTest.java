@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -186,13 +185,13 @@ public class DeleteOperationRouterTest {
     assertEquals(expectedId, op.getId());
 
     final @NotNull NonReadRequestUrl deleteRequestUrl = s.requestUrl();
-    final ReqFieldPath path = deleteRequestUrl.path();
+    final ReqFieldProjection path = deleteRequestUrl.path();
 
     if (expectedPath == null)
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.entityProjection()));
+      assertEquals(expectedPath, TestUtil.printReqEntityPath(path.entityProjection()));
     }
 
     final @Nullable StepsAndProjection<ReqFieldProjection> deleteStepsAndProjection =

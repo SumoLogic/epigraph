@@ -158,6 +158,11 @@ public abstract class AbstractVarProjection<
     }
   }
 
+  public boolean isPathEnd() {
+    assertResolved();
+    return tagProjections().isEmpty();
+  }
+
   @Override
   public @NotNull TypeApi type() { return type; }
 

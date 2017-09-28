@@ -25,6 +25,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.TypeKind;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,6 +60,25 @@ public class ReqEntityProjection extends AbstractVarProjection<
 
   public ReqEntityProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
+  }
+
+  public static @NotNull ReqEntityProjection path(
+      @NotNull TypeApi type,
+      @NotNull ReqTagProjectionEntry tag,
+      @NotNull TextLocation location) {
+
+    return new ReqEntityProjection(
+        type,
+        false,
+        Collections.singletonMap(tag.tag().name(), tag),
+        false,
+        null,
+        location
+    );
+  }
+
+  public static @NotNull ReqEntityProjection pathEnd(@NotNull TypeApi type, @NotNull TextLocation location) {
+    return new ReqEntityProjection(type, false, Collections.emptyMap(), false, null, location);
   }
 
   public boolean flagged() { return flagged; }

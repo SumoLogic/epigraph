@@ -180,7 +180,7 @@ public final class EpigraphTestUtil {
         };
 
     OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
-    printer.printVar(projection, 0);
+    printer.printEntity(projection, 0);
     layouter.close();
     return sb.getString();
   }

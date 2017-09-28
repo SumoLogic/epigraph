@@ -16,12 +16,11 @@
 
 package ws.epigraph.url;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import java.util.Map;
 public class ReadRequestUrl extends RequestUrl {
   public ReadRequestUrl(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);

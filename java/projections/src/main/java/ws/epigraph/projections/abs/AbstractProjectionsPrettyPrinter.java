@@ -33,21 +33,21 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractProjectionsPrettyPrinter<
-    VP extends GenVarProjection<VP, TP, MP>,
+    EP extends GenVarProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;
   protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
-  protected final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context;
+  protected final @NotNull ProjectionsPrettyPrinterContext<EP, MP> context;
 
   private final Collection<ProjectionReferenceName.RefNameSegment> visitedEntityRefs = new HashSet<>();
   private final Collection<ProjectionReferenceName.RefNameSegment> visitedModelRefs = new HashSet<>();
 
   protected AbstractProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<EP, MP> context) {
     l = layouter;
     this.context = context;
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
@@ -72,7 +72,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     visitedEntityRefs.addAll(names);
   }
 
-  public final void printVar(@NotNull VP p, int pathSteps) throws E {
+  public final void printEntity(@NotNull EP p, int pathSteps) throws E {
     final ProjectionReferenceName name = p.referenceName();
 
     boolean shouldPrint = true;
@@ -97,20 +97,20 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
 
     if (shouldPrint)
-      printVarNoRefCheck(p, pathSteps);
+      printEntityNoRefCheck(p, pathSteps);
   }
 
-  public final void printVarNoRefCheck(@NotNull VP p, int pathSteps) throws E {
+  public final void printEntityNoRefCheck(@NotNull EP p, int pathSteps) throws E {
     if (p.isResolved()) {
-      printVarOnly(p, pathSteps);
+      printEntityOnly(p, pathSteps);
       printTailsOnly(p);
     } else {
       l.print("<UNRESOLVED>");
     }
   }
 
-  protected void printVarOnly(@NotNull VP p, int pathSteps) throws E {
-    printVarDecoration(p);
+  protected void printEntityOnly(@NotNull EP p, int pathSteps) throws E {
+    printEntityDecoration(p);
     Map<String, TP> tagProjections = p.tagProjections();
     if (p.type().kind() != TypeKind.ENTITY) {
       // samovar
@@ -144,32 +144,32 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  protected void printVarDecoration(@NotNull VP p) throws E { }
+  protected void printEntityDecoration(@NotNull EP p) throws E { }
 
-  private void printTailsOnly(@NotNull VP p) throws E {
-    Collection<VP> polymorphicTails = p.polymorphicTails();
+  private void printTailsOnly(@NotNull EP p) throws E {
+    Collection<EP> polymorphicTails = p.polymorphicTails();
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
       l.beginIInd();
       brk();
       if (polymorphicTails.size() == 1) {
         l.print(":~");
-        VP tail = polymorphicTails.iterator().next();
+        EP tail = polymorphicTails.iterator().next();
         l.print(tail.type().name().toString());
         brk();
-        printVar(tail, 0);
+        printEntity(tail, 0);
       } else {
         l.beginCInd();
         l.print(":~(");
         boolean first = true;
-        for (VP tail : polymorphicTails) {
+        for (EP tail : polymorphicTails) {
           if (first) first = false;
           else l.print(",");
           brk();
           l.beginIInd(0);
           l.print(tail.type().name().toString());
           brk();
-          printVar(tail, 0);
+          printEntity(tail, 0);
           l.end();
         }
         brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -314,14 +314,14 @@ public abstract class AbstractProjectionsPrettyPrinter<
 //    return first;
 //  }
 
-  protected boolean isPrintoutEmpty(@NotNull VP vp) {
+  protected boolean isPrintoutEmpty(@NotNull EP EP) {
 
-    if (!vp.isResolved()) return false;
-    Collection<VP> tails = vp.polymorphicTails();
+    if (!EP.isResolved()) return false;
+    Collection<EP> tails = EP.polymorphicTails();
     if (tails != null && !tails.isEmpty()) return false;
-    if (vp.type().kind() == TypeKind.ENTITY) return false; // non-samovar always prints something
+    if (EP.type().kind() == TypeKind.ENTITY) return false; // non-samovar always prints something
 
-    for (TP tagProjection : vp.tagProjections().values()) {
+    for (TP tagProjection : EP.tagProjections().values()) {
       final MP modelProjection = tagProjection.projection();
       if (!isPrintoutEmpty(modelProjection)) return false;
       if (!modelParamsEmpty(modelProjection)) return false;
@@ -342,9 +342,9 @@ public abstract class AbstractProjectionsPrettyPrinter<
       case RECORD:
         return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();
       case MAP:
-        return isPrintoutEmpty((VP) ((GenMapModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((EP) ((GenMapModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
       case LIST:
-        return isPrintoutEmpty((VP) ((GenListModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((EP) ((GenListModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
       default:
         return true;
     }

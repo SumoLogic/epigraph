@@ -33,8 +33,8 @@ class ReqPathPrimitiveModelProjectionGen(
 
   override type OpProjectionType = OpPrimitiveModelProjection
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPrimitiveModelPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPrimitiveModelPath")
+//  )
 
 }

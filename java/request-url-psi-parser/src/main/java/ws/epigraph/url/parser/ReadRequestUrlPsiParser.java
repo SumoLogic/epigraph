@@ -26,7 +26,6 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -36,8 +35,8 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
-import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -85,7 +84,7 @@ public final class ReadRequestUrlPsiParser {
       final @NotNull TypesResolver typesResolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
+    @NotNull ReadReqPathParsingResult<ReqFieldProjection> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
         resourceType,
         opPath,
         psi.getReqTrunkFieldProjection(),
@@ -93,7 +92,7 @@ public final class ReadRequestUrlPsiParser {
         new ReqPathPsiProcessingContext(context)
     );
 
-    @NotNull ReqFieldPath reqPath = pathParsingResult.path();
+    @NotNull ReqFieldProjection reqPath = pathParsingResult.path();
     DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.entityProjection());
     TypesResolver newResolver = addTypeNamespace(pathTipType.type(), typesResolver);
 

@@ -30,8 +30,6 @@ import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.*;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.*;
@@ -93,7 +91,7 @@ public final class RequestFactory {
 
     throwErrors(psi, errorsAccumulator);
 
-    final ReqFieldPath reqPath;
+    final ReqFieldProjection reqPath;
     final ReqFieldProjection reqFieldProjection;
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
@@ -121,7 +119,7 @@ public final class RequestFactory {
 
         reqFieldProjection = stepsAndProjection.projection();
       } else {
-        ReadReqPathParsingResult<ReqFieldPath> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
+        ReadReqPathParsingResult<ReqFieldProjection> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
             resourceType,
             opPath,
             psi,
@@ -210,7 +208,7 @@ public final class RequestFactory {
       @NotNull String outputRequestString,
       @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
 
-    ReqFieldPath reqFieldPath = null;
+    ReqFieldProjection reqFieldPath = null;
 
     if (pathString != null) {
       OpFieldProjection opPath = operationDeclaration.path();
@@ -222,8 +220,8 @@ public final class RequestFactory {
             )
         );
 
-      ReqVarPath reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
-      reqFieldPath = new ReqFieldPath(
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
       );
@@ -284,7 +282,7 @@ public final class RequestFactory {
       @NotNull String outputRequestString,
       @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
 
-    ReqFieldPath reqFieldPath = null;
+    ReqFieldProjection reqFieldPath = null;
 
     if (pathString != null) {
       OpFieldProjection opPath = operationDeclaration.path();
@@ -296,8 +294,8 @@ public final class RequestFactory {
             )
         );
 
-      ReqVarPath reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
-      reqFieldPath = new ReqFieldPath(
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
       );
@@ -359,7 +357,7 @@ public final class RequestFactory {
       @NotNull String outputRequestString,
       @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
 
-    ReqFieldPath reqFieldPath = null;
+    ReqFieldProjection reqFieldPath = null;
 
     if (pathString != null) {
       OpFieldProjection opPath = operationDeclaration.path();
@@ -371,8 +369,8 @@ public final class RequestFactory {
             )
         );
 
-      ReqVarPath reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
-      reqFieldPath = new ReqFieldPath(
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
       );
@@ -428,7 +426,7 @@ public final class RequestFactory {
       @NotNull String outputRequestString,
       @NotNull TypesResolver typesResolver) throws IllegalArgumentException {
 
-    ReqFieldPath reqFieldPath = null;
+    ReqFieldProjection reqFieldPath = null;
 
     if (pathString != null) {
       OpFieldProjection opPath = operationDeclaration.path();
@@ -440,8 +438,8 @@ public final class RequestFactory {
             )
         );
 
-      ReqVarPath reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
-      reqFieldPath = new ReqFieldPath(
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
       );
@@ -490,7 +488,7 @@ public final class RequestFactory {
     );
   }
 
-  private static @NotNull ReqVarPath parseReqPath(
+  private static @NotNull ReqEntityProjection parseReqPath(
       @NotNull String path,
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,

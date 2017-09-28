@@ -60,7 +60,7 @@ class ReqPathMapModelProjectionGen(
    * @return key projection
    */
   public @NotNull $keyProjectionClass key() {
-    return new $keyProjectionClass(raw.key());
+    return new $keyProjectionClass(raw.keys().get(0));
   }
 """/*@formatter:on*/
       ,
@@ -68,7 +68,7 @@ class ReqPathMapModelProjectionGen(
     )
   }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqMapModelPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqMapModelPath")
+//  )
 }

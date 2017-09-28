@@ -45,8 +45,8 @@ class ReqPathFieldProjectionGen(
       ctx
     )
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqFieldPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqFieldPath")
+//  )
 
 }

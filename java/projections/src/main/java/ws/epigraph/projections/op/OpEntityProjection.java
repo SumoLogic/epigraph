@@ -73,11 +73,6 @@ public class OpEntityProjection extends AbstractVarProjection<
     return new OpEntityProjection(type, false, Collections.emptyMap(), false, null, location);
   }
 
-  public boolean isPathEnd() {
-    assertResolved();
-    return tagProjections().isEmpty();
-  }
-
   public OpEntityProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }

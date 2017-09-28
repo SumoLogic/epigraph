@@ -50,10 +50,10 @@ class ReqPathEntityProjectionGen(
       ctx
     )
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqTagPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath"),
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqTagPath")
+//  )
 }
 
 object ReqPathEntityProjectionGen {
@@ -65,6 +65,7 @@ object ReqPathEntityProjectionGen {
 
     case TypeKind.ENTITY =>
       new ReqPathEntityProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
+
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
         baseNamespaceProvider,

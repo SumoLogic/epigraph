@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +33,7 @@ public class NonReadRequestUrl extends RequestUrl {
 
   public NonReadRequestUrl(
       final @NotNull String fieldName,
-      final @Nullable ReqFieldPath path,
+      final @Nullable ReqFieldProjection path,
       final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection,
       final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       final @NotNull Map<String, GDatum> parameters) {

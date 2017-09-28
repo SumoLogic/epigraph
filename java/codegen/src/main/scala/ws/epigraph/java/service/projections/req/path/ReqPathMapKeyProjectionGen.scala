@@ -40,7 +40,7 @@ class ReqPathMapKeyProjectionGen(
 
   override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPathKeyProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqPathKeyProjection")
+//  )
 }

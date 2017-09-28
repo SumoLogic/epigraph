@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -30,7 +29,7 @@ public class CustomOperationRequest extends OperationRequest {
   private final @Nullable ReqFieldProjection inputProjection;
 
   public CustomOperationRequest(
-      final @Nullable ReqFieldPath path,
+      final @Nullable ReqFieldProjection path,
       final @Nullable Data data,
       final @Nullable ReqFieldProjection inputProjection,
       final @NotNull ReqFieldProjection outputProjection) {

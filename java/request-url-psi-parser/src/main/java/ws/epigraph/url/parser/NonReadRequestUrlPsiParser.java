@@ -22,7 +22,6 @@ import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -81,7 +80,7 @@ public abstract class NonReadRequestUrlPsiParser {
 
     } else {
 
-      @NotNull ReqFieldPath reqPath = ReqPathPsiParser.parseFieldPath(
+      @NotNull ReqFieldProjection reqPath = ReqPathPsiParser.parseFieldPath(
           resourceType,
           opPath,
           psi.getReqFieldPath(),
@@ -102,7 +101,7 @@ public abstract class NonReadRequestUrlPsiParser {
   }
 
   private @NotNull NonReadRequestUrl parseRequestUrl(
-      final @Nullable ReqFieldPath reqFieldPath,
+      final @Nullable ReqFieldProjection reqFieldPath,
       final Map<String, GDatum> requestParams,
       final @NotNull OperationDeclaration op,
       final @NotNull UrlNonReadUrl psi,

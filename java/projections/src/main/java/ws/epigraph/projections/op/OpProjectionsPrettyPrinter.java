@@ -134,7 +134,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
     // todo: don't print '+' for vars/models if printed for items
     l.print("(");
     brk();
-    printVar(mp.itemsProjection(), 0);
+    printEntity(mp.itemsProjection(), 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

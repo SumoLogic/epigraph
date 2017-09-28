@@ -38,8 +38,7 @@ import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
-import ws.epigraph.projections.req.path.ReqVarPath;
+import ws.epigraph.projections.req.ReqPathPrettyPrinter;
 import ws.epigraph.psi.*;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemaPrettyPrinter;
@@ -275,17 +274,17 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
-    printer.printVar(path, 0);
+    printer.printEntity(path, 0);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printReqVarPath(@NotNull ReqVarPath path) {
+  public static @NotNull String printReqEntityPath(@NotNull ReqEntityProjection path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
     int len = ProjectionUtils.pathLength(path);
-    printer.printVar(path, len);
+    printer.printEntity(path, len);
     layouter.close();
     return sb.getString();
   }
@@ -311,7 +310,7 @@ public final class TestUtil {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqProjectionsPrettyPrinter<NoExceptions> printer = new ReqProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, pathSteps);
+    printer.printEntity(projection, pathSteps);
     layouter.close();
     return sb.getString();
   }
@@ -332,7 +331,7 @@ public final class TestUtil {
         };
 
     OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
-    printer.printVar(projection, 0);
+    printer.printEntity(projection, 0);
     layouter.close();
     return sb.getString();
   }

@@ -192,7 +192,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             globalOutputProjections
         );
 
-    new OpProjectionsPrettyPrinter<>(l, ipc).printVar(transformer.inputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, ipc).printEntity(transformer.inputProjection(), 0);
     l.end();
 
 
@@ -206,7 +206,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ProjectionReferenceName.fromQn(namespaces.projectionsNamespace()),
             globalOutputProjections
         );
-    new OpProjectionsPrettyPrinter<>(l, opc).printVar(transformer.outputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, opc).printEntity(transformer.outputProjection(), 0);
     l.end();
 
     l.end(); //2
@@ -437,7 +437,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             l.beginIInd();
             l.print(prefix).brk().print(shortName.toString()).print(":").brk();
             l.print(outputProjection.type().name().toString()).brk().print("=").brk();
-            projectionsPrettyPrinter.printVarNoRefCheck(outputProjection, 0);
+            projectionsPrettyPrinter.printEntityNoRefCheck(outputProjection, 0);
             l.end();
 
             ProjectionsPrettyPrinterContext<VP, MP> parentContext = printerContext.parent();

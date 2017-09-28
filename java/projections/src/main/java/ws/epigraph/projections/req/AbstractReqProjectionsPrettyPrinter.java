@@ -164,7 +164,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       brk();
-      printVar(fieldVarProjection, pathSteps);
+      printEntity(fieldVarProjection, pathSteps);
     }
     l.end();
   }
@@ -240,7 +240,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(itemsProjection)) {
       brk();
-      printVar(itemsProjection, 0);
+      printEntity(itemsProjection, 0);
     }
     brk(1, -l.getDefaultIndentation()).end().print(")");
 

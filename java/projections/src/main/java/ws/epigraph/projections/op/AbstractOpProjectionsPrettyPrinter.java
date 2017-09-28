@@ -190,7 +190,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
 //    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      printVar(fieldVarProjection, 0);
+      printEntity(fieldVarProjection, 0);
     }
 //    } else {
 //      l.beginCInd();
@@ -271,7 +271,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.print(itemsProjectionPrefix);
     l.print("(");
     brk();
-    printVar(itemsProjection, 0);
+    printEntity(itemsProjection, 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

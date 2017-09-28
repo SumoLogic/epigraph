@@ -19,7 +19,6 @@ package ws.epigraph.service.operations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -28,7 +27,7 @@ public class DeleteOperationRequest extends OperationRequest {
   private final @NotNull ReqFieldProjection DeleteProjection;
 
   public DeleteOperationRequest(
-      final @Nullable ReqFieldPath path,
+      final @Nullable ReqFieldProjection path,
       final @NotNull ReqFieldProjection deleteProjection,
       final @NotNull ReqFieldProjection outputProjection) {
 

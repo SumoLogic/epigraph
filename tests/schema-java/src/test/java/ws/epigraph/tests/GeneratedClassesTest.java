@@ -161,7 +161,7 @@ public class GeneratedClassesTest {
             null
         )
     );
-    printer.printVar(projection, 0);
+    printer.printEntity(projection, 0);
     layouter.close();
     return sb.getString();
   }

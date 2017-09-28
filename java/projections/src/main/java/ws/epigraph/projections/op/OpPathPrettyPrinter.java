@@ -40,10 +40,10 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected void printVarOnly(@NotNull OpEntityProjection p, int pathSteps) throws E {
+  protected void printEntityOnly(@NotNull OpEntityProjection p, int pathSteps) throws E {
     // no tags = end of path
     if (!p.tagProjections().isEmpty()) {
-      super.printVarOnly(p, pathSteps);
+      super.printEntityOnly(p, pathSteps);
     }
   }
 
@@ -97,7 +97,7 @@ public class OpPathPrettyPrinter<E extends Exception>
       if (!isPrintoutEmpty(mp.itemsProjection())) brk();
     }
 
-    printVar(mp.itemsProjection(), 0);
+    printEntity(mp.itemsProjection(), 0);
 
     l.end();
   }

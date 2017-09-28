@@ -25,8 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
+import ws.epigraph.projections.req.ReqPathPrettyPrinter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -54,7 +53,7 @@ public final class UriComposer {
 
   public static @NotNull String composeReadUri(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @NotNull ReqFieldProjection projection) {
 
     final String decodedUri;
@@ -75,7 +74,7 @@ public final class UriComposer {
 
   public static @NotNull String composeCreateUri(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @Nullable ReqFieldProjection inputProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
@@ -97,7 +96,7 @@ public final class UriComposer {
 
   public static @NotNull String composeUpdateUri(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @Nullable ReqFieldProjection updateProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
@@ -119,7 +118,7 @@ public final class UriComposer {
 
   public static @NotNull String composeDeleteUri(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @NotNull ReqFieldProjection deleteProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
@@ -139,7 +138,7 @@ public final class UriComposer {
 
   public static @NotNull String composeCustomUri(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
+      @Nullable ReqFieldProjection path,
       @Nullable ReqFieldProjection inputProjection,
       @NotNull ReqFieldProjection outputProjection) {
 
@@ -197,14 +196,14 @@ public final class UriComposer {
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
 
-    printer.printVar(projection, 0);
+    printer.printEntity(projection, 0);
 
     return sb.getString();
   }
 
   private static @NotNull String printReqPath(
       @NotNull String fieldName,
-      @NotNull ReqFieldPath path) {
+      @NotNull ReqFieldProjection path) {
 
     StringBackend sb = new StringBackend(2000);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);

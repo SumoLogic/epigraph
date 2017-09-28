@@ -16,27 +16,26 @@
 
 package ws.epigraph.service.operations;
 
-import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OperationRequest {
-  private final @Nullable ReqFieldPath path;
+  private final @Nullable ReqFieldProjection path;
   private final @NotNull ReqFieldProjection outputProjection;
 
   protected OperationRequest(
-      final @Nullable ReqFieldPath path,
+      final @Nullable ReqFieldProjection path,
       final @NotNull ReqFieldProjection outputProjection) {
 
     this.path = path;
     this.outputProjection = outputProjection;
   }
 
-  public @Nullable ReqFieldPath path() { return path; }
+  public @Nullable ReqFieldProjection path() { return path; }
 
   public @NotNull ReqFieldProjection outputProjection() { return outputProjection; }
 }

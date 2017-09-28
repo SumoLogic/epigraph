@@ -80,6 +80,13 @@ public class ReqMapModelProjection
     return keys;
   }
 
+  public @NotNull ReqKeyProjection pathKey() {
+    assert isResolved();
+    assert keys != null;
+    assert keys.size() == 1;
+    return keys.get(0);
+  }
+
   public boolean keysRequired() {
     return keysRequired;
   }
