@@ -19,14 +19,15 @@ package ws.epigraph.projections.op.path;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpVarPath;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityPath;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
@@ -41,7 +42,7 @@ import static ws.epigraph.test.TestUtil.*;
 public class OpOutputPathTest {
   @Test
   public void testParseEmpty() throws PsiProcessingException {
-    testVarPathParsing("");
+    testEntityPathParsing("");
   }
 
   @Test
@@ -51,7 +52,7 @@ public class OpOutputPathTest {
 
   @Test
   public void testParseParam() throws PsiProcessingException {
-    testVarPathParsing(
+    testEntityPathParsing(
         ":`record` { ;foo: epigraph.String } / id { ;+param: map[epigraph.String,ws.epigraph.tests.Person] { @epigraph.annotations.Deprecated, default : ( \"foo\": < id: 123 > ) } []( :id ) }"
         ,
         lines(
@@ -67,22 +68,22 @@ public class OpOutputPathTest {
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testVarPathParsing(":`record` / bestFriend :`record` / id");
+    testEntityPathParsing(":`record` / bestFriend :`record` / id");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testVarPathParsing(":`record` / bestFriend :`record` { @epigraph.annotations.Deprecated } / id");
+    testEntityPathParsing(":`record` / bestFriend :`record` { @epigraph.annotations.Deprecated } / id");
   }
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testVarPathParsing(":`record` / friendsMap { ;param: epigraph.String } / . :`record` / id");
+    testEntityPathParsing(":`record` / friendsMap { ;param: epigraph.String } / . :`record` / id");
   }
 
   private void testVarPathParsingErr(String str) {
     try {
-      testVarPathParsing(
+      testEntityPathParsing(
           new DataType(Person.type, Person.id),
           str
           ,
@@ -93,16 +94,16 @@ public class OpOutputPathTest {
     }
   }
 
-  private void testVarPathParsing(String str) throws PsiProcessingException {
-    testVarPathParsing(
+  private void testEntityPathParsing(String str) throws PsiProcessingException {
+    testEntityPathParsing(
         str
         ,
         str
     );
   }
 
-  private void testVarPathParsing(String str, String expected) throws PsiProcessingException {
-    testVarPathParsing(
+  private void testEntityPathParsing(String str, String expected) throws PsiProcessingException {
+    testEntityPathParsing(
         new DataType(Person.type, Person.id),
         str
         ,
@@ -110,18 +111,18 @@ public class OpOutputPathTest {
     );
   }
 
-  private void testVarPathParsing(DataType varDataType, String projectionString, String expected)
+  private void testEntityPathParsing(DataType varDataType, String projectionString, String expected)
       throws PsiProcessingException {
 
-    OpVarPath varPath = parseOpVarPath(varDataType, projectionString);
+    OpEntityProjection varPath = parseOpEntityProjection(varDataType, projectionString);
 
-    String actual = TestUtil.printOpVarPath(varPath);
+    String actual = TestUtil.printOpEntityPath(varPath);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  private OpVarPath parseOpVarPath(DataType varDataType, String projectionString) throws PsiProcessingException {
+  private OpEntityProjection parseOpEntityProjection(DataType varDataType, String projectionString) throws PsiProcessingException {
 
     TypesResolver
         resolver = new SimpleTypesResolver(
@@ -135,10 +136,10 @@ public class OpOutputPathTest {
         epigraph.annotations.Deprecated.type
     );
 
-    return parseOpVarPath(varDataType, projectionString, false, resolver);
+    return parseOpEntityProjection(varDataType, projectionString, false, resolver);
   }
 
-  public static @NotNull OpVarPath parseOpVarPath(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -146,31 +147,30 @@ public class OpOutputPathTest {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityPath entityPathPsi = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_VAR_PATH,
+        SchemaSubParserDefinitions.OP_ENTITY_PATH,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(entityPathPsi, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpInputReferenceContext inputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpInputPsiProcessingContext inputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputReferenceContext);
+    final TestUtil.PsiParserClosure<OpEntityProjection> closure = context -> {
+      OpReferenceContext referenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
       OpPathPsiProcessingContext pathPsiProcessingContext =
-          new OpPathPsiProcessingContext(context, inputPsiProcessingContext);
+          new OpPathPsiProcessingContext(context, new OpPsiProcessingContext(context, referenceContext));
 
-      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, pathPsiProcessingContext);
+      @NotNull OpEntityProjection
+          vp = OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, pathPsiProcessingContext);
 
-      inputReferenceContext.ensureAllReferencesResolved();
+      referenceContext.ensureAllReferencesResolved();
 
       return vp;
     };
 
-    return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
+    return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);
   }
 
 }

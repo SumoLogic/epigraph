@@ -18,17 +18,11 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.UpdateOperation;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.UpdateRequestUrl;
 import ws.epigraph.url.parser.UpdateRequestUrlPsiParser;
-import ws.epigraph.url.parser.psi.UrlUpdateUrl;
 
 import java.util.Collection;
 
@@ -36,36 +30,20 @@ import java.util.Collection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class UpdateOperationRouter
-    extends AbstractOperationRouter<UrlUpdateUrl, UpdateOperationDeclaration, UpdateOperation<?>, UpdateRequestUrl> {
+    extends AbstractNonReadOperationRouter<UpdateOperationDeclaration, UpdateOperation<?>> {
 
   public static final UpdateOperationRouter INSTANCE = new UpdateOperationRouter();
 
-  private UpdateOperationRouter() {}
+  private UpdateOperationRouter() {super(UpdateRequestUrlPsiParser.INSTANCE);}
 
   @Override
   protected @Nullable UpdateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {
-    return resource.namedUpdateOperation(DeleteOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
+    return resource.namedUpdateOperation(UpdateOperationDeclaration.DEFAULT_NAME.equals(name) ? null : name);
   }
 
   @Override
   protected @NotNull Collection<? extends UpdateOperation<?>> operations(final @NotNull Resource resource) {
     return resource.updateOperations();
-  }
-
-  @Override
-  protected @NotNull UpdateRequestUrl parseUrl(
-      final @NotNull DataTypeApi resourceType,
-      final @NotNull UpdateOperationDeclaration opDecl,
-      final @NotNull UrlUpdateUrl urlPsi,
-      final @NotNull TypesResolver resolver,
-      final @NotNull PsiProcessingContext context) throws PsiProcessingException {
-    return UpdateRequestUrlPsiParser.parseUpdateRequestUrl(
-        resourceType,
-        opDecl,
-        urlPsi,
-        resolver,
-        context
-    );
   }
 
 }

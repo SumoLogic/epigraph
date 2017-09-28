@@ -83,7 +83,7 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitRetroDecl(@NotNull final SchemaRetroDecl retroDecl) {
+      public void visitRetroDecl(final @NotNull SchemaRetroDecl retroDecl) {
         SchemaEntityTagRef varTagRef = retroDecl.getEntityTagRef();
         PsiElement id = varTagRef.getQid();
         setHighlighting(id, holder, SchemaSyntaxHighlighter.VAR_MEMBER);
@@ -233,37 +233,13 @@ public class SchemaAnnotator extends SchemaAnnotatorBase {
       }
 
       @Override
-      public void visitOpInputVarProjectionRef(@NotNull final SchemaOpInputVarProjectionRef o) {
+      public void visitOpEntityProjectionRef(final @NotNull SchemaOpEntityProjectionRef o) {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }
 
       @Override
-      public void visitOpOutputVarProjectionRef(@NotNull final SchemaOpOutputVarProjectionRef o) {
-        final SchemaQid qid = o.getQid();
-        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
-      }
-
-      @Override
-      public void visitOpDeleteVarProjectionRef(@NotNull final SchemaOpDeleteVarProjectionRef o) {
-        final SchemaQid qid = o.getQid();
-        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
-      }
-
-      @Override
-      public void visitOpOutputModelProjectionRef(@NotNull final SchemaOpOutputModelProjectionRef o) {
-        final SchemaQid qid = o.getQid();
-        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
-      }
-
-      @Override
-      public void visitOpInputModelProjectionRef(@NotNull final SchemaOpInputModelProjectionRef o) {
-        final SchemaQid qid = o.getQid();
-        if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
-      }
-
-      @Override
-      public void visitOpDeleteModelProjectionRef(@NotNull final SchemaOpDeleteModelProjectionRef o) {
+      public void visitOpModelProjectionRef(final @NotNull SchemaOpModelProjectionRef o) {
         final SchemaQid qid = o.getQid();
         if (qid != null) setHighlighting(qid, holder, SchemaSyntaxHighlighter.PROJECTION_REF);
       }

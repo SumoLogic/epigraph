@@ -147,7 +147,7 @@ public abstract class AbstractRemoteOperationInvocation<
             try {
               f.complete(
                   serverProtocol.readResponse(
-                      request.outputProjection().varProjection(),
+                      request.outputProjection().entityProjection(),
                       context,
                       result,
                       okStatusCode

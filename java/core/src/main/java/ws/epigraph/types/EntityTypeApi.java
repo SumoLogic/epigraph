@@ -35,5 +35,6 @@ public interface EntityTypeApi extends TypeApi {
   @Override
   @NotNull List<@NotNull ? extends EntityTypeApi> supertypes();
 
+  /** Creates new data type with a given retro tag */
   @NotNull DataTypeApi dataType(@Nullable TagApi defaultTag);
 }

@@ -24,32 +24,21 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
-import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.op.output.OpOutputModelProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
-import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.delete.ReqDeleteProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.projections.req.path.ReqPathPrettyPrinter;
-import ws.epigraph.projections.req.path.ReqVarPath;
-import ws.epigraph.projections.req.update.ReqUpdateProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpPathPrettyPrinter;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
+import ws.epigraph.projections.req.ReqPathPrettyPrinter;
 import ws.epigraph.psi.*;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemaPrettyPrinter;
@@ -160,13 +149,13 @@ public final class TestUtil {
   }
 
   @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     try {
-      return parseOpVarPath(varDataType, projectionString, true, resolver);
+      return parseOpEntityProjection(varDataType, projectionString, true, resolver);
     } catch (PsiProcessingException e) { // can't happen..
       e.printStackTrace();
       fail(e.getMessage());
@@ -176,7 +165,7 @@ public final class TestUtil {
   }
 
   @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -184,7 +173,7 @@ public final class TestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    IdlOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         IdlSubParserDefinitions.OP_VAR_PATH,
         errorsAccumulator
@@ -192,7 +181,7 @@ public final class TestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    final PsiParserClosure<OpVarPath> closure =
+    final PsiParserClosure<OpEntityProjection> closure =
         errors -> OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, errors);
 
     return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
@@ -281,129 +270,77 @@ public final class TestUtil {
 
 */
 
-  public static @NotNull String printOpVarPath(@NotNull OpVarPath path) {
+  public static @NotNull String printOpEntityPath(@NotNull OpEntityProjection path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
-    printer.printVar(path, 0);
+    printer.printEntity(path, 0);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printReqVarPath(@NotNull ReqVarPath path) {
+  public static @NotNull String printReqEntityPath(@NotNull ReqEntityProjection path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
     int len = ProjectionUtils.pathLength(path);
-    printer.printVar(path, len);
+    printer.printEntity(path, len);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printReqOutputFieldProjection(
+  public static @NotNull String printReqFieldProjection(
       String fieldName,
-      @NotNull ReqOutputFieldProjection projection,
+      @NotNull ReqFieldProjection projection,
       int pathSteps) {
 
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
+    ReqProjectionsPrettyPrinter<NoExceptions> printer = new ReqProjectionsPrettyPrinter<>(layouter);
     printer.print(fieldName, projection, pathSteps);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printReqOutputVarProjection(@NotNull ReqOutputVarProjection projection, int pathSteps) {
+  public static @NotNull String printReqEntityProjection(@NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection) {
+    return printReqEntityProjection(stepsAndProjection.projection(), stepsAndProjection.pathSteps());
+  }
+
+  public static @NotNull String printReqEntityProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqOutputProjectionsPrettyPrinter<NoExceptions> printer = new ReqOutputProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, pathSteps);
+    ReqProjectionsPrettyPrinter<NoExceptions> printer = new ReqProjectionsPrettyPrinter<>(layouter);
+    printer.printEntity(projection, pathSteps);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printReqUpdateVarProjection(@NotNull ReqUpdateVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqUpdateProjectionsPrettyPrinter<NoExceptions> printer = new ReqUpdateProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printReqInputFieldProjection(
-      String fieldName,
-      @NotNull ReqInputFieldProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
-    printer.print(fieldName, projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printReqInputVarProjection(@NotNull ReqInputVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqInputProjectionsPrettyPrinter<NoExceptions> printer = new ReqInputProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printReqDeleteVarProjection(@NotNull ReqDeleteVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    ReqDeleteProjectionsPrettyPrinter<NoExceptions> printer = new ReqDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printOpInputVarProjection(@NotNull OpInputVarProjection projection, int pathSteps) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpInputProjectionsPrettyPrinter<NoExceptions> printer = new OpInputProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, pathSteps);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printOpOutputVarProjection(@NotNull OpOutputVarProjection projection) {
+  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpOutputVarProjection, OpOutputModelProjection<?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {
           @Override
-          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+          public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
             return true;
           }
         };
 
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter, pctx);
-    printer.printVar(projection, 0);
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
+    printer.printEntity(projection, 0);
     layouter.close();
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputModelProjection(@NotNull OpOutputModelProjection<?, ?, ?> projection) {
+  public static @NotNull String printOpModelProjection(@NotNull OpModelProjection<?, ?, ?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpOutputProjectionsPrettyPrinter<NoExceptions> printer = new OpOutputProjectionsPrettyPrinter<>(layouter);
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter);
     printer.printModel(projection, 0);
-    layouter.close();
-    return sb.getString();
-  }
-
-  public static @NotNull String printOpDeleteVarProjection(OpDeleteVarProjection projection) {
-    StringBackend sb = new StringBackend(120);
-    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
-    OpDeleteProjectionsPrettyPrinter<NoExceptions> printer = new OpDeleteProjectionsPrettyPrinter<>(layouter);
-    printer.printVar(projection, 0);
     layouter.close();
     return sb.getString();
   }
@@ -427,13 +364,22 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static void failIfHasErrors(final List<PsiProcessingMessage> errors) {
-    if (!errors.isEmpty()) {
+  public static void failIfHasErrors(boolean failOnWarnings, final List<PsiProcessingMessage> messages) {
+    if (!messages.isEmpty()) {
+      boolean fatal = false;
       StringBuilder sb = new StringBuilder("\n");
-      for (final PsiProcessingMessage error : errors)
-        sb.append(error.location()).append(": ").append(error.message()).append("\n");
+      for (final PsiProcessingMessage message : messages) {
 
-      fail(sb.toString());
+        if (message.level() == PsiProcessingMessage.Level.ERROR)
+          fatal = true;
+
+        sb.append(message.location()).append(": ").append(message.message()).append("\n");
+      }
+
+      if (fatal || failOnWarnings)
+        fail(sb.toString());
+//      else
+//        System.out.print(sb.toString());
     }
   }
 
@@ -451,7 +397,7 @@ public final class TestUtil {
     }
   }
 
-  public static @NotNull <R> R runPsiParser(@NotNull TestUtil.PsiParserClosure<R> closure) {
+  public static @NotNull <R> R runPsiParser(boolean failOnWarnings, @NotNull TestUtil.PsiParserClosure<R> closure) {
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     R r = null;
 
@@ -461,7 +407,7 @@ public final class TestUtil {
       context.setErrors(e.messages());
     }
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(failOnWarnings, context.messages());
 
     assert r != null;
     return r;

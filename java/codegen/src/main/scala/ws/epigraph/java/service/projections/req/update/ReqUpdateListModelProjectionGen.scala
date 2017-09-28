@@ -19,14 +19,14 @@ package ws.epigraph.java.service.projections.req.update
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqListModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputListModelProjection
+import ws.epigraph.projections.op.OpListModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqUpdateListModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpInputListModelProjection,
+  val op: OpListModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
@@ -40,9 +40,9 @@ class ReqUpdateListModelProjectionGen(
     ctx
   ) with ReqListModelProjectionGen {
 
-  override type OpProjectionType = OpInputListModelProjection
+  override type OpProjectionType = OpListModelProjection
 
-  val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateVarProjectionGen.dataProjectionGen(
+  val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),
@@ -56,7 +56,7 @@ class ReqUpdateListModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqUpdateModelProjectionGen,
-    op: OpInputListModelProjection,
+    op: OpListModelProjection,
     normalized: Boolean) =
     new ReqUpdateListModelProjectionGen(
       baseNamespaceProvider,
@@ -71,9 +71,9 @@ class ReqUpdateListModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateListModelProjection"),
-    replace
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateListModelProjection"),
+//    replace
+//  )
 
 }

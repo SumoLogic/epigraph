@@ -148,7 +148,7 @@ abstract class AbstractJsonFormatReader<
   @Override
   public @Nullable Data readData(@NotNull VP projection) throws IOException, JsonFormatException {
     Data data = readData((Type) projection.type(), Collections.singletonList(projection));
-    stepOver(null, "EOF");
+    ensureEOF();
     return data;
   }
 
@@ -988,6 +988,11 @@ abstract class AbstractJsonFormatReader<
     ensure(actual, null, expectedStringCallable, expected);
   }
 
+  private void ensureEOF() throws IOException, JsonFormatException {
+    if (nextToken() != null)
+      throw expected("EOF");
+  }
+
   private void ensure(
       @Nullable JsonToken actual,
       @Nullable String expectedText,
@@ -1021,7 +1026,7 @@ abstract class AbstractJsonFormatReader<
     stepOver(expected, "'" + expected.toString() + "'");
   }
 
-  private void stepOver(@Nullable JsonToken expected, @NotNull String expectedText)
+  private void stepOver(@NotNull JsonToken expected, @NotNull String expectedText)
       throws IOException, JsonFormatException {
     ensure(nextToken(), expectedText, null, expected);
   }

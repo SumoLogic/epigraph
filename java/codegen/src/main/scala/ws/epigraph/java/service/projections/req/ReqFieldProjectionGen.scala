@@ -31,11 +31,13 @@ trait ReqFieldProjectionGen extends ReqProjectionGen {
 
   def dataProjectionGen: ReqProjectionGen
 
+  protected def fieldName: String
+
   // -----
 
   override lazy val children: Iterable[ReqProjectionGen] = Iterable(dataProjectionGen)
 
-  protected def generate(fieldName: String, reqFieldProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
+  protected def generate(reqFieldProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
 //    val params =
 //      ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
 
@@ -64,7 +66,7 @@ public class $shortClassName {
    * @return field data projection
    */
   public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
-    return new ${dataProjectionGen.shortClassName}(raw.varProjection());
+    return new ${dataProjectionGen.shortClassName}(raw.entityProjection());
   }
 ${/*params.code*/""}\
 ${extra.code}\
@@ -72,6 +74,10 @@ ${extra.code}\
   public @NotNull ${reqFieldProjectionFqn.last()} _raw() { return raw; }
 }"""/*@formatter:on*/
   }
+
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqFieldProjection")
+  )
 }
 
 object ReqFieldProjectionGen {

@@ -102,7 +102,7 @@ public final class RecordModelProjectionHelper {
             )
         );
 
-      final TypeApi projectionType = entry.getValue().fieldProjection().varProjection().type();
+      final TypeApi projectionType = entry.getValue().fieldProjection().entityProjection().type();
       if (!projectionType.isAssignableFrom(field.dataType().type()))
         throw new IllegalArgumentException(
             String.format("Field '%s' projection type '%s' is not compatible with field type '%s'",
@@ -171,8 +171,8 @@ public final class RecordModelProjectionHelper {
         final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
         FP fp = entry.getValue().fieldProjection();
         final VP normalizedVp =
-            fp.varProjection().normalizedForType(effectiveField.dataType().type());
-        result.put(entry.getKey(), fp.setVarProjection(normalizedVp));
+            fp.entityProjection().normalizedForType(effectiveField.dataType().type());
+        result.put(entry.getKey(), fp.setEntityProjection(normalizedVp));
       }
 
       return result;

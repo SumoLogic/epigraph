@@ -22,16 +22,16 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkFieldProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -40,42 +40,41 @@ public final class RequestUrlPsiParserUtil {
 
   private RequestUrlPsiParserUtil() {}
 
-  static @NotNull StepsAndProjection<ReqOutputFieldProjection> parseOutputProjection(
+  static @NotNull StepsAndProjection<ReqFieldProjection> parseProjection(
       final @NotNull DataTypeApi dataType,
-      final @NotNull OpOutputFieldProjection op,
-      final @Nullable UrlReqOutputTrunkFieldProjection psi,
+      final @NotNull OpFieldProjection op,
+      final @Nullable UrlReqTrunkFieldProjection psi,
+      final boolean flagged,
+      final @NotNull ReqProjectionPsiParser psiParser,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection;
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection;
 
-    ReqOutputReferenceContext reqOutputReferenceContext =
-        new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-    ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-        new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+    ReqReferenceContext reqOutputReferenceContext =
+        new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    ReqPsiProcessingContext reqOutputPsiProcessingContext =
+        new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
     if (psi == null) {
       stepsAndProjection = new StepsAndProjection<>(
           0,
-          new ReqOutputFieldProjection(
-//              ReqParams.EMPTY,
-//              Annotations.EMPTY,
-              ReqOutputProjectionsPsiParser.createDefaultVarProjection(
+          new ReqFieldProjection(
+              psiParser.createDefaultEntityProjection(
                   dataType,
-                  op.varProjection(),
-                  false,
+                  op.entityProjection(),
+                  flagged,
                   PsiUtil.NULL_PSI_ELEMENT,
                   reqOutputPsiProcessingContext
               ),
-//              false,
               TextLocation.UNKNOWN
           )
       );
     } else {
-      final StepsAndProjection<ReqOutputFieldProjection> fieldStepsAndProjection =
-          ReqOutputProjectionsPsiParser.parseTrunkFieldProjection(
-              false, // ?
+      final StepsAndProjection<ReqFieldProjection> fieldStepsAndProjection =
+          psiParser.parseTrunkFieldProjection(
               dataType,
+              flagged,
               op,
               psi,
               resolver,

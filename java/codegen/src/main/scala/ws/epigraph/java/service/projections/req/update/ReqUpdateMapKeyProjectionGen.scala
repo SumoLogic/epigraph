@@ -21,7 +21,7 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapKeyProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.input.OpInputKeyProjection
+import ws.epigraph.projections.op.OpKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -29,18 +29,18 @@ import ws.epigraph.projections.op.input.OpInputKeyProjection
 class ReqUpdateMapKeyProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
   protected val cMapType: CMapType,
-  protected val op: OpInputKeyProjection,
+  protected val op: OpKeyProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqUpdateProjectionGen with ReqMapKeyProjectionGen {
 
-  override type OpKeyProjectionType = OpInputKeyProjection
+  override type OpKeyProjectionType = OpKeyProjection
 
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override def shortClassName: String = s"$classNamePrefix${mapTypeShortName}Key$classNameSuffix"
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateKeyProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateKeyProjection")
+//  )
 }

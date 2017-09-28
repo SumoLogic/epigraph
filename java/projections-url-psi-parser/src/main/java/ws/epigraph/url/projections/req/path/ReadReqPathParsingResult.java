@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.url.parser.psi.UrlReqOutputComaVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -28,13 +28,13 @@ public class ReadReqPathParsingResult<P> {
   private final @NotNull P path;
 
   // only one of these can be non-null
-  private final @Nullable UrlReqOutputTrunkVarProjection trunkProjectionPsi;
-  private final @Nullable UrlReqOutputComaVarProjection comaProjectionPsi;
+  private final @Nullable UrlReqTrunkEntityProjection trunkProjectionPsi;
+  private final @Nullable UrlReqComaEntityProjection comaProjectionPsi;
 
   public ReadReqPathParsingResult(
       @NotNull P path,
-      @Nullable UrlReqOutputTrunkVarProjection trunkProjectionPsi,
-      @Nullable UrlReqOutputComaVarProjection comaProjectionPsi) {
+      @Nullable UrlReqTrunkEntityProjection trunkProjectionPsi,
+      @Nullable UrlReqComaEntityProjection comaProjectionPsi) {
 
     this.path = path;
     this.trunkProjectionPsi = trunkProjectionPsi;
@@ -43,7 +43,7 @@ public class ReadReqPathParsingResult<P> {
 
   public @NotNull P path() { return path; }
 
-  public @Nullable UrlReqOutputTrunkVarProjection trunkProjectionPsi() { return trunkProjectionPsi; }
+  public @Nullable UrlReqTrunkEntityProjection trunkProjectionPsi() { return trunkProjectionPsi; }
 
-  public @Nullable UrlReqOutputComaVarProjection comaProjectionPsi() { return comaProjectionPsi; }
+  public @Nullable UrlReqComaEntityProjection comaProjectionPsi() { return comaProjectionPsi; }
 }

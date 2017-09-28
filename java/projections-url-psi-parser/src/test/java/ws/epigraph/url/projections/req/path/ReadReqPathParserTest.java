@@ -19,8 +19,8 @@ package ws.epigraph.url.projections.req.path;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.path.ReqVarPath;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -31,7 +31,7 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.*;
@@ -52,7 +52,7 @@ public class ReadReqPathParserTest {
       epigraph.String.type
   );
 
-  private final OpVarPath personOpPath = parseOpVarPath(
+  private final OpEntityProjection personOpPath = parseOpEntityPath(
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
@@ -120,16 +120,16 @@ public class ReadReqPathParserTest {
     );
   }
 
-  private void testParse(OpVarPath opPath, String expr) {
+  private void testParse(OpEntityProjection opPath, String expr) {
     testParse(opPath, expr, expr, null);
   }
 
-  private void testPathNotMatched(OpVarPath opPath, String expr) {
+  private void testPathNotMatched(OpEntityProjection opPath, String expr) {
     try {
-      UrlReqOutputTrunkVarProjection psi = getPsi(expr);
+      UrlReqTrunkEntityProjection psi = getPsi(expr);
       PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
       ReqPathPsiProcessingContext pathPsiProcessingContext = new ReqPathPsiProcessingContext(psiProcessingContext);
-      ReadReqPathPsiParser.parseVarPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
+      ReadReqPathPsiParser.parseEntityPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
 
       fail("Expected to get 'path not matched' error");
     } catch (PathNotMatchedException ignored) {
@@ -139,11 +139,11 @@ public class ReadReqPathParserTest {
     }
   }
 
-  private void testParse(OpVarPath opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
+  private void testParse(OpEntityProjection opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
 
-    UrlReqOutputTrunkVarProjection psi = getPsi(expr);
-    final ReadReqPathParsingResult<ReqVarPath> result =
-        TestUtil.runPsiParser(context -> ReadReqPathPsiParser.parseVarPath(
+    UrlReqTrunkEntityProjection psi = getPsi(expr);
+    final ReadReqPathParsingResult<ReqEntityProjection> result =
+        TestUtil.runPsiParser(true, context -> ReadReqPathPsiParser.parseEntityPath(
             opPath,
             Person.type.dataType(null),
             psi,
@@ -151,7 +151,7 @@ public class ReadReqPathParserTest {
             new ReqPathPsiProcessingContext(context)
         ));
 
-    String s = TestUtil.printReqVarPath(result.path());
+    String s = TestUtil.printReqEntityPath(result.path());
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
@@ -180,12 +180,12 @@ public class ReadReqPathParserTest {
 
   }
 
-  private UrlReqOutputTrunkVarProjection getPsi(String projectionString) {
+  private UrlReqTrunkEntityProjection getPsi(String projectionString) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psiVarPath = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psiVarPath = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -194,8 +194,8 @@ public class ReadReqPathParserTest {
     return psiVarPath;
   }
 
-  private OpVarPath parseOpVarPath(String projectionString) {
-    return ReqTestUtil.parseOpVarPath(dataType, projectionString, resolver);
+  private OpEntityProjection parseOpEntityPath(String projectionString) {
+    return ReqTestUtil.parseOpEntityPath(dataType, projectionString, resolver);
   }
 
 }

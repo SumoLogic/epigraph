@@ -20,15 +20,14 @@ import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.OpKeyPresence
-import ws.epigraph.projections.op.input.OpInputMapModelProjection
+import ws.epigraph.projections.op.{AbstractOpKeyPresence, OpMapModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqInputMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override val op: OpInputMapModelProjection,
+  override val op: OpMapModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
@@ -42,9 +41,9 @@ class ReqInputMapModelProjectionGen(
     ctx
   ) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpInputMapModelProjection
+  override type OpProjectionType = OpMapModelProjection
 
-  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
+  override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 
   override val keyGen: ReqInputMapKeyProjectionGen = new ReqInputMapKeyProjectionGen(
     baseNamespaceProvider,
@@ -55,7 +54,7 @@ class ReqInputMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqInputTypeProjectionGen = ReqInputVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqInputTypeProjectionGen = ReqInputEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     Some(baseNamespace),
@@ -69,7 +68,7 @@ class ReqInputMapModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqInputModelProjectionGen,
-    op: OpInputMapModelProjection,
+    op: OpMapModelProjection,
     normalized: Boolean) =
     new ReqInputMapModelProjectionGen(
       baseNamespaceProvider,
@@ -84,7 +83,7 @@ class ReqInputMapModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputMapModelProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputMapModelProjection")
+//  )
 }

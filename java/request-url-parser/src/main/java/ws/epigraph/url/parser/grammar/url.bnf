@@ -106,27 +106,22 @@ tagName ::= qid
 
 // ============= url =============
 
-// this one isn't used actually, sub-parsers for read/create/... are used instead
-url ::= readUrl | createUrl | updateUrl | deleteUrl | customUrl
+// this one isn't used actually, sub-parsers for read/non-read URLs are used instead
+url ::= readUrl | nonReadUrl
 
 // todo get rid of requestParms?
 
 // real entry points:
-readUrl ::= '/' qid reqOutputTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
+readUrl ::= '/' qid reqTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
   extends = "url"
 }
-createUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
+
+nonReadUrl ::= '/' qid reqFieldPath inputProjection? outputProjection? requestParams {
   extends = "url"
 }
-updateUrl ::= '/' qid reqFieldPath ('<' '+'? reqUpdateFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
-  extends = "url"
-}
-deleteUrl ::= '/' qid reqFieldPath '<' reqDeleteFieldProjection ('>' reqOutputTrunkFieldProjection)? requestParams {
-  extends = "url"
-}
-customUrl ::= '/' qid reqFieldPath ('<' reqInputFieldProjection)? ('>' reqOutputTrunkFieldProjection)? requestParams {
-  extends = "url"
-}
+
+inputProjection ::= '<' '+'? reqTrunkFieldProjection { pin = 1 name = "input projection" }
+outputProjection ::= '>' '+'? reqTrunkFieldProjection { pin = 1 name = "output projection" }
 
 // todo do we actually need them?
 private requestParams ::= requestParam*
@@ -142,247 +137,110 @@ private requestParamRecover ::= ! ( '?' | '&' )
 
 reqParam ::= ';' qid '=' datum // todo attach reqInputProjection too?
 reqAnnotation ::= '!' annotation
-private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )* 
+private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 
 // req path --------------------------------------------------------
 
 // no tails, no branching, no meta
 
-reqVarPath ::= ( ':' tagName)? reqParamsAndAnnotations reqModelPath
+reqEntityPath ::= ( ':' tagName)? reqModelPath
 
-reqModelPath ::= ( reqRecordModelPath
-                 | reqMapModelPath
-                 )?
+reqModelPath ::= reqParamsAndAnnotations? ( reqRecordModelPath | reqMapModelPath )?
 
 // req record path
 reqRecordModelPath ::= '/' reqFieldPathEntry {pin=2}
 reqFieldPathEntry ::= qid reqFieldPath
-reqFieldPath ::= /* reqParamsAndAnnotations */ reqVarPath {pin=1}
+reqFieldPath ::= /* reqParamsAndAnnotations */ reqEntityPath {pin=1}
 
 // req map path
-reqMapModelPath ::= '/' reqOutputTrunkKeyProjection reqVarPath {pin=2}
+reqMapModelPath ::= '/' reqTrunkKeyProjection reqEntityPath {pin=2}
 
 // req output --------------------------------------------------------
 // this is based on opInput from schema.bnf
 
-reqOutputStarTagProjection ::= ':' '*' // all tags with empty contents
+reqStarTagProjection ::= ':' '*' // all tags with empty contents
 
-reqOutputModelMeta ::= '@' '+'? reqOutputComaModelProjection // no params/annotations on meta?
+reqModelMeta ::= '@' '+'? reqComaModelProjection // no params/annotations on meta?
 
-reqOutputVarPolymorphicTail ::= ':' '~' ( reqOutputVarSingleTail | reqOutputVarMultiTail ) {pin=2}
-reqOutputVarSingleTail ::= typeRef reqOutputComaVarProjection
-reqOutputVarMultiTail ::= '(' (reqOutputVarMultiTailItem ','?)* ')' {pin=1}
-reqOutputVarMultiTailItem ::= typeRef reqOutputComaVarProjection
+reqEntityPolymorphicTail ::= ':' '~' ( reqEntitySingleTail | reqEntityMultiTail ) {pin=2}
+reqEntitySingleTail ::= typeRef reqComaEntityProjection
+reqEntityMultiTail ::= '(' (reqEntityMultiTailItem ','?)* ')' {pin=1}
+reqEntityMultiTailItem ::= typeRef reqComaEntityProjection
 
 // req projection consists of two parts: trunk and coma. Trunk can't have any branching, i.e. only
 // singular tags and fields are allowed in var and record projections. Coma can contain branching
 
 // req output trunk part
 
-reqOutputTrunkVarProjection ::= reqOutputNamedTrunkVarProjection | reqOutputUnnamedOrRefTrunkVarProjection
-reqOutputUnnamedOrRefTrunkVarProjection ::= reqOutputTrunkVarProjectionRef | reqOutputUnnamedTrunkVarProjection
-reqOutputNamedTrunkVarProjection ::= '$' qid '=' reqOutputUnnamedOrRefTrunkVarProjection {pin = 3}
-reqOutputTrunkVarProjectionRef ::= '$' qid {pin = 1}
-reqOutputUnnamedTrunkVarProjection ::= ( reqOutputStarTagProjection
-                                | reqOutputComaMultiTagProjection
-                                | reqOutputTrunkSingleTagProjection
-                                ) reqOutputVarPolymorphicTail?
+reqTrunkEntityProjection ::= reqNamedTrunkEntityProjection | reqUnnamedOrRefTrunkEntityProjection
+reqUnnamedOrRefTrunkEntityProjection ::= reqTrunkEntityProjectionRef | reqUnnamedTrunkEntityProjection
+reqNamedTrunkEntityProjection ::= '$' qid '=' reqUnnamedOrRefTrunkEntityProjection {pin = 3}
+reqTrunkEntityProjectionRef ::= '$' qid {pin = 1}
+reqUnnamedTrunkEntityProjection ::= ( reqStarTagProjection
+                                    | reqComaMultiTagProjection
+                                    | reqTrunkSingleTagProjection
+                                    ) reqEntityPolymorphicTail?
 
-reqOutputTrunkSingleTagProjection ::= ( ':' '+'? tagName )? reqOutputTrunkModelProjectionWithProperties reqOutputModelMeta?
+reqTrunkSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? reqTrunkModelProjectionWithProperties reqModelMeta?
 
-private reqOutputTrunkModelProjectionWithProperties ::= reqParamsAndAnnotations reqOutputTrunkModelProjection
+private reqTrunkModelProjectionWithProperties ::= reqParamsAndAnnotations reqTrunkModelProjection
 
-//
-
-reqOutputTrunkModelProjection ::= ( reqOutputTrunkRecordModelProjection // no tails on paths
-                                  | reqOutputTrunkMapModelProjection
-                                  | ( reqOutputComaRecordModelProjection reqOutputModelPolymorphicTail? )
-                                  | ( reqOutputComaMapModelProjection reqOutputModelPolymorphicTail? )
-                                  | ( reqOutputComaListModelProjection reqOutputModelPolymorphicTail? )
-                                  )? {
-   extends = reqOutputComaModelProjection
+reqTrunkModelProjection ::= ( reqTrunkRecordModelProjection // no tails on paths
+                            | reqTrunkMapModelProjection
+                            | ( reqComaRecordModelProjection reqModelPolymorphicTail? )
+                            | ( reqComaMapModelProjection reqModelPolymorphicTail? )
+                            | ( reqComaListModelProjection reqModelPolymorphicTail? )
+                            )? {
+   extends = reqComaModelProjection
 }
 
-reqOutputTrunkRecordModelProjection ::= '/' '+'? qid reqOutputTrunkFieldProjection {pin=3}
-reqOutputTrunkFieldProjection ::= /* reqParamsAndAnnotations */ reqOutputTrunkVarProjection
+reqTrunkRecordModelProjection ::= '/' '+'? qid reqTrunkFieldProjection {pin=3}
+reqTrunkFieldProjection ::= /* reqParamsAndAnnotations */ reqTrunkEntityProjection
 
-reqOutputTrunkMapModelProjection ::= '/' reqOutputTrunkKeyProjection reqOutputTrunkVarProjection
-private reqOutputTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
+reqTrunkMapModelProjection ::= '/' reqTrunkKeyProjection '+'? reqTrunkEntityProjection
+private reqTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
 
 // req output coma part
 
-reqOutputComaVarProjection ::= reqOutputNamedComaVarProjection | reqOutputUnnamedOrRefComaVarProjection
-reqOutputUnnamedOrRefComaVarProjection ::= reqOutputComaVarProjectionRef | reqOutputUnnamedComaVarProjection
-reqOutputNamedComaVarProjection ::= '$' qid '=' reqOutputUnnamedOrRefComaVarProjection {pin = 3}
-reqOutputComaVarProjectionRef ::= '$' qid {pin = 1}
-reqOutputUnnamedComaVarProjection ::= ( reqOutputStarTagProjection
-                                      | reqOutputComaMultiTagProjection
-                                      | reqOutputComaSingleTagProjection
-                                      ) reqOutputVarPolymorphicTail?
-private reqOutputBracedComaVarProjection ::= '(' reqOutputComaVarProjection ')'
+reqComaEntityProjection ::= reqNamedComaEntityProjection | reqUnnamedOrRefComaEntityProjection
+reqUnnamedOrRefComaEntityProjection ::= reqComaEntityProjectionRef | reqUnnamedComaEntityProjection
+reqNamedComaEntityProjection ::= '$' qid '=' reqUnnamedOrRefComaEntityProjection {pin = 3}
+reqComaEntityProjectionRef ::= '$' qid {pin = 1}
+reqUnnamedComaEntityProjection ::= ( reqStarTagProjection
+                                      | reqComaMultiTagProjection
+                                      | reqComaSingleTagProjection
+                                      ) reqEntityPolymorphicTail?
+private reqBracedComaEntityProjection ::= '(' reqComaEntityProjection ')'
 
-reqOutputComaSingleTagProjection ::= ( ':' '+'? tagName)? reqOutputComaModelProjectionWithProperties
-reqOutputComaMultiTagProjection ::= ':' '(' (reqOutputComaMultiTagProjectionItem ','?)* ')' {pin=2}
-reqOutputComaMultiTagProjectionItem ::= '+'? tagName reqOutputComaModelProjectionWithProperties
+reqComaSingleTagProjection ::= ( ( ':' '+'? tagName) | '+' )? reqComaModelProjectionWithProperties
+reqComaMultiTagProjection ::= ':' '(' (reqComaMultiTagProjectionItem ','?)* ')' {pin=2}
+reqComaMultiTagProjectionItem ::= '+'? tagName reqComaModelProjectionWithProperties
 
 //
-reqOutputModelPolymorphicTail ::= '~' ( reqOutputModelSingleTail | reqOutputModelMultiTail ) // {pin=1}
-reqOutputModelSingleTail ::= '+'? typeRef reqOutputComaModelProjectionWithProperties
-reqOutputModelMultiTail ::= '(' (reqOutputModelMultiTailItem ','?)* ')' {pin=1}
-reqOutputModelMultiTailItem ::= '+'? typeRef reqOutputComaModelProjectionWithProperties
+reqModelPolymorphicTail ::= '~' ( reqModelSingleTail | reqModelMultiTail ) // {pin=1}
+reqModelSingleTail ::= '+'? typeRef reqComaModelProjectionWithProperties
+reqModelMultiTail ::= '(' (reqModelMultiTailItem ','?)* ')' {pin=1}
+reqModelMultiTailItem ::= '+'? typeRef reqComaModelProjectionWithProperties
 
-private reqOutputComaModelProjectionWithProperties ::= reqParamsAndAnnotations reqOutputComaModelProjection reqOutputModelMeta?
+private reqComaModelProjectionWithProperties ::= reqParamsAndAnnotations reqComaModelProjection reqModelMeta?
 
-reqOutputComaModelProjection ::= ( ( reqOutputComaRecordModelProjection
-                                   | reqOutputComaListModelProjection
-                                   | reqOutputComaMapModelProjection
-                                   ) reqOutputModelPolymorphicTail ?
-                                 )?
+reqComaModelProjection ::= ( ( reqComaRecordModelProjection
+                             | reqComaListModelProjection
+                             | reqComaMapModelProjection
+                             ) reqModelPolymorphicTail ?
+                           )?
 
 // req output record
-reqOutputComaRecordModelProjection ::= '(' ( '*' | ( (reqOutputComaFieldProjection ','?)* ) ) ')' { pin=1 }
-reqOutputComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqOutputComaVarProjection
+reqComaRecordModelProjection ::= '(' ( '*' | ( (reqComaFieldProjection ','?)* ) ) ')' { pin=1 }
+reqComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqComaEntityProjection
 
 // req output list
-reqOutputComaListModelProjection ::= '*' ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )? { pin=1 }
+reqComaListModelProjection ::= '*' '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )? { pin=1 }
 
 // req output map
-reqOutputComaMapModelProjection ::= '+'? reqOutputComaKeysProjection ( ( reqOutputBracedComaVarProjection | reqOutputComaVarProjection ) )?
-reqOutputComaKeysProjection ::= '[' ( '*' | ( ( reqOutputComaKeyProjection ','? )* ) ) ']' {pin=1}
-reqOutputComaKeyProjection ::= datum reqParamsAndAnnotations
-
-// req update --------------------------------------------------------
-
-//reqUpdateModelMeta ::= '@' reqUpdateModelProjection // no params/annotations on meta?
-
-reqUpdateVarProjection ::= reqUpdateNamedVarProjection | reqUpdateUnnamedOrRefVarProjection
-reqUpdateUnnamedOrRefVarProjection ::= reqUpdateVarProjectionRef | reqUpdateUnnamedVarProjection
-reqUpdateNamedVarProjection ::= '$' qid '=' reqUpdateUnnamedOrRefVarProjection {pin = 3}
-reqUpdateVarProjectionRef ::= '$' qid {pin = 1}
-reqUpdateUnnamedVarProjection ::= ( reqUpdateMultiTagProjection | reqUpdateSingleTagProjection ) reqUpdateVarPolymorphicTail?
-private reqUpdateBracedVarProjection ::= '(' reqUpdateVarProjection ')'
-
-reqUpdateSingleTagProjection ::= ( ':' '+'? tagName?)? reqUpdateModelProjectionWithProperties // optional tag name to allow updating self-vars
-reqUpdateMultiTagProjection ::= ':' '(' (reqUpdateMultiTagProjectionItem ','?)* ')' {pin=2}
-reqUpdateMultiTagProjectionItem ::= '+'? tagName reqUpdateModelProjectionWithProperties
-
-reqUpdateVarPolymorphicTail ::= ':' '~' ( reqUpdateVarSingleTail | reqUpdateVarMultiTail ) {pin=2}
-reqUpdateVarSingleTail ::= typeRef reqUpdateVarProjection
-reqUpdateVarMultiTail ::= '(' (reqUpdateVarMultiTailItem ','?)* ')' {pin=1}
-reqUpdateVarMultiTailItem ::= typeRef reqUpdateVarProjection
-//
-reqUpdateModelPolymorphicTail ::= '~' ( reqUpdateModelSingleTail | reqUpdateModelMultiTail ) // {pin=1}
-reqUpdateModelSingleTail ::= '+'? typeRef reqUpdateModelProjectionWithProperties
-reqUpdateModelMultiTail ::= '(' (reqUpdateModelMultiTailItem ','?)* ')' {pin=1}
-reqUpdateModelMultiTailItem ::= '+'? typeRef reqUpdateModelProjectionWithProperties
-
-private reqUpdateModelProjectionWithProperties ::= reqParamsAndAnnotations reqUpdateModelProjection // reqUpdateModelMeta?
-//
-
-reqUpdateModelProjection ::= ( ( reqUpdateRecordModelProjection
-                               | reqUpdateMapModelProjection
-                               | reqUpdateListModelProjection
-                               ) reqUpdateModelPolymorphicTail?
-                             )?
-
-reqUpdateRecordModelProjection ::= '(' (reqUpdateFieldProjectionEntry ','?)* ')' { pin=1 }
-reqUpdateFieldProjectionEntry ::= '+'? qid reqUpdateFieldProjection
-reqUpdateFieldProjection ::= /* reqParamsAndAnnotations */ reqUpdateVarProjection
-
-reqUpdateListModelProjection ::= '*' '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )? { pin=1 }
-
-reqUpdateMapModelProjection ::= reqUpdateKeysProjection '+'? ( ( reqUpdateBracedVarProjection | reqUpdateVarProjection ) )?
-reqUpdateKeysProjection ::= '[' ( reqUpdateKeyProjection ','? )* ']' {pin=1}  // plus for `update keys`
-reqUpdateKeyProjection ::= datum reqParamsAndAnnotations
-
-// req delete --------------------------------------------------------
-
-// reqDeleteModelMeta ::= '@' '+'? reqDeleteModelProjection // no params/annotations on meta?
-
-reqDeleteVarProjection ::= reqDeleteNamedVarProjection | reqDeleteUnnamedOrRefVarProjection
-reqDeleteUnnamedOrRefVarProjection ::= reqDeleteVarProjectionRef | reqDeleteUnnamedVarProjection
-reqDeleteNamedVarProjection ::= '$' qid '=' reqDeleteUnnamedOrRefVarProjection {pin = 3}
-reqDeleteVarProjectionRef ::= '$' qid {pin = 1}
-reqDeleteUnnamedVarProjection ::= ( reqDeleteMultiTagProjection | reqDeleteSingleTagProjection ) reqDeleteVarPolymorphicTail?
-private reqDeleteBracedVarProjection ::= '(' reqDeleteVarProjection ')'
-
-reqDeleteSingleTagProjection ::= ( ':' tagName)? reqDeleteModelProjectionWithProperties
-reqDeleteMultiTagProjection ::= ':' '(' (reqDeleteMultiTagProjectionItem ','?)* ')' {pin=2}
-reqDeleteMultiTagProjectionItem ::= tagName reqDeleteModelProjectionWithProperties
-
-reqDeleteVarPolymorphicTail ::= ':' '~' ( reqDeleteVarSingleTail | reqDeleteVarMultiTail ) {pin=2}
-reqDeleteVarSingleTail ::= typeRef reqDeleteVarProjection
-reqDeleteVarMultiTail ::= '(' (reqDeleteVarMultiTailItem ','?)* ')' {pin=1}
-reqDeleteVarMultiTailItem ::= typeRef reqDeleteVarProjection
-//
-reqDeleteModelPolymorphicTail ::= '~' ( reqDeleteModelSingleTail | reqDeleteModelMultiTail ) // {pin=1}
-reqDeleteModelSingleTail ::= typeRef reqDeleteModelProjectionWithProperties
-reqDeleteModelMultiTail ::= '(' (reqDeleteModelMultiTailItem ','?)* ')' {pin=1}
-reqDeleteModelMultiTailItem ::= typeRef reqDeleteModelProjectionWithProperties
-
-private reqDeleteModelProjectionWithProperties ::= reqParamsAndAnnotations reqDeleteModelProjection // reqDeleteModelMeta?
-//
-
-reqDeleteModelProjection ::= ( ( reqDeleteRecordModelProjection
-                               | reqDeleteListModelProjection
-                               | reqDeleteMapModelProjection
-                               ) reqDeleteModelPolymorphicTail?
-                             )?
-
-reqDeleteRecordModelProjection ::= '(' (reqDeleteFieldProjectionEntry ','?)* ')' { pin=1 }
-reqDeleteFieldProjectionEntry ::= qid reqDeleteFieldProjection
-reqDeleteFieldProjection ::= /* reqParamsAndAnnotations */ reqDeleteVarProjection
-
-reqDeleteListModelProjection ::= '*' ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )? { pin=1 }
-
-reqDeleteMapModelProjection ::= reqDeleteKeysProjection ( ( reqDeleteBracedVarProjection | reqDeleteVarProjection ) )?
-reqDeleteKeysProjection ::= '['( '*' | ( ( reqDeleteKeyProjection ','? )* ) ) ']' {pin=1}
-reqDeleteKeyProjection ::= datum reqParamsAndAnnotations
-
-// req input --------------------------------------------------------
-
-// reqInputModelMeta ::= '@' '+'? reqInputModelProjection // no params/annotations on meta?
-
-reqInputVarProjection ::= reqInputNamedVarProjection | reqInputUnnamedOrRefVarProjection
-reqInputUnnamedOrRefVarProjection ::= reqInputVarProjectionRef | reqInputUnnamedVarProjection
-reqInputNamedVarProjection ::= '$' qid '=' reqInputUnnamedOrRefVarProjection {pin = 3}
-reqInputVarProjectionRef ::= '$' qid {pin = 1}
-reqInputUnnamedVarProjection ::= ( reqInputMultiTagProjection | reqInputSingleTagProjection ) reqInputVarPolymorphicTail?
-private reqInputBracedVarProjection ::= '(' reqInputVarProjection ')'
-
-reqInputSingleTagProjection ::= ( ':' tagName)? reqInputModelProjectionWithProperties
-reqInputMultiTagProjection ::= ':' '(' (reqInputMultiTagProjectionItem ','?)* ')' {pin=2}
-reqInputMultiTagProjectionItem ::= tagName reqInputModelProjectionWithProperties
-
-reqInputVarPolymorphicTail ::= ':' '~' ( reqInputVarSingleTail | reqInputVarMultiTail ) {pin=2}
-reqInputVarSingleTail ::= typeRef reqInputVarProjection
-reqInputVarMultiTail ::= '(' (reqInputVarMultiTailItem ','?)* ')' {pin=1}
-reqInputVarMultiTailItem ::= typeRef reqInputVarProjection
-//
-reqInputModelPolymorphicTail ::= '~' ( reqInputModelSingleTail | reqInputModelMultiTail ) // {pin=1}
-reqInputModelSingleTail ::= typeRef reqInputModelProjectionWithProperties
-reqInputModelMultiTail ::= '(' (reqInputModelMultiTailItem ','?)* ')' {pin=1}
-reqInputModelMultiTailItem ::= typeRef reqInputModelProjectionWithProperties
-
-private reqInputModelProjectionWithProperties ::= reqParamsAndAnnotations reqInputModelProjection // reqInputModelMeta?
-
-//
-
-reqInputModelProjection ::= ( ( reqInputRecordModelProjection
-                              | reqInputListModelProjection
-                              | reqInputMapModelProjection
-                              ) reqInputModelPolymorphicTail?
-                            )?
-
-reqInputRecordModelProjection ::= '(' (reqInputFieldProjectionEntry ','?)* ')' { pin=1 }
-reqInputFieldProjectionEntry ::= qid reqInputFieldProjection
-reqInputFieldProjection ::= /* reqParamsAndAnnotations */ reqInputVarProjection
-
-reqInputListModelProjection ::= '*' ( ( reqInputBracedVarProjection | reqInputVarProjection ) )? { pin=1 }
-
-reqInputMapModelProjection ::= reqInputKeysProjection ( ( reqInputBracedVarProjection |  reqInputVarProjection ) )?
-reqInputKeysProjection ::= '['( '*' | ( ( reqInputKeyProjection ','? )* ) ) ']' {pin=1}
-reqInputKeyProjection ::= datum reqParamsAndAnnotations
+reqComaMapModelProjection ::= reqComaKeysProjection '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
+reqComaKeysProjection ::= '[' ( '*' | ( ( reqComaKeyProjection ','? )* ) ) ']' {pin=1}
+reqComaKeyProjection ::= datum reqParamsAndAnnotations
 
 // ============= data language =============
 // please keep in sync with data language from schema.bnf

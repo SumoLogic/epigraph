@@ -152,7 +152,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   protected String fieldNamePrefix(@NotNull FP fieldProjection) { return ""; }
 
   public void print(@NotNull String fieldName, @NotNull FP fieldProjection, int pathSteps) throws E {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -164,13 +164,13 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       brk();
-      printVar(fieldVarProjection, pathSteps);
+      printEntity(fieldVarProjection, pathSteps);
     }
     l.end();
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull ReqParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
@@ -196,19 +196,19 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     return super.modelParamsEmpty(mp) && mp.directives().isEmpty() && mp.params().isEmpty();
   }
 
-  protected void printReqKey(final ReqKeyProjection key) throws E {
+  protected void printReqKey(final AbstractReqKeyProjection key) throws E {
     dataPrinter.print(null, key.value());
     printParams(key.params());
     printDirectives(key.directives());
   }
 
-  protected void printMapModelProjection(@Nullable List<? extends ReqKeyProjection> keys, @NotNull VP itemsProjection)
+  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
       throws E {
     printMapModelProjection(keys, "", itemsProjection);
   }
 
   protected void printMapModelProjection(
-      @Nullable List<? extends ReqKeyProjection> keys,
+      @Nullable List<? extends AbstractReqKeyProjection> keys,
       @NotNull String itemsProjectionPrefix,
       @NotNull VP itemsProjection)
       throws E {
@@ -220,7 +220,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
       l.print("*");
     } else {
       boolean first = true;
-      for (ReqKeyProjection key : keys) {
+      for (AbstractReqKeyProjection key : keys) {
         if (first) {
           brk();
           first = false;
@@ -240,7 +240,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(itemsProjection)) {
       brk();
-      printVar(itemsProjection, 0);
+      printEntity(itemsProjection, 0);
     }
     brk(1, -l.getDefaultIndentation()).end().print(")");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package ws.epigraph.url;
 
-import ws.epigraph.gdata.GDatum;
-import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.gdata.GDatum;
+import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 
 import java.util.Map;
 
@@ -31,8 +30,8 @@ import java.util.Map;
 public class ReadRequestUrl extends RequestUrl {
   public ReadRequestUrl(
       @NotNull String fieldName,
-      @Nullable ReqFieldPath path,
-      @NotNull StepsAndProjection<ReqOutputFieldProjection> outputProjection,
+      @Nullable ReqFieldProjection path,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
     super(fieldName, path, outputProjection, parameters);
   }

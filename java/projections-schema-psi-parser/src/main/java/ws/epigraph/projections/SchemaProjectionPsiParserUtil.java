@@ -17,6 +17,7 @@
 package ws.epigraph.projections;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
@@ -25,9 +26,10 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpBasicProjectionPsiParser;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -35,6 +37,7 @@ import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.TypeRefs;
 import ws.epigraph.schema.parser.psi.*;
+import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
@@ -49,53 +52,73 @@ import java.util.stream.Stream;
 public final class SchemaProjectionPsiParserUtil {
   private SchemaProjectionPsiParserUtil() {}
 
-  public static @NotNull TagApi getTag(
-      @NotNull TypeApi type,
-      @Nullable SchemaTagName tagName,
-      @Nullable TagApi defaultTag,
+  public static
+  @NotNull TagApi getTag(
+      @NotNull DataTypeApi type,
+      @Nullable SchemaTagName tagNamePsi,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, context);
+    return ProjectionsParsingUtil.getTag(type, getTagName(tagNamePsi), null, location, context);
   }
 
-  public static @Nullable TagApi findTag(
-      @NotNull TypeApi type,
-      @Nullable SchemaTagName tagName,
-      @Nullable TagApi defaultTag,
+  public static
+  @Nullable TagApi findTag(
+      @NotNull DataTypeApi type,
+      @Nullable SchemaTagName tagNamePsi,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ProjectionsParsingUtil.findTag(type, getTagNameString(tagName), defaultTag, location, context);
+    return ProjectionsParsingUtil.findTag(type, getTagName(tagNamePsi), null, location, context);
   }
 
-  private static @Nullable String getTagNameString(final @Nullable SchemaTagName tagName) {
+  private static @Nullable String getTagName(final @Nullable SchemaTagName tagNamePsi) {
     String tagNameStr = null;
 
-    if (tagName != null) {
-      final @Nullable SchemaQid qid = tagName.getQid();
+    if (tagNamePsi != null) {
+      final @Nullable SchemaQid qid = tagNamePsi.getQid();
       if (qid != null)
         tagNameStr = qid.getCanonicalName();
     }
     return tagNameStr;
   }
 
-  public static @Nullable OpInputModelProjection<?, ?, ?, ?> parseKeyProjection(
+  @Contract("_, _, _ -> fail")
+  public static
+  void raiseNoTagsError(
+      @NotNull DataTypeApi type,
+      @NotNull PsiElement location,
+      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+
+    throw new PsiProcessingException(
+        String.format(
+            "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+            type.name(),
+            ProjectionsParsingUtil.listTags(type.type())
+        ),
+        location,
+        context
+    );
+
+  }
+
+  public static @Nullable OpModelProjection<?, ?, ?, ?> parseKeyProjection(
       @NotNull DatumTypeApi keyType,
-      @Nullable OpInputModelProjection<?, ?, ?, ?> keyProjection,
+      @Nullable OpModelProjection<?, ?, ?, ?> keyProjection,
       @Nullable SchemaOpKeyProjection projectionPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     if (projectionPsi == null) return keyProjection;
+
     if (keyProjection == null) {
-      SchemaOpInputModelProjection inputModelProjectionPsi = projectionPsi.getOpInputModelProjection();
+      @Nullable SchemaOpModelProjection inputModelProjectionPsi = projectionPsi.getOpModelProjection();
       if (inputModelProjectionPsi == null) {
         context.addError("Missing key projection definition", projectionPsi);
         return null;
       }
 
-      return OpInputProjectionsPsiParser.parseModelProjection(
+      return OpInputProjectionsPsiParser.INSTANCE.parseModelProjection(
           keyType,
           true,
           inputModelProjectionPsi,
@@ -111,7 +134,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParams parseParams(
       @NotNull Stream<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     return parseParams(paramsPsi.collect(Collectors.toList()), resolver, context);
   }
@@ -119,7 +142,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParams parseParams(
       @NotNull Iterable<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     Collection<OpParam> params = null;
 
@@ -137,7 +160,7 @@ public final class SchemaProjectionPsiParserUtil {
   public static @NotNull OpParam parseParameter(
       @NotNull SchemaOpParam paramPsi,
       @NotNull TypesResolver resolver,
-      @NotNull OpInputPsiProcessingContext context) throws PsiProcessingException {
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable SchemaQid qid = paramPsi.getQid();
     if (qid == null) throw new PsiProcessingException("Parameter name not specified", paramPsi, context.messages());
@@ -160,7 +183,7 @@ public final class SchemaProjectionPsiParserUtil {
           context.messages()
       );
 
-    @Nullable SchemaOpInputModelProjection paramModelProjectionPsi = paramPsi.getOpInputModelProjection();
+    @Nullable SchemaOpModelProjection paramModelProjectionPsi = paramPsi.getOpModelProjection();
 
 //    final @NotNull OpParams params = parseParams(paramPsi.getOpParamList(), resolver, context);
 //    @NotNull Annotations annotations = parseAnnotations(paramPsi.getAnnotationList(), context);
@@ -170,29 +193,21 @@ public final class SchemaProjectionPsiParserUtil {
 //                                    ? null
 //                                    : SchemaGDataPsiParser.parseDatum(defaultValuePsi, context);
 
-    final OpInputModelProjection<?, ?, ?, ?> paramModelProjection;
+    final OpModelProjection<?, ?, ?, ?> paramModelProjection;
 
     if (paramModelProjectionPsi == null)
-      paramModelProjection = OpInputProjectionsPsiParser.createDefaultModelProjection(
+      paramModelProjection = OpBasicProjectionPsiParser.createDefaultModelProjection(
           paramType,
           paramPsi.getPlus() != null,
-//          defaultValue,
-//          params,
-//          annotations,
           null,
           OpParams.EMPTY,
           Annotations.EMPTY,
           paramPsi,
-          resolver,
           context
       );
-    else paramModelProjection = OpInputProjectionsPsiParser.parseModelProjection(
+    else paramModelProjection = OpInputProjectionsPsiParser.INSTANCE.parseModelProjection(
         paramType,
         paramPsi.getPlus() != null,
-//        defaultValue,
-//        params,
-//        annotations,
-//        null, // TODO do we want to support metadata on parameters?
         paramModelProjectionPsi,
         resolver,
         context
@@ -201,11 +216,11 @@ public final class SchemaProjectionPsiParserUtil {
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }
 
-  public static @Nullable OpInputModelProjection<?, ?, ?, ?> parseKeyProjection(
+  public static @Nullable OpModelProjection<?, ?, ?, ?> parseKeyProjection(
       @NotNull DatumTypeApi keyType,
       @NotNull Stream<SchemaOpKeyProjection> projectionPsi,
       @NotNull TypesResolver typesResolver,
-      @NotNull OpInputPsiProcessingContext context) {
+      @NotNull OpPsiProcessingContext context) {
 
     return projectionPsi.reduce(
         null,

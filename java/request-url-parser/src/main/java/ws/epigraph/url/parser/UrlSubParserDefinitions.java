@@ -33,35 +33,17 @@ public final class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlReadUrl> READ_URL =
       new UrlSubParserDefinition<>(U_READ_URL, UrlReadUrl.class);
 
-  public static final UrlSubParserDefinition<UrlCreateUrl> CREATE_URL =
-      new UrlSubParserDefinition<>(U_CREATE_URL, UrlCreateUrl.class);
+  public static final UrlSubParserDefinition<UrlNonReadUrl> NON_READ_URL =
+      new UrlSubParserDefinition<>(U_NON_READ_URL, UrlNonReadUrl.class);
 
-  public static final UrlSubParserDefinition<UrlUpdateUrl> UPDATE_URL =
-      new UrlSubParserDefinition<>(U_UPDATE_URL, UrlUpdateUrl.class);
+  public static final UrlSubParserDefinition<UrlReqEntityPath> REQ_ENTITY_PATH =
+      new UrlSubParserDefinition<>(U_REQ_ENTITY_PATH, UrlReqEntityPath.class);
 
-  public static final UrlSubParserDefinition<UrlDeleteUrl> DELETE_URL =
-      new UrlSubParserDefinition<>(U_DELETE_URL, UrlDeleteUrl.class);
+  public static final UrlSubParserDefinition<UrlReqTrunkEntityProjection> REQ_ENTITY_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_TRUNK_ENTITY_PROJECTION, UrlReqTrunkEntityProjection.class);
 
-  public static final UrlSubParserDefinition<UrlCustomUrl> CUSTOM_URL =
-      new UrlSubParserDefinition<>(U_CUSTOM_URL, UrlCustomUrl.class);
-
-  public static final UrlSubParserDefinition<UrlReqVarPath> REQ_VAR_PATH =
-      new UrlSubParserDefinition<>(U_REQ_VAR_PATH, UrlReqVarPath.class);
-
-  public static final UrlSubParserDefinition<UrlReqOutputTrunkVarProjection> REQ_OUTPUT_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_VAR_PROJECTION, UrlReqOutputTrunkVarProjection.class);
-
-  public static final UrlSubParserDefinition<UrlReqOutputTrunkFieldProjection> REQ_OUTPUT_FIELD_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_OUTPUT_TRUNK_FIELD_PROJECTION, UrlReqOutputTrunkFieldProjection.class);
-
-  public static final UrlSubParserDefinition<UrlReqUpdateVarProjection> REQ_UPDATE_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_UPDATE_VAR_PROJECTION, UrlReqUpdateVarProjection.class);
-  
-  public static final UrlSubParserDefinition<UrlReqDeleteVarProjection> REQ_DELETE_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_DELETE_VAR_PROJECTION, UrlReqDeleteVarProjection.class);
-
-  public static final UrlSubParserDefinition<UrlReqInputVarProjection> REQ_INPUT_VAR_PROJECTION =
-      new UrlSubParserDefinition<>(U_REQ_INPUT_VAR_PROJECTION, UrlReqInputVarProjection.class);
+  public static final UrlSubParserDefinition<UrlReqTrunkFieldProjection> REQ_FIELD_PROJECTION =
+      new UrlSubParserDefinition<>(U_REQ_TRUNK_FIELD_PROJECTION, UrlReqTrunkFieldProjection.class);
 
   private UrlSubParserDefinitions() {}
 

@@ -19,22 +19,22 @@ package ws.epigraph.gdata.validation;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.gdata.GData;
 import ws.epigraph.gdata.GRecordDatum;
-import ws.epigraph.projections.op.input.*;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.TypesResolver;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpInputGDataValidator extends GenGDataValidator<
-    OpInputVarProjection,
-    OpInputTagProjectionEntry,
-    OpInputModelProjection<?, ?, ?, ?>,
-    OpInputRecordModelProjection,
-    OpInputMapModelProjection,
-    OpInputListModelProjection,
-    OpInputPrimitiveModelProjection,
-    OpInputFieldProjectionEntry,
-    OpInputFieldProjection
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpMapModelProjection,
+    OpListModelProjection,
+    OpPrimitiveModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection
     > {
 
   public OpInputGDataValidator(final @NotNull TypesResolver resolver) {
@@ -42,8 +42,8 @@ public class OpInputGDataValidator extends GenGDataValidator<
   }
 
   @Override
-  protected void validateDataOnly(final @NotNull GData data, final @NotNull OpInputVarProjection projection) {
-    projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
+  protected void validateDataOnly(final @NotNull GData data, final @NotNull OpEntityProjection projection) {
+    projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
       if (!data.tags().containsKey(tagName))
@@ -54,8 +54,8 @@ public class OpInputGDataValidator extends GenGDataValidator<
   @Override
   protected void validateRecordDatumOnly(
       final @NotNull GRecordDatum datum,
-      final @NotNull OpInputRecordModelProjection projection) {
-    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
+      final @NotNull OpRecordModelProjection projection) {
+    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
       if (!datum.fields().containsKey(fieldName))

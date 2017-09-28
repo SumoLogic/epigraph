@@ -26,6 +26,7 @@ import ws.epigraph.types.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class ReferenceContext<
     EP extends GenVarProjection<EP, ?, MP>,
-    MP extends GenModelProjection<?, ?, ?, ?>
+    MP extends GenModelProjection<?, /*MP*/?, ?, ?>
     > {
 
   @NotNull
@@ -44,8 +45,8 @@ public abstract class ReferenceContext<
 
   @Nullable
   private final ReferenceContext<EP, MP> parent;
-  private final Map<String, EP> entityReferences = new HashMap<>();
-  private final Map<String, MP> modelReferences = new HashMap<>();
+  private final Map<String, RefItem<EP>> entityReferences = new HashMap<>();
+  private final Map<String, RefItem<MP>> modelReferences = new HashMap<>();
   private final Map<String, TextLocation> resolvedAt = new HashMap<>();
 
   protected ReferenceContext(
@@ -66,54 +67,61 @@ public abstract class ReferenceContext<
   public ReferenceContext<EP, MP> parentOrThis() { return parent == null ? this : parent; }
 
   @NotNull
-  public EP varReference(
+  public EP entityReference(
       @NotNull TypeApi type,
       @NotNull String name,
       boolean useParent,
       @NotNull TextLocation location) {
 
-    EP ref = lookupEntityReference(name, useParent);
+    @Nullable ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent);
 
     if (ref == null) {
-      ref = newVarReference(type, location);
+      ref = new IdRefItem<>(newVarReference(type, location));
 //      System.out.println("Allocated entity reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      entityReferences.put(name, ref);
-      return ref;
-    } else return ref;
+      addEntityReference(name, ref);
+      return ref.apply();
+    } else return ref.apply();
+  }
 
+  public void addEntityReference(@NotNull String name, @NotNull RefItem<EP> refItem) {
+    entityReferences.put(name, refItem);
   }
 
   @NotNull
-  public MP modelReference(
+  public <R extends GenProjectionReference<?>> MP modelReference(
       @NotNull DatumTypeApi type,
       @NotNull String name,
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    MP ref = lookupModelReference(name, useParent);
+    @Nullable ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent);
 
     if (ref == null) {
-      ref = newModelReference(type, location);
+      ref = (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, location));
 //      System.out.println("Allocated model reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      modelReferences.put(name, ref);
-      return ref;
-    } else return ref;
+      addModelReference(name, ref);
+      return ref.apply();
+    } else return ref.apply();
 
   }
 
+  public void addModelReference(@NotNull String name, @NotNull RefItem<MP> refItem) {
+    modelReferences.put(name, refItem);
+  }
+
   public boolean isResolved(@NotNull String name) {
-    final GenProjectionReference<?> entityReference = lookupEntityReference(name, true);
-    final GenProjectionReference<?> modelReference = lookupModelReference(name, true);
+    final @Nullable ReferenceContext.RefItem<EP> entityReference = lookupEntityReference(name, true);
+    final @Nullable ReferenceContext.RefItem<MP> modelReference = lookupModelReference(name, true);
     return (entityReference != null && entityReference.isResolved()) ||
            (modelReference != null && modelReference.isResolved());
   }
 
   @Nullable
-  private EP lookupEntityReference(@NotNull String name, boolean useParent) {
-    EP eref = entityReferences.get(name);
+  public ReferenceContext.RefItem<EP> lookupEntityReference(@NotNull String name, boolean useParent) {
+    RefItem<EP> eref = entityReferences.get(name);
 
     if (eref == null) {
-      MP mref = modelReferences.get(name);
+      RefItem<MP> mref = modelReferences.get(name);
       if (mref == null) {
         if (useParent && parent != null) { eref = parent.lookupEntityReference(name, true); }
       } else if (mref.isResolved()) {
@@ -126,12 +134,11 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  private MP lookupModelReference(@NotNull String name, boolean useParent) {
-
-    MP mref = modelReferences.get(name);
+  public ReferenceContext.RefItem<MP> lookupModelReference(@NotNull String name, boolean useParent) {
+    RefItem<MP> mref = modelReferences.get(name);
 
     if (mref == null) {
-      EP eref = entityReferences.get(name);
+      RefItem<EP> eref = entityReferences.get(name);
       if (eref == null) {
         if (useParent && parent != null) { mref = parent.lookupModelReference(name, true); }
       } else if (eref.isResolved()) {
@@ -147,16 +154,24 @@ public abstract class ReferenceContext<
            (parent != null && parent.hasReference(name));
   }
 
-  public <R extends GenProjectionReference<R>> void resolveEntityRef(
+  public void resolveEntityRef(@NotNull String name, @NotNull EP value, @NotNull TextLocation location) {
+    resolveEntityRef(name, value, true, location);
+  }
+
+  private <R extends GenProjectionReference<R>> void resolveEntityRef(
       @NotNull String name,
       @NotNull EP value,
+      boolean updateMRef,
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
       ProjectionReferenceName referenceName = projectionReferenceName(name);
 
-      EP eref = entityReferences.get(name);
-      MP mref = modelReferences.get(name);
+      RefItem<EP> eitem = entityReferences.get(name);
+      RefItem<MP> mitem = modelReferences.get(name);
+
+      EP eref = eitem == null ? null : eitem.apply();
+      MP mref = mitem == null ? null : mitem.apply();
 
       if (eref != null) {
         if (eref.isResolved()) {
@@ -166,7 +181,7 @@ public abstract class ReferenceContext<
         } else {
           if (eref.type().isAssignableFrom(value.type())) {
             EP _normalized = value.normalizedForType(eref.type());
-            eref.resolve(referenceName, _normalized);
+            eitem.argument().resolve(referenceName, _normalized);
             resolvedAt.put(name, location);
 
           } else {
@@ -175,7 +190,7 @@ public abstract class ReferenceContext<
         }
       }
 
-      if (mref != null) {
+      if (updateMRef && mref != null) {
         if (mref.isResolved()) {
           context.addError(
               String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
@@ -189,7 +204,7 @@ public abstract class ReferenceContext<
                   String.format("Broken isAssignableFrom between %s and %s", mref.type().name(), value.type().name())
               );
             else {
-              ((GenProjectionReference<R>) mref).resolve(referenceName, (R) (fromSelfVar(_normalized)));
+              ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) (fromSelfVar(_normalized)));
               resolvedAt.put(name, location);
             }
           } else
@@ -215,17 +230,25 @@ public abstract class ReferenceContext<
     });
   }
 
-  public <R extends GenProjectionReference<R>> void resolveModelRef(
+  public void resolveModelRef(@NotNull String name, @NotNull MP value, @NotNull TextLocation location) {
+    resolveModelRef(name, value, true, location);
+  }
+
+  private <R extends GenProjectionReference<R>> void resolveModelRef(
       @NotNull String name,
       @NotNull MP value,
+      boolean updateERef,
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
       ProjectionReferenceName referenceName =
           projectionReferenceName(name);
 
-      EP eref = entityReferences.get(name);
-      MP mref = modelReferences.get(name);
+      RefItem<EP> eitem = entityReferences.get(name);
+      RefItem<MP> mitem = modelReferences.get(name);
+
+      EP eref = eitem == null ? null : eitem.apply();
+      MP mref = mitem == null ? null : mitem.apply();
 
       if (mref != null) {
         if (mref.isResolved()) {
@@ -235,7 +258,7 @@ public abstract class ReferenceContext<
         } else {
           if (mref.type().isAssignableFrom(value.type())) {
             MP _normalized = (MP) value.normalizedForType(mref.type());
-            ((GenProjectionReference<R>) mref).resolve(referenceName, (R) _normalized);
+            ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) _normalized);
             resolvedAt.put(name, location);
           } else {
             addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
@@ -243,7 +266,7 @@ public abstract class ReferenceContext<
         }
       }
 
-      if (eref != null) {
+      if (updateERef && eref != null) {
         if (eref.isResolved()) {
           context.addError(
               String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
@@ -252,7 +275,7 @@ public abstract class ReferenceContext<
 
           if (eref.type().isAssignableFrom(value.type())) {
             EP evalue = toSelfVar(value);
-            eref.resolve(referenceName, evalue);
+            eitem.argument().resolve(referenceName, evalue);
             resolvedAt.put(name, location);
           } else
             addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
@@ -299,15 +322,17 @@ public abstract class ReferenceContext<
     );
   }
 
-  public <R extends GenProjectionReference<R>> void ensureAllReferencesResolved() {
-    for (Map.Entry<String, EP> entry : entityReferences.entrySet())
-      ensureReferenceResolved(
+  public <R extends GenProjectionReference<R>> boolean ensureAllReferencesResolved() {
+    boolean allResolved = true;
+
+    for (Map.Entry<String, RefItem<EP>> entry : entityReferences.entrySet())
+      allResolved &= ensureReferenceResolved(
           entry.getKey(),
           entry.getValue(),
           () -> {
-            MP mref = modelReferences.get(entry.getKey());
+            RefItem<MP> mref = modelReferences.get(entry.getKey());
             if (mref != null && mref.isResolved()) {
-              resolveEntityRef(entry.getKey(), toSelfVar(mref), mref.location());
+              resolveEntityRef(entry.getKey(), toSelfVar(mref.apply()), false, mref.location());
               return true;
             } else
               return false;
@@ -315,31 +340,36 @@ public abstract class ReferenceContext<
           parent == null ? null : parent.entityReferences
       );
 
-    for (final Map.Entry<String, MP> entry : modelReferences.entrySet()) {
-      ensureReferenceResolved(
+    for (final Map.Entry<String, RefItem<MP>> entry : modelReferences.entrySet()) {
+      //noinspection rawtypes
+      allResolved &= ensureReferenceResolved(
           entry.getKey(),
-          (R) entry.getValue(),
+          (RefItem<R>) entry.getValue(),
           () -> {
-            EP eref = entityReferences.get(entry.getKey());
+            RefItem<EP> eref = entityReferences.get(entry.getKey());
             if (eref != null && eref.isResolved()) {
-              resolveModelRef(entry.getKey(), fromSelfVar(eref), eref.location());
+              resolveModelRef(entry.getKey(), fromSelfVar(eref.apply()), false, eref.location());
               return true;
             } else
               return false;
           },
-          parent == null ? null : (Map<String, R>) parent.modelReferences
+          parent == null ? null : (Map<String, RefItem<R>>) (Map) parent.modelReferences
       );
     }
 
 //    if (parent != null)
 //      parent.ensureAllReferencesResolved();
+
+    return allResolved;
   }
 
-  private <R extends GenProjectionReference<R>> void ensureReferenceResolved(
+  private <R extends GenProjectionReference<R>> boolean ensureReferenceResolved(
       @NotNull String name,
-      @NotNull R ref,
+      @NotNull ReferenceContext.RefItem<R> ref,
       @NotNull Supplier<Boolean> backupResolver,
-      @Nullable Map<String, R> parentReferences) {
+      @Nullable Map<String, RefItem<R>> parentReferences) {
+
+    boolean allResolved = true;
 
     if (!ref.isResolved()) {
       // check if backup resolver can handle it (resolve entity ref from model ref or v.v.)
@@ -352,13 +382,14 @@ public abstract class ReferenceContext<
         // a = 1
 
         if (parentReferences == null) {
+          allResolved = false;
           context.addError(
-              String.format("Projection '%s' is not defined (context: %s)", name, referencesNamespace),
+              String.format("Projection '%s' is not defined (context: '%s')", name, referencesNamespace),
               ref.location()
           );
         } else {
           assert parent != null;
-          R parentRef = parentReferences.get(name);
+          RefItem<R> parentRef = parentReferences.get(name);
           if (parentRef == null) {
             parentReferences.put(name, ref);
           } else if (parentRef != ref) {
@@ -376,6 +407,7 @@ public abstract class ReferenceContext<
       }
     }
 
+    return allResolved;
   }
 
   @NotNull
@@ -437,12 +469,122 @@ public abstract class ReferenceContext<
   protected abstract @NotNull EP toSelfVar(@NotNull MP mRef);
 
   protected @NotNull MP fromSelfVar(@NotNull EP eRef) {
+    assert eRef.isResolved();
     assert eRef.type().kind() != TypeKind.ENTITY;
     GenTagProjectionEntry<?, MP> tpe = eRef.singleTagProjection();
     assert tpe != null;
     return tpe.projection();
   }
 
+  /**
+   * Updates references using a transformation map obtained
+   * during projection {@link GenProjectionTransformer transformation}.
+   *
+   * @param transformationMap references transformation map
+   */
+  public final void transform(@NotNull GenProjectionTransformationMap<EP, MP> transformationMap) {
+//    if (!ensureAllReferencesResolved())
+//      throw new IllegalArgumentException(
+//          "Can't apply transformation map to a reference context when not all references are resolved");
+
+    for (final Map.Entry<String, RefItem<EP>> entry : entityReferences.entrySet()) {
+      EP old = entry.getValue().argument();
+      EP _new = transformationMap.getEntityMapping(old);
+
+      if (_new != null)
+        entry.getValue().setArgument(_new);
+    }
+
+    for (final Map.Entry<String, RefItem<MP>> entry : modelReferences.entrySet()) {
+      MP old = entry.getValue().argument();
+      MP _new = transformationMap.getModelMapping(old);
+
+      if (_new != null)
+        entry.getValue().setArgument(_new);
+    }
+
+    if (parent != null)
+      parent.transform(transformationMap);
+  }
+
   @Override
   public String toString() { return "'" + referencesNamespace + "' reference context"; }
+
+  private @NotNull ReferenceContext.RefItem<EP> toSelfVar(@NotNull ReferenceContext.RefItem<MP> mRef) {
+    return new RefItem<>(
+        toSelfVar(mRef.argument()),
+        ep -> {
+          MP m = fromSelfVar(ep);
+          return toSelfVar(mRef.func.apply(m));
+        },
+        mRef.location()
+    );
+  }
+
+  private @NotNull ReferenceContext.RefItem<MP> fromSelfVar(@NotNull ReferenceContext.RefItem<EP> eRef) {
+    return new RefItem<>(
+        fromSelfVar(eRef.argument()),
+        mp -> {
+          EP e = toSelfVar(mp);
+          return fromSelfVar(eRef.func.apply(e));
+        },
+        eRef.location()
+    );
+  }
+
+  /**
+   * Reference item is a pair of a reference of type {@code R}
+   * called "argument" and a function from {@code R} to {@code R}.
+   * <p>
+   * "argument" can be unresolved and can also be refined (changed) over time,
+   * for instance if projection is transformed and references
+   * are updated using {@link ReferenceContext#transform(GenProjectionTransformationMap)}
+   * transformation map.
+   * Function must be stateless.
+   * <p>
+   * In simplest case "argument" is target reference and function is identity,
+   * this case is described by {@link IdRefItem}.
+   * <p>
+   * A more complex case is a named normalized tail reference, for example
+   * <code>
+   * <pre>
+   *     outputProjection $foo = ( a, b ) ~Bar $bar = ( c )
+   *   </pre>
+   * </code>
+   * This results in "bar" reference created in the same context as "foo", with
+   * {@code RefItem} having "foo" as the argument and a call
+   * to {@link GenModelProjection#normalizedForType(DatumTypeApi) normalizedForType} as a function
+   *
+   * @param <R>
+   */
+  public static class RefItem<R extends GenProjectionReference</*R*/?>> {
+    private @NotNull R argument;
+    private final @NotNull Function<R, R> func;
+    private final @NotNull TextLocation location;
+
+    public RefItem(
+        @NotNull final R argument,
+        @NotNull final Function<R, R> func,
+        @NotNull final TextLocation location) {
+      this.argument = argument;
+      this.func = func;
+      this.location = location;
+    }
+
+    public @NotNull R argument() { return argument; }
+
+    public void setArgument(final @NotNull R argument) { this.argument = argument; }
+
+    public @NotNull R apply() { return func.apply(argument()); }
+
+    boolean isResolved() { return argument().isResolved(); }
+
+    public @NotNull TextLocation location() { return location; }
+  }
+
+  public static final class IdRefItem<R extends GenProjectionReference<?>> extends RefItem<R> {
+    public IdRefItem(@NotNull final R argument) {
+      super(argument, Function.identity(), argument.location());
+    }
+  }
 }

@@ -19,52 +19,32 @@ package ws.epigraph.url.projections.req;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpProjectionPsiParser;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.delete.OpDeleteVarProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
-import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.delete.ReqDeleteVarProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpDeleteVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpInputVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
-import ws.epigraph.schema.parser.psi.SchemaOpVarPath;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityPath;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqDeleteVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqInputVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
-import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionsPsiParser;
-import ws.epigraph.url.projections.req.delete.ReqDeletePsiProcessingContext;
-import ws.epigraph.url.projections.req.delete.ReqDeleteReferenceContext;
-import ws.epigraph.url.projections.req.input.ReqInputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.input.ReqInputPsiProcessingContext;
-import ws.epigraph.url.projections.req.input.ReqInputReferenceContext;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
-import ws.epigraph.url.projections.req.update.ReqUpdateProjectionsPsiParser;
-import ws.epigraph.url.projections.req.update.ReqUpdatePsiProcessingContext;
-import ws.epigraph.url.projections.req.update.ReqUpdateReferenceContext;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
+import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
+import ws.epigraph.url.projections.req.update.ReqUpdateProjectionPsiParser;
 
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.*;
@@ -76,81 +56,150 @@ import static ws.epigraph.test.TestUtil.*;
 public final class ReqTestUtil {
   private ReqTestUtil() {}
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseOpEntityProjection(OpOutputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+  }
+
+  public static @NotNull OpEntityProjection parseOpInputEntityProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseOpEntityProjection(OpInputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+  }
+
+  public static @NotNull OpEntityProjection parseOpDeleteEntityProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseOpEntityProjection(OpDeleteProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+  }
+
+  private static @NotNull OpEntityProjection parseOpEntityProjection(
+      @NotNull OpProjectionPsiParser parser,
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpOutputReferenceContext opOutputReferenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    return runPsiParser(true, context -> {
+      OpReferenceContext opOutputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, opInputReferenceContext);
-
-      OpOutputPsiProcessingContext opOutputPsiProcessingContext = new OpOutputPsiProcessingContext(
+      OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
           context,
-          opInputPsiProcessingContext,
           opOutputReferenceContext
       );
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+      OpEntityProjection vp = parser.parseEntityProjection(
           varDataType,
+          false,
           psiVarProjection,
           resolver,
-          opOutputPsiProcessingContext
+          opPsiProcessingContext
       );
 
       opOutputReferenceContext.ensureAllReferencesResolved();
-      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
 
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
       @NotNull DataType type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseReqVarProjection(
+        ReqOutputProjectionPsiParser.INSTANCE,
+        type, op, projectionString, resolver
+    );
+  }
+
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputVarProjection(
+      @NotNull DataType type,
+      @NotNull OpEntityProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseReqVarProjection(
+        ReqInputProjectionPsiParser.INSTANCE,
+        type, op, projectionString, resolver
+    );
+  }
+
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqUpdateEntityProjection(
+      @NotNull DataType type,
+      @NotNull OpEntityProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseReqVarProjection(
+        ReqUpdateProjectionPsiParser.INSTANCE,
+        type, op, projectionString, resolver
+    );
+  }
+
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteVarProjection(
+      @NotNull DataType type,
+      @NotNull OpEntityProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseReqVarProjection(
+        ReqDeleteProjectionPsiParser.INSTANCE,
+        type, op, projectionString, resolver
+    );
+  }
+
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqVarProjection(
+      @NotNull ReqProjectionPsiParser parser,
+      @NotNull DataType type,
+      @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      ReqOutputReferenceContext reqOutputReferenceContext =
-          new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    return runPsiParser(true, context -> {
+      ReqReferenceContext reqOutputReferenceContext =
+          new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-          new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+      ReqPsiProcessingContext reqPsiProcessingContext =
+          new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
-          type,
-          op,
-          false,
-          psi,
-          resolver,
-          reqOutputPsiProcessingContext
-      );
+      @NotNull StepsAndProjection<ReqEntityProjection> res =
+          parser.parseTrunkEntityProjection(
+              type,
+              false,
+              op,
+              psi,
+              resolver,
+              reqPsiProcessingContext
+          );
 
       reqOutputReferenceContext.ensureAllReferencesResolved();
 
@@ -158,13 +207,13 @@ public final class ReqTestUtil {
     });
   }
 
-  public static @NotNull OpVarPath parseOpVarPath(
+  public static @NotNull OpEntityProjection parseOpEntityPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     try {
-      return parseOpVarPath(varDataType, projectionString, true, resolver);
+      return parseOpEntityPath(varDataType, projectionString, true, resolver);
     } catch (PsiProcessingException e) { // can't happen..
       e.printStackTrace();
       fail(e.getMessage());
@@ -173,7 +222,7 @@ public final class ReqTestUtil {
     throw new RuntimeException("unreachable");
   }
 
-  public static @NotNull OpVarPath parseOpVarPath(
+  public static @NotNull OpEntityProjection parseOpEntityPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -181,218 +230,32 @@ public final class ReqTestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityPath entityPathPsi = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_VAR_PATH,
+        SchemaSubParserDefinitions.OP_ENTITY_PATH,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(entityPathPsi, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    final TestUtil.PsiParserClosure<OpEntityProjection> closure = context -> {
+      OpReferenceContext referenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, opInputReferenceContext);
+      OpPsiProcessingContext psiProcessingContext =
+          new OpPsiProcessingContext(context, referenceContext);
       OpPathPsiProcessingContext opPathPsiProcessingContext =
-          new OpPathPsiProcessingContext(context, opInputPsiProcessingContext);
+          new OpPathPsiProcessingContext(context, psiProcessingContext);
 
-      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, opPathPsiProcessingContext);
+      OpEntityProjection vp = OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
 
-      opInputReferenceContext.ensureAllReferencesResolved();
+      referenceContext.ensureAllReferencesResolved();
 
       return vp;
     };
 
-    return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
+    return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);
   }
 
-  public static @NotNull ReqUpdateVarProjection parseReqUpdateVarProjection(
-      @NotNull DataType type,
-      @NotNull OpInputVarProjection op,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
 
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqUpdateVarProjection psi = EpigraphPsiUtil.parseText(
-        projectionString,
-        UrlSubParserDefinitions.REQ_UPDATE_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psi, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      ReqUpdateReferenceContext reqUpdateReferenceContext =
-          new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
-          new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
-
-      ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
-          type,
-          false,
-          op,
-          psi,
-          resolver,
-          reqUpdatePsiProcessingContext
-      );
-
-      reqUpdateReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-  }
-
-  public static @NotNull ReqInputVarProjection parseReqInputVarProjection(
-      @NotNull DataType type,
-      @NotNull OpInputVarProjection op,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqInputVarProjection psi = EpigraphPsiUtil.parseText(
-        projectionString,
-        UrlSubParserDefinitions.REQ_INPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psi, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      ReqInputReferenceContext reqInputReferenceContext =
-          new ReqInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-
-      ReqInputPsiProcessingContext reqInputPsiProcessingContext =
-          new ReqInputPsiProcessingContext(context, reqInputReferenceContext);
-
-      ReqInputVarProjection vp = ReqInputProjectionsPsiParser.parseVarProjection(
-          type,
-          op,
-          psi,
-          resolver,
-          reqInputPsiProcessingContext
-      );
-
-      reqInputReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-  }
-
-  public static ReqDeleteVarProjection parseReqDeleteVarProjection(
-      @NotNull DataType type,
-      @NotNull OpDeleteVarProjection op,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlReqDeleteVarProjection psi = EpigraphPsiUtil.parseText(
-        projectionString,
-        UrlSubParserDefinitions.REQ_DELETE_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psi, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      ReqDeleteReferenceContext reqDeleteReferenceContext =
-          new ReqDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-
-      ReqDeletePsiProcessingContext reqDeletePsiProcessingContext =
-          new ReqDeletePsiProcessingContext(context, reqDeleteReferenceContext);
-      ReqDeleteVarProjection vp = ReqDeleteProjectionsPsiParser.parseVarProjection(
-          type,
-          op,
-          psi,
-          resolver,
-          reqDeletePsiProcessingContext
-      );
-
-      reqDeleteReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-  }
-
-  public static OpInputVarProjection parseOpInputVarProjection(
-      @NotNull DataType varDataType,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    SchemaOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        SchemaSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, opInputReferenceContext);
-
-      OpInputVarProjection vp = OpInputProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          psiVarProjection,
-          resolver,
-          opInputPsiProcessingContext
-      );
-
-      opInputReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-
-  }
-
-  public static OpDeleteVarProjection parseOpDeleteVarProjection(
-      @NotNull DataType varDataType,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    SchemaOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        SchemaSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      OpDeleteReferenceContext opDeleteReferenceContext =
-          new OpDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, opInputReferenceContext);
-      OpDeletePsiProcessingContext opDeletePsiProcessingContext =
-          new OpDeletePsiProcessingContext(context, opInputPsiProcessingContext, opDeleteReferenceContext);
-
-      OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          false,
-          psiVarProjection,
-          resolver,
-          opDeletePsiProcessingContext
-      );
-
-      opDeleteReferenceContext.ensureAllReferencesResolved();
-      opInputReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-
-  }
 }

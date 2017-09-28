@@ -18,7 +18,7 @@ package ws.epigraph.service;
 
 import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.types.Field;
 import ws.epigraph.types.Tag;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +36,13 @@ public final class ProjectionDataTrimmer {
 
   public ProjectionDataTrimmer() {}
 
-  public @NotNull Data trimData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
+  public @NotNull Data trimData(@NotNull Data data, @NotNull ReqEntityProjection projection) {
     final @NotNull Data.Raw raw = data._raw();
     final @NotNull Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    ReqOutputVarProjection normalizedProjection = projection.normalizedForType(data.type());
+    ReqEntityProjection normalizedProjection = projection.normalizedForType(data.type());
 
-    for (Map.Entry<String, ReqOutputTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
+    for (Map.Entry<String, ReqTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
       final Tag tag = (Tag) normalizedProjection.type().tagsMap().get(tagName);
 
@@ -59,10 +59,10 @@ public final class ProjectionDataTrimmer {
     return b;
   }
 
-  public @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+  public @NotNull Datum trimDatum(@NotNull Datum datum, @NotNull ReqModelProjection<?, ?, ?> projection) {
     Datum.Builder.Raw b = trimDatumNoMeta(datum, projection);
 
-    final ReqOutputModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
+    final ReqModelProjection<?, ?, ?> metaProjection = projection.metaProjection();
     if (metaProjection != null) {
       final Datum meta = datum._raw().meta();
       if (meta != null) {
@@ -75,17 +75,17 @@ public final class ProjectionDataTrimmer {
 
   private @NotNull Datum.Builder.Raw trimDatumNoMeta(
       @NotNull Datum datum,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+      @NotNull ReqModelProjection<?, ?, ?> projection) {
 
     switch (datum.type().kind()) {
       case RECORD:
-        return trimRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);
+        return trimRecordDatum((RecordDatum) datum, (ReqRecordModelProjection) projection);
       case MAP:
-        return trimMapDatum((MapDatum) datum, (ReqOutputMapModelProjection) projection);
+        return trimMapDatum((MapDatum) datum, (ReqMapModelProjection) projection);
       case LIST:
-        return trimListDatum((ListDatum) datum, (ReqOutputListModelProjection) projection);
+        return trimListDatum((ListDatum) datum, (ReqListModelProjection) projection);
       case PRIMITIVE:
-        return trimPrimitiveDatum((PrimitiveDatum<?>) datum, (ReqOutputPrimitiveModelProjection) projection);
+        return trimPrimitiveDatum((PrimitiveDatum<?>) datum, (ReqPrimitiveModelProjection) projection);
       case ENUM:
         throw new RuntimeException("Unsupported kind kind: " + datum.type().kind());
       case ENTITY:
@@ -97,20 +97,20 @@ public final class ProjectionDataTrimmer {
 
   public @NotNull Datum.Builder.Raw trimRecordDatum(
       @NotNull RecordDatum datum,
-      @NotNull ReqOutputRecordModelProjection projection) {
+      @NotNull ReqRecordModelProjection projection) {
     final @NotNull RecordDatum.Raw raw = datum._raw();
     final @NotNull RecordDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
     @NotNull
-    Map<String, ReqOutputFieldProjectionEntry> fieldProjections = projection.fieldProjections();
+    Map<String, ReqFieldProjectionEntry> fieldProjections = projection.fieldProjections();
 
-    for (Map.Entry<String, ReqOutputFieldProjectionEntry> entry : fieldProjections.entrySet()) {
-      final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
+    for (Map.Entry<String, ReqFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+      final ReqFieldProjectionEntry fieldProjectionEntry = entry.getValue();
       final Field field = raw.type().fieldsMap().get(entry.getKey());
       assert field != null : raw.type().name().toString() + "." + entry.getKey();
       final @Nullable Data data = raw.getData(field);
 
-      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().varProjection()));
+      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().entityProjection()));
     }
 
     return b;
@@ -118,12 +118,12 @@ public final class ProjectionDataTrimmer {
 
   public @NotNull Datum.Builder.Raw trimMapDatum(
       @NotNull MapDatum datum,
-      @NotNull ReqOutputMapModelProjection projection) {
+      @NotNull ReqMapModelProjection projection) {
 
     final @NotNull MapDatum.Raw raw = datum._raw();
     final @NotNull MapDatum.Builder.Raw b = datum.type().createBuilder()._raw();
 
-    final @Nullable List<ReqOutputKeyProjection> keyProjections = projection.keys();
+    final @Nullable List<ReqKeyProjection> keyProjections = projection.keys();
 
     if (keyProjections == null) {
       for (Map.Entry<Datum.Imm, ? extends Data> entry : raw.elements().entrySet()) {
@@ -133,7 +133,7 @@ public final class ProjectionDataTrimmer {
         if (data != null) b.elements().put(keyValue, trimData(data, projection.itemsProjection()));
       }
     } else {
-      for (ReqOutputKeyProjection keyProjection : keyProjections) {
+      for (ReqKeyProjection keyProjection : keyProjections) {
         final @NotNull Datum.Imm keyValue = keyProjection.value().toImmutable();
         final @Nullable Data data = raw.elements().get(keyValue);
 
@@ -146,7 +146,7 @@ public final class ProjectionDataTrimmer {
 
   public static @NotNull Datum.Builder.Raw trimListDatum(
       @NotNull ListDatum datum,
-      @NotNull ReqOutputListModelProjection projection) {
+      @NotNull ReqListModelProjection projection) {
 
     // nothing to trim.
     // Todo: use toBuilder once available
@@ -162,7 +162,7 @@ public final class ProjectionDataTrimmer {
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static @NotNull Datum.Builder.Raw trimPrimitiveDatum(
       @NotNull PrimitiveDatum<?> datum,
-      @NotNull ReqOutputPrimitiveModelProjection projection) {
+      @NotNull ReqPrimitiveModelProjection projection) {
     // nothing to trim
     // Todo: use toBuilder once available
 

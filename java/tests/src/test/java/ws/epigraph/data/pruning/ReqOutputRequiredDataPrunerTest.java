@@ -23,8 +23,8 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.tests.PersonId;
@@ -154,7 +154,7 @@ public class ReqOutputRequiredDataPrunerTest {
                 .put("3", null),
 
             "[](id)",
-            "+[1,2,3](+id)"
+            "[1,2,3]+(+id)"
         ),
 
         "['2']/id : Required data is a [111] error: xxx"
@@ -238,14 +238,14 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpOutputVarProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection op = EpigraphTestUtil.parseOpEntityProjection(
         (DataType) data.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqOutputVarProjection> req =
-        EpigraphTestUtil.parseReqOutputVarProjection(
+    StepsAndProjection<ReqEntityProjection> req =
+        EpigraphTestUtil.parseReqOutputEntityProjection(
             (DataType) data.type().dataType(),
             op,
             reqProjection,
@@ -260,14 +260,14 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpOutputVarProjection op = EpigraphTestUtil.parseOpOutputVarProjection(
+    OpEntityProjection op = EpigraphTestUtil.parseOpEntityProjection(
         datum.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqOutputVarProjection> req =
-        EpigraphTestUtil.parseReqOutputVarProjection(
+    StepsAndProjection<ReqEntityProjection> req =
+        EpigraphTestUtil.parseReqOutputEntityProjection(
             datum.type().dataType(),
             op,
             reqProjection,

@@ -21,15 +21,12 @@ import org.junit.Test;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.ReqParam;
-import ws.epigraph.projections.req.output.ReqOutputModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputRecordModelProjection;
-import ws.epigraph.projections.req.output.ReqOutputTagProjectionEntry;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
@@ -39,8 +36,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.printReqOutputVarProjection;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputVarProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
@@ -65,7 +61,7 @@ public class ReqOutputProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpOutputVarProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -87,7 +83,7 @@ public class ReqOutputProjectionsParserTest {
           "        firstName",
           "      ),",
           "    ) ) :~ws.epigraph.tests.User : profile ,",
-          "    bestFriend2 $bf2 = :`record` ( id, bestFriend2 $bf2 ),",
+          "    bestFriend2 $bf2 = :( id, `record` ( id, bestFriend2 $bf2 ) ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
@@ -194,12 +190,13 @@ public class ReqOutputProjectionsParserTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testParseEmptyRecordFieldParam() {
-    ReqOutputVarProjection vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null} ) )", 0);
+    ReqEntityProjection
+        vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null} ) )", 0);
 
-    ReqOutputRecordModelProjection recordProjection =
-        (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
-    ReqOutputModelProjection<?, ?, ?> idProjection =
-        recordProjection.fieldProjection("id").fieldProjection().varProjection().singleTagProjection().projection();
+    ReqRecordModelProjection recordProjection =
+        (ReqRecordModelProjection) vp.tagProjection("record").projection();
+    ReqModelProjection<?, ?, ?> idProjection =
+        recordProjection.fieldProjection("id").fieldProjection().entityProjection().singleTagProjection().projection();
 
     ReqParam param = idProjection.params().get("param2");
     UserRecord paramValue = (UserRecord) param.value();
@@ -290,7 +287,7 @@ public class ReqOutputProjectionsParserTest {
             "  firstName,",
             "  middleName,",
             "  bestFriend :(),",
-            "  bestFriend2 :(),",
+            "  bestFriend2 :( id ),",
             "  bestFriend3 :(),",
             "  friends *( :() ),",
             "  friendRecords,",
@@ -305,16 +302,16 @@ public class ReqOutputProjectionsParserTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testRequiredField() {
-    ReqOutputVarProjection vp = testParse(":record ( +id )", 1);
-    ReqOutputRecordModelProjection rmp = (ReqOutputRecordModelProjection) vp.tagProjection("record").projection();
-    assertTrue(rmp.fieldProjection("id").fieldProjection().required());
+    ReqEntityProjection vp = testParse(":record ( +id )", 1);
+    ReqRecordModelProjection rmp = (ReqRecordModelProjection) vp.tagProjection("record").projection();
+    assertTrue(rmp.fieldProjection("id").fieldProjection().flagged());
   }
 
   @Test
   public void testRequiredFieldWithTails() {
     testParse(
         ":record ( +bestFriend :( id ) :~ws.epigraph.tests.User :( profile ) )",
-        ":record ( +bestFriend :( +id ) :~ws.epigraph.tests.User :( +profile ) )",
+//        ":record ( +bestFriend :( +id ) :~ws.epigraph.tests.User :( +profile ) )",
         1
     );
   }
@@ -322,7 +319,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testRequiredFieldMultiModel() {
     // + on field implies + on models
-    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
+//    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
+    testParse(":record ( +bestFriend :( id, record ) )", 1);
   }
 
   @Test
@@ -387,7 +385,7 @@ public class ReqOutputProjectionsParserTest {
   public void testModelTailsNormalization() throws PsiProcessingException {
 
     testModelTailsNormalization(
-        parseOpOutputVarProjection(
+        parseOpEntityProjection(
             new DataType(Person.type, null),
             ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
             resolver
@@ -398,7 +396,7 @@ public class ReqOutputProjectionsParserTest {
     );
 
     testModelTailsNormalization(
-        parseOpOutputVarProjection(
+        parseOpEntityProjection(
             new DataType(Person.type, null),
             ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
             resolver
@@ -409,7 +407,7 @@ public class ReqOutputProjectionsParserTest {
     );
 
     testModelTailsNormalization(
-        parseOpOutputVarProjection(
+        parseOpEntityProjection(
             new DataType(Person.type, null),
             ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(lastName)~ws.epigraph.tests.SubUserRecord(firstName))",
             resolver
@@ -425,7 +423,7 @@ public class ReqOutputProjectionsParserTest {
   public void testDiamond() throws PsiProcessingException {
 
     testModelTailsNormalization(
-        parseOpOutputVarProjection(
+        parseOpEntityProjection(
             new DataType(Person.type, null),
             ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
             resolver
@@ -442,7 +440,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
-    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpEntityProjection(dataType, opProjectionStr, resolver);
 
     String projection = "[ 2 ]( :record ( id, firstName ) )@+( start, count )";
 
@@ -459,7 +457,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ ;+param: epigraph.String } [ ]( :id )";
-    @NotNull OpOutputVarProjection opProjection = parseOpOutputVarProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpEntityProjection(dataType, opProjectionStr, resolver);
 
     try {
       testParse(
@@ -473,32 +471,80 @@ public class ReqOutputProjectionsParserTest {
     }
   }
 
+  @Test
+  public void testRetro() throws PsiProcessingException {
+    testParse(":record ( bestFriend :() )", 1); // no retro - no tags
+//    testParse(":record ( bestFriend2 )", ":record ( bestFriend2:id )", 1); // bestFriend2: Person retro id
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessor() throws PsiProcessingException {
+    // check that model gets flagged when field/var is flagged
+    ReqEntityProjection p = testParse(":record ( +id )", 1);
+    ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
+    @NotNull ReqFieldProjection fp = rmp.fieldProjection("id").fieldProjection();
+    assertTrue(fp.flagged());
+    ReqEntityProjection ep = fp.entityProjection();
+    assertTrue(ep.flagged());
+    ReqModelProjection<?, ?, ?> mp = ep.singleTagProjection().projection();
+    assertTrue(mp.flagged());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessorWithRetro() throws PsiProcessingException {
+    // bestFriend2 has retro :id
+    ReqEntityProjection p = testParse(
+        ":record( +bestFriend2 )",
+        ":record ( +bestFriend2 :+id )",
+        1
+    );
+    ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
+    @NotNull ReqFieldProjection fp = rmp.fieldProjection("bestFriend2").fieldProjection();
+    assertTrue(fp.flagged());
+    @NotNull ReqEntityProjection ep = fp.entityProjection();
+    assertTrue(ep.flagged());
+    ReqTagProjectionEntry tpe = ep.tagProjection("id");
+    assertNotNull(tpe);
+    ReqModelProjection<?, ?, ?> mp = tpe.projection();
+    assertTrue(mp.flagged());
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void testPostProcessorNoTags() throws PsiProcessingException {
+    // no retro and no tags
+    testParse(":record ( +bestFriend :() )", 1); // should be an error?
+  }
+
   // todo negative test cases too
 
   private void testTailsNormalization(String str, Type type, String expected) {
-    final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+    final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseReqOutputVarProjection(dataType, personOpProjection, str, resolver);
 
-    ReqOutputVarProjection varProjection = stepsAndProjection.projection();
-    final @NotNull ReqOutputVarProjection normalized = varProjection.normalizedForType(type);
+    ReqEntityProjection varProjection = stepsAndProjection.projection();
+    final @NotNull ReqEntityProjection normalized = varProjection.normalizedForType(type);
 
-    String actual = printReqOutputVarProjection(normalized, stepsAndProjection.pathSteps());
+    String actual = TestUtil.printReqEntityProjection(normalized, stepsAndProjection.pathSteps());
     assertEquals(expected, actual);
   }
 
-  private void testModelTailsNormalization(OpOutputVarProjection op, String str, DatumType type, String expected) {
-    ReqOutputVarProjection varProjection = parseReqOutputVarProjection(dataType, op, str, resolver).projection();
-    final ReqOutputTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
+  private void testModelTailsNormalization(OpEntityProjection op, String str, DatumType type, String expected) {
+    ReqEntityProjection varProjection = parseReqOutputVarProjection(dataType, op, str, resolver).projection();
+    final ReqTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
-    final ReqOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+    final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
     assertNotNull(modelProjection);
 
-    final ReqOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
-    final ReqOutputVarProjection normalizedVar = new ReqOutputVarProjection(
+    final ReqModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    final ReqEntityProjection normalizedVar = new ReqEntityProjection(
         varProjection.type(),
+        false,
         ProjectionUtils.singletonLinkedHashMap(
             tagProjectionEntry.tag().name(),
-            new ReqOutputTagProjectionEntry(
+            new ReqTagProjectionEntry(
                 tagProjectionEntry.tag(),
                 normalized,
                 TextLocation.UNKNOWN
@@ -507,33 +553,33 @@ public class ReqOutputProjectionsParserTest {
         varProjection.parenthesized(), null,
         TextLocation.UNKNOWN
     );
-    String actual = printReqOutputVarProjection(normalizedVar, 0);
+    String actual = TestUtil.printReqEntityProjection(normalizedVar, 0);
     assertEquals(expected, actual);
   }
 
-  private ReqOutputVarProjection testParse(String expr, int steps) { return testParse(expr, expr, steps); }
+  private ReqEntityProjection testParse(String expr, int steps) { return testParse(expr, expr, steps); }
 
-  private void testParse(DataType dataType, OpOutputVarProjection opProjection, String expr, int steps) {
+  private void testParse(DataType dataType, OpEntityProjection opProjection, String expr, int steps) {
     testParse(dataType, opProjection, expr, expr, steps);
   }
 
-  private ReqOutputVarProjection testParse(String expr, String expectedProjection, int steps) {
+  private ReqEntityProjection testParse(String expr, String expectedProjection, int steps) {
     return testParse(dataType, personOpProjection, expr, expectedProjection, steps);
   }
 
-  private ReqOutputVarProjection testParse(
+  private ReqEntityProjection testParse(
       DataType dataType,
-      OpOutputVarProjection opProjection,
+      OpEntityProjection opProjection,
       String expr,
       String expectedProjection,
       int steps) {
 
-    final @NotNull StepsAndProjection<ReqOutputVarProjection> stepsAndProjection =
+    final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseReqOutputVarProjection(dataType, opProjection, expr, resolver);
 
     assertEquals(steps, stepsAndProjection.pathSteps());
 
-    String s = printReqOutputVarProjection(stepsAndProjection.projection(), steps);
+    String s = TestUtil.printReqEntityProjection(stepsAndProjection.projection(), steps);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
@@ -542,8 +588,8 @@ public class ReqOutputProjectionsParserTest {
     return stepsAndProjection.projection();
   }
 
-  private @NotNull OpOutputVarProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
-    return parseOpOutputVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
+    return parseOpEntityProjection(dataType, projectionString, resolver);
   }
 
 }

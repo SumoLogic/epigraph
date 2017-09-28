@@ -58,9 +58,13 @@ public abstract class AbstractVarProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+  protected final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
   protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
+  private final Throwable allocationTrace = new Throwable();
+
+  @SuppressWarnings("unchecked")
   protected AbstractVarProjection(
       @NotNull TypeApi type,
       @NotNull Map<String, TP> tagProjections,
@@ -84,15 +88,11 @@ public abstract class AbstractVarProjection<
       final TP tp = singleTagProjection();
       if (tp != null) {
         MP mp = tp.projection();
-        //noinspection ThisEscapedInObjectConstruction
-        mp.setEntityProjection(this);
-
-//        mp.runOnResolved(
-//            () -> {
-//              if (name == null)
-//                name = mp.referenceName();
-//            }
-//        );
+        setReferenceName0(mp.referenceName());
+        @SuppressWarnings("ThisEscapedInObjectConstruction")
+        MP mp2 = (MP) mp.setEntityProjection(this);
+        if (mp != mp2)
+          tagProjections.put(tagProjections.keySet().iterator().next(), tp.setModelProjection(mp2));
       }
     }
   }
@@ -158,6 +158,11 @@ public abstract class AbstractVarProjection<
     }
   }
 
+  public boolean isPathEnd() {
+    assertResolved();
+    return tagProjections().isEmpty();
+  }
+
   @Override
   public @NotNull TypeApi type() { return type; }
 
@@ -183,6 +188,18 @@ public abstract class AbstractVarProjection<
     return polymorphicTails;
   }
 
+  @Override
+  public void setNormalizedTailReferenceName(
+      @NotNull TypeApi type,
+      @NotNull ProjectionReferenceName tailReferenceName) {
+
+    normalizedTailNames.put(type.name(), tailReferenceName);
+  }
+
+  public void copyNormalizedTailReferenceNames(@NotNull VP vp) {
+    normalizedTailNames.putAll(vp.normalizedTailNames);
+  }
+
   protected abstract @NotNull VarNormalizationContext<VP> newNormalizationContext();
 
 //  /**
@@ -204,7 +221,13 @@ public abstract class AbstractVarProjection<
 //  }
 
   @Override
+  public @NotNull VP normalizedForType(final @NotNull TypeApi type) {
+    return normalizedForType(type, normalizedTailNames.get(type.name()));
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
+  @Deprecated
   public @NotNull VP normalizedForType(
       @NotNull TypeApi targetType,
       @Nullable ProjectionReferenceName resultReferenceName) {
@@ -245,7 +268,6 @@ public abstract class AbstractVarProjection<
             if (this.name == null) {
               ref = context.newReference(effectiveType, self());
               ref.setReferenceName(normalizedRefName);
-              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
             } else {
               NormalizationContext.VisitedKey visitedKey =
                   new NormalizationContext.VisitedKey(this.name, effectiveType.name());
@@ -264,6 +286,7 @@ public abstract class AbstractVarProjection<
                     ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
                 );
             }
+            normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
 
             final List<VP> effectiveProjections = new ArrayList<>(linearizedTails);
             effectiveProjections.add(self()); //we're the least specific projection
@@ -470,6 +493,14 @@ public abstract class AbstractVarProjection<
 
     VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
+
+    // todo check for clashes
+    Map<TypeName, ProjectionReferenceName> mergedTailNames = new HashMap<>();
+    for (VP vp : varProjections) {
+      mergedTailNames.putAll(vp.normalizedTailNames);
+    }
+    res.normalizedTailNames.putAll(mergedTailNames);
+
     return res;
   }
 
@@ -563,6 +594,8 @@ public abstract class AbstractVarProjection<
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     this.normalizedFrom = value.normalizedFrom();
+//    this.normalizedCache.putAll(((AbstractVarProjection<VP, TP, MP>) value).normalizedCache);
+    this.normalizedTailNames.putAll(value.normalizedTailNames);
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks)
@@ -606,6 +639,9 @@ public abstract class AbstractVarProjection<
     return location;
   }
 
+  @Override
+  public @Nullable Throwable allocationTrace() { return allocationTrace; }
+
   @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object o) {
@@ -620,7 +656,8 @@ public abstract class AbstractVarProjection<
 
   @Override
   public int hashCode() {
-    if (name != null) return name.hashCode();
+//    assertResolved(); // todo: this should be prohibited for unresolved projections
+//    if (name != null) return name.hashCode();
     return Objects.hash(type, tagProjections, polymorphicTails);
   }
 

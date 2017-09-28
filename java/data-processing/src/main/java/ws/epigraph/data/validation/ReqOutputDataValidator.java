@@ -21,28 +21,28 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.types.TypeKind;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputDataValidator extends GenDataValidator<
-    ReqOutputVarProjection,
-    ReqOutputTagProjectionEntry,
-    ReqOutputModelProjection<?, ?, ?>,
-    ReqOutputRecordModelProjection,
-    ReqOutputMapModelProjection,
-    ReqOutputListModelProjection,
-    ReqOutputPrimitiveModelProjection,
-    ReqOutputFieldProjectionEntry,
-    ReqOutputFieldProjection
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqRecordModelProjection,
+    ReqMapModelProjection,
+    ReqListModelProjection,
+    ReqPrimitiveModelProjection,
+    ReqFieldProjectionEntry,
+    ReqFieldProjection
     > {
 
   @Override
-  protected void validateDataOnly(final @NotNull Data data, final @NotNull ReqOutputVarProjection projection) {
+  protected void validateDataOnly(final @NotNull Data data, final @NotNull ReqEntityProjection projection) {
 
-    projection.tagProjections().values().stream().filter(p -> p.projection().required()).forEach(tp -> {
+    projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
       final String obj = data.type().kind() == TypeKind.ENTITY ? "tag '" + tagName + "'" : "value";
@@ -65,9 +65,9 @@ public class ReqOutputDataValidator extends GenDataValidator<
   @Override
   protected void validateRecordDatumOnly(
       final @NotNull RecordDatum datum,
-      final @NotNull ReqOutputRecordModelProjection projection) {
+      final @NotNull ReqRecordModelProjection projection) {
 
-    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().required()).forEach(fp -> {
+    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
       final Data fieldData = datum._raw().fieldsData().get(fieldName);

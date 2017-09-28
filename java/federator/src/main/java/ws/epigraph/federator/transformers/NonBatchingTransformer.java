@@ -19,7 +19,7 @@ package ws.epigraph.federator.transformers;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.schema.TransformerDeclaration;
 
 import java.util.concurrent.CompletableFuture;
@@ -44,7 +44,7 @@ public abstract class NonBatchingTransformer extends Transformer<Void> {
    */
   public abstract @NotNull CompletableFuture<InvocationResult<Data>> transform(
       @NotNull Data input,
-      @NotNull ReqOutputVarProjection outputProjection);
+      @NotNull ReqEntityProjection outputProjection);
 
   @Override
   public @NotNull Void newBatch() { return null; }
@@ -52,7 +52,7 @@ public abstract class NonBatchingTransformer extends Transformer<Void> {
   @Override
   public @NotNull CompletableFuture<InvocationResult<Data>> transform(
       @NotNull Data input,
-      @NotNull ReqOutputVarProjection outputProjection,
+      @NotNull ReqEntityProjection outputProjection,
       @NotNull Void batch) {
     return transform(input, outputProjection);
   }

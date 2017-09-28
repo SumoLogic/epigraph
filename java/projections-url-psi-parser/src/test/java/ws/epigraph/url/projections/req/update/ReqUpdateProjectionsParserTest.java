@@ -18,9 +18,10 @@ package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -29,8 +30,10 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqUpdateVarProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.ReqTestUtil;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -52,7 +55,7 @@ public class ReqUpdateProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpInputVarProjection personOpProjection = parsePersonOpInputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpInputEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -84,12 +87,12 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testParseRecordTag() {
-    testParse(":record", ":+record");
+    testParse(":record", ":record");
   }
 
   @Test
   public void testParseMultiTag() {
-    testParse(":(id,record)", ":( +id, +record )");
+    testParse(":(id,record)", ":( +id, record )");
   }
 
   @Test
@@ -101,7 +104,7 @@ public class ReqUpdateProjectionsParserTest {
   public void testParseMap() {
     testParse(
         ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )",
-        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :+id ) )"
+        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )"
     );
   }
 
@@ -150,15 +153,15 @@ public class ReqUpdateProjectionsParserTest {
   public void testUpdateModel() {
     testParse(
         ":+record ( id )",
-        ":+record ( +id )"
+        ":+record ( id )"
     );
   }
 
   @Test
   public void testUpdateDefaultModel() {
     testParse(
-        ":record ( worstEnemy :+( id ) )",
-        ":record ( worstEnemy :+( +id ) )"
+        ":record ( worstEnemy ( id ) )",
+        ":record ( worstEnemy ( +id ) )"
     );
   }
 
@@ -174,7 +177,7 @@ public class ReqUpdateProjectionsParserTest {
   public void testParseModelTail() {
     testParse(
         ":record (id) ~+UserRecord (profile)",
-        ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( +profile )"
+        ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( profile )"
     );
   }
 
@@ -205,9 +208,9 @@ public class ReqUpdateProjectionsParserTest {
   private void testParseFail(String expr) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqUpdateVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         expr,
-        UrlSubParserDefinitions.REQ_UPDATE_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
@@ -215,24 +218,26 @@ public class ReqUpdateProjectionsParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context -> {
-        ReqUpdateReferenceContext reqUpdateReferenceContext =
-            new ReqUpdateReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+        ReqReferenceContext referenceContext = new ReqReferenceContext(
+            ProjectionReferenceName.EMPTY, null, context
+        );
 
-        ReqUpdatePsiProcessingContext reqUpdatePsiProcessingContext =
-            new ReqUpdatePsiProcessingContext(context, reqUpdateReferenceContext);
+        ReqPsiProcessingContext psiProcessingContext =
+            new ReqPsiProcessingContext(context, referenceContext);
 
-        ReqUpdateVarProjection vp = ReqUpdateProjectionsPsiParser.parseVarProjection(
+        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqUpdateProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
             dataType,
             false,
             personOpProjection,
             psi,
             resolver,
-            reqUpdatePsiProcessingContext
+            psiProcessingContext
         );
 
-        reqUpdateReferenceContext.ensureAllReferencesResolved();
+        referenceContext.ensureAllReferencesResolved();
 
         return vp;
+
       });
 
       fail();
@@ -241,17 +246,17 @@ public class ReqUpdateProjectionsParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    final @NotNull ReqUpdateVarProjection varProjection =
-        ReqTestUtil.parseReqUpdateVarProjection(dataType, personOpProjection, expr, resolver);
+    final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
+        ReqTestUtil.parseReqUpdateEntityProjection(dataType, personOpProjection, expr, resolver);
 
-    String s = TestUtil.printReqUpdateVarProjection(varProjection);
+    String s = TestUtil.printReqEntityProjection(varProjection);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpInputVarProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputVarProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpInputEntityProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpInputEntityProjection(dataType, projectionString, resolver);
   }
 }

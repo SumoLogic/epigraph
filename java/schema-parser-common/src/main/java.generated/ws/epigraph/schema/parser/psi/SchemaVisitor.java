@@ -81,6 +81,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDeleteProjection(@NotNull SchemaDeleteProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitDeleteProjectionDef(@NotNull SchemaDeleteProjectionDef o) {
     visitPsiElement(o);
   }
@@ -136,6 +140,10 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitInputProjection(@NotNull SchemaInputProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitInputProjectionDef(@NotNull SchemaInputProjectionDef o) {
     visitPsiElement(o);
   }
@@ -180,111 +188,31 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitDatum(o);
   }
 
-  public void visitOpDeleteFieldProjection(@NotNull SchemaOpDeleteFieldProjection o) {
+  public void visitOpDefaultValue(@NotNull SchemaOpDefaultValue o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteFieldProjectionEntry(@NotNull SchemaOpDeleteFieldProjectionEntry o) {
+  public void visitOpEntityMultiTail(@NotNull SchemaOpEntityMultiTail o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteKeyProjection(@NotNull SchemaOpDeleteKeyProjection o) {
+  public void visitOpEntityPath(@NotNull SchemaOpEntityPath o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteKeyProjectionPart(@NotNull SchemaOpDeleteKeyProjectionPart o) {
+  public void visitOpEntityPolymorphicTail(@NotNull SchemaOpEntityPolymorphicTail o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteListModelProjection(@NotNull SchemaOpDeleteListModelProjection o) {
+  public void visitOpEntityProjection(@NotNull SchemaOpEntityProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteMapModelProjection(@NotNull SchemaOpDeleteMapModelProjection o) {
+  public void visitOpEntityProjectionRef(@NotNull SchemaOpEntityProjectionRef o) {
     visitPsiElement(o);
   }
 
-  public void visitOpDeleteModelMultiTail(@NotNull SchemaOpDeleteModelMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteModelPolymorphicTail(@NotNull SchemaOpDeleteModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteModelProjection(@NotNull SchemaOpDeleteModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteModelProjectionRef(@NotNull SchemaOpDeleteModelProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteModelProperty(@NotNull SchemaOpDeleteModelProperty o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteModelTailItem(@NotNull SchemaOpDeleteModelTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteMultiTagProjection(@NotNull SchemaOpDeleteMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteMultiTagProjectionItem(@NotNull SchemaOpDeleteMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteNamedModelProjection(@NotNull SchemaOpDeleteNamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteNamedVarProjection(@NotNull SchemaOpDeleteNamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteRecordModelProjection(@NotNull SchemaOpDeleteRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteSingleTagProjection(@NotNull SchemaOpDeleteSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteUnnamedModelProjection(@NotNull SchemaOpDeleteUnnamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteUnnamedOrRefModelProjection(@NotNull SchemaOpDeleteUnnamedOrRefModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteUnnamedOrRefVarProjection(@NotNull SchemaOpDeleteUnnamedOrRefVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteUnnamedVarProjection(@NotNull SchemaOpDeleteUnnamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteVarMultiTail(@NotNull SchemaOpDeleteVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteVarPolymorphicTail(@NotNull SchemaOpDeleteVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteVarProjection(@NotNull SchemaOpDeleteVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteVarProjectionRef(@NotNull SchemaOpDeleteVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpDeleteVarTailItem(@NotNull SchemaOpDeleteVarTailItem o) {
+  public void visitOpEntityTailItem(@NotNull SchemaOpEntityTailItem o) {
     visitPsiElement(o);
   }
 
@@ -296,119 +224,11 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpInputDefaultValue(@NotNull SchemaOpInputDefaultValue o) {
+  public void visitOpFieldProjection(@NotNull SchemaOpFieldProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpInputFieldProjection(@NotNull SchemaOpInputFieldProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputFieldProjectionEntry(@NotNull SchemaOpInputFieldProjectionEntry o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputKeyProjection(@NotNull SchemaOpInputKeyProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputKeyProjectionPart(@NotNull SchemaOpInputKeyProjectionPart o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputListModelProjection(@NotNull SchemaOpInputListModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputMapModelProjection(@NotNull SchemaOpInputMapModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelMeta(@NotNull SchemaOpInputModelMeta o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelMultiTail(@NotNull SchemaOpInputModelMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelPolymorphicTail(@NotNull SchemaOpInputModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelProjection(@NotNull SchemaOpInputModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelProjectionRef(@NotNull SchemaOpInputModelProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelProperty(@NotNull SchemaOpInputModelProperty o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputModelTailItem(@NotNull SchemaOpInputModelTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputMultiTagProjection(@NotNull SchemaOpInputMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputMultiTagProjectionItem(@NotNull SchemaOpInputMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputNamedModelProjection(@NotNull SchemaOpInputNamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputNamedVarProjection(@NotNull SchemaOpInputNamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputRecordModelProjection(@NotNull SchemaOpInputRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputSingleTagProjection(@NotNull SchemaOpInputSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputUnnamedModelProjection(@NotNull SchemaOpInputUnnamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputUnnamedOrRefModelProjection(@NotNull SchemaOpInputUnnamedOrRefModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputUnnamedOrRefVarProjection(@NotNull SchemaOpInputUnnamedOrRefVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputUnnamedVarProjection(@NotNull SchemaOpInputUnnamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputVarMultiTail(@NotNull SchemaOpInputVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputVarPolymorphicTail(@NotNull SchemaOpInputVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputVarProjection(@NotNull SchemaOpInputVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputVarProjectionRef(@NotNull SchemaOpInputVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpInputVarTailItem(@NotNull SchemaOpInputVarTailItem o) {
+  public void visitOpFieldProjectionEntry(@NotNull SchemaOpFieldProjectionEntry o) {
     visitPsiElement(o);
   }
 
@@ -416,7 +236,31 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitOpKeySpec(@NotNull SchemaOpKeySpec o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpKeySpecPart(@NotNull SchemaOpKeySpecPart o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpListModelProjection(@NotNull SchemaOpListModelProjection o) {
+    visitPsiElement(o);
+  }
+
   public void visitOpMapModelPath(@NotNull SchemaOpMapModelPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpMapModelProjection(@NotNull SchemaOpMapModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpModelMeta(@NotNull SchemaOpModelMeta o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpModelMultiTail(@NotNull SchemaOpModelMultiTail o) {
     visitPsiElement(o);
   }
 
@@ -428,115 +272,39 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputFieldProjection(@NotNull SchemaOpOutputFieldProjection o) {
+  public void visitOpModelPolymorphicTail(@NotNull SchemaOpModelPolymorphicTail o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputFieldProjectionEntry(@NotNull SchemaOpOutputFieldProjectionEntry o) {
+  public void visitOpModelProjection(@NotNull SchemaOpModelProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputKeyProjection(@NotNull SchemaOpOutputKeyProjection o) {
+  public void visitOpModelProjectionRef(@NotNull SchemaOpModelProjectionRef o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputKeyProjectionPart(@NotNull SchemaOpOutputKeyProjectionPart o) {
+  public void visitOpModelProperty(@NotNull SchemaOpModelProperty o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputListModelProjection(@NotNull SchemaOpOutputListModelProjection o) {
+  public void visitOpModelTailItem(@NotNull SchemaOpModelTailItem o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputMapModelProjection(@NotNull SchemaOpOutputMapModelProjection o) {
+  public void visitOpMultiTagProjection(@NotNull SchemaOpMultiTagProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputModelMeta(@NotNull SchemaOpOutputModelMeta o) {
+  public void visitOpMultiTagProjectionItem(@NotNull SchemaOpMultiTagProjectionItem o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputModelMultiTail(@NotNull SchemaOpOutputModelMultiTail o) {
+  public void visitOpNamedEntityProjection(@NotNull SchemaOpNamedEntityProjection o) {
     visitPsiElement(o);
   }
 
-  public void visitOpOutputModelPolymorphicTail(@NotNull SchemaOpOutputModelPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputModelProjection(@NotNull SchemaOpOutputModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputModelProjectionRef(@NotNull SchemaOpOutputModelProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputModelProperty(@NotNull SchemaOpOutputModelProperty o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputModelTailItem(@NotNull SchemaOpOutputModelTailItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputMultiTagProjection(@NotNull SchemaOpOutputMultiTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputMultiTagProjectionItem(@NotNull SchemaOpOutputMultiTagProjectionItem o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputNamedModelProjection(@NotNull SchemaOpOutputNamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputNamedVarProjection(@NotNull SchemaOpOutputNamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputRecordModelProjection(@NotNull SchemaOpOutputRecordModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputSingleTagProjection(@NotNull SchemaOpOutputSingleTagProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputUnnamedModelProjection(@NotNull SchemaOpOutputUnnamedModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputUnnamedOrRefModelProjection(@NotNull SchemaOpOutputUnnamedOrRefModelProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputUnnamedOrRefVarProjection(@NotNull SchemaOpOutputUnnamedOrRefVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputUnnamedVarProjection(@NotNull SchemaOpOutputUnnamedVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputVarMultiTail(@NotNull SchemaOpOutputVarMultiTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputVarPolymorphicTail(@NotNull SchemaOpOutputVarPolymorphicTail o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputVarProjection(@NotNull SchemaOpOutputVarProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputVarProjectionRef(@NotNull SchemaOpOutputVarProjectionRef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOpOutputVarTailItem(@NotNull SchemaOpOutputVarTailItem o) {
+  public void visitOpNamedModelProjection(@NotNull SchemaOpNamedModelProjection o) {
     visitPsiElement(o);
   }
 
@@ -560,19 +328,31 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOpVarPath(@NotNull SchemaOpVarPath o) {
+  public void visitOpRecordModelProjection(@NotNull SchemaOpRecordModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpSingleTagProjection(@NotNull SchemaOpSingleTagProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpUnnamedEntityProjection(@NotNull SchemaOpUnnamedEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpUnnamedModelProjection(@NotNull SchemaOpUnnamedModelProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpUnnamedOrRefEntityProjection(@NotNull SchemaOpUnnamedOrRefEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOpUnnamedOrRefModelProjection(@NotNull SchemaOpUnnamedOrRefModelProjection o) {
     visitPsiElement(o);
   }
 
   public void visitOperationDef(@NotNull SchemaOperationDef o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOperationDeleteProjection(@NotNull SchemaOperationDeleteProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitOperationInputProjection(@NotNull SchemaOperationInputProjection o) {
     visitPsiElement(o);
   }
 
@@ -588,15 +368,15 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitOperationOutputProjection(@NotNull SchemaOperationOutputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitOperationOutputType(@NotNull SchemaOperationOutputType o) {
     visitPsiElement(o);
   }
 
   public void visitOperationPath(@NotNull SchemaOperationPath o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOutputProjection(@NotNull SchemaOutputProjection o) {
     visitPsiElement(o);
   }
 
@@ -696,15 +476,7 @@ public class SchemaVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTransformerInputProjection(@NotNull SchemaTransformerInputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitTransformerName(@NotNull SchemaTransformerName o) {
-    visitPsiElement(o);
-  }
-
-  public void visitTransformerOutputProjection(@NotNull SchemaTransformerOutputProjection o) {
     visitPsiElement(o);
   }
 

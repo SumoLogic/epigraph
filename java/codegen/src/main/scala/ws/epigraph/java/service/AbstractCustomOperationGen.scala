@@ -18,8 +18,8 @@ package ws.epigraph.java.service
 
 import ws.epigraph.java.JavaGenNames.{lqbct, lqbrn, lqdrn2, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.OperationInfoBaseNamespaceProvider
 import ws.epigraph.java.service.projections.req.input.ReqInputFieldProjectionGen
+import ws.epigraph.java.service.projections.req.{OperationInfoBaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils, ObjectGenContext}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
@@ -34,7 +34,7 @@ class AbstractCustomOperationGen(
   val op: CustomOperationDeclaration,
   val ctx: GenContext) extends AbstractOperationGen {
 
-  protected val inputFieldProjectionGenOpt: Option[ReqInputFieldProjectionGen] =
+  protected val inputFieldProjectionGenOpt: Option[ReqFieldProjectionGen] =
     Option(op.inputProjection()).map { inputProjection =>
       new ReqInputFieldProjectionGen(
         new OperationInfoBaseNamespaceProvider(operationInfo),

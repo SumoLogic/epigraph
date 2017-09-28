@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.data.Data;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
@@ -32,8 +32,8 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.wire.WireTestUtil.parseOpOutputVarProjection;
-import static ws.epigraph.wire.WireTestUtil.parseReqOutputVarProjection;
+import static ws.epigraph.wire.WireTestUtil.parseOpEntityProjection;
+import static ws.epigraph.wire.WireTestUtil.parseReqOutputEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -59,7 +59,7 @@ public class ReqOutputJsonFormatWriterTest {
   );
 
   private final DataType personDataType = new DataType(Person.type, Person.id);
-  private final OpOutputVarProjection personOpProjection = parseOpOutputVarProjection(personDataType, lines(
+  private final OpEntityProjection personOpProjection = parseOpEntityProjection(personDataType, lines(
       ":(",
       "  id,",
       "  `record` (",
@@ -287,13 +287,13 @@ public class ReqOutputJsonFormatWriterTest {
   @Test
   public void testRenderMeta() throws IOException {
     final DataType personMapDataType = new DataType(PersonMap.type, null);
-    final OpOutputVarProjection personMapOpProjection = parseOpOutputVarProjection(personMapDataType,
+    final OpEntityProjection personMapOpProjection = parseOpEntityProjection(personMapDataType,
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 
     String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
-    final @NotNull ReqOutputVarProjection reqProjection =
-        parseReqOutputVarProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+    final @NotNull ReqEntityProjection reqProjection =
+        parseReqOutputEntityProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
     personMap.put$(
@@ -316,13 +316,13 @@ public class ReqOutputJsonFormatWriterTest {
     bf.setRecord(
         PersonRecord.create()
             .setId(PersonId.create(11))
-            .setBestFriend2(bf)
+            .setBestFriend2$(bf)
     );
 
     Person.Builder person = Person.create()
         .setId(PersonId.create(1))
         .setRecord(
-            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2(bf)
+            PersonRecord.create().setId(PersonId.create(1)).setBestFriend2$(bf)
         );
 
     testRender(
@@ -380,7 +380,7 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     testRender(
-        (ReqOutputVarProjection) null,
+        (ReqEntityProjection) null,
         pb,
         "{\"record\":{" +
         "\"id\":11," +
@@ -404,7 +404,7 @@ public class ReqOutputJsonFormatWriterTest {
     );
 
     testRender(
-        (ReqOutputVarProjection) null,
+        (ReqEntityProjection) null,
         pb,
         "{\"record\":{\"friendRecords\":[" +
         "{\"firstName\":\"fn1\"}," +
@@ -416,22 +416,22 @@ public class ReqOutputJsonFormatWriterTest {
   private void testRender(@NotNull String reqProjectionStr, @NotNull Data data, @NotNull String expectedJson)
       throws IOException {
 
-    final @NotNull ReqOutputVarProjection reqProjection =
-        parseReqOutputVarProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
+    final @NotNull ReqEntityProjection reqProjection =
+        parseReqOutputEntityProjection(personDataType, personOpProjection, reqProjectionStr, resolver).projection();
 
     testRender(reqProjection, data, expectedJson);
 
   }
 
   private void testRender(
-      @Nullable ReqOutputVarProjection reqProjection,
+      @Nullable ReqEntityProjection reqProjection,
       @NotNull Data data,
       @NotNull String expectedJson)
       throws IOException {
 
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    final ReqOutputJsonFormatWriter jsonWriter = new ReqOutputJsonFormatWriter(baos);
+    final ReqJsonFormatWriter jsonWriter = new ReqJsonFormatWriter(baos);
 
     if (reqProjection == null)
       jsonWriter.writeData(data.type(), data);

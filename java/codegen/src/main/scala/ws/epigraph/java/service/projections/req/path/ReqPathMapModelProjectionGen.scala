@@ -21,19 +21,19 @@ import ws.epigraph.java.GenContext
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, CodeChunk, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path.OpMapModelPath
+import ws.epigraph.projections.op.OpMapModelProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathMapModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  override val op: OpMapModelPath,
+  override val op: OpMapModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqMapModelProjectionGen {
 
-  override type OpProjectionType = OpMapModelPath
+  override type OpProjectionType = OpMapModelProjection
 
   override val keyGen: ReqPathMapKeyProjectionGen = new ReqPathMapKeyProjectionGen(
     baseNamespaceProvider,
@@ -44,7 +44,7 @@ class ReqPathMapModelProjectionGen(
     ctx
   )
 
-  override val elementGen: ReqPathTypeProjectionGen = ReqPathVarProjectionGen.dataProjectionGen(
+  override val elementGen: ReqPathTypeProjectionGen = ReqPathEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
     namespaceSuffix.append(elementsNamespaceSuffix),
@@ -60,7 +60,7 @@ class ReqPathMapModelProjectionGen(
    * @return key projection
    */
   public @NotNull $keyProjectionClass key() {
-    return new $keyProjectionClass(raw.key());
+    return new $keyProjectionClass(raw.keys().get(0));
   }
 """/*@formatter:on*/
       ,
@@ -68,7 +68,7 @@ class ReqPathMapModelProjectionGen(
     )
   }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqMapModelPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqMapModelPath")
+//  )
 }

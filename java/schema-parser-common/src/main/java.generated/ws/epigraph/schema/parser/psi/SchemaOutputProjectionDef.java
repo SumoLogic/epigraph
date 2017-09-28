@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOutputProjectionDef extends PsiElement {
 
   @Nullable
-  SchemaOpOutputUnnamedOrRefVarProjection getOpOutputUnnamedOrRefVarProjection();
+  SchemaOpUnnamedOrRefEntityProjection getOpUnnamedOrRefEntityProjection();
 
   @Nullable
   SchemaQid getQid();
@@ -39,6 +39,6 @@ public interface SchemaOutputProjectionDef extends PsiElement {
   PsiElement getEq();
 
   @NotNull
-  PsiElement getOutputProjection();
+  PsiElement getOutputProj();
 
 }

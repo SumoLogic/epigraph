@@ -85,4 +85,6 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
     reference.runOnResolved(codeWithTry);
 
   }
+
+  @Nullable Throwable allocationTrace();
 }

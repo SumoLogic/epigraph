@@ -19,23 +19,21 @@ package ws.epigraph.wire;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -46,71 +44,67 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class WireTestUtil {
   private WireTestUtil() {}
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiEntityProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(psiEntityProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpOutputReferenceContext outputReferenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    return runPsiParser(true, context -> {
+      OpReferenceContext outputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputReferenceContext);
-      OpOutputPsiProcessingContext outputPsiProcessingContext =
-          new OpOutputPsiProcessingContext(context, opInputPsiProcessingContext, outputReferenceContext);
+      OpPsiProcessingContext outputPsiProcessingContext =
+          new OpPsiProcessingContext(context, outputReferenceContext);
 
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
-          psiVarProjection,
+          false,
+          psiEntityProjection,
           resolver,
           outputPsiProcessingContext
       );
 
       outputReferenceContext.ensureAllReferencesResolved();
-      inputReferenceContext.ensureAllReferencesResolved();
       return vp;
 
     });
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
       @NotNull DataType type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      ReqOutputReferenceContext referenceContext =
-          new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      ReqOutputPsiProcessingContext psiProcessingContext = new ReqOutputPsiProcessingContext(context, referenceContext);
+    return runPsiParser(true, context -> {
+      ReqReferenceContext referenceContext =
+          new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+      ReqPsiProcessingContext psiProcessingContext = new ReqPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           psiProcessingContext

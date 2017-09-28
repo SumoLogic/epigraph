@@ -18,19 +18,19 @@ package ws.epigraph.java.service.projections.req.output
 
 import ws.epigraph.compiler.CField
 import ws.epigraph.java.JavaGenNames.jn
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.assemblers.RecordAsmGen
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.{GenContext, JavaGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.{OpOutputFieldProjectionEntry, OpOutputRecordModelProjection}
-import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
+import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqOutputRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpOutputRecordModelProjection,
+  val op: OpRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
@@ -44,8 +44,8 @@ class ReqOutputRecordModelProjectionGen(
     ctx
   ) with ReqRecordModelProjectionGen {
 
-  override type OpProjectionType = OpOutputRecordModelProjection
-  override type OpFieldProjectionType = OpOutputFieldProjectionEntry
+  override type OpProjectionType = OpRecordModelProjection
+  override type OpFieldProjectionType = OpFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
@@ -71,7 +71,7 @@ class ReqOutputRecordModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqOutputModelProjectionGen,
-    op: OpOutputRecordModelProjection,
+    op: OpRecordModelProjection,
     normalized: Boolean) =
     new ReqOutputRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,
@@ -94,10 +94,4 @@ class ReqOutputRecordModelProjectionGen(
       super.children ++ Iterable(assemblerGen)
     }
 
-
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputRecordModelProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputFieldProjectionEntry"),
-    required
-  )
 }

@@ -25,19 +25,20 @@ import ws.epigraph.data.Val;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.gdata.GDataValue;
 import ws.epigraph.gdata.GDatum;
+import ws.epigraph.gdata.validation.GDataValidationError;
+import ws.epigraph.gdata.validation.OpInputGDataValidator;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
-import ws.epigraph.projections.req.Directive;
-import ws.epigraph.projections.req.Directives;
-import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.req.Directive;
+import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.req.ReqParam;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -48,12 +49,10 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.url.gdata.UrlGDataPsiParser;
 import ws.epigraph.url.parser.psi.*;
-import ws.epigraph.gdata.validation.GDataValidationError;
-import ws.epigraph.gdata.validation.OpInputGDataValidator;
 
 import java.util.*;
 
-import static ws.epigraph.projections.ProjectionsParsingUtil.*;
+import static ws.epigraph.projections.ProjectionsParsingUtil.listTags;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -61,89 +60,116 @@ import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 public final class UrlProjectionsPsiParserUtil {
   private UrlProjectionsPsiParserUtil() {}
 
-  /**
-   * Finds supported tag with a given name in type {@code type} if {@code tagNamePsi} is not null.
-   * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findSelfTag(TypeApi, GenVarProjection, PsiElement, PsiProcessingContext)}
-   * self tag} and, if not {@code null}, returns it; otherwise fails.
-   */
-  public static @NotNull <
+//  /**
+//   * Finds supported tag with a given name in type {@code type} if {@code tagNamePsi} is not null.
+//   * <p>
+//   * Otherwise gets {@link ProjectionsParsingUtil#findSelfOrRetroTag(TypeApi, GenVarProjection, PsiElement, PsiProcessingContext)}
+//   * self tag} and, if not {@code null}, returns it; otherwise fails.
+//   */
+//  public static @NotNull <
+//      MP extends GenModelProjection<?, ?, ?, ?>,
+//      TP extends GenTagProjectionEntry<TP, MP>,
+//      VP extends GenVarProjection<VP, TP, MP>>
+//  TagApi getTagOrSelfTag(
+//      @NotNull TypeApi type,
+//      @Nullable UrlTagName tagNamePsi,
+//      @NotNull VP opOutputVarProjection,
+//      @NotNull PsiElement location,
+//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+//
+//    TagApi tag = findTagOrSelfOrRetroTag(type, tagNamePsi, opOutputVarProjection, location, context);
+//    if (tag == null)
+//      throw new PsiProcessingException(
+//          String.format(
+//              "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+//              type.name(),
+//              listTags(opOutputVarProjection)
+//          ),
+//          location,
+//          context
+//      );
+//
+//    return tag;
+//  }
+
+//  /**
+//   * If {@code tagNamePsi} is not null: gets tag from the op projection. Otherwise returns
+//   * retro tag if present, or self tag if it's a non-entity type, or else null.
+//   * <p>
+//   * Otherwise gets {@link ProjectionsParsingUtil#findSelfOrRetroTag(TypeApi, GenVarProjection, PsiElement, PsiProcessingContext)}
+//   * self tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
+//   */
+//  @Contract("_, !null, _, _, _ -> !null")
+//  public static @Nullable <
+//      MP extends GenModelProjection<?, ?, ?, ?>,
+//      TP extends GenTagProjectionEntry<TP, MP>,
+//      VP extends GenVarProjection<VP, TP, MP>>
+//
+//  TagApi findTagOrSelfOrRetroTag(
+//      @NotNull DataTypeApi dataType,
+//      @Nullable UrlTagName tagNamePsi,
+//      @NotNull VP opOutputVarProjection,
+//      @NotNull PsiElement location,
+//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+//
+//    if (tagNamePsi == null)
+//      return findSelfOrRetroTag(dataType, opOutputVarProjection, location, context);
+//    else
+//      return getTag(tagNamePsi, opOutputVarProjection, location, context);
+//  }
+
+  public static @Nullable String getTagName(@Nullable UrlTagName tagNamePsi) {
+    return tagNamePsi == null ? null : tagNamePsi.getQid().getCanonicalName();
+  }
+
+  @Contract("_, _, _, _ -> fail")
+  public static <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenVarProjection<VP, TP, MP>>
-  TagApi getTagOrSelfTag(
-      @NotNull TypeApi type,
-      @Nullable UrlTagName tagNamePsi,
+  void raiseNoTagsError(
+      @NotNull DataTypeApi type,
       @NotNull VP opOutputVarProjection,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    TagApi tag = findTagOrSelfTag(type, tagNamePsi, opOutputVarProjection, location, context);
-    if (tag == null)
-      throw new PsiProcessingException(
-          String.format(
-              "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
-              type.name(),
-              listTags(opOutputVarProjection)
-          ),
-          location,
-          context
-      );
+    throw new PsiProcessingException(
+        String.format(
+            "Can't build projection for type '%s': no tags specified. Supported tags: {%s}",
+            type.name(),
+            listTags(opOutputVarProjection)
+        ),
+        location,
+        context
+    );
 
-    return tag;
   }
 
-  /**
-   * Finds supported tag with a given name in type {@code type} if {@code tagNamePsi} is not null.
-   * <p>
-   * Otherwise gets {@link ProjectionsParsingUtil#findSelfTag(TypeApi, GenVarProjection, PsiElement, PsiProcessingContext)}
-   * self tag} and, if not {@code null}, returns it; otherwise returns {@code null}.
-   */
-  @Contract("_, !null, _, _, _ -> !null")
-  public static @Nullable <
-      MP extends GenModelProjection<?, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>>
+//  /**
+//   * Finds supported tag with a given name in type {@code type}
+//   */
+//  public static @NotNull <
+//      MP extends GenModelProjection<?, ?, ?, ?>,
+//      TP extends GenTagProjectionEntry<TP, MP>,
+//      VP extends GenVarProjection<VP, TP, MP>>
+//  TagApi getTag(
+//      @NotNull UrlTagName idlTagName,
+//      @NotNull VP varProjection,
+//      @NotNull PsiElement location,
+//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+//
+//    return getTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, context).tag();
+//  }
 
-  TagApi findTagOrSelfTag(
-      @NotNull TypeApi type,
-      @Nullable UrlTagName tagNamePsi,
-      @NotNull VP opOutputVarProjection,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    if (tagNamePsi == null)
-      return findSelfTag(type, opOutputVarProjection, location, context);
-    else
-      return getTag(tagNamePsi, opOutputVarProjection, location, context);
-  }
-
-
-  /**
-   * Finds supported tag with a given name in type {@code type}
-   */
-  public static @NotNull <
-      MP extends GenModelProjection<?, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>>
-  TagApi getTag(
-      @NotNull UrlTagName idlTagName,
-      @NotNull VP varProjection,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    return getTagProjection(idlTagName.getQid().getCanonicalName(), varProjection, location, context).tag();
-  }
-
-  public static @NotNull TagApi getTag(
-      @NotNull TypeApi type,
-      @Nullable UrlTagName tagName,
-      @Nullable TagApi defaultTag,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, context);
-  }
+//  public static @NotNull TagApi getTag(
+//      @NotNull TypeApi type,
+//      @Nullable UrlTagName tagName,
+//      @Nullable TagApi defaultTag,
+//      @NotNull PsiElement location,
+//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+//
+//    return ProjectionsParsingUtil.getTag(type, getTagNameString(tagName), defaultTag, location, context);
+//  }
 
   @Contract("null -> null; !null -> !null")
   private static @Nullable String getTagNameString(final @Nullable UrlTagName tagName) {
@@ -201,7 +227,7 @@ public final class UrlProjectionsPsiParserUtil {
 
   public static @Nullable Datum getDatum(
       @NotNull UrlDatum datumPsi,
-      @NotNull OpInputModelProjection<?, ?, ?, ?> projection,
+      @NotNull OpModelProjection<?, ?, ?, ?> projection,
       @NotNull TypesResolver resolver,
       @NotNull String errorMessagePrefix,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -315,13 +341,13 @@ public final class UrlProjectionsPsiParserUtil {
     for (final Map.Entry<String, OpParam> entry : opParams.asMap().entrySet()) {
       String paramName = entry.getKey();
       if ((paramMap == null || !paramMap.containsKey(paramName))) {
-        final OpInputModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
+        final OpModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
 
         GDatum defaultValue = opModelProjection.defaultValue();
         if (defaultValue == null) {
           defaultValue = opModelProjection.defaultValue();
 
-          if (defaultValue == null && opModelProjection.required()) {
+          if (defaultValue == null && opModelProjection.flagged()) {
             context.addError(
                 String.format("Required parameter '%s' is missing", paramName),
                 paramsLocation
@@ -376,7 +402,7 @@ public final class UrlProjectionsPsiParserUtil {
       }
 
       final String errorMsgPrefix = String.format("Error processing parameter '%s' value: ", name);
-      OpInputModelProjection<?, ?, ?, ?> projection = opParam.projection();
+      OpModelProjection<?, ?, ?, ?> projection = opParam.projection();
       final DatumTypeApi model = projection.type();
       final @NotNull TypesResolver subResolver = addTypeNamespace(model, resolver);
 
@@ -392,7 +418,7 @@ public final class UrlProjectionsPsiParserUtil {
           }
       }
 
-      if (value == null && opParam.projection().required())
+      if (value == null && opParam.projection().flagged())
         context.addError("Required parameter '" + opParam.name() + "' value is missing", reqParamPsi.getQid());
 
       reqParamsMap.put(name, new ReqParam(name, value, EpigraphPsiUtil.getLocation(reqParamPsi)));

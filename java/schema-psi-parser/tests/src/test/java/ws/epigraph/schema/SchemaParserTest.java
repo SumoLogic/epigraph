@@ -18,9 +18,12 @@ package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.parser.ResourcesSchemaPsiParser;
 import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
@@ -30,6 +33,7 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static ws.epigraph.test.TestUtil.*;
 
@@ -181,6 +185,110 @@ public class SchemaParserTest {
             "}"
         )
     );
+  }
+
+  @Test
+  public void testProjectionNamespaces() throws IOException {
+    ResourcesSchema schema = testParse(
+        lines(
+            "namespace test",
+            "import ws.epigraph.tests.Person",
+            "import ws.epigraph.tests.UserRecord",
+            "import epigraph.annotations.Doc",
+            "resource users : map[String,Person] {",
+            "  outputProjection defaultOutput : map[String,Person] = [forbidden](:id)",
+            "  read {",
+            "    outputProjection [required]( :`record` (id, firstName) )",
+            "  }",
+            "  create {",
+            "    inputProjection $input = []( :`record` ( firstName, lastName) )",
+            "    outputType Boolean",
+            "    outputProjection", // empty projection
+            "  }",
+            "  update {",
+            "    inputProjection []( :`record` $ur = ( firstName, lastName) )",
+            "    outputProjection $defaultOutput",
+            "  }",
+            "  delete {",
+            "    deleteProjection $del = [forbidden]+( :`record` ( firstName ) )",
+            "    outputType Boolean",
+            "  }",
+            "  custom customOp {",
+            "    method POST",
+            "    inputType map[String,Person]",
+            "    inputProjection $input2 = []( :`record` ( firstName, lastName) )",
+            "    outputType map[String,Person]",
+            "    outputProjection $out = $defaultOutput",
+            "  }",
+            "}"
+        ),
+
+        lines(
+            "namespace test",
+            "resource users: map[epigraph.String,ws.epigraph.tests.Person] {",
+            "  read {",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection [ required ]( :`record` ( id, firstName ) )",
+            "  }",
+            "  create {",
+            "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    inputProjection $input = [ ]( :`record` ( firstName, lastName ) ),",
+            "    outputType epigraph.Boolean",
+            "  }",
+            "  update {",
+            "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    inputProjection [ ]( :`record` $ur = ( firstName, lastName ) ),",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection $defaultOutput",
+            "  }",
+            "  delete {",
+            "    deleteProjection $del = [ forbidden ]+( :`record` ( +firstName ) ),",
+            "    outputType epigraph.Boolean",
+            "  }",
+            "  custom customOp {",
+            "    method POST,",
+            "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    inputProjection $input2 = [ ]( :`record` ( firstName, lastName ) ),",
+            "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
+            "    outputProjection $defaultOutput",
+            "  }",
+            "  outputProjection defaultOutput: map[epigraph.String,ws.epigraph.tests.Person]",
+            "    = [ forbidden ]( :id )",
+            "}"
+        )
+    );
+
+    // check operation projection namespaces
+    ResourceDeclaration users = schema.resources().get("users");
+    for (final OperationDeclaration op : users.operations()) {
+      OpFieldProjection outputProjection = op.outputProjection();
+      ProjectionReferenceName referenceName = outputProjection.entityProjection().referenceName();
+      if (referenceName != null) {
+        assertTrue(referenceName.toString(), referenceName.toString().contains("projections.output"));
+      }
+
+      OpFieldProjection inputProjection = op.inputProjection();
+      if (inputProjection != null && inputProjection.entityProjection().referenceName() != null) {
+        referenceName = inputProjection.entityProjection().referenceName();
+        assertNotNull(referenceName);
+
+        switch (op.kind()) {
+          case CREATE:
+            assertTrue(referenceName.toString(), referenceName.toString().contains("projections.input"));
+            break;
+          case UPDATE:
+            assertTrue(referenceName.toString(), referenceName.toString().contains("projections.input"));
+            break;
+          case DELETE:
+            assertTrue(referenceName.toString(), referenceName.toString().contains("projections.delete"));
+            break;
+          case CUSTOM:
+            assertTrue(referenceName.toString(), referenceName.toString().contains("projections.input"));
+            break;
+          default:
+        }
+      }
+    }
   }
 
   @Test
@@ -519,9 +627,11 @@ public class SchemaParserTest {
     );
   }
 
-  private void testParse(String idlStr, String expected) {
+  private ResourcesSchema testParse(String idlStr, String expected) {
     ResourcesSchema schema = parseSchema(idlStr, resolver);
-    assertEquals(expected, printSchema(schema));
+    if (expected != null)
+      assertEquals(expected, printSchema(schema));
+    return schema;
   }
 
   private static @NotNull ResourcesSchema parseSchema(@NotNull String text, @NotNull TypesResolver resolver) {
@@ -540,7 +650,7 @@ public class SchemaParserTest {
 //    String psiDump = DebugUtil.psiToString(psiFile, true, false).trim();
 //    System.out.println(psiDump);
 
-    return runPsiParser(context -> {
+    return runPsiParser(true, context -> {
       SchemasPsiProcessingContext schemasPsiProcessingContext = new SchemasPsiProcessingContext();
       ResourcesSchema schema = ResourcesSchemaPsiParser.parseResourcesSchema(
           psiFile,

@@ -34,8 +34,12 @@
         }
     ```
     Figure out injections: how to add annotations to existing types/fields.
-- [ ] req output projections codegen: use `ImportManager` to get more readable projections code
-- [ ] req projections codegen: add inheritance to input/update/delete projections (model after output projections)
+- [ ] codegen: need better framework for generating imports and imported names
+- [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
+- [ ] codegen: `_resources/*` package name should be in lower case
+- [ ] codegen: primitive `String` setters should accept `CharSequence`
+- [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
+- [ ] unify req projections codegens
 
 
 # Type system
@@ -51,25 +55,12 @@
 # Schema compiler
 - [ ] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
-- [ ] Proper resources compilation (port op projections/resource decls to scala/ctypes)
-  - [x] Port generic projections to scala
-  - [x] Port `GData` to scala/ctypes
-  - [ ] Port op projections to scala/ctypes
-  - [ ] Port op projection psi parsers to scala/ctypes
-  - [ ] Port operations declarations to scala/ctypes
-  - [ ] Port operations declarations psi parsers to scala/ctypes
-  - [ ] Port `ResourcesSchema` psi parsers to scala/ctypes
-  - [ ] Change codegen to use scala versions
-  - [ ] Remove ctypes -> types API bridge
-  - [ ] Remove types API?
-  - [ ] Revert gradle/maven build changes added to avoid circular dependencies (see `compiler` build files)
 - [ ] Check that anonymous map keys are datum (not data) type
 - [ ] Generated artifacts index format (json? yaml? both?)
   - [ ] Should provide enough information to detect incompatible supplements, etc.
 - [ ] Handle top-level package names obscured by in-scope field/variable names in generated code
 
 # Maven plugin
-- [x] use slf4j for logging
 
 # Gradle plugin
 - [ ] use slf4j for logging
@@ -87,24 +78,25 @@
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 - [ ] op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`
+- [ ] paths: add entity params, make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
+- [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
+- [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
+- [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
+- [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
+- [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
+- [ ] sort out 'path steps' for input projections: input data should respect them
 
 # Operations
 
 # Service
 
 # Build
-- [x] Try to remove sources copying from `java/schema-parser`, include generated sources directly. See if IDEA will get confused about them. If all is fine: get rid of `maven-resources-plugin`
 - Gradle
   -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
-  -[x] light-psi should be versioned (and, potentially, released) separately from the rest of the project, as mvn build does. This would entail adding another `settings-light-psi.gradle` to deploy light-psi to local repo and changing all `project` to usual dependencies
 - Maven
-- [x] include `examples` in main build
-  - [x] maven
-  - [x] gradle
 
 - Cleanup
-  - [x] AnonMapType/AnonListType: why immediateSupertypes are based on valueType's immediateSupertypes?
-        Because, e.g. map[Foo, Bar] extends map[Foo, BarSuper1], map[Foo, BarSuper2], etc.
+  - [ ] check out artifactory-tools to clean up old light-psi versions
   - [ ] DataType(Api): type should be EntityType ?
   - [ ] Rename Data/Var/Union type to some common name
 
@@ -120,7 +112,6 @@
 - [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1501890729529761 - `@Doc` annotation, without an import, doesn't show as compilation error in IntelliJ
 - [x] https://sumologic.slack.com/archives/C2PN5GQS1/p1502142890265437 - Releases should publish sources too, to make development easier
 - [ ] https://sumologic.slack.com/archives/C2PN5GQS1/p1502142552131468 - Clients use a concrete class, instead of interface/ class combo.  This makes dynamic proxying very hard, automatic retries hard, etc.  (Java proxies use interfaces, last I checked)
-- [x] Release job needs to publish sources too to make it easy to debug/examine in other projects
 
 # Instrument maven plugin(s) with jacoco agent?
 - [ ] e.g.: argLine set to -javaagent:/home/travis/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/travis/build/SumoLogic/epigraph/target/jacoco.exec

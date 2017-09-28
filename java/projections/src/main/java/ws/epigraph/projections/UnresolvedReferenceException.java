@@ -19,6 +19,9 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.gen.GenProjectionReference;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -31,6 +34,20 @@ public class UnresolvedReferenceException extends RuntimeException {
 
   @Override
   public String getMessage() {
-    return String.format("Unresolved reference '%s'", reference);
+    Throwable allocationTrace = reference.allocationTrace();
+    if (allocationTrace == null)
+      return String.format("Unresolved reference '%s' (location: %s)", reference, reference.location());
+    else {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      allocationTrace.printStackTrace(pw);
+      return String.format(
+          "Unresolved reference '%s' (location: %s) allocated at:\n%s",
+          reference,
+          reference.location(),
+          allocationTrace
+      );
+    }
+
   }
 }

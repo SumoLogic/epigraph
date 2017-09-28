@@ -16,22 +16,19 @@
 
 package ws.epigraph.projections.op.input;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.projections.op.OpTestUtil;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpInputVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static ws.epigraph.test.TestUtil.*;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -81,9 +78,10 @@ public class OpInputProjectionsTest {
 
     try {
       testParsingVarProjection(":`record` { default: { firstName: \"John\" } } ( +id, firstName )");
-      fail();
+      fail("This should fail with 'Required field missing' message");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError error) {
-      assertTrue(error.getMessage().contains("Required field 'id' is missing"));
+      String message = error.getMessage();
+      assertTrue(error.toString(), message.contains("Required field 'id' is missing"));
     }
   }
 
@@ -152,7 +150,8 @@ public class OpInputProjectionsTest {
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friendsMap [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\" ]( :id ) )");
+    testParsingVarProjection(
+        ":`record` ( friendsMap [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\" ]( :id ) )");
   }
 
   @Test
@@ -213,48 +212,16 @@ public class OpInputProjectionsTest {
         epigraph.annotations.Doc.type
     );
 
-    final OpInputVarProjection varProjection = parseOpInputVarProjection(
+    final OpEntityProjection varProjection = OpTestUtil.parseOpInputVarProjection(
         varDataType,
         projectionString,
         resolver
     );
-    String actual = printOpInputVarProjection(varProjection, 0);
+
+    String actual = OpTestUtil.printOpEntityProjection(varProjection);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  public static @NotNull OpInputVarProjection parseOpInputVarProjection(
-      @NotNull DataType varDataType,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    SchemaOpInputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
-        projectionString,
-        SchemaSubParserDefinitions.OP_INPUT_VAR_PROJECTION,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      OpInputReferenceContext varReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpInputPsiProcessingContext inputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, varReferenceContext);
-
-      OpInputVarProjection vp = OpInputProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          psiVarProjection,
-          resolver,
-          inputPsiProcessingContext
-      );
-
-      varReferenceContext.ensureAllReferencesResolved();
-      return vp;
-    });
-
-  }
 }

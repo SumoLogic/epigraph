@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -158,21 +157,21 @@ public class ReadOperationRouterTest {
     assertEquals(expectedId, op.getId());
 
     final @NotNull ReadRequestUrl readRequestUrl = s.requestUrl();
-    final ReqFieldPath path = readRequestUrl.path();
+    final ReqFieldProjection path = readRequestUrl.path();
 
     if (expectedPath == null)
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
+      assertEquals(expectedPath, TestUtil.printReqEntityPath(path.entityProjection()));
     }
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = readRequestUrl.outputProjection();
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection = readRequestUrl.outputProjection();
 
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().entityProjection(), expectedSteps)
     );
   }
 

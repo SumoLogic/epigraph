@@ -50,14 +50,14 @@ public class SchemaTransformerBodyPartImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public SchemaTransformerInputProjection getTransformerInputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaTransformerInputProjection.class);
+  public SchemaInputProjection getInputProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaInputProjection.class);
   }
 
   @Override
   @Nullable
-  public SchemaTransformerOutputProjection getTransformerOutputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaTransformerOutputProjection.class);
+  public SchemaOutputProjection getOutputProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOutputProjection.class);
   }
 
 }

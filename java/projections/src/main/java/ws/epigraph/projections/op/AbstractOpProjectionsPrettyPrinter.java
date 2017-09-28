@@ -30,8 +30,6 @@ import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
-import ws.epigraph.projections.op.input.OpInputModelProjection;
-import ws.epigraph.projections.op.input.OpInputProjectionsPrettyPrinter;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
@@ -131,16 +129,16 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public void printOpParam(@NotNull OpParam p) throws E {
-    OpInputModelProjection<?, ?, ?, ?> projection = p.projection();
+    OpModelProjection<?, ?, ?, ?> projection = p.projection();
 
     l.beginIInd();
     l.print(";");
-    if (projection.required()) l.print("+");
+    if (projection.flagged()) l.print("+");
     l.print(escape(p.name())).print(":");
     brk();
     l.print(projection.type().name().toString());
 
-    OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
+    OpProjectionsPrettyPrinter<E> ipp = new OpProjectionsPrettyPrinter<>(l);
     if (!ipp.modelParamsEmpty(projection) || !ipp.isPrintoutNoParamsEmpty(projection)) {
       brk();
       ipp.printModel(projection, 0);
@@ -186,13 +184,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   protected String fieldNamePrefix(@NotNull FPE fieldEntry) { return ""; }
 
   public void print(@NotNull FP fieldProjection) throws E {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull OpParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
 //    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      printVar(fieldVarProjection, 0);
+      printEntity(fieldVarProjection, 0);
     }
 //    } else {
 //      l.beginCInd();
@@ -211,7 +209,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   protected void printMapModelProjection(
       @Nullable String keysProjectionPrefix,
-      @NotNull OpKeyProjection keyProjection,
+      @NotNull AbstractOpKeyProjection keyProjection,
       VP itemsProjection) throws E {
 
     printMapModelProjection(keysProjectionPrefix, keyProjection, "", itemsProjection);
@@ -219,7 +217,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   protected void printMapModelProjection(
       @Nullable String keysProjectionPrefix,
-      @NotNull OpKeyProjection keyProjection,
+      @NotNull AbstractOpKeyProjection keyProjection,
       @NotNull String itemsProjectionPrefix,
       VP itemsProjection) throws E {
 
@@ -250,7 +248,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         first = printAnnotations(keyAnnotations, true, first);
       }
 
-      OpInputModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
+      OpModelProjection<?, ?, ?, ?> keyModelProjection = keyProjection.projection();
       if (keyModelProjection != null) {
         if (!first) {
           l.print(",");
@@ -260,8 +258,8 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
         l.beginCInd(0);
         l.print("projection:");
         brk();
-        OpInputProjectionsPrettyPrinter<E> ipp = new OpInputProjectionsPrettyPrinter<>(l);
-        ipp.printModel(keyModelProjection, 0);
+        OpProjectionsPrettyPrinter<E> opp = new OpProjectionsPrettyPrinter<>(l);
+        opp.printModel(keyModelProjection, 0);
         l.end();
 
         first = false;
@@ -273,7 +271,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     l.print(itemsProjectionPrefix);
     l.print("(");
     brk();
-    printVar(itemsProjection, 0);
+    printEntity(itemsProjection, 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
@@ -321,7 +319,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
     return !isBlockProjection(fieldProjection) && isPrintoutEmpty(fieldVarProjection);
   }
 

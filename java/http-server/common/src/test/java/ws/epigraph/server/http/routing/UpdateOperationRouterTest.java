@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
-import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
-import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -38,9 +35,7 @@ import ws.epigraph.service.operations.UpdateOperation;
 import ws.epigraph.service.operations.UpdateOperationRequest;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.UpdateRequestUrl;
-import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlUpdateUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,9 +43,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.*;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.failIfSearchFailure;
-import static ws.epigraph.server.http.routing.RoutingTestUtil.parseIdl;
-import static ws.epigraph.test.TestUtil.failIfHasErrors;
+import static ws.epigraph.server.http.routing.RoutingTestUtil.*;
 import static ws.epigraph.test.TestUtil.lines;
 
 /**
@@ -246,49 +239,52 @@ public class UpdateOperationRouterTest {
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends UpdateOperation<?>, UpdateRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull UpdateRequestUrl updateRequestUrl = s.requestUrl();
-    final ReqFieldPath path = updateRequestUrl.path();
+    final @NotNull NonReadRequestUrl updateRequestUrl = s.requestUrl();
+    final ReqFieldProjection path = updateRequestUrl.path();
 
     if (expectedPath == null)
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
+      assertEquals(expectedPath, TestUtil.printReqEntityPath(path.entityProjection()));
     }
 
-    final @Nullable ReqUpdateFieldProjection inputProjection = updateRequestUrl.updateProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = updateRequestUrl.inputProjection();
     if (expectedInputProjection == null)
       assertNull(inputProjection);
     else {
       assertNotNull(inputProjection);
-      assertEquals(expectedInputProjection, TestUtil.printReqUpdateVarProjection(inputProjection.varProjection()));
+      assertEquals(
+          expectedInputProjection,
+          TestUtil.printReqEntityProjection(inputProjection.projection().entityProjection(), 0)
+      );
     }
 
-    final StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = updateRequestUrl.outputProjection();
+    final StepsAndProjection<ReqFieldProjection> stepsAndProjection = updateRequestUrl.outputProjection();
 
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        TestUtil.printReqOutputVarProjection(stepsAndProjection.projection().varProjection(), expectedOutputSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().entityProjection(), expectedOutputSteps)
     );
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends UpdateOperation<?>, UpdateRequestUrl>
+  private OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
     final @NotNull OperationSearchResult<UpdateOperation<?>> oss = UpdateOperationRouter.INSTANCE.findOperation(
         null,
-        parseUpdateUrl(url),
+        parseNonReadUrl(url),
         resource, resolver
     );
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends UpdateOperation<?>, UpdateRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl>) oss;
   }
 
   private class OpImpl extends UpdateOperation<PersonId_Person_Map.Data> {
@@ -309,17 +305,4 @@ public class UpdateOperationRouterTest {
     }
   }
 
-  private static @NotNull UrlUpdateUrl parseUpdateUrl(@NotNull String url) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    UrlUpdateUrl urlPsi = EpigraphPsiUtil.parseText(
-        url,
-        UrlSubParserDefinitions.UPDATE_URL,
-        errorsAccumulator
-    );
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
-  }
 }

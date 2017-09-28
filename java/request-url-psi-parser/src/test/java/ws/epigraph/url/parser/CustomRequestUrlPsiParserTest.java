@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -34,8 +33,8 @@ import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.CustomRequestUrl;
-import ws.epigraph.url.parser.psi.UrlCustomUrl;
+import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.parser.psi.UrlNonReadUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -112,7 +111,7 @@ public class CustomRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull CustomRequestUrl requestUrl = CustomRequestUrlPsiParser.parseCustomRequestUrl(
+    final @NotNull NonReadRequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -120,30 +119,31 @@ public class CustomRequestUrlPsiParserTest {
         context
     );
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(true, context.messages());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.varProjection()));
+    else
+      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().entityProjection(), 0));
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
+    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        printReqOutputFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));
   }
 
 
-  private static UrlCustomUrl parseUrlPsi(@NotNull String text) {
+  private static UrlNonReadUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlCustomUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.CUSTOM_URL, errorsAccumulator);
+    @NotNull UrlNonReadUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.NON_READ_URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

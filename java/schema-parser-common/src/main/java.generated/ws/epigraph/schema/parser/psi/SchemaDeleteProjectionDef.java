@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaDeleteProjectionDef extends PsiElement {
 
   @Nullable
-  SchemaOpDeleteUnnamedOrRefVarProjection getOpDeleteUnnamedOrRefVarProjection();
+  SchemaOpUnnamedOrRefEntityProjection getOpUnnamedOrRefEntityProjection();
 
   @Nullable
   SchemaQid getQid();
@@ -36,7 +36,7 @@ public interface SchemaDeleteProjectionDef extends PsiElement {
   PsiElement getColon();
 
   @NotNull
-  PsiElement getDeleteProjection();
+  PsiElement getDeleteProj();
 
   @Nullable
   PsiElement getEq();

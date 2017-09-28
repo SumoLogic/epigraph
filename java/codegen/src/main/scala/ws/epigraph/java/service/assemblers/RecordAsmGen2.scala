@@ -19,7 +19,8 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CField, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output.{ReqOutputFieldProjectionGen, ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output.ReqOutputRecordModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 //currently unused version utilizing `RecordFieldAsmsGen`
@@ -36,7 +37,7 @@ class RecordAsmGen2(
 
   override def children = Iterable(fieldAsmsGen)
 
-  case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) {
+  case class FieldParts(field: CField, fieldGen: ReqProjectionGen) {
     // todo remove unused parts
     def fieldName: String = jn(field.name)
 
@@ -62,7 +63,7 @@ class RecordAsmGen2(
     def javadoc: String = s"$fbf {@code $fieldName} field assembler"
   }
 
-  private def fieldGenerators(g: G): Map[String, (CField, ReqOutputFieldProjectionGen)] =
+  private def fieldGenerators(g: G): Map[String, (CField, ReqFieldProjectionGen)] =
     g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[G])).getOrElse(Map()) ++
     g.fieldGenerators.map { case (f, p) => f.name -> (f, p) }
 

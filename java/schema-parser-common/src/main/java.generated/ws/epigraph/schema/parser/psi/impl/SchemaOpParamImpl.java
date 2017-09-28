@@ -44,8 +44,8 @@ public class SchemaOpParamImpl extends ASTWrapperPsiElement implements SchemaOpP
 
   @Override
   @Nullable
-  public SchemaOpInputModelProjection getOpInputModelProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpInputModelProjection.class);
+  public SchemaOpModelProjection getOpModelProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpModelProjection.class);
   }
 
   @Override

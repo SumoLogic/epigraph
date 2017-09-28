@@ -51,8 +51,8 @@ public class ProjectionsPrettyPrinterContext<EP extends GenVarProjection<EP, ?, 
 
   public @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent() { return parent; }
 
-  public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
-    return projectionName.removeLastSegment().equals(namespace);
+  public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
+    return projectionName != null && projectionName.removeLastSegment().equals(namespace);
   }
 
   public void addEntityProjection(@NotNull EP projection) {

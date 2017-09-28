@@ -71,7 +71,7 @@ object CTypeApiWrapper {
 class CDataTypeApiWrapper(private val dataType: CDataType) extends DataTypeApi {
   override val `type`: TypeApi = CTypeApiWrapper.wrap(dataType.typeRef.resolved)
 
-  override val defaultTag: TagApi = dataType.defaultTag.map{ ct => new CTagApiWrapper(ct) }.orNull
+  override val retroTag: TagApi = dataType.defaultTag.map{ ct => new CTagApiWrapper(ct) }.orNull
 
   override val name: DataTypeName = new DataTypeName(`type`.name(), dataType.defaultTag.map(_.name).orNull)
 

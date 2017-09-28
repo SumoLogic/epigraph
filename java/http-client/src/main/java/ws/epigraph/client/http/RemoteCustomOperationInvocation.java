@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.service.operations.CustomOperationRequest;
 import ws.epigraph.types.Type;
@@ -58,7 +58,8 @@ public class RemoteCustomOperationInvocation
       final @NotNull CustomOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = operationRequest.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ ReqFieldProjection inputFieldProjection = operationRequest.inputProjection();
 
     String uri = UriComposer.composeCustomUri(
         resourceName,
@@ -89,17 +90,18 @@ public class RemoteCustomOperationInvocation
   protected @Nullable HttpContentProducer requestContentProducer(
       @NotNull CustomOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqInputFieldProjection inputFieldProjection = request.inputProjection();
+    ReqFieldProjection inputFieldProjection = request.inputProjection();
     Data data = request.data();
 
-    OpInputFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
+    // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
+    /*@Nullable*/ OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
     if (data == null || opInputFieldProjection == null)
       return null;
 
     Type dataType = data.type();
     TypeApi projectionType = inputFieldProjection == null
-                             ? opInputFieldProjection.varProjection().type()
-                             : inputFieldProjection.varProjection().type();
+                             ? opInputFieldProjection.entityProjection().type()
+                             : inputFieldProjection.entityProjection().type();
 
     if (!projectionType.isAssignableFrom(dataType)) {
       throw new IllegalArgumentException(
@@ -107,8 +109,8 @@ public class RemoteCustomOperationInvocation
     }
 
     return serverProtocol.customRequestContentProducer(
-        inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
-        opInputFieldProjection.varProjection(),
+        inputFieldProjection == null ? null : inputFieldProjection.entityProjection(),
+        opInputFieldProjection.entityProjection(),
         data,
         operationInvocationContext
     );

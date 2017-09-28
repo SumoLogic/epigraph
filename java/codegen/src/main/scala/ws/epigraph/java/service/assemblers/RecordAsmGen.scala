@@ -19,7 +19,8 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CField, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output.{ReqOutputFieldProjectionGen, ReqOutputProjectionGen, ReqOutputRecordModelProjectionGen}
+import ws.epigraph.java.service.projections.req.output.ReqOutputRecordModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqFieldProjectionGen, ReqProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 import scala.collection.immutable.ListMap
@@ -35,7 +36,7 @@ class RecordAsmGen(
 
   import Imports._
 
-  case class FieldParts(field: CField, fieldGen: ReqOutputProjectionGen) extends Comparable[FieldParts] {
+  case class FieldParts(field: CField, fieldGen: ReqProjectionGen) extends Comparable[FieldParts] {
     def fieldName: String = jn(field.name)
 
     def fieldType: CType = field.typeRef.resolved
@@ -66,7 +67,7 @@ class RecordAsmGen(
     override def compareTo(o: FieldParts): Int = field.name.compareTo(o.field.name)
   }
 
-  private def fieldGenerators(g: G): Map[String, (CField, ReqOutputFieldProjectionGen)] =
+  private def fieldGenerators(g: G): Map[String, (CField, ReqFieldProjectionGen)] =
     g.parentClassGenOpt.map(pg => fieldGenerators(pg.asInstanceOf[G])).getOrElse(ListMap()) ++
     g.fieldGenerators.map { case (f, p) => f.name -> (f, p) }
 

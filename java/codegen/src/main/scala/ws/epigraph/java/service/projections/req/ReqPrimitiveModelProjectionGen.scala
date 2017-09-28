@@ -59,4 +59,9 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqPrimitiveMode
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
+
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqPrimitiveModelProjection"),
+    flagged
+  )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public final class TypeReferenceFactory {
   public static @NotNull ValueTypeRef createValueTypeReference(@NotNull DataTypeApi dataType) {
     final @NotNull TypeApi type = dataType.type();
 
-    final @Nullable TagApi defaultTag = dataType.defaultTag();
+    final @Nullable TagApi defaultTag = dataType.retroTag();
 //    final String defaultTagName = defaultTag == null ? null : defaultTag.name();
     final String defaultTagName = defaultTag == null || type instanceof DatumTypeApi ? null : defaultTag.name();
 

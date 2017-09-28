@@ -22,14 +22,14 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.delete.{OpDeleteFieldProjectionEntry, OpDeleteRecordModelProjection}
+import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpDeleteRecordModelProjection,
+  val op: OpRecordModelProjection,
   baseNamespaceOpt: Option[Qn],
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
@@ -43,8 +43,8 @@ class ReqDeleteRecordModelProjectionGen(
     ctx
   ) with ReqRecordModelProjectionGen {
 
-  override type OpProjectionType = OpDeleteRecordModelProjection
-  override type OpFieldProjectionType = OpDeleteFieldProjectionEntry
+  override type OpProjectionType = OpRecordModelProjection
+  override type OpFieldProjectionType = OpFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
@@ -70,7 +70,7 @@ class ReqDeleteRecordModelProjectionGen(
 
   override protected def tailGenerator(
     parentGen: ReqDeleteModelProjectionGen,
-    op: OpDeleteRecordModelProjection,
+    op: OpRecordModelProjection,
     normalized: Boolean) =
     new ReqDeleteRecordModelProjectionGen( // don't use cache here!
       baseNamespaceProvider,
@@ -85,8 +85,8 @@ class ReqDeleteRecordModelProjectionGen(
 //      override protected val buildNormalizedTails: Boolean = normalized
 //    }
 
-  override protected def generate: String = generate(
-    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteRecordModelProjection"),
-    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjectionEntry")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteRecordModelProjection"),
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjectionEntry")
+//  )
 }

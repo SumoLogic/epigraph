@@ -18,13 +18,13 @@ package ws.epigraph.java.service.projections.req
 
 import ws.epigraph.compiler.{CField, CFieldApiWrapper, CRecordTypeDef}
 import ws.epigraph.java.JavaGenNames.jn
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
+import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenFieldProjectionEntry, GenRecordModelProjection}
 import ws.epigraph.projections.op.AbstractOpModelProjection
 import ws.epigraph.types.DatumTypeApi
-import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 
 import scala.collection.JavaConversions._
 
@@ -137,7 +137,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
    */
   public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
     ${reqFieldProjectionEntryFqn.last()} fpe = raw.fieldProjection("${field.name}");
-    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().varProjection());
+    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().entityProjection());
   }
 """/*@formatter:on*/
 
@@ -191,4 +191,10 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqRecordModelPr
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
+
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqRecordModelProjection"),
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqFieldProjectionEntry"),
+    flagged
+  )
 }

@@ -18,14 +18,14 @@ package ws.epigraph.java.service
 
 import java.nio.file.Path
 
-import ws.epigraph.compiler.{CDatumType, CType, CEntityTypeDef}
+import ws.epigraph.compiler.{CDatumType, CEntityTypeDef, CType}
 import ws.epigraph.java.JavaGenNames.lqdrn2
 import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
-import ws.epigraph.java.service.projections.req.{OperationInfo, OperationInfoBaseNamespaceProvider}
+import ws.epigraph.java._
 import ws.epigraph.java.service.projections.req.output.ReqOutputFieldProjectionGen
 import ws.epigraph.java.service.projections.req.path.ReqPathFieldProjectionGen
-import ws.epigraph.java._
+import ws.epigraph.java.service.projections.req.{OperationInfo, OperationInfoBaseNamespaceProvider}
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourceDeclaration
 import ws.epigraph.schema.operations.OperationDeclaration

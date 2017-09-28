@@ -44,8 +44,8 @@ public class SchemaDeleteProjectionDefImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @Nullable
-  public SchemaOpDeleteUnnamedOrRefVarProjection getOpDeleteUnnamedOrRefVarProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOpDeleteUnnamedOrRefVarProjection.class);
+  public SchemaOpUnnamedOrRefEntityProjection getOpUnnamedOrRefEntityProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOpUnnamedOrRefEntityProjection.class);
   }
 
   @Override
@@ -68,8 +68,8 @@ public class SchemaDeleteProjectionDefImpl extends ASTWrapperPsiElement implemen
 
   @Override
   @NotNull
-  public PsiElement getDeleteProjection() {
-    return notNullChild(findChildByType(S_DELETE_PROJECTION));
+  public PsiElement getDeleteProj() {
+    return notNullChild(findChildByType(S_DELETE_PROJ));
   }
 
   @Override

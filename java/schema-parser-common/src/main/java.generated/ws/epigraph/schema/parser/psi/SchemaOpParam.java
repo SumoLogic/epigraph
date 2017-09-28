@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface SchemaOpParam extends PsiElement {
 
   @Nullable
-  SchemaOpInputModelProjection getOpInputModelProjection();
+  SchemaOpModelProjection getOpModelProjection();
 
   @Nullable
   SchemaQid getQid();

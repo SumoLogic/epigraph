@@ -16,8 +16,8 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenListModelProjection
 import ws.epigraph.projections.op.AbstractOpModelProjection
@@ -75,4 +75,9 @@ ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqListModelProj
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
+
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqListModelProjection"),
+    flagged
+  )
 }

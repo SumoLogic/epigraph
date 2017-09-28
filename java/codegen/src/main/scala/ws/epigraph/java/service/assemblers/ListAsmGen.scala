@@ -19,7 +19,8 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output._
+import ws.epigraph.java.service.projections.req.output.ReqOutputListModelProjectionGen
+import ws.epigraph.java.service.projections.req.{ReqModelProjectionGen, ReqEntityProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
 
 /**
@@ -33,8 +34,8 @@ class ListAsmGen(
 
   val itemCType: CType = JavaGenUtils.toCType(
     g.elementGen match {
-      case eg: ReqOutputVarProjectionGen => eg.op.`type`()
-      case mg: ReqOutputModelProjectionGen => mg.op.`type`()
+      case eg: ReqEntityProjectionGen => eg.op.`type`()
+      case mg: ReqModelProjectionGen => mg.op.`type`()
     }
   )
 

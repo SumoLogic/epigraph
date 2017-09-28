@@ -21,7 +21,7 @@ import ws.epigraph.java.JavaGenNames.ln
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path._
+import ws.epigraph.projections.op._
 import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
@@ -29,20 +29,20 @@ import ws.epigraph.types.{DatumTypeApi, TypeKind}
  */
 abstract class ReqPathModelProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  op: OpModelPath[_, _, _ <: DatumTypeApi],
+  op: OpModelProjection[_, _, _ <: DatumTypeApi, _],
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqModelProjectionGen {
 
-  override type OpProjectionType <: OpModelPath[_, _, _ <: DatumTypeApi]
-  override type OpMetaProjectionType = OpModelPath[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
+  override type OpMetaProjectionType = OpModelProjection[_, _, _ <: DatumTypeApi, _]
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
-  override protected def reqVarProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath")
-
-  override protected def reqModelProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqModelPath")
+//  override protected def reqVarProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath")
+//
+//  override protected def reqModelProjectionFqn: Qn =
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqModelPath")
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
@@ -50,28 +50,28 @@ abstract class ReqPathModelProjectionGen(
 object ReqPathModelProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpModelPath[_, _, _ <: DatumTypeApi],
+    op: OpModelProjection[_, _, _ <: DatumTypeApi, _],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathModelProjectionGen = op.`type`().kind() match {
 
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
         baseNamespaceProvider,
-        op.asInstanceOf[OpRecordModelPath],
+        op.asInstanceOf[OpRecordModelProjection],
         namespaceSuffix,
         ctx
       )
     case TypeKind.MAP =>
       new ReqPathMapModelProjectionGen(
         baseNamespaceProvider,
-        op.asInstanceOf[OpMapModelPath],
+        op.asInstanceOf[OpMapModelProjection],
         namespaceSuffix,
         ctx
       )
     case TypeKind.PRIMITIVE =>
       new ReqPathPrimitiveModelProjectionGen(
         baseNamespaceProvider,
-        op.asInstanceOf[OpPrimitiveModelPath],
+        op.asInstanceOf[OpPrimitiveModelProjection],
         namespaceSuffix,
         ctx
       )

@@ -16,8 +16,8 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
+import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenMapModelProjection
 import ws.epigraph.projections.op.AbstractOpModelProjection
@@ -117,4 +117,9 @@ ${keys.code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqMapModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\
 }"""/*@formatter:on*/
   }
+
+  override protected def generate: String = generate(
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqMapModelProjection"),
+    flagged
+  )
 }

@@ -26,7 +26,7 @@ import ws.epigraph.names.DataTypeName;
 public interface DataTypeApi {
   @NotNull TypeApi type();
 
-  @Nullable TagApi defaultTag();
+  @Nullable TagApi retroTag();
 
   @NotNull DataTypeName name();
 }

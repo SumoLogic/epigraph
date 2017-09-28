@@ -19,7 +19,7 @@ package ws.epigraph.service;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.operations.HttpMethod;
 import ws.epigraph.service.operations.*;
@@ -197,11 +197,11 @@ public class Resource {
       // path length stay in the order of declaration
 
       allOperations.sort((o1, o2) -> {
-        final @Nullable OpFieldPath path1 = o1.declaration().path();
-        final @Nullable OpFieldPath path2 = o2.declaration().path();
+        final @Nullable OpFieldProjection path1 = o1.declaration().path();
+        final @Nullable OpFieldProjection path2 = o2.declaration().path();
 
-        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1.varProjection());
-        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2.varProjection());
+        int path1Len = path1 == null ? 0 : ProjectionUtils.pathLength(path1.entityProjection());
+        int path2Len = path2 == null ? 0 : ProjectionUtils.pathLength(path2.entityProjection());
 
         if (path1Len > path2Len) return -1;
         if (path1Len < path2Len) return 1;

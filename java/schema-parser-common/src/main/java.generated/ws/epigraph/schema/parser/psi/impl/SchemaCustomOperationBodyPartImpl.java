@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.schema.parser.psi.impl;
 
@@ -34,8 +50,8 @@ public class SchemaCustomOperationBodyPartImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public SchemaOperationInputProjection getOperationInputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOperationInputProjection.class);
+  public SchemaInputProjection getInputProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaInputProjection.class);
   }
 
   @Override
@@ -52,12 +68,6 @@ public class SchemaCustomOperationBodyPartImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
-  public SchemaOperationOutputProjection getOperationOutputProjection() {
-    return PsiTreeUtil.getChildOfType(this, SchemaOperationOutputProjection.class);
-  }
-
-  @Override
-  @Nullable
   public SchemaOperationOutputType getOperationOutputType() {
     return PsiTreeUtil.getChildOfType(this, SchemaOperationOutputType.class);
   }
@@ -66,6 +76,12 @@ public class SchemaCustomOperationBodyPartImpl extends ASTWrapperPsiElement impl
   @Nullable
   public SchemaOperationPath getOperationPath() {
     return PsiTreeUtil.getChildOfType(this, SchemaOperationPath.class);
+  }
+
+  @Override
+  @Nullable
+  public SchemaOutputProjection getOutputProjection() {
+    return PsiTreeUtil.getChildOfType(this, SchemaOutputProjection.class);
   }
 
 }

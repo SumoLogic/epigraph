@@ -26,16 +26,16 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenFieldProjection<
-    VP extends GenVarProjection<VP, TP, MP>,
+    EP extends GenVarProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
+    FP extends GenFieldProjection<EP, TP, MP, FP>
     > {
 //  @NotNull Annotations annotations();
 
-  @NotNull VP varProjection();
+  @NotNull EP entityProjection();
 
-  @NotNull FP setVarProjection(@NotNull VP varProjection);
+  @NotNull FP setEntityProjection(@NotNull EP varProjection);
 
   /**
    * Merges a list of field projections together

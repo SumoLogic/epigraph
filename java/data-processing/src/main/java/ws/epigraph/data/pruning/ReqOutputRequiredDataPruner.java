@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.*;
 import ws.epigraph.data.traversal.DataTraversalContext;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.req.output.*;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Field;
 import ws.epigraph.types.Tag;
@@ -38,20 +38,20 @@ import java.util.stream.Collectors;
 public class ReqOutputRequiredDataPruner {
   private final DataTraversalContext context = new DataTraversalContext();
 
-  public @NotNull DataPruningResult pruneData(@NotNull Data data, @NotNull ReqOutputVarProjection projection) {
+  public @NotNull DataPruningResult pruneData(@NotNull Data data, @NotNull ReqEntityProjection projection) {
 
     projection = projection.normalizedForType(data.type());
 
     final Map<@NotNull String, @NotNull ? extends Val> tagValues = data._raw().tagValues();
     final Map<String, Val> replacements = new HashMap<>();
 
-    for (final Map.Entry<String, ReqOutputTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
+    for (final Map.Entry<String, ReqTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();
       final Tag tag = data.type().tagsMap().get(tagName);
 
-      final ReqOutputTagProjectionEntry tagProjectionEntry = entry.getValue();
-      final ReqOutputModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
-      final boolean required = modelProjection.required();
+      final ReqTagProjectionEntry tagProjectionEntry = entry.getValue();
+      final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+      final boolean required = modelProjection.flagged();
 
       Val val = tagValues.get(tagName);
 
@@ -132,17 +132,17 @@ public class ReqOutputRequiredDataPruner {
 
   public @NotNull DatumPruningResult pruneDatum(
       @NotNull Datum datum,
-      @NotNull ReqOutputModelProjection<?, ?, ?> projection) {
+      @NotNull ReqModelProjection<?, ?, ?> projection) {
 
     projection = projection.normalizedForType(datum.type());
 
     switch (datum.type().kind()) {
       case RECORD:
-        return pruneRecordDatum((RecordDatum) datum, (ReqOutputRecordModelProjection) projection);
+        return pruneRecordDatum((RecordDatum) datum, (ReqRecordModelProjection) projection);
       case MAP:
-        return pruneMapDatum((MapDatum) datum, (ReqOutputMapModelProjection) projection);
+        return pruneMapDatum((MapDatum) datum, (ReqMapModelProjection) projection);
       case LIST:
-        return pruneListDatum((ListDatum) datum, (ReqOutputListModelProjection) projection);
+        return pruneListDatum((ListDatum) datum, (ReqListModelProjection) projection);
       default:
         return Keep.INSTANCE;
     }
@@ -150,19 +150,19 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneRecordDatum(
       @NotNull RecordDatum datum,
-      @NotNull ReqOutputRecordModelProjection projection) {
+      @NotNull ReqRecordModelProjection projection) {
 
     final Map<@NotNull String, @NotNull ? extends Data> fieldsData = datum._raw().fieldsData();
     final Map<String, Data> replacements = new HashMap<>();
 
-    for (final Map.Entry<String, ReqOutputFieldProjectionEntry> entry : projection.fieldProjections().entrySet()) {
+    for (final Map.Entry<String, ReqFieldProjectionEntry> entry : projection.fieldProjections().entrySet()) {
       final String fieldName = entry.getKey();
       final Field field = datum.type().fieldsMap().get(fieldName);
 
-      final ReqOutputFieldProjectionEntry fieldProjectionEntry = entry.getValue();
-      final ReqOutputFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
-      final boolean required = fieldProjection.required();
-      final ReqOutputVarProjection dataProjection = fieldProjection.varProjection();
+      final ReqFieldProjectionEntry fieldProjectionEntry = entry.getValue();
+      final ReqFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
+      final boolean required = fieldProjection.flagged();
+      final ReqEntityProjection dataProjection = fieldProjection.entityProjection();
 
       Data data = fieldsData.get(fieldName);
 
@@ -218,14 +218,14 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneMapDatum(
       @NotNull MapDatum datum,
-      @NotNull ReqOutputMapModelProjection projection) {
+      @NotNull ReqMapModelProjection projection) {
 
-    final ReqOutputVarProjection itemsProjection = projection.itemsProjection();
+    final ReqEntityProjection itemsProjection = projection.itemsProjection();
     final boolean keysRequired = projection.keysRequired();
     final Map<Datum.Imm, Data> replacements = new HashMap<>();
 
 
-    List<ReqOutputKeyProjection> projectionKeys = projection.keys();
+    List<ReqKeyProjection> projectionKeys = projection.keys();
     Collection<Datum.Imm> keys =
         projectionKeys == null
         ? datum._raw().elements().keySet()
@@ -287,9 +287,9 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneListDatum(
       @NotNull ListDatum datum,
-      @NotNull ReqOutputListModelProjection projection) {
+      @NotNull ReqListModelProjection projection) {
 
-    final ReqOutputVarProjection itemsProjection = projection.itemsProjection();
+    final ReqEntityProjection itemsProjection = projection.itemsProjection();
     final Map<Integer, Data> replacements = new HashMap<>();
 
     int index = 0;

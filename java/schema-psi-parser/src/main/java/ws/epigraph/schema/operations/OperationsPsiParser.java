@@ -24,19 +24,13 @@ import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.delete.OpDeleteFieldProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.delete.OpDeletePsiProcessingContext;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
 import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
-import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -93,7 +87,7 @@ public final class OperationsPsiParser {
     Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -102,38 +96,26 @@ public final class OperationsPsiParser {
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
         operationName == null ? ReadOperationDeclaration.DEFAULT_NAME : operationName;
 
-    @Nullable OpFieldPath fieldPath =
+    @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.READ, resourceType, pathPsi, resolver, context);
-//    @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.projection();
 
-    final OpOutputFieldProjection outputProjection = parseOutputProjection(
+    final OpFieldProjection outputProjection = parseOutputProjection(
         operationNameOrDefaultName,
         OperationKind.READ,
         resolveOutputType(
             resourceType,
-            fieldPath == null ? null : fieldPath.varProjection(),
+            fieldPath == null ? null : fieldPath.entityProjection(),
             null,
             resolver,
             context
         ), outputProjectionPsi, resolver, psi, context
     );
-
-//    if (outputProjectionPsi == null)
-//      throw new PsiProcessingException("Output projection must be specified", psi, context);
-//
-//    OpOutputFieldProjection outputProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
-//        resolveOutputType(resourceType, varPath, null, resolver, context),
-//        true,
-//        outputProjectionPsi.getOpOutputFieldProjection(),
-//        resolver,
-//        context
-//    );
 
     return new ReadOperationDeclaration(
         operationName,
@@ -156,9 +138,9 @@ public final class OperationsPsiParser {
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     for (SchemaCreateOperationBodyPart part : psi.getCreateOperationBodyPartList()) {
       annotations = SchemaPsiParserUtil.parseAnnotation(annotations, part.getAnnotation(), context, resolver);
@@ -166,40 +148,41 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
         operationName == null ? CreateOperationDeclaration.DEFAULT_NAME : operationName;
 
-    @Nullable OpFieldPath fieldPath =
+    @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.CREATE, resourceType, pathPsi, resolver, context);
-    OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
+    OpEntityProjection entityProjection = fieldPath == null ? null : fieldPath.entityProjection();
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
 
-    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi.getOpInputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi = inputProjectionPsi.getOpFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
-    OpInputReferenceContext referenceContext =
-        createInputReferenceContext(operationNameOrDefaultName, OperationKind.CREATE, context);
-    OpInputPsiProcessingContext opInputPsiProcessingContext = new OpInputPsiProcessingContext(
-        context,
-        referenceContext
-    );
+    OpReferenceContext referenceContext =
+        createReferenceContext(
+            operationNameOrDefaultName,
+            context.inputReferenceContext(),
+            OperationKind.CREATE,
+            Namespaces.INPUT_SEGMENT,
+            context
+        );
 
-    final OpInputFieldProjection fieldProjection = OpInputProjectionsPsiParser.parseFieldProjection(
-        resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
+    final OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
+        resolveInputType(resourceType, entityProjection, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
         resolver,
-        opInputPsiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
     referenceContext.ensureAllReferencesResolved();
 
@@ -213,7 +196,7 @@ public final class OperationsPsiParser {
             OperationKind.CREATE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.varProjection(),
+                fieldPath == null ? null : fieldPath.entityProjection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -233,9 +216,9 @@ public final class OperationsPsiParser {
 
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -245,41 +228,43 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
         operationName == null ? UpdateOperationDeclaration.DEFAULT_NAME : operationName;
 
-    @Nullable OpFieldPath fieldPath =
+    @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.UPDATE, resourceType, pathPsi, resolver, context);
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
 
-    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi.getOpInputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi.getOpFieldProjection();
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
-    final @Nullable OpVarPath varPath = fieldPath == null ? null : fieldPath.varProjection();
+    final @Nullable OpEntityProjection entityPath = fieldPath == null ? null : fieldPath.entityProjection();
 
-    OpInputReferenceContext referenceContext =
-        createInputReferenceContext(operationNameOrDefaultName, OperationKind.UPDATE, context);
-    OpInputPsiProcessingContext psiProcessingContext = new OpInputPsiProcessingContext(
-        context,
-        referenceContext
-    );
+    OpReferenceContext referenceContext =
+        createReferenceContext(
+            operationNameOrDefaultName,
+            context.inputReferenceContext(),
+            OperationKind.UPDATE,
+            Namespaces.INPUT_SEGMENT,
+            context
+        );
 
-    final OpInputFieldProjection fieldProjection = OpInputProjectionsPsiParser.parseFieldProjection(
-        resolveInputType(resourceType, varPath, inputTypePsi, resolver, context),
+    final @NotNull OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
+        resolveInputType(resourceType, entityPath, inputTypePsi, resolver, context),
         true,
         inputFieldProjectionPsi,
         resolver,
-        psiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
     referenceContext.ensureAllReferencesResolved();
 
@@ -293,7 +278,7 @@ public final class OperationsPsiParser {
             OperationKind.UPDATE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.varProjection(),
+                fieldPath == null ? null : fieldPath.entityProjection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -312,9 +297,9 @@ public final class OperationsPsiParser {
     Map<DatumTypeApi, Annotation> annotations = null;
 
     SchemaOperationPath pathPsi = null;
-    SchemaOperationDeleteProjection deleteProjectionPsi = null;
+    SchemaDeleteProjection deleteProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final String operationName = parseOperationName(psi.getOperationName());
 
@@ -323,59 +308,44 @@ public final class OperationsPsiParser {
 
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       deleteProjectionPsi =
-          getPsiPart(deleteProjectionPsi, part.getOperationDeleteProjection(), "delete projection", context);
+          getPsiPart(deleteProjectionPsi, part.getDeleteProjection(), "delete projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final String operationNameOrDefaultName =
         operationName == null ? DeleteOperationDeclaration.DEFAULT_NAME : operationName;
 
-    @Nullable OpFieldPath fieldPath =
+    @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.DELETE, resourceType, pathPsi, resolver, context);
 
     if (deleteProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", psi, context);
 
-    final @Nullable SchemaOpDeleteFieldProjection deleteFieldProjectionPsi =
-        deleteProjectionPsi.getOpDeleteFieldProjection();
+    final @Nullable SchemaOpFieldProjection deleteFieldProjectionPsi =
+        deleteProjectionPsi.getOpFieldProjection();
     if (deleteFieldProjectionPsi == null)
       throw new PsiProcessingException("Delete projection must be specified", deleteProjectionPsi, context);
 
-    OpDeleteReferenceContext deleteReferenceContext = new OpDeleteReferenceContext(
-        ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationDeleteProjectionsNamespace(
-                    context.resourceName(),
-                    OperationKind.DELETE,
-                    operationNameOrDefaultName
-                )
-        ),
-        context.deleteReferenceContext(),
-        context
-    );
+    OpReferenceContext referenceContext =
+        createReferenceContext(
+            operationNameOrDefaultName,
+            context.deleteReferenceContext(),
+            OperationKind.DELETE,
+            Namespaces.DELETE_SEGMENT,
+            context
+        );
 
-    OpInputReferenceContext inputReferenceContext =
-        createInputReferenceContext(operationNameOrDefaultName, OperationKind.DELETE, context);
-
-    OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
-        context, inputReferenceContext
-    );
-
-    OpDeletePsiProcessingContext psiProcessingContext = new OpDeletePsiProcessingContext(
-        context, inputPsiProcessingContext, deleteReferenceContext
-    );
-
-    final OpDeleteFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.parseFieldProjection(
-        resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.varProjection()),
+    final OpFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.INSTANCE.parseFieldProjection(
+        resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.entityProjection()),
         deleteProjectionPsi.getPlus() != null,
         deleteFieldProjectionPsi,
         resolver,
-        psiProcessingContext
+        new OpPsiProcessingContext(context, referenceContext)
     );
-    inputReferenceContext.ensureAllReferencesResolved();
-    deleteReferenceContext.ensureAllReferencesResolved();
+
+    referenceContext.ensureAllReferencesResolved();
 
     return new DeleteOperationDeclaration(
         operationName,
@@ -387,7 +357,7 @@ public final class OperationsPsiParser {
             OperationKind.DELETE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.varProjection(),
+                fieldPath == null ? null : fieldPath.entityProjection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -408,9 +378,9 @@ public final class OperationsPsiParser {
     SchemaOperationMethod methodPsi = null;
     SchemaOperationPath pathPsi = null;
     SchemaOperationInputType inputTypePsi = null;
-    SchemaOperationInputProjection inputProjectionPsi = null;
+    SchemaInputProjection inputProjectionPsi = null;
     SchemaOperationOutputType outputTypePsi = null;
-    SchemaOperationOutputProjection outputProjectionPsi = null;
+    SchemaOutputProjection outputProjectionPsi = null;
 
     final @Nullable String operationName = parseOperationName(psi.getOperationName());
     if (operationName == null)
@@ -423,10 +393,10 @@ public final class OperationsPsiParser {
       pathPsi = getPsiPart(pathPsi, part.getOperationPath(), "path", context);
       inputTypePsi = getPsiPart(inputTypePsi, part.getOperationInputType(), "input type", context);
       inputProjectionPsi =
-          getPsiPart(inputProjectionPsi, part.getOperationInputProjection(), "input projection", context);
+          getPsiPart(inputProjectionPsi, part.getInputProjection(), "input projection", context);
       outputTypePsi = getPsiPart(outputTypePsi, part.getOperationOutputType(), "output type", context);
       outputProjectionPsi =
-          getPsiPart(outputProjectionPsi, part.getOperationOutputProjection(), "output projection", context);
+          getPsiPart(outputProjectionPsi, part.getOutputProjection(), "output projection", context);
     }
 
     final HttpMethod method;
@@ -440,24 +410,26 @@ public final class OperationsPsiParser {
       else throw new PsiProcessingException("HTTP method must be specified", methodPsi, context);
     }
 
-    final @Nullable SchemaOpInputFieldProjection inputFieldProjectionPsi =
-        inputProjectionPsi == null ? null : inputProjectionPsi.getOpInputFieldProjection();
+    final @Nullable SchemaOpFieldProjection inputFieldProjectionPsi =
+        inputProjectionPsi == null ? null : inputProjectionPsi.getOpFieldProjection();
 
-    OpInputReferenceContext referenceContext =
-        createInputReferenceContext(operationName, OperationKind.CUSTOM, context);
+    OpReferenceContext inputReferenceContext =
+        createReferenceContext(
+            operationName,
+            context.inputReferenceContext(),
+            OperationKind.CUSTOM,
+            Namespaces.INPUT_SEGMENT,
+            context
+        );
 
-    OpInputPsiProcessingContext psiProcessingContext = new OpInputPsiProcessingContext(
-        context, referenceContext
-    );
-
-    @Nullable OpFieldPath opPath =
+    @Nullable OpFieldProjection opPath =
         parsePath(operationName, OperationKind.CUSTOM, resourceType, pathPsi, resolver, context);
 
-    final OpInputFieldProjection fieldProjection =
-        inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.parseFieldProjection(
+    final OpFieldProjection fieldProjection =
+        inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
             resolveInputType(
                 resourceType,
-                opPath == null ? null : opPath.varProjection(),
+                opPath == null ? null : opPath.entityProjection(),
                 inputTypePsi,
                 resolver,
                 context
@@ -465,9 +437,10 @@ public final class OperationsPsiParser {
             true,
             inputFieldProjectionPsi,
             resolver,
-            psiProcessingContext
+            new OpPsiProcessingContext(context, inputReferenceContext)
         );
-    referenceContext.ensureAllReferencesResolved();
+
+    inputReferenceContext.ensureAllReferencesResolved();
 
     return new CustomOperationDeclaration(
         method,
@@ -480,7 +453,7 @@ public final class OperationsPsiParser {
             OperationKind.CUSTOM,
             resolveOutputType(
                 resourceType,
-                opPath == null ? null : opPath.varProjection(),
+                opPath == null ? null : opPath.entityProjection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -490,50 +463,41 @@ public final class OperationsPsiParser {
     );
   }
 
-  private static @NotNull OpOutputFieldProjection parseOutputProjection(
+  private static @NotNull OpFieldProjection parseOutputProjection(
       final @NotNull String operationNameOrDefaultName,
       final @NotNull OperationKind operationKind,
       final @NotNull DataTypeApi outputType,
-      final @Nullable SchemaOperationOutputProjection outputProjectionPsi,
+      final @Nullable SchemaOutputProjection outputProjectionPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiElement location,
-      final @NotNull ResourcePsiProcessingContext context)
+      final @NotNull ResourcePsiProcessingContext resourcePsiProcessingContext)
       throws PsiProcessingException {
 
-    final @Nullable SchemaOpOutputFieldProjection outputFieldProjectionPsi =
-        outputProjectionPsi == null ? null : outputProjectionPsi.getOpOutputFieldProjection();
+    final @Nullable SchemaOpFieldProjection outputFieldProjectionPsi =
+        outputProjectionPsi == null ? null : outputProjectionPsi.getOpFieldProjection();
 
-    OpOutputReferenceContext outputReferenceContext = new OpOutputReferenceContext(
-        ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationOutputProjectionsNamespace(
-                    context.resourceName(),
-                    operationKind,
-                    operationNameOrDefaultName
-                )
-        ),
-        context.outputReferenceContext(),
-        context
-    );
-    OpInputReferenceContext inputReferenceContext =
-        createInputReferenceContext(operationNameOrDefaultName, operationKind, context);
+    OpReferenceContext outputReferenceContext =
+        createReferenceContext(
+            operationNameOrDefaultName,
+            resourcePsiProcessingContext.outputReferenceContext(),
+            operationKind,
+            Namespaces.OUTPUT_SEGMENT,
+            resourcePsiProcessingContext
+        );
 
-    OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
-        context, inputReferenceContext
-    );
-    OpOutputPsiProcessingContext psiProcessingContext = new OpOutputPsiProcessingContext(
-        context, inputPsiProcessingContext, outputReferenceContext
+    OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
+        resourcePsiProcessingContext, outputReferenceContext
     );
 
-    final OpOutputFieldProjection fieldProjection;
+    final OpFieldProjection fieldProjection;
 
     // todo add context
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
-      final @NotNull OpOutputVarProjection varProjection =
-          OpOutputProjectionsPsiParser.createDefaultVarProjection(outputType, location, psiProcessingContext);
+      final @NotNull OpEntityProjection varProjection =
+          OpBasicProjectionPsiParser.createDefaultEntityProjection(outputType, location, opPsiProcessingContext);
 
-      fieldProjection = new OpOutputFieldProjection(
+      fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,
 //          Annotations.EMPTY,
           varProjection,
@@ -542,14 +506,14 @@ public final class OperationsPsiParser {
 
 //      throw new PsiProcessingException("Output projection must be specified", location, context);
     } else {
-      fieldProjection = OpOutputProjectionsPsiParser.parseFieldProjection(
+      fieldProjection = OpOutputProjectionsPsiParser.INSTANCE.parseFieldProjection(
           outputType,
+          false,
           outputFieldProjectionPsi,
           resolver,
-          psiProcessingContext
+          opPsiProcessingContext
       );
     }
-    inputReferenceContext.ensureAllReferencesResolved();
     outputReferenceContext.ensureAllReferencesResolved();
 
     return fieldProjection;
@@ -564,7 +528,7 @@ public final class OperationsPsiParser {
 
     if (cur != null) {
       if (prev != null) {
-        context.addError("Operation " + name + " specified twice", cur);
+        context.addError("Operation '" + name + "' specified twice", cur);
       }
 
       return cur;
@@ -575,7 +539,7 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveOutputType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpVarPath opVarPath,
+      @Nullable OpEntityProjection opEntityPath,
       @Nullable SchemaOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -589,7 +553,7 @@ public final class OperationsPsiParser {
         declaredOutputTypePsi == null ? null : declaredOutputTypePsi.getValueTypeRef();
 
     if (declaredOutputTypePsi == null || typeRefPsi == null) {
-      return opVarPath == null ? resourceType : ProjectionUtils.tipType(opVarPath);
+      return opEntityPath == null ? resourceType : ProjectionUtils.tipType(opEntityPath);
     }
 
     final @NotNull ValueTypeRef valueTypeRef = TypeRefs.fromPsi(typeRefPsi, context);
@@ -605,7 +569,7 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveInputType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpVarPath path,
+      @Nullable OpEntityProjection path,
       @Nullable SchemaOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -621,7 +585,9 @@ public final class OperationsPsiParser {
 
         @NotNull TypeApi rtt = resourceType.type();
 
-        if (rtt instanceof DatumTypeApi) return ((DatumTypeApi) rtt).dataType();
+        if (rtt instanceof DatumTypeApi)
+          //noinspection RedundantCast
+          return ((DatumTypeApi) rtt).dataType();
 
         return resourceType;
 
@@ -646,11 +612,12 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveDeleteType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpVarPath opVarPath) {
-    return opVarPath == null ? resourceType : ProjectionUtils.tipType(opVarPath);
+      @Nullable OpEntityProjection opEntityPath) {
+
+    return opEntityPath == null ? resourceType : ProjectionUtils.tipType(opEntityPath);
   }
 
-  private static @Nullable OpFieldPath parsePath(
+  private static @Nullable OpFieldProjection parsePath(
       @NotNull String operationNameOrDefaultName,
       @NotNull OperationKind operationKind,
       @NotNull DataTypeApi type,
@@ -660,22 +627,33 @@ public final class OperationsPsiParser {
 
     if (pathPsi == null) return null;
     else {
-      final @Nullable SchemaOpFieldPath varPathPsi = pathPsi.getOpFieldPath();
-      if (varPathPsi == null) {
+      final @Nullable SchemaOpFieldPath fieldPathPsi = pathPsi.getOpFieldPath();
+      if (fieldPathPsi == null) {
         context.addError("Path expression missing", pathPsi);
         return null;
       }
-      OpInputReferenceContext inputReferenceContext =
-          createInputReferenceContext(operationNameOrDefaultName, operationKind, context);
 
-      OpInputPsiProcessingContext inputPsiProcessingContext = new OpInputPsiProcessingContext(
-          context, context.inputReferenceContext()
+      OpReferenceContext referenceContext =
+          createReferenceContext(
+              operationNameOrDefaultName,
+              context.inputReferenceContext(),
+              operationKind,
+              Namespaces.PATH_SEGMENT,
+              context
+          );
+
+      OpPsiProcessingContext outputPsiProcessingContext = new OpPsiProcessingContext(
+          context,
+          referenceContext
       );
-      OpPathPsiProcessingContext psiProcessingContext =
-          new OpPathPsiProcessingContext(context, inputPsiProcessingContext);
 
-      final OpFieldPath fieldPath = OpPathPsiParser.parseFieldPath(type, varPathPsi, resolver, psiProcessingContext);
-      inputReferenceContext.ensureAllReferencesResolved();
+      OpPathPsiProcessingContext psiProcessingContext =
+          new OpPathPsiProcessingContext(context, outputPsiProcessingContext);
+
+      final OpFieldProjection fieldPath = OpPathPsiParser.parseFieldPath(type,
+          fieldPathPsi, resolver, psiProcessingContext);
+
+      referenceContext.ensureAllReferencesResolved();
 
       return fieldPath;
     }
@@ -689,23 +667,25 @@ public final class OperationsPsiParser {
     return qid.getCanonicalName();
   }
 
-  private static @NotNull OpInputReferenceContext createInputReferenceContext(
+  private static @NotNull OpReferenceContext createReferenceContext(
       final @NotNull String operationNameOrDefaultName,
+      final @Nullable OpReferenceContext parentReferenceContext,
       final @NotNull OperationKind operationKind,
+      final @NotNull String projectionsNamespaceSegment,
       final @NotNull ResourcePsiProcessingContext context) {
 
-    return new OpInputReferenceContext(
+    return new OpReferenceContext(
         ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace())
-                .operationInputProjectionsNamespace(
-                    context.resourceName(),
-                    operationKind,
-                    operationNameOrDefaultName
-                )
+            new Namespaces(context.namespace()).operationProjectionsNamespace(
+                context.resourceName(),
+                operationKind,
+                operationNameOrDefaultName
+            ).append(projectionsNamespaceSegment)
         ),
-        context.inputReferenceContext(),
+        parentReferenceContext,
         context
     );
 
   }
+
 }

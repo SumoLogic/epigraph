@@ -21,15 +21,15 @@ import java.nio.file.Path
 import ws.epigraph.compiler._
 import ws.epigraph.java.JavaGenNames.{jn, ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.output.ReqOutputEntityProjectionGen
 import ws.epigraph.java.service.projections.req.ReqProjectionGen
-import ws.epigraph.java.service.projections.req.output.{ReqOutputProjectionGen, ReqOutputVarProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGenUtils}
 import ws.epigraph.lang.Qn
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class EntityAsmGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends AsmGen {
+class EntityAsmGen(g: ReqOutputEntityProjectionGen, val ctx: GenContext) extends AsmGen {
   val cType: CType = JavaGenUtils.toCType(g.op.`type`())
 
   override protected def namespace: Qn = g.namespace
@@ -49,7 +49,7 @@ class EntityAsmGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends As
 
     val t = lqn2(cType, namespace.toString)
 
-    case class TagParts(tag: CTag, tagGen: ReqOutputProjectionGen) extends Comparable[TagParts] {
+    case class TagParts(tag: CTag, tagGen: ReqProjectionGen) extends Comparable[TagParts] {
       val tagGenName: importManager.ImportedName = importManager.use(tagGen.fullClassName)
 
       val assemblerResultType: importManager.ImportedName = importManager.use(
@@ -78,15 +78,15 @@ class EntityAsmGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends As
       override def compareTo(o: TagParts): Int = tag.name.compareTo(o.tag.name)
     }
 
-    def tagGenerators(g: ReqOutputVarProjectionGen): Map[String, (CTag, ReqProjectionGen)] =
+    def tagGenerators(g: ReqOutputEntityProjectionGen): Map[String, (CTag, ReqProjectionGen)] =
       g.parentClassGenOpt.map(pg => tagGenerators(pg)).getOrElse(Map()) ++
       g.tagGenerators.map { case (tag, p) => tag.name -> (tag, p) }
 
     val fps: Seq[TagParts] = tagGenerators(g).map { case (_, (f, fg)) =>
-      TagParts(f, fg.asInstanceOf[ReqOutputProjectionGen])
+      TagParts(f, fg.asInstanceOf[ReqProjectionGen])
     }.toSeq.sorted
 
-    case class TailParts(tailProjectionGen: ReqOutputVarProjectionGen) extends Comparable [TailParts] {
+    case class TailParts(tailProjectionGen: ReqOutputEntityProjectionGen) extends Comparable [TailParts] {
       val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
 
       def tt: CType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
@@ -103,9 +103,9 @@ class EntityAsmGen(g: ReqOutputVarProjectionGen, val ctx: GenContext) extends As
     }
 
     val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-      TailParts(tg.asInstanceOf[ReqOutputVarProjectionGen])
+      TailParts(tg.asInstanceOf[ReqOutputEntityProjectionGen])
     }.toSeq//.sorted
-    
+
     val obj = importManager.use("java.lang.Object")
 
     lazy val defaultBuild: String = /*@formatter:off*/sn"""\

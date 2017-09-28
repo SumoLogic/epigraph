@@ -17,25 +17,17 @@
 package ws.epigraph.url.parser;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.update.ReqUpdateFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
-import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.SimpleTypesResolver;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
-import ws.epigraph.tests.*;
-import ws.epigraph.types.DataType;
-import ws.epigraph.url.UpdateRequestUrl;
-import ws.epigraph.url.parser.psi.UrlUpdateUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,17 +41,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class UpdateRequestUrlPsiParserTest {
-  private final TypesResolver resolver = new SimpleTypesResolver(
-      PersonId.type,
-      Person.type,
-      User.type,
-      UserId.type,
-      UserRecord.type,
-      String_Person_Map.type,
-      epigraph.String.type,
-      epigraph.Boolean.type
-  );
+public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTest {
 
   private final String idlText = lines(
       "namespace test",
@@ -75,7 +57,6 @@ public class UpdateRequestUrlPsiParserTest {
   );
 
   private final UpdateOperationDeclaration updateIdl1;
-  private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
     ResourcesSchema schema = parseIdl(idlText, resolver);
@@ -90,10 +71,10 @@ public class UpdateRequestUrlPsiParserTest {
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
         updateIdl1,
-        "/users<+(+id)>/123:record(id)?format='json'&verbose=true",
+        "/users<+(id)>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
-        ":+( +id )",
+        "+( id )",
         "users / '123' :record ( id )",
         "{format = \"json\", verbose = true}"
     );
@@ -111,7 +92,7 @@ public class UpdateRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull UpdateRequestUrl requestUrl = UpdateRequestUrlPsiParser.parseUpdateRequestUrl(
+    final @NotNull NonReadRequestUrl requestUrl = UpdateRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -119,34 +100,29 @@ public class UpdateRequestUrlPsiParserTest {
         context
     );
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(true, context.messages());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqUpdateFieldProjection inputProjection = requestUrl.updateProjection();
-    if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqUpdateVarProjection(inputProjection.varProjection()));
+    StepsAndProjection<ReqFieldProjection> inputStepsAndProjection = requestUrl.inputProjection();
+    if (inputStepsAndProjection == null) {
+      assertNull(expectedInputProjection);
+    } else {
+      final @NotNull ReqFieldProjection inputProjection = inputStepsAndProjection.projection();
+      String s = printReqEntityProjection(inputProjection.entityProjection(), 0);
+      if (inputProjection.entityProjection().flagged())
+        s = "+" + s; // don't want to mess with pretty printing for this
+      assertEquals(expectedInputProjection, s);
+    }
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
+    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        printReqOutputFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));
-  }
-
-
-  private static UrlUpdateUrl parseUrlPsi(@NotNull String text) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    @NotNull UrlUpdateUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.UPDATE_URL, errorsAccumulator);
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
   }
 
 }

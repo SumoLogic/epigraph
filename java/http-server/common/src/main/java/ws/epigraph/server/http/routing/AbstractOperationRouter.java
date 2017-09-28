@@ -42,8 +42,8 @@ import java.util.*;
  * Else operations are sorted by op path length in descending order and are tried one by one. The first operation
  * such that URL can be parsed against it's declaration (for instance path, input projection, output projection) wins.
  *
- * @see "operations.epigraph"
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
+ * @see "operations.epigraph"
  */
 public abstract class AbstractOperationRouter<
     U extends UrlUrl,
@@ -120,6 +120,9 @@ public abstract class AbstractOperationRouter<
         context.setErrors(e.messages());
       }
 
+      if (request != null)
+        validateMatchingRequest(request, context);
+
       if (context.messages().isEmpty()) {
         assert request != null;
         return new OperationSearchSuccess<>(
@@ -132,6 +135,8 @@ public abstract class AbstractOperationRouter<
         );
     }
   }
+
+  protected void validateMatchingRequest(@NotNull R request, @NotNull PsiProcessingContext context) {}
 
   protected abstract @NotNull R parseUrl(
       @NotNull DataTypeApi resourceType,

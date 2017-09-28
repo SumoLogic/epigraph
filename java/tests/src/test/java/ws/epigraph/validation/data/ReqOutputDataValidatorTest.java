@@ -22,8 +22,8 @@ import ws.epigraph.EpigraphTestUtil;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.ReqOutputDataValidator;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.Person;
@@ -84,9 +84,9 @@ public class ReqOutputDataValidatorTest {
       String... expectedErrorMessages) {
 
     final DataType dataType = (DataType) type.dataType();
-    final OpOutputVarProjection varProjection = EpigraphTestUtil.parseOpOutputVarProjection(dataType, op, resolver);
-    final ReqOutputVarProjection reqProjection =
-        EpigraphTestUtil.parseReqOutputVarProjection(dataType, varProjection, req, resolver).projection();
+    final OpEntityProjection varProjection = EpigraphTestUtil.parseOpEntityProjection(dataType, op, resolver);
+    final ReqEntityProjection reqProjection =
+        EpigraphTestUtil.parseReqOutputEntityProjection(dataType, varProjection, req, resolver).projection();
     final Data d = EpigraphTestUtil.makeData(type, data, resolver);
 
     final ReqOutputDataValidator validator = new ReqOutputDataValidator();

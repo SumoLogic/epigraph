@@ -22,10 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
-import ws.epigraph.projections.op.input.OpInputVarProjection;
-import ws.epigraph.projections.req.input.ReqInputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
-import ws.epigraph.projections.req.update.ReqUpdateVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
 /**
@@ -40,26 +38,26 @@ public interface ServerProtocol {
   @NotNull String[] mimeTypes();
 
   InvocationResult<ReadOperationResponse<Data>> readResponse(
-      @NotNull ReqOutputVarProjection projection,
+      @NotNull ReqEntityProjection projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,
       int okStatusCode);
 
-  @NotNull HttpContentProducer createRequestContentProducer(
-      @Nullable ReqInputVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+  HttpContentProducer createRequestContentProducer(
+      @Nullable ReqEntityProjection reqInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  @NotNull HttpContentProducer updateRequestContentProducer(
-      @Nullable ReqUpdateVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+  HttpContentProducer updateRequestContentProducer(
+      @Nullable ReqEntityProjection reqInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
-  @NotNull HttpContentProducer customRequestContentProducer(
-      @Nullable ReqInputVarProjection reqInputProjection,
-      @NotNull OpInputVarProjection opInputProjection,
+  HttpContentProducer customRequestContentProducer(
+      @Nullable ReqEntityProjection reqInputProjection,
+      @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 }

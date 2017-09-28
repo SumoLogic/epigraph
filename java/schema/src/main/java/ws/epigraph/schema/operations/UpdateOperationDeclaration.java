@@ -20,9 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.input.OpInputFieldProjection;
-import ws.epigraph.projections.op.output.OpOutputFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.types.TypeApi;
 
 /**
@@ -34,9 +32,9 @@ public class UpdateOperationDeclaration extends OperationDeclaration {
   public UpdateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
-      @NotNull OpInputFieldProjection inputProjection,
-      @NotNull OpOutputFieldProjection outputProjection,
+      @Nullable OpFieldProjection path,
+      @NotNull OpFieldProjection inputProjection,
+      @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
     super(OperationKind.UPDATE, HttpMethod.PUT, name, annotations,
@@ -48,8 +46,8 @@ public class UpdateOperationDeclaration extends OperationDeclaration {
 //  protected @NotNull String defaultName() { return DEFAULT_NAME; }
 
   @Override
-  public @NotNull OpInputFieldProjection inputProjection() {
-    final @Nullable OpInputFieldProjection projection = super.inputProjection();
+  public @NotNull OpFieldProjection inputProjection() {
+    final @Nullable OpFieldProjection projection = super.inputProjection();
     assert projection != null;
     return projection;
   }

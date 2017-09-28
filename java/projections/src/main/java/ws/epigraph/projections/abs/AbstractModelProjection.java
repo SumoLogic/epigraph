@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.abs;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
@@ -57,9 +58,12 @@ public abstract class AbstractModelProjection<
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
+  private final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
   protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
   protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
+
+  private final Throwable allocationTrace = new Throwable();
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -98,6 +102,23 @@ public abstract class AbstractModelProjection<
   @Override
   public @Nullable List<SMP> polymorphicTails() { return polymorphicTails; }
 
+  @Contract(pure = true)
+  protected @NotNull Map<TypeName, ProjectionReferenceName> normalizedTailNames() {
+    return entityProjection == null ? normalizedTailNames : entityProjection.normalizedTailNames;
+  }
+
+  @Override
+  public void setNormalizedTailReferenceName(
+      @NotNull DatumTypeApi type,
+      @NotNull ProjectionReferenceName tailReferenceName) {
+
+    normalizedTailNames().put(type.name(), tailReferenceName);
+  }
+
+  public void copyNormalizedTailReferenceNames(@NotNull SMP mp) {
+    normalizedTailNames().putAll(mp.normalizedTailNames());
+  }
+
   protected abstract @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext();
 
 //  /**
@@ -133,12 +154,56 @@ public abstract class AbstractModelProjection<
 
   }
 
-  public void setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    this.entityProjection = entityProjection;
+  /**
+   * Sets entity projection reference for datum type projections
+   *
+   * @param entityProjection entity projection corresponding to this model projection (there should be a 1-1 relation)
+   *
+   * @return model projection with entity projection reference set up correctly
+   */
+  public SMP setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+    if (entityProjection == this.entityProjection) return self();
+    if (this.entityProjection == null) {
+      this.entityProjection = entityProjection;
+
+      // entity projection's `normalizedTailNames` is the source of truth now
+      entityProjection.normalizedTailNames.putAll(normalizedTailNames);
+      normalizedTailNames.clear();
+
+      if (!Objects.equals(referenceName(), entityProjection.referenceName()))
+        throw new IllegalStateException(String.format(
+            "[%s] {%s} != {%s}",
+            type().name().toString(),
+            name,
+            entityProjection.referenceName()
+        ));
+      return self();
+    } else {
+      SMP clone = clone();
+      clone.setReferenceName0(referenceName());
+      return clone.setEntityProjection(entityProjection);
+    }
+  }
+
+  /**
+   * Clones all but reference name and entity projection reference
+   *
+   * @return cloned object
+   */
+  @SuppressWarnings("CloneDoesntDeclareCloneNotSupportedException")
+  @Override
+  protected abstract SMP clone();
+
+  public @Nullable AbstractVarProjection<?, ?, ?> entityProjection() { return entityProjection; }
+
+  @Override
+  public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi type) {
+    return normalizedForType(type, normalizedTailNames().get(type.name()));
   }
 
   @Override
   @SuppressWarnings("unchecked")
+  @Deprecated
   public @NotNull SMP normalizedForType(
       final @NotNull DatumTypeApi targetType,
       final @Nullable ProjectionReferenceName resultReferenceName) {
@@ -178,7 +243,6 @@ public abstract class AbstractModelProjection<
             if (this.name == null) {
               ref = context.newReference((M) effectiveType, self());
               ref.setReferenceName(normalizedRefName);
-              normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
             } else {
               NormalizationContext.VisitedKey visitedKey =
                   new NormalizationContext.VisitedKey(this.name, effectiveType.name());
@@ -197,6 +261,7 @@ public abstract class AbstractModelProjection<
                     ProjectionUtils.sameNamespace(type().name(), effectiveType.name())
                 );
             }
+            normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
 
             final List<SMP> effectiveProjections = new ArrayList<>(linearizedTails);
             effectiveProjections.add(self()); //we're the least specific projection
@@ -341,6 +406,14 @@ public abstract class AbstractModelProjection<
         mergedTails
     );
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
+
+    // todo check for clashes
+    Map<TypeName, ProjectionReferenceName> mergedTailNames = new HashMap<>();
+    for (SMP mp : modelProjections) {
+      mergedTailNames.putAll(mp.normalizedTailNames());
+    }
+    res.normalizedTailNames().putAll(mergedTailNames);
+
     return res;
   }
 
@@ -412,7 +485,8 @@ public abstract class AbstractModelProjection<
   @Override
   public void setReferenceName(final @Nullable ProjectionReferenceName referenceName) {
     setReferenceName0(referenceName);
-    if (entityProjection != null) entityProjection.setReferenceName0(referenceName);
+    if (entityProjection != null)
+      entityProjection.setReferenceName0(referenceName);
   }
 
   public void setReferenceName0(final @Nullable ProjectionReferenceName referenceName) {
@@ -445,12 +519,24 @@ public abstract class AbstractModelProjection<
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
-    this.isResolved = true;
     setReferenceName(name);
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     setNormalizedFrom(value.normalizedFrom);
+//    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
+    this.normalizedTailNames().putAll(value.normalizedTailNames());
+    this.entityProjection = value.entityProjection;
+
+    if (entityProjection != null && !Objects.equals(name, entityProjection.referenceName()))
+      throw new IllegalStateException(String.format(
+          "[%s] {%s} != {%s}",
+          value.type().name().toString(),
+          name,
+          entityProjection.referenceName()
+      ));
+
+    this.isResolved = true;
 
     for (final Runnable callback : onResolvedCallbacks)
       callback.run();
@@ -486,7 +572,11 @@ public abstract class AbstractModelProjection<
   }
 
   @Override
+  public @Nullable Throwable allocationTrace() { return allocationTrace; }
+
+  @Override
   public int hashCode() {
+//    assertResolved(); // todo: this should be prohibited for unresolved projections
     return Objects.hash(model, metaProjection);
   }
 

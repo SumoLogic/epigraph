@@ -16,37 +16,40 @@
 
 package ws.epigraph;
 
+import de.uka.ilkd.pp.Layouter;
+import de.uka.ilkd.pp.NoExceptions;
+import de.uka.ilkd.pp.StringBackend;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.gdata.GData;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.printers.DataPrinter;
+import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.OpOutputPsiProcessingContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputVarProjection;
-import ws.epigraph.projections.req.output.ReqOutputVarProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.output.*;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaData;
 import ws.epigraph.schema.parser.psi.SchemaDataValue;
-import ws.epigraph.schema.parser.psi.SchemaOpOutputVarProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.Type;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqOutputTrunkVarProjection;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionsPsiParser;
-import ws.epigraph.url.projections.req.output.ReqOutputPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputReferenceContext;
+import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -75,7 +78,7 @@ public final class EpigraphTestUtil {
     final SchemaData dataPsi = dataValuePsi.getData();
     assert dataPsi != null;
 
-    final GData gData = runPsiParser(context -> SchemaGDataPsiParser.parseData(dataPsi, context));
+    final GData gData = runPsiParser(true, context -> SchemaGDataPsiParser.parseData(dataPsi, context));
 
     try {
       return GDataToData.transform(type, gData, resolver);
@@ -85,77 +88,71 @@ public final class EpigraphTestUtil {
     }
   }
 
-  public static @NotNull OpOutputVarProjection parseOpOutputVarProjection(
+  public static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpOutputVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection psiEntityProjection = EpigraphPsiUtil.parseText(
         projectionString,
-        SchemaSubParserDefinitions.OP_OUTPUT_VAR_PROJECTION,
+        SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(psiEntityProjection, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      OpInputReferenceContext opInputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpOutputReferenceContext opOutputReferenceContext =
-          new OpOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    return runPsiParser(true, context -> {
+      OpReferenceContext opOutputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      OpInputPsiProcessingContext opInputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, opInputReferenceContext);
-
-      OpOutputPsiProcessingContext opOutputPsiProcessingContext = new OpOutputPsiProcessingContext(
+      OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
           context,
-          opInputPsiProcessingContext,
           opOutputReferenceContext
       );
-      OpOutputVarProjection vp = OpOutputProjectionsPsiParser.parseVarProjection(
+      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
           varDataType,
-          psiVarProjection,
+          false,
+          psiEntityProjection,
           resolver,
-          opOutputPsiProcessingContext
+          opPsiProcessingContext
       );
 
       opOutputReferenceContext.ensureAllReferencesResolved();
-      opInputReferenceContext.ensureAllReferencesResolved();
 
       return vp;
     });
 
   }
 
-  public static @NotNull StepsAndProjection<ReqOutputVarProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
       @NotNull DataType type,
-      @NotNull OpOutputVarProjection op,
+      @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqOutputTrunkVarProjection psi = EpigraphPsiUtil.parseText(
+    UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_OUTPUT_VAR_PROJECTION,
+        UrlSubParserDefinitions.REQ_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
     failIfHasErrors(psi, errorsAccumulator);
 
-    return runPsiParser(context -> {
-      ReqOutputReferenceContext reqOutputReferenceContext =
-          new ReqOutputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+    return runPsiParser(true, context -> {
+      ReqReferenceContext reqOutputReferenceContext =
+          new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
-      ReqOutputPsiProcessingContext reqOutputPsiProcessingContext =
-          new ReqOutputPsiProcessingContext(context, reqOutputReferenceContext);
+      ReqPsiProcessingContext reqOutputPsiProcessingContext =
+          new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqOutputVarProjection> res = ReqOutputProjectionsPsiParser.parseTrunkVarProjection(
+      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
           type,
-          op,
           false,
+          op,
           psi,
           resolver,
           reqOutputPsiProcessingContext
@@ -165,6 +162,27 @@ public final class EpigraphTestUtil {
 
       return res;
     });
+  }
+
+  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
+    StringBackend sb = new StringBackend(120);
+    Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
+
+    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
+            ProjectionReferenceName.EMPTY,
+            null
+        ) {
+          @Override
+          public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
+            return true;
+          }
+        };
+
+    OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
+    printer.printEntity(projection, 0);
+    layouter.close();
+    return sb.getString();
   }
 
   public static void checkEquals(@NotNull Data expected, @NotNull Data actual) {

@@ -18,14 +18,10 @@ package ws.epigraph.wire.json;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.wire.*;
-import ws.epigraph.wire.json.reader.OpInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqInputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqOutputJsonFormatReader;
-import ws.epigraph.wire.json.reader.ReqUpdateJsonFormatReader;
-import ws.epigraph.wire.json.writer.OpInputJsonFormatWriter;
-import ws.epigraph.wire.json.writer.ReqInputJsonFormatWriter;
-import ws.epigraph.wire.json.writer.ReqOutputJsonFormatWriter;
-import ws.epigraph.wire.json.writer.ReqUpdateJsonFormatWriter;
+import ws.epigraph.wire.json.reader.OpJsonFormatReader;
+import ws.epigraph.wire.json.reader.ReqJsonFormatReader;
+import ws.epigraph.wire.json.writer.OpJsonFormatWriter;
+import ws.epigraph.wire.json.writer.ReqJsonFormatWriter;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,42 +30,23 @@ public class JsonFormatFactories implements FormatFactories {
   public static final JsonFormatFactories INSTANCE = new JsonFormatFactories();
 
   @Override
-  public @NotNull FormatReader.Factory<? extends OpInputFormatReader> opInputReaderFactory() {
-    return new OpInputJsonFormatReader.Factory();
+  public @NotNull FormatReader.Factory<? extends OpFormatReader> opReaderFactory() {
+    return new OpJsonFormatReader.Factory();
   }
 
   @Override
-  public @NotNull FormatReader.Factory<? extends ReqInputFormatReader> reqInputReaderFactory() {
-    return new ReqInputJsonFormatReader.Factory();
+  public @NotNull FormatWriter.Factory<? extends OpFormatWriter> opWriterFactory() {
+    return new OpJsonFormatWriter.OpOutputJsonFormatWriterFactory();
   }
 
   @Override
-  public @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory() {
-    return new ReqUpdateJsonFormatReader.Factory();
+  public @NotNull FormatReader.Factory<? extends ReqFormatReader> reqReaderFactory() {
+    return new ReqJsonFormatReader.Factory();
   }
 
   @Override
-  public @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory() {
-    return new ReqOutputJsonFormatReader.Factory();
+  public @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqWriterFactory() {
+    return new ReqJsonFormatWriter.ReqJsonFormatWriterFactory();
   }
 
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory() {
-    return new ReqOutputJsonFormatWriter.ReqOutputJsonFormatWriterFactory();
-  }
-
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory() {
-    return new ReqInputJsonFormatWriter.ReqInputJsonFormatWriterFactory();
-  }
-
-  @Override
-  public @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory() {
-    return new ReqUpdateJsonFormatWriter.ReqUpdateJsonFormatWriterFactory();
-  }
-
-  @Override
-  public @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory() {
-    return new OpInputJsonFormatWriter.OpInputJsonFormatWriterFactory();
-  }
 }

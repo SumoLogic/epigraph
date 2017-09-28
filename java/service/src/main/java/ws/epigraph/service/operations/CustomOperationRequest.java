@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,20 @@ package ws.epigraph.service.operations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
-import ws.epigraph.projections.req.path.ReqFieldPath;
+import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CustomOperationRequest extends OperationRequest {
   private final @Nullable Data data;
-  private final @Nullable ReqInputFieldProjection inputProjection;
+  private final @Nullable ReqFieldProjection inputProjection;
 
   public CustomOperationRequest(
-      final @Nullable ReqFieldPath path,
+      final @Nullable ReqFieldProjection path,
       final @Nullable Data data,
-      final @Nullable ReqInputFieldProjection inputProjection,
-      final @NotNull ReqOutputFieldProjection outputProjection) {
+      final @Nullable ReqFieldProjection inputProjection,
+      final @NotNull ReqFieldProjection outputProjection) {
     super(path, outputProjection);
     this.data = data;
     this.inputProjection = inputProjection;
@@ -42,5 +40,5 @@ public class CustomOperationRequest extends OperationRequest {
 
   public @Nullable Data data() { return data; }
 
-  public @Nullable ReqInputFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable ReqFieldProjection inputProjection() { return inputProjection; }
 }

@@ -24,19 +24,11 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface FormatFactories {
-  @NotNull FormatReader.Factory<? extends OpInputFormatReader> opInputReaderFactory();
+  @NotNull FormatReader.Factory<? extends OpFormatReader> opReaderFactory();
 
-  @NotNull FormatReader.Factory<? extends ReqInputFormatReader> reqInputReaderFactory();
+  @NotNull FormatWriter.Factory<? extends OpFormatWriter> opWriterFactory();
 
-  @NotNull FormatReader.Factory<? extends ReqUpdateFormatReader> reqUpdateReaderFactory();
+  @NotNull FormatReader.Factory<? extends ReqFormatReader> reqReaderFactory();
 
-  @NotNull FormatReader.Factory<? extends ReqOutputFormatReader> reqOutputReaderFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqOutputFormatWriter> reqOutputWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqInputFormatWriter> reqInputWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends ReqUpdateFormatWriter> reqUpdateWriterFactory();
-
-  @NotNull FormatWriter.Factory<? extends OpInputFormatWriter> opInputWriterFactory();
+  @NotNull FormatWriter.Factory<? extends ReqFormatWriter> reqWriterFactory();
 }

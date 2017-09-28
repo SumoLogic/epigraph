@@ -17,7 +17,7 @@
 package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
+import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingMessage;
@@ -28,19 +28,17 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPathPsiProcessingContext extends DelegatingPsiProcessingContext {
-  private final OpInputPsiProcessingContext inputPsiProcessingContext;
+  private final OpPsiProcessingContext inputPsiProcessingContext;
 
   public OpPathPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
-      final @NotNull OpInputPsiProcessingContext context) {
+      final @NotNull OpPsiProcessingContext context2) {
     super(psiProcessingContext);
-    inputPsiProcessingContext = context;
+    inputPsiProcessingContext = context2;
   }
 
-  @NotNull
   @Override
-  public List<PsiProcessingMessage> messages() { return inputPsiProcessingContext.messages(); }
+  public @NotNull List<PsiProcessingMessage> messages() { return inputPsiProcessingContext.messages(); }
 
-  @NotNull
-  public OpInputPsiProcessingContext inputPsiProcessingContext() { return inputPsiProcessingContext; }
+  public @NotNull OpPsiProcessingContext inputPsiProcessingContext() { return inputPsiProcessingContext; }
 }

@@ -16,22 +16,17 @@
 
 package ws.epigraph.projections.op.delete;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.input.OpInputPsiProcessingContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.projections.op.OpTestUtil;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
-import ws.epigraph.schema.parser.psi.SchemaOpDeleteVarProjection;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 
 import static org.junit.Assert.assertEquals;
-import static ws.epigraph.test.TestUtil.*;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -50,7 +45,7 @@ public class OpDeleteProjectionsTest {
         "    +bestFriend :`record` (",
         "      id,",
         "      bestFriend: id",
-        // todo get default tag from Person.type, once available
+        "      bestFriend2: id",
         "    ),",
         "    friends *+( :id )",
         "  )",
@@ -63,7 +58,7 @@ public class OpDeleteProjectionsTest {
         "  id,",
         "  `record` (",
         "    +id { ;+param1: epigraph.String { @epigraph.annotations.Doc \"some doc\", default: \"hello world\" } },",
-        "    +bestFriend :`record` ( +id, +bestFriend :id ),",
+        "    +bestFriend :`record` ( +id, bestFriend :id, +bestFriend2 :id ),",
         "    friends *+( :id )",
         "  )",
         ")"
@@ -209,15 +204,15 @@ public class OpDeleteProjectionsTest {
 
   private void testParsingVarProjection(DataType varDataType, String projectionString, String expected) {
 
-    OpDeleteVarProjection varProjection = parseOpDeleteVarProjection(varDataType, projectionString);
+    OpEntityProjection varProjection = parseOpDeleteVarProjection(varDataType, projectionString);
 
-    String actual = printOpDeleteVarProjection(varProjection);
+    String actual = OpTestUtil.printOpEntityProjection(varProjection);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  private OpDeleteVarProjection parseOpDeleteVarProjection(DataType varDataType, String projectionString) {
+  private OpEntityProjection parseOpDeleteVarProjection(DataType varDataType, String projectionString) {
     TypesResolver
         resolver = new SimpleTypesResolver(
         PersonId.type,
@@ -232,49 +227,11 @@ public class OpDeleteProjectionsTest {
         epigraph.annotations.Deprecated.type
     );
 
-    return parseOpDeleteVarProjection(varDataType, projectionString, resolver);
-  }
-
-  public static OpDeleteVarProjection parseOpDeleteVarProjection(
-      @NotNull DataType varDataType,
-      @NotNull String projectionString,
-      @NotNull TypesResolver resolver) {
-
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    SchemaOpDeleteVarProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    return OpTestUtil.parseOpDeleteVarProjection(
+        varDataType,
         projectionString,
-        SchemaSubParserDefinitions.OP_DELETE_VAR_PROJECTION,
-        errorsAccumulator
+        resolver
     );
-
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
-
-    return runPsiParser(context -> {
-      OpInputReferenceContext inputReferenceContext =
-          new OpInputReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-      OpDeleteReferenceContext deleteReferenceContext =
-          new OpDeleteReferenceContext(ProjectionReferenceName.EMPTY, null, context);
-
-      OpInputPsiProcessingContext inputPsiProcessingContext =
-          new OpInputPsiProcessingContext(context, inputReferenceContext);
-      OpDeletePsiProcessingContext deletePsiProcessingContext =
-          new OpDeletePsiProcessingContext(context, inputPsiProcessingContext, deleteReferenceContext);
-
-      OpDeleteVarProjection vp = OpDeleteProjectionsPsiParser.parseVarProjection(
-          varDataType,
-          false,
-          psiVarProjection,
-          resolver,
-          deletePsiProcessingContext
-      );
-
-      deleteReferenceContext.ensureAllReferencesResolved();
-      inputReferenceContext.ensureAllReferencesResolved();
-
-      return vp;
-    });
-
   }
 
 }

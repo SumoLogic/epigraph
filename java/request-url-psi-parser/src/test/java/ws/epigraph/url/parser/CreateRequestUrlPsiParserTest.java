@@ -20,22 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.input.ReqInputFieldProjection;
-import ws.epigraph.projections.req.output.ReqOutputFieldProjection;
+import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
-import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
-import ws.epigraph.refs.SimpleTypesResolver;
-import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.tests.*;
-import ws.epigraph.types.DataType;
-import ws.epigraph.url.CreateRequestUrl;
-import ws.epigraph.url.parser.psi.UrlCreateUrl;
+import ws.epigraph.url.NonReadRequestUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,17 +42,7 @@ import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.printParameters
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class CreateRequestUrlPsiParserTest {
-  private final TypesResolver resolver = new SimpleTypesResolver(
-      PersonId.type,
-      Person.type,
-      User.type,
-      UserId.type,
-      UserRecord.type,
-      String_Person_Map.type,
-      epigraph.String.type,
-      epigraph.Boolean.type
-  );
+public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTest {
 
   private final String idlText = lines(
       "namespace test",
@@ -75,7 +58,6 @@ public class CreateRequestUrlPsiParserTest {
   );
 
   private final CreateOperationDeclaration createIdl1;
-  private final DataType resourceType = String_Person_Map.type.dataType();
 
   {
     ResourcesSchema schema = parseIdl(idlText, resolver);
@@ -111,7 +93,7 @@ public class CreateRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull CreateRequestUrl requestUrl = CreateRequestUrlPsiParser.parseCreateRequestUrl(
+    final @NotNull NonReadRequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -119,34 +101,24 @@ public class CreateRequestUrlPsiParserTest {
         context
     );
 
-    failIfHasErrors(context.messages());
+    failIfHasErrors(true, context.messages());
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
-    final @Nullable ReqInputFieldProjection inputProjection = requestUrl.inputProjection();
+    final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
-    else assertEquals(expectedInputProjection, printReqInputVarProjection(inputProjection.varProjection()));
+    else
+      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().entityProjection(), 0));
 
-    final @NotNull StepsAndProjection<ReqOutputFieldProjection> stepsAndProjection = requestUrl.outputProjection();
+    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        printReqOutputFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));
   }
 
-
-  private static UrlCreateUrl parseUrlPsi(@NotNull String text) {
-    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-
-    @NotNull UrlCreateUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.CREATE_URL, errorsAccumulator);
-
-    failIfHasErrors(urlPsi, errorsAccumulator);
-
-    return urlPsi;
-  }
 
 }

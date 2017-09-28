@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.path.OpVarPath;
-import ws.epigraph.projections.req.path.ReqVarPath;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -28,7 +28,7 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqVarPath;
+import ws.epigraph.url.parser.psi.UrlReqEntityPath;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -49,7 +49,7 @@ public class ReqPathParserTest {
       epigraph.String.type
   );
 
-  private final OpVarPath personOpPath = parseOpVarPath(
+  private final OpEntityProjection personOpPath = parseOpEntityProjection(
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
@@ -72,11 +72,11 @@ public class ReqPathParserTest {
   @Test
   public void testShortPathNotMatching() {
     String expr = ":record / friendsMap / 'John' ;p3 = 'foo' :record";
-    UrlReqVarPath psi = getPsi(expr);
+    UrlReqEntityPath psi = getPsi(expr);
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context ->
-          ReqPathPsiParser.parseVarPath(
+          ReqPathPsiParser.parseEntityPath(
               personOpPath,
               Person.type.dataType(null),
               psi,
@@ -93,10 +93,10 @@ public class ReqPathParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    UrlReqVarPath psi = getPsi(expr);
+    UrlReqEntityPath psi = getPsi(expr);
 
-    final @NotNull ReqVarPath path = TestUtil.runPsiParser(context ->
-        ReqPathPsiParser.parseVarPath(
+    final @NotNull ReqEntityProjection path = TestUtil.runPsiParser(true, context ->
+        ReqPathPsiParser.parseEntityPath(
             personOpPath,
             Person.type.dataType(null),
             psi,
@@ -104,18 +104,18 @@ public class ReqPathParserTest {
             new ReqPathPsiProcessingContext(context)
         ));
 
-    String s = TestUtil.printReqVarPath(path);
+    String s = TestUtil.printReqEntityPath(path);
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
   }
 
-  private UrlReqVarPath getPsi(String projectionString) {
+  private UrlReqEntityPath getPsi(String projectionString) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqVarPath psiVarPath = EpigraphPsiUtil.parseText(
+    UrlReqEntityPath psiVarPath = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_VAR_PATH,
+        UrlSubParserDefinitions.REQ_ENTITY_PATH,
         errorsAccumulator
     );
 
@@ -124,8 +124,8 @@ public class ReqPathParserTest {
     return psiVarPath;
   }
 
-  private @NotNull OpVarPath parseOpVarPath(String projectionString) {
-    return ReqTestUtil.parseOpVarPath(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parseOpEntityProjection(String projectionString) {
+    return ReqTestUtil.parseOpEntityPath(dataType, projectionString, resolver);
   }
 
 }

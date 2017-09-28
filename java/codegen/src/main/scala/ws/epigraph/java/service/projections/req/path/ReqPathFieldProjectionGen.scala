@@ -21,32 +21,32 @@ import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path.OpFieldPath
+import ws.epigraph.projections.op.OpFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathFieldProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  fieldName: String,
-  protected val op: OpFieldPath,
+  protected val fieldName: String,
+  protected val op: OpFieldProjection,
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpFieldPath
+  override type OpFieldProjectionType = OpFieldProjection
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
   override lazy val dataProjectionGen: ReqPathProjectionGen =
-    ReqPathVarProjectionGen.dataProjectionGen(
+    ReqPathEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.varProjection(),
+      op.entityProjection(),
       namespaceSuffix,
       ctx
     )
 
-  override protected def generate: String = generate(
-    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqFieldPath")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqFieldPath")
+//  )
 
 }

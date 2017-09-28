@@ -22,9 +22,10 @@ import ws.epigraph.compiler.CDatumType
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.service.projections.req.ReqModelProjectionGen
 import ws.epigraph.java.service.projections.req.output.ReqOutputModelProjectionGen
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.output.OpOutputModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 /**
@@ -53,7 +54,7 @@ trait ModelAsmGen extends AsmGen {
 
   importManager.use(namespace.append(shortClassName))
 
-  case class TailParts(tailProjectionGen: ReqOutputModelProjectionGen) {
+  case class TailParts(tailProjectionGen: ReqModelProjectionGen) {
     def `type`: CDatumType = JavaGenUtils.toCType(tailProjectionGen.op.`type`())
 
     val tailGenName: importManager.ImportedName = importManager.use(tailProjectionGen.fullClassName)
@@ -67,9 +68,7 @@ trait ModelAsmGen extends AsmGen {
     def javadoc: String = s"$assembler {@code ${ ln(`type`) }} value assembler"
   }
 
-  protected val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg =>
-    TailParts(tg.asInstanceOf[ReqOutputModelProjectionGen])
-  }.toSeq
+  protected val tps: Seq[TailParts] = g.normalizedTailGenerators.values.map { tg => TailParts(tg) }.toSeq
 
   protected val hasTails: Boolean = g.normalizedTailGenerators.nonEmpty
 
@@ -91,7 +90,8 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
 
   // meta stuff
 
-  protected lazy val metaProjection: OpOutputModelProjection[_, _, _] = g.op.metaProjection().asInstanceOf[OpOutputModelProjection[_, _, _]]
+  protected lazy val metaProjection: OpModelProjection[_, _, _, _] =
+    g.op.metaProjection().asInstanceOf[OpModelProjection[_, _, _, _]]
 
   protected lazy val hasMeta: Boolean = g.metaGeneratorOpt.isDefined
 

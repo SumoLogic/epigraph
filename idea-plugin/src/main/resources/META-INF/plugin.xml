@@ -115,7 +115,7 @@
     <annotator language="epigraph_schema"
                implementationClass="ws.epigraph.ideaplugin.schema.highlighting.SchemaAnnotator"/>
     <annotator language="epigraph_schema"
-               implementationClass="ws.epigraph.ideaplugin.schema.highlighting.SchemaOpOutputProjectionsAnnotator"/>
+               implementationClass="ws.epigraph.ideaplugin.schema.highlighting.SchemaOpProjectionsAnnotator"/>
     <!-- highlight errors in parents even if there are errors in children -->
     <highlightRangeExtension
         implementation="ws.epigraph.ideaplugin.schema.highlighting.SchemaHighlightRangeExtension"/>

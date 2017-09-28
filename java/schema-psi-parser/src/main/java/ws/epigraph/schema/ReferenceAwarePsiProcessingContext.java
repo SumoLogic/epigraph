@@ -17,18 +17,16 @@
 package ws.epigraph.schema;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.delete.OpDeleteReferenceContext;
-import ws.epigraph.projections.op.input.OpInputReferenceContext;
-import ws.epigraph.projections.op.output.OpOutputReferenceContext;
+import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface ReferenceAwarePsiProcessingContext extends PsiProcessingContext {
-  @NotNull OpInputReferenceContext inputReferenceContext();
+  @NotNull OpReferenceContext inputReferenceContext();
 
-  @NotNull OpOutputReferenceContext outputReferenceContext();
+  @NotNull OpReferenceContext outputReferenceContext();
 
-  @NotNull OpDeleteReferenceContext deleteReferenceContext();
+  @NotNull OpReferenceContext deleteReferenceContext();
 }

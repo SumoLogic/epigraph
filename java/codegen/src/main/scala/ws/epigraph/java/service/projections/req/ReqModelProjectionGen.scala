@@ -38,9 +38,11 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
 
-  protected def reqVarProjectionFqn: Qn
+  protected def reqVarProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqEntityProjection")
 
-  protected def reqModelProjectionFqn: Qn
+  protected def reqModelProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqModelProjection")
 
   protected def reqModelProjectionParams: String
 
@@ -52,13 +54,19 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   override def description: String = "[M] " + super.description
 
+  protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  public boolean flagged() { return raw.flagged(); }
+"""/*@formatter:on*/
+  )
+
+
   // -----------
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
   override def children: Iterable[JavaGen] =
     super.children ++ metaGeneratorOpt.iterator ++ /*tailGenerators.values ++*/
-    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/.values // filter out named generators
+    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/ .values // filter out named generators
 
   protected lazy val params: CodeChunk =
     ReqProjectionGen.generateParams(op.params(), namespace.toString, "raw.params()")
@@ -102,7 +110,11 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
   lazy val normalizedTailGenerators: Map[OpProjectionType, ReqModelProjectionGen] =
     Option(op.polymorphicTails()).map(
       _.asInstanceOf[java.util.List[OpProjectionType]].map { t: OpProjectionType =>
-        t -> tailGenerator(this.asInstanceOf[GenType], op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType], normalized = true)
+        t -> tailGenerator(
+          this.asInstanceOf[GenType],
+          op.normalizedForType(t.`type`()).asInstanceOf[OpProjectionType],
+          normalized = true
+        )
       }.toListMap
     ).getOrElse(Map())
 
@@ -187,7 +199,12 @@ ${normalizedTailGenerators.map{ case (t,g) =>
         _default.run();
     }
   }\n"""/*@formatter:on*/ ,
-    Set("ws.epigraph.types.Type", "java.util.function.Function", "java.util.function.Supplier", "java.util.function.Consumer")
+    Set(
+      "ws.epigraph.types.Type",
+      "java.util.function.Function",
+      "java.util.function.Supplier",
+      "java.util.function.Consumer"
+    )
   )
 
   protected def classJavadoc =/*@formatter:off*/sn"""\

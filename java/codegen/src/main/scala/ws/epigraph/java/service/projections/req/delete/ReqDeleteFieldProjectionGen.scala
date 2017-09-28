@@ -21,38 +21,38 @@ import ws.epigraph.java.JavaGenUtils.up
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqFieldProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.delete.OpDeleteFieldProjection
+import ws.epigraph.projections.op.OpFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqDeleteFieldProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  fieldName: String,
-  protected val op: OpDeleteFieldProjection,
+  protected val fieldName: String,
+  protected val op: OpFieldProjection,
   baseNamespaceOpt: Option[Qn],
   override protected val namespaceSuffix: Qn,
   dataParentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpDeleteFieldProjection
+  override type OpFieldProjectionType = OpFieldProjection
 
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
   override lazy val dataProjectionGen: ReqDeleteProjectionGen =
-    ReqDeleteVarProjectionGen.dataProjectionGen(
+    ReqDeleteEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.varProjection(),
+      op.entityProjection(),
       baseNamespaceOpt,
       namespaceSuffix,
       dataParentClassGenOpt,
       ctx
     )
 
-  override protected def generate: String = generate(
-    fieldName, Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjection")
-  )
+//  override protected def generate: String = generate(
+//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteFieldProjection")
+//  )
 
 }
