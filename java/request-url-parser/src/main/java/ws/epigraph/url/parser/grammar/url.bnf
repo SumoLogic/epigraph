@@ -111,8 +111,6 @@ url ::= readUrl | nonReadUrl
 
 // todo get rid of requestParms?
 
-// todo rename reqOutput* to req*
-
 // real entry points:
 readUrl ::= '/' qid reqTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
   extends = "url"
@@ -145,19 +143,17 @@ private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 
 // no tails, no branching, no meta
 
-reqVarPath ::= ( ':' tagName)? reqParamsAndAnnotations reqModelPath
+reqEntityPath ::= ( ':' tagName)? reqModelPath
 
-reqModelPath ::= ( reqRecordModelPath
-                 | reqMapModelPath
-                 )?
+reqModelPath ::= reqParamsAndAnnotations? ( reqRecordModelPath | reqMapModelPath )?
 
 // req record path
 reqRecordModelPath ::= '/' reqFieldPathEntry {pin=2}
 reqFieldPathEntry ::= qid reqFieldPath
-reqFieldPath ::= /* reqParamsAndAnnotations */ reqVarPath {pin=1}
+reqFieldPath ::= /* reqParamsAndAnnotations */ reqEntityPath {pin=1}
 
 // req map path
-reqMapModelPath ::= '/' reqTrunkKeyProjection reqVarPath {pin=2}
+reqMapModelPath ::= '/' reqTrunkKeyProjection reqEntityPath {pin=2}
 
 // req output --------------------------------------------------------
 // this is based on opInput from schema.bnf

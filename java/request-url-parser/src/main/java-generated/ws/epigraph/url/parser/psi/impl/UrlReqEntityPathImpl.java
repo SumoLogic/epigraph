@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 Sumo Logic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // This is a generated file. Not intended for manual editing.
 package ws.epigraph.url.parser.psi.impl;
 
@@ -11,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqVarPathImpl extends ASTWrapperPsiElement implements UrlReqVarPath {
+public class UrlReqEntityPathImpl extends ASTWrapperPsiElement implements UrlReqEntityPath {
 
-  public UrlReqVarPathImpl(ASTNode node) {
+  public UrlReqEntityPathImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqVarPath(this);
+    visitor.visitReqEntityPath(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,20 +44,8 @@ public class UrlReqVarPathImpl extends ASTWrapperPsiElement implements UrlReqVar
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
   public UrlReqModelPath getReqModelPath() {
     return findNotNullChildByClass(UrlReqModelPath.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
   @Override

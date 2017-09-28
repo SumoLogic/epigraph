@@ -64,6 +64,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_COMA_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_COMA_SINGLE_TAG_PROJECTION");
   IElementType U_REQ_ENTITY_MULTI_TAIL = new UrlElementType("U_REQ_ENTITY_MULTI_TAIL");
   IElementType U_REQ_ENTITY_MULTI_TAIL_ITEM = new UrlElementType("U_REQ_ENTITY_MULTI_TAIL_ITEM");
+  IElementType U_REQ_ENTITY_PATH = new UrlElementType("U_REQ_ENTITY_PATH");
   IElementType U_REQ_ENTITY_POLYMORPHIC_TAIL = new UrlElementType("U_REQ_ENTITY_POLYMORPHIC_TAIL");
   IElementType U_REQ_ENTITY_SINGLE_TAIL = new UrlElementType("U_REQ_ENTITY_SINGLE_TAIL");
   IElementType U_REQ_FIELD_PATH = new UrlElementType("U_REQ_FIELD_PATH");
@@ -91,7 +92,6 @@ public interface UrlElementTypes {
   IElementType U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION");
   IElementType U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION");
   IElementType U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION");
-  IElementType U_REQ_VAR_PATH = new UrlElementType("U_REQ_VAR_PATH");
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
   IElementType U_TYPE_REF = new UrlElementType("U_TYPE_REF");
   IElementType U_URL = new UrlElementType("U_URL");
@@ -253,6 +253,9 @@ public interface UrlElementTypes {
       else if (type == U_REQ_ENTITY_MULTI_TAIL_ITEM) {
         return new UrlReqEntityMultiTailItemImpl(node);
       }
+      else if (type == U_REQ_ENTITY_PATH) {
+        return new UrlReqEntityPathImpl(node);
+      }
       else if (type == U_REQ_ENTITY_POLYMORPHIC_TAIL) {
         return new UrlReqEntityPolymorphicTailImpl(node);
       }
@@ -333,9 +336,6 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION) {
         return new UrlReqUnnamedTrunkEntityProjectionImpl(node);
-      }
-      else if (type == U_REQ_VAR_PATH) {
-        return new UrlReqVarPathImpl(node);
       }
       else if (type == U_TAG_NAME) {
         return new UrlTagNameImpl(node);

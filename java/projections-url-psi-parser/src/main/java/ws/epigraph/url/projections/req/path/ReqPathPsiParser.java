@@ -48,7 +48,7 @@ public final class ReqPathPsiParser {
   public static ReqVarPath parseEntityPath(
       @NotNull OpEntityProjection op,
       @NotNull DataTypeApi dataType,
-      @NotNull UrlReqVarPath psi,
+      @NotNull UrlReqEntityPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqPathPsiProcessingContext context) throws PsiProcessingException {
 
@@ -98,8 +98,6 @@ public final class ReqPathPsiParser {
     final ReqModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
         opModelPath,
         opTag.type(),
-        parseReqParams(psi.getReqParamList(), opModelPath.params(), typesResolver, psi, context),
-        parseAnnotations(psi.getReqAnnotationList(), context),
         modelPathPsi,
         typesResolver,
         context
@@ -125,15 +123,16 @@ public final class ReqPathPsiParser {
 //    );
 //  }
 
-  public static @NotNull ReqModelPath<?, ?, ?> parseModelPath(
+  private static @NotNull ReqModelPath<?, ?, ?> parseModelPath(
       @NotNull OpModelProjection<?, ?, ?, ?> op,
       @NotNull DatumTypeApi type,
-      @NotNull ReqParams params,
-      @NotNull Directives directives,
       @NotNull UrlReqModelPath psi,
       @NotNull TypesResolver typesResolver,
       @NotNull ReqPathPsiProcessingContext context)
       throws PsiProcessingException {
+
+    ReqParams params = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, psi, context);
+    Directives directives = parseAnnotations(psi.getReqAnnotationList(), context);
 
     switch (type.kind()) {
       case RECORD:
@@ -264,7 +263,7 @@ public final class ReqPathPsiParser {
 
 //    @NotNull Annotations fieldAnnotations = parseAnnotations(psi.getReqAnnotationList(), context);
 
-    @Nullable UrlReqVarPath fieldVarPathPsi = psi.getReqVarPath();
+    @Nullable UrlReqEntityPath fieldVarPathPsi = psi.getReqEntityPath();
 
     final ReqVarPath varProjection;
 
@@ -300,7 +299,7 @@ public final class ReqPathPsiParser {
         context
     );
 
-    @Nullable UrlReqVarPath valueProjectionPsi = psi.getReqVarPath();
+    @Nullable UrlReqEntityPath valueProjectionPsi = psi.getReqEntityPath();
 
     if (valueProjectionPsi == null)
       throw new PsiProcessingException("Map value projection not specified", psi, context);
@@ -343,7 +342,7 @@ public final class ReqPathPsiParser {
     );
   }
 
-  public static @NotNull ReqPrimitiveModelPath parsePrimitiveModelPath(
+  private static @NotNull ReqPrimitiveModelPath parsePrimitiveModelPath(
       @NotNull PrimitiveTypeApi type,
       @NotNull ReqParams params,
       @NotNull Directives directives,

@@ -21,21 +21,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqMapModelPath extends PsiElement {
+public interface UrlReqEntityPath extends PsiElement {
 
   @NotNull
-  UrlDatum getDatum();
-
-  @NotNull
-  List<UrlReqAnnotation> getReqAnnotationList();
+  UrlReqModelPath getReqModelPath();
 
   @Nullable
-  UrlReqEntityPath getReqEntityPath();
+  UrlTagName getTagName();
 
-  @NotNull
-  List<UrlReqParam> getReqParamList();
-
-  @NotNull
-  PsiElement getSlash();
+  @Nullable
+  PsiElement getColon();
 
 }

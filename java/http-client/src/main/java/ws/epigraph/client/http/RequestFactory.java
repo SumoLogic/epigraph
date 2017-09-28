@@ -40,9 +40,9 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqEntityPath;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
-import ws.epigraph.url.parser.psi.UrlReqVarPath;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
@@ -496,7 +496,7 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    UrlReqVarPath psi = getReqPathPsi(path);
+    UrlReqEntityPath psi = getReqPathPsi(path);
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     try {
@@ -514,14 +514,14 @@ public final class RequestFactory {
     throw new IllegalArgumentException(dumpErrors(context.messages()));
   }
 
-  private static @NotNull UrlReqVarPath getReqPathPsi(@NotNull String projectionString)
+  private static @NotNull UrlReqEntityPath getReqPathPsi(@NotNull String projectionString)
       throws IllegalArgumentException {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqVarPath psiVarPath = EpigraphPsiUtil.parseText(
+    UrlReqEntityPath psiVarPath = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_VAR_PATH,
+        UrlSubParserDefinitions.REQ_ENTITY_PATH,
         errorsAccumulator
     );
 

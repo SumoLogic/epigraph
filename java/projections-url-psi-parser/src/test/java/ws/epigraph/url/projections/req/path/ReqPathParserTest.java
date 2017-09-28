@@ -28,7 +28,7 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReqVarPath;
+import ws.epigraph.url.parser.psi.UrlReqEntityPath;
 import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -72,7 +72,7 @@ public class ReqPathParserTest {
   @Test
   public void testShortPathNotMatching() {
     String expr = ":record / friendsMap / 'John' ;p3 = 'foo' :record";
-    UrlReqVarPath psi = getPsi(expr);
+    UrlReqEntityPath psi = getPsi(expr);
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context ->
@@ -93,7 +93,7 @@ public class ReqPathParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    UrlReqVarPath psi = getPsi(expr);
+    UrlReqEntityPath psi = getPsi(expr);
 
     final @NotNull ReqVarPath path = TestUtil.runPsiParser(true, context ->
         ReqPathPsiParser.parseEntityPath(
@@ -110,12 +110,12 @@ public class ReqPathParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private UrlReqVarPath getPsi(String projectionString) {
+  private UrlReqEntityPath getPsi(String projectionString) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReqVarPath psiVarPath = EpigraphPsiUtil.parseText(
+    UrlReqEntityPath psiVarPath = EpigraphPsiUtil.parseText(
         projectionString,
-        UrlSubParserDefinitions.REQ_VAR_PATH,
+        UrlSubParserDefinitions.REQ_ENTITY_PATH,
         errorsAccumulator
     );
 

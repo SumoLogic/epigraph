@@ -179,6 +179,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqEntityPath(@NotNull UrlReqEntityPath o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqEntityPolymorphicTail(@NotNull UrlReqEntityPolymorphicTail o) {
     visitPsiElement(o);
   }
@@ -284,10 +288,6 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqUnnamedTrunkEntityProjection(@NotNull UrlReqUnnamedTrunkEntityProjection o) {
-    visitPsiElement(o);
-  }
-
-  public void visitReqVarPath(@NotNull UrlReqVarPath o) {
     visitPsiElement(o);
   }
 

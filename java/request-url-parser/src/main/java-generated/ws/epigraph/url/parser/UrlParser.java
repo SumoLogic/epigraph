@@ -156,6 +156,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_ENTITY_MULTI_TAIL_ITEM) {
       r = reqEntityMultiTailItem(b, 0);
     }
+    else if (t == U_REQ_ENTITY_PATH) {
+      r = reqEntityPath(b, 0);
+    }
     else if (t == U_REQ_ENTITY_POLYMORPHIC_TAIL) {
       r = reqEntityPolymorphicTail(b, 0);
     }
@@ -237,9 +240,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION) {
       r = reqUnnamedTrunkEntityProjection(b, 0);
     }
-    else if (t == U_REQ_VAR_PATH) {
-      r = reqVarPath(b, 0);
-    }
     else if (t == U_REQUEST_PARAM) {
       r = requestParam(b, 0);
     }
@@ -280,7 +280,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // qid '=' dataValue
   public static boolean annotation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "annotation")) return false;
-    if (!nextTokenIs(b, U_ID)) return false;
+    if (!nextTokenIs(b, "<custom annotation>", U_ID)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_ANNOTATION, "<custom annotation>");
     r = qid(b, l + 1);
@@ -474,7 +474,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // '<' '+'? reqTrunkFieldProjection
   public static boolean inputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inputProjection")) return false;
-    if (!nextTokenIs(b, U_ANGLE_LEFT)) return false;
+    if (!nextTokenIs(b, "<input projection>", U_ANGLE_LEFT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_INPUT_PROJECTION, "<input projection>");
     r = consumeToken(b, U_ANGLE_LEFT);
@@ -665,7 +665,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   // '>' '+'? reqTrunkFieldProjection
   public static boolean outputProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "outputProjection")) return false;
-    if (!nextTokenIs(b, U_ANGLE_RIGHT)) return false;
+    if (!nextTokenIs(b, "<output projection>", U_ANGLE_RIGHT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, U_OUTPUT_PROJECTION, "<output projection>");
     r = consumeToken(b, U_ANGLE_RIGHT);
@@ -1387,6 +1387,36 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // ( ':' tagName)? reqModelPath
+  public static boolean reqEntityPath(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityPath")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ENTITY_PATH, "<req entity path>");
+    r = reqEntityPath_0(b, l + 1);
+    r = r && reqModelPath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // ( ':' tagName)?
+  private static boolean reqEntityPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityPath_0")) return false;
+    reqEntityPath_0_0(b, l + 1);
+    return true;
+  }
+
+  // ':' tagName
+  private static boolean reqEntityPath_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqEntityPath_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_COLON);
+    r = r && tagName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // ':' '~' ( reqEntitySingleTail | reqEntityMultiTail )
   public static boolean reqEntityPolymorphicTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqEntityPolymorphicTail")) return false;
@@ -1424,12 +1454,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // reqVarPath
+  // reqEntityPath
   public static boolean reqFieldPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqFieldPath")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_FIELD_PATH, "<req field path>");
-    r = reqVarPath(b, l + 1);
+    r = reqEntityPath(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1448,7 +1478,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '/' reqTrunkKeyProjection reqVarPath
+  // '/' reqTrunkKeyProjection reqEntityPath
   public static boolean reqMapModelPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqMapModelPath")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
@@ -1457,7 +1487,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, U_SLASH);
     r = r && reqTrunkKeyProjection(b, l + 1);
     p = r; // pin = 2
-    r = r && reqVarPath(b, l + 1);
+    r = r && reqEntityPath(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -1549,21 +1579,34 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( reqRecordModelPath
-  //                  | reqMapModelPath
-  //                  )?
+  // reqParamsAndAnnotations? ( reqRecordModelPath | reqMapModelPath )?
   public static boolean reqModelPath(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqModelPath")) return false;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_PATH, "<req model path>");
-    reqModelPath_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
+    r = reqModelPath_0(b, l + 1);
+    r = r && reqModelPath_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // reqParamsAndAnnotations?
+  private static boolean reqModelPath_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPath_0")) return false;
+    reqParamsAndAnnotations(b, l + 1);
     return true;
   }
 
-  // reqRecordModelPath
-  //                  | reqMapModelPath
-  private static boolean reqModelPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqModelPath_0")) return false;
+  // ( reqRecordModelPath | reqMapModelPath )?
+  private static boolean reqModelPath_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPath_1")) return false;
+    reqModelPath_1_0(b, l + 1);
+    return true;
+  }
+
+  // reqRecordModelPath | reqMapModelPath
+  private static boolean reqModelPath_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqModelPath_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = reqRecordModelPath(b, l + 1);
@@ -2056,37 +2099,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "reqUnnamedTrunkEntityProjection_1")) return false;
     reqEntityPolymorphicTail(b, l + 1);
     return true;
-  }
-
-  /* ********************************************************** */
-  // ( ':' tagName)? reqParamsAndAnnotations reqModelPath
-  public static boolean reqVarPath(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqVarPath")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, U_REQ_VAR_PATH, "<req var path>");
-    r = reqVarPath_0(b, l + 1);
-    r = r && reqParamsAndAnnotations(b, l + 1);
-    r = r && reqModelPath(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ( ':' tagName)?
-  private static boolean reqVarPath_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqVarPath_0")) return false;
-    reqVarPath_0_0(b, l + 1);
-    return true;
-  }
-
-  // ':' tagName
-  private static boolean reqVarPath_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqVarPath_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_COLON);
-    r = r && tagName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */

@@ -36,8 +36,8 @@ public final class UrlSubParserDefinitions {
   public static final UrlSubParserDefinition<UrlNonReadUrl> NON_READ_URL =
       new UrlSubParserDefinition<>(U_NON_READ_URL, UrlNonReadUrl.class);
 
-  public static final UrlSubParserDefinition<UrlReqVarPath> REQ_VAR_PATH =
-      new UrlSubParserDefinition<>(U_REQ_VAR_PATH, UrlReqVarPath.class);
+  public static final UrlSubParserDefinition<UrlReqEntityPath> REQ_ENTITY_PATH =
+      new UrlSubParserDefinition<>(U_REQ_ENTITY_PATH, UrlReqEntityPath.class);
 
   public static final UrlSubParserDefinition<UrlReqTrunkEntityProjection> REQ_ENTITY_PROJECTION =
       new UrlSubParserDefinition<>(U_REQ_TRUNK_ENTITY_PROJECTION, UrlReqTrunkEntityProjection.class);
