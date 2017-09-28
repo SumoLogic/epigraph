@@ -4,13 +4,17 @@ target/
 .flattened-pom.xml
 
 # Gradle
-/.gradle/
+.gradle/
 build/
 !src/**/build/
 
 # IntelliJ IDEA
-/.idea/
+**/.idea/
 *.iml
+*.ipr
+*.iws
+out/
+!src/**/out/
 
 # Eclipse
 .classpath
