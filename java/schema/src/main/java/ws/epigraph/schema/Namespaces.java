@@ -80,7 +80,7 @@ public class Namespaces {
   }
 
   public @NotNull Qn clientNamespace(@NotNull String resourceName) {
-    return resourceNamespace(resourceName).append(CLIENT_SEGMENT);
+    return resourceNamespace(resourceName.toLowerCase()).append(CLIENT_SEGMENT);
   }
 
   public @NotNull Qn projectionsNamespace(@NotNull String resourceName) {

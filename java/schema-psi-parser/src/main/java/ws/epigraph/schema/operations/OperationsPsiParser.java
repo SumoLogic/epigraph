@@ -651,7 +651,8 @@ public final class OperationsPsiParser {
           new OpPathPsiProcessingContext(context, outputPsiProcessingContext);
 
       final OpFieldProjection fieldPath = OpPathPsiParser.parseFieldPath(type,
-          fieldPathPsi, resolver, psiProcessingContext);
+          fieldPathPsi, resolver, psiProcessingContext
+      );
 
       referenceContext.ensureAllReferencesResolved();
 
@@ -676,11 +677,12 @@ public final class OperationsPsiParser {
 
     return new OpReferenceContext(
         ProjectionReferenceName.fromQn(
-            new Namespaces(context.namespace()).operationProjectionsNamespace(
-                context.resourceName(),
-                operationKind,
-                operationNameOrDefaultName
-            ).append(projectionsNamespaceSegment)
+            new Namespaces(context.namespace())
+                .operationProjectionsNamespace(
+                    context.resourceName(),
+                    operationKind,
+                    operationNameOrDefaultName
+                ).append(projectionsNamespaceSegment)
         ),
         parentReferenceContext,
         context

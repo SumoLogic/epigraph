@@ -233,7 +233,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     @Nullable TagApi defaultTag = fieldType.retroTag();
     if (defaultTag != null && !(fieldType.type() instanceof DatumType)) {
-      l.print("default").brk();
+      l.print("retro").brk();
       l.print(defaultTag.name()).brk();
     }
 
