@@ -26,34 +26,26 @@
 - [ ] remove `requestParams` from requests/URLs?
 - [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
 - [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
-- [x] better implementation of schema annotations. Get inspiration from Java annotations? e.g.
-    ```
-        string MyAnnotation // taget? default?
-        record SomeRecord {
-          @MyAnnotation "foo"
-        }
-    ```
-    Figure out injections: how to add annotations to existing types/fields.
+- [x] better implementation of schema annotations. Get inspiration from Java annotations?
+  - [ ] Figure out injections: how to add annotations to existing types/fields.
 - [ ] codegen: need better framework for generating imports and imported names
-- [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 - [ ] codegen: `_resources/*` package name should be in lower case
 - [ ] codegen: primitive `String` setters should accept `CharSequence`
 - [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
-- [ ] unify req projections codegens
+- [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 
 
 # Type system
 - [ ] Enums
 - [ ] Restrict map keys to exact declared type only (throw runtime exception - no static checks unfortunately, unless we introduce yet another data flavor that doesn't inherit from supertypes)
   - [ ] Alternatively, define equals for map keys to be declared type-scoped only, implement with wrapper over keys.
-- [ ] ~~Allow supplementing Union types with any datum type (applies to all compatible tag types)~~
 - [ ] **Add `type.createBuilder(data)` similar to `toImmutable`**
 - [ ] Feature: Introduce real epigraph (record?) type for holding error values
 - [ ] Feature: Add `abstract` (`any`?) datum type, extensible by any other datum type. Translate to interface in codegen. Tails can't be normalized/mern.segments[i];
 - [ ] Feature: add `final` on fields. Codegen: record builders should implement special `FinalFields` interfaces which should inherit each other
 
 # Schema compiler
-- [ ] Annotations support. Should they be inherited? Annotations on annotations?
+- [x] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
 - [ ] Check that anonymous map keys are datum (not data) type
 - [ ] Generated artifacts index format (json? yaml? both?)
@@ -74,11 +66,10 @@
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
 - [ ] allow merging multiple recursive projections (seems to be a hard task)
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
-- [ ] req update projections should support paths (trunk), with trimmed input data on the wire
 - [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
-- [ ] op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`
-- [ ] paths: add entity params, make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
+- [ ] ~~op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`~~
+- [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
 - [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
@@ -95,10 +86,16 @@
   -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
 - Maven
 
-- Cleanup
+# Cleanup
   - [ ] check out artifactory-tools to clean up old light-psi versions
   - [ ] DataType(Api): type should be EntityType ?
   - [ ] Rename Data/Var/Union type to some common name
+
+# Docs
+- [ ] assemblers: update library example docs
+
+# Reflection service
+- [ ] annotations support
 
 # Other
 - See [Short-term todo list] (todo-short-term.md)

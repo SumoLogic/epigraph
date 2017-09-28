@@ -1,29 +1,26 @@
-- [x] add `Assemblers` codegen
-- [x] update reflection implementation
-- [x] rest of op parsers: named tails normalization
-- [x] req projections codegen: add inheritance for non-output projections
-- [x] req projections codegen: remove `normalizedFor` methods
-- [ ] assemblers: update library example docs
-
-- [ ] new annotations
-  - [x] add to op params
-  - [x] add to op entity projections
-  - [x] add (delegating) annotations to fields and tags
-  - [ ] update reflection service
-
 - [ ] allow paths to end with model types (prereq. for fed. ?)
-  
+- [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
+- [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
+- [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
+- [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
+- [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
+- [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
+- [ ] sort out 'path steps' for input projections: input data should respect them
+- [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
+- [ ] codegen: `_resources/*` package name should be in lower case
+- [ ] codegen: primitive `String` setters should accept `CharSequence`
+
 - Federator
   - [x] support named projections on the top level (not inside service)
   - [x] add transformers to schema
     - [x] codegen implementation stubs
   - [ ] operations -> transformers via annotations
-  
+
   - [ ] `toBuilder` on data? Will be tricky because of covariance
   - [ ] add `api` section to schema, listing a set of exposed resources and if they're federated
     - [ ] codegen something from it
     - [ ] validate at startup that stuff is actually?
-    
+
 # Yegor dependencies
 - [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc. Entity/Model types?
 - [ ] add enums
