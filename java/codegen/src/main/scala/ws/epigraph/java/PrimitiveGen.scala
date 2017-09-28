@@ -30,6 +30,9 @@ class PrimitiveGen(from: CPrimitiveTypeDef, ctx: GenContext) extends JavaTypeDef
 
     val annotations = new AnnotationsGen(from.annotations).generate(ogc)
 
+    val createArgType = if (t.kind == CTypeKind.STRING) "java.lang.CharSequence" else native(t)
+    val builderArg = if (t.kind == CTypeKind.STRING) "val.toString()" else "val"
+
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}\
 package ${pn(t)};
@@ -46,7 +49,7 @@ public interface $ln extends${JavaGenUtils.withParents(t)} ws.epigraph.data.${ki
 
   @NotNull $ln.Type type = $ln.Type.instance();
 
-  static @NotNull $ln.Builder create(@NotNull ${native(t)} val) { return $ln.Type.instance().createBuilder(val); }
+  static @NotNull $ln.Builder create(@NotNull $createArgType val) { return $ln.Type.instance().createBuilder($builderArg); }
 
   @Override
   @NotNull $ln.Imm toImmutable();

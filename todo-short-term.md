@@ -8,7 +8,7 @@
 - [ ] sort out 'path steps' for input projections: input data should respect them
 - [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [ ] codegen: `_resources/*` package name should be in lower case
-- [ ] codegen: primitive `String` setters should accept `CharSequence`
+- [x] codegen: primitive `String` setters should accept `CharSequence`
 
 - Federator
   - [x] support named projections on the top level (not inside service)
@@ -22,7 +22,6 @@
     - [ ] validate at startup that stuff is actually?
 
 # Yegor dependencies
-- [ ] introduce consistent naming. Type/VarType/DataType/UnionType etc. Entity/Model types?
 - [ ] add enums
 
 # See also

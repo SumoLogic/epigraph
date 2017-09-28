@@ -56,6 +56,9 @@ object JavaGenUtils {
     if (indent == 0) s
     else s.lines.map { l => spaces(indent) + l }.mkString("\n")
 
+  def nativeSetterArgType(nativeType: String): String =
+    if (nativeType == "java.lang.String") "java.lang.CharSequence"
+    else nativeType
 
   def fqnToPath(fqn: Qn): Path = if (fqn.isEmpty) EmptyPath else Paths.get(fqn.first, fqn.segments.tail: _*)
 
