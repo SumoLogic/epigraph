@@ -6,7 +6,7 @@
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
 - [ ] sort out 'path steps' for input projections: input data should respect them
-- [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
+- [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [x] codegen: `_resources/*` package name should be in lower case
 - [x] codegen: primitive `String` setters should accept `CharSequence`
 

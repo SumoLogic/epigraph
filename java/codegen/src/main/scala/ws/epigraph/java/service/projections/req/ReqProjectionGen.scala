@@ -112,14 +112,15 @@ object ReqProjectionGen {
 """/*@formatter:on*/
 
       // unwrap primitive param accessors to return native values
-      val paramCode = datumType.kind match {
-        case CTypeKind.STRING => genPrimitiveParam("String")
-        case CTypeKind.INTEGER => genPrimitiveParam("Integer")
-        case CTypeKind.LONG => genPrimitiveParam("Long")
-        case CTypeKind.DOUBLE => genPrimitiveParam("Double")
-        case CTypeKind.BOOLEAN => genPrimitiveParam("Boolean")
-        case _ => genNonPrimitiveParam
-      }
+      val paramCode = if (JavaGenUtils.builtInPrimitives.containsKey(datumType.name.name))
+        datumType.kind match {
+          case CTypeKind.STRING => genPrimitiveParam("String")
+          case CTypeKind.INTEGER => genPrimitiveParam("Integer")
+          case CTypeKind.LONG => genPrimitiveParam("Long")
+          case CTypeKind.DOUBLE => genPrimitiveParam("Double")
+          case CTypeKind.BOOLEAN => genPrimitiveParam("Boolean")
+          case _ => genNonPrimitiveParam
+        } else genNonPrimitiveParam
 
       CodeChunk(
         paramCode, Set(

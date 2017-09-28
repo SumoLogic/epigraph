@@ -58,7 +58,7 @@ resource users: PersonMap {
 
   read bestFriend {
     path /.:`record`/bestFriend
-    outputProjection :`record`(id, firstName, lastName)
+    outputProjection :`record` { ;param: UserId } (id, firstName, lastName)
   }
 
   create {

@@ -140,7 +140,27 @@ public class GeneratedClassesTest {
     assertEquals("personId", avroField.getVal());
   }
 
-  public static @NotNull String printOpDeleteVarProjection(
+  @Test
+  public void testIndex() {
+    assertNotNull(StaticTypesResolver.instance().resolve(new QnTypeRef(Qn.fromDotSeparated("ws.epigraph.tests.PersonMap"))));
+  }
+
+  @Test
+  public void testStringFieldSetter() {
+    CharSequence fn = "foo";
+    PersonRecord.create().setFirstName(fn); // should accept CharSequence
+  }
+
+  @Test
+  public void testPrimitiveProjectionParamGetter() {
+    try {
+      ws.epigraph.tests._resources.users.operations.read.bestfriend.output.record.OutputPersonRecordProjection p = null;
+      UserId u = p.getParamParameter(); // should not be Long
+    } catch (NullPointerException ignored) {
+    }
+  }
+
+  private static @NotNull String printOpDeleteVarProjection(
       Qn namespace,
       String resourceName,
       String operationName,
@@ -164,10 +184,5 @@ public class GeneratedClassesTest {
     printer.printEntity(projection, 0);
     layouter.close();
     return sb.getString();
-  }
-
-  @Test
-  public void testIndex() {
-    assertNotNull(StaticTypesResolver.instance().resolve(new QnTypeRef(Qn.fromDotSeparated("ws.epigraph.tests.PersonMap"))));
   }
 }
