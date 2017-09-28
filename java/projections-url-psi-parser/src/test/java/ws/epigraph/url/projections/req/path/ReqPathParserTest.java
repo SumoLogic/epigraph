@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.path.OpVarPath;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.path.ReqVarPath;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -49,7 +49,7 @@ public class ReqPathParserTest {
       epigraph.String.type
   );
 
-  private final OpVarPath personOpPath = parseOpVarPath(
+  private final OpEntityProjection personOpPath = parseOpEntityProjection(
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
@@ -76,7 +76,7 @@ public class ReqPathParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context ->
-          ReqPathPsiParser.parseVarPath(
+          ReqPathPsiParser.parseEntityPath(
               personOpPath,
               Person.type.dataType(null),
               psi,
@@ -96,7 +96,7 @@ public class ReqPathParserTest {
     UrlReqVarPath psi = getPsi(expr);
 
     final @NotNull ReqVarPath path = TestUtil.runPsiParser(true, context ->
-        ReqPathPsiParser.parseVarPath(
+        ReqPathPsiParser.parseEntityPath(
             personOpPath,
             Person.type.dataType(null),
             psi,
@@ -124,8 +124,8 @@ public class ReqPathParserTest {
     return psiVarPath;
   }
 
-  private @NotNull OpVarPath parseOpVarPath(String projectionString) {
-    return ReqTestUtil.parseOpVarPath(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parseOpEntityProjection(String projectionString) {
+    return ReqTestUtil.parseOpEntityPath(dataType, projectionString, resolver);
   }
 
 }

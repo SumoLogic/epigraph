@@ -158,7 +158,7 @@ public abstract class GenGDataValidator<
       context.withStackItem(new GDataValidationContext.FieldStackItem(fieldName), () -> {
         final GDataValue dataValue = datum.fields().get(fieldName);
         if (dataValue != null) {
-          validateDataValue(dataValue, fpe.fieldProjection().varProjection());
+          validateDataValue(dataValue, fpe.fieldProjection().entityProjection());
         }
       });
     }

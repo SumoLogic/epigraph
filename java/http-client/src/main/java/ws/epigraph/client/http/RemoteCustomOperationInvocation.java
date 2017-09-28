@@ -100,8 +100,8 @@ public class RemoteCustomOperationInvocation
 
     Type dataType = data.type();
     TypeApi projectionType = inputFieldProjection == null
-                             ? opInputFieldProjection.varProjection().type()
-                             : inputFieldProjection.varProjection().type();
+                             ? opInputFieldProjection.entityProjection().type()
+                             : inputFieldProjection.entityProjection().type();
 
     if (!projectionType.isAssignableFrom(dataType)) {
       throw new IllegalArgumentException(
@@ -109,8 +109,8 @@ public class RemoteCustomOperationInvocation
     }
 
     return serverProtocol.customRequestContentProducer(
-        inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
-        opInputFieldProjection.varProjection(),
+        inputFieldProjection == null ? null : inputFieldProjection.entityProjection(),
+        opInputFieldProjection.entityProjection(),
         data,
         operationInvocationContext
     );

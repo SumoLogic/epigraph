@@ -23,7 +23,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.path.OpFieldPath;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
@@ -66,7 +66,7 @@ public final class ReadRequestUrlPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final @Nullable OpFieldPath opPath = op.path();
+    final @Nullable OpFieldProjection opPath = op.path();
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), context);
 
@@ -80,7 +80,7 @@ public final class ReadRequestUrlPsiParser {
       final @NotNull DataTypeApi resourceType,
       final @NotNull Map<String, GDatum> requestParams,
       final @NotNull ReadOperationDeclaration op,
-      final @NotNull OpFieldPath opPath,
+      final @NotNull OpFieldProjection opPath,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -94,7 +94,7 @@ public final class ReadRequestUrlPsiParser {
     );
 
     @NotNull ReqFieldPath reqPath = pathParsingResult.path();
-    DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.varProjection());
+    DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.entityProjection());
     TypesResolver newResolver = addTypeNamespace(pathTipType.type(), typesResolver);
 
     final UrlReqTrunkEntityProjection trunkEntityProjection = pathParsingResult.trunkProjectionPsi();
@@ -115,7 +115,7 @@ public final class ReadRequestUrlPsiParser {
       @NotNull StepsAndProjection<ReqEntityProjection> r = psiParser.parseTrunkEntityProjection(
           pathTipType,
           false,
-          op.outputProjection().varProjection(),
+          op.outputProjection().entityProjection(),
           trunkEntityProjection,
           newResolver,
           reqOutputPsiProcessingContext
@@ -128,7 +128,7 @@ public final class ReadRequestUrlPsiParser {
       StepsAndProjection<ReqEntityProjection> r = psiParser.parseComaEntityProjection(
           pathTipType,
           false,
-          op.outputProjection().varProjection(),
+          op.outputProjection().entityProjection(),
           comaEntityProjection,
           newResolver,
           reqOutputPsiProcessingContext

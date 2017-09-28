@@ -48,7 +48,7 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
    * @return {@code true} iff field entity projection is flagged
    */
   public boolean flagged() {
-    return flagged(varProjection());
+    return flagged(entityProjection());
   }
 
   private static boolean flagged(@NotNull ReqEntityProjection vp) {
@@ -56,7 +56,7 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
   }
 
   @Override
-  public @NotNull ReqFieldProjection setVarProjection(final @NotNull ReqEntityProjection varProjection) {
+  public @NotNull ReqFieldProjection setEntityProjection(final @NotNull ReqEntityProjection varProjection) {
     return new ReqFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
@@ -66,12 +66,12 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
       final @NotNull List<ReqFieldProjection> fieldProjections,
 //      final @NotNull ReqParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull ReqEntityProjection mergedVarProjection) {
+      final @NotNull ReqEntityProjection mergedEntityProjection) {
 
     return new ReqFieldProjection(
 //        mergedParams,
 //        mergedAnnotations,
-        mergedVarProjection,
+        mergedEntityProjection,
 //        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::flagged),
         TextLocation.UNKNOWN
     );

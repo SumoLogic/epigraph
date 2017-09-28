@@ -43,11 +43,11 @@ public class OpFieldProjection extends AbstractOpFieldProjection<
   }
 
   @Override
-  public @NotNull OpFieldProjection setVarProjection(final @NotNull OpEntityProjection varProjection) {
+  public @NotNull OpFieldProjection setEntityProjection(final @NotNull OpEntityProjection varProjection) {
     return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
-  public boolean flagged() { return varProjection().flagged(); }
+  public boolean flagged() { return entityProjection().flagged(); }
 
   @Override
   protected @NotNull OpFieldProjection merge(
@@ -55,12 +55,12 @@ public class OpFieldProjection extends AbstractOpFieldProjection<
       final @NotNull List<OpFieldProjection> fieldProjections,
 //      final @NotNull OpParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull OpEntityProjection mergedVarProjection) {
+      final @NotNull OpEntityProjection mergedEntityProjection) {
 
     return new OpFieldProjection(
 //        mergedParams,
 //        mergedAnnotations,
-        mergedVarProjection,
+        mergedEntityProjection,
         TextLocation.UNKNOWN
     );
   }

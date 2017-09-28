@@ -62,7 +62,7 @@ public final class RequestUrlPsiParserUtil {
           new ReqFieldProjection(
               psiParser.createDefaultEntityProjection(
                   dataType,
-                  op.varProjection(),
+                  op.entityProjection(),
                   flagged,
                   PsiUtil.NULL_PSI_ELEMENT,
                   reqOutputPsiProcessingContext

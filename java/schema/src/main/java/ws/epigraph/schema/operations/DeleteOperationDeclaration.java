@@ -22,7 +22,6 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.types.TypeApi;
@@ -38,7 +37,7 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
   public DeleteOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
+      @Nullable OpFieldProjection path,
       @NotNull OpFieldProjection deleteProjection,
       @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
@@ -48,8 +47,8 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
     );
 
     if (path != null) {
-      TypeApi tipType = ProjectionUtils.tipType(path.varProjection()).type();
-      TypeApi deleteType = deleteProjection.varProjection().type();
+      TypeApi tipType = ProjectionUtils.tipType(path.entityProjection()).type();
+      TypeApi deleteType = deleteProjection.entityProjection().type();
 
       if (!deleteType.isAssignableFrom(tipType))
         throw new IllegalArgumentException(
@@ -75,7 +74,7 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        deleteProjection().varProjection(),
+        deleteProjection().entityProjection(),
         "delete",
         errors
     );

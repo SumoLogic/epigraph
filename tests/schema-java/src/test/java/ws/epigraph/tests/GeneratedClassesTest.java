@@ -91,7 +91,7 @@ public class GeneratedClassesTest {
   @Test
   public void testRecursiveOpProjection() {
     final @NotNull OpEntityProjection varProjection =
-        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().varProjection();
+        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().entityProjection();
 
     assertEquals(
         "[ ]( $recTest = :`record` ( bestFriend $recTest ) )",

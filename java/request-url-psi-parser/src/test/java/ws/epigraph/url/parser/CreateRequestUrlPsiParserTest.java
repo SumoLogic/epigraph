@@ -108,7 +108,7 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
     final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
     else
-      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().varProjection(), 0));
+      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().entityProjection(), 0));
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

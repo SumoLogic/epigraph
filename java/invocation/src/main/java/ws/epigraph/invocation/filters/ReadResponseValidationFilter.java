@@ -53,7 +53,7 @@ public class ReadResponseValidationFilter<Req extends OperationRequest, D extend
                 return InvocationResult.success(response);
 
               ReqOutputDataValidator validator = new ReqOutputDataValidator();
-              validator.validateData(data, request.outputProjection().varProjection());
+              validator.validateData(data, request.outputProjection().entityProjection());
 
               Collection<? extends DataValidationError> validationErrors = validator.errors();
               return validationErrors.isEmpty()

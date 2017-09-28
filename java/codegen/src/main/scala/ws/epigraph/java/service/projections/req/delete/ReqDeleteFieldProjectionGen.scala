@@ -44,7 +44,7 @@ class ReqDeleteFieldProjectionGen(
   override lazy val dataProjectionGen: ReqDeleteProjectionGen =
     ReqDeleteEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.varProjection(),
+      op.entityProjection(),
       baseNamespaceOpt,
       namespaceSuffix,
       dataParentClassGenOpt,

@@ -28,7 +28,6 @@ import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.projections.op.output.OpReferenceContext;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
-import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
@@ -208,13 +207,13 @@ public final class ReqTestUtil {
     });
   }
 
-  public static @NotNull OpVarPath parseOpVarPath(
+  public static @NotNull OpEntityProjection parseOpEntityPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     try {
-      return parseOpVarPath(varDataType, projectionString, true, resolver);
+      return parseOpEntityPath(varDataType, projectionString, true, resolver);
     } catch (PsiProcessingException e) { // can't happen..
       e.printStackTrace();
       fail(e.getMessage());
@@ -223,7 +222,7 @@ public final class ReqTestUtil {
     throw new RuntimeException("unreachable");
   }
 
-  public static @NotNull OpVarPath parseOpVarPath(
+  public static @NotNull OpEntityProjection parseOpEntityPath(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -239,7 +238,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(entityPathPsi, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpVarPath> closure = context -> {
+    final TestUtil.PsiParserClosure<OpEntityProjection> closure = context -> {
       OpReferenceContext referenceContext =
           new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -248,7 +247,7 @@ public final class ReqTestUtil {
       OpPathPsiProcessingContext opPathPsiProcessingContext =
           new OpPathPsiProcessingContext(context, psiProcessingContext);
 
-      OpVarPath vp = OpPathPsiParser.parseVarPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
+      OpEntityProjection vp = OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.path.ReqFieldPath;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -65,7 +64,7 @@ public abstract class NonReadRequestUrlPsiParser {
       @NotNull TypesResolver typesResolver,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final @Nullable OpFieldPath opPath = op.path();
+    final @Nullable OpFieldProjection opPath = op.path();
 
     final Map<String, GDatum> requestParams = parseRequestParams(psi.getRequestParamList(), context);
 

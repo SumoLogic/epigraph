@@ -17,11 +17,9 @@
 package ws.epigraph.java.service
 
 import ws.epigraph.java.service.projections.op._
-import ws.epigraph.java.service.projections.op.path._
 import ws.epigraph.java.{ObjectGenContext, ObjectGenerators}
 import ws.epigraph.projections.gen.ProjectionReferenceName
 import ws.epigraph.projections.op._
-import ws.epigraph.projections.op.path._
 import ws.epigraph.schema.operations._
 
 object ServiceObjectGenerators extends ObjectGenerators {
@@ -40,13 +38,6 @@ object ServiceObjectGenerators extends ObjectGenerators {
         case param: OpParam => new OpParamGen(param).generate(ctx)
         case params: OpParams => new OpParamsGen(params).generate(ctx)
         case kp: AbstractOpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
-
-        case ovp: OpVarPath => new OpVarPathGen(ovp).generate(ctx)
-        case ormp: OpRecordModelPath => new OpRecordModelPathGen(ormp).generate(ctx)
-        case ofp: OpFieldPath => new OpFieldPathGen(ofp).generate(ctx)
-        case ommp: OpMapModelPath => new OpMapModelPathGen(ommp).generate(ctx)
-        case opkp: OpPathKeyProjection => new OpPathKeyProjectionGen(opkp).generate(ctx)
-        case opmp: OpPrimitiveModelPath => new OpPrimitiveModelPathGen(opmp).generate(ctx)
 
         case oovp: OpEntityProjection => new OpEntityProjectionGen(oovp).generate(ctx)
         case oormp: OpRecordModelProjection => new OpRecordModelProjectionGen(oormp).generate(ctx)

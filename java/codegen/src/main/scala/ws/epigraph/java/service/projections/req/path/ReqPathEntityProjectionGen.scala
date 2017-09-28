@@ -19,9 +19,9 @@ package ws.epigraph.java.service.projections.req.path
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.{jn, ln}
 import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqEntityProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqEntityProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path._
+import ws.epigraph.projections.op._
 import ws.epigraph.types.TypeKind
 
 /**
@@ -29,20 +29,20 @@ import ws.epigraph.types.TypeKind
  */
 class ReqPathEntityProjectionGen(
   protected val baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpVarPath,
+  val op: OpEntityProjection,
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathTypeProjectionGen with ReqEntityProjectionGen {
 
-  override type OpProjectionType = OpVarPath
-  override type OpTagProjectionEntryType = OpTagPath
+  override type OpProjectionType = OpEntityProjection
+  override type OpTagProjectionEntryType = OpTagProjectionEntry
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
   override protected def tailGenerator(
-    op: OpVarPath,
+    op: OpEntityProjection,
     normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")
 
-  override protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagPath): ReqPathProjectionGen =
+  override protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagProjectionEntry): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.projection(),
@@ -59,7 +59,7 @@ class ReqPathEntityProjectionGen(
 object ReqPathEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpVarPath,
+    op: OpEntityProjection,
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathTypeProjectionGen = op.`type`().kind() match {
 
@@ -68,21 +68,21 @@ object ReqPathEntityProjectionGen {
     case TypeKind.RECORD =>
       new ReqPathRecordModelProjectionGen(
         baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpRecordModelPath],
+        op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
         namespaceSuffix,
         ctx
       )
     case TypeKind.MAP =>
       new ReqPathMapModelProjectionGen(
         baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpMapModelPath],
+        op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
         namespaceSuffix,
         ctx
       )
     case TypeKind.PRIMITIVE =>
       new ReqPathPrimitiveModelProjectionGen(
         baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelPath],
+        op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
         namespaceSuffix,
         ctx
       )

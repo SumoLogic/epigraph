@@ -1422,7 +1422,7 @@ public final class ReqBasicProjectionPsiParser {
 
       @NotNull ReqEntityProjection varProjection = createDefaultEntityProjection(
           fieldType,
-          opFieldProjection.varProjection(),
+          opFieldProjection.entityProjection(),
           fieldFlagged,
           psi,
           context
@@ -1492,7 +1492,7 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    return parseTrunkFieldProjection(fieldType, flagged,  /*op.params(), */op.varProjection(), psi, resolver, context);
+    return parseTrunkFieldProjection(fieldType, flagged,  /*op.params(), */op.entityProjection(), psi, resolver, context);
   }
 
   private static StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
@@ -1577,7 +1577,7 @@ public final class ReqBasicProjectionPsiParser {
                 parseComaEntityProjection(
                     field.dataType(),
                     fieldFlagged,
-                    opFieldProjection.varProjection(),
+                    opFieldProjection.entityProjection(),
                     psiEntityProjection,
                     resolver,
                     context
@@ -1618,7 +1618,7 @@ public final class ReqBasicProjectionPsiParser {
 //                    Annotations.EMPTY,
                     createDefaultEntityProjection(
                         field.dataType(),
-                        opFieldProjection.varProjection(),
+                        opFieldProjection.entityProjection(),
                         false,
                         psi.getStar(),
                         context

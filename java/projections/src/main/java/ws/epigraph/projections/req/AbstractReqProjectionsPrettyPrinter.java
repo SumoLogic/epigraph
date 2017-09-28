@@ -152,7 +152,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   protected String fieldNamePrefix(@NotNull FP fieldProjection) { return ""; }
 
   public void print(@NotNull String fieldName, @NotNull FP fieldProjection, int pathSteps) throws E {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -170,7 +170,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull ReqParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 

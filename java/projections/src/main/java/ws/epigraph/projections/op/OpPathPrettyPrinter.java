@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.path;
+package ws.epigraph.projections.op;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.AbstractOpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.OpParams;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPathPrettyPrinter<E extends Exception>
     extends AbstractOpProjectionsPrettyPrinter<
-    OpVarPath,
-    OpTagPath,
-    OpModelPath<?, ?, ?>,
-    OpRecordModelPath,
-    OpFieldPathEntry,
-    OpFieldPath,
+    OpEntityProjection,
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpRecordModelProjection,
+    OpFieldProjectionEntry,
+    OpFieldProjection,
     E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
@@ -43,7 +40,7 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected void printVarOnly(@NotNull OpVarPath p, int pathSteps) throws E {
+  protected void printVarOnly(@NotNull OpEntityProjection p, int pathSteps) throws E {
     // no tags = end of path
     if (!p.tagProjections().isEmpty()) {
       super.printVarOnly(p, pathSteps);
@@ -51,16 +48,16 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  public void printModelOnly(@NotNull OpModelPath<?, ?, ?> mp, int pathSteps) throws E {
-    if (mp instanceof OpRecordModelPath)
-      printRecordProjection((OpRecordModelPath) mp);
-    else if (mp instanceof OpMapModelPath)
-      printModelOnly((OpMapModelPath) mp);
+  public void printModelOnly(@NotNull OpModelProjection<?, ?, ?, ?> mp, int pathSteps) throws E {
+    if (mp instanceof OpRecordModelProjection)
+      printRecordProjection((OpRecordModelProjection) mp);
+    else if (mp instanceof OpMapModelProjection)
+      printModelOnly((OpMapModelProjection) mp);
   }
 
   @Override
-  public void printRecordProjection(@NotNull OpRecordModelPath mp) throws E {
-    final /*@Nullable*/ OpFieldPathEntry entry = mp.pathFieldProjection();
+  public void printRecordProjection(@NotNull OpRecordModelProjection mp) throws E {
+    final /*@Nullable*/ OpFieldProjectionEntry entry = mp.pathFieldProjection();
 
     if (entry != null) {
       l.beginIInd();
@@ -72,10 +69,10 @@ public class OpPathPrettyPrinter<E extends Exception>
     }
   }
 
-  private void printModelOnly(OpMapModelPath mp) throws E {
+  private void printModelOnly(OpMapModelProjection mp) throws E {
     l.beginIInd(0);
 
-    @NotNull OpPathKeyProjection keyProjection = mp.keyProjection();
+    @NotNull OpKeyProjection keyProjection = mp.keyProjection();
     @NotNull OpParams keyParams = keyProjection.params();
     @NotNull Annotations keyAnnotations = keyProjection.annotations();
 
@@ -106,14 +103,14 @@ public class OpPathPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected boolean isPrintoutEmpty(@NotNull OpVarPath opVarPath) {
-    return OpVarPath.isEnd(opVarPath) /*|| super.isPrintoutEmpty(opVarPath)*/;
+  protected boolean isPrintoutEmpty(@NotNull OpEntityProjection opVarPath) {
+    return opVarPath.isPathEnd() /*|| super.isPrintoutEmpty(opVarPath)*/;
   }
 
   @Override
-  public boolean isPrintoutNoParamsEmpty(@NotNull OpModelPath<?, ?, ?> mp) {
-    if (mp instanceof OpMapModelPath) {
-//      OpMapModelPath mapModelProjection = (OpMapModelPath) mp;
+  public boolean isPrintoutNoParamsEmpty(@NotNull OpModelProjection<?, ?, ?, ?> mp) {
+    if (mp instanceof OpMapModelProjection) {
+//      OpMapModelProjection mapModelProjection = (OpMapModelProjection) mp;
 //      @NotNull OpPathKeyProjection keyProjection = mapModelProjection.keyProjection();
 //
 //      if (!keyProjection.params().isEmpty()) return false;

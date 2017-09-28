@@ -44,7 +44,7 @@ class ReqInputFieldProjectionGen(
   override lazy val dataProjectionGen: ReqInputProjectionGen =
     ReqInputEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.varProjection(),
+      op.entityProjection(),
       baseNamespaceOpt,
       namespaceSuffix,
       dataParentClassGenOpt,

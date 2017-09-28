@@ -32,21 +32,21 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractFieldProjection<
-    VP extends GenVarProjection<VP, TP, MP>,
+    EP extends GenVarProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
-    > implements GenFieldProjection<VP, TP, MP, FP> {
+    FP extends GenFieldProjection<EP, TP, MP, FP>
+    > implements GenFieldProjection<EP, TP, MP, FP> {
 
 //  private final @NotNull Annotations annotations;
 
-  private final @NotNull VP projection;
+  private final @NotNull EP projection;
 
   private final @NotNull TextLocation location;
 
   protected AbstractFieldProjection(
 //      @NotNull Annotations annotations,
-      @NotNull VP projection,
+      @NotNull EP projection,
       @NotNull TextLocation location) {
 //    this.annotations = annotations;
     this.projection = projection;
@@ -57,7 +57,7 @@ public abstract class AbstractFieldProjection<
 //  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
-  public @NotNull VP varProjection() { return projection; }
+  public @NotNull EP entityProjection() { return projection; }
 
   @Override
   public FP merge(
@@ -66,17 +66,17 @@ public abstract class AbstractFieldProjection<
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
-//    final List<@NotNull VP> varProjections =
+//    final List<@NotNull VP> entityProjections =
 //        fieldProjections.stream().map(GenFieldProjection::varProjection).collect(Collectors.toList());
-    final List<@NotNull VP> varProjections =
+    final List<@NotNull EP> entityProjections =
         fieldProjections
             .stream()
-            .map(fp -> fp.varProjection().normalizedForType(type.type()))
+            .map(fp -> fp.entityProjection().normalizedForType(type.type()))
             .collect(Collectors.toList());
 
-    assert varProjections.size() >= 1;
+    assert entityProjections.size() >= 1;
 
-    final @NotNull VP mergedVarProjection = varProjections.get(0).merge(varProjections);
+    final @NotNull EP mergedVarProjection = entityProjections.get(0).merge(entityProjections);
 
     return merge(
         type,
@@ -90,7 +90,7 @@ public abstract class AbstractFieldProjection<
       @NotNull DataTypeApi type,
       @NotNull List<FP> fieldProjections,
 //      @NotNull Annotations mergedAnnotations,
-      @NotNull VP mergedVarProjection);
+      @NotNull EP mergedEntityProjection);
 
   @Override
   public @NotNull TextLocation location() { return location; }

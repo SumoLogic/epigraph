@@ -24,7 +24,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenVarProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
 import ws.epigraph.types.TypeApi;
@@ -44,7 +43,7 @@ public abstract class OperationDeclaration implements Annotated {
   protected final @NotNull HttpMethod method;
   protected final @Nullable String name;
   protected final @NotNull Annotations annotations;
-  protected final @Nullable OpFieldPath path;
+  protected final @Nullable OpFieldProjection path;
   protected final @Nullable OpFieldProjection inputProjection;
   protected final @NotNull OpFieldProjection outputProjection;
   protected final @NotNull TextLocation location;
@@ -54,7 +53,7 @@ public abstract class OperationDeclaration implements Annotated {
       @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
+      @Nullable OpFieldProjection path,
       @Nullable OpFieldProjection inputProjection,
       @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
@@ -84,15 +83,15 @@ public abstract class OperationDeclaration implements Annotated {
   @Override
   public @NotNull Annotations annotations() { return annotations; }
 
-  public @Nullable OpFieldPath path() { return path; }
+  public @Nullable OpFieldProjection path() { return path; }
 
   public @Nullable TypeApi inputType() {
-    return inputProjection == null ? null : inputProjection.varProjection().type();
+    return inputProjection == null ? null : inputProjection.entityProjection().type();
   }
 
   public @Nullable OpFieldProjection inputProjection() { return inputProjection; }
 
-  public @NotNull TypeApi outputType() { return outputProjection.varProjection().type(); }
+  public @NotNull TypeApi outputType() { return outputProjection.entityProjection().type(); }
 
   public @NotNull OpFieldProjection outputProjection() { return outputProjection; }
 
@@ -107,7 +106,7 @@ public abstract class OperationDeclaration implements Annotated {
       @NotNull List<ResourceDeclarationError> errors) {
 
     @NotNull TypeApi outputType = resource.fieldType().type();
-    if (path != null) outputType = ProjectionUtils.tipType(path.varProjection()).type();
+    if (path != null) outputType = ProjectionUtils.tipType(path.entityProjection()).type();
 
     final TypeApi outputProjectionType = projection.type();
 

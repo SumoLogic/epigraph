@@ -28,7 +28,7 @@ class OpFieldProjectionGen(fp: OpFieldProjection) extends ObjectGen[OpFieldProje
   override protected def generateObject(o: String, ctx: ObjectGenContext): String =
   /*@formatter:off*/sn"""\
 new $o(
-  ${i(gen(fp.varProjection(), ctx))},
+  ${i(gen(fp.entityProjection(), ctx))},
   ${gen(fp.location(), ctx)}
 )"""/*@formatter:on*/
 }

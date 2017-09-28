@@ -109,8 +109,8 @@ public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
       assertNull(expectedInputProjection);
     } else {
       final @NotNull ReqFieldProjection inputProjection = inputStepsAndProjection.projection();
-      String s = printReqEntityProjection(inputProjection.varProjection(), 0);
-      if (inputProjection.varProjection().flagged())
+      String s = printReqEntityProjection(inputProjection.entityProjection(), 0);
+      if (inputProjection.entityProjection().flagged())
         s = "+" + s; // don't want to mess with pretty printing for this
       assertEquals(expectedInputProjection, s);
     }

@@ -24,9 +24,7 @@ import ws.epigraph.annotations.Annotation;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
-import ws.epigraph.projections.op.OpParam;
-import ws.epigraph.projections.op.OpParams;
-import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -38,6 +36,7 @@ import ws.epigraph.types.TypeKind;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.*;
@@ -50,7 +49,7 @@ public final class OpPathPsiParser {
 
   private OpPathPsiParser() {}
 
-  public static @NotNull OpVarPath parseVarPath(
+  public static @NotNull OpEntityProjection parseEntityPath(
       @NotNull DataTypeApi dataType,
       @NotNull SchemaOpEntityPath psi,
       @NotNull TypesResolver typesResolver,
@@ -59,10 +58,10 @@ public final class OpPathPsiParser {
 
     final TypeApi type = dataType.type();
 
-    @Nullable SchemaOpModelPath modelProjection = psi.getOpModelPath();
+    @Nullable SchemaOpModelPath modelPathPsi = psi.getOpModelPath();
 
 
-    if (isModelPathEmpty(modelProjection) ) {
+    if (isModelPathEmpty(modelPathPsi)) {
       if (psi.getTagName() != null)
         throw new PsiProcessingException(
             "Path can't end with a tag (path tip type must be a data type)",
@@ -70,11 +69,7 @@ public final class OpPathPsiParser {
             context
         );
 
-      return new OpVarPath(
-          type,
-          null, // no tags = end of path
-          EpigraphPsiUtil.getLocation(psi)
-      );
+      return OpEntityProjection.pathEnd(type, EpigraphPsiUtil.getLocation(psi));
     }
 
     final TagApi tag = getTag(
@@ -85,18 +80,20 @@ public final class OpPathPsiParser {
     );
 
 
-    final OpModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
+    final OpModelProjection<?, ?, ?, ?> modelPath = parseModelPath(
         tag.type(),
-        modelProjection,
+        modelPathPsi,
         typesResolver,
         context
     );
 
     try {
-      return new OpVarPath(
+      return OpEntityProjection.path(
           type,
-          new OpTagPath(
-              tag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelProjection)
+          new OpTagProjectionEntry(
+              tag,
+              modelPath,
+              EpigraphPsiUtil.getLocation(modelPathPsi)
           ),
           EpigraphPsiUtil.getLocation(psi)
       );
@@ -131,15 +128,15 @@ public final class OpPathPsiParser {
     );
   }
 
-  private static @NotNull OpVarPath createDefaultVarPath(
+  private static @NotNull OpEntityProjection createDefaultEntityPath(
       @NotNull TypeApi type,
       @NotNull TagApi tag,
       @NotNull PsiElement locationPsi,
       @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
-    return new OpVarPath(
+    return OpEntityProjection.path(
         type,
-        new OpTagPath(
+        new OpTagProjectionEntry(
             tag,
             createDefaultModelPath(
                 tag.type(),
@@ -163,7 +160,7 @@ public final class OpPathPsiParser {
     );
   }
 
-  private static @NotNull OpModelPath<?, ?, ?> parseModelPath(
+  private static @NotNull OpModelProjection<?, ?, ?, ?> parseModelPath(
       @NotNull DatumTypeApi type,
       @NotNull SchemaOpModelPath psi,
       @NotNull TypesResolver typesResolver,
@@ -239,7 +236,7 @@ public final class OpPathPsiParser {
     return null;
   }
 
-  private static @NotNull OpModelPath<?, ?, ?> createDefaultModelPath(
+  private static @NotNull OpModelProjection<?, ?, ?, ?> createDefaultModelPath(
       @NotNull DatumTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -247,18 +244,23 @@ public final class OpPathPsiParser {
 
     switch (type.kind()) {
       case RECORD:
-        return new OpRecordModelPath(
+        return new OpRecordModelProjection(
             (RecordTypeApi) type,
+            false,
+            null,
             params,
             annotations,
+            null,
+            Collections.emptyMap(),
             null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case MAP:
         MapTypeApi mapType = (MapTypeApi) type;
 
-        final OpPathKeyProjection keyProjection =
-            new OpPathKeyProjection(
+        final OpKeyProjection keyProjection =
+            new OpKeyProjection(
+                AbstractOpKeyPresence.OPTIONAL,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 null,
@@ -266,28 +268,35 @@ public final class OpPathPsiParser {
             );
 
         @NotNull DataTypeApi valueType = mapType.valueType();
-        @Nullable TagApi defaultValuesTag = valueType.retroTag();
+        @Nullable TagApi tag = valueType.retroTag();
 
-        if (defaultValuesTag == null)
+        if (tag == null && valueType.type().kind() != TypeKind.ENTITY)
+          tag = ((DatumTypeApi) (valueType.type())).self();
+
+        if (tag == null)
           throw new PsiProcessingException(String.format(
-              "Can't create default projection for map type '%s, as it's value type '%s' doesn't have a default tag",
+              "Can't create default path for map type '%s, as it's value type '%s' doesn't have a retro tag",
               type.name(),
               valueType.name()
           ), locationPsi, context);
 
-        final OpVarPath valueVarProjection = createDefaultVarPath(
+        final OpEntityProjection valueVarProjection = createDefaultEntityPath(
             valueType.type(),
-            defaultValuesTag,
+            tag,
             locationPsi,
             context
         );
 
-        return new OpMapModelPath(
+        return new OpMapModelProjection(
             mapType,
+            false,
+            null,
             params,
             annotations,
+            null,
             keyProjection,
             valueVarProjection,
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       case LIST:
@@ -301,10 +310,14 @@ public final class OpPathPsiParser {
       case ENUM:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
       case PRIMITIVE:
-        return new OpPrimitiveModelPath(
+        return new OpPrimitiveModelProjection(
             (PrimitiveTypeApi) type,
+            false,
+            null,
             params,
             annotations,
+            null,
+            null,
             EpigraphPsiUtil.getLocation(locationPsi)
         );
       default:
@@ -312,7 +325,7 @@ public final class OpPathPsiParser {
     }
   }
 
-  public static @NotNull OpRecordModelPath parseRecordModelPath(
+  public static @NotNull OpRecordModelProjection parseRecordModelPath(
       @NotNull RecordTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -326,7 +339,7 @@ public final class OpPathPsiParser {
     FieldApi field = type.fieldsMap().get(fieldName);
     if (field == null)
       throw new PsiProcessingException(
-          String.format("Can't field projection for '%s', field '%s' not found", type.name(), fieldName),
+          String.format("Can't field path for '%s', field '%s' not found", type.name(), fieldName),
           fieldPathEntryPsi,
           context
       );
@@ -335,7 +348,7 @@ public final class OpPathPsiParser {
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldPathEntryPsi);
 
-    final OpFieldPathEntry fieldProjection = new OpFieldPathEntry(
+    final OpFieldProjectionEntry fieldProjection = new OpFieldProjectionEntry(
         field,
         parseFieldPath(
             field.dataType(),
@@ -346,16 +359,20 @@ public final class OpPathPsiParser {
         fieldLocation
     );
 
-    return new OpRecordModelPath(
+    return new OpRecordModelProjection(
         type,
+        false,
+        null,
         params,
         annotations,
-        fieldProjection,
+        null,
+        Collections.singletonMap(fieldName, fieldProjection),
+        null,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
 
-  public static @NotNull OpFieldPath parseFieldPath(
+  public static @NotNull OpFieldProjection parseFieldPath(
       @NotNull DataTypeApi fieldType,
       @NotNull SchemaOpFieldPath psi,
       @NotNull TypesResolver resolver,
@@ -374,13 +391,13 @@ public final class OpPathPsiParser {
 //      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), context);
 //    }
 
-    final OpVarPath varProjection;
+    final OpEntityProjection varProjection;
 
     @Nullable SchemaOpEntityPath varPathPsi = psi.getOpEntityPath();
 
-    varProjection = parseVarPath(fieldType, varPathPsi, resolver, context);
+    varProjection = parseEntityPath(fieldType, varPathPsi, resolver, context);
 
-    return new OpFieldPath(
+    return new OpFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),
 //        Annotations.fromMap(fieldAnnotationsMap),
         varProjection,
@@ -388,7 +405,7 @@ public final class OpPathPsiParser {
     );
   }
 
-  public static @NotNull OpMapModelPath parseMapModelPath(
+  public static @NotNull OpMapModelProjection parseMapModelPath(
       @NotNull MapTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -396,27 +413,32 @@ public final class OpPathPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
-    @NotNull OpPathKeyProjection keyProjection =
+    @NotNull OpKeyProjection keyProjection =
         parseKeyProjection(type.keyType(), psi.getOpPathKeyProjection(), resolver, context);
 
     @Nullable SchemaOpEntityPath valueProjectionPsi = psi.getOpEntityPath();
 
     if (valueProjectionPsi == null)
-      throw new PsiProcessingException("Map value projection not specified", psi, context);
+      throw new PsiProcessingException("Map value path not specified", psi, context);
 
-    @NotNull OpVarPath valueProjection = parseVarPath(type.valueType(), valueProjectionPsi, resolver, context);
+    @NotNull OpEntityProjection valueProjection =
+        parseEntityPath(type.valueType(), valueProjectionPsi, resolver, context);
 
-    return new OpMapModelPath(
+    return new OpMapModelProjection(
         type,
+        false,
+        null,
         params,
         annotations,
+        null,
         keyProjection,
         valueProjection,
+        null,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
 
-  private static @NotNull OpPathKeyProjection parseKeyProjection(
+  private static @NotNull OpKeyProjection parseKeyProjection(
       @NotNull DatumTypeApi keyType,
       @NotNull SchemaOpPathKeyProjection keyProjectionPsi,
       @NotNull TypesResolver resolver,
@@ -447,7 +469,8 @@ public final class OpPathPsiParser {
       }
     }
 
-    return new OpPathKeyProjection(
+    return new OpKeyProjection(
+        AbstractOpKeyPresence.REQUIRED,
         OpParams.fromCollection(params),
         Annotations.fromMap(annotationsMap),
         projection,
@@ -455,16 +478,20 @@ public final class OpPathPsiParser {
     );
   }
 
-  public static @NotNull OpPrimitiveModelPath parsePrimitiveModelPath(
+  public static @NotNull OpPrimitiveModelProjection parsePrimitiveModelPath(
       @NotNull PrimitiveTypeApi type,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi) {
 
-    return new OpPrimitiveModelPath(
+    return new OpPrimitiveModelProjection(
         type,
+        false,
+        null,
         params,
         annotations,
+        null,
+        null,
         EpigraphPsiUtil.getLocation(locationPsi)
     );
   }

@@ -287,7 +287,7 @@ public abstract class GenProjectionTransformer<
   }
 
   private @NotNull FP transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    VP ep = fp.varProjection();
+    VP ep = fp.entityProjection();
     VP transformedEp = transform(ep, dataType);
     return transformFieldProjection(fp, transformedEp, ep != transformedEp);
   }

@@ -65,7 +65,7 @@ public final class UriComposer {
       // see ReadRequestUrlPsiParser::parseReadRequestUrlWithPath
 
       String pathStr = printReqPath(fieldName, path);
-      String varStr = printReqProjection(projection.varProjection());
+      String varStr = printReqProjection(projection.entityProjection());
 
       decodedUri = pathStr + varStr;
     }
@@ -152,7 +152,7 @@ public final class UriComposer {
   }
 
   private static @NotNull String printReqProjection(@NotNull ReqFieldProjection projection) {
-    return printReqProjection(projection.varProjection());
+    return printReqProjection(projection.entityProjection());
   }
 
   private static @NotNull String printReqProjection(

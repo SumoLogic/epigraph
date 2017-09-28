@@ -77,8 +77,8 @@ public class RemoteCreateOperationInvocation
 
     Type dataType = data.type();
     TypeApi projectionType = inputFieldProjection == null
-                             ? operationDeclaration.inputProjection().varProjection().type()
-                             : inputFieldProjection.varProjection().type();
+                             ? operationDeclaration.inputProjection().entityProjection().type()
+                             : inputFieldProjection.entityProjection().type();
 
     if (!projectionType.isAssignableFrom(dataType)) {
       throw new IllegalArgumentException(
@@ -86,8 +86,8 @@ public class RemoteCreateOperationInvocation
     }
 
     return serverProtocol.createRequestContentProducer(
-        inputFieldProjection == null ? null : inputFieldProjection.varProjection(),
-        operationDeclaration.inputProjection().varProjection(),
+        inputFieldProjection == null ? null : inputFieldProjection.entityProjection(),
+        operationDeclaration.inputProjection().entityProjection(),
         data,
         operationInvocationContext
     );

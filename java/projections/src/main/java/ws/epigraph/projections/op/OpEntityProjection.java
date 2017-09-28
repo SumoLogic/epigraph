@@ -25,6 +25,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
 import ws.epigraph.types.TypeKind;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +50,32 @@ public class OpEntityProjection extends AbstractVarProjection<
       @NotNull TextLocation location) {
     super(type, tagProjections, parenthesized, polymorphicTails, location);
     //noinspection ConstantConditions
-    this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
+    this.flagged =
+        flagged || (!isPathEnd() && type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
+  }
+
+  public static @NotNull OpEntityProjection path(
+      @NotNull TypeApi type,
+      @NotNull OpTagProjectionEntry tag,
+      @NotNull TextLocation location) {
+
+    return new OpEntityProjection(
+        type,
+        false,
+        Collections.singletonMap(tag.tag().name(), tag),
+        false,
+        null,
+        location
+    );
+  }
+
+  public static @NotNull OpEntityProjection pathEnd(@NotNull TypeApi type, @NotNull TextLocation location) {
+    return new OpEntityProjection(type, false, Collections.emptyMap(), false, null, location);
+  }
+
+  public boolean isPathEnd() {
+    assertResolved();
+    return tagProjections().isEmpty();
   }
 
   public OpEntityProjection(final TypeApi type, final TextLocation location) {

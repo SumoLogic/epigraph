@@ -60,10 +60,4 @@ public class SchemaOpEntityPathImpl extends ASTWrapperPsiElement implements Sche
     return findChildByType(S_COLON);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(S_PLUS);
-  }
-
 }

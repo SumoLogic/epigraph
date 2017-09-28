@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
 
@@ -36,7 +35,7 @@ public class ReadOperationDeclaration extends OperationDeclaration {
   public ReadOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
+      @Nullable OpFieldProjection path,
       @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {
 
@@ -54,7 +53,7 @@ public class ReadOperationDeclaration extends OperationDeclaration {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        outputProjection().varProjection(),
+        outputProjection().entityProjection(),
         "output",
         errors
     );

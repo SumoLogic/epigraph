@@ -22,27 +22,25 @@ import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.JavaGenUtils.TraversableOnceToListMapObject.TraversableOnceToListMap
 import ws.epigraph.java.service.projections.req._
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.path.{OpFieldPathEntry, OpRecordModelPath, OpVarPath}
+import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqPathRecordModelProjectionGen(
   baseNamespaceProvider: BaseNamespaceProvider,
-  val op: OpRecordModelPath,
+  val op: OpRecordModelProjection,
   namespaceSuffix: Qn,
   ctx: GenContext)
   extends ReqPathModelProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx) with ReqRecordModelProjectionGen {
 
-  override type OpProjectionType = OpRecordModelPath
+  override type OpProjectionType = OpRecordModelProjection
 
-  override type OpFieldProjectionType = OpFieldPathEntry
+  override type OpFieldProjectionType = OpFieldProjectionEntry
 
   override lazy val fieldGenerators: Map[CField, ReqPathFieldProjectionGen] =
     fieldProjections.values
-      .filter { case (fgo, fpe) =>
-        !OpVarPath.isEnd(fpe.fieldProjection().varProjection()) // todo same for maps/lists?
-      }
+      .filter { case (fgo, fpe) => !fpe.fieldProjection().entityProjection().isPathEnd }
       .map { case (fgo, fpe) =>
         (
           findField(fpe.field().name()),

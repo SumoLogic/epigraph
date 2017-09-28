@@ -52,7 +52,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
 
               ReqOutputRequiredDataPruner pruner = new ReqOutputRequiredDataPruner();
               final ReqOutputRequiredDataPruner.DataPruningResult pruningResult =
-                  pruner.pruneData(data, request.outputProjection().varProjection());
+                  pruner.pruneData(data, request.outputProjection().entityProjection());
 
               if (pruningResult instanceof ReqOutputRequiredDataPruner.ReplaceData) {
                 ReqOutputRequiredDataPruner.ReplaceData replaceData =

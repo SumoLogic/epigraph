@@ -25,8 +25,7 @@ import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
 import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
-import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
+import ws.epigraph.projections.op.OpPathPrettyPrinter;
 import ws.epigraph.types.TypeApi;
 
 /**
@@ -109,7 +108,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
   }
 
   private boolean printPath(@NotNull OperationDeclaration operation, boolean first) throws E {
-    final @Nullable OpFieldPath path = operation.path();
+    final @Nullable OpFieldProjection path = operation.path();
 
     if (path != null) {
       if (first) first = false;
@@ -208,7 +207,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       opDeletePrinter.printFieldProjection(
           "deleteProjection",
-          deleteFieldProjection.varProjection().flagged() ? "+" : "",
+          deleteFieldProjection.entityProjection().flagged() ? "+" : "",
           deleteFieldProjection
       );
     }

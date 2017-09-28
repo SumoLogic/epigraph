@@ -269,7 +269,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new ReadResult(
                   success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
-                  outputProjection.projection().varProjection()
+                  outputProjection.projection().entityProjection()
               )
           ));
         },
@@ -440,8 +440,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           final Data body;
           try {
             body = serverProtocol.readInput(
-                operation.declaration().inputProjection().varProjection(),
-                inputProjection == null ? null : inputProjection.projection().varProjection(),
+                operation.declaration().inputProjection().entityProjection(),
+                inputProjection == null ? null : inputProjection.projection().entityProjection(),
                 context,
                 operationInvocationContext
             );
@@ -477,7 +477,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new ReadResult(
                   success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
-                  outputProjection.projection().varProjection()
+                  outputProjection.projection().entityProjection()
               )
           ));
         },
@@ -596,8 +596,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           final Data body;
           try {
             body = serverProtocol.readUpdateInput(
-                operation.declaration().inputProjection().varProjection(),
-                updateProjection == null ? null : updateProjection.varProjection(),
+                operation.declaration().inputProjection().entityProjection(),
+                updateProjection == null ? null : updateProjection.entityProjection(),
                 context,
                 operationInvocationContext
             );
@@ -633,7 +633,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new ReadResult(
                   success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
-                  outputProjection.projection().varProjection()
+                  outputProjection.projection().entityProjection()
               )
           ));
         },
@@ -743,7 +743,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new ReadResult(
                   success == null ? null : success.getData(),
                   outputProjection.pathSteps(),
-                  outputProjection.projection().varProjection()
+                  outputProjection.projection().entityProjection()
               )
           ));
         },
@@ -866,8 +866,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       body = opInputProjection == null
              ? null
              : serverProtocol.readInput(
-                 opInputProjection.varProjection(),
-                 inputProjection == null ? null : inputProjection.projection().varProjection(),
+                 opInputProjection.entityProjection(),
+                 inputProjection == null ? null : inputProjection.projection().entityProjection(),
                  context,
                  operationInvocationContext
              );
@@ -897,7 +897,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         new ReadResult(
             success == null ? null : success.getData(),
             outputProjection.pathSteps(),
-            outputProjection.projection().varProjection()
+            outputProjection.projection().entityProjection()
         )
     ));
   }

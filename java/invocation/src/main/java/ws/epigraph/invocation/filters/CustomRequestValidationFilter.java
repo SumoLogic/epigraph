@@ -17,7 +17,6 @@
 package ws.epigraph.invocation.filters;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.data.validation.DataValidationError;
 import ws.epigraph.data.validation.OpInputDataValidator;
@@ -56,7 +55,7 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
     if (data == null || inputProjection == null)
       return invocation.invoke(request, context);
 
-    validator.validateData(data, inputProjection.varProjection());
+    validator.validateData(data, inputProjection.entityProjection());
     List<? extends DataValidationError> errors = validator.errors();
 
     return errors.isEmpty()

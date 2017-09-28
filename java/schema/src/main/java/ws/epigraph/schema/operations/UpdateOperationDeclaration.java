@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 import ws.epigraph.types.TypeApi;
 
 /**
@@ -33,7 +32,7 @@ public class UpdateOperationDeclaration extends OperationDeclaration {
   public UpdateOperationDeclaration(
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
+      @Nullable OpFieldProjection path,
       @NotNull OpFieldProjection inputProjection,
       @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {

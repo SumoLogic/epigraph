@@ -42,7 +42,7 @@ public class ReqFieldPathEntry extends AbstractFieldProjectionEntry<
     return new ReqFieldPathEntry(
         overridingField,
         new ReqFieldPath(
-            fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
+            fieldProjection().entityProjection().normalizedForType(overridingField.dataType().type()),
             TextLocation.UNKNOWN
         ),
         TextLocation.UNKNOWN

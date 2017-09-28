@@ -478,7 +478,7 @@ opKeyProjection ::= 'projection' ':' opModelProjection { pin=1 }
 // :tag / field / * / field
 // :tag { ;foo:String } / field { ;foo:String } / * { ;foo:String }
 
-opEntityPath ::= ( ( ':' '+'? tagName) | '+' )? opModelPath
+opEntityPath ::= ( ':' tagName )? opModelPath
 
 opModelPath ::= opModelPathProperties? ( opRecordModelPath | opMapModelPath )?
 

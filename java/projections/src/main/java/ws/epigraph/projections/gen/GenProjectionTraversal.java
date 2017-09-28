@@ -135,7 +135,7 @@ public abstract class GenProjectionTraversal<
 
   public boolean traverse(@NotNull FP fp) {
     if (visitFieldProjection(fp)) {
-      VP vp = fp.varProjection();
+      VP vp = fp.entityProjection();
       return traverse(vp);
     } else return false;
   }

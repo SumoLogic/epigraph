@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionsParsingUtil;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.Directives;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.op.path.*;
 import ws.epigraph.projections.req.ReqParams;
 import ws.epigraph.projections.req.path.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -45,8 +45,8 @@ public final class ReqPathPsiParser {
 
   private ReqPathPsiParser() {}
 
-  public static ReqVarPath parseVarPath(
-      @NotNull OpVarPath op,
+  public static ReqVarPath parseEntityPath(
+      @NotNull OpEntityProjection op,
       @NotNull DataTypeApi dataType,
       @NotNull UrlReqVarPath psi,
       @NotNull TypesResolver typesResolver,
@@ -56,7 +56,7 @@ public final class ReqPathPsiParser {
 
     final @Nullable UrlTagName tagNamePsi = psi.getTagName();
 
-    final @Nullable OpTagPath opTagPath = op.singleTagProjection();
+    final @Nullable OpTagProjectionEntry opTagPath = op.singleTagProjection();
 
     if (opTagPath == null) {
       if (tagNamePsi != null)
@@ -92,7 +92,7 @@ public final class ReqPathPsiParser {
       );
     }
 
-    final OpModelPath<?, ?, ?> opModelPath = opTagPath.projection();
+    final OpModelProjection<?, ?, ?, ?> opModelPath = opTagPath.projection();
 
 
     final ReqModelPath<?, ?, ?> parsedModelProjection = parseModelPath(
@@ -126,7 +126,7 @@ public final class ReqPathPsiParser {
 //  }
 
   public static @NotNull ReqModelPath<?, ?, ?> parseModelPath(
-      @NotNull OpModelPath<?, ?, ?> op,
+      @NotNull OpModelProjection<?, ?, ?, ?> op,
       @NotNull DatumTypeApi type,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -143,7 +143,7 @@ public final class ReqPathPsiParser {
 
         ensureModelKind(psi, TypeKind.RECORD, context);
         return parseRecordModelPath(
-            (OpRecordModelPath) op,
+            (OpRecordModelProjection) op,
             (RecordTypeApi) type,
             params,
             directives,
@@ -159,7 +159,7 @@ public final class ReqPathPsiParser {
         ensureModelKind(psi, TypeKind.MAP, context);
 
         return parseMapModelPath(
-            (OpMapModelPath) op,
+            (OpMapModelProjection) op,
             (MapTypeApi) type,
             params,
             directives,
@@ -205,7 +205,7 @@ public final class ReqPathPsiParser {
   }
 
   public static @NotNull ReqRecordModelPath parseRecordModelPath(
-      @NotNull OpRecordModelPath op,
+      @NotNull OpRecordModelProjection op,
       @NotNull RecordTypeApi type,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -217,7 +217,7 @@ public final class ReqPathPsiParser {
 
     final String fieldName = fieldPathEntryPsi.getQid().getCanonicalName();
 
-    final OpFieldPathEntry opFieldEntry = op.fieldProjections().get(fieldName);
+    final OpFieldProjectionEntry opFieldEntry = op.fieldProjections().get(fieldName);
 
     if (opFieldEntry == null)
       throw new PsiProcessingException(
@@ -255,7 +255,7 @@ public final class ReqPathPsiParser {
 
   public static @NotNull ReqFieldPath parseFieldPath(
       final @NotNull DataTypeApi fieldType,
-      final @NotNull OpFieldPath op,
+      final @NotNull OpFieldProjection op,
       final @NotNull UrlReqFieldPath psi,
       final @NotNull TypesResolver typesResolver,
       @NotNull ReqPathPsiProcessingContext context) throws PsiProcessingException {
@@ -268,7 +268,7 @@ public final class ReqPathPsiParser {
 
     final ReqVarPath varProjection;
 
-    varProjection = parseVarPath(op.varProjection(), fieldType, fieldVarPathPsi, typesResolver, context);
+    varProjection = parseEntityPath(op.entityProjection(), fieldType, fieldVarPathPsi, typesResolver, context);
 
 //    final ReadReqPathParsingResult<ReqVarPath> fieldVarParsingResult;
 
@@ -283,7 +283,7 @@ public final class ReqPathPsiParser {
   }
 
   public static @NotNull ReqMapModelPath parseMapModelPath(
-      @NotNull OpMapModelPath op,
+      @NotNull OpMapModelProjection op,
       @NotNull MapTypeApi type,
       @NotNull ReqParams params,
       @NotNull Directives directives,
@@ -306,7 +306,7 @@ public final class ReqPathPsiParser {
       throw new PsiProcessingException("Map value projection not specified", psi, context);
 
     @NotNull ReqVarPath valueProjection =
-        parseVarPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
+        parseEntityPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
 
     return new ReqMapModelPath(
         type,
@@ -319,7 +319,7 @@ public final class ReqPathPsiParser {
   }
 
   private static @NotNull ReqPathKeyProjection parseKeyProjection(
-      @NotNull OpPathKeyProjection op,
+      @NotNull OpKeyProjection op,
       @NotNull DatumTypeApi keyType,
       @NotNull UrlReqMapModelPath mapPathPsi,
       @NotNull TypesResolver resolver,

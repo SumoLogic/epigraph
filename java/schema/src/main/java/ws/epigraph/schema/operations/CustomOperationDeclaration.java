@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.path.OpFieldPath;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -32,7 +31,7 @@ public class CustomOperationDeclaration extends OperationDeclaration {
       @NotNull HttpMethod method,
       @Nullable String name,
       @NotNull Annotations annotations,
-      @Nullable OpFieldPath path,
+      @Nullable OpFieldProjection path,
       @Nullable OpFieldProjection inputProjection,
       @NotNull OpFieldProjection outputProjection,
       @NotNull TextLocation location) {

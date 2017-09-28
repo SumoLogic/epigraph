@@ -114,9 +114,9 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
     );
 
     ReqFieldProjection fieldProjection = stepsAndProjection.projection();
-    ReqEntityProjection ep = fieldProjection.varProjection();
+    ReqEntityProjection ep = fieldProjection.entityProjection();
 
-    ReqEntityProjection transformedEp = processEntityProjection(ep, op.varProjection(), context);
+    ReqEntityProjection transformedEp = processEntityProjection(ep, op.entityProjection(), context);
 
     return new StepsAndProjection<>(
         stepsAndProjection.pathSteps(),

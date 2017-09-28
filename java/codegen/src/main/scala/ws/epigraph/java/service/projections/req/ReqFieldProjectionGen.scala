@@ -66,7 +66,7 @@ public class $shortClassName {
    * @return field data projection
    */
   public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
-    return new ${dataProjectionGen.shortClassName}(raw.varProjection());
+    return new ${dataProjectionGen.shortClassName}(raw.entityProjection());
   }
 ${/*params.code*/""}\
 ${extra.code}\

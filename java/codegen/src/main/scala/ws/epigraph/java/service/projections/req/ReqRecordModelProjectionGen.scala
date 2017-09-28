@@ -137,7 +137,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
    */
   public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
     ${reqFieldProjectionEntryFqn.last()} fpe = raw.fieldProjection("${field.name}");
-    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().varProjection());
+    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().entityProjection());
   }
 """/*@formatter:on*/
 

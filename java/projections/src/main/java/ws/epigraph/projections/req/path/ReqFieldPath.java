@@ -45,12 +45,12 @@ public class ReqFieldPath extends AbstractReqFieldProjection<
   protected ReqFieldPath merge(
       final @NotNull DataTypeApi type,
       final @NotNull List<ReqFieldPath> fieldProjections,
-      final @NotNull ReqVarPath mergedVarProjection) {
+      final @NotNull ReqVarPath mergedEntityProjection) {
     throw new RuntimeException("path polymorphic tails not supported");
   }
 
   @Override
-  public @NotNull ReqFieldPath setVarProjection(final @NotNull ReqVarPath varProjection) {
+  public @NotNull ReqFieldPath setEntityProjection(final @NotNull ReqVarPath varProjection) {
     return new ReqFieldPath(varProjection, TextLocation.UNKNOWN);
   }
 }

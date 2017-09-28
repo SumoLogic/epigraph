@@ -32,7 +32,4 @@ public interface SchemaOpEntityPath extends PsiElement {
   @Nullable
   PsiElement getColon();
 
-  @Nullable
-  PsiElement getPlus();
-
 }

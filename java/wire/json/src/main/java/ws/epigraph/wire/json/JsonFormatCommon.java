@@ -168,7 +168,7 @@ public final class JsonFormatCommon {
       FPE fieldProjectionEntry = mp.fieldProjection(field.name());
       if (fieldProjectionEntry != null) {
         if (varProjections == null) varProjections = collSupplier.get();
-        varProjections.add(fieldProjectionEntry.fieldProjection().varProjection());
+        varProjections.add(fieldProjectionEntry.fieldProjection().entityProjection());
       }
     }
     return varProjections;

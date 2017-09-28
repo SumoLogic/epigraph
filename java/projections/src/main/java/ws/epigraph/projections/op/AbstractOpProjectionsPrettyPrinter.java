@@ -184,7 +184,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   protected String fieldNamePrefix(@NotNull FPE fieldEntry) { return ""; }
 
   public void print(@NotNull FP fieldProjection) throws E {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
 //    @NotNull OpParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
@@ -319,7 +319,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {
-    @NotNull VP fieldVarProjection = fieldProjection.varProjection();
+    @NotNull VP fieldVarProjection = fieldProjection.entityProjection();
     return !isBlockProjection(fieldProjection) && isPrintoutEmpty(fieldVarProjection);
   }
 

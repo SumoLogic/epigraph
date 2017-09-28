@@ -162,7 +162,7 @@ public class ReqOutputRequiredDataPruner {
       final ReqFieldProjectionEntry fieldProjectionEntry = entry.getValue();
       final ReqFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
       final boolean required = fieldProjection.flagged();
-      final ReqEntityProjection dataProjection = fieldProjection.varProjection();
+      final ReqEntityProjection dataProjection = fieldProjection.entityProjection();
 
       Data data = fieldsData.get(fieldName);
 

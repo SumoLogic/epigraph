@@ -164,7 +164,7 @@ public class ReadOperationRouterTest {
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqVarPath(path.varProjection()));
+      assertEquals(expectedPath, TestUtil.printReqVarPath(path.entityProjection()));
     }
 
     final StepsAndProjection<ReqFieldProjection> stepsAndProjection = readRequestUrl.outputProjection();
@@ -172,7 +172,7 @@ public class ReadOperationRouterTest {
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedProjection,
-        TestUtil.printReqEntityProjection(stepsAndProjection.projection().varProjection(), expectedSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().entityProjection(), expectedSteps)
     );
   }
 

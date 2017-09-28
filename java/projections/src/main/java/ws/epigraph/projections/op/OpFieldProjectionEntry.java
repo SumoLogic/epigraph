@@ -43,7 +43,7 @@ public class OpFieldProjectionEntry extends AbstractFieldProjectionEntry<
     return new OpFieldProjectionEntry(
         overridingField,
         new OpFieldProjection(
-            fieldProjection().varProjection().normalizedForType(overridingField.dataType().type()),
+            fieldProjection().entityProjection().normalizedForType(overridingField.dataType().type()),
             TextLocation.UNKNOWN
         ),
         TextLocation.UNKNOWN

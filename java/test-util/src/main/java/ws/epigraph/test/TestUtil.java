@@ -24,6 +24,7 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.gdata.GDataPrettyPrinter;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.projections.ProjectionUtils;
@@ -32,9 +33,8 @@ import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpPathPrettyPrinter;
 import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.path.OpPathPrettyPrinter;
-import ws.epigraph.projections.op.path.OpVarPath;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
@@ -150,13 +150,13 @@ public final class TestUtil {
   }
 
   @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     try {
-      return parseOpVarPath(varDataType, projectionString, true, resolver);
+      return parseOpEntityProjection(varDataType, projectionString, true, resolver);
     } catch (PsiProcessingException e) { // can't happen..
       e.printStackTrace();
       fail(e.getMessage());
@@ -166,7 +166,7 @@ public final class TestUtil {
   }
 
   @NotNull
-  public static OpVarPath parseOpVarPath(
+  public static OpEntityProjection parseOpEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
@@ -174,7 +174,7 @@ public final class TestUtil {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    IdlOpVarPath psiVarProjection = EpigraphPsiUtil.parseText(
+    IdlOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
         projectionString,
         IdlSubParserDefinitions.OP_VAR_PATH,
         errorsAccumulator
@@ -182,7 +182,7 @@ public final class TestUtil {
 
     failIfHasErrors(psiVarProjection, errorsAccumulator);
 
-    final PsiParserClosure<OpVarPath> closure =
+    final PsiParserClosure<OpEntityProjection> closure =
         errors -> OpPathPsiParser.parseVarPath(varDataType, psiVarProjection, resolver, errors);
 
     return catchPsiErrors ? runPsiParser(closure) : runPsiParserNotCatchingErrors(closure);
@@ -271,7 +271,7 @@ public final class TestUtil {
 
 */
 
-  public static @NotNull String printOpVarPath(@NotNull OpVarPath path) {
+  public static @NotNull String printOpEntityPath(@NotNull OpEntityProjection path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
@@ -316,7 +316,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputVarProjection(@NotNull OpEntityProjection projection) {
+  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
@@ -326,7 +326,7 @@ public final class TestUtil {
             null
         ) {
           @Override
-          public boolean inNamespace(@NotNull ProjectionReferenceName projectionName) {
+          public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
             return true;
           }
         };
@@ -337,7 +337,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpOutputModelProjection(@NotNull OpModelProjection<?, ?, ?, ?> projection) {
+  public static @NotNull String printOpModelProjection(@NotNull OpModelProjection<?, ?, ?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter);

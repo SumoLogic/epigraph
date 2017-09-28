@@ -57,7 +57,7 @@ public class ProjectionsTransformerTest {
         (OpRecordModelProjection) vp.singleTagProjection().projection();
 
     OpEntityProjection oBfProjection =
-        oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().varProjection();
+        oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().entityProjection();
 
     OpRecordModelProjection oBfRecordProjection =
         (OpRecordModelProjection) oBfProjection.singleTagProjection().projection();
@@ -96,7 +96,7 @@ public class ProjectionsTransformerTest {
         (OpRecordModelProjection) vp.singleTagProjection().projection();
 
     OpEntityProjection nBfProjection =
-        nPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().varProjection();
+        nPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().entityProjection();
 
     OpRecordModelProjection nBfRecordProjection =
         (OpRecordModelProjection) nBfProjection.singleTagProjection().projection();

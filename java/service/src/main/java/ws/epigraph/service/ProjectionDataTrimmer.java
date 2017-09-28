@@ -110,7 +110,7 @@ public final class ProjectionDataTrimmer {
       assert field != null : raw.type().name().toString() + "." + entry.getKey();
       final @Nullable Data data = raw.getData(field);
 
-      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().varProjection()));
+      if (data != null) b.setData(field, trimData(data, fieldProjectionEntry.fieldProjection().entityProjection()));
     }
 
     return b;
