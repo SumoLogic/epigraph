@@ -18,6 +18,7 @@ package ws.epigraph.service.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
@@ -27,7 +28,7 @@ public class ReadOperationRequest extends OperationRequest {
   // if path != null then output projection = var projection without field params and annotations
   public ReadOperationRequest(
       final @Nullable ReqFieldProjection path,
-      final @NotNull ReqFieldProjection outputProjection) {
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection) {
     super(path, outputProjection);
   }
 }

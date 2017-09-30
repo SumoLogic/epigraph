@@ -30,7 +30,7 @@ import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.parser.psi.UrlReadUrl;
@@ -60,7 +60,7 @@ public final class ReadRequestUrlPsiParser {
 
   public static @NotNull ReadRequestUrl parseReadRequestUrl(
       @NotNull DataTypeApi resourceType,
-      @NotNull ReadOperationDeclaration op,
+      @NotNull OperationDeclaration op,
       @NotNull UrlReadUrl psi,
       @NotNull TypesResolver typesResolver,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -78,7 +78,7 @@ public final class ReadRequestUrlPsiParser {
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithPath(
       final @NotNull DataTypeApi resourceType,
       final @NotNull Map<String, GDatum> requestParams,
-      final @NotNull ReadOperationDeclaration op,
+      final @NotNull OperationDeclaration op,
       final @NotNull OpFieldProjection opPath,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
@@ -169,7 +169,7 @@ public final class ReadRequestUrlPsiParser {
   private static @NotNull ReadRequestUrl parseReadRequestUrlWithoutPath(
       final @NotNull DataTypeApi resourceType,
       final Map<String, GDatum> requestParams,
-      final @NotNull ReadOperationDeclaration op,
+      final @NotNull OperationDeclaration op,
       final @NotNull UrlReadUrl psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull PsiProcessingContext context)

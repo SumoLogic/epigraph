@@ -32,6 +32,7 @@ import ws.epigraph.http.Headers;
 import ws.epigraph.invocation.OperationInvocation;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.OperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -137,7 +138,7 @@ public abstract class AbstractRemoteOperationInvocation<
     httpClient.execute(
         requestProducer,
 
-        // NB this consumer does in-memory buffering of the respose and currently there's no way around it
+        // NB this consumer does in-memory buffering of the response and currently there's no way around it
         // see 'true async support for http' in `todo.md`
         new BasicAsyncResponseConsumer(),
 
@@ -147,7 +148,10 @@ public abstract class AbstractRemoteOperationInvocation<
             try {
               f.complete(
                   serverProtocol.readResponse(
-                      request.outputProjection().entityProjection(),
+                      new StepsAndProjection<>(
+                          Math.max(0, request.outputStepsAndProjection().pathSteps() - 1), // minus one for field
+                          request.outputProjection().entityProjection()
+                      ),
                       context,
                       result,
                       okStatusCode

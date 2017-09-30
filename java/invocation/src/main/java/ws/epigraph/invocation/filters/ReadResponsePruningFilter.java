@@ -46,6 +46,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
     return invocation.invoke(request, context).thenApply(operationInvocationResult ->
         operationInvocationResult.apply(
             readOperationResponse -> {
+              assert readOperationResponse != null;
               Data data = readOperationResponse.getData();
               if (data == null)
                 return InvocationResult.success(readOperationResponse);

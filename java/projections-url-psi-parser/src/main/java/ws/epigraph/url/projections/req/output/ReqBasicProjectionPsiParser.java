@@ -1505,15 +1505,12 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull ReqPsiProcessingContext context
   ) throws PsiProcessingException {
 
-    final int steps;
-    final ReqEntityProjection varProjection;
-
     @Nullable UrlReqTrunkEntityProjection psiEntityProjection = psi.getReqTrunkEntityProjection();
     StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseTrunkEntityProjection(fieldType, flagged, opEntityProjection, psiEntityProjection, resolver, context);
 
-    varProjection = stepsAndProjection.projection();
-    steps = stepsAndProjection.pathSteps() + 1;
+    final ReqEntityProjection varProjection = stepsAndProjection.projection();
+    final int steps = stepsAndProjection.pathSteps() + 1;
 
     ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
 

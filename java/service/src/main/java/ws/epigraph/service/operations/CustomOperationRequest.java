@@ -19,6 +19,7 @@ package ws.epigraph.service.operations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
@@ -26,19 +27,23 @@ import ws.epigraph.projections.req.ReqFieldProjection;
  */
 public class CustomOperationRequest extends OperationRequest {
   private final @Nullable Data data;
-  private final @Nullable ReqFieldProjection inputProjection;
+  private final @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection;
 
   public CustomOperationRequest(
       final @Nullable ReqFieldProjection path,
       final @Nullable Data data,
-      final @Nullable ReqFieldProjection inputProjection,
-      final @NotNull ReqFieldProjection outputProjection) {
-    super(path, outputProjection);
+      final @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsProjection) {
+    super(path, outputStepsProjection);
     this.data = data;
-    this.inputProjection = inputProjection;
+    this.inputStepsAndProjection = inputStepsAndProjection;
   }
 
   public @Nullable Data data() { return data; }
 
-  public @Nullable ReqFieldProjection inputProjection() { return inputProjection; }
+  public @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection() { return inputStepsAndProjection; }
+
+  public @Nullable ReqFieldProjection inputProjection() {
+    return inputStepsAndProjection == null ? null : inputStepsAndProjection.projection();
+  }
 }

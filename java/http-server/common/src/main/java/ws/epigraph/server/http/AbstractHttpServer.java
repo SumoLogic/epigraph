@@ -19,12 +19,13 @@ package ws.epigraph.server.http;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
+import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -263,7 +264,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           return operationInvocation.invoke(
               new ReadOperationRequest(
                   requestUrl.path(),
-                  outputProjection.projection()
+                  outputProjection
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
@@ -432,7 +433,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         urlPsi,
         operationSearchResult -> {
           @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
-          @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
+          @Nullable StepsAndProjection<ReqFieldProjection> reqInputProjection = requestUrl.inputProjection();
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           @NotNull CreateOperation<Data> operation = operationSearchResult.operation();
@@ -441,7 +442,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           try {
             body = serverProtocol.readInput(
                 operation.declaration().inputProjection().entityProjection(),
-                inputProjection == null ? null : inputProjection.projection().entityProjection(),
+                StepsAndProjection.unwrapNullable(reqInputProjection, AbstractFieldProjection::entityProjection),
                 context,
                 operationInvocationContext
             );
@@ -470,8 +471,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new CreateOperationRequest(
                   requestUrl.path(),
                   body,
-                  inputProjection == null ? null : inputProjection.projection(),
-                  outputProjection.projection()
+                  reqInputProjection,
+                  outputProjection
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
@@ -586,8 +587,6 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationSearchResult -> {
           @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection = requestUrl.inputProjection();
-          @Nullable ReqFieldProjection updateProjection =
-              updateStepsAndProjection == null ? null : updateStepsAndProjection.projection();
 
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
@@ -595,9 +594,9 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
           final Data body;
           try {
-            body = serverProtocol.readUpdateInput(
+            body = serverProtocol.readInput(
                 operation.declaration().inputProjection().entityProjection(),
-                updateProjection == null ? null : updateProjection.entityProjection(),
+                StepsAndProjection.unwrapNullable(updateStepsAndProjection, AbstractFieldProjection::entityProjection),
                 context,
                 operationInvocationContext
             );
@@ -626,8 +625,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new UpdateOperationRequest(
                   requestUrl.path(),
                   body,
-                  updateProjection,
-                  outputProjection.projection()
+                  updateStepsAndProjection,
+                  outputProjection
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
@@ -737,7 +736,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
               new DeleteOperationRequest(
                   requestUrl.path(),
                   deleteProjection,
-                  outputProjection.projection()
+                  outputProjection
               ), operationInvocationContext
           ).thenApply(result -> result.mapSuccess(success ->
               new ReadResult(
@@ -857,7 +856,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
 
     assert requestUrl != null;
 
-    @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
+    @Nullable StepsAndProjection<ReqFieldProjection> reqInputProjection = requestUrl.inputProjection();
     StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
     final Data body;
@@ -867,7 +866,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
              ? null
              : serverProtocol.readInput(
                  opInputProjection.entityProjection(),
-                 inputProjection == null ? null : inputProjection.projection().entityProjection(),
+                 StepsAndProjection.unwrapNullable(reqInputProjection, AbstractFieldProjection::entityProjection),
                  context,
                  operationInvocationContext
              );
@@ -890,8 +889,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         new CustomOperationRequest(
             requestUrl.path(),
             body,
-            inputProjection == null ? null : inputProjection.projection(),
-            outputProjection.projection()
+            reqInputProjection,
+            outputProjection
         ), operationInvocationContext
     ).thenApply(result -> result.mapSuccess(success ->
         new ReadResult(
@@ -916,57 +915,77 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       if (data == null) {
         serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
       } else {
-        DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
 
-        if (noPathResult.error == null) {
-          final @Nullable ReqEntityProjection varProjection = noPathResult.dataProjection;
-          final @Nullable ReqModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
-
-          if (varProjection != null) {
-            serverProtocol.writeDataResponse(
-                operationKind,
-                varProjection,
-                noPathResult.data,
-                context,
-                operationInvocationContext
-            );
-          } else if (modelProjection != null) {
-            serverProtocol.writeDatumResponse(
-                operationKind,
-                modelProjection,
-                noPathResult.datum,
-                context,
-                operationInvocationContext
-            );
-          } else {
-            serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
-          }
+        // any reasonable way to get rid of this extra traversal? should be a big performance hit though
+        ErrorValue error = DataErrorLocator.getError(reqProjection, pathSteps, data);
+        if (error == null) {
+          serverProtocol.writeDataResponse(
+              operationKind,
+              new StepsAndProjection<>(pathSteps, reqProjection.normalizedForType(data.type())),
+              data,
+              context,
+              operationInvocationContext
+          );
         } else {
           serverProtocol.writeErrorResponse(
               operationKind,
-              noPathResult.error,
+              error,
               context,
               operationInvocationContext
           );
         }
+
+//        DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
+//
+//        if (noPathResult.error == null) {
+//          final @Nullable ReqEntityProjection varProjection = noPathResult.dataProjection;
+//          final @Nullable ReqModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
+//
+//          if (varProjection != null) {
+//            serverProtocol.writeDataResponse(
+//                operationKind,
+//                varProjection,
+//                noPathResult.data,
+//                context,
+//                operationInvocationContext
+//            );
+//          } else if (modelProjection != null) {
+//            serverProtocol.writeDatumResponse(
+//                operationKind,
+//                modelProjection,
+//                noPathResult.datum,
+//                context,
+//                operationInvocationContext
+//            );
+//          } else {
+//            serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
+//          }
+//        } else {
+//          serverProtocol.writeErrorResponse(
+//              operationKind,
+//              noPathResult.error,
+//              context,
+//              operationInvocationContext
+//          );
+//        }
       }
 
-    } catch (AmbiguousPathException ignored) {
-      writeInvocationErrorAndCloseContext(
-          new GenericServerInvocationError(
+//    } catch (AmbiguousPathException ignored) {
+//      writeInvocationErrorAndCloseContext(
+//          new GenericServerInvocationError(
+////              String.format(
+////                  "Can't remove %d path steps from data: \n%s\n",
+////                  pathSteps == 0 ? 0 : pathSteps - 1,
+////                  dataToString(data)
+////              )
 //              String.format(
-//                  "Can't remove %d path steps from data: \n%s\n",
-//                  pathSteps == 0 ? 0 : pathSteps - 1,
-//                  dataToString(data)
+//                  "Can't remove %d path steps from data",
+//                  pathSteps == 0 ? 0 : pathSteps - 1
 //              )
-              String.format(
-                  "Can't remove %d path steps from data",
-                  pathSteps == 0 ? 0 : pathSteps - 1
-              )
-          ),
-          context,
-          operationInvocationContext
-      );
+//          ),
+//          context,
+//          operationInvocationContext
+//      );
     } catch (RuntimeException e) {
       context.logger().error("Error writing response", e);
       writeInvocationErrorAndCloseContext(

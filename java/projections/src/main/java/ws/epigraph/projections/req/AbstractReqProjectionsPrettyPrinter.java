@@ -164,7 +164,7 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       brk();
-      printEntity(fieldVarProjection, pathSteps);
+      printEntity(fieldVarProjection, pathSteps - 1);
     }
     l.end();
   }

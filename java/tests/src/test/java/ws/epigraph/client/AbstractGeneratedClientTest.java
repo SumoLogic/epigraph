@@ -267,7 +267,9 @@ public abstract class AbstractGeneratedClientTest {
         PersonMap.create()
             .put$(
                 PersonId.create(8),
-                Person.create().setRecord(PersonRecord.create())
+                Person.create().setRecord(
+                    PersonRecord.create().setBestFriend(Person.create().setId(null))
+                )
             ),
 
         client.read("/8:record/bestFriend:id")

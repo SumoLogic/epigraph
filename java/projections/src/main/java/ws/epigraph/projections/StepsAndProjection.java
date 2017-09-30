@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package ws.epigraph.projections;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 /**
  * Projection together with number of steps along the path. Projection should not have
@@ -39,5 +43,29 @@ public class StepsAndProjection<P> {
 
   public @NotNull P projection() {
     return projection;
+  }
+
+  public <K> @NotNull StepsAndProjection<K> unwrap(@NotNull Function<P, K> unwrapper) {
+    return new StepsAndProjection<>(pathSteps - 1, unwrapper.apply(projection));
+  }
+
+  public <K> @NotNull StepsAndProjection<K> wrap(@NotNull Function<P, K> wrapper) {
+    return new StepsAndProjection<>(pathSteps + 1, wrapper.apply(projection));
+  }
+
+  @Contract("null, _ -> null")
+  public static <K, P> @Nullable StepsAndProjection<K> unwrapNullable(
+      @Nullable StepsAndProjection<P> stepsAndProjection,
+      @NotNull Function<P, K> unwrapper) {
+
+    return stepsAndProjection == null ? null : stepsAndProjection.unwrap(unwrapper);
+  }
+
+  @Contract("null, _ -> null")
+  public static <K, P> @Nullable StepsAndProjection<K> wrapNullable(
+      @Nullable StepsAndProjection<P> stepsAndProjection,
+      @NotNull Function<P, K> wrapper) {
+
+    return stepsAndProjection == null ? null : stepsAndProjection.wrap(wrapper);
   }
 }

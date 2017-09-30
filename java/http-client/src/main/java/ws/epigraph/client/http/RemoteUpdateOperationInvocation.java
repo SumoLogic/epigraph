@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
+import ws.epigraph.projections.StepsAndProjection;
+import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.operations.UpdateOperationRequest;
@@ -54,13 +56,11 @@ public class RemoteUpdateOperationInvocation
       final @NotNull UpdateOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqFieldProjection inputFieldProjection = operationRequest.updateProjection();
-
     String uri = UriComposer.composeUpdateUri(
         resourceName,
         operationRequest.path(),
-        inputFieldProjection,
-        operationRequest.outputProjection()
+        operationRequest.updateStepsAndProjection(),
+        operationRequest.outputStepsAndProjection()
     );
 
     return new HttpPut(uri);
@@ -71,13 +71,14 @@ public class RemoteUpdateOperationInvocation
       @NotNull UpdateOperationRequest request, @NotNull OperationInvocationContext operationInvocationContext) {
 
     // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
-    /*@Nullable*/ ReqFieldProjection updateFieldProjection = request.updateProjection();
+    /*@Nullable*/
+    StepsAndProjection<ReqFieldProjection> updateStepsAndProjection = request.updateStepsAndProjection();
     Data data = request.data();
 
     Type dataType = data.type();
-    TypeApi projectionType = updateFieldProjection == null
+    TypeApi projectionType = updateStepsAndProjection == null
                              ? operationDeclaration.inputProjection().entityProjection().type()
-                             : updateFieldProjection.entityProjection().type();
+                             : updateStepsAndProjection.projection().entityProjection().type();
 
     if (!projectionType.isAssignableFrom(dataType)) {
       throw new IllegalArgumentException(
@@ -85,7 +86,7 @@ public class RemoteUpdateOperationInvocation
     }
 
     return serverProtocol.updateRequestContentProducer(
-        updateFieldProjection == null ? null : updateFieldProjection.entityProjection(),
+        StepsAndProjection.unwrapNullable(updateStepsAndProjection, AbstractFieldProjection::entityProjection),
         operationDeclaration.inputProjection().entityProjection(),
         data,
         operationInvocationContext

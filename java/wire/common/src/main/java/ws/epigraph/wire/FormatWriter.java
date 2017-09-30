@@ -42,9 +42,27 @@ public interface FormatWriter<
 
   // with projections
 
-  void writeData(@NotNull VP projection, @Nullable Data data) throws IOException;
+  /**
+   * Writes data out
+   *
+   * @param projection projection describing the data
+   * @param pathSteps  number of path steps in the projection. Input data should contain
+   *                   proper layers for all of them. In most cases these layers must
+   *                   be skipped from the output
+   * @param data       data to write
+   */
+  void writeData(@NotNull VP projection, int pathSteps, @Nullable Data data) throws IOException;
 
-  void writeDatum(@NotNull MP projection, @Nullable Datum datum) throws IOException;
+  /**
+   * Writes datum out
+   *
+   * @param projection projection describing the data
+   * @param pathSteps  number of path steps in the projection. Input data should contain
+   *                   proper layers for all of them. In most cases these layers must
+   *                   be skipped from the output
+   * @param datum      datum to write
+   */
+  void writeDatum(@NotNull MP projection, int pathSteps, @Nullable Datum datum) throws IOException;
 
   // without projections
 

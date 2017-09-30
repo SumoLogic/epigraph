@@ -23,6 +23,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -38,26 +39,20 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
 
   Data readInput(
       @NotNull OpEntityProjection opInputProjection,
-      @Nullable ReqEntityProjection reqInputProjection,
-      @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
-
-  Data readUpdateInput(
-      @NotNull OpEntityProjection opInputProjection,
-      @Nullable ReqEntityProjection reqUpdateProjection,
+      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
   void writeDataResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqEntityProjection projection,
+      @NotNull StepsAndProjection<ReqEntityProjection> outputProjection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   void writeDatumResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqModelProjection<?, ?, ?> projection,
+      @NotNull StepsAndProjection<ReqModelProjection<?, ?, ?>> outputProjection,
       @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);

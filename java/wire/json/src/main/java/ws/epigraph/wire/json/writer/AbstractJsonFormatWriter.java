@@ -25,7 +25,7 @@ import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
-import ws.epigraph.wire.FormatWriter;
+import ws.epigraph.wire.AbstractFormatWriter;
 import ws.epigraph.wire.json.JsonFormat;
 
 import java.io.*;
@@ -53,7 +53,7 @@ public abstract class AbstractJsonFormatWriter<
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
     PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
     KP // key projection
-    > implements FormatWriter<VP, MP> {
+    > extends AbstractFormatWriter<VP, TP, MP, RMP, FPE, FP, MMP> {
 
   private final @NotNull Writer out;
   private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
@@ -650,4 +650,8 @@ public abstract class AbstractJsonFormatWriter<
     }
   }
 
+  @Override
+  protected void writeNull() throws IOException {
+    out.write("null");
+  }
 }

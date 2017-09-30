@@ -54,6 +54,6 @@ public class RemoteReadOperationInvocation
   }
 
   protected @NotNull String composeUri(final @NotNull ReadOperationRequest request) {
-    return UriComposer.composeReadUri(resourceName, request.path(), request.outputProjection());
+    return UriComposer.composeReadUri(resourceName, request.path(), request.outputStepsAndProjection());
   }
 }

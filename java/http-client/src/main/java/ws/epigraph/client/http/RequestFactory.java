@@ -43,6 +43,7 @@ import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
+import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
@@ -54,6 +55,7 @@ import ws.epigraph.url.projections.req.update.ReqUpdateProjectionPsiParser;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -61,6 +63,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class RequestFactory {
+  private static final Function<ReqEntityProjection, ReqFieldProjection>
+      ENTITY_TO_FIELD = p -> new ReqFieldProjection(p, p.location());
+
   private RequestFactory() {}
 
   /**
@@ -92,7 +97,7 @@ public final class RequestFactory {
     throwErrors(psi, errorsAccumulator);
 
     final ReqFieldProjection reqPath;
-    final ReqFieldProjection reqFieldProjection;
+    final StepsAndProjection<ReqFieldProjection> reqFieldProjection;
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
@@ -117,7 +122,7 @@ public final class RequestFactory {
 
         reqOutputReferenceContext.ensureAllReferencesResolved();
 
-        reqFieldProjection = stepsAndProjection.projection();
+        reqFieldProjection = stepsAndProjection;
       } else {
         ReadReqPathParsingResult<ReqFieldProjection> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
             resourceType,
@@ -148,7 +153,10 @@ public final class RequestFactory {
               reqOutputPsiProcessingContext
           );
 
-          reqFieldProjection = new ReqFieldProjection(r.projection(), r.projection().location());
+          reqFieldProjection = new StepsAndProjection<>(
+              r.pathSteps(),
+              new ReqFieldProjection(r.projection(), r.projection().location())
+          );
         } else if (comaEntityProjection != null) {
           StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseComaEntityProjection(
               pathTipType,
@@ -158,7 +166,10 @@ public final class RequestFactory {
               typesResolver,
               reqOutputPsiProcessingContext
           );
-          reqFieldProjection = new ReqFieldProjection(r.projection(), r.projection().location());
+          reqFieldProjection = new StepsAndProjection<>(
+              r.pathSteps(),
+              new ReqFieldProjection(r.projection(), r.projection().location())
+          );
         } else {
           ReqEntityProjection vp = new ReqEntityProjection(
               pathTipType.type(),
@@ -168,7 +179,7 @@ public final class RequestFactory {
               null,
               TextLocation.UNKNOWN
           );
-          reqFieldProjection = new ReqFieldProjection(vp, vp.location());
+          reqFieldProjection = new StepsAndProjection<>(0, new ReqFieldProjection(vp, vp.location()));
         }
 
         reqOutputReferenceContext.ensureAllReferencesResolved();
@@ -228,34 +239,29 @@ public final class RequestFactory {
 
     }
 
-    ReqFieldProjection reqOutputFieldProjection = new ReqFieldProjection(
-        parseReqOutputProjection(
-            outputRequestString,
-            operationDeclaration.outputType().dataType(),
-            operationDeclaration.outputProjection().entityProjection(),
-            typesResolver
-        ).projection(),
-        TextLocation.UNKNOWN
+    StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
+        outputRequestString,
+        operationDeclaration.outputType().dataType(),
+        operationDeclaration.outputProjection().entityProjection(),
+        typesResolver
     );
 
-    ReqFieldProjection reqInputFieldProjection = null;
+    StepsAndProjection<ReqEntityProjection> inputStepsAndProjection = null;
     if (inputRequestString != null) {
-      reqInputFieldProjection = new ReqFieldProjection(
-          parseReqOutputProjection(
-              inputRequestString,
-              operationDeclaration.inputType().dataType(),
-              operationDeclaration.inputProjection().entityProjection(),
-              typesResolver
-          ).projection(),
-          TextLocation.UNKNOWN
+      inputStepsAndProjection = parseReqInputProjection(
+          inputRequestString,
+          true, // todo take from inputRequestString
+          operationDeclaration.inputType().dataType(),
+          operationDeclaration.inputProjection().entityProjection(),
+          typesResolver
       );
     }
 
     return new CreateOperationRequest(
         reqFieldPath,
         requestData,
-        reqInputFieldProjection,
-        reqOutputFieldProjection
+        StepsAndProjection.wrapNullable(inputStepsAndProjection, ENTITY_TO_FIELD),
+        outputStepsAndProjection.wrap(ENTITY_TO_FIELD)
     );
   }
 
@@ -301,38 +307,33 @@ public final class RequestFactory {
       );
     }
 
-    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
-        parseReqOutputProjection(
-            outputRequestString,
-            operationDeclaration.outputType().dataType(),
-            operationDeclaration.outputProjection().entityProjection(),
-            typesResolver
-        ).projection(),
-        TextLocation.UNKNOWN
+    StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
+        outputRequestString,
+        operationDeclaration.outputType().dataType(),
+        operationDeclaration.outputProjection().entityProjection(),
+        typesResolver
     );
 
-    ReqFieldProjection reqUpdateFieldProjection = null;
+    StepsAndProjection<ReqEntityProjection> updateStepsAndProjection = null;
     if (updateRequestString != null) {
       // parse leading '+'
       boolean replace = updateRequestString.startsWith("+");
 
-      reqUpdateFieldProjection = new ReqFieldProjection(
-          parseReqUpdateProjection(
-              replace ? updateRequestString.substring(1) : updateRequestString,
-              replace,
-              operationDeclaration.inputType().dataType(),
-              operationDeclaration.inputProjection().entityProjection(),
-              typesResolver
-          ),
-          TextLocation.UNKNOWN
+      updateStepsAndProjection = parseReqUpdateProjection(
+          replace ? updateRequestString.substring(1) : updateRequestString,
+          replace,
+          operationDeclaration.inputType().dataType(),
+          operationDeclaration.inputProjection().entityProjection(),
+          typesResolver
       );
+
     }
 
     return new UpdateOperationRequest(
         reqFieldPath,
         requestData,
-        reqUpdateFieldProjection,
-        reqFieldProjection
+        StepsAndProjection.wrapNullable(updateStepsAndProjection, ENTITY_TO_FIELD),
+        outputStepsAndProjection.wrap(ENTITY_TO_FIELD)
     );
   }
 
@@ -376,14 +377,11 @@ public final class RequestFactory {
       );
     }
 
-    ReqFieldProjection reqFieldProjection = new ReqFieldProjection(
-        parseReqOutputProjection(
-            outputRequestString,
-            operationDeclaration.outputType().dataType(),
-            operationDeclaration.outputProjection().entityProjection(),
-            typesResolver
-        ).projection(),
-        TextLocation.UNKNOWN
+    StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
+        outputRequestString,
+        operationDeclaration.outputType().dataType(),
+        operationDeclaration.outputProjection().entityProjection(),
+        typesResolver
     );
 
     ReqFieldProjection reqDeleteFieldProjection = new ReqFieldProjection(
@@ -399,7 +397,9 @@ public final class RequestFactory {
     return new DeleteOperationRequest(
         reqFieldPath,
         reqDeleteFieldProjection,
-        reqFieldProjection
+        outputStepsAndProjection.wrap(
+            projection -> new ReqFieldProjection(projection, projection.location())
+        )
     );
   }
 
@@ -445,17 +445,14 @@ public final class RequestFactory {
       );
     }
 
-    ReqFieldProjection reqOutputFieldProjection = new ReqFieldProjection(
-        parseReqOutputProjection(
-            outputRequestString,
-            operationDeclaration.outputType().dataType(),
-            operationDeclaration.outputProjection().entityProjection(),
-            typesResolver
-        ).projection(),
-        TextLocation.UNKNOWN
+    StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
+        outputRequestString,
+        operationDeclaration.outputType().dataType(),
+        operationDeclaration.outputProjection().entityProjection(),
+        typesResolver
     );
 
-    ReqFieldProjection reqInputFieldProjection = null;
+    StepsAndProjection<ReqEntityProjection> inputStepsAndProjection = null;
     if (inputRequestString != null) {
       OpFieldProjection opInputFieldProjection = operationDeclaration.inputProjection();
       if (opInputFieldProjection == null)
@@ -469,24 +466,24 @@ public final class RequestFactory {
       TypeApi inputType = operationDeclaration.inputType();
       assert inputType != null;
 
-      reqInputFieldProjection = new ReqFieldProjection(
-          parseReqOutputProjection(
-              inputRequestString,
-              inputType.dataType(),
-              opInputFieldProjection.entityProjection(),
-              typesResolver
-          ).projection(),
-          TextLocation.UNKNOWN
+      inputStepsAndProjection = parseReqInputProjection(
+          inputRequestString,
+          true, // todo take from inputRequestString
+          inputType.dataType(),
+          opInputFieldProjection.entityProjection(),
+          typesResolver
       );
+
     }
 
     return new CustomOperationRequest(
         reqFieldPath,
         requestData,
-        reqInputFieldProjection,
-        reqOutputFieldProjection
+        StepsAndProjection.wrapNullable(inputStepsAndProjection, ENTITY_TO_FIELD),
+        outputStepsAndProjection.wrap(ENTITY_TO_FIELD)
     );
   }
+
 
   private static @NotNull ReqEntityProjection parseReqPath(
       @NotNull String path,
@@ -535,6 +532,33 @@ public final class RequestFactory {
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(ReqOutputProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
+  }
+
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputProjection(
+      @NotNull String projection,
+      boolean required,
+      @NotNull DataTypeApi type,
+      @NotNull OpEntityProjection op,
+      @NotNull TypesResolver resolver) throws IllegalArgumentException {
+
+    return parseReqProjection(ReqInputProjectionPsiParser.INSTANCE, required, projection, type, op, resolver);
+  }
+
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqUpdateProjection(
+      @NotNull String projection,
+      boolean replace,
+      @NotNull DataTypeApi dataType,
+      @NotNull OpEntityProjection op,
+      @NotNull TypesResolver resolver) throws IllegalArgumentException {
+
+    return parseReqProjection(
+        ReqUpdateProjectionPsiParser.INSTANCE,
+        replace,
+        projection,
+        dataType,
+        op,
+        resolver
+    );
   }
 
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteProjection(
@@ -602,22 +626,6 @@ public final class RequestFactory {
     return psi;
   }
 
-  private static @NotNull ReqEntityProjection parseReqUpdateProjection(
-      @NotNull String projection,
-      boolean replace,
-      @NotNull DataTypeApi dataType,
-      @NotNull OpEntityProjection op,
-      @NotNull TypesResolver resolver) throws IllegalArgumentException {
-
-    return parseReqProjection(
-        ReqUpdateProjectionPsiParser.INSTANCE,
-        replace,
-        projection,
-        dataType,
-        op,
-        resolver
-    ).projection();
-  }
 
   private static void throwErrors(
       @NotNull PsiElement psi,

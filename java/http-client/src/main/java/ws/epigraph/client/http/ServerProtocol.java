@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
@@ -38,25 +39,25 @@ public interface ServerProtocol {
   @NotNull String[] mimeTypes();
 
   InvocationResult<ReadOperationResponse<Data>> readResponse(
-      @NotNull ReqEntityProjection projection,
+      @NotNull StepsAndProjection<ReqEntityProjection> projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,
       int okStatusCode);
 
   HttpContentProducer createRequestContentProducer(
-      @Nullable ReqEntityProjection reqInputProjection,
+      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   HttpContentProducer updateRequestContentProducer(
-      @Nullable ReqEntityProjection reqInputProjection,
+      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   HttpContentProducer customRequestContentProducer(
-      @Nullable ReqEntityProjection reqInputProjection,
+      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       @NotNull OpEntityProjection opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);

@@ -33,9 +33,8 @@ import ws.epigraph.wire.json.JsonFormat;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NotThreadSafe
 public class ReqJsonFormatWriter extends AbstractJsonFormatWriter<
@@ -86,6 +85,12 @@ public class ReqJsonFormatWriter extends AbstractJsonFormatWriter<
         }
         return keys;
     }
+  }
+
+  @Override
+  protected @Nullable Collection<Datum> getExpectedKeys(final @NotNull ReqMapModelProjection mapProjection) {
+    List<ReqKeyProjection> keys = mapProjection.keys();
+    return keys == null ? null : keys.stream().map(AbstractReqKeyProjection::value).collect(Collectors.toList());
   }
 
   @ThreadSafe

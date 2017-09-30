@@ -33,6 +33,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@Deprecated
 public final class DataPathRemover {
   private DataPathRemover() {} // todo move somewhere?
 

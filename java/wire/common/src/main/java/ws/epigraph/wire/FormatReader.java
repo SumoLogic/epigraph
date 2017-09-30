@@ -35,14 +35,14 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public interface FormatReader<
-    VP extends GenVarProjection<VP, ?, ?>,
+    EP extends GenVarProjection<EP, ?, ?>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>> {
 
   // with projections
 
-  @Nullable Data readData(@NotNull VP projection) throws IOException, FormatException;
+  @Nullable Data readData(@NotNull EP projection, int pathSteps) throws IOException, FormatException;
 
-  @Nullable Datum readDatum(@NotNull MP projection) throws IOException, FormatException;
+  @NotNull Val readValue(@NotNull MP projection, int pathSteps) throws IOException, FormatException;
 
   // without projections
 

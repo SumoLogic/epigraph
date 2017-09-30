@@ -180,6 +180,22 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
+  public void testCreateReadUpdateDeleteWithPath() throws IOException {
+    Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
+    int nextId = id + 1;
+
+    get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
+    put("/users</" + id + ":record/firstName", "'Bruce'", 200, "[]", false);
+    get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
+    delete("/users</" + id + ">[*](code,message)", 200, "[]");
+    delete(
+        "/users</" + nextId + ">/" + nextId + "(code,message)",
+        200,
+        "{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}"
+    );
+  }
+
+  @Test
   public void testCreateWithRequired() throws IOException {
     post(
         null,

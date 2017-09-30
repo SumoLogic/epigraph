@@ -18,6 +18,7 @@ package ws.epigraph.service.operations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
@@ -29,7 +30,7 @@ public class DeleteOperationRequest extends OperationRequest {
   public DeleteOperationRequest(
       final @Nullable ReqFieldProjection path,
       final @NotNull ReqFieldProjection deleteProjection,
-      final @NotNull ReqFieldProjection outputProjection) {
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection) {
 
     super(path, outputProjection);
     this.DeleteProjection = deleteProjection;

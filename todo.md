@@ -75,11 +75,12 @@
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
-- [ ] sort out 'path steps' for input projections: input data should respect them
+- [x] sort out 'path steps' for input projections: input data should respect them
 
 # Operations
 
 # Service
+- [x] http client `ServerProtocol`: optimize create/update payloads if they contain only one field, use paths in input projections
 
 # Build
 - Gradle

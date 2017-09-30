@@ -22,7 +22,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.invocation.OperationInvocationContext;
-import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.util.HttpStatusCode;
@@ -51,13 +51,11 @@ public class RemoteDeleteOperationInvocation
       final @NotNull DeleteOperationRequest operationRequest,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
-    ReqFieldProjection deleteFieldProjection = operationRequest.deleteProjection();
-
     String uri = UriComposer.composeDeleteUri(
         resourceName,
         operationRequest.path(),
-        deleteFieldProjection,
-        operationRequest.outputProjection()
+        new StepsAndProjection<>(0, operationRequest.deleteProjection()),
+        operationRequest.outputStepsAndProjection()
     );
 
     return new HttpDelete(uri);

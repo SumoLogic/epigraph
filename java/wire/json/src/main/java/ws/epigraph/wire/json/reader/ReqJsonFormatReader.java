@@ -76,9 +76,7 @@ public class ReqJsonFormatReader extends AbstractJsonFormatReader<
   }
 
   @Override
-  protected @Nullable Set<Datum> getExpectedKeys(
-      @NotNull Collection<@NotNull ReqMapModelProjection> projections
-  ) {
+  protected @Nullable Set<Datum> getExpectedKeys(@NotNull Collection<@NotNull ReqMapModelProjection> projections) {
     Set<Datum> expectedKeys = null;
     for (final ReqMapModelProjection projection : projections) {
       final @Nullable List<ReqKeyProjection> keyProjections = projection.keys();

@@ -49,13 +49,9 @@ public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
     OpKeyProjection
     > implements OpFormatWriter {
 
-  public OpJsonFormatWriter(@NotNull OutputStream out) {
-    this(out, StandardCharsets.UTF_8);
-  }
+  public OpJsonFormatWriter(@NotNull OutputStream out) { this(out, StandardCharsets.UTF_8); }
 
-  public OpJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) {
-    super(out, charset);
-  }
+  public OpJsonFormatWriter(@NotNull OutputStream out, @NotNull Charset charset) { super(out, charset); }
 
   @Override
   protected @NotNull Datum keyDatum(final @NotNull OpKeyProjection keyProjection) {
@@ -96,4 +92,8 @@ public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
     }
   }
 
+  @Override
+  protected @Nullable Collection<Datum> getExpectedKeys(final @NotNull OpMapModelProjection mapProjection) {
+    return null;
+  }
 }

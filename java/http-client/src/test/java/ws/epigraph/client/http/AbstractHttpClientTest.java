@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.client;
+package ws.epigraph.client.http;
 
 import org.apache.http.HttpHost;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ws.epigraph.client.http.*;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.DefaultOperationInvocationContext;
 import ws.epigraph.invocation.OperationInvocationContext;
@@ -83,6 +82,15 @@ public abstract class AbstractHttpClientTest {
         UsersResourceDeclaration.readOperationDeclaration,
         "[1,2](:record(firstName))",
         "( 1: < record: { firstName: 'First1' } >, 2: < record: { firstName: 'First2' } > )"
+    );
+  }
+
+  @Test
+  public void testReadWithPath() throws ExecutionException, InterruptedException {
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "/1:record/firstName",
+        "( 1: < record: { firstName: 'First1' } > )"
     );
   }
 
@@ -291,7 +299,7 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "/8:record/bestFriend:id",
-        "( 8: < record: { } > )"
+        "( 8: < record: { bestFriend: < id: null > } > )"  // todo double check if this is correct. Technically we asked for it?
     );
 
     // change it back

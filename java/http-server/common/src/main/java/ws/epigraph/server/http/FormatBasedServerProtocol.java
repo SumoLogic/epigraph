@@ -25,6 +25,7 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -67,7 +68,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public Data readInput(
       @NotNull OpEntityProjection opInputProjection,
-      @Nullable ReqEntityProjection reqInputProjection,
+      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
@@ -80,35 +81,10 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
       return reqInputProjection == null
              ? factories.opReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
-                 .readData(opInputProjection)
+                 .readData(opInputProjection, 0)
              : factories.reqReaderFactory()
                  .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
-                 .readData(reqInputProjection);
-    } catch (FormatException e) {
-      throw new IOException(e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public Data readUpdateInput(
-      @NotNull OpEntityProjection opInputProjection,
-      @Nullable ReqEntityProjection reqUpdateProjection,
-      @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
-
-    HttpExchange httpExchange = httpExchangeFactory.apply(httpInvocationContext);
-    Charset charset = Util.getCharset(httpExchange);
-
-    try {
-      FormatFactories factories = formatSelector.getFactories(httpInvocationContext);
-
-      return reqUpdateProjection == null
-             ? factories.opReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
-                 .readData(opInputProjection)
-             : factories.reqReaderFactory()
-                 .newFormatReader(httpExchange.getInputStream(), charset, typesResolver)
-                 .readData(reqUpdateProjection);
+                 .readData(reqInputProjection.projection(), reqInputProjection.pathSteps());
     } catch (FormatException e) {
       throw new IOException(e.getMessage(), e);
     }
@@ -117,7 +93,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public void writeDataResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqEntityProjection projection,
+      @NotNull StepsAndProjection<ReqEntityProjection> outputProjection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -126,7 +102,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
         getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
-        writer -> writer.writeData(projection, data)
+        writer -> writer.writeData(outputProjection.projection(), outputProjection.pathSteps(), data)
     );
 
   }
@@ -134,7 +110,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public void writeDatumResponse(
       @NotNull OperationKind operationKind,
-      @NotNull ReqModelProjection<?, ?, ?> projection,
+      @NotNull StepsAndProjection<ReqModelProjection<?, ?, ?>> outputProjection,
       @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -143,7 +119,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
         getSuccessStatusCode(operationKind),
         httpInvocationContext,
         operationInvocationContext,
-        writer -> writer.writeDatum(projection, datum)
+        writer -> writer.writeDatum(outputProjection.projection(), outputProjection.pathSteps(), datum)
     );
 
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.client;
+package ws.epigraph.client.http;
 
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;

@@ -19,6 +19,7 @@ package ws.epigraph.service.operations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 
 /**
@@ -26,20 +27,23 @@ import ws.epigraph.projections.req.ReqFieldProjection;
  */
 public class UpdateOperationRequest extends OperationRequest {
   private final @NotNull Data data;
-  private final @Nullable ReqFieldProjection updateProjection;
+  private final @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection;
 
   public UpdateOperationRequest(
       final @Nullable ReqFieldProjection path,
       final @NotNull Data data,
-      final @Nullable ReqFieldProjection updateProjection,
-      final @NotNull ReqFieldProjection outputProjection) {
-
-    super(path, outputProjection);
+      final @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection,
+      final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsProjection) {
+    super(path, outputStepsProjection);
     this.data = data;
-    this.updateProjection = updateProjection;
+    this.updateStepsAndProjection = updateStepsAndProjection;
   }
 
-  public @Nullable ReqFieldProjection updateProjection() { return updateProjection; }
-
   public @NotNull Data data() { return data; }
+
+  public @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection() { return updateStepsAndProjection; }
+
+  public @Nullable ReqFieldProjection updateProjection() {
+    return updateStepsAndProjection == null ? null : updateStepsAndProjection.projection();
+  }
 }

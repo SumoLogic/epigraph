@@ -238,6 +238,7 @@ reqComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqComaEntityP
 reqComaListModelProjection ::= '*' '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )? { pin=1 }
 
 // req output map
+// todo try to swap braced/non-braced to allow /users[*](*) instead of /users[*]((*))
 reqComaMapModelProjection ::= reqComaKeysProjection '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
 reqComaKeysProjection ::= '[' ( '*' | ( ( reqComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqComaKeyProjection ::= datum reqParamsAndAnnotations

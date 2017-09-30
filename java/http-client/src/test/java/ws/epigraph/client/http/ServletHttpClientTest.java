@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.client;
+package ws.epigraph.client.http;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;

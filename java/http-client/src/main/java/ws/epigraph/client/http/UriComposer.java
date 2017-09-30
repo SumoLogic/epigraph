@@ -22,6 +22,7 @@ import de.uka.ilkd.pp.StringBackend;
 import org.apache.commons.codec.net.URLCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
@@ -36,6 +37,7 @@ import java.util.BitSet;
 public final class UriComposer {
   protected static final BitSet SAFE_CHARACTERS = new BitSet(256);
 
+  // todo UT
   static {
     // alpha characters
     for (int i = 'a'; i <= 'z'; i++) { SAFE_CHARACTERS.set(i); }
@@ -54,17 +56,17 @@ public final class UriComposer {
   public static @NotNull String composeReadUri(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
-      @NotNull ReqFieldProjection projection) {
+      @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
     final String decodedUri;
 
     if (path == null)
-      decodedUri = printReqProjection(fieldName, projection);
+      decodedUri = printReqProjection(fieldName, outputStepsAndProjection);
     else {
       // see ReadRequestUrlPsiParser::parseReadRequestUrlWithPath
 
       String pathStr = printReqPath(fieldName, path);
-      String varStr = printReqProjection(projection.entityProjection());
+      String varStr = printReqProjection(outputStepsAndProjection);
 
       decodedUri = pathStr + varStr;
     }
@@ -75,8 +77,8 @@ public final class UriComposer {
   public static @NotNull String composeCreateUri(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
-      @Nullable ReqFieldProjection inputProjection,
-      @NotNull ReqFieldProjection outputProjection) {
+      @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
 
@@ -85,11 +87,11 @@ public final class UriComposer {
     else
       decodedUri.append(printReqPath(fieldName, path));
 
-    if (inputProjection != null) {
-      decodedUri.append('<').append(printReqProjection(inputProjection));
+    if (inputStepsAndProjection != null) {
+      decodedUri.append('<').append(printReqProjection(inputStepsAndProjection));
     }
 
-    decodedUri.append('>').append(printReqProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -97,8 +99,8 @@ public final class UriComposer {
   public static @NotNull String composeUpdateUri(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
-      @Nullable ReqFieldProjection updateProjection,
-      @NotNull ReqFieldProjection outputProjection) {
+      @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
 
@@ -107,11 +109,11 @@ public final class UriComposer {
     else
       decodedUri.append(printReqPath(fieldName, path));
 
-    if (updateProjection != null) {
-      decodedUri.append('<').append(printReqProjection(updateProjection));
+    if (updateStepsAndProjection != null) {
+      decodedUri.append('<').append(printReqProjection(updateStepsAndProjection));
     }
 
-    decodedUri.append('>').append(printReqProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -119,8 +121,8 @@ public final class UriComposer {
   public static @NotNull String composeDeleteUri(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
-      @NotNull ReqFieldProjection deleteProjection,
-      @NotNull ReqFieldProjection outputProjection) {
+      @NotNull StepsAndProjection<ReqFieldProjection> deleteStepsAndProjection,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
     final StringBuilder decodedUri = new StringBuilder();
 
@@ -129,9 +131,9 @@ public final class UriComposer {
     else
       decodedUri.append(printReqPath(fieldName, path));
 
-    decodedUri.append('<').append(printReqProjection(deleteProjection));
+    decodedUri.append('<').append(printReqProjection(deleteStepsAndProjection));
 
-    decodedUri.append('>').append(printReqProjection(outputProjection));
+    decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
 
     return encodeUri(decodedUri.toString());
   }
@@ -139,10 +141,10 @@ public final class UriComposer {
   public static @NotNull String composeCustomUri(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
-      @Nullable ReqFieldProjection inputProjection,
-      @NotNull ReqFieldProjection outputProjection) {
+      @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection,
+      @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
-    return composeCreateUri(fieldName, path, inputProjection, outputProjection); // same
+    return composeCreateUri(fieldName, path, inputStepsAndProjection, outputStepsAndProjection); // same
   }
 
   private static @NotNull String encodeUri(@NotNull String decodedUriNoLeadSlash) {
@@ -150,13 +152,16 @@ public final class UriComposer {
     return "/" + new String(urlBytes, StandardCharsets.UTF_8);
   }
 
-  private static @NotNull String printReqProjection(@NotNull ReqFieldProjection projection) {
-    return printReqProjection(projection.entityProjection());
+  private static @NotNull String printReqProjection(@NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection) {
+    return printReqProjection(
+        stepsAndProjection.projection().entityProjection(),
+        stepsAndProjection.pathSteps() - 1
+    );
   }
 
   private static @NotNull String printReqProjection(
       @NotNull String fieldName,
-      @NotNull ReqFieldProjection projection) {
+      @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection) {
 
     StringBackend sb = new StringBackend(2000);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
@@ -173,13 +178,12 @@ public final class UriComposer {
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
 
-    printer.print(fieldName, projection, 0);
+    printer.print(fieldName, stepsAndProjection.projection(), stepsAndProjection.pathSteps());
 
     return sb.getString();
   }
 
-  private static @NotNull String printReqProjection(
-      @NotNull ReqEntityProjection projection) {
+  private static @NotNull String printReqProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
 
     StringBackend sb = new StringBackend(2000);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
@@ -196,7 +200,7 @@ public final class UriComposer {
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
 
-    printer.printEntity(projection, 0);
+    printer.printEntity(projection, pathSteps);
 
     return sb.getString();
   }

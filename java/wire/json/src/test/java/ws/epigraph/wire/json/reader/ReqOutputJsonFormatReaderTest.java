@@ -29,6 +29,7 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
+import ws.epigraph.wire.FormatException;
 import ws.epigraph.wire.json.writer.ReqJsonFormatWriter;
 
 import java.io.ByteArrayOutputStream;
@@ -491,8 +492,8 @@ public class ReqOutputJsonFormatReaderTest {
 
     final Data data;
     try {
-      data = jsonReader.readData(reqProjection);
-    } catch (JsonFormatException e) {
+      data = jsonReader.readData(reqProjection, 0);
+    } catch (FormatException e) {
       fail(e.toString());
       throw new RuntimeException(e);
     }
@@ -550,9 +551,9 @@ public class ReqOutputJsonFormatReaderTest {
     ReqJsonFormatReader jsonReader = new ReqJsonFormatReader(parser, resolver);
 
     try {
-      jsonReader.readData(reqProjection);
+      jsonReader.readData(reqProjection, 0);
       fail();
-    } catch (JsonFormatException e) {
+    } catch (FormatException e) {
       if (errorMessageSubstring != null)
         assertTrue(e.getMessage().contains(errorMessageSubstring));
     }

@@ -34,6 +34,7 @@ import ws.epigraph.http.MimeTypes;
 import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.refs.TypesResolver;
@@ -83,7 +84,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer createRequestContentProducer(
-      final @Nullable ReqEntityProjection reqInputProjection,
+      final @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
       final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
@@ -96,7 +97,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
-        writer.writeData(opInputProjection, inputData);
+        writer.writeData(opInputProjection, 0, inputData);
         writer.close();
         cos.close();
       };
@@ -105,7 +106,11 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         ReqFormatWriter writer = reqWriterFactory.newFormatWriter(cos, requestCharset);
-        writer.writeData(reqInputProjection, inputData);
+        writer.writeData(
+            reqInputProjection.projection(),
+            reqInputProjection.pathSteps() - 1, // minus one for field
+            inputData
+        );
         writer.close();
         cos.close();
       };
@@ -119,7 +124,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer updateRequestContentProducer(
-      final @Nullable ReqEntityProjection reqUpdateProjection,
+      final @Nullable StepsAndProjection<ReqEntityProjection> reqUpdateProjection,
       final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
@@ -132,7 +137,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         OpFormatWriter writer = opWriterFactory.newFormatWriter(cos, requestCharset);
-        writer.writeData(opInputProjection, inputData);
+        writer.writeData(opInputProjection, 0, inputData);
         writer.close();
         cos.close();
       };
@@ -141,7 +146,11 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       producerFunc = ce -> () -> {
         ContentEncodingOutputStream cos = new ContentEncodingOutputStream(ce);
         ReqFormatWriter writer = reqWriterFactory.newFormatWriter(cos, requestCharset);
-        writer.writeData(reqUpdateProjection, inputData);
+        writer.writeData(
+            reqUpdateProjection.projection(),
+            reqUpdateProjection.pathSteps() - 1, // minus one for field
+            inputData
+        );
         writer.close();
         cos.close();
       };
@@ -155,7 +164,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer customRequestContentProducer(
-      final @Nullable ReqEntityProjection reqInputProjection,
+      final StepsAndProjection<ReqEntityProjection> reqInputProjection,
       final @NotNull OpEntityProjection opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
@@ -165,7 +174,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public InvocationResult<ReadOperationResponse<Data>> readResponse(
-      final @NotNull ReqEntityProjection projection,
+      final @NotNull StepsAndProjection<ReqEntityProjection> projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse,
       final int okStatusCode) {
@@ -182,7 +191,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
           ReqFormatReader formatReader =
               reqReaderFactory.newFormatReader(inputStream, charset, typesResolver);
 
-          Data data = formatReader.readData(projection);
+          Data data = formatReader.readData(projection.projection(), projection.pathSteps());
           return InvocationResult.success(new ReadOperationResponse<>(data));
         } catch (FormatException e) {
           return InvocationResult.failure(new MalformedOutputInvocationError(e));

@@ -35,6 +35,7 @@ public interface HttpExchange extends AutoCloseable {
   @NotNull InputStream getInputStream() throws IOException;
 
   void setStatusCode(int statusCode);
+
   void setHeaders(Map<String, String> headers);
 
   @NotNull OutputStream getOutputStream() throws IOException;
