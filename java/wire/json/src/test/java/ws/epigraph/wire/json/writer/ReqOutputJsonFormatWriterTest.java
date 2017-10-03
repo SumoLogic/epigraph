@@ -291,7 +291,7 @@ public class ReqOutputJsonFormatWriterTest {
         "{ meta: (start, count) } [ required ]( :`record` ( id, firstName ) )", resolver
     );
 
-    String reqProjectionStr = "[ 2 ](:record(id, firstName))@(start,count)";
+    String reqProjectionStr = "@(start,count)[ 2 ]:record(id, firstName)";
     final @NotNull ReqEntityProjection reqProjection =
         parseReqOutputEntityProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
 

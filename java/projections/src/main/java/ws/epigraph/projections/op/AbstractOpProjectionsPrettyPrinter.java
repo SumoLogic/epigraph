@@ -207,13 +207,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 //    }
   }
 
-  protected void printMapModelProjection(
-      @Nullable String keysProjectionPrefix,
-      @NotNull AbstractOpKeyProjection keyProjection,
-      VP itemsProjection) throws E {
-
-    printMapModelProjection(keysProjectionPrefix, keyProjection, "", itemsProjection);
-  }
+//  protected void printMapModelProjection(
+//      @Nullable String keysProjectionPrefix,
+//      @NotNull AbstractOpKeyProjection keyProjection,
+//      VP itemsProjection) throws E {
+//
+//    printMapModelProjection(keysProjectionPrefix, keyProjection, "", itemsProjection);
+//  }
 
   protected void printMapModelProjection(
       @Nullable String keysProjectionPrefix,

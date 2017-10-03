@@ -299,6 +299,15 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
+//  @Test
+  public void testStarFieldsInMap() {
+    testParse(
+        ":record(friendRecordMap[*](*))",
+        ":record ( friendRecordMap [ * ] ( id, firstName ) )",
+        1
+    );
+  }
+
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testRequiredField() {
@@ -439,10 +448,10 @@ public class ReqOutputProjectionsParserTest {
   public void testParseMeta() throws PsiProcessingException {
     final DataType dataType = new DataType(PersonMap.type, null);
 
-    String opProjectionStr = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
+    String opProjectionStr = "{ ;param: epigraph.String, meta: ( start, count ) } [ required ] :`record` ( id, firstName )";
     @NotNull OpEntityProjection opProjection = parseOpEntityProjection(dataType, opProjectionStr, resolver);
 
-    String projection = "[ 2 ]( :record ( id, firstName ) )@+( start, count )";
+    String projection = "@+( start, count ) ;param = 'foo' [ 2 ]( :record ( id, firstName ) )";
 
     testParse(
         dataType,

@@ -82,9 +82,10 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
   }
 
   @Override
-  protected void printModelMeta(final @NotNull MP metaProjection) throws E {
+  protected boolean printModelMeta(final @NotNull MP metaProjection) throws E {
     l.print("@");
     printModel(metaProjection, 0);
+    return false;
   }
 
   protected void printParams(@NotNull ReqParams params) throws E { // move to req common?
@@ -202,47 +203,48 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     printDirectives(key.directives());
   }
 
-  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
-      throws E {
-    printMapModelProjection(keys, "", itemsProjection);
-  }
-
-  protected void printMapModelProjection(
-      @Nullable List<? extends AbstractReqKeyProjection> keys,
-      @NotNull String itemsProjectionPrefix,
-      @NotNull VP itemsProjection)
-      throws E {
-
-    l.beginIInd();
-    l.print("[");
-
-    if (keys == null) {
-      l.print("*");
-    } else {
-      boolean first = true;
-      for (AbstractReqKeyProjection key : keys) {
-        if (first) {
-          brk();
-          first = false;
-        } else {
-          l.print(",");
-          nbsp(); // why not brk() ?
-        }
-
-        printReqKey(key);
-      }
-      if (!first) brk();
-    }
-
-    l.print("]");
-    l.print(itemsProjectionPrefix);
-    l.print("(");
-
-    if (!isPrintoutEmpty(itemsProjection)) {
-      brk();
-      printEntity(itemsProjection, 0);
-    }
-    brk(1, -l.getDefaultIndentation()).end().print(")");
-
-  }
+//  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
+//      throws E {
+//    printMapModelProjection(keys, "", itemsProjection);
+//  }
+//
+//  protected void printMapModelProjection(
+//      @Nullable List<? extends AbstractReqKeyProjection> keys,
+//      @NotNull String itemsProjectionPrefix,
+//      @NotNull VP itemsProjection)
+//      throws E {
+//
+//    l.beginIInd();
+//    l.print("[");
+//
+//    if (keys == null) {
+//      l.print("*");
+//    } else {
+//      boolean first = true;
+//      for (AbstractReqKeyProjection key : keys) {
+//        if (first) {
+//          brk();
+//          first = false;
+//        } else {
+//          l.print(",");
+//          nbsp(); // why not brk() ?
+//        }
+//
+//        printReqKey(key);
+//      }
+//      if (!first) brk();
+//    }
+//
+//    l.print("]");
+//    l.print(itemsProjectionPrefix);
+//    l.print("(");
+//
+//    if (!isPrintoutEmpty(itemsProjection)) {
+//      brk();
+//      printEntity(itemsProjection, 0);
+//    }
+//    brk(1, -l.getDefaultIndentation()).end().print(")");
+////    brk().end();
+//
+//  }
 }

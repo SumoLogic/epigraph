@@ -43,9 +43,9 @@ public class UrlReqModelMetaImpl extends ASTWrapperPsiElement implements UrlReqM
   }
 
   @Override
-  @NotNull
+  @Nullable
   public UrlReqComaModelProjection getReqComaModelProjection() {
-    return findNotNullChildByClass(UrlReqComaModelProjection.class);
+    return findChildByClass(UrlReqComaModelProjection.class);
   }
 
   @Override

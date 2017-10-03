@@ -1497,13 +1497,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   public static boolean reqModelMeta(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqModelMeta")) return false;
     if (!nextTokenIs(b, U_AT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_META, null);
     r = consumeToken(b, U_AT);
-    r = r && reqModelMeta_1(b, l + 1);
-    r = r && reqComaModelProjection(b, l + 1);
-    exit_section_(b, m, U_REQ_MODEL_META, r);
-    return r;
+    p = r; // pin = 1
+    r = r && report_error_(b, reqModelMeta_1(b, l + 1));
+    r = p && reqComaModelProjection(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // '+'?
@@ -1949,14 +1950,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ( ( ':' '+'? tagName ) | '+' )? reqTrunkModelProjectionWithProperties reqModelMeta?
+  // ( ( ':' '+'? tagName ) | '+' )? reqModelMeta? reqTrunkModelProjectionWithProperties
   public static boolean reqTrunkSingleTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_TRUNK_SINGLE_TAG_PROJECTION, "<req trunk single tag projection>");
     r = reqTrunkSingleTagProjection_0(b, l + 1);
+    r = r && reqTrunkSingleTagProjection_1(b, l + 1);
     r = r && reqTrunkModelProjectionWithProperties(b, l + 1);
-    r = r && reqTrunkSingleTagProjection_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1999,8 +2000,8 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   // reqModelMeta?
-  private static boolean reqTrunkSingleTagProjection_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_2")) return false;
+  private static boolean reqTrunkSingleTagProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkSingleTagProjection_1")) return false;
     reqModelMeta(b, l + 1);
     return true;
   }

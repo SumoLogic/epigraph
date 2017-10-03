@@ -160,7 +160,7 @@ reqMapModelPath ::= '/' reqTrunkKeyProjection reqEntityPath {pin=2}
 
 reqStarTagProjection ::= ':' '*' // all tags with empty contents
 
-reqModelMeta ::= '@' '+'? reqComaModelProjection // no params/annotations on meta?
+reqModelMeta ::= '@' '+'? reqComaModelProjection { pin = 1 } // no params/annotations on meta?
 
 reqEntityPolymorphicTail ::= ':' '~' ( reqEntitySingleTail | reqEntityMultiTail ) {pin=2}
 reqEntitySingleTail ::= typeRef reqComaEntityProjection
@@ -181,7 +181,7 @@ reqUnnamedTrunkEntityProjection ::= ( reqStarTagProjection
                                     | reqTrunkSingleTagProjection
                                     ) reqEntityPolymorphicTail?
 
-reqTrunkSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? reqTrunkModelProjectionWithProperties reqModelMeta?
+reqTrunkSingleTagProjection ::= ( ( ':' '+'? tagName ) | '+' )? reqModelMeta? reqTrunkModelProjectionWithProperties
 
 private reqTrunkModelProjectionWithProperties ::= reqParamsAndAnnotations reqTrunkModelProjection
 
@@ -238,7 +238,7 @@ reqComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqComaEntityP
 reqComaListModelProjection ::= '*' '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )? { pin=1 }
 
 // req output map
-// todo try to swap braced/non-braced to allow /users[*](*) instead of /users[*]((*))
+// NB: can't get rid of optional braces because they are needed to disambiguate model tails for maps/lists (map vs map item tails)
 reqComaMapModelProjection ::= reqComaKeysProjection '+'? ( ( reqBracedComaEntityProjection | reqComaEntityProjection ) )?
 reqComaKeysProjection ::= '[' ( '*' | ( ( reqComaKeyProjection ','? )* ) ) ']' {pin=1}
 reqComaKeyProjection ::= datum reqParamsAndAnnotations

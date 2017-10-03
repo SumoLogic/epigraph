@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 
 public interface UrlReqModelMeta extends PsiElement {
 
-  @NotNull
+  @Nullable
   UrlReqComaModelProjection getReqComaModelProjection();
 
   @NotNull

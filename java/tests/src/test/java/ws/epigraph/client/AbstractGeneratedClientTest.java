@@ -89,7 +89,7 @@ public abstract class AbstractGeneratedClientTest {
             .put$(PersonId.create(2), Person.create().setRecord(PersonRecord.create().setFirstName("First2")))
             .setMeta(PaginationInfo.create().setStart(1L).setCount(2L)),
 
-        client.read(";start=1;count=2[1,2](:record(firstName))@(start,count)")
+        client.read("@(start,count);start=1;count=2[1,2]:record(firstName)")
     );
   }
 

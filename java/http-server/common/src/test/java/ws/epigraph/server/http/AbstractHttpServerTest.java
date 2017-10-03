@@ -105,7 +105,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testGetWithMeta() throws IOException {
     get(
-        "/users;start=5;count=10[1](:id)@(start,count)",
+        "/users@(start,count);start=5;count=10[1]:id",
         200,
         "{\"META\":{\"start\":5,\"count\":10},\"DATA\":[{\"K\":1,\"V\":1}]}"
     );

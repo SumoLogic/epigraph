@@ -58,10 +58,11 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
   }
 
   @Override
-  protected void printModelMeta(final @NotNull ReqModelProjection<?, ?, ?> metaProjection) throws E {
+  protected boolean printModelMeta(final @NotNull ReqModelProjection<?, ?, ?> metaProjection) throws E {
     l.print("@");
     if (metaProjection.flagged()) l.print("+");
     printModel(metaProjection, 0);
+    return false;
   }
 
   @Override

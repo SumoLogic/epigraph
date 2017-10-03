@@ -227,19 +227,25 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (mp.isResolved()) {
       l.beginIInd(0);
 
-      boolean empty = printModelParams(mp);
+      boolean empty = true;
+      final MP meta = (MP) mp.metaProjection();
+      if (meta != null) {
+        empty = printModelMeta(meta);
+      }
+
+      if (!empty && !modelParamsEmpty(mp))
+        nbsp();
+
+      empty &= printModelParams(mp);
+
       if (!empty && !isPrintoutNoParamsEmpty(mp))
-        l.print(" ");
+        nbsp();
       //l.brk();
 
       if (!isPrintoutNoParamsEmpty(mp))
         printModelOnly(mp, pathSteps);
 
       printModelTailsOnly(mp);
-
-      final MP meta = (MP) mp.metaProjection();
-      if (meta != null)
-        printModelMeta(meta);
 
       l.end();
     } else
@@ -250,7 +256,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected abstract void printModelOnly(@NotNull MP mp, int pathSteps) throws E;
 
-  protected void printModelMeta(@NotNull MP meta) throws E { }
+  protected boolean printModelMeta(@NotNull MP meta) throws E { return true; }
 
   @SuppressWarnings("unchecked") // todo introduce TMP extends MP
   private void printModelTailsOnly(@NotNull MP p) throws E {

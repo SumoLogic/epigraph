@@ -76,6 +76,7 @@
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
 - [x] sort out 'path steps' for input projections: input data should respect them
+- [ ] consider removing model kinds separation from grammar/psi to allow more flexible syntax, e.g. `friendsMap * ( foo )`
 
 # Operations
 
