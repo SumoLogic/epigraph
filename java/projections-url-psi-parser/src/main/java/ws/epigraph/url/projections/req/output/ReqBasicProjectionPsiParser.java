@@ -209,7 +209,7 @@ public final class ReqBasicProjectionPsiParser {
           // tagProjections stay empty
           parenthesized = false;
           steps = 0;
-        }  else {
+        } else {
           throw noRetroTagError(dataType, tagLocation, context);
         }
 
@@ -732,6 +732,12 @@ public final class ReqBasicProjectionPsiParser {
 
     // no params/annotations/meta on meta for now
 
+    UrlReqComaModelProjection modelProjectionPsi = modelMetaPsi.getReqComaModelProjection();
+    if (modelProjectionPsi == null) {
+      context.addError("Incomplete meta projection", modelMetaPsi);
+      return null;
+    }
+
     return parseComaModelProjection(
         ReqModelProjection.class,
         metaOp,
@@ -739,7 +745,7 @@ public final class ReqBasicProjectionPsiParser {
         ReqParams.EMPTY,
         Directives.EMPTY,
         null,
-        modelMetaPsi.getReqComaModelProjection(),
+        modelProjectionPsi,
         addTypeNamespace(metaOp.type(), resolver),
         context
     );
@@ -1492,7 +1498,14 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    return parseTrunkFieldProjection(fieldType, flagged,  /*op.params(), */op.entityProjection(), psi, resolver, context);
+    return parseTrunkFieldProjection(
+        fieldType,
+        flagged,  /*op.params(), */
+        op.entityProjection(),
+        psi,
+        resolver,
+        context
+    );
   }
 
   private static StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
@@ -1542,7 +1555,7 @@ public final class ReqBasicProjectionPsiParser {
 
     Map<String, OpFieldProjectionEntry> opFields = op.fieldProjections();
 
-    if (psi.getStar() == null) {
+    if (psi.getReqAll() == null) {
       for (UrlReqComaFieldProjection fieldProjectionPsi : psiFieldProjections) {
         final String fieldName = fieldProjectionPsi.getQid().getCanonicalName();
 
@@ -1600,7 +1613,7 @@ public final class ReqBasicProjectionPsiParser {
         }
       }
     } else {
-      TextLocation location = EpigraphPsiUtil.getLocation(psi.getStar());
+      TextLocation location = EpigraphPsiUtil.getLocation(psi.getReqAll());
 
       for (final Map.Entry<String, OpFieldProjectionEntry> entry : opFields.entrySet()) {
         final FieldApi field = entry.getValue().field();
@@ -1617,7 +1630,7 @@ public final class ReqBasicProjectionPsiParser {
                         field.dataType(),
                         opFieldProjection.entityProjection(),
                         false,
-                        psi.getStar(),
+                        psi.getReqAll(),
                         context
                     ),
 //                    false,
@@ -1814,7 +1827,8 @@ public final class ReqBasicProjectionPsiParser {
     ReqEntityProjection itemsProjection;
     @Nullable UrlReqComaEntityProjection reqOutputEntityProjectionPsi = psi.getReqComaEntityProjection();
     if (reqOutputEntityProjectionPsi == null)
-      itemsProjection = createDefaultEntityProjection(op.type().elementType(), op.itemsProjection(), true, psi, context);
+      itemsProjection =
+          createDefaultEntityProjection(op.type().elementType(), op.itemsProjection(), true, psi, context);
     else
       itemsProjection =
           parseComaEntityProjection(

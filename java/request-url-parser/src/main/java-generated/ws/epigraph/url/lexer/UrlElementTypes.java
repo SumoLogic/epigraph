@@ -49,6 +49,7 @@ public interface UrlElementTypes {
   IElementType U_RECORD_DATUM = new UrlElementType("U_RECORD_DATUM");
   IElementType U_RECORD_DATUM_ENTRY = new UrlElementType("U_RECORD_DATUM_ENTRY");
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
+  IElementType U_REQ_ALL = new UrlElementType("U_REQ_ALL");
   IElementType U_REQ_ANNOTATION = new UrlElementType("U_REQ_ANNOTATION");
   IElementType U_REQ_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_COMA_ENTITY_PROJECTION");
   IElementType U_REQ_COMA_ENTITY_PROJECTION_REF = new UrlElementType("U_REQ_COMA_ENTITY_PROJECTION_REF");
@@ -207,6 +208,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQUEST_PARAM) {
         return new UrlRequestParamImpl(node);
+      }
+      else if (type == U_REQ_ALL) {
+        return new UrlReqAllImpl(node);
       }
       else if (type == U_REQ_ANNOTATION) {
         return new UrlReqAnnotationImpl(node);

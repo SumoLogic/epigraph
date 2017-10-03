@@ -23,6 +23,9 @@ import com.intellij.psi.PsiElement;
 
 public interface UrlReqComaRecordModelProjection extends PsiElement {
 
+  @Nullable
+  UrlReqAll getReqAll();
+
   @NotNull
   List<UrlReqComaFieldProjection> getReqComaFieldProjectionList();
 
@@ -31,8 +34,5 @@ public interface UrlReqComaRecordModelProjection extends PsiElement {
 
   @Nullable
   PsiElement getParenRight();
-
-  @Nullable
-  PsiElement getStar();
 
 }

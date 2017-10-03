@@ -119,6 +119,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqAll(@NotNull UrlReqAll o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqAnnotation(@NotNull UrlReqAnnotation o) {
     visitPsiElement(o);
   }

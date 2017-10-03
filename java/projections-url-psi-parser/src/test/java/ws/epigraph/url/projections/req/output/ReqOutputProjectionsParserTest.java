@@ -262,7 +262,13 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testStarTags() {
     testParse(
-        ":*",
+        ":...",
+        ":( id, record )",
+        0
+    );
+
+    testParse(
+        ":(...)",
         ":( id, record )",
         0
     );
@@ -271,7 +277,7 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testStarTags2() {
     testParse(
-        ":record(bestFriend:*)",
+        ":record(bestFriend:...)",
         ":record ( bestFriend :( id, record ) )",
         1
     );
@@ -280,7 +286,7 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testStarFields() {
     testParse(
-        ":record(*)",
+        ":record(...)",
         lines(
             ":record (",
             "  id,",
@@ -299,11 +305,11 @@ public class ReqOutputProjectionsParserTest {
     );
   }
 
-//  @Test
+  @Test
   public void testStarFieldsInMap() {
     testParse(
-        ":record(friendRecordMap[*](*))",
-        ":record ( friendRecordMap [ * ] ( id, firstName ) )",
+        ":record(friendRecordMap[*](...))",
+        ":record ( friendRecordMap [ * ]( ( id, firstName ) ) )",
         1
     );
   }

@@ -44,14 +44,26 @@ public class UrlReqStarTagProjectionImpl extends ASTWrapperPsiElement implements
 
   @Override
   @NotNull
+  public UrlReqAll getReqAll() {
+    return findNotNullChildByClass(UrlReqAll.class);
+  }
+
+  @Override
+  @NotNull
   public PsiElement getColon() {
     return findNotNullChildByType(U_COLON);
   }
 
   @Override
-  @NotNull
-  public PsiElement getStar() {
-    return findNotNullChildByType(U_STAR);
+  @Nullable
+  public PsiElement getParenLeft() {
+    return findChildByType(U_PAREN_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getParenRight() {
+    return findChildByType(U_PAREN_RIGHT);
   }
 
 }

@@ -24,9 +24,15 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqStarTagProjection extends PsiElement {
 
   @NotNull
-  PsiElement getColon();
+  UrlReqAll getReqAll();
 
   @NotNull
-  PsiElement getStar();
+  PsiElement getColon();
+
+  @Nullable
+  PsiElement getParenLeft();
+
+  @Nullable
+  PsiElement getParenRight();
 
 }

@@ -43,6 +43,12 @@ public class UrlReqComaRecordModelProjectionImpl extends ASTWrapperPsiElement im
   }
 
   @Override
+  @Nullable
+  public UrlReqAll getReqAll() {
+    return findChildByClass(UrlReqAll.class);
+  }
+
+  @Override
   @NotNull
   public List<UrlReqComaFieldProjection> getReqComaFieldProjectionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqComaFieldProjection.class);
@@ -58,12 +64,6 @@ public class UrlReqComaRecordModelProjectionImpl extends ASTWrapperPsiElement im
   @Nullable
   public PsiElement getParenRight() {
     return findChildByType(U_PAREN_RIGHT);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getStar() {
-    return findChildByType(U_STAR);
   }
 
 }

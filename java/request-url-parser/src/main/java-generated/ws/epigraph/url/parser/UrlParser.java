@@ -111,6 +111,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_RECORD_DATUM_ENTRY) {
       r = recordDatumEntry(b, 0);
     }
+    else if (t == U_REQ_ALL) {
+      r = reqAll(b, 0);
+    }
     else if (t == U_REQ_ANNOTATION) {
       r = reqAnnotation(b, 0);
     }
@@ -869,6 +872,19 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '.' '.' '.'
+  public static boolean reqAll(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqAll")) return false;
+    if (!nextTokenIs(b, U_DOT)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_ALL, null);
+    r = consumeTokens(b, 1, U_DOT, U_DOT, U_DOT);
+    p = r; // pin = 1
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // '!' annotation
   public static boolean reqAnnotation(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqAnnotation")) return false;
@@ -1225,7 +1241,7 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '(' ( '*' | ( (reqComaFieldProjection ','?)* ) ) ')'
+  // '(' ( reqAll | ( (reqComaFieldProjection ','?)* ) ) ')'
   public static boolean reqComaRecordModelProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqComaRecordModelProjection")) return false;
     if (!nextTokenIs(b, U_PAREN_LEFT)) return false;
@@ -1239,12 +1255,12 @@ public class UrlParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // '*' | ( (reqComaFieldProjection ','?)* )
+  // reqAll | ( (reqComaFieldProjection ','?)* )
   private static boolean reqComaRecordModelProjection_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqComaRecordModelProjection_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, U_STAR);
+    r = reqAll(b, l + 1);
     if (!r) r = reqComaRecordModelProjection_1_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -1745,14 +1761,38 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ':' '*'
+  // ':' ( reqAll | '(' reqAll ')' )
   public static boolean reqStarTagProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqStarTagProjection")) return false;
     if (!nextTokenIs(b, U_COLON)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, U_COLON, U_STAR);
+    r = consumeToken(b, U_COLON);
+    r = r && reqStarTagProjection_1(b, l + 1);
     exit_section_(b, m, U_REQ_STAR_TAG_PROJECTION, r);
+    return r;
+  }
+
+  // reqAll | '(' reqAll ')'
+  private static boolean reqStarTagProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqStarTagProjection_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = reqAll(b, l + 1);
+    if (!r) r = reqStarTagProjection_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '(' reqAll ')'
+  private static boolean reqStarTagProjection_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqStarTagProjection_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_PAREN_LEFT);
+    r = r && reqAll(b, l + 1);
+    r = r && consumeToken(b, U_PAREN_RIGHT);
+    exit_section_(b, m, null, r);
     return r;
   }
 

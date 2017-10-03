@@ -158,7 +158,8 @@ reqMapModelPath ::= '/' reqTrunkKeyProjection reqEntityPath {pin=2}
 // req output --------------------------------------------------------
 // this is based on opInput from schema.bnf
 
-reqStarTagProjection ::= ':' '*' // all tags with empty contents
+reqAll ::= '.' '.' '.' { pin = 1 }
+reqStarTagProjection ::= ':' ( reqAll | '(' reqAll ')' ) // all tags with empty contents
 
 reqModelMeta ::= '@' '+'? reqComaModelProjection { pin = 1 } // no params/annotations on meta?
 
@@ -231,7 +232,7 @@ reqComaModelProjection ::= ( ( reqComaRecordModelProjection
                            )?
 
 // req output record
-reqComaRecordModelProjection ::= '(' ( '*' | ( (reqComaFieldProjection ','?)* ) ) ')' { pin=1 }
+reqComaRecordModelProjection ::= '(' ( reqAll | ( (reqComaFieldProjection ','?)* ) ) ')' { pin=1 }
 reqComaFieldProjection ::= '+'? qid /* reqParamsAndAnnotations */ reqComaEntityProjection
 
 // req output list
