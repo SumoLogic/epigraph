@@ -9,6 +9,7 @@
 - [x] codegen: `_resources/*` package name should be in lower case
 - [x] codegen: primitive `String` setters should accept `CharSequence`
 - [x] get rid of `<` before input projections in URLs
+- [ ] do something about nullable/optional in schema/projections
 
 - Federator
   - [ ] allow paths to end with model types (prereq. for fed. ?)

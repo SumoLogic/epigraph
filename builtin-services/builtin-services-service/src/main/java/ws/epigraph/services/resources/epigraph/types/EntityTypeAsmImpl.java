@@ -16,23 +16,23 @@
 
 package ws.epigraph.services.resources.epigraph.types;
 
-import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.VarTypeAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.supertypes.VarType_ListAsm;
-import ws.epigraph.services._resources.epigraph.projections.output.type._nt.vartype.tags.Tag_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.entitytype.EntityTypeAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.entitytype.supertypes.EntityType_ListAsm;
+import ws.epigraph.services._resources.epigraph.projections.output.type._nt.entitytype.tags.Tag_ListAsm;
 import ws.epigraph.types.EntityTypeApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class EntityTypeAsm extends VarTypeAsm<EntityTypeApi> {
-  public static final EntityTypeAsm INSTANCE = new EntityTypeAsm();
+public final class EntityTypeAsmImpl extends EntityTypeAsm<EntityTypeApi> {
+  public static final EntityTypeAsmImpl INSTANCE = new EntityTypeAsmImpl();
 
-  private EntityTypeAsm() {
+  private EntityTypeAsmImpl() {
     super(
         TypeAsmImpl.ABSTRACT_ASM.on(t -> (EntityTypeApi) t), // abstract
         AnnotationsAsmImpl.INSTANCE.on(EntityTypeApi::annotations), // annotations
         QualifiedTypeNameAsmImpl.INSTANCE.on(EntityTypeApi::name), // name
-        new VarType_ListAsm<>(EntityTypeApi::supertypes, INSTANCE),  // supertypes
+        new EntityType_ListAsm<>(EntityTypeApi::supertypes, INSTANCE),  // supertypes
         new Tag_ListAsm<>(EntityTypeApi::tags, TagAsmImpl.INSTANCE) // tags
     );
   }

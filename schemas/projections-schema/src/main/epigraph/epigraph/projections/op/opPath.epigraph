@@ -8,7 +8,7 @@ import epigraph.schema.PrimitiveType
 import epigraph.schema.RecordType
 import epigraph.schema.Tag
 
-record OpVarPath {
+record OpEntityPath {
   tag: OpTagPath
 }
 
@@ -35,13 +35,13 @@ record OpFieldPathEntry {
 record OpFieldPath {
   params: list[OpParam]
 //  annotations: map[QualifiedTypeName, Annotation]
-  varPath: OpVarPath
+  varPath: OpEntityPath
 }
 
 record OpMapModelPath extends OpModelPath {
   override model: MapType
   keyProjection: OpPathKeyProjection
-  varPath: OpVarPath
+  varPath: OpEntityPath
 }
 
 record OpPathKeyProjection extends Annotated {

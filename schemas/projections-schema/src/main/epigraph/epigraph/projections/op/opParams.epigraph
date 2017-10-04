@@ -8,7 +8,7 @@ import epigraph.schema.Named
 record OpParam extends Named /*, Annotated */ {
   `required`: Boolean
   override name: ParamName
-  modelProjection: OpInputModelProjection
+  modelProjection: OpModelProjection
   `default`: Datum
   customParams: map[String, Data]
 }

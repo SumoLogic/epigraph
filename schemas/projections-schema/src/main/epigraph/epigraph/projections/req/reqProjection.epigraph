@@ -35,67 +35,72 @@ import epigraph.annotations.Doc
 // /a/b/c vs a(b(c))
 // this is not reflected in the schema, but psi parsers return projections along with 'number of path steps' = path length
 
-record ReqOutputVarProjection {
+record ReqEntityProjection {
   type: Type
-  tagProjections: map[String, ReqOutputTagProjectionEntry]
-  polymorphicTail: list[ReqOutputVarProjection]
+  flagged: Boolean {
+    @Doc "'required' for output projection, 'replace' for update input projection"
+  }
+  tagProjections: map[String, ReqTagProjectionEntry]
+  polymorphicTail: list[ReqEntityProjection]
 }
 
-record ReqOutputTagProjectionEntry {
+record ReqTagProjectionEntry {
   tag: Tag
-  `projection`: ReqOutputModelProjection
+  `projection`: ReqModelProjection
 }
 
-abstract record ReqOutputModelProjection {
+abstract record ReqModelProjection {
   model: DatumType
-  `required`: Boolean
+  flagged: Boolean {
+    @Doc "'required' for output projection, 'replace' for update input projection"
+  }
   params: map[String, ReqParam]
   directives: map[String, Directive]
-  `meta`: ReqOutputModelProjection
+  `meta`: ReqModelProjection
 }
 
-record ReqOutputRecordModelProjection extends ReqOutputModelProjection {
+record ReqRecordModelProjection extends ReqModelProjection {
   override model: RecordType
-  fieldProjections: list[ReqOutputFieldProjectionEntry]
+  fieldProjections: list[ReqFieldProjectionEntry]
 }
-record ReqOutputFieldProjectionEntry {
+record ReqFieldProjectionEntry {
   field: Field
-  `projection`: ReqOutputFieldProjection
+  `projection`: ReqFieldProjection
 }
 
-record ReqOutputFieldProjection {
+record ReqFieldProjection {
   `required`: Boolean  // artificial, required on field = required on all models
   // params: map[String, ReqParam]
   // annotations: map[String, Annotation]
-  varProjection: ReqOutputVarProjection
+  entityProjection: ReqEntityProjection
 }
 
-record ReqOutputListModelProjection extends ReqOutputModelProjection {
+record ReqListModelProjection extends ReqModelProjection {
   override model: ListType
-  varProjection: ReqOutputVarProjection
+  itemsProjection: ReqEntityProjection
 }
 
-record ReqOutputMapModelProjection extends ReqOutputModelProjection {
+record ReqMapModelProjection extends ReqModelProjection {
   override model: MapType
   keysRequired: Boolean // one for all keys
-  keysProjection: ReqOutputKeysProjection { @Doc "if `null` - all keys" }
-  varProjection: ReqOutputVarProjection
+  keysProjection: ReqKeysProjection { @Doc "if `null` - all keys" }
+  itemsProjection: ReqEntityProjection
 }
 
-record ReqOutputKeysProjection {
-  keys: list[ReqOutputKeyProjection]
+record ReqKeysProjection {
+  keys: list[ReqKeyProjection]
 }
 
-record ReqOutputKeyProjection {
+record ReqKeyProjection {
   value: Datum { @Doc "of appropriate (enclosing map key) type"}
   params: map[String, ReqParam]
   directives: map[String, Directive]
 }
 
-record ReqOutputEnumModelProjection extends ReqOutputModelProjection {
+record ReqEnumModelProjection extends ReqModelProjection {
   override model: EnumType
 }
 
-record ReqOutputPrimitiveModelProjection extends ReqOutputModelProjection {
+record ReqPrimitiveModelProjection extends ReqModelProjection {
   override model: PrimitiveType
 }

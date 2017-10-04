@@ -1,7 +1,7 @@
 namespace epigraph.data
 
 import epigraph.schema.Type
-import epigraph.schema.VarType
+import epigraph.schema.EntityType
 import epigraph.schema.DatumType
 import epigraph.schema.RecordType
 import epigraph.schema.MapType
@@ -31,7 +31,7 @@ abstract record Data {
 }
 
 record EntityData extends Data {
-  override type: VarType
+  override type: EntityType
   tags: map[String, Data]
 }
 

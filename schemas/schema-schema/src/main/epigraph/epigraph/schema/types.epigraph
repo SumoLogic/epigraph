@@ -15,24 +15,24 @@ abstract record Type extends Named {
   `abstract`: Boolean { @Doc "Abstract types cannot be instantiated (?)" }
 }
 
-record VarType extends Type {
+record EntityType extends Type {
   @Doc "Vartype declaration"
 
   override name: QualifiedTypeName
 
-  override supertypes: list[VarType]
+  override supertypes: list[EntityType]
 
   tags: list[Tag]
 }
 
 record DataType {
-  type: Type // todo should be VarType ?
+  type: Type // todo should be EntityType ?
 
   `retro`: Tag
 }
 
 record Tag extends Named {
-  @Doc "Vartype member declaration"
+  @Doc "Entity type member declaration"
 
   override name: TagName
 

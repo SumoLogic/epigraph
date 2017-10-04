@@ -30,7 +30,7 @@ import epigraph.schema.RecordType
 import epigraph.schema.Tag
 import epigraph.schema.Type
 import epigraph.schema.TypeName
-import epigraph.schema.VarType
+import epigraph.schema.EntityType
 
 record EpigraphResource {
   @Doc "Epigraph built-in services resource root type"
@@ -108,7 +108,7 @@ resource epigraph: EpigraphResource {
     `abstract`,
     annotations $annotations
   ) ~ (
-    VarType ( tags * $tag ),
+    EntityType ( tags * $tag ),
     DatumType $datumType = (     // datumType = type ~ DatumType
       // supertypes * $datumType // can't merge recursive projections yet. And not needed actually: normalized version will have it as list[DatumType] with $datumType for items anyways
       metaType $datumType

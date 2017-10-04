@@ -34,13 +34,13 @@ public final class TypeAsmImpl extends Type_Asm<TypeApi> {
 
   private TypeAsmImpl() {
     super(
-        t -> (t.kind() == TypeKind.ENTITY) ? epigraph.schema.VarType.type : epigraph.schema.DatumType.type,  // (output) type extractor
+        t -> (t.kind() == TypeKind.ENTITY) ? epigraph.schema.EntityType.type : epigraph.schema.DatumType.type,  // (output) type extractor
         ABSTRACT_ASM, // abstract
         AnnotationsAsmImpl.INSTANCE.on(TypeApi::annotations), // annotations
         TypeNameAsmImpl.INSTANCE.on(TypeApi::name), // name
         new Type_ListAsm<>(TypeApi::supertypes, TypeAsmImpl.INSTANCE), // supertypes
         //tails
-        EntityTypeAsm.INSTANCE.on(t -> (EntityTypeApi) t), // entity
+        EntityTypeAsmImpl.INSTANCE.on(t -> (EntityTypeApi) t), // entity
         DatumTypeAsmImpl.INSTANCE.on(t -> (DatumTypeApi) t) // datum
     );
   }
