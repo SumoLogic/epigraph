@@ -22,10 +22,8 @@ import ws.epigraph.projections.op.postprocess.OpFlaggedNotSupportedChecker;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-@SuppressWarnings("ConstantConditions")
 public final class OpOutputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
   public static final OpOutputProjectionsPsiParser INSTANCE = new OpOutputProjectionsPsiParser();
 
   private OpOutputProjectionsPsiParser() { super(OpFlaggedNotSupportedChecker::new, null);}
-
 }

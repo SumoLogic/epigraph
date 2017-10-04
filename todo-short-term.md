@@ -15,6 +15,7 @@
 - [ ] do something about nullable/optional in schema/projections
   - make generated records throw errors if asked for non-existing fields?
   - then add `@NotNull` on fields in schema, translated into `@NotNull` on generated records
+  - https://sumologic.slack.com/archives/D0JPD1FKN/p1507142820000118
 
 - Federator
   - [ ] allow paths to end with model types (prereq. for fed. ?)

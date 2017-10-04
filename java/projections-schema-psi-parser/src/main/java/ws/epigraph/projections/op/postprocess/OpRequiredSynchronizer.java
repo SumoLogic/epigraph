@@ -100,28 +100,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(recordModelProjection)) {
-      OpRecordModelProjection newProjection = new OpRecordModelProjection(
-          recordModelProjection.type(),
-          true,
-          recordModelProjection.defaultValue(),
-          recordModelProjection.params(),
-          recordModelProjection.annotations(),
-          transformedMeta,
-          transformedFields,
-          transformedTails,
-          recordModelProjection.location()
-      );
-
-      fixTransformedModel(recordModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformRecordModelProjection(
+    return transformRecordModelProjection(
         recordModelProjection,
+        recordModelProjection.flagged() || flagModel(recordModelProjection),
         transformedFields,
         transformedTails,
         transformedMeta,
         mustRebuild
     );
+
   }
 
   @Override
@@ -132,24 +119,9 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(mapModelProjection)) {
-      OpMapModelProjection newProjection = new OpMapModelProjection(
-          mapModelProjection.type(),
-          true,
-          mapModelProjection.defaultValue(),
-          mapModelProjection.params(),
-          mapModelProjection.annotations(),
-          transformedMeta,
-          mapModelProjection.keyProjection(), // transform in base class too?
-          transformedItemsProjection,
-          transformedTails,
-          mapModelProjection.location()
-      );
-
-      fixTransformedModel(mapModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformMapModelProjection(
+    return transformMapModelProjection(
         mapModelProjection,
+        mapModelProjection.flagged() || flagModel(mapModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -165,23 +137,9 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(listModelProjection)) {
-      OpListModelProjection newProjection = new OpListModelProjection(
-          listModelProjection.type(),
-          true,
-          listModelProjection.defaultValue(),
-          listModelProjection.params(),
-          listModelProjection.annotations(),
-          transformedMeta,
-          transformedItemsProjection,
-          transformedTails,
-          listModelProjection.location()
-      );
-
-      fixTransformedModel(listModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformListModelProjection(
+    return transformListModelProjection(
         listModelProjection,
+        listModelProjection.flagged() || flagModel(listModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -196,22 +154,9 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(primitiveModelProjection)) {
-      OpPrimitiveModelProjection newProjection = new OpPrimitiveModelProjection(
-          primitiveModelProjection.type(),
-          true,
-          primitiveModelProjection.defaultValue(),
-          primitiveModelProjection.params(),
-          primitiveModelProjection.annotations(),
-          transformedMeta,
-          transformedTails,
-          primitiveModelProjection.location()
-      );
-
-      fixTransformedModel(primitiveModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformPrimitiveModelProjection(
+    return transformPrimitiveModelProjection(
         primitiveModelProjection,
+        primitiveModelProjection.flagged() || flagModel(primitiveModelProjection),
         transformedTails,
         transformedMeta,
         mustRebuild

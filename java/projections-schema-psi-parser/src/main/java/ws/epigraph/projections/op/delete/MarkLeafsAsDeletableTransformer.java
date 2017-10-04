@@ -38,8 +38,8 @@ public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransform
   MarkLeafsAsDeletableTransformer(final PsiProcessingContext context) { }
 
   @Override
-  protected OpEntityProjection transformVarProjection(
-      final @NotNull OpEntityProjection varProjection,
+  protected OpEntityProjection transformEntityProjection(
+      final @NotNull OpEntityProjection entityProjection,
       final @Nullable DataTypeApi dataType,
       final @NotNull Map<String, OpTagProjectionEntry> transformedTagProjections,
       final @Nullable List<OpEntityProjection> transformedTails,
@@ -58,25 +58,21 @@ public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransform
         // questionable heuristic to keep things compatible when introducing retro tags:
         // mark entity projection is deletable if it's only tag is a retro tag
 
-        OpTagProjectionEntry singleTagProjection = varProjection.singleTagProjection();
+        OpTagProjectionEntry singleTagProjection = entityProjection.singleTagProjection();
         markDeletable = singleTagProjection != null && singleTagProjection.tag().equals(retroTag);
       }
     }
 
-    if (!varProjection.flagged() && markDeletable) {
-      OpEntityProjection newProjection = new OpEntityProjection(
-          varProjection.type(),
+    if (!entityProjection.flagged() && markDeletable) {
+      return transformEntityProjection(
+          entityProjection,
           true,
           transformedTagProjections,
-          varProjection.parenthesized(),
           transformedTails,
-          varProjection.location()
+          mustRebuild
       );
-
-      fixTransformedEntity(varProjection, newProjection);
-      return newProjection;
-    } else return super.transformVarProjection(
-        varProjection,
+    } else return super.transformEntityProjection(
+        entityProjection,
         dataType,
         transformedTagProjections,
         transformedTails,

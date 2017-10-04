@@ -77,8 +77,8 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   @Override
-  protected ReqEntityProjection transformVarProjection(
-      final @NotNull ReqEntityProjection varProjection,
+  protected ReqEntityProjection transformEntityProjection(
+      final @NotNull ReqEntityProjection entityProjection,
       final @Nullable DataTypeApi dataType,
       final @NotNull Map<String, ReqTagProjectionEntry> transformedTagProjections,
       final @Nullable List<ReqEntityProjection> transformedTails,
@@ -86,37 +86,24 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
 
     TagApi retroTag = dataType == null ? null : dataType.retroTag();
     // nullable here is legit but breaks JaCoCo: http://forge.ow2.org/tracker/?func=detail&aid=317789&group_id=23&atid=100023
-    /*@Nullable*/ ReqTagProjectionEntry tp = null;
+    /*@Nullable*/
+    ReqTagProjectionEntry tp = null;
     if (retroTag != null)
-      tp = varProjection.tagProjection(retroTag.name());
-    else if (varProjection.type().kind() != TypeKind.ENTITY)
-      tp = varProjection.singleTagProjection();
+      tp = entityProjection.tagProjection(retroTag.name());
+    else if (entityProjection.type().kind() != TypeKind.ENTITY)
+      tp = entityProjection.singleTagProjection();
 
     // this is either a self-var and model projection is flagged
     // or we have a retro tag and it's model is flagged
     boolean modelFlagged = tp != null && tp.projection().flagged();
 
-    if (!varProjection.flagged() && modelFlagged) {
-      ReqEntityProjection newProjection = new ReqEntityProjection(
-          varProjection.type(),
-          true,
-          transformedTagProjections,
-          varProjection.parenthesized(),
-          transformedTails,
-          varProjection.location()
-      );
-
-      fixTransformedEntity(varProjection, newProjection);
-      return newProjection;
-    } else {
-      return super.transformVarProjection(
-          varProjection,
-          dataType,
-          transformedTagProjections,
-          transformedTails,
-          mustRebuild
-      );
-    }
+    return super.transformEntityProjection(
+        entityProjection,
+        entityProjection.flagged() || modelFlagged,
+        transformedTagProjections,
+        transformedTails,
+        mustRebuild
+    );
   }
 
   protected boolean flagModel(@NotNull ReqModelProjection<?, ?, ?> modelProjection) {
@@ -148,27 +135,15 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(recordModelProjection)) {
-      ReqRecordModelProjection newProjection = new ReqRecordModelProjection(
-          recordModelProjection.type(),
-          true,
-          recordModelProjection.params(),
-          recordModelProjection.directives(),
-          transformedMeta,
-          transformedFields,
-          transformedTails,
-          recordModelProjection.location()
-      );
-
-      fixTransformedModel(recordModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformRecordModelProjection(
+    return transformRecordModelProjection(
         recordModelProjection,
+        recordModelProjection.flagged() || flagModel(recordModelProjection),
         transformedFields,
         transformedTails,
         transformedMeta,
         mustRebuild
     );
+
   }
 
   @Override
@@ -179,29 +154,15 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(mapModelProjection)) {
-      ReqMapModelProjection newProjection = new ReqMapModelProjection(
-          mapModelProjection.type(),
-          true,
-          mapModelProjection.params(),
-          mapModelProjection.directives(),
-          transformedMeta,
-          mapModelProjection.keys(),
-          mapModelProjection.keysRequired(),
-          transformedItemsProjection,
-          transformedTails,
-          mapModelProjection.location()
-      );
-
-      fixTransformedModel(mapModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformMapModelProjection(
+    return transformMapModelProjection(
         mapModelProjection,
+        mapModelProjection.flagged() || flagModel(mapModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
         mustRebuild
     );
+
   }
 
   @Override
@@ -212,27 +173,15 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(listModelProjection)) {
-      ReqListModelProjection newProjection = new ReqListModelProjection(
-          listModelProjection.type(),
-          true,
-          listModelProjection.params(),
-          listModelProjection.directives(),
-          transformedMeta,
-          transformedItemsProjection,
-          transformedTails,
-          listModelProjection.location()
-      );
-
-      fixTransformedModel(listModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformListModelProjection(
+    return transformListModelProjection(
         listModelProjection,
+        listModelProjection.flagged() || flagModel(listModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
         mustRebuild
     );
+
   }
 
   @Override
@@ -242,25 +191,14 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (flagModel(primitiveModelProjection)) {
-      ReqPrimitiveModelProjection newProjection = new ReqPrimitiveModelProjection(
-          primitiveModelProjection.type(),
-          true,
-          primitiveModelProjection.params(),
-          primitiveModelProjection.directives(),
-          transformedMeta,
-          transformedTails,
-          primitiveModelProjection.location()
-      );
-
-      fixTransformedModel(primitiveModelProjection, newProjection);
-      return newProjection;
-    } else return super.transformPrimitiveModelProjection(
+    return transformPrimitiveModelProjection(
         primitiveModelProjection,
+        primitiveModelProjection.flagged() || flagModel(primitiveModelProjection),
         transformedTails,
         transformedMeta,
         mustRebuild
     );
+
   }
 
   private static final class EntityProjectionAndDataType {

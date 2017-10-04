@@ -27,23 +27,23 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenProjectionTransformer<
-    VP extends GenVarProjection<VP, TP, MP>,
+    EP extends GenVarProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
+    RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<EP, TP, MP, LMP, ?>,
     PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
+    FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
+    FP extends GenFieldProjection<EP, TP, MP, FP>
     > {
 
-  private final Map<VP, VP> transformedEntitiesCache = new IdentityHashMap<>();
+  private final Map<EP, EP> transformedEntitiesCache = new IdentityHashMap<>();
   private final Map<MP, MP> transformedModelsCache = new IdentityHashMap<>();
-  private final Map<VP, VP> visited = new IdentityHashMap<>();
-  private final Set<VP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
+  private final Map<EP, EP> visited = new IdentityHashMap<>();
+  private final Set<EP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
 
-  private GenProjectionTransformationMap<VP, MP> transformationMap = null;
+  private GenProjectionTransformationMap<EP, MP> transformationMap = null;
 
   public void reset() {
     transformedEntitiesCache.clear();
@@ -52,17 +52,17 @@ public abstract class GenProjectionTransformer<
     usedRecursively.clear();
   }
 
-  public @NotNull VP transform(
-      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
-      @NotNull VP projection,
+  public @NotNull EP transform(
+      @NotNull GenProjectionTransformationMap<EP, MP> transformationMap,
+      @NotNull EP projection,
       @Nullable DataTypeApi dataType) {
 
     this.transformationMap = transformationMap;
     return transform(projection, dataType);
   }
 
-  protected @NotNull VP transform(@NotNull VP projection, @Nullable DataTypeApi dataType) {
-    VP cached = transformedEntitiesCache.get(projection);
+  protected @NotNull EP transform(@NotNull EP projection, @Nullable DataTypeApi dataType) {
+    EP cached = transformedEntitiesCache.get(projection);
     if (cached != null)
       return cached;
     if (transformedEntitiesCache.values().contains(projection))
@@ -73,18 +73,18 @@ public abstract class GenProjectionTransformer<
     if (projection.isResolved()) {
       return transformResolved(projection, dataType);
     } else {
-      final VP ref = newEntityRef(projection.type(), projection.location());
+      final EP ref = newEntityRef(projection.type(), projection.location());
       transformedEntitiesCache.put(projection, ref);
       projection.runOnResolved(() -> {
-        VP transformed = transformResolved(projection, dataType);
+        EP transformed = transformResolved(projection, dataType);
         transformed.runOnResolved(() -> ref.resolve(projection.referenceName(), transformed));
       });
       return ref;
     }
   }
 
-  protected @NotNull VP transformResolved(@NotNull VP projection, @Nullable DataTypeApi dataType) {
-    VP res = visited.get(projection);
+  protected @NotNull EP transformResolved(@NotNull EP projection, @Nullable DataTypeApi dataType) {
+    EP res = visited.get(projection);
     if (res != null) {
       usedRecursively.add(res); // do the same for models? or vars is enough?
       return res;
@@ -110,13 +110,13 @@ public abstract class GenProjectionTransformer<
     }
 
     boolean tailsChanged = false;
-    List<VP> transformedTails = null;
+    List<EP> transformedTails = null;
 
-    List<VP> tails = projection.polymorphicTails();
+    List<EP> tails = projection.polymorphicTails();
     if (tails != null) {
       transformedTails = new ArrayList<>(tails.size());
-      for (final VP tail : tails) {
-        VP transformedTail = transform(tail, dataType);
+      for (final EP tail : tails) {
+        EP transformedTail = transform(tail, dataType);
 
         if (transformedTail != tail)
           tailsChanged = true;
@@ -124,7 +124,7 @@ public abstract class GenProjectionTransformer<
       }
     }
 
-    VP transformed = transformVarProjection(
+    EP transformed = transformEntityProjection(
         projection,
         dataType,
         transformedTags,
@@ -148,7 +148,7 @@ public abstract class GenProjectionTransformer<
   }
 
   public @NotNull MP transform(
-      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
+      @NotNull GenProjectionTransformationMap<EP, MP> transformationMap,
       @NotNull MP projection) {
 
     this.transformationMap = transformationMap;
@@ -278,7 +278,7 @@ public abstract class GenProjectionTransformer<
   }
 
   public @NotNull FP transform(
-      @NotNull GenProjectionTransformationMap<VP, MP> transformationMap,
+      @NotNull GenProjectionTransformationMap<EP, MP> transformationMap,
       @NotNull FP fp,
       @NotNull DataTypeApi dataType) {
 
@@ -287,8 +287,8 @@ public abstract class GenProjectionTransformer<
   }
 
   private @NotNull FP transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    VP ep = fp.entityProjection();
-    VP transformedEp = transform(ep, dataType);
+    EP ep = fp.entityProjection();
+    EP transformedEp = transform(ep, dataType);
     return transformFieldProjection(fp, transformedEp, ep != transformedEp);
   }
 
@@ -299,7 +299,7 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    VP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().valueType());
+    EP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().valueType());
     //noinspection unchecked
     return transformMapModelProjection(
         projection,
@@ -317,7 +317,7 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    VP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().elementType());
+    EP transformedItemsProjection = transform(projection.itemsProjection(), projection.type().elementType());
     //noinspection unchecked
     return transformListModelProjection(
         projection,
@@ -341,7 +341,7 @@ public abstract class GenProjectionTransformer<
   /**
    * Transforms var projection
    *
-   * @param varProjection             original instance
+   * @param entityProjection          original instance
    * @param dataType                  data type of the container that holds this projection (field, map or list entry), if known
    * @param transformedTagProjections transformed tag projections
    * @param transformedTails          transformed tail projections
@@ -349,17 +349,17 @@ public abstract class GenProjectionTransformer<
    *
    * @return original or transformed projection
    */
-  protected abstract VP transformVarProjection(
-      @NotNull VP varProjection,
+  protected abstract EP transformEntityProjection(
+      @NotNull EP entityProjection,
       @Nullable DataTypeApi dataType,
       @NotNull Map<String, TP> transformedTagProjections,
-      @Nullable List<VP> transformedTails,
+      @Nullable List<EP> transformedTails,
       boolean mustRebuild);
 
   /**
    * Transforms tag projection
    *
-   * @param varProjection              original var projection
+   * @param entityProjection              original var projection
    * @param tag                        tag
    * @param tagProjection              original instance
    * @param transformedModelProjection transformed model projection
@@ -368,7 +368,7 @@ public abstract class GenProjectionTransformer<
    * @return original or transformed projection
    */
   protected abstract @NotNull TP transformTagProjection(
-      @NotNull VP varProjection,
+      @NotNull EP entityProjection,
       @NotNull TagApi tag,
       @NotNull TP tagProjection,
       @NotNull MP transformedModelProjection,
@@ -419,7 +419,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull FP transformFieldProjection(
       @NotNull FP fieldProjection,
-      @NotNull VP transformedEntityProjection,
+      @NotNull EP transformedEntityProjection,
       boolean mustRebuild);
 
   /**
@@ -435,7 +435,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull MMP transformMapModelProjection(
       @NotNull MMP mapModelProjection,
-      @NotNull VP transformedItemsProjection,
+      @NotNull EP transformedItemsProjection,
       @Nullable List<MMP> transformedTails,
       @Nullable MP transformedMeta,
       boolean mustRebuild);
@@ -453,7 +453,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull LMP transformListModelProjection(
       @NotNull LMP listModelProjection,
-      @NotNull VP transformedItemsProjection,
+      @NotNull EP transformedItemsProjection,
       @Nullable List<LMP> transformedTails,
       @Nullable MP transformedMeta,
       boolean mustRebuild);
@@ -474,7 +474,7 @@ public abstract class GenProjectionTransformer<
       @Nullable MP transformedMeta,
       boolean mustRebuild);
 
-  protected abstract @NotNull VP newEntityRef(@NotNull TypeApi type, @NotNull TextLocation location);
+  protected abstract @NotNull EP newEntityRef(@NotNull TypeApi type, @NotNull TextLocation location);
 
   protected abstract @NotNull MP newModelRef(@NotNull DatumTypeApi model, @NotNull TextLocation location);
 }
