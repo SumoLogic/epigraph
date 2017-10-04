@@ -28,12 +28,13 @@ import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.CreateOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static ws.epigraph.test.TestUtil.*;
 import static ws.epigraph.url.parser.RequestUrlPsiParserTestUtil.parseIdl;
@@ -54,10 +55,17 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
       "    inputProjection (id, firstName)",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
+      "  create withPath {",
+      "    path /.",
+      "    inputType UserRecord",
+      "    inputProjection (id, firstName)",
+      "    outputProjection :`record` (id, firstName)",
+      "  }",
       "}"
   );
 
   private final CreateOperationDeclaration createIdl1;
+  private final CreateOperationDeclaration createIdl2;
 
   {
     ResourcesSchema schema = parseIdl(idlText, resolver);
@@ -65,6 +73,7 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     final @NotNull List<OperationDeclaration> operationDeclarations = resourceDeclaration.operations();
     createIdl1 = (CreateOperationDeclaration) operationDeclarations.get(0);
+    createIdl2 = (CreateOperationDeclaration) operationDeclarations.get(1);
 
   }
 
@@ -72,11 +81,40 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
         createIdl1,
-        "/users<(id)>/123:record(id)?format='json'&verbose=true",
+        "/users(id)>/123:record(id)?format='json'&verbose=true",
         "users",
+        null,
         3,
         "( id )",
         "users / '123' :record ( id )",
+        "{format = \"json\", verbose = true}"
+    );
+  }
+
+  @Test
+  public void testParsingWithPath() throws IOException, PsiProcessingException {
+    test(
+        createIdl2,
+        "/users/123(id)>:record(id)?format='json'&verbose=true",
+        "users",
+        "/ '123'",
+        1,
+        "( id )",
+        "users :record ( id )",
+        "{format = \"json\", verbose = true}"
+    );
+  }
+
+  @Test
+  public void testParsingWithPathOnly() throws IOException, PsiProcessingException {
+    test(
+        createIdl2,
+        "/users/123>:record(id)?format='json'&verbose=true",
+        "users",
+        "/ '123'",
+        1,
+        null,
+        "users :record ( id )",
         "{format = \"json\", verbose = true}"
     );
   }
@@ -85,15 +123,16 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
       CreateOperationDeclaration op,
       String url,
       String expectedResource,
-      int expectedSteps,
-      String expectedInputProjection,
+      @Nullable String expectedPath,
+      int expectedOutputSteps,
+      @Nullable String expectedInputProjection,
       String expectedOutputProjection,
       String expectedParams)
       throws PsiProcessingException {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull NonReadRequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -105,16 +144,27 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     assertEquals(expectedResource, requestUrl.fieldName());
 
+    @Nullable ReqFieldProjection path = requestUrl.path();
+    if (expectedPath == null) {
+      assertNull(path);
+    } else {
+      assertNotNull(path);
+      assertEquals(expectedPath, printReqEntityPath(path.entityProjection()));
+    }
+
     final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
     else
-      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().entityProjection(), 0));
+      assertEquals(
+          expectedInputProjection,
+          printReqEntityProjection(inputProjection.projection().entityProjection(), 0)
+      );
 
-    final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
-    assertEquals(expectedSteps, stepsAndProjection.pathSteps());
+    final @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection = requestUrl.outputProjection();
+    assertEquals(expectedOutputSteps, outputStepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        printReqFieldProjection(expectedResource, stepsAndProjection.projection(), expectedSteps)
+        printReqFieldProjection(expectedResource, outputStepsAndProjection.projection(), expectedOutputSteps)
     );
 
     assertEquals(expectedParams, printParameters(requestUrl.parameters()));

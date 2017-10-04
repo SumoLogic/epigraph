@@ -16,19 +16,19 @@
 
 package ws.epigraph.url.projections.req.output;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
-import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
+import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 /**
@@ -55,7 +55,7 @@ public interface ReqProjectionPsiParser {
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
   @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(

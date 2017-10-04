@@ -30,7 +30,7 @@ import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.tests.String_Person_Map;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -74,7 +74,7 @@ public class DeleteRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
         deleteIdl1,
-        "/users<[123](:record(id))>/123:record(id)?format='json'&verbose=true",
+        "/users[123](:record(id))>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
         "[ '123' ]( :record ( id ) )",
@@ -95,7 +95,7 @@ public class DeleteRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull NonReadRequestUrl requestUrl = DeleteRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = DeleteRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

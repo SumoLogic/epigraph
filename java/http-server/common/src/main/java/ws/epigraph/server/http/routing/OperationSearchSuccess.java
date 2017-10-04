@@ -24,14 +24,15 @@ import ws.epigraph.url.RequestUrl;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class OperationSearchSuccess<O extends Operation<?, ?, ?>, R extends RequestUrl>
+public final class OperationSearchSuccess<O extends Operation<?, ?, ?>>
     implements OperationSearchResult<O> {
+
   private final @NotNull O operation;
-  private final @NotNull R requestUrl;
+  private final @NotNull RequestUrl requestUrl;
 
   public OperationSearchSuccess(
       final @NotNull O operation,
-      final @NotNull R url) {
+      final @NotNull RequestUrl url) {
 
     this.operation = operation;
     requestUrl = url;
@@ -40,5 +41,5 @@ public final class OperationSearchSuccess<O extends Operation<?, ?, ?>, R extend
   @Contract(pure = true)
   public @NotNull O operation() { return operation; }
 
-  public @NotNull R requestUrl() { return requestUrl; }
+  public @NotNull RequestUrl requestUrl() { return requestUrl; }
 }

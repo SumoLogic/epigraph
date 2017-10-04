@@ -19,6 +19,7 @@ package ws.epigraph.projections;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -51,7 +52,7 @@ public final class ProjectionsParsingUtil {
    * @param dataType data type with optional retro tag
    * @param tagName  optional tag name
    * @param op       optional operation projection for extra checks
-   * @param locationPsi location for error message
+   * @param location location for error message
    * @param context  psi processing context
    *
    * @return tag instance
@@ -66,24 +67,24 @@ public final class ProjectionsParsingUtil {
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
       @Nullable VP op,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    final TagApi tag = findTag(dataType, tagName, op, locationPsi, context);
+    final TagApi tag = findTag(dataType, tagName, op, location, context);
 
     if (tag == null)
-      throw noRetroTagError(dataType, locationPsi, context);
+      throw noRetroTagError(dataType, location, context);
     return tag;
   }
 
   public static PsiProcessingException noRetroTagError(
       final @NotNull DataTypeApi dataType,
-      final @NotNull PsiElement locationPsi,
+      final @NotNull TextLocation location,
       final @NotNull PsiProcessingContext context) {
 
     return new PsiProcessingException(
         String.format("Can't parse projection for '%s', retro tag not specified", dataType.name()),
-        locationPsi,
+        location,
         context
     );
   }
@@ -114,7 +115,7 @@ public final class ProjectionsParsingUtil {
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
       @Nullable VP op,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     final TagApi tag;
@@ -151,7 +152,7 @@ public final class ProjectionsParsingUtil {
       @NotNull TypeApi type,
       @NotNull TagApi tag,
       @Nullable VP op,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (!type.tags().contains(tag))
@@ -255,7 +256,7 @@ public final class ProjectionsParsingUtil {
   TP getTagProjection(
       @NotNull String tagName,
       @NotNull VP op,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
     final TP tagProjection = op.tagProjections().get(tagName);
     if (tagProjection == null) {
@@ -281,7 +282,7 @@ public final class ProjectionsParsingUtil {
   TagApi findSelfOrRetroTag(
       @NotNull DataTypeApi dataType,
       @Nullable VP op,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     TagApi retroTag = dataType.retroTag();
@@ -292,7 +293,7 @@ public final class ProjectionsParsingUtil {
     if (type.kind() != TypeKind.ENTITY) {
       DatumTypeApi datumType = (DatumTypeApi) type;
       final @NotNull TagApi self = datumType.self();
-      if (op != null) getTagProjection(self.name(), op, locationPsi, context); // check that op contains it
+      if (op != null) getTagProjection(self.name(), op, location, context); // check that op contains it
       return self;
     }
 

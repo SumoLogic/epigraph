@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenVarProjection;
@@ -56,7 +57,7 @@ public final class SchemaProjectionPsiParserUtil {
   @NotNull TagApi getTag(
       @NotNull DataTypeApi type,
       @Nullable SchemaTagName tagNamePsi,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     return ProjectionsParsingUtil.getTag(type, getTagName(tagNamePsi), null, location, context);
@@ -66,7 +67,7 @@ public final class SchemaProjectionPsiParserUtil {
   @Nullable TagApi findTag(
       @NotNull DataTypeApi type,
       @Nullable SchemaTagName tagNamePsi,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     return ProjectionsParsingUtil.findTag(type, getTagName(tagNamePsi), null, location, context);
@@ -139,7 +140,7 @@ public final class SchemaProjectionPsiParserUtil {
     return parseParams(paramsPsi.collect(Collectors.toList()), resolver, context);
   }
 
-  public static @NotNull OpParams parseParams(
+  private static @NotNull OpParams parseParams(
       @NotNull Iterable<SchemaOpParam> paramsPsi,
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {

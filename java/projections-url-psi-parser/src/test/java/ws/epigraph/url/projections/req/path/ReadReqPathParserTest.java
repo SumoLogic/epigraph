@@ -129,7 +129,7 @@ public class ReadReqPathParserTest {
       UrlReqTrunkEntityProjection psi = getPsi(expr);
       PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
       ReqPathPsiProcessingContext pathPsiProcessingContext = new ReqPathPsiProcessingContext(psiProcessingContext);
-      ReadReqPathPsiParser.parseEntityPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
+      ReqPartialPathPsiParser.parseEntityPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
 
       fail("Expected to get 'path not matched' error");
     } catch (PathNotMatchedException ignored) {
@@ -142,8 +142,8 @@ public class ReadReqPathParserTest {
   private void testParse(OpEntityProjection opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
 
     UrlReqTrunkEntityProjection psi = getPsi(expr);
-    final ReadReqPathParsingResult<ReqEntityProjection> result =
-        TestUtil.runPsiParser(true, context -> ReadReqPathPsiParser.parseEntityPath(
+    final ReqPartialPathParsingResult<ReqEntityProjection> result =
+        TestUtil.runPsiParser(true, context -> ReqPartialPathPsiParser.parseEntityPath(
             opPath,
             Person.type.dataType(null),
             psi,

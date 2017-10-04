@@ -18,7 +18,6 @@ package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.UpdateOperation;

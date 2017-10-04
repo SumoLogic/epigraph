@@ -75,7 +75,7 @@ public final class OpPathPsiParser {
     final TagApi tag = getTag(
         dataType,
         psi.getTagName(),
-        psi,
+        EpigraphPsiUtil.getLocation(psi),
         context
     );
 

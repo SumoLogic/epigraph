@@ -35,7 +35,7 @@ import ws.epigraph.service.operations.CreateOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -134,7 +134,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   @Test
   public void testPathlessWithInput() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(firstName))",
+        "/users[](:record(id))>[1](:record(firstName))",
         "pathless.1",
         null,
         "[]( :record ( id ) )",
@@ -158,7 +158,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   @Test
   public void testPathless2WithInput() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(id,lastName))",
+        "/users[](:record(id))>[1](:record(id,lastName))",
         "pathless.2",
         null,
         "[]( :record ( id ) )",
@@ -175,7 +175,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   @Test
   public void testPathless3WithInput() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>/1:record(id,lastName)",
+        "/users[](:record(id))>/1:record(id,lastName)",
         "pathless.2",
         null,
         "[]( :record ( id ) )",
@@ -191,7 +191,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
 
   @Test
   public void testPath1WithInput() throws PsiProcessingException {
-    testRouting("/users/1<(id)>:record(id)", "path.1", "/ '1'", "( id )", 1, ":record ( id )");
+    testRouting("/users/1(id)>:record(id)", "path.1", "/ '1'", "( id )", 1, ":record ( id )");
   }
 
   @Test
@@ -209,7 +209,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   @Test
   public void testPath2WithInput() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<(id,firstName)>:record(id)",
+        "/users/1:record/bestFriend(id,firstName)>:record(id)",
         "path.2",
         "/ '1' :record / bestFriend",
         "( id, firstName )",
@@ -221,7 +221,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   @Test
   public void testPath3WithInput() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<(id)>:record(id)",
+        "/users/1:record/bestFriend(id)>:record(id)",
         "path.3", // should not select path.2 because required field is missing from input projection
         "/ '1' :record / bestFriend",
         "( id )",
@@ -238,11 +238,11 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends CreateOperation<?>> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull NonReadRequestUrl createRequestUrl = s.requestUrl();
+    final @NotNull RequestUrl createRequestUrl = s.requestUrl();
     final ReqFieldProjection path = createRequestUrl.path();
 
     if (expectedPath == null)
@@ -276,7 +276,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl>
+  private OperationSearchSuccess<? extends CreateOperation<?>>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
     final @NotNull OperationSearchResult<CreateOperation<?>> oss = CreateOperationRouter.INSTANCE.findOperation(
         null,
@@ -286,7 +286,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends CreateOperation<?>, NonReadRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends CreateOperation<?>>) oss;
   }
 
   private class OpImpl extends CreateOperation<PersonId_Person_Map.Data> {

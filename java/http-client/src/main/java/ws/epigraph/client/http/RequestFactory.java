@@ -47,8 +47,8 @@ import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqReferenceContext;
-import ws.epigraph.url.projections.req.path.ReadReqPathParsingResult;
-import ws.epigraph.url.projections.req.path.ReadReqPathPsiParser;
+import ws.epigraph.url.projections.req.path.ReqPartialPathParsingResult;
+import ws.epigraph.url.projections.req.path.ReqPartialPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiParser;
 import ws.epigraph.url.projections.req.path.ReqPathPsiProcessingContext;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionPsiParser;
@@ -124,7 +124,7 @@ public final class RequestFactory {
 
         reqFieldProjection = stepsAndProjection;
       } else {
-        ReadReqPathParsingResult<ReqFieldProjection> pathParsingResult = ReadReqPathPsiParser.parseFieldPath(
+        ReqPartialPathParsingResult<ReqFieldProjection> pathParsingResult = ReqPartialPathPsiParser.parseFieldPath(
             resourceType,
             opPath,
             psi,

@@ -48,8 +48,7 @@ import java.util.*;
 public abstract class AbstractOperationRouter<
     U extends UrlUrl,
     D extends OperationDeclaration,
-    O extends Operation<D, ?, ?>,
-    R extends RequestUrl>
+    O extends Operation<D, ?, ?>>
     implements OperationRouter<U, O> {
 
   @Override
@@ -106,7 +105,7 @@ public abstract class AbstractOperationRouter<
     else {
       PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-      R request = null;
+      RequestUrl request = null;
 
       try {
         request = parseUrl(
@@ -136,9 +135,9 @@ public abstract class AbstractOperationRouter<
     }
   }
 
-  protected void validateMatchingRequest(@NotNull R request, @NotNull PsiProcessingContext context) {}
+  protected void validateMatchingRequest(@NotNull RequestUrl request, @NotNull PsiProcessingContext context) {}
 
-  protected abstract @NotNull R parseUrl(
+  protected abstract @NotNull RequestUrl parseUrl(
       @NotNull DataTypeApi resourceType,
       @NotNull D opDecl,
       @NotNull U urlPsi,

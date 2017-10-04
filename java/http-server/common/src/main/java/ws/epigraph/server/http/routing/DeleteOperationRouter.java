@@ -23,7 +23,7 @@ import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.schema.operations.DeleteOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.DeleteOperation;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.DeleteRequestUrlPsiParser;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ public final class DeleteOperationRouter
 
   @Override
   protected void validateMatchingRequest(
-      final @NotNull NonReadRequestUrl request,
+      final @NotNull RequestUrl request,
       final @NotNull PsiProcessingContext context) {
 
     if (request.inputProjection() == null)

@@ -33,11 +33,9 @@ public interface UrlElementTypes {
   IElementType U_DATUM = new UrlElementType("U_DATUM");
   IElementType U_DEFAULT_OVERRIDE = new UrlElementType("U_DEFAULT_OVERRIDE");
   IElementType U_ENUM_DATUM = new UrlElementType("U_ENUM_DATUM");
-  IElementType U_INPUT_PROJECTION = new UrlElementType("U_INPUT_PROJECTION");
   IElementType U_LIST_DATUM = new UrlElementType("U_LIST_DATUM");
   IElementType U_MAP_DATUM = new UrlElementType("U_MAP_DATUM");
   IElementType U_MAP_DATUM_ENTRY = new UrlElementType("U_MAP_DATUM_ENTRY");
-  IElementType U_NON_READ_URL = new UrlElementType("U_NON_READ_URL");
   IElementType U_NULL_DATUM = new UrlElementType("U_NULL_DATUM");
   IElementType U_OUTPUT_PROJECTION = new UrlElementType("U_OUTPUT_PROJECTION");
   IElementType U_PRIMITIVE_DATUM = new UrlElementType("U_PRIMITIVE_DATUM");
@@ -45,7 +43,6 @@ public interface UrlElementTypes {
   IElementType U_QN = new UrlElementType("U_QN");
   IElementType U_QN_SEGMENT = new UrlElementType("U_QN_SEGMENT");
   IElementType U_QN_TYPE_REF = new UrlElementType("U_QN_TYPE_REF");
-  IElementType U_READ_URL = new UrlElementType("U_READ_URL");
   IElementType U_RECORD_DATUM = new UrlElementType("U_RECORD_DATUM");
   IElementType U_RECORD_DATUM_ENTRY = new UrlElementType("U_RECORD_DATUM_ENTRY");
   IElementType U_REQUEST_PARAM = new UrlElementType("U_REQUEST_PARAM");
@@ -161,9 +158,6 @@ public interface UrlElementTypes {
       else if (type == U_ENUM_DATUM) {
         return new UrlEnumDatumImpl(node);
       }
-      else if (type == U_INPUT_PROJECTION) {
-        return new UrlInputProjectionImpl(node);
-      }
       else if (type == U_LIST_DATUM) {
         return new UrlListDatumImpl(node);
       }
@@ -172,9 +166,6 @@ public interface UrlElementTypes {
       }
       else if (type == U_MAP_DATUM_ENTRY) {
         return new UrlMapDatumEntryImpl(node);
-      }
-      else if (type == U_NON_READ_URL) {
-        return new UrlNonReadUrlImpl(node);
       }
       else if (type == U_NULL_DATUM) {
         return new UrlNullDatumImpl(node);
@@ -196,9 +187,6 @@ public interface UrlElementTypes {
       }
       else if (type == U_QN_TYPE_REF) {
         return new UrlQnTypeRefImpl(node);
-      }
-      else if (type == U_READ_URL) {
-        return new UrlReadUrlImpl(node);
       }
       else if (type == U_RECORD_DATUM) {
         return new UrlRecordDatumImpl(node);
@@ -343,6 +331,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_TAG_NAME) {
         return new UrlTagNameImpl(node);
+      }
+      else if (type == U_URL) {
+        return new UrlUrlImpl(node);
       }
       else if (type == U_VALUE_TYPE_REF) {
         return new UrlValueTypeRefImpl(node);

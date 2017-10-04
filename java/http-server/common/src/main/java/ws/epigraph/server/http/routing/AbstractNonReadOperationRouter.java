@@ -23,27 +23,27 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.service.operations.Operation;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.NonReadRequestUrl;
-import ws.epigraph.url.parser.NonReadRequestUrlPsiParser;
-import ws.epigraph.url.parser.psi.UrlNonReadUrl;
+import ws.epigraph.url.RequestUrl;
+import ws.epigraph.url.parser.RequestUrlPsiParser;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractNonReadOperationRouter<OD extends OperationDeclaration, O extends Operation<OD, ?, ?>>
-    extends AbstractOperationRouter<UrlNonReadUrl, OD, O, NonReadRequestUrl> {
+    extends AbstractOperationRouter<UrlUrl, OD, O> {
 
-  private final @NotNull NonReadRequestUrlPsiParser requestUrlPsiParser;
+  private final @NotNull RequestUrlPsiParser requestUrlPsiParser;
 
-  protected AbstractNonReadOperationRouter(final @NotNull NonReadRequestUrlPsiParser requestUrlPsiParser) {
+  protected AbstractNonReadOperationRouter(final @NotNull RequestUrlPsiParser requestUrlPsiParser) {
     this.requestUrlPsiParser = requestUrlPsiParser;
   }
 
   @Override
-  protected @NotNull NonReadRequestUrl parseUrl(
+  protected @NotNull RequestUrl parseUrl(
       final @NotNull DataTypeApi resourceType,
       final @NotNull OD opDecl,
-      final @NotNull UrlNonReadUrl urlPsi,
+      final @NotNull UrlUrl urlPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 

@@ -32,8 +32,8 @@ import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.ReadRequestUrl;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
+import ws.epigraph.url.RequestUrl;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -115,7 +115,7 @@ public class ReadRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull ReadRequestUrl requestUrl = ReadRequestUrlPsiParser.parseReadRequestUrl(
+    final @NotNull RequestUrl requestUrl = ReadRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -138,11 +138,11 @@ public class ReadRequestUrlPsiParserTest {
   }
 
 
-  private static UrlReadUrl parseUrlPsi(@NotNull String text) {
+  private static UrlUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlReadUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.READ_URL, errorsAccumulator);
+    @NotNull UrlUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

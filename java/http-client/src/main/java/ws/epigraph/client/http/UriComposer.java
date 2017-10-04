@@ -88,7 +88,7 @@ public final class UriComposer {
       decodedUri.append(printReqPath(fieldName, path));
 
     if (inputStepsAndProjection != null) {
-      decodedUri.append('<').append(printReqProjection(inputStepsAndProjection));
+      decodedUri.append(printReqProjection(inputStepsAndProjection));
     }
 
     decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
@@ -110,7 +110,7 @@ public final class UriComposer {
       decodedUri.append(printReqPath(fieldName, path));
 
     if (updateStepsAndProjection != null) {
-      decodedUri.append('<').append(printReqProjection(updateStepsAndProjection));
+      decodedUri.append(printReqProjection(updateStepsAndProjection));
     }
 
     decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
@@ -131,7 +131,7 @@ public final class UriComposer {
     else
       decodedUri.append(printReqPath(fieldName, path));
 
-    decodedUri.append('<').append(printReqProjection(deleteStepsAndProjection));
+    decodedUri.append(printReqProjection(deleteStepsAndProjection));
 
     decodedUri.append('>').append(printReqProjection(outputStepsAndProjection));
 

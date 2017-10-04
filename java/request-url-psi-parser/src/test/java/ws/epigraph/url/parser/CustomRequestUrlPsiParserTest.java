@@ -33,8 +33,8 @@ import ws.epigraph.schema.operations.CustomOperationDeclaration;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.NonReadRequestUrl;
-import ws.epigraph.url.parser.psi.UrlNonReadUrl;
+import ws.epigraph.url.RequestUrl;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -90,7 +90,7 @@ public class CustomRequestUrlPsiParserTest {
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
         customIdl1,
-        "/users<(id)>/123:record(id)?format='json'&verbose=true",
+        "/users(id)>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
         "( id )",
@@ -111,7 +111,7 @@ public class CustomRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull NonReadRequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),
@@ -139,11 +139,11 @@ public class CustomRequestUrlPsiParserTest {
   }
 
 
-  private static UrlNonReadUrl parseUrlPsi(@NotNull String text) {
+  private static UrlUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlNonReadUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.NON_READ_URL, errorsAccumulator);
+    @NotNull UrlUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

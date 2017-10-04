@@ -74,7 +74,7 @@ public final class ReqPathPsiParser {
         dataType,
         UrlProjectionsPsiParserUtil.getTagName(tagNamePsi),
         op,
-        psi,
+        EpigraphPsiUtil.getLocation(psi),
         context
     );
     final TagApi opTag = opTagPath.tag();
@@ -196,7 +196,7 @@ public final class ReqPathPsiParser {
     return null;
   }
 
-  public static @NotNull ReqRecordModelProjection parseRecordModelProjection(
+  private static @NotNull ReqRecordModelProjection parseRecordModelProjection(
       @NotNull OpRecordModelProjection op,
       @NotNull RecordTypeApi type,
       @NotNull ReqParams params,
@@ -277,7 +277,7 @@ public final class ReqPathPsiParser {
     );
   }
 
-  public static @NotNull ReqMapModelProjection parseMapModelProjection(
+  private static @NotNull ReqMapModelProjection parseMapModelProjection(
       @NotNull OpMapModelProjection op,
       @NotNull MapTypeApi type,
       @NotNull ReqParams params,

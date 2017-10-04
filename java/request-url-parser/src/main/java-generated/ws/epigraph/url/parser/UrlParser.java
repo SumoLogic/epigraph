@@ -66,9 +66,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_ENUM_DATUM) {
       r = enumDatum(b, 0);
     }
-    else if (t == U_INPUT_PROJECTION) {
-      r = inputProjection(b, 0);
-    }
     else if (t == U_LIST_DATUM) {
       r = listDatum(b, 0);
     }
@@ -77,9 +74,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_MAP_DATUM_ENTRY) {
       r = mapDatumEntry(b, 0);
-    }
-    else if (t == U_NON_READ_URL) {
-      r = nonReadUrl(b, 0);
     }
     else if (t == U_NULL_DATUM) {
       r = nullDatum(b, 0);
@@ -101,9 +95,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_QN_TYPE_REF) {
       r = qnTypeRef(b, 0);
-    }
-    else if (t == U_READ_URL) {
-      r = readUrl(b, 0);
     }
     else if (t == U_RECORD_DATUM) {
       r = recordDatum(b, 0);
@@ -273,7 +264,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(U_REQ_COMA_MODEL_PROJECTION, U_REQ_TRUNK_MODEL_PROJECTION),
-    create_token_set_(U_NON_READ_URL, U_READ_URL, U_URL),
     create_token_set_(U_ANON_LIST, U_ANON_MAP, U_QN_TYPE_REF, U_TYPE_REF),
     create_token_set_(U_DATUM, U_ENUM_DATUM, U_LIST_DATUM, U_MAP_DATUM,
       U_NULL_DATUM, U_PRIMITIVE_DATUM, U_RECORD_DATUM),
@@ -474,28 +464,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '<' '+'? reqTrunkFieldProjection
-  public static boolean inputProjection(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "inputProjection")) return false;
-    if (!nextTokenIs(b, "<input projection>", U_ANGLE_LEFT)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, U_INPUT_PROJECTION, "<input projection>");
-    r = consumeToken(b, U_ANGLE_LEFT);
-    p = r; // pin = 1
-    r = r && report_error_(b, inputProjection_1(b, l + 1));
-    r = p && reqTrunkFieldProjection(b, l + 1) && r;
-    exit_section_(b, l, m, r, p, null);
-    return r || p;
-  }
-
-  // '+'?
-  private static boolean inputProjection_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "inputProjection_1")) return false;
-    consumeToken(b, U_PLUS);
-    return true;
-  }
-
-  /* ********************************************************** */
   // dataTypeSpec? '[' (dataValue ','?)* ']'
   public static boolean listDatum(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listDatum")) return false;
@@ -600,37 +568,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
   private static boolean mapDatumEntry_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapDatumEntry_3")) return false;
     consumeToken(b, U_COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '/' qid reqFieldPath inputProjection? outputProjection? requestParams
-  public static boolean nonReadUrl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonReadUrl")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqFieldPath(b, l + 1);
-    r = r && nonReadUrl_3(b, l + 1);
-    r = r && nonReadUrl_4(b, l + 1);
-    r = r && requestParams(b, l + 1);
-    exit_section_(b, m, U_NON_READ_URL, r);
-    return r;
-  }
-
-  // inputProjection?
-  private static boolean nonReadUrl_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonReadUrl_3")) return false;
-    inputProjection(b, l + 1);
-    return true;
-  }
-
-  // outputProjection?
-  private static boolean nonReadUrl_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "nonReadUrl_4")) return false;
-    outputProjection(b, l + 1);
     return true;
   }
 
@@ -797,21 +734,6 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = qn(b, l + 1);
     exit_section_(b, m, U_QN_TYPE_REF, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '/' qid reqTrunkFieldProjection requestParams
-  public static boolean readUrl(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "readUrl")) return false;
-    if (!nextTokenIs(b, U_SLASH)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, U_SLASH);
-    r = r && qid(b, l + 1);
-    r = r && reqTrunkFieldProjection(b, l + 1);
-    r = r && requestParams(b, l + 1);
-    exit_section_(b, m, U_READ_URL, r);
     return r;
   }
 
@@ -2234,16 +2156,34 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // readUrl | nonReadUrl
+  // '/' '+'? qid reqTrunkFieldProjection outputProjection? requestParams
   public static boolean url(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "url")) return false;
     if (!nextTokenIs(b, U_SLASH)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _COLLAPSE_, U_URL, null);
-    r = readUrl(b, l + 1);
-    if (!r) r = nonReadUrl(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    Marker m = enter_section_(b);
+    r = consumeToken(b, U_SLASH);
+    r = r && url_1(b, l + 1);
+    r = r && qid(b, l + 1);
+    r = r && reqTrunkFieldProjection(b, l + 1);
+    r = r && url_4(b, l + 1);
+    r = r && requestParams(b, l + 1);
+    exit_section_(b, m, U_URL, r);
     return r;
+  }
+
+  // '+'?
+  private static boolean url_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "url_1")) return false;
+    consumeToken(b, U_PLUS);
+    return true;
+  }
+
+  // outputProjection?
+  private static boolean url_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "url_4")) return false;
+    outputProjection(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

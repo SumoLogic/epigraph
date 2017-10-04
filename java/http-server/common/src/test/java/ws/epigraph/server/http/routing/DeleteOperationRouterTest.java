@@ -35,7 +35,7 @@ import ws.epigraph.service.operations.DeleteOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,7 +121,7 @@ public class DeleteOperationRouterTest {
   @Test
   public void testPathless() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(firstName))",
+        "/users[](:record(id))>[1](:record(firstName))",
         "pathless.1",
         null,
         "[]( :record ( id ) )",
@@ -133,7 +133,7 @@ public class DeleteOperationRouterTest {
   @Test
   public void testPathless2() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(id,lastName))",
+        "/users[](:record(id))>[1](:record(id,lastName))",
         "pathless.2",
         null,
         "[]( :record ( id ) )",
@@ -145,7 +145,7 @@ public class DeleteOperationRouterTest {
   @Test
   public void testPathless3() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>/1:record(id,lastName)",
+        "/users[](:record(id))>/1:record(id,lastName)",
         "pathless.2",
         null,
         "[]( :record ( id ) )",
@@ -156,14 +156,14 @@ public class DeleteOperationRouterTest {
 
   @Test
   public void testPath1WithDelete() throws PsiProcessingException {
-    testRouting("/users/1<:record(id)>:record(id)", "path.1", "/ '1'", ":record ( id )", 1, ":record ( id )");
+    testRouting("/users/1:record(id)>:record(id)", "path.1", "/ '1'", ":record ( id )", 1, ":record ( id )");
   }
 
 
   @Test
   public void testPath2() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<:record(id)>:record(id)",
+        "/users/1:record/bestFriend:record(id)>:record(id)",
         "path.2",
         "/ '1' :record / bestFriend",
         ":record ( id )",
@@ -180,11 +180,11 @@ public class DeleteOperationRouterTest {
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends DeleteOperation<?>> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull NonReadRequestUrl deleteRequestUrl = s.requestUrl();
+    final @NotNull RequestUrl deleteRequestUrl = s.requestUrl();
     final ReqFieldProjection path = deleteRequestUrl.path();
 
     if (expectedPath == null)
@@ -219,7 +219,7 @@ public class DeleteOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl> getTargetOpId(final @NotNull String url)
+  private OperationSearchSuccess<? extends DeleteOperation<?>> getTargetOpId(final @NotNull String url)
       throws PsiProcessingException {
     final @NotNull OperationSearchResult<DeleteOperation<?>> oss = DeleteOperationRouter.INSTANCE.findOperation(
         null,
@@ -229,7 +229,7 @@ public class DeleteOperationRouterTest {
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends DeleteOperation<?>, NonReadRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends DeleteOperation<?>>) oss;
   }
 
   private class OpImpl extends DeleteOperation<PersonId_Person_Map.Data> {

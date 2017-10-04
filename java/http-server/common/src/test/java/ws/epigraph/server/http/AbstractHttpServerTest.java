@@ -170,10 +170,10 @@ public abstract class AbstractHttpServerTest {
     int nextId = id + 1;
 
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
-    put("/users<[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]", false);
+    put("/users[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]", false);
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
     delete(
-        "/users<[" + id + "," + nextId + "]>[*](code,message)",
+        "/users[" + id + "," + nextId + "]>[*](code,message)",
         200,
         "[{\"K\":" + nextId + ",\"V\":{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}}]"
     );
@@ -185,11 +185,11 @@ public abstract class AbstractHttpServerTest {
     int nextId = id + 1;
 
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
-    put("/users</" + id + ":record/firstName", "'Bruce'", 200, "[]", false);
+    put("/users/" + id + ":record/firstName", "'Bruce'", 200, "[]", false);
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
-    delete("/users</" + id + ">[*](code,message)", 200, "[]");
+    delete("/users/" + id + ">[*](code,message)", 200, "[]");
     delete(
-        "/users</" + nextId + ">/" + nextId + "(code,message)",
+        "/users/" + nextId + ">/" + nextId + "(code,message)",
         200,
         "{\"code\":404,\"message\":\"Item with id " + nextId + " doesn't exist\"}"
     );
@@ -241,9 +241,9 @@ public abstract class AbstractHttpServerTest {
         "\\{'ERROR':404,'message':'Person with id " + nextId + " not found'\\}"
     );
 
-    post("capitalize", "/users/" + id + "<(firstName)>(firstName,lastName)", null, 200, "\\{'firstName':'ALFRED'\\}");
+    post("capitalize", "/users/" + id + "(firstName)>(firstName,lastName)", null, 200, "\\{'firstName':'ALFRED'\\}");
     delete(
-        "/users<[" + id + "]>[*](code,message)",
+        "/users[" + id + "]>[*](code,message)",
         200,
         "[]"
     );

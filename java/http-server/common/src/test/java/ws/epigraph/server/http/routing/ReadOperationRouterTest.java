@@ -36,9 +36,9 @@ import ws.epigraph.service.operations.ReadOperationRequest;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.ReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -152,11 +152,11 @@ public class ReadOperationRouterTest {
       int expectedSteps,
       @NotNull String expectedProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<?, ReadRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<?> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull ReadRequestUrl readRequestUrl = s.requestUrl();
+    final @NotNull RequestUrl readRequestUrl = s.requestUrl();
     final ReqFieldProjection path = readRequestUrl.path();
 
     if (expectedPath == null)
@@ -176,15 +176,15 @@ public class ReadOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<?, ReadRequestUrl>
+  private OperationSearchSuccess<?>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
     final @NotNull OperationSearchResult<ReadOperation<?>> oss = ReadOperationRouter.INSTANCE.findOperation(
         null,
-        parseReadUrl(url),
+        parseUrl(url),
         resource, resolver
     );
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<?, ReadRequestUrl>) oss;
+    return (OperationSearchSuccess<?>) oss;
   }
 
   private class OpImpl extends ReadOperation<PersonId_Person_Map.Data> {
@@ -205,12 +205,12 @@ public class ReadOperationRouterTest {
     }
   }
 
-  private static @NotNull UrlReadUrl parseReadUrl(@NotNull String url) {
+  private static @NotNull UrlUrl parseUrl(@NotNull String url) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
+    UrlUrl urlPsi = EpigraphPsiUtil.parseText(
         url,
-        UrlSubParserDefinitions.READ_URL,
+        UrlSubParserDefinitions.URL,
         errorsAccumulator
     );
 

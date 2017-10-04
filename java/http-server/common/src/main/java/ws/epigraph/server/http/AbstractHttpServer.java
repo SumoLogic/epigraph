@@ -32,15 +32,14 @@ import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.server.http.routing.*;
-import ws.epigraph.service.*;
+import ws.epigraph.service.Resource;
+import ws.epigraph.service.ResourceNotFoundException;
+import ws.epigraph.service.ResourceRouter;
+import ws.epigraph.service.Service;
 import ws.epigraph.service.operations.*;
-import ws.epigraph.url.NonReadRequestUrl;
-import ws.epigraph.url.ReadRequestUrl;
 import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.CustomRequestUrlPsiParser;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
-import ws.epigraph.url.parser.psi.UrlNonReadUrl;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
 import ws.epigraph.url.parser.psi.UrlUrl;
 import ws.epigraph.util.EBean;
 import ws.epigraph.util.HttpStatusCode;
@@ -232,7 +231,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlReadUrl urlPsi = parseReadUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -253,7 +252,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          ReadRequestUrl requestUrl = operationSearchResult.requestUrl();
+          RequestUrl requestUrl = operationSearchResult.requestUrl();
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
           ReadOperation<Data> operation = operationSearchResult.operation();
@@ -278,32 +277,13 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull UrlReadUrl parseReadUrlPsi(
-      @NotNull String urlString,
-      @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
-      @NotNull C context) {
-
-    UrlReadUrl urlPsi = EpigraphPsiUtil.parseText(
-        urlString,
-        UrlSubParserDefinitions.READ_URL.rootElementType(),
-        UrlReadUrl.class,
-        UrlSubParserDefinitions.READ_URL,
-        errorsAccumulator
-    );
-
-    if (context.isDebug())
-      context.logger().info(Util.dumpUrl(urlPsi));
-
-    return urlPsi;
-  }
-
   @SuppressWarnings("unchecked")
   private <R> CompletionStage<InvocationResult<R>> withReadOperation(
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlReadUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<ReadOperation<Data>, ReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<ReadOperation<Data>>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -411,7 +391,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -432,7 +412,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @NotNull RequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable StepsAndProjection<ReqFieldProjection> reqInputProjection = requestUrl.inputProjection();
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
 
@@ -486,16 +466,16 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     );
   }
 
-  private @NotNull UrlNonReadUrl parseNonReadUrlPsi(
+  private @NotNull UrlUrl parseNonReadUrlPsi(
       @NotNull String urlString,
       @NotNull EpigraphPsiUtil.ErrorProcessor errorsAccumulator,
       @NotNull C context) {
 
-    UrlNonReadUrl urlPsi = EpigraphPsiUtil.parseText(
+    UrlUrl urlPsi = EpigraphPsiUtil.parseText(
         urlString,
-        UrlSubParserDefinitions.NON_READ_URL.rootElementType(),
-        UrlNonReadUrl.class,
-        UrlSubParserDefinitions.NON_READ_URL,
+        UrlSubParserDefinitions.URL.rootElementType(),
+        UrlUrl.class,
+        UrlSubParserDefinitions.URL,
         errorsAccumulator
     );
 
@@ -510,8 +490,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlNonReadUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>, NonReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<CreateOperation<Data>>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -564,7 +544,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -585,7 +565,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @NotNull RequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable StepsAndProjection<ReqFieldProjection> updateStepsAndProjection = requestUrl.inputProjection();
 
           StepsAndProjection<ReqFieldProjection> outputProjection = requestUrl.outputProjection();
@@ -645,8 +625,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlNonReadUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>, NonReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<UpdateOperation<Data>>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -699,7 +679,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -720,7 +700,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
         operationName,
         urlPsi,
         operationSearchResult -> {
-          @NotNull NonReadRequestUrl requestUrl = operationSearchResult.requestUrl();
+          @NotNull RequestUrl requestUrl = operationSearchResult.requestUrl();
           @Nullable StepsAndProjection<ReqFieldProjection> deleteStepsAndProjection = requestUrl.inputProjection();
           assert deleteStepsAndProjection != null; // ensured by DeleteOperationRouter
           @NotNull ReqFieldProjection deleteProjection = deleteStepsAndProjection.projection();
@@ -755,8 +735,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull String requestText,
       @NotNull Resource resource,
       @Nullable String operationName,
-      @NotNull UrlNonReadUrl urlPsi,
-      @NotNull Function<OperationSearchSuccess<DeleteOperation<Data>, NonReadRequestUrl>, CompletableFuture<InvocationResult<R>>> continuation,
+      @NotNull UrlUrl urlPsi,
+      @NotNull Function<OperationSearchSuccess<DeleteOperation<Data>>, CompletableFuture<InvocationResult<R>>> continuation,
       @NotNull C context) {
 
     return this.withOperation(
@@ -811,7 +791,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       );
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
-    UrlNonReadUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
+    UrlUrl urlPsi = parseNonReadUrlPsi(decodedUri, errorsAccumulator, context);
 
     if (errorsAccumulator.hasErrors())
       return CompletableFuture.completedFuture(
@@ -826,7 +806,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           )
       );
 
-    NonReadRequestUrl requestUrl = null;
+    RequestUrl requestUrl = null;
     PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
     try {
       requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
@@ -1001,9 +981,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   @SuppressWarnings("unchecked")
   private <
       O extends Operation<?, ?, ?>,
-      U extends RequestUrl,
       UP extends UrlUrl,
-      R extends AbstractOperationRouter<UP, ?, ?, U>,
+      R extends AbstractOperationRouter<UP, ?, ?>,
       Rsp
       >
   CompletionStage<InvocationResult<Rsp>> withOperation(
@@ -1013,7 +992,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       @NotNull UP urlPsi,
       @NotNull R router,
       @NotNull OperationKind operationKind,
-      @NotNull Function<OperationSearchSuccess<O, U>, CompletableFuture<InvocationResult<Rsp>>> continuation,
+      @NotNull Function<OperationSearchSuccess<O>, CompletableFuture<InvocationResult<Rsp>>> continuation,
       @NotNull C context) {
 
     try {
@@ -1045,7 +1024,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
       }
 
       assert searchResult instanceof OperationSearchSuccess;
-      OperationSearchSuccess<O, U> searchSuccessResult = (OperationSearchSuccess<O, U>) searchResult;
+      OperationSearchSuccess<O> searchSuccessResult = (OperationSearchSuccess<O>) searchResult;
       return continuation.apply(searchSuccessResult);
 
     } catch (PsiProcessingException e) {

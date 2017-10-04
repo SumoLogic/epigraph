@@ -1,4 +1,3 @@
-- [ ] allow paths to end with model types (prereq. for fed. ?)
 - [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
 - [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
@@ -9,9 +8,10 @@
 - [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [x] codegen: `_resources/*` package name should be in lower case
 - [x] codegen: primitive `String` setters should accept `CharSequence`
-- [ ] get rid of `<` before input projections in URLs
+- [x] get rid of `<` before input projections in URLs
 
 - Federator
+  - [ ] allow paths to end with model types (prereq. for fed. ?)
   - [x] support named projections on the top level (not inside service)
   - [x] add transformers to schema
     - [x] codegen implementation stubs

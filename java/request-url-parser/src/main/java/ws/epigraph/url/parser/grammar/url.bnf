@@ -106,24 +106,16 @@ tagName ::= qid
 
 // ============= url =============
 
-// this one isn't used actually, sub-parsers for read/non-read URLs are used instead
-url ::= readUrl | nonReadUrl
-
 // todo get rid of requestParms?
 
-// real entry points:
-readUrl ::= '/' qid reqTrunkFieldProjection requestParams { // reqFieldPath is part of output projection, will be extracted by psi parser
-  extends = "url"
-}
+// reqTrunkFieldProjection contains (optional) path followed by
+// - output projection for read operation ( `outputProjection` should not be present in this case )
+// - input projection for create/update/custom operations
+// - delete projection for delete operation
+url ::= '/' '+'? qid reqTrunkFieldProjection outputProjection? requestParams
 
-nonReadUrl ::= '/' qid reqFieldPath inputProjection? outputProjection? requestParams {
-  extends = "url"
-}
-
-inputProjection ::= '<' '+'? reqTrunkFieldProjection { pin = 1 name = "input projection" }
 outputProjection ::= '>' '+'? reqTrunkFieldProjection { pin = 1 name = "output projection" }
 
-// todo do we actually need them?
 private requestParams ::= requestParam*
 requestParam ::= ('?' | '&') PARAM_NAME '=' datum {  // ? vs & nonsense is sorted out in the UrlRequestPsiParser
   pin = 1
@@ -135,7 +127,7 @@ private requestParamRecover ::= ! ( '?' | '&' )
 
 // ============= req output projection =============
 
-reqParam ::= ';' qid '=' datum // todo attach reqInputProjection too?
+reqParam ::= ';' qid '=' datum // todo attach input projection too?
 reqAnnotation ::= '!' annotation
 private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 
@@ -143,6 +135,7 @@ private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 
 // no tails, no branching, no meta
 
+// used by (client) request builders
 reqEntityPath ::= ( ':' tagName)? reqModelPath
 
 reqModelPath ::= reqParamsAndAnnotations? ( reqRecordModelPath | reqMapModelPath )?
@@ -155,8 +148,8 @@ reqFieldPath ::= /* reqParamsAndAnnotations */ reqEntityPath {pin=1}
 // req map path
 reqMapModelPath ::= '/' reqTrunkKeyProjection reqEntityPath {pin=2}
 
-// req output --------------------------------------------------------
-// this is based on opInput from schema.bnf
+// req projection --------------------------------------------------------
+// this is based on op projection from schema.bnf
 
 reqAll ::= '.' '.' '.' { pin = 1 }
 reqStarTagProjection ::= ':' ( reqAll | '(' reqAll ')' ) // all tags with empty contents

@@ -30,11 +30,8 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
  */
 public final class UrlSubParserDefinitions {
 
-  public static final UrlSubParserDefinition<UrlReadUrl> READ_URL =
-      new UrlSubParserDefinition<>(U_READ_URL, UrlReadUrl.class);
-
-  public static final UrlSubParserDefinition<UrlNonReadUrl> NON_READ_URL =
-      new UrlSubParserDefinition<>(U_NON_READ_URL, UrlNonReadUrl.class);
+  public static final UrlSubParserDefinition<UrlUrl> URL =
+      new UrlSubParserDefinition<>(U_URL, UrlUrl.class);
 
   public static final UrlSubParserDefinition<UrlReqEntityPath> REQ_ENTITY_PATH =
       new UrlSubParserDefinition<>(U_REQ_ENTITY_PATH, UrlReqEntityPath.class);

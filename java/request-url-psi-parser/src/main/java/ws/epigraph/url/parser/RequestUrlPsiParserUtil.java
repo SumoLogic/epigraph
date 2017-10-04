@@ -16,7 +16,6 @@
 
 package ws.epigraph.url.parser;
 
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
@@ -30,8 +29,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
+import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -64,7 +63,7 @@ public final class RequestUrlPsiParserUtil {
                   dataType,
                   op.entityProjection(),
                   flagged,
-                  PsiUtil.NULL_PSI_ELEMENT,
+                  TextLocation.UNKNOWN,
                   reqOutputPsiProcessingContext
               ),
               TextLocation.UNKNOWN

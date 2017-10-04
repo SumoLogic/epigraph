@@ -46,7 +46,7 @@ public class StepsAndProjection<P> {
   }
 
   public <K> @NotNull StepsAndProjection<K> unwrap(@NotNull Function<P, K> unwrapper) {
-    return new StepsAndProjection<>(pathSteps - 1, unwrapper.apply(projection));
+    return new StepsAndProjection<>(Math.max(0, pathSteps - 1), unwrapper.apply(projection));
   }
 
   public <K> @NotNull StepsAndProjection<K> wrap(@NotNull Function<P, K> wrapper) {

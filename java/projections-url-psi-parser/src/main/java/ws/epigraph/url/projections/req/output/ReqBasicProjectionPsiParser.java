@@ -192,7 +192,7 @@ public final class ReqBasicProjectionPsiParser {
       addStarTags(op, tagProjections, context, psi);
     } else if (singleTagProjectionPsi != null) {
       // try to improve error reporting: singleTagProjectionPsi may be empty
-      PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
+      TextLocation tagLocation = getSingleTagLocation(singleTagProjectionPsi);
 
       tagProjections = new LinkedHashMap<>();
 
@@ -252,7 +252,7 @@ public final class ReqBasicProjectionPsiParser {
             new ReqTagProjectionEntry(
                 tag,
                 parsedModelProjection,
-                EpigraphPsiUtil.getLocation(tagLocation)
+                tagLocation
             )
         );
 
@@ -287,10 +287,10 @@ public final class ReqBasicProjectionPsiParser {
     }
   }
 
-  private static @NotNull PsiElement
+  private static @NotNull TextLocation
   getSingleTagLocation(final @NotNull UrlReqTrunkSingleTagProjection singleTagProjectionPsi) {
     final UrlTagName tagName = singleTagProjectionPsi.getTagName();
-    if (tagName != null) return tagName;
+    if (tagName != null) return EpigraphPsiUtil.getLocation(tagName);
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().isEmpty()) {
       final @Nullable UrlReqComaFieldProjection fieldProjectionPsi =
@@ -304,7 +304,7 @@ public final class ReqBasicProjectionPsiParser {
         tagLocation = fieldProjectionPsi.getQid();
       }
     }
-    return tagLocation;
+    return EpigraphPsiUtil.getLocation(tagLocation);
   }
 
   private static void addStarTags(
@@ -329,7 +329,7 @@ public final class ReqBasicProjectionPsiParser {
                   opModelProjection,
                   ReqParams.EMPTY,
                   Directives.EMPTY,
-                  locationPsi,
+                  location,
                   context
               ),
               location
@@ -496,7 +496,7 @@ public final class ReqBasicProjectionPsiParser {
     } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
-      PsiElement tagLocation = getSingleTagLocation(singleTagProjectionPsi);
+      TextLocation tagLocation = getSingleTagLocation(singleTagProjectionPsi);
       TagApi tag = ProjectionsParsingUtil.findTag(
           dataType,
           UrlProjectionsPsiParserUtil.getTagName(singleTagProjectionPsi.getTagName()),
@@ -512,7 +512,7 @@ public final class ReqBasicProjectionPsiParser {
 
       if (tag != null) {
         @NotNull OpTagProjectionEntry opTagProjection =
-            getTagProjection(tag.name(), op, singleTagProjectionPsi, context);
+            getTagProjection(tag.name(), op, EpigraphPsiUtil.getLocation(singleTagProjectionPsi), context);
 
         @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
 
@@ -579,9 +579,9 @@ public final class ReqBasicProjectionPsiParser {
     }
   }
 
-  private static @NotNull PsiElement getSingleTagLocation(final @NotNull UrlReqComaSingleTagProjection singleTagProjectionPsi) {
+  private static @NotNull TextLocation getSingleTagLocation(final @NotNull UrlReqComaSingleTagProjection singleTagProjectionPsi) {
     final UrlTagName tagName = singleTagProjectionPsi.getTagName();
-    if (tagName != null) return tagName;
+    if (tagName != null) return EpigraphPsiUtil.getLocation(tagName);
     PsiElement tagLocation = singleTagProjectionPsi;
     if (tagLocation.getText().isEmpty()) {
       final @Nullable UrlReqComaFieldProjection fieldProjectionPsi =
@@ -590,7 +590,7 @@ public final class ReqBasicProjectionPsiParser {
         tagLocation = fieldProjectionPsi.getQid();
       }
     }
-    return tagLocation;
+    return EpigraphPsiUtil.getLocation(tagLocation);
   }
 
   private static LinkedHashMap<String, ReqTagProjectionEntry> parseComaMultiTagProjection(
@@ -621,11 +621,12 @@ public final class ReqBasicProjectionPsiParser {
             dataType,
             getTagName(tagProjectionPsi.getTagName()),
             op,
-            tagProjectionPsi,
+            EpigraphPsiUtil.getLocation(tagProjectionPsi),
             context
         );
 
-        @NotNull OpTagProjectionEntry opTag = getTagProjection(tag.name(), op, tagProjectionPsi, context);
+        @NotNull OpTagProjectionEntry opTag =
+            getTagProjection(tag.name(), op, EpigraphPsiUtil.getLocation(tagProjectionPsi), context);
 
         OpModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
 
@@ -784,7 +785,7 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull Iterable<TagApi> tags,
       @NotNull OpEntityProjection op,
       boolean required,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
     LinkedHashMap<String, ReqTagProjectionEntry> tagProjections = new LinkedHashMap<>();
@@ -802,10 +803,10 @@ public final class ReqBasicProjectionPsiParser {
                     opOutputTagProjection.projection(),
                     ReqParams.EMPTY,
                     Directives.EMPTY,
-                    locationPsi,
+                    location,
                     context
                 ),
-                EpigraphPsiUtil.getLocation(locationPsi)
+                location
             )
         );
       }
@@ -816,7 +817,7 @@ public final class ReqBasicProjectionPsiParser {
         false,
         tagProjections,
         op.parenthesized() || tagProjections.size() != 1, null,
-        EpigraphPsiUtil.getLocation(locationPsi)
+        location
     );
   }
 
@@ -824,14 +825,14 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(type, null, op, locationPsi, context);
+    @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(type, null, op, location, context);
     Iterable<TagApi> tags = defaultTag == null ?
                             Collections.emptyList() :
                             Collections.singletonList(defaultTag);
-    return createDefaultEntityProjection(type.type(), tags, op, required, locationPsi, context);
+    return createDefaultEntityProjection(type.type(), tags, op, required, location, context);
   }
 
   @SuppressWarnings("unchecked")
@@ -998,7 +999,15 @@ public final class ReqBasicProjectionPsiParser {
 
         if (recordModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);
-          return (MP) createDefaultModelProjection(model, required, opRecord, params, directives, psi, context);
+          return (MP) createDefaultModelProjection(
+              model,
+              required,
+              opRecord,
+              params,
+              directives,
+              EpigraphPsiUtil.getLocation(psi),
+              context
+          );
         }
 
         return (MP) parseComaRecordModelProjection(
@@ -1028,7 +1037,15 @@ public final class ReqBasicProjectionPsiParser {
 
         if (mapModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.MAP, context);
-          return (MP) createDefaultModelProjection(model, required, opMap, params, directives, psi, context);
+          return (MP) createDefaultModelProjection(
+              model,
+              required,
+              opMap,
+              params,
+              directives,
+              EpigraphPsiUtil.getLocation(psi),
+              context
+          );
         }
 
         return (MP) parseComaMapModelProjection(
@@ -1059,7 +1076,15 @@ public final class ReqBasicProjectionPsiParser {
 
         if (listModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.LIST, context);
-          return (MP) createDefaultModelProjection(model, required, opList, params, directives, psi, context);
+          return (MP) createDefaultModelProjection(
+              model,
+              required,
+              opList,
+              params,
+              directives,
+              EpigraphPsiUtil.getLocation(psi),
+              context
+          );
         }
 
         return (MP) parseListModelProjection(
@@ -1238,10 +1263,8 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull OpModelProjection<?, ?, ?, ?> op,
       @NotNull ReqParams params,
       @NotNull Directives directives,
-      @NotNull PsiElement locationPsi,
+      @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
-
-    @NotNull TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
 
     switch (type.kind()) {
       case RECORD:
@@ -1303,7 +1326,7 @@ public final class ReqBasicProjectionPsiParser {
         if (opMap.keyProjection().presence() == AbstractOpKeyPresence.REQUIRED)
           throw new PsiProcessingException(
               String.format("Can't build default projection for '%s': keys are required", type.name()),
-              locationPsi,
+              location,
               context
           );
 
@@ -1312,7 +1335,7 @@ public final class ReqBasicProjectionPsiParser {
             mapType.valueType(),
             opMap.itemsProjection(),
             required,
-            locationPsi,
+            location,
             context
         );
 
@@ -1336,7 +1359,7 @@ public final class ReqBasicProjectionPsiParser {
             listType.elementType(),
             opList.itemsProjection(),
             required,
-            locationPsi,
+            location,
             context
         );
 
@@ -1353,12 +1376,12 @@ public final class ReqBasicProjectionPsiParser {
       case ENTITY:
         throw new PsiProcessingException(
             "Was expecting to get datum model kind, got: " + type.kind(),
-            locationPsi,
+            location,
             context
         );
       case ENUM:
         // todo
-        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
+        throw new PsiProcessingException("Unsupported type kind: " + type.kind(), location, context);
       case PRIMITIVE:
         return new ReqPrimitiveModelProjection(
             (PrimitiveTypeApi) type,
@@ -1370,7 +1393,7 @@ public final class ReqBasicProjectionPsiParser {
             location
         );
       default:
-        throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, context);
+        throw new PsiProcessingException("Unknown type kind: " + type.kind(), location, context);
     }
   }
 
@@ -1430,7 +1453,7 @@ public final class ReqBasicProjectionPsiParser {
           fieldType,
           opFieldProjection.entityProjection(),
           fieldFlagged,
-          psi,
+          EpigraphPsiUtil.getLocation(psi),
           context
       );
 
@@ -1630,7 +1653,7 @@ public final class ReqBasicProjectionPsiParser {
                         field.dataType(),
                         opFieldProjection.entityProjection(),
                         false,
-                        psi.getReqAll(),
+                        EpigraphPsiUtil.getLocation(psi.getReqAll()),
                         context
                     ),
 //                    false,
@@ -1784,7 +1807,7 @@ public final class ReqBasicProjectionPsiParser {
           op.type().valueType(),
           op.itemsProjection(),
           psi.getPlus() != null,
-          psi,
+          EpigraphPsiUtil.getLocation(psi),
           context
       );
     } else {
@@ -1828,7 +1851,13 @@ public final class ReqBasicProjectionPsiParser {
     @Nullable UrlReqComaEntityProjection reqOutputEntityProjectionPsi = psi.getReqComaEntityProjection();
     if (reqOutputEntityProjectionPsi == null)
       itemsProjection =
-          createDefaultEntityProjection(op.type().elementType(), op.itemsProjection(), true, psi, context);
+          createDefaultEntityProjection(
+              op.type().elementType(),
+              op.itemsProjection(),
+              true,
+              EpigraphPsiUtil.getLocation(psi),
+              context
+          );
     else
       itemsProjection =
           parseComaEntityProjection(

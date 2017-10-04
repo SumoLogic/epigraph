@@ -22,16 +22,19 @@ import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 
 /**
+ * Result of partial path parsing. Contains parsed path of type {@code P}
+ * and optional unparsed tail, which is either a trunk or a coma projection psi.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReadReqPathParsingResult<P> {
+public class ReqPartialPathParsingResult<P> {
   private final @NotNull P path;
 
   // only one of these can be non-null
   private final @Nullable UrlReqTrunkEntityProjection trunkProjectionPsi;
   private final @Nullable UrlReqComaEntityProjection comaProjectionPsi;
 
-  public ReadReqPathParsingResult(
+  public ReqPartialPathParsingResult(
       @NotNull P path,
       @Nullable UrlReqTrunkEntityProjection trunkProjectionPsi,
       @Nullable UrlReqComaEntityProjection comaProjectionPsi) {

@@ -30,20 +30,23 @@ import java.util.Objects;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class RequestUrl {
+public final class RequestUrl {
   private final @NotNull String fieldName;
   private final @Nullable ReqFieldProjection path;
+  private final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection;
   private final @NotNull StepsAndProjection<ReqFieldProjection> outputProjection;
   private final @NotNull Map<String, GDatum> parameters;
 
-  protected RequestUrl(
+  public RequestUrl(
       @NotNull String fieldName,
       @Nullable ReqFieldProjection path,
+      @Nullable StepsAndProjection<ReqFieldProjection> inputProjection,
       @NotNull StepsAndProjection<ReqFieldProjection> outputProjection,
       @NotNull Map<String, GDatum> parameters) {
 
     this.fieldName = fieldName;
     this.path = path;
+    this.inputProjection = inputProjection;
     this.outputProjection = outputProjection;
     this.parameters = parameters;
   }
@@ -51,6 +54,8 @@ public abstract class RequestUrl {
   public @NotNull String fieldName() { return fieldName; }
 
   public @Nullable ReqFieldProjection path() { return path; }
+
+  public @Nullable StepsAndProjection<ReqFieldProjection> inputProjection() { return inputProjection; }
 
   public @NotNull StepsAndProjection<ReqFieldProjection> outputProjection() { return outputProjection; }
 
@@ -63,12 +68,13 @@ public abstract class RequestUrl {
     final RequestUrl url = (RequestUrl) o;
     return Objects.equals(fieldName, url.fieldName) &&
            Objects.equals(path, url.path) &&
+           Objects.equals(inputProjection, url.inputProjection) &&
            Objects.equals(outputProjection, url.outputProjection) &&
            Objects.equals(parameters, url.parameters);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fieldName, path, outputProjection, parameters);
+    return Objects.hash(fieldName, path, inputProjection, outputProjection, parameters);
   }
 }

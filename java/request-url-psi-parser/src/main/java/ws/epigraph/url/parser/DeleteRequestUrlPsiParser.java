@@ -22,7 +22,7 @@ import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class DeleteRequestUrlPsiParser extends NonReadRequestUrlPsiParser {
+public final class DeleteRequestUrlPsiParser extends RequestUrlPsiParser {
   public static final DeleteRequestUrlPsiParser INSTANCE = new DeleteRequestUrlPsiParser();
 
   private DeleteRequestUrlPsiParser() {

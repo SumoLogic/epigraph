@@ -27,7 +27,7 @@ import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.operations.OperationDeclaration;
 import ws.epigraph.schema.operations.UpdateOperationDeclaration;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,7 +71,7 @@ public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
   public void testParsing1() throws IOException, PsiProcessingException {
     test(
         updateIdl1,
-        "/users<+(id)>/123:record(id)?format='json'&verbose=true",
+        "/+users(id)>/123:record(id)?format='json'&verbose=true",
         "users",
         3,
         "+( id )",
@@ -92,7 +92,7 @@ public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull NonReadRequestUrl requestUrl = UpdateRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = UpdateRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

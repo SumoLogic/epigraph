@@ -59,10 +59,6 @@ public class UrlVisitor extends PsiElementVisitor {
     visitDatum(o);
   }
 
-  public void visitInputProjection(@NotNull UrlInputProjection o) {
-    visitPsiElement(o);
-  }
-
   public void visitListDatum(@NotNull UrlListDatum o) {
     visitDatum(o);
   }
@@ -73,10 +69,6 @@ public class UrlVisitor extends PsiElementVisitor {
 
   public void visitMapDatumEntry(@NotNull UrlMapDatumEntry o) {
     visitPsiElement(o);
-  }
-
-  public void visitNonReadUrl(@NotNull UrlNonReadUrl o) {
-    visitUrl(o);
   }
 
   public void visitNullDatum(@NotNull UrlNullDatum o) {
@@ -105,10 +97,6 @@ public class UrlVisitor extends PsiElementVisitor {
 
   public void visitQnTypeRef(@NotNull UrlQnTypeRef o) {
     visitTypeRef(o);
-  }
-
-  public void visitReadUrl(@NotNull UrlReadUrl o) {
-    visitUrl(o);
   }
 
   public void visitRecordDatum(@NotNull UrlRecordDatum o) {

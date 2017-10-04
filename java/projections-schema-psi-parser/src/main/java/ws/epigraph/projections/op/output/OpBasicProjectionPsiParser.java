@@ -238,7 +238,7 @@ public final class OpBasicProjectionPsiParser {
       TagApi tag = findTag(
           dataType,
           singleTagProjectionPsi.getTagName(),
-          singleTagProjectionPsi,
+          EpigraphPsiUtil.getLocation(singleTagProjectionPsi),
           context
       );
 
@@ -303,7 +303,7 @@ public final class OpBasicProjectionPsiParser {
       @NotNull TagApi tag = getTag(
           dataType,
           tagProjectionPsi.getTagName(),
-          tagProjectionPsi,
+          EpigraphPsiUtil.getLocation(tagProjectionPsi),
           context
       );
 

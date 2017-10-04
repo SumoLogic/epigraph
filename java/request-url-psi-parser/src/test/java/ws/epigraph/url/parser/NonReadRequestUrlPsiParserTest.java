@@ -22,7 +22,7 @@ import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.url.parser.psi.UrlNonReadUrl;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 
@@ -43,11 +43,11 @@ public class NonReadRequestUrlPsiParserTest {
 
   protected final DataType resourceType = String_Person_Map.type.dataType();
 
-  protected static UrlNonReadUrl parseUrlPsi(@NotNull String text) {
+  protected static UrlUrl parseUrlPsi(@NotNull String text) {
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    @NotNull UrlNonReadUrl urlPsi =
-        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.NON_READ_URL, errorsAccumulator);
+    @NotNull UrlUrl urlPsi =
+        EpigraphPsiUtil.parseText(text, UrlSubParserDefinitions.URL, errorsAccumulator);
 
     failIfHasErrors(urlPsi, errorsAccumulator);
 

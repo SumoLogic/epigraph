@@ -16,26 +16,26 @@
 
 package ws.epigraph.server.http.routing;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
+import ws.epigraph.schema.operations.ReadOperationDeclaration;
 import ws.epigraph.service.Resource;
 import ws.epigraph.service.operations.ReadOperation;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.url.ReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.ReadRequestUrlPsiParser;
-import ws.epigraph.url.parser.psi.UrlReadUrl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import ws.epigraph.url.parser.psi.UrlUrl;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReadOperationRouter
-    extends AbstractOperationRouter<UrlReadUrl, ReadOperationDeclaration, ReadOperation<?>, ReadRequestUrl> {
+    extends AbstractOperationRouter<UrlUrl, ReadOperationDeclaration, ReadOperation<?>> {
 
   public static final ReadOperationRouter INSTANCE = new ReadOperationRouter();
 
@@ -53,13 +53,14 @@ public final class ReadOperationRouter
   }
 
   @Override
-  protected @NotNull ReadRequestUrl parseUrl(
+  protected @NotNull RequestUrl parseUrl(
       final @NotNull DataTypeApi resourceType,
       final @NotNull ReadOperationDeclaration opDecl,
-      final @NotNull UrlReadUrl urlPsi,
+      final @NotNull UrlUrl urlPsi,
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
-    return ReadRequestUrlPsiParser.parseReadRequestUrl(
+
+    return ReadRequestUrlPsiParser.INSTANCE.parseRequestUrl(
         resourceType,
         opDecl,
         urlPsi,

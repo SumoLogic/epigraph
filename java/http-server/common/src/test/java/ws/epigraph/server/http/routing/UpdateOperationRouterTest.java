@@ -35,7 +35,7 @@ import ws.epigraph.service.operations.UpdateOperation;
 import ws.epigraph.service.operations.UpdateOperationRequest;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
-import ws.epigraph.url.NonReadRequestUrl;
+import ws.epigraph.url.RequestUrl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,7 +135,7 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPathlessWithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(firstName))",
+        "/users[](:record(id))>[1](:record(firstName))",
         "pathless.1",
         null,
         "[]( :record ( +id ) )",
@@ -159,7 +159,7 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPathless2WithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>[1](:record(id,lastName))",
+        "/users[](:record(id))>[1](:record(id,lastName))",
         "pathless.2",
         null,
         "[]( :record ( +id ) )",
@@ -176,7 +176,7 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPathless3WithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users<[](:record(id))>/1:record(id,lastName)",
+        "/users[](:record(id))>/1:record(id,lastName)",
         "pathless.2",
         null,
         "[]( :record ( +id ) )",
@@ -192,7 +192,7 @@ public class UpdateOperationRouterTest {
 
   @Test
   public void testPath1WithUpdate() throws PsiProcessingException {
-    testRouting("/users/1<(id)>:record(id)", "path.1", "/ '1'", "( +id )", 1, ":record ( id )");
+    testRouting("/users/1(id)>:record(id)", "path.1", "/ '1'", "( +id )", 1, ":record ( id )");
   }
 
   @Test
@@ -210,7 +210,7 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPath2WithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<(id,firstName)>:record(id)",
+        "/users/1:record/bestFriend(id,firstName)>:record(id)",
         "path.2",
         "/ '1' :record / bestFriend",
         "( +id, +firstName )",
@@ -222,7 +222,7 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPath3WithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend<(id)>:record(id)",
+        "/users/1:record/bestFriend(id)>:record(id)",
         "path.3", // should not select path.2 because required field is missing from update projection
         "/ '1' :record / bestFriend",
         "( +id )",
@@ -239,11 +239,11 @@ public class UpdateOperationRouterTest {
       int expectedOutputSteps,
       @NotNull String expectedOutputProjection) throws PsiProcessingException {
 
-    final OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl> s = getTargetOpId(url);
+    final OperationSearchSuccess<? extends UpdateOperation<?>> s = getTargetOpId(url);
     final OpImpl op = (OpImpl) s.operation();
     assertEquals(expectedId, op.getId());
 
-    final @NotNull NonReadRequestUrl updateRequestUrl = s.requestUrl();
+    final @NotNull RequestUrl updateRequestUrl = s.requestUrl();
     final ReqFieldProjection path = updateRequestUrl.path();
 
     if (expectedPath == null)
@@ -274,7 +274,7 @@ public class UpdateOperationRouterTest {
   }
 
   @SuppressWarnings("unchecked")
-  private OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl>
+  private OperationSearchSuccess<? extends UpdateOperation<?>>
   getTargetOpId(final @NotNull String url) throws PsiProcessingException {
     final @NotNull OperationSearchResult<UpdateOperation<?>> oss = UpdateOperationRouter.INSTANCE.findOperation(
         null,
@@ -284,7 +284,7 @@ public class UpdateOperationRouterTest {
 
     failIfSearchFailure(oss);
     assertTrue(oss instanceof OperationSearchSuccess);
-    return (OperationSearchSuccess<? extends UpdateOperation<?>, NonReadRequestUrl>) oss;
+    return (OperationSearchSuccess<? extends UpdateOperation<?>>) oss;
   }
 
   private class OpImpl extends UpdateOperation<PersonId_Person_Map.Data> {
