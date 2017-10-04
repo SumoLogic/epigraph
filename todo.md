@@ -29,9 +29,9 @@
 - [x] better implementation of schema annotations. Get inspiration from Java annotations?
   - [ ] Figure out injections: how to add annotations to existing types/fields.
 - [ ] codegen: need better framework for generating imports and imported names
-- [ ] codegen: `_resources/*` package name should be in lower case
-- [ ] codegen: primitive `String` setters should accept `CharSequence`
-- [ ] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
+- [x] codegen: `_resources/*` package name should be in lower case
+- [x] codegen: primitive `String` setters should accept `CharSequence`
+- [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 
 

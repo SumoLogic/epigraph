@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;

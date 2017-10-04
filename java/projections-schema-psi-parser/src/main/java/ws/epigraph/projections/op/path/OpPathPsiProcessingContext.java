@@ -17,7 +17,7 @@
 package ws.epigraph.projections.op.path;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpPsiProcessingContext;
+import ws.epigraph.projections.op.OpPsiProcessingContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingMessage;

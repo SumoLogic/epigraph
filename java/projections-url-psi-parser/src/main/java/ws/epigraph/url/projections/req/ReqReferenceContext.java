@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.output;
+package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.*;
 

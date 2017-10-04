@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqReferenceContext;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;

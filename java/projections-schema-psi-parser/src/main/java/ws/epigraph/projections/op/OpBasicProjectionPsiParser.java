@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.output;
+package ws.epigraph.projections.op;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
@@ -28,7 +28,6 @@ import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.SchemaProjectionPsiParserUtil;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;

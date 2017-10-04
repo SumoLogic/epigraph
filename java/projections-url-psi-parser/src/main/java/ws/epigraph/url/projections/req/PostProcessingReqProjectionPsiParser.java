@@ -32,8 +32,6 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
-import ws.epigraph.url.projections.req.output.ReqBasicProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
 
 import java.util.function.Function;
 

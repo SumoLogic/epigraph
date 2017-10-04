@@ -29,8 +29,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqProjectionPsiParser;
-import ws.epigraph.url.projections.req.output.ReqReferenceContext;
+import ws.epigraph.url.projections.req.ReqProjectionPsiParser;
+import ws.epigraph.url.projections.req.ReqReferenceContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

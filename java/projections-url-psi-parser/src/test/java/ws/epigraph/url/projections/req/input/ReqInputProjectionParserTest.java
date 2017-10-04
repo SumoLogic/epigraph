@@ -33,7 +33,7 @@ import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 import ws.epigraph.url.projections.req.ReqTestUtil;
-import ws.epigraph.url.projections.req.output.ReqReferenceContext;
+import ws.epigraph.url.projections.req.ReqReferenceContext;
 
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;

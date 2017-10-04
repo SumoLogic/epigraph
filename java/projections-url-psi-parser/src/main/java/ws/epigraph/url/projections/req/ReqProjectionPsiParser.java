@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.output;
+package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
@@ -29,7 +29,6 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
-import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

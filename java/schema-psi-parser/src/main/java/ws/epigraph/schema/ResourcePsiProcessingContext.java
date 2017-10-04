@@ -19,7 +19,7 @@ package ws.epigraph.schema;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpReferenceContext;
+import ws.epigraph.projections.op.OpReferenceContext;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 
 /**

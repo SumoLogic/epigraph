@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req.output;
+package ws.epigraph.url.projections.req;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,7 +36,6 @@ import ws.epigraph.types.*;
 import ws.epigraph.url.TypeRefs;
 import ws.epigraph.url.parser.psi.*;
 import ws.epigraph.url.projections.UrlProjectionsPsiParserUtil;
-import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
 
 import java.util.*;
 

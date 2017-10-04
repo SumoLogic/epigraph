@@ -17,7 +17,6 @@
 package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.output.OpPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
