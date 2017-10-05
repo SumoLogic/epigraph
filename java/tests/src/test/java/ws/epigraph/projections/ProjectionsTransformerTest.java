@@ -24,6 +24,7 @@ import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.tests.Person;
 import ws.epigraph.types.DataType;
+import ws.epigraph.util.Tuple2;
 
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,6 @@ public class ProjectionsTransformerTest {
   public void testRecursiveProjectionTransformation() {
     String projection = ":`record` ( bestFriend $bf = :`record` ( id, bestFriend $bf ) )";
     String transformedProjection = ":`record` ( bestFriend $bf = :`record` ( bestFriend $bf ) )";
-
-    OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
 
     OpEntityProjection vp = EpigraphTestUtil.parseOpEntityProjection(
         (DataType) Person.type.dataType(),
@@ -64,7 +63,7 @@ public class ProjectionsTransformerTest {
 
     OpProjectionTransformer t = new OpProjectionTransformer() {
       @Override
-      protected @NotNull OpRecordModelProjection transformRecordModelProjection(
+      protected @NotNull OpRecordModelProjection transformRecordProjection(
           final @NotNull OpRecordModelProjection recordModelProjection,
           final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
           final @Nullable List<OpRecordModelProjection> transformedTails,
@@ -73,7 +72,7 @@ public class ProjectionsTransformerTest {
 
         transformedFields.remove("id");
 
-        return super.transformRecordModelProjection(
+        return super.transformRecordProjection(
             recordModelProjection,
             transformedFields,
             transformedTails,
@@ -83,7 +82,9 @@ public class ProjectionsTransformerTest {
       }
     };
 
-    vp = t.transform(transformationMap, vp, null);
+    Tuple2<OpEntityProjection, OpProjectionTransformationMap> tuple  = t.transform(vp, null);
+    vp = tuple._1;
+    OpProjectionTransformationMap transformationMap = tuple._2;
 
     s = EpigraphTestUtil.printOpEntityProjection(vp);
     assertEquals(transformedProjection, s);

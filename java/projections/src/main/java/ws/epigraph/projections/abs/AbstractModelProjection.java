@@ -28,6 +28,7 @@ import ws.epigraph.projections.UnresolvedReferenceException;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TypeKind;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,6 +48,7 @@ public abstract class AbstractModelProjection<
 
   protected final @NotNull M model;
   private /*final*/ @Nullable ProjectionReferenceName name;
+  protected /*final*/ boolean flag;
   protected /*final*/ @Nullable MP metaProjection;
   protected /*final*/ @Nullable List<SMP> polymorphicTails;
 
@@ -67,6 +69,7 @@ public abstract class AbstractModelProjection<
 
   protected AbstractModelProjection(
       @NotNull M model,
+      boolean flag,
       @Nullable MP metaProjection,
       @Nullable List<SMP> polymorphicTails,
       @NotNull TextLocation location
@@ -74,6 +77,7 @@ public abstract class AbstractModelProjection<
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.model = model;
+    this.flag = flag;
     this.metaProjection = metaProjection;
     this.polymorphicTails = polymorphicTails;
     this.location = location;
@@ -95,6 +99,9 @@ public abstract class AbstractModelProjection<
 
   @Override
   public @NotNull M type() { return model; }
+
+  @Override
+  public boolean flag() { return flag; }
 
   @Override
   public @Nullable MP metaProjection() { return metaProjection; }
@@ -163,6 +170,7 @@ public abstract class AbstractModelProjection<
    */
   public SMP setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
     if (entityProjection == this.entityProjection) return self();
+    final SMP result;
     if (this.entityProjection == null) {
       this.entityProjection = entityProjection;
 
@@ -177,12 +185,21 @@ public abstract class AbstractModelProjection<
             name,
             entityProjection.referenceName()
         ));
-      return self();
+      result = self();
     } else {
       SMP clone = clone();
       clone.setReferenceName0(referenceName());
-      return clone.setEntityProjection(entityProjection);
+      result = clone.setEntityProjection(entityProjection);
     }
+
+    if (entityProjection.type().kind() != TypeKind.ENTITY) {
+      if (entityProjection.flag())
+        result.flag = true;
+      else if (flag)
+        entityProjection.flag = true;
+    }
+
+    return result;
   }
 
   /**
@@ -391,16 +408,22 @@ public abstract class AbstractModelProjection<
       final MP metaProjection = metaProjectionsList.get(0);
       DatumTypeApi metaModel = effectiveType.metaType();
       assert metaModel != null; // since we have a projection for it
+
+
       //noinspection ConstantConditions
       mergedMetaProjection = (MP) ((GenModelProjection<MP, MP, MP, M>) metaProjection)
           .merge((M) metaModel, metaProjectionsList)
           .normalizedForType(metaModel);
     }
 
+    boolean mergedFlag = modelProjections.stream().anyMatch(mp -> mp.flag());
+
     final ProjectionReferenceName mergedRefName =
         buildReferenceName(modelProjections, modelProjections.get(0).location());
+
     SMP res = merge(
         effectiveType,
+        mergedFlag,
         modelProjections,
         mergedMetaProjection,
         mergedTails
@@ -451,6 +474,7 @@ public abstract class AbstractModelProjection<
 
   protected abstract SMP merge(
       @NotNull M model,
+      boolean mergedFlag,
       @NotNull List<SMP> modelProjections,
       @Nullable MP mergedMetaProjection,
       @Nullable List<SMP> mergedTails);
@@ -520,6 +544,7 @@ public abstract class AbstractModelProjection<
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     setReferenceName(name);
+    this.flag = value.flag();
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
@@ -567,7 +592,9 @@ public abstract class AbstractModelProjection<
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AbstractModelProjection<?, ?, ?> that = (AbstractModelProjection<?, ?, ?>) o;
+
     return Objects.equals(model, that.model) &&
+           Objects.equals(flag, that.flag) &&
            Objects.equals(metaProjection, that.metaProjection);
   }
 
@@ -577,7 +604,7 @@ public abstract class AbstractModelProjection<
   @Override
   public int hashCode() {
 //    assertResolved(); // todo: this should be prohibited for unresolved projections
-    return Objects.hash(model, metaProjection);
+    return Objects.hash(model, flag, metaProjection);
   }
 
   @Override

@@ -338,7 +338,7 @@ public final class OpBasicProjectionPsiParser {
     if (tailPsi == null) tails = null;
     else {
       tails = new ArrayList<>();
-      boolean flagged = parentProjection.flagged();
+      boolean flagged = parentProjection.flag();
 
       @Nullable SchemaOpEntityTailItem singleTail = tailPsi.getOpEntityTailItem();
       if (singleTail == null) {

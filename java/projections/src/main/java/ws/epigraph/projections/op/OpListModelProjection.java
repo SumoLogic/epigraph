@@ -47,7 +47,7 @@ public class OpListModelProjection
 
   public OpListModelProjection(
       @NotNull ListTypeApi model,
-      boolean flagged,
+      boolean flag,
       @Nullable GListDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -55,7 +55,7 @@ public class OpListModelProjection
       @NotNull OpEntityProjection itemsProjection,
       @Nullable List<OpListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
+    super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -75,7 +75,7 @@ public class OpListModelProjection
     if (isResolved) {
       return new OpListModelProjection(
           model,
-          flagged,
+          flag,
           defaultValue,
           params,
           annotations,
@@ -94,7 +94,7 @@ public class OpListModelProjection
   @Override
   protected OpListModelProjection merge(
       final @NotNull ListTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @Nullable GListDatum mergedDefault,
       final @NotNull List<OpListModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
@@ -112,7 +112,7 @@ public class OpListModelProjection
 
     return new OpListModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedDefault,
         mergedParams,
         mergedAnnotations,
@@ -130,7 +130,7 @@ public class OpListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new OpListModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.defaultValue(),
         n.params(),
         n.annotations(),

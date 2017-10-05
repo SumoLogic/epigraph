@@ -40,13 +40,14 @@ public abstract class AbstractReqModelProjection<
 
   protected AbstractReqModelProjection(
       final @NotNull M model,
+      final boolean flag,
       final @NotNull ReqParams params,
       final @Nullable MP metaProjection,
       final @NotNull Directives directives,
       final @Nullable List<SMP> tails,
       final @NotNull TextLocation location
   ) {
-    super(model, metaProjection, tails, location);
+    super(model, flag, metaProjection, tails, location);
     this.directives = directives;
     this.params = params;
   }
@@ -64,13 +65,14 @@ public abstract class AbstractReqModelProjection<
   @Override
   protected SMP merge(
       final @NotNull M model,
+      final boolean mergedFlag,
       final @NotNull List<SMP> modelProjections,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
-
     return merge(
         model,
+        mergedFlag,
         modelProjections,
         ReqParams.merge(modelProjections.stream().map(AbstractReqModelProjection::params)),
         Directives.merge(modelProjections.stream().map(AbstractReqModelProjection::directives)),
@@ -81,6 +83,7 @@ public abstract class AbstractReqModelProjection<
 
   protected abstract SMP merge(
       @NotNull M model,
+      boolean mergedFlag,
       @NotNull List<SMP> modelProjections,
       @NotNull ReqParams mergedParams,
       @NotNull Directives mergedDirectives,

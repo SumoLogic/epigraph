@@ -32,7 +32,7 @@ public interface GenTagProjectionEntry<
 
   @NotNull TagApi tag();
 
-  @NotNull MP projection();
+  @NotNull MP projection(); // todo rename to modelProjection()
 
   /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 

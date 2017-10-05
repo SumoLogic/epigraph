@@ -33,13 +33,13 @@ public class ReqPrimitiveModelProjection
 
   public ReqPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
-      boolean flagged,
+      boolean flag,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, flagged, params, directives, metaProjection, tails, location);
+    super(model, flag, params, directives, metaProjection, tails, location);
   }
 
   public ReqPrimitiveModelProjection(
@@ -51,7 +51,7 @@ public class ReqPrimitiveModelProjection
   @Override
   protected ReqPrimitiveModelProjection clone() {
     return new ReqPrimitiveModelProjection(
-        model, flagged, params, directives, metaProjection, polymorphicTails, location()
+        model, flag, params, directives, metaProjection, polymorphicTails, location()
     );
   }
 
@@ -59,7 +59,7 @@ public class ReqPrimitiveModelProjection
   @Override
   protected ReqPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @NotNull List<ReqPrimitiveModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -68,7 +68,7 @@ public class ReqPrimitiveModelProjection
 
     return new ReqPrimitiveModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,

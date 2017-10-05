@@ -21,6 +21,6 @@ import ws.epigraph.projections.gen.GenProjectionTransformationMap;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpProjectionTransformationMap
+public interface OpProjectionTransformationMap
     extends GenProjectionTransformationMap<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 }

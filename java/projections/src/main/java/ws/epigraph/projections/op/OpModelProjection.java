@@ -22,7 +22,6 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ModelNormalizationContext;
-import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
@@ -39,12 +38,11 @@ public abstract class OpModelProjection<
     D extends GDatum
     > extends AbstractOpModelProjection<MP, SMP, M> {
 
-  protected /*final*/ boolean flagged;
   protected /*final*/ @Nullable D defaultValue;
 
   protected OpModelProjection(
       @NotNull M model,
-      boolean flagged,
+      boolean flag,
       @Nullable D defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -52,8 +50,7 @@ public abstract class OpModelProjection<
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, metaProjection, params, annotations, tails, location);
-    this.flagged = flagged;
+    super(model, flag, metaProjection, params, annotations, tails, location);
     this.defaultValue = defaultValue;
     // check that defaultValue is covered by the projection? (all required parts are present)
   }
@@ -62,34 +59,19 @@ public abstract class OpModelProjection<
     super(model, location);
   }
 
-  public boolean flagged() { return flagged; }
-
   public @Nullable D defaultValue() { return defaultValue; }
-
-  @Override
-  public SMP setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    SMP res = super.setEntityProjection(entityProjection);
-    if (entityProjection instanceof OpEntityProjection) {
-      OpEntityProjection o = (OpEntityProjection) entityProjection;
-      if (o.flagged())
-        res.flagged = true;
-      else if (flagged())
-        o.flagged = true;
-    }
-    return res;
-  }
 
   @SuppressWarnings("unchecked")
   @Override
   protected SMP merge(
       final @NotNull M model,
+      final boolean mergedFlag,
       final @NotNull List<SMP> modelProjections,
       final @NotNull OpParams mergedParams,
       final Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
-    boolean mergedFlagged = modelProjections.stream().anyMatch(mp -> mp.flagged());
     D mergedDefault = modelProjections.stream()
         .map(m -> (D) m.defaultValue())
         .filter(Objects::nonNull)
@@ -98,7 +80,7 @@ public abstract class OpModelProjection<
 
     return merge(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedDefault,
         modelProjections,
         mergedParams,
@@ -110,7 +92,7 @@ public abstract class OpModelProjection<
 
   protected abstract SMP merge(
       @NotNull M model,
-      boolean mergedFlagged,
+      boolean mergedFlag,
       @Nullable D mergedDefault,
       @NotNull List<SMP> modelProjections,
       @NotNull OpParams mergedParams,
@@ -123,7 +105,6 @@ public abstract class OpModelProjection<
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     preResolveCheck(value);
-    this.flagged = value.flagged();
     this.defaultValue = (D) value.defaultValue();
     super.resolve(name, value);
   }
@@ -153,9 +134,9 @@ public abstract class OpModelProjection<
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     OpModelProjection<?, ?, ?, ?> that = (OpModelProjection<?, ?, ?, ?>) o;
-    return flagged == that.flagged && Objects.equals(defaultValue, that.defaultValue);
+    return Objects.equals(defaultValue, that.defaultValue);
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), flagged, defaultValue); }
+  public int hashCode() { return Objects.hash(super.hashCode(), defaultValue); }
 }

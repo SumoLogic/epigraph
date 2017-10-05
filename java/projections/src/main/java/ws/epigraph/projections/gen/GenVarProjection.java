@@ -68,6 +68,8 @@ public interface GenVarProjection<
    */
   boolean parenthesized();
 
+  boolean flag();
+
   /**
    * Polymorphic tails for this projection.
    *

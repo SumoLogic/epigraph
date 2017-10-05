@@ -195,6 +195,6 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectio
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqRecordModelProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqFieldProjectionEntry"),
-    flagged
+    flag
   )
 }

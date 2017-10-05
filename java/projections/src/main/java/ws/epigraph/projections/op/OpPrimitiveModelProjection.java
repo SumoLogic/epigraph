@@ -35,14 +35,14 @@ public class OpPrimitiveModelProjection
 
   public OpPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,
-      boolean flagged,
+      boolean flag,
       @Nullable GPrimitiveDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
       @Nullable List<OpPrimitiveModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
+    super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
   }
 
   public OpPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
@@ -53,7 +53,7 @@ public class OpPrimitiveModelProjection
   protected OpPrimitiveModelProjection clone() {
     return new OpPrimitiveModelProjection(
         model,
-        flagged,
+        flag,
         defaultValue,
         params,
         annotations,
@@ -66,7 +66,7 @@ public class OpPrimitiveModelProjection
   @Override
   protected OpPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @Nullable GPrimitiveDatum mergedDefault,
       final @NotNull List<OpPrimitiveModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
@@ -76,7 +76,7 @@ public class OpPrimitiveModelProjection
 
     return new OpPrimitiveModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedDefault,
         mergedParams,
         mergedAnnotations,

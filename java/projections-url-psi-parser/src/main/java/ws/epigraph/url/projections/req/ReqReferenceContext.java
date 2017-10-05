@@ -79,7 +79,7 @@ public class ReqReferenceContext
       final DatumTypeApi modelType = mRef.type();
       return new ReqEntityProjection(
           modelType,
-          mRef.flagged(),
+          mRef.flag(),
           ProjectionUtils.singletonLinkedHashMap(
               modelType.self().name(),
               new ReqTagProjectionEntry(

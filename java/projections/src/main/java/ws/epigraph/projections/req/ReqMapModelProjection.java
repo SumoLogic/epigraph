@@ -48,7 +48,7 @@ public class ReqMapModelProjection
 
   public ReqMapModelProjection(
       @NotNull MapTypeApi model,
-      boolean flagged,
+      boolean flag,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
@@ -58,7 +58,7 @@ public class ReqMapModelProjection
       @Nullable List<ReqMapModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, flagged, params, directives, metaProjection, tails, location);
+    super(model, flag, params, directives, metaProjection, tails, location);
     this.keys = keys == null ? null : Collections.unmodifiableList(keys);
     this.keysRequired = keysRequired;
     this.valuesProjection = valuesProjection;
@@ -96,7 +96,7 @@ public class ReqMapModelProjection
     if (isResolved()) {
       return new ReqMapModelProjection(
           model,
-          flagged,
+          flag,
           params,
           directives,
           metaProjection,
@@ -115,7 +115,7 @@ public class ReqMapModelProjection
   @Override
   protected ReqMapModelProjection merge(
       final @NotNull MapTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @NotNull List<ReqMapModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -146,7 +146,7 @@ public class ReqMapModelProjection
 
     return new ReqMapModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -166,7 +166,7 @@ public class ReqMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new ReqMapModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.params(),
         n.directives(),
         n.metaProjection(),

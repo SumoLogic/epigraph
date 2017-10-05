@@ -37,10 +37,12 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     OpListModelProjection,
     OpPrimitiveModelProjection,
     OpFieldProjectionEntry,
-    OpFieldProjection
+    OpFieldProjection,
+    OpProjectionTransformationMap,
+    OpProjectionTransformationMapImpl
     > {
 
-  // NB keep in sync with OpProjectionTransformer
+  // NB keep in sync with ReqProjectionTransformer
 
   @Override
   protected OpEntityProjection transformEntityProjection(
@@ -52,7 +54,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
 
     return transformEntityProjection(
         entityProjection,
-        entityProjection.flagged(),
+        entityProjection.flag(),
         transformedTagProjections,
         transformedTails,
         mustRebuild
@@ -62,15 +64,15 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
 
   protected final OpEntityProjection transformEntityProjection(
       final @NotNull OpEntityProjection entityProjection,
-      final boolean flaggedOverride,
+      final boolean flagOverride,
       final @NotNull Map<String, OpTagProjectionEntry> transformedTagProjections,
       final @Nullable List<OpEntityProjection> transformedTails,
       final boolean mustRebuild) {
 
-    if (mustRebuild || flaggedOverride != entityProjection.flagged()) {
+    if (mustRebuild || flagOverride != entityProjection.flag()) {
       OpEntityProjection newProjection = new OpEntityProjection(
           entityProjection.type(),
-          flaggedOverride,
+          flagOverride,
           transformedTagProjections,
           entityProjection.parenthesized(),
           transformedTails,
@@ -99,16 +101,16 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull OpRecordModelProjection transformRecordModelProjection(
+  protected @NotNull OpRecordModelProjection transformRecordProjection(
       final @NotNull OpRecordModelProjection recordModelProjection,
       final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
       final @Nullable List<OpRecordModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformRecordModelProjection(
+    return transformRecordProjection(
         recordModelProjection,
-        recordModelProjection.flagged(),
+        recordModelProjection.flag(),
         transformedFields,
         transformedTails,
         transformedMeta,
@@ -117,7 +119,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
 
   }
 
-  protected final @NotNull OpRecordModelProjection transformRecordModelProjection(
+  protected final @NotNull OpRecordModelProjection transformRecordProjection(
       final @NotNull OpRecordModelProjection recordModelProjection,
       final boolean flagOverride,
       final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
@@ -125,7 +127,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (mustRebuild || flagOverride != recordModelProjection.flagged()) {
+    if (mustRebuild || flagOverride != recordModelProjection.flag()) {
       OpRecordModelProjection newProjection = new OpRecordModelProjection(
           recordModelProjection.type(),
           flagOverride,
@@ -170,16 +172,16 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull OpMapModelProjection transformMapModelProjection(
+  protected @NotNull OpMapModelProjection transformMapProjection(
       final @NotNull OpMapModelProjection mapModelProjection,
       final @NotNull OpEntityProjection transformedItemsProjection,
       final @Nullable List<OpMapModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformMapModelProjection(
+    return transformMapProjection(
         mapModelProjection,
-        mapModelProjection.flagged(),
+        mapModelProjection.flag(),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -187,7 +189,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     );
   }
 
-  protected final @NotNull OpMapModelProjection transformMapModelProjection(
+  protected final @NotNull OpMapModelProjection transformMapProjection(
       final @NotNull OpMapModelProjection mapModelProjection,
       final boolean flagOverride,
       final @NotNull OpEntityProjection transformedItemsProjection,
@@ -195,7 +197,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (mustRebuild || flagOverride != mapModelProjection.flagged()) {
+    if (mustRebuild || flagOverride != mapModelProjection.flag()) {
       OpMapModelProjection newProjection = new OpMapModelProjection(
           mapModelProjection.type(),
           flagOverride,
@@ -215,16 +217,16 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull OpListModelProjection transformListModelProjection(
+  protected @NotNull OpListModelProjection transformListProjection(
       final @NotNull OpListModelProjection listModelProjection,
       final @NotNull OpEntityProjection transformedItemsProjection,
       final @Nullable List<OpListModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformListModelProjection(
+    return transformListProjection(
         listModelProjection,
-        listModelProjection.flagged(),
+        listModelProjection.flag(),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -232,7 +234,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     );
   }
 
-  protected final @NotNull OpListModelProjection transformListModelProjection(
+  protected final @NotNull OpListModelProjection transformListProjection(
       final @NotNull OpListModelProjection listModelProjection,
       final boolean flagOverride,
       final @NotNull OpEntityProjection transformedItemsProjection,
@@ -240,7 +242,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (mustRebuild || flagOverride != listModelProjection.flagged()) {
+    if (mustRebuild || flagOverride != listModelProjection.flag()) {
       OpListModelProjection newProjection = new OpListModelProjection(
           listModelProjection.type(),
           flagOverride,
@@ -259,29 +261,29 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   }
 
   @Override
-  protected @NotNull OpPrimitiveModelProjection transformPrimitiveModelProjection(
+  protected @NotNull OpPrimitiveModelProjection transformPrimitiveProjection(
       final @NotNull OpPrimitiveModelProjection primitiveModelProjection,
       final @Nullable List<OpPrimitiveModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformPrimitiveModelProjection(
+    return transformPrimitiveProjection(
         primitiveModelProjection,
-        primitiveModelProjection.flagged(),
+        primitiveModelProjection.flag(),
         transformedTails,
         transformedMeta,
         mustRebuild
     );
   }
 
-  protected final @NotNull OpPrimitiveModelProjection transformPrimitiveModelProjection(
+  protected final @NotNull OpPrimitiveModelProjection transformPrimitiveProjection(
       final @NotNull OpPrimitiveModelProjection primitiveModelProjection,
       final boolean flagOverride,
       final @Nullable List<OpPrimitiveModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    if (mustRebuild || flagOverride != primitiveModelProjection.flagged()) {
+    if (mustRebuild || flagOverride != primitiveModelProjection.flag()) {
       OpPrimitiveModelProjection newProjection = new OpPrimitiveModelProjection(
           primitiveModelProjection.type(),
           flagOverride,
@@ -298,7 +300,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     } else return primitiveModelProjection;
   }
 
-  protected void fixTransformedEntity(@NotNull OpEntityProjection old, @NotNull OpEntityProjection _new) {
+  protected final void fixTransformedEntity(@NotNull OpEntityProjection old, @NotNull OpEntityProjection _new) {
     _new.setReferenceName(old.referenceName());
     _new.copyNormalizedTailReferenceNames(old);
   }
@@ -335,5 +337,10 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
       default:
         throw new IllegalArgumentException("Unsupported model kind: " + model.kind());
     }
+  }
+
+  @Override
+  protected @NotNull OpProjectionTransformationMapImpl newTransformationMap() {
+    return new OpProjectionTransformationMapImpl();
   }
 }

@@ -40,7 +40,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
       final @NotNull ReqEntityProjection varProjection,
       final @NotNull OpEntityProjection guide) {
 
-    if (varProjection.flagged())
+    if (varProjection.flag())
       context.addWarning("flag is not supported on output projections, ignoring", varProjection.location());
     return super.visitVarProjection(varProjection, guide);
   }
@@ -50,7 +50,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
       final @NotNull ReqModelProjection<?, ?, ?> modelProjection,
       final @NotNull OpModelProjection<?, ?, ?, ?> guide) {
 
-    if (modelProjection.flagged())
+    if (modelProjection.flag())
       context.addWarning("flag is not supported on output projections, ignoring", modelProjection.location());
     return super.visitModelProjection(modelProjection, guide);
   }

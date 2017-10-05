@@ -207,7 +207,7 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
       opDeletePrinter.printFieldProjection(
           "deleteProjection",
-          deleteFieldProjection.entityProjection().flagged() ? "+" : "",
+          deleteFieldProjection.entityProjection().flag() ? "+" : "",
           deleteFieldProjection
       );
     }

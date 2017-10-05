@@ -17,12 +17,12 @@
 package ws.epigraph.url.projections.req;
 
 import ws.epigraph.projections.gen.GenProjectionTransformationMap;
-import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqProjectionTransformationMap
+public interface ReqProjectionTransformationMap
     extends GenProjectionTransformationMap<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
 }

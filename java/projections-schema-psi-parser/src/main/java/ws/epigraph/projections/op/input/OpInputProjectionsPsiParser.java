@@ -17,7 +17,7 @@
 package ws.epigraph.projections.op.input;
 
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
-import ws.epigraph.projections.op.postprocess.OpRequiredSynchronizer;
+import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -25,6 +25,6 @@ import ws.epigraph.projections.op.postprocess.OpRequiredSynchronizer;
 public final class OpInputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
   public static final OpInputProjectionsPsiParser INSTANCE = new OpInputProjectionsPsiParser();
 
-  private OpInputProjectionsPsiParser() { super(null, OpRequiredSynchronizer::new);}
+  private OpInputProjectionsPsiParser() { super(null, context -> new OpFlagSynchronizer("required", context));}
 
 }

@@ -53,14 +53,14 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
   protected void printTagName(
       final @NotNull String tagName,
       final @NotNull ReqModelProjection<?, ?, ?> projection) throws E {
-    if (projection.flagged()) l.print("+");
+    if (projection.flag()) l.print("+");
     super.printTagName(tagName, projection);
   }
 
   @Override
   protected boolean printModelMeta(final @NotNull ReqModelProjection<?, ?, ?> metaProjection) throws E {
     l.print("@");
-    if (metaProjection.flagged()) l.print("+");
+    if (metaProjection.flag()) l.print("+");
     printModel(metaProjection, 0);
     return false;
   }
@@ -77,7 +77,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected String fieldNamePrefix(final @NotNull ReqFieldProjection fieldProjection) {
-    return fieldProjection.flagged() ? "+" : "";
+    return fieldProjection.flag() ? "+" : "";
   }
 
   private void printModelOnly(ReqMapModelProjection mp, int pathSteps) throws E {
@@ -152,7 +152,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected String modelTailTypeNamePrefix(final @NotNull ReqModelProjection<?, ?, ?> projection) {
-    return projection.flagged() ? "+" : super.modelTailTypeNamePrefix(projection);
+    return projection.flag() ? "+" : super.modelTailTypeNamePrefix(projection);
   }
 
   @Override

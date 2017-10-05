@@ -45,14 +45,14 @@ public class ReqListModelProjection
 
   public ReqListModelProjection(
       @NotNull ListTypeApi model,
-      boolean flagged,
+      boolean flag,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @NotNull ReqEntityProjection itemsProjection,
       @Nullable List<ReqListModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, flagged, params, directives, metaProjection, tails, location);
+    super(model, flag, params, directives, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
   }
 
@@ -72,7 +72,7 @@ public class ReqListModelProjection
     if (isResolved) {
       return new ReqListModelProjection(
           model,
-          flagged,
+          flag,
           params,
           directives,
           metaProjection,
@@ -89,7 +89,7 @@ public class ReqListModelProjection
   @Override
   protected ReqListModelProjection merge(
       final @NotNull ListTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @NotNull List<ReqListModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -106,7 +106,7 @@ public class ReqListModelProjection
 
     return new ReqListModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -123,7 +123,7 @@ public class ReqListModelProjection
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new ReqListModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.params(),
         n.directives(),
         n.metaProjection(),

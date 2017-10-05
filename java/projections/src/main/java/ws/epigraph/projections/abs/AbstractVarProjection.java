@@ -49,6 +49,7 @@ public abstract class AbstractVarProjection<
 
   private final @NotNull TypeApi type;
   private /*final*/ @Nullable ProjectionReferenceName name;
+  protected /*final*/ boolean flag;
   private /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
   private /*final*/ boolean parenthesized;
   private /*final*/ @Nullable List<VP> polymorphicTails;
@@ -67,6 +68,7 @@ public abstract class AbstractVarProjection<
   @SuppressWarnings("unchecked")
   protected AbstractVarProjection(
       @NotNull TypeApi type,
+      boolean flag,
       @NotNull Map<String, TP> tagProjections,
       boolean parenthesized,
       @Nullable List<VP> polymorphicTails,
@@ -75,6 +77,7 @@ public abstract class AbstractVarProjection<
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.type = type;
+    this.flag = flag || selfModelFlagged(type, tagProjections);
     this.tagProjections = tagProjections;
     this.parenthesized = parenthesized;
     this.polymorphicTails = polymorphicTails;
@@ -95,6 +98,14 @@ public abstract class AbstractVarProjection<
           tagProjections.put(tagProjections.keySet().iterator().next(), tp.setModelProjection(mp2));
       }
     }
+  }
+
+  private boolean selfModelFlagged(
+      @NotNull TypeApi type,
+      @NotNull Map<String, TP> tagProjections) {
+
+    return (type.kind() != TypeKind.ENTITY && tagProjections.size() == 1) &&
+           tagProjections.values().iterator().next().projection().flag();
   }
 
   /**
@@ -165,6 +176,9 @@ public abstract class AbstractVarProjection<
 
   @Override
   public @NotNull TypeApi type() { return type; }
+
+  @Override
+  public boolean flag() { return flag; }
 
   @Override
   public @NotNull Map<String, TP> tagProjections() {
@@ -491,7 +505,9 @@ public abstract class AbstractVarProjection<
                                                   ? buildReferenceName(varProjections, varProjections.get(0).location())
                                                   : defaultReferenceName;
 
-    VP res = merge(effectiveType, varProjections, mergedTags, mergedParenthesized, mergedTails);
+    boolean mergedFlag = varProjections.stream().anyMatch(GenVarProjection::flag);
+
+    VP res = merge(effectiveType, varProjections, mergedFlag, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
 
     // todo check for clashes
@@ -542,6 +558,7 @@ public abstract class AbstractVarProjection<
   protected abstract VP merge(
       @NotNull TypeApi effectiveType,
       @NotNull List<VP> varProjections,
+      boolean mergedFlag,
       @NotNull Map<String, TP> mergedTags,
       boolean mergedParenthesized,
       @Nullable List<VP> mergedTails);
@@ -589,6 +606,7 @@ public abstract class AbstractVarProjection<
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.name = name;
+    this.flag = value.flag;
     this.tagProjections = value.tagProjections();
     this.parenthesized = value.parenthesized();
     this.polymorphicTails = value.polymorphicTails();
@@ -658,7 +676,7 @@ public abstract class AbstractVarProjection<
   public int hashCode() {
 //    assertResolved(); // todo: this should be prohibited for unresolved projections
 //    if (name != null) return name.hashCode();
-    return Objects.hash(type, tagProjections, polymorphicTails);
+    return Objects.hash(type, flag, tagProjections, polymorphicTails);
   }
 
   @Override

@@ -260,14 +260,14 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqVarProjectionFqn.las
 }"""/*@formatter:on*/
   }
 
-  protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
-  public boolean flagged() { return raw.flagged(); }
+  protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  public boolean flag() { return raw.flag(); }
 """/*@formatter:on*/
   )
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqEntityProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqTagProjectionEntry"),
-    flagged
+    flag
   )
 }

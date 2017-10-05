@@ -19,6 +19,7 @@ apply plugin: 'java'
 dependencies {
   compile project(':epigraph-java-core')
   compile project(':epigraph-java-lang-common')
+  compile project(':epigraph-java-util')
 
   compile 'com.io7m.jpplib:io7m-jpplib-core'
   compile 'org.jetbrains:annotations'

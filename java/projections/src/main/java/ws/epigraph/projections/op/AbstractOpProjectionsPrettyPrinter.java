@@ -133,7 +133,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
     l.beginIInd();
     l.print(";");
-    if (projection.flagged()) l.print("+");
+    if (projection.flag()) l.print("+");
     l.print(escape(p.name())).print(":");
     brk();
     l.print(projection.type().name().toString());

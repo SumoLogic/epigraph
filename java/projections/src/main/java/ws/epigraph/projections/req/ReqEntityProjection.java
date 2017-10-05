@@ -21,14 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.TypeKind;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -39,24 +36,21 @@ public class ReqEntityProjection extends AbstractVarProjection<
     ReqModelProjection<?, ?, ?>
     > {
 
-  protected /*final*/ boolean flagged;
 
   public ReqEntityProjection(
       @NotNull TypeApi type,
-      boolean flagged,
+      boolean flag,
       @NotNull Map<String, ReqTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<ReqEntityProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, parenthesized, polymorphicTails, location);
+
+    super(type, flag, tagProjections, parenthesized, polymorphicTails, location);
 
     if (tagProjections.size() > 1 && !parenthesized)
       throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
-
-    ReqTagProjectionEntry singleTagProjection = singleTagProjection();
-    this.flagged = flagged || (type.kind() != TypeKind.ENTITY && singleTagProjection != null &&
-                               singleTagProjection.projection().flagged());
   }
+
 
   public ReqEntityProjection(final @NotNull TypeApi type, final @NotNull TextLocation location) {
     super(type, location);
@@ -81,20 +75,19 @@ public class ReqEntityProjection extends AbstractVarProjection<
     return new ReqEntityProjection(type, false, Collections.emptyMap(), false, null, location);
   }
 
-  public boolean flagged() { return flagged; }
 
   @Override
   protected ReqEntityProjection merge(
       final @NotNull TypeApi effectiveType,
       final @NotNull List<ReqEntityProjection> varProjections,
+      boolean mergedFlag,
       final @NotNull Map<String, ReqTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
       final List<ReqEntityProjection> mergedTails) {
 
-    boolean mergedFlagged = varProjections.stream().anyMatch(ReqEntityProjection::flagged);
     return new ReqEntityProjection(
         effectiveType,
-        mergedFlagged,
+        mergedFlag,
         mergedTags,
         mergedParenthesized, mergedTails,
         TextLocation.UNKNOWN
@@ -108,24 +101,4 @@ public class ReqEntityProjection extends AbstractVarProjection<
     );
   }
 
-  @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull ReqEntityProjection value) {
-    preResolveCheck(value);
-    this.flagged = value.flagged();
-    super.resolve(name, value);
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final ReqEntityProjection that = (ReqEntityProjection) o;
-    return flagged == that.flagged;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), flagged);
-  }
 }

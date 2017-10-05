@@ -84,7 +84,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
       l.beginIInd(0).print("meta:");
       brk();
-      if (metaProjection.flagged()) l.print("+");
+      if (metaProjection.flag()) l.print("+");
       printModel(metaProjection, 0);
       l.end();
     }
@@ -94,13 +94,13 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected void printTagName(@NotNull String tagName, @NotNull OpModelProjection<?, ?, ?, ?> mp) throws E {
-    if (mp.flagged()) l.print("+");
+    if (mp.flag()) l.print("+");
     l.print(escape(tagName));
   }
 
   @Override
   protected String fieldNamePrefix(final @NotNull OpFieldProjectionEntry fieldEntry) {
-    return fieldEntry.fieldProjection().entityProjection().flagged() ? "+" : "";
+    return fieldEntry.fieldProjection().entityProjection().flag() ? "+" : "";
     // todo: don't print '+' for vars/models if printed for field
   }
 
@@ -121,7 +121,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
     printMapModelProjection(
         keyProjection.presence().getPrettyPrinterString(),
         keyProjection,
-        itemsProjection.flagged() ? "+" : "",
+        itemsProjection.flag() ? "+" : "",
         // todo: don't print '+' for vars/models if printed for items
         itemsProjection
     );
@@ -130,7 +130,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
   private void printModelOnly(OpListModelProjection mp) throws E {
     l.beginIInd();
     l.print("*");
-    if (mp.itemsProjection().flagged()) l.print("+");
+    if (mp.itemsProjection().flag()) l.print("+");
     // todo: don't print '+' for vars/models if printed for items
     l.print("(");
     brk();

@@ -16,35 +16,16 @@
 
 package ws.epigraph.projections.gen;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.IdentityHashMap;
-
 /**
- * Projection transformation mapping, from old to new projection nodes
- *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class GenProjectionTransformationMap<
+public interface GenProjectionTransformationMap<
     VP extends GenVarProjection<VP, ?, MP>,
-    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>
-    > {
+    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>> {
 
-  private final @NotNull IdentityHashMap<VP, VP> epMapping = new IdentityHashMap<>();
-  private final @NotNull IdentityHashMap<MP, MP> mpMapping = new IdentityHashMap<>();
+  VP getEntityMapping(VP old);
 
-  public void addEntityMapping(@NotNull VP old, @NotNull VP _new) {
-    if (old != _new) epMapping.put(old, _new);
-  }
+  MP getModelMapping(MP old);
 
-  public void addModelMapping(@NotNull MP old, @NotNull MP _new) {
-    if (old != _new) mpMapping.put(old, _new);
-  }
-
-  public @Nullable VP getEntityMapping(@NotNull VP old) { return epMapping.get(old); }
-
-  public @Nullable MP getModelMapping(@NotNull MP old) { return mpMapping.get(old); }
-
-  public int size() { return epMapping.size() + mpMapping.size(); }
+  int size();
 }

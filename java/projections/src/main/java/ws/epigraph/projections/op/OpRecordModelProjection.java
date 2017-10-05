@@ -54,7 +54,7 @@ public class OpRecordModelProjection
 
   public OpRecordModelProjection(
       @NotNull RecordTypeApi model,
-      boolean flagged,
+      boolean flag,
       @Nullable GRecordDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -63,7 +63,7 @@ public class OpRecordModelProjection
       @Nullable List<OpRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
+    super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
     this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
@@ -85,7 +85,7 @@ public class OpRecordModelProjection
     if (isResolved) {
       return new OpRecordModelProjection(
           model,
-          flagged,
+          flag,
           defaultValue,
           params,
           annotations,
@@ -102,7 +102,7 @@ public class OpRecordModelProjection
   @Override
   protected OpRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @Nullable GRecordDatum mergedDefault,
       final @NotNull List<OpRecordModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
@@ -127,7 +127,7 @@ public class OpRecordModelProjection
 
     return new OpRecordModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedDefault,
         mergedParams,
         mergedAnnotations,
@@ -155,7 +155,7 @@ public class OpRecordModelProjection
 
     return new OpRecordModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.defaultValue(),
         n.params(),
         n.annotations(),

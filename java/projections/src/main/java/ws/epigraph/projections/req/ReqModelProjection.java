@@ -19,13 +19,10 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.abs.AbstractVarProjection;
 import ws.epigraph.projections.ModelNormalizationContext;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -36,27 +33,19 @@ public abstract class ReqModelProjection<
     M extends DatumTypeApi>
     extends AbstractReqModelProjection<MP, SMP, M> {
 
-  protected /*final*/ boolean flagged;
-
   protected ReqModelProjection(
       @NotNull M model,
-      boolean flagged,
+      boolean flag,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable MP metaProjection,
       @Nullable List<SMP> tails,
       @NotNull TextLocation location) {
-    super(model, params, metaProjection, directives, tails, location);
-    this.flagged = flagged;
+    super(model, flag, params, metaProjection, directives, tails, location);
   }
 
   protected ReqModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
-  }
-
-  public boolean flagged() {
-    assert isResolved();
-    return flagged;
   }
 
   @SuppressWarnings("unchecked")
@@ -78,66 +67,4 @@ public abstract class ReqModelProjection<
     });
   }
 
-  @Override
-  public SMP setEntityProjection(final @NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
-    SMP res = super.setEntityProjection(entityProjection);
-    if (entityProjection instanceof ReqEntityProjection) {
-      ReqEntityProjection r = (ReqEntityProjection) entityProjection;
-      if (r.flagged())
-        res.flagged = true;
-      else if (flagged())
-        r.flagged = true;
-    }
-    return res;
-  }
-
-  @Override
-  protected SMP merge(
-      final @NotNull M model,
-      final @NotNull List<SMP> modelProjections,
-      final @NotNull ReqParams mergedParams,
-      final @NotNull Directives mergedDirectives,
-      final @Nullable MP mergedMetaProjection,
-      final @Nullable List<SMP> mergedTails) {
-
-    return merge(
-        model,
-        modelProjections.stream().anyMatch(ReqModelProjection::flagged),
-        modelProjections,
-        mergedParams,
-        mergedDirectives,
-        mergedMetaProjection,
-        mergedTails
-    );
-  }
-
-  protected abstract SMP merge(
-      @NotNull M model,
-      boolean mergedFlagged,
-      @NotNull List<SMP> modelProjections,
-      @NotNull ReqParams mergedParams,
-      @NotNull Directives mergedDirectives,
-      @Nullable MP mergedMetaProjection,
-      @Nullable List<SMP> mergedTails);
-
-  @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
-    preResolveCheck(value);
-    flagged = value.flagged();
-    super.resolve(name, value);
-  }
-
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final ReqModelProjection<?, ?, ?> that = (ReqModelProjection<?, ?, ?>) o;
-    return flagged == that.flagged;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), flagged);
-  }
 }

@@ -62,6 +62,6 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjec
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqPrimitiveModelProjection"),
-    flagged
+    flag
   )
 }

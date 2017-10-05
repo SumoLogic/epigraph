@@ -41,7 +41,7 @@ public class OpInputDataValidator extends GenDataValidator<
 
   @Override
   protected void validateDataOnly(final @NotNull Data data, final @NotNull OpEntityProjection projection) {
-    projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
+    projection.tagProjections().values().stream().filter(p -> p.projection().flag()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
       final Val val = data._raw().tagValues().get(tagName);
@@ -55,7 +55,7 @@ public class OpInputDataValidator extends GenDataValidator<
       final @NotNull RecordDatum datum,
       final @NotNull OpRecordModelProjection projection) {
 
-    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
+    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flag()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
       final Data fieldData = datum._raw().fieldsData().get(fieldName);

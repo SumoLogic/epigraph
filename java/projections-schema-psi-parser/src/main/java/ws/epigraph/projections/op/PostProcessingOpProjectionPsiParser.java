@@ -27,6 +27,7 @@ import ws.epigraph.schema.parser.psi.SchemaOpModelProjection;
 import ws.epigraph.schema.parser.psi.SchemaOpUnnamedOrRefEntityProjection;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.util.Tuple2;
 
 import java.util.function.Function;
 
@@ -97,7 +98,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpModelProjection<?,?,?,?> res =
+    OpModelProjection<?, ?, ?, ?> res =
         OpBasicProjectionPsiParser.parseModelProjection(type, flagged, psi, typesResolver, context);
 
     return processModelProjection(res, context);
@@ -116,16 +117,18 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       return ep;
     else {
       OpProjectionTransformer transformer = transformerFactory.apply(context);
-      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
-      OpEntityProjection transformedMp = transformer.transform(transformationMap, ep, null);
+      Tuple2<OpEntityProjection, OpProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
+
+      OpEntityProjection transformedMp = tuple2._1;
+      OpProjectionTransformationMap transformationMap = tuple2._2;
 
       context.referenceContext().transform(transformationMap);
       return transformedMp;
     }
   }
 
-  private @NotNull OpModelProjection<?,?,?,?> processModelProjection(
-      @NotNull OpModelProjection<?,?,?,?> mp,
+  private @NotNull OpModelProjection<?, ?, ?, ?> processModelProjection(
+      @NotNull OpModelProjection<?, ?, ?, ?> mp,
       @NotNull OpPsiProcessingContext context) {
 
     if (traversalFactory != null) {
@@ -137,8 +140,10 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       return mp;
     else {
       OpProjectionTransformer transformer = transformerFactory.apply(context);
-      OpProjectionTransformationMap transformationMap = new OpProjectionTransformationMap();
-      OpModelProjection<?, ?, ?, ?> transformedMp = transformer.transform(transformationMap, mp);
+      Tuple2<OpModelProjection<?, ?, ?, ?>, OpProjectionTransformationMap> tuple2 = transformer.transform(mp);
+
+      OpModelProjection<?, ?, ?, ?> transformedMp = tuple2._1;
+      OpProjectionTransformationMap transformationMap = tuple2._2;
 
       context.referenceContext().transform(transformationMap);
       return transformedMp;

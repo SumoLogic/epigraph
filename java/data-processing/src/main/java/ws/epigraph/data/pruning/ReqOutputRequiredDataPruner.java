@@ -51,7 +51,7 @@ public class ReqOutputRequiredDataPruner {
 
       final ReqTagProjectionEntry tagProjectionEntry = entry.getValue();
       final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
-      final boolean required = modelProjection.flagged();
+      final boolean required = modelProjection.flag();
 
       Val val = tagValues.get(tagName);
 
@@ -161,7 +161,7 @@ public class ReqOutputRequiredDataPruner {
 
       final ReqFieldProjectionEntry fieldProjectionEntry = entry.getValue();
       final ReqFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
-      final boolean required = fieldProjection.flagged();
+      final boolean required = fieldProjection.flag();
       final ReqEntityProjection dataProjection = fieldProjection.entityProjection();
 
       Data data = fieldsData.get(fieldName);

@@ -54,8 +54,8 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   override def description: String = "[M] " + super.description
 
-  protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
-  public boolean flagged() { return raw.flagged(); }
+  protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  public boolean flag() { return raw.flag(); }
 """/*@formatter:on*/
   )
 

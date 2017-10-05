@@ -95,7 +95,7 @@ public class OpOutputProjectionsTest {
         "  )"
     );
 
-    testParsingVarProjection(
+    testParsingEntityProjection(
         dataType,
         projectionStr,
         expected
@@ -121,7 +121,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseEmpty() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         dataType,
         ""
         ,
@@ -131,7 +131,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseParam() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         lines(
             ":id {",
             "  ;+param: map[epigraph.String,ws.epigraph.tests.Person]",
@@ -143,12 +143,12 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseMultipleTags() throws PsiProcessingException {
-    testParsingVarProjection(":( id, `record` )");
+    testParsingEntityProjection(":( id, `record` )");
   }
 
   @Test
   public void testParseRecursive() throws PsiProcessingException {
-    OpEntityProjection vp = testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
+    OpEntityProjection vp = testParsingEntityProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
     final ProjectionReferenceName name = vp.referenceName();
     assertNotNull(name);
     assertEquals("self", name.toString());
@@ -157,7 +157,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseStupidRecursive() throws PsiProcessingException {
     try {
-      testParsingVarProjection("$self = $self");
+      testParsingEntityProjection("$self = $self");
       fail("Expected to get an error");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage().contains("is not defined"));
@@ -168,7 +168,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseModelRecursive() throws PsiProcessingException {
     final OpEntityProjection vp =
-        testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+        testParsingEntityProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
 
     // check that it's actually correct
 
@@ -188,7 +188,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testNormalizeRecursive() throws PsiProcessingException {
     final OpEntityProjection vp =
-        testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
+        testParsingEntityProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
             .normalizedForType(User.type);
 
     // check that it's actually correct
@@ -209,7 +209,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseSelfVarRecursive() throws PsiProcessingException {
     final OpEntityProjection vp =
-        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
+        testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
 
     // check that it's actually correct
 
@@ -236,7 +236,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testNormalizeSelfVarRecursive() throws PsiProcessingException {
     final OpEntityProjection vp =
-        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
+        testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
             .normalizedForType(User.type);
 
     // check that it's actually correct
@@ -264,7 +264,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testNormalizeSelfVarModelRecursive() throws PsiProcessingException {
     final OpEntityProjection vp =
-        testParsingVarProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
+        testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
 
 
     // rmp = :record
@@ -294,7 +294,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testNormalizeDiamond() throws PsiProcessingException {
-    final OpEntityProjection vp = testParsingVarProjection(
+    final OpEntityProjection vp = testParsingEntityProjection(
         lines(
             ":`record` ( id )",
             "  ~(",
@@ -314,7 +314,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testSuperTypeRef() throws PsiProcessingException {
     // todo add to other parser tests too
-    OpEntityProjection personProjection = testParsingVarProjection(":id");
+    OpEntityProjection personProjection = testParsingEntityProjection(":id");
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
@@ -337,12 +337,12 @@ public class OpOutputProjectionsTest {
       }
     };
 
-    testParsingVarProjection(testConfig, ":`record` ( bestFriend4 $ref )", ":`record` ( bestFriend4 $ref = :id )");
+    testParsingEntityProjection(testConfig, ":`record` ( bestFriend4 $ref )", ":`record` ( bestFriend4 $ref = :id )");
   }
 
   @Test
   public void testParseModelRef() throws PsiProcessingException {
-    OpEntityProjection personProjection = testParsingVarProjection(":`record` ( id )");
+    OpEntityProjection personProjection = testParsingEntityProjection(":`record` ( id )");
 
     @SuppressWarnings("ConstantConditions")
     OpModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
@@ -385,7 +385,7 @@ public class OpOutputProjectionsTest {
       }
     };
 
-    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` <unresolved>");
+    testParsingEntityProjection(testConfig, ":`record` $ref", ":`record` <unresolved>");
 //    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` ( id )");
     // we don't get reference name here because it belongs to var, not model projection ( personRecordVar )
 //    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` $ref = ( id )");
@@ -398,7 +398,7 @@ public class OpOutputProjectionsTest {
   public void testParseWrongTypeRef() throws PsiProcessingException {
     // todo add to other parser tests too
     OpEntityProjection paginationProjection =
-        testParsingVarProjection(new DataType(PaginationInfo.type, null), "()", "");
+        testParsingEntityProjection(new DataType(PaginationInfo.type, null), "()", "");
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
@@ -417,7 +417,7 @@ public class OpOutputProjectionsTest {
     };
 
     try {
-      testParsingVarProjection(testConfig, ":`record` ( bestFriend $ref )", ":`record` ( bestFriend )");
+      testParsingEntityProjection(testConfig, ":`record` ( bestFriend $ref )", ":`record` ( bestFriend )");
       fail("Var reference built for an incompatible type should not be accepted");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage().contains(
@@ -429,7 +429,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseTail() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         ":~ws.epigraph.tests.User :id"
         ,
         ":id :~ws.epigraph.tests.User :id"
@@ -438,7 +438,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseDoubleTail() throws PsiProcessingException {
-    final OpEntityProjection projection = testParsingVarProjection(
+    final OpEntityProjection projection = testParsingEntityProjection(
         dataType,
         ":~ws.epigraph.tests.User :id :~ws.epigraph.tests.SubUser :id"
         ,
@@ -461,7 +461,7 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseTails() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
         ,
         ":id :~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
@@ -470,55 +470,55 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseModelTail() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
     );
   }
 
   @Test
   public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { @epigraph.annotations.Deprecated }");
+    testParsingEntityProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
   public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, firstName )");
+    testParsingEntityProjection(":`record` ( id, firstName )");
   }
 
   @Test
   public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` ( id ) )");
+    testParsingEntityProjection(":`record` ( id, bestFriend :`record` ( id ) )");
   }
 
   @Test
   public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
+    testParsingEntityProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
   }
 
   @Test
   public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friends *( :id ) )");
+    testParsingEntityProjection(":`record` ( friends *( :id ) )");
   }
 
   @Test
   public void testParseList2() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friends * :id )", ":`record` ( friends *( :id ) )");
+    testParsingEntityProjection(":`record` ( friends * :id )", ":`record` ( friends *( :id ) )");
   }
 
   @Test
   public void testParseList3() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friends * :`record` ( id ) )", ":`record` ( friends *( :`record` ( id ) ) )");
+    testParsingEntityProjection(":`record` ( friends * :`record` ( id ) )", ":`record` ( friends *( :`record` ( id ) ) )");
   }
 
   @Test
   public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, @epigraph.annotations.Doc \"no keys\" ]( :id ) )");
   }
 
   @Test
   public void testParseMapWithKeyProjection() throws PsiProcessingException {
-    testParsingVarProjection(
+    testParsingEntityProjection(
         lines(
             ":`record` (",
             "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection: ( firstName, lastName ) ](",
@@ -528,29 +528,23 @@ public class OpOutputProjectionsTest {
     );
   }
 
-  @Test
-  public void testFlagged() throws PsiProcessingException {
-    TestConfig cfg = new TestConfig() {
-      @Override
-      boolean failOnWarnings() { return false; }
-    };
-
-    testParsingVarProjection(cfg, ":+id");
-    testParsingVarProjection(cfg, ":`record` ( +id )");
-    testParsingVarProjection(cfg, ":`record` ( id+ )", ":`record` ( +id )");
-    testParsingVarProjection(cfg, ":`record` ( bestFriend2+ )", ":`record` ( bestFriend2 :+id )");
-    testParsingVarProjection(cfg, ":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :id )");
-
-    // todo: enable smarter output in pretty printer
-    testParsingVarProjection(cfg, ":`record` ( friends*+:id )", ":`record` ( friends *+( :id ) )");
-    testParsingVarProjection(
-        cfg,
-        ":`record` ( friendsMap[forbidden]+:id)",
-        ":`record` ( friendsMap [ forbidden ]+( :id ) )"
-    );
-
-    testParsingVarProjection(cfg, ":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
-  }
+//  @Test
+//  public void testFlag() throws PsiProcessingException {
+//    testParsingEntityProjection(":+id");
+//    testParsingEntityProjection(":+`record` ( +id )");
+//    testParsingEntityProjection(":`record` ( id+ )", ":+`record` ( +id )");
+//    testParsingEntityProjection(":`record` ( bestFriend2+ )", ":+`record` ( +bestFriend2 :+id )");
+//    testParsingEntityProjection(":`record` ( +bestFriend2 )", ":+`record` ( +bestFriend2 :+id )");
+//
+//    // todo: enable smarter output in pretty printer
+//    testParsingEntityProjection(":`record` ( friends*+:id )", ":+`record` ( +friends *+( :id ) )");
+//    testParsingEntityProjection(
+//        ":`record` ( friendsMap[forbidden]+:id)",
+//        ":+`record` ( +friendsMap [ forbidden ]+( :id ) )"
+//    );
+//
+//    testParsingEntityProjection(":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");
+//  }
 
   @Test
   public void testParseDefault() throws PsiProcessingException {
@@ -559,7 +553,7 @@ public class OpOutputProjectionsTest {
       boolean failOnWarnings() { return false; }
     };
 
-    testParsingVarProjection(cfg, ":id { default: 123 }");
+    testParsingEntityProjection(cfg, ":id { default: 123 }");
   }
 
   @Test
@@ -721,7 +715,7 @@ public class OpOutputProjectionsTest {
       }
     };
 
-    OpEntityProjection vp = testParsingVarProjection(
+    OpEntityProjection vp = testParsingEntityProjection(
         testConfig,
         ":id :~ws.epigraph.tests.User $user = :`record` ( id, bestFriend4 $user )",
         // should we preserve original label for some reason?
@@ -762,7 +756,7 @@ public class OpOutputProjectionsTest {
       }
     };
 
-    OpEntityProjection vp = testParsingVarProjection(
+    OpEntityProjection vp = testParsingEntityProjection(
         testConfig,
         ":`record` ( id ) ~ws.epigraph.tests.UserRecord $user = ( firstName )",
         // should we preserve original label for some reason?
@@ -802,7 +796,7 @@ public class OpOutputProjectionsTest {
   public void testParseMeta() throws PsiProcessingException {
     String projection = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
 
-    testParsingVarProjection(
+    testParsingEntityProjection(
         new DataType(PersonMap.type, null),
         projection,
         projection
@@ -932,7 +926,7 @@ public class OpOutputProjectionsTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testTailTagType() {
-    OpEntityProjection vp = testParsingVarProjection(
+    OpEntityProjection vp = testParsingEntityProjection(
         ":id :~ws.epigraph.tests.User :id"
     );
 
@@ -948,7 +942,7 @@ public class OpOutputProjectionsTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testTailTagType2() {
-    OpEntityProjection vp = testParsingVarProjection(
+    OpEntityProjection vp = testParsingEntityProjection(
         ":`record` ( bestFriend :id :~ws.epigraph.tests.User :id )"
     );
 
@@ -969,7 +963,7 @@ public class OpOutputProjectionsTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testTailFieldType() {
-    OpEntityProjection vp = testParsingVarProjection(
+    OpEntityProjection vp = testParsingEntityProjection(
         ":`record` ( bestFriend :`record` ( id ) ~ws.epigraph.tests.UserRecord ( id ) )"
     );
 
@@ -1101,20 +1095,20 @@ public class OpOutputProjectionsTest {
     assertEquals(expected, actual);
   }
 
-  private OpEntityProjection testParsingVarProjection(String str) {
-    return testParsingVarProjection(str, str);
+  private OpEntityProjection testParsingEntityProjection(String str) {
+    return testParsingEntityProjection(str, str);
   }
 
-  private OpEntityProjection testParsingVarProjection(String str, String expected) {
-    return testParsingVarProjection(DEFAULT_CONFIG, str, expected);
+  private OpEntityProjection testParsingEntityProjection(String str, String expected) {
+    return testParsingEntityProjection(DEFAULT_CONFIG, str, expected);
   }
 
-  private OpEntityProjection testParsingVarProjection(
+  private OpEntityProjection testParsingEntityProjection(
       DataType dt,
       String projectionString,
       String expected) {
 
-    return testParsingVarProjection(
+    return testParsingEntityProjection(
         new TestConfig() {
           @Override
           @NotNull DataType dataType() {
@@ -1126,11 +1120,11 @@ public class OpOutputProjectionsTest {
     );
   }
 
-  private OpEntityProjection testParsingVarProjection(TestConfig config, String str) {
-    return testParsingVarProjection(config, str, str);
+  private OpEntityProjection testParsingEntityProjection(TestConfig config, String str) {
+    return testParsingEntityProjection(config, str, str);
   }
 
-  private OpEntityProjection testParsingVarProjection(
+  private OpEntityProjection testParsingEntityProjection(
       TestConfig config,
       String projectionString,
       String expected) {

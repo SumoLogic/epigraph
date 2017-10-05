@@ -81,12 +81,12 @@ class ReqUpdateEntityProjectionGen(
       ctx
     )
 
-  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  override protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if entity must be replaced (updated), and {@code false} if it must be patched
    */
   public boolean replace() {
-    return raw.flagged();
+    return raw.flag();
   }
 """/*@formatter:on*/
   )

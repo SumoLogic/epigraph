@@ -67,12 +67,12 @@ public class ReqJsonFormatReader extends AbstractJsonFormatReader<
 
   @Override
   protected boolean tagRequired(@NotNull ReqTagProjectionEntry tagProjection) {
-    return tagProjection.projection().flagged();
+    return tagProjection.projection().flag();
   }
 
   @Override
   protected boolean fieldRequired(@NotNull ReqFieldProjectionEntry fieldEntry) {
-    return fieldEntry.fieldProjection().flagged();
+    return fieldEntry.fieldProjection().flag();
   }
 
   @Override

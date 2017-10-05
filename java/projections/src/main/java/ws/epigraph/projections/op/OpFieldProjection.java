@@ -32,7 +32,7 @@ public class OpFieldProjection extends AbstractOpFieldProjection<
     OpFieldProjection
     > {
 
-  // private final boolean flagged; // flagged field = flagged field retro model | var = all models flagged
+  // private final boolean flag; // flag field = flag field retro model | var = all models flag
 
   public OpFieldProjection(
 //      @NotNull OpParams params,
@@ -47,7 +47,7 @@ public class OpFieldProjection extends AbstractOpFieldProjection<
     return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
-  public boolean flagged() { return entityProjection().flagged(); }
+  public boolean flag() { return entityProjection().flag(); }
 
   @Override
   protected @NotNull OpFieldProjection merge(

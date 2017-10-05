@@ -36,14 +36,14 @@ public class OpFlaggedNotSupportedChecker extends OpProjectionTraversal {
 
   @Override
   protected boolean visitVarProjection(final @NotNull OpEntityProjection projection) {
-    if (projection.flagged())
+    if (projection.flag())
       context.addWarning("flag is not supported on output projections, ignoring", projection.location());
     return super.visitVarProjection(projection);
   }
 
   @Override
   protected boolean visitModelProjection(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {
-    if (projection.flagged())
+    if (projection.flag())
       context.addWarning("flag is not supported on output projections, ignoring", projection.location());
     return super.visitModelProjection(projection);
   }

@@ -120,6 +120,6 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqMapModelProjectionFq
 
   override protected def generate: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqMapModelProjection"),
-    flagged
+    flag
   )
 }

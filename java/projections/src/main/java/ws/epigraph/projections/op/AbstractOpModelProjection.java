@@ -42,12 +42,13 @@ public abstract class AbstractOpModelProjection<
 
   protected AbstractOpModelProjection(
       final @NotNull M model,
+      final boolean flag,
       final @Nullable MP metaProjection,
       final @NotNull OpParams params,
       final @NotNull Annotations annotations,
       final @Nullable List<SMP> tails,
       final @NotNull TextLocation location) {
-    super(model, metaProjection, tails, location);
+    super(model, flag, metaProjection, tails, location);
     this.annotations = annotations;
     this.params = params;
   }
@@ -66,6 +67,7 @@ public abstract class AbstractOpModelProjection<
   @Override
   protected SMP merge(
       final @NotNull M model,
+      final boolean mergedFlag,
       final @NotNull List<SMP> modelProjections,
       final MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
@@ -74,6 +76,7 @@ public abstract class AbstractOpModelProjection<
 
     return merge(
         model,
+        mergedFlag,
         modelProjections,
         OpParams.merge(modelProjections.stream().map(AbstractOpModelProjection::params)),
         Annotations.merge(modelProjections.stream().map(AbstractOpModelProjection::annotations)),
@@ -85,6 +88,7 @@ public abstract class AbstractOpModelProjection<
   /* static */
   protected abstract SMP merge(
       @NotNull M model,
+      boolean mergedFlag,
       @NotNull List<SMP> modelProjections,
       @NotNull OpParams mergedParams,
       Annotations mergedAnnotations,

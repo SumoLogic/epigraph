@@ -42,6 +42,8 @@ public interface GenModelProjection<
   @Override
   @NotNull M type();
 
+  boolean flag();
+
   @Nullable MP metaProjection();
 
   @Nullable List<TMP> polymorphicTails();

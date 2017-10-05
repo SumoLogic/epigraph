@@ -49,7 +49,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   public ReqRequiredSynchronizer(final @NotNull PsiProcessingContext context) {this.context = context;}
 
   @Override
-  protected @NotNull ReqEntityProjection transformResolved(
+  protected @NotNull ReqEntityProjection transformResolvedEntityProjection(
       @NotNull ReqEntityProjection projection,
       @Nullable DataTypeApi dataType) {
 
@@ -59,7 +59,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
     }
 
     // check if flag is valid
-    if (projection.flagged()
+    if (projection.flag()
         && projection.type().kind() != TypeKind.ENTITY
         && dataType != null
         && dataType.retroTag() == null) {
@@ -73,7 +73,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
       );
     }
 
-    return super.transformResolved(projection, dataType);
+    return super.transformResolvedEntityProjection(projection, dataType);
   }
 
   @Override
@@ -95,11 +95,11 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
 
     // this is either a self-var and model projection is flagged
     // or we have a retro tag and it's model is flagged
-    boolean modelFlagged = tp != null && tp.projection().flagged();
+    boolean modelFlagged = tp != null && tp.projection().flag();
 
     return super.transformEntityProjection(
         entityProjection,
-        entityProjection.flagged() || modelFlagged,
+        entityProjection.flag() || modelFlagged,
         transformedTagProjections,
         transformedTails,
         mustRebuild
@@ -107,10 +107,10 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   protected boolean flagModel(@NotNull ReqModelProjection<?, ?, ?> modelProjection) {
-    if (modelProjection.flagged()) return false;
+    if (modelProjection.flag()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);
-      if (epd == null || !epd.ep.flagged()) return false;
+      if (epd == null || !epd.ep.flag()) return false;
       else {
         ReqEntityProjection entityProjection = epd.ep;
         DataTypeApi dataType = epd.dataType;
@@ -128,16 +128,16 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqRecordModelProjection transformRecordModelProjection(
+  protected @NotNull ReqRecordModelProjection transformRecordProjection(
       final @NotNull ReqRecordModelProjection recordModelProjection,
       final @NotNull Map<String, ReqFieldProjectionEntry> transformedFields,
       final @Nullable List<ReqRecordModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformRecordModelProjection(
+    return transformRecordProjection(
         recordModelProjection,
-        recordModelProjection.flagged() || flagModel(recordModelProjection),
+        recordModelProjection.flag() || flagModel(recordModelProjection),
         transformedFields,
         transformedTails,
         transformedMeta,
@@ -147,16 +147,16 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqMapModelProjection transformMapModelProjection(
+  protected @NotNull ReqMapModelProjection transformMapProjection(
       final @NotNull ReqMapModelProjection mapModelProjection,
       final @NotNull ReqEntityProjection transformedItemsProjection,
       final @Nullable List<ReqMapModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformMapModelProjection(
+    return transformMapProjection(
         mapModelProjection,
-        mapModelProjection.flagged() || flagModel(mapModelProjection),
+        mapModelProjection.flag() || flagModel(mapModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -166,16 +166,16 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqListModelProjection transformListModelProjection(
+  protected @NotNull ReqListModelProjection transformListProjection(
       final @NotNull ReqListModelProjection listModelProjection,
       final @NotNull ReqEntityProjection transformedItemsProjection,
       final @Nullable List<ReqListModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformListModelProjection(
+    return transformListProjection(
         listModelProjection,
-        listModelProjection.flagged() || flagModel(listModelProjection),
+        listModelProjection.flag() || flagModel(listModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -185,15 +185,15 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   }
 
   @Override
-  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveModelProjection(
+  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveProjection(
       final @NotNull ReqPrimitiveModelProjection primitiveModelProjection,
       final @Nullable List<ReqPrimitiveModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformPrimitiveModelProjection(
+    return transformPrimitiveProjection(
         primitiveModelProjection,
-        primitiveModelProjection.flagged() || flagModel(primitiveModelProjection),
+        primitiveModelProjection.flag() || flagModel(primitiveModelProjection),
         transformedTails,
         transformedMeta,
         mustRebuild

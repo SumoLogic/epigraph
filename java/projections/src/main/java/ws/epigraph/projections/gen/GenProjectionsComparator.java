@@ -73,6 +73,12 @@ public class GenProjectionsComparator<
     if (vps1.isEmpty())
       return vps2.isEmpty();
 
+    boolean flag1 = vps1.stream().anyMatch(GenVarProjection::flag);
+    boolean flag2 = vps2.stream().anyMatch(GenVarProjection::flag);
+
+    if (flag1 != flag2)
+      return false;
+
     // check for recursion
     RecEntry entry1 = new RecEntry(vps1);
     RecEntry entry2 = new RecEntry(vps2);
@@ -82,7 +88,6 @@ public class GenProjectionsComparator<
       return true;
     else
       entries.add(entry2);
-
 
     Map<String, Collection<TP>> tags1 = collectTags(vps1);
     Map<String, Collection<TP>> tags2 = collectTags(vps2);

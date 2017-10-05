@@ -59,12 +59,12 @@ abstract class ReqOutputModelProjectionGen(
 
   override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 
-  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  override protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if model is required
    */
   public boolean requried() {
-    return raw.flagged();
+    return raw.flag();
   }
 """/*@formatter:on*/
   )

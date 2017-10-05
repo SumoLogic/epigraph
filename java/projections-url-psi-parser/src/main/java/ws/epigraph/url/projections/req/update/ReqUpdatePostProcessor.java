@@ -47,38 +47,38 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
   }
 
   @Override
-  protected @NotNull ReqEntityProjection transform(
+  protected @NotNull ReqEntityProjection transformEntityProjection(
       final @NotNull ReqEntityProjection projection,
       final @Nullable DataTypeApi dataType) {
 
     ReqTagProjectionEntry singleTagProjection = projection.singleTagProjection();
     boolean selfModelFlagged = projection.type().kind() != TypeKind.ENTITY &&
                                singleTagProjection != null &&
-                               singleTagProjection.projection().flagged();
+                               singleTagProjection.projection().flag();
 
-    int flagged = projection.flagged() && !selfModelFlagged ? 1 : 0;
+    int flagged = projection.flag() && !selfModelFlagged ? 1 : 0;
     flaggedInCurrentPath += flagged;
 
     if (flaggedInCurrentPath > 1)
       context.addError("'replace' flags cannot be nested", projection.location());
 
     try {
-      return super.transform(projection, dataType);
+      return super.transformEntityProjection(projection, dataType);
     } finally {
       flaggedInCurrentPath -= flagged;
     }
   }
 
   @Override
-  protected @NotNull ReqModelProjection<?, ?, ?> transform(final @NotNull ReqModelProjection<?, ?, ?> projection) {
-    int flagged = projection.flagged() ? 1 : 0;
+  protected @NotNull ReqModelProjection<?, ?, ?> transformModelProjection(final @NotNull ReqModelProjection<?, ?, ?> projection) {
+    int flagged = projection.flag() ? 1 : 0;
     flaggedInCurrentPath += flagged;
 
     if (flaggedInCurrentPath > 1)
       context.addError("'replace' flags cannot be nested", projection.location());
 
     try {
-      return super.transform(projection);
+      return super.transformModelProjection(projection);
     } finally {
       flaggedInCurrentPath -= flagged;
     }
@@ -86,7 +86,7 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
   }
 
   @Override
-  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveModelProjection(
+  protected @NotNull ReqPrimitiveModelProjection transformPrimitiveProjection(
       final @NotNull ReqPrimitiveModelProjection primitiveModelProjection,
       final @Nullable List<ReqPrimitiveModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
@@ -106,7 +106,7 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
       fixTransformedModel(primitiveModelProjection, newProjection);
       return newProjection;
     } else {
-      return super.transformPrimitiveModelProjection(
+      return super.transformPrimitiveProjection(
           primitiveModelProjection,
           transformedTails,
           transformedMeta,

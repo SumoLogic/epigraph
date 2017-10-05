@@ -84,7 +84,7 @@ object ReqProjectionGen {
       // Scala doesn't get it
       val valueType = JavaGenNames.lqn2(datumType, namespace)
 
-      val notnull = p.projection().flagged() || p.projection().defaultValue() != null
+      val notnull = p.projection().flag() || p.projection().defaultValue() != null
       val nullAnnotation = if (notnull) "@NotNull" else "@Nullable"
       val nullHandlingCode = if (notnull) "assert param != null;" else "if (param == null) return null;"
 

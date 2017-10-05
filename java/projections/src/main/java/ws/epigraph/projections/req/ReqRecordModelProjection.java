@@ -52,7 +52,7 @@ public class ReqRecordModelProjection
 
   public ReqRecordModelProjection(
       @NotNull RecordTypeApi model,
-      boolean flagged,
+      boolean flag,
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
@@ -60,7 +60,7 @@ public class ReqRecordModelProjection
       @Nullable List<ReqRecordModelProjection> tails,
       @NotNull TextLocation location) {
 
-    super(model, flagged, params, directives, metaProjection, tails, location);
+    super(model, flag, params, directives, metaProjection, tails, location);
     this.fieldProjections = Collections.unmodifiableMap(fieldProjections);
 
     RecordModelProjectionHelper.checkFields(fieldProjections, model);
@@ -86,7 +86,7 @@ public class ReqRecordModelProjection
   protected ReqRecordModelProjection clone() {
     if (isResolved()) {
       return new ReqRecordModelProjection(
-          model, flagged, params, directives, metaProjection, fieldProjections, polymorphicTails, location()
+          model, flag, params, directives, metaProjection, fieldProjections, polymorphicTails, location()
       );
     } else {
       return new ReqRecordModelProjection(model, location());
@@ -96,7 +96,7 @@ public class ReqRecordModelProjection
   @Override
   protected ReqRecordModelProjection merge(
       final @NotNull RecordTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @NotNull List<ReqRecordModelProjection> modelProjections,
       final @NotNull ReqParams mergedParams,
       final @NotNull Directives mergedDirectives,
@@ -120,7 +120,7 @@ public class ReqRecordModelProjection
 
     return new ReqRecordModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedParams,
         mergedDirectives,
         mergedMetaProjection,
@@ -147,7 +147,7 @@ public class ReqRecordModelProjection
 
     return new ReqRecordModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.params(),
         n.directives(),
         n.metaProjection(),

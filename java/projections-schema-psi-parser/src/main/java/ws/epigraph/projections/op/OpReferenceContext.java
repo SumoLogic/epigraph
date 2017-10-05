@@ -77,7 +77,7 @@ public class OpReferenceContext
       final DatumTypeApi modelType = mRef.type();
       return new OpEntityProjection(
           modelType,
-          mRef.flagged(),
+          mRef.flag(),
           ProjectionUtils.singletonLinkedHashMap(
               modelType.self().name(),
               new OpTagProjectionEntry(
@@ -97,7 +97,7 @@ public class OpReferenceContext
   @Override
   protected @NotNull OpModelProjection<?, ?, ?, ?> fromSelfVar(final @NotNull OpEntityProjection eRef) {
     OpModelProjection<?, ?, ?, ?> res = super.fromSelfVar(eRef);
-    assert res.flagged() == eRef.flagged();
+    assert res.flag() == eRef.flag();
     return res;
   }
 }

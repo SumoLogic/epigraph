@@ -32,27 +32,27 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
     ReqFieldProjection
     > {
 
-//  private final boolean flagged;
+//  private final boolean flag;
 
   public ReqFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
       @NotNull ReqEntityProjection projection,
-//      boolean flagged,
+//      boolean flag,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
-//    this.flagged = flagged;
+//    this.flag = flag;
   }
 
   /**
-   * @return {@code true} iff field entity projection is flagged
+   * @return {@code true} iff field entity projection is flag
    */
-  public boolean flagged() {
-    return flagged(entityProjection());
+  public boolean flag() {
+    return flag(entityProjection());
   }
 
-  private static boolean flagged(@NotNull ReqEntityProjection vp) {
-    return vp.flagged();
+  private static boolean flag(@NotNull ReqEntityProjection vp) {
+    return vp.flag();
   }
 
   @Override
@@ -72,7 +72,7 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
 //        mergedParams,
 //        mergedAnnotations,
         mergedEntityProjection,
-//        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::flagged),
+//        fieldProjections.stream().anyMatch(ReqOutputFieldProjection::flag),
         TextLocation.UNKNOWN
     );
   }
@@ -83,11 +83,11 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
 //    if (o == null || getClass() != o.getClass()) return false;
 //    if (!super.equals(o)) return false;
 //    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
-//    return flagged == that.flagged;
+//    return flag == that.flag;
 //  }
 //
 //  @Override
 //  public int hashCode() {
-//    return Objects.hash(super.hashCode(), flagged);
+//    return Objects.hash(super.hashCode(), flag);
 //  }
 }

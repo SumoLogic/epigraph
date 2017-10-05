@@ -48,7 +48,7 @@ public class OpMapModelProjection
 
   public OpMapModelProjection(
       @NotNull MapTypeApi model,
-      boolean flagged,
+      boolean flag,
       @Nullable GMapDatum defaultValue,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
@@ -57,7 +57,7 @@ public class OpMapModelProjection
       @NotNull OpEntityProjection itemsProjection,
       @Nullable List<OpMapModelProjection> tails,
       @NotNull TextLocation location) {
-    super(model, flagged, defaultValue, params, annotations, metaProjection, tails, location);
+    super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
     this.itemsProjection = itemsProjection;
     this.keyProjection = keyProjection;
   }
@@ -84,7 +84,7 @@ public class OpMapModelProjection
     if (isResolved) {
       return new OpMapModelProjection(
           model,
-          flagged,
+          flag,
           defaultValue,
           params,
           annotations,
@@ -106,7 +106,7 @@ public class OpMapModelProjection
   @Override
   protected OpMapModelProjection merge(
       final @NotNull MapTypeApi model,
-      final boolean mergedFlagged,
+      final boolean mergedFlag,
       final @Nullable GMapDatum mergedDefault,
       final @NotNull List<OpMapModelProjection> modelProjections,
       final @NotNull OpParams mergedParams,
@@ -152,7 +152,7 @@ public class OpMapModelProjection
 
     return new OpMapModelProjection(
         model,
-        mergedFlagged,
+        mergedFlag,
         mergedDefault,
         mergedParams,
         mergedAnnotations,
@@ -180,7 +180,7 @@ public class OpMapModelProjection
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new OpMapModelProjection(
         n.type(),
-        n.flagged(),
+        n.flag(),
         n.defaultValue(),
         n.params(),
         n.annotations(),

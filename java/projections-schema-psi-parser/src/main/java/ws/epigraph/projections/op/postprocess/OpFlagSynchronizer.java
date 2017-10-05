@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpRequiredSynchronizer extends OpProjectionTransformer {
+public class OpFlagSynchronizer extends OpProjectionTransformer {
   // logic here is similar to ReqRequiredSynchronizer, keep them in sync todo extract common code
 
   private final @NotNull PsiProcessingContext context;
@@ -39,10 +39,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   private final Map<OpModelProjection<?, ?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
 
-  public OpRequiredSynchronizer(final @NotNull PsiProcessingContext context) {this.context = context;}
+  private final String flagSemantics;
+
+  public OpFlagSynchronizer(final String flagSemantics, final @NotNull PsiProcessingContext context) {
+    this.flagSemantics = flagSemantics;
+    this.context = context;
+  }
 
   @Override
-  protected @NotNull OpEntityProjection transformResolved(
+  protected @NotNull OpEntityProjection transformResolvedEntityProjection(
       final @NotNull OpEntityProjection projection,
       final @Nullable DataTypeApi dataType) {
 
@@ -52,30 +57,31 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
     }
 
     // check if flag is valid
-    if (projection.flagged()
+    if (projection.flag()
         && projection.type().kind() != TypeKind.ENTITY
         && dataType != null
         && dataType.retroTag() == null) {
 
       context.addError(
           String.format(
-              "Entity projection is marked as required, but type '%s' has no retro tag defined",
+              "Entity projection is marked as %s, but type '%s' has no retro tag defined",
+              flagSemantics,
               dataType.name().toString()
           ),
           projection.location()
       );
     }
 
-    // todo should we also mark entity as required if self- or retro- tag is marked as requried?
+    // todo should we also mark entity as flagged if self- or retro- tag is marked as flagged?
 
-    return super.transformResolved(projection, dataType);
+    return super.transformResolvedEntityProjection(projection, dataType);
   }
 
   private boolean flagModel(@NotNull OpModelProjection<?, ?, ?, ?> modelProjection) {
-    if (modelProjection.flagged()) return false;
+    if (modelProjection.flag()) return false;
     else {
       EntityProjectionAndDataType epd = modelToEntity.get(modelProjection);
-      if (epd == null || !epd.ep.flagged()) return false;
+      if (epd == null || !epd.ep.flag()) return false;
       else {
         OpEntityProjection entityProjection = epd.ep;
         DataTypeApi dataType = epd.dataType;
@@ -93,16 +99,16 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpRecordModelProjection transformRecordModelProjection(
+  protected @NotNull OpRecordModelProjection transformRecordProjection(
       final @NotNull OpRecordModelProjection recordModelProjection,
       final @NotNull Map<String, OpFieldProjectionEntry> transformedFields,
       final @Nullable List<OpRecordModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformRecordModelProjection(
+    return transformRecordProjection(
         recordModelProjection,
-        recordModelProjection.flagged() || flagModel(recordModelProjection),
+        recordModelProjection.flag() || flagModel(recordModelProjection),
         transformedFields,
         transformedTails,
         transformedMeta,
@@ -112,16 +118,16 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpMapModelProjection transformMapModelProjection(
+  protected @NotNull OpMapModelProjection transformMapProjection(
       final @NotNull OpMapModelProjection mapModelProjection,
       final @NotNull OpEntityProjection transformedItemsProjection,
       final @Nullable List<OpMapModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformMapModelProjection(
+    return transformMapProjection(
         mapModelProjection,
-        mapModelProjection.flagged() || flagModel(mapModelProjection),
+        mapModelProjection.flag() || flagModel(mapModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -130,16 +136,16 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpListModelProjection transformListModelProjection(
+  protected @NotNull OpListModelProjection transformListProjection(
       final @NotNull OpListModelProjection listModelProjection,
       final @NotNull OpEntityProjection transformedItemsProjection,
       final @Nullable List<OpListModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformListModelProjection(
+    return transformListProjection(
         listModelProjection,
-        listModelProjection.flagged() || flagModel(listModelProjection),
+        listModelProjection.flag() || flagModel(listModelProjection),
         transformedItemsProjection,
         transformedTails,
         transformedMeta,
@@ -148,15 +154,15 @@ public class OpRequiredSynchronizer extends OpProjectionTransformer {
   }
 
   @Override
-  protected @NotNull OpPrimitiveModelProjection transformPrimitiveModelProjection(
+  protected @NotNull OpPrimitiveModelProjection transformPrimitiveProjection(
       final @NotNull OpPrimitiveModelProjection primitiveModelProjection,
       final @Nullable List<OpPrimitiveModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
 
-    return transformPrimitiveModelProjection(
+    return transformPrimitiveProjection(
         primitiveModelProjection,
-        primitiveModelProjection.flagged() || flagModel(primitiveModelProjection),
+        primitiveModelProjection.flag() || flagModel(primitiveModelProjection),
         transformedTails,
         transformedMeta,
         mustRebuild

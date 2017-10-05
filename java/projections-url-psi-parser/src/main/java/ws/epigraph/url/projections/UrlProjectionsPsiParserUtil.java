@@ -347,7 +347,7 @@ public final class UrlProjectionsPsiParserUtil {
         if (defaultValue == null) {
           defaultValue = opModelProjection.defaultValue();
 
-          if (defaultValue == null && opModelProjection.flagged()) {
+          if (defaultValue == null && opModelProjection.flag()) {
             context.addError(
                 String.format("Required parameter '%s' is missing", paramName),
                 paramsLocation
@@ -418,7 +418,7 @@ public final class UrlProjectionsPsiParserUtil {
           }
       }
 
-      if (value == null && opParam.projection().flagged())
+      if (value == null && opParam.projection().flag())
         context.addError("Required parameter '" + opParam.name() + "' value is missing", reqParamPsi.getQid());
 
       reqParamsMap.put(name, new ReqParam(name, value, EpigraphPsiUtil.getLocation(reqParamPsi)));

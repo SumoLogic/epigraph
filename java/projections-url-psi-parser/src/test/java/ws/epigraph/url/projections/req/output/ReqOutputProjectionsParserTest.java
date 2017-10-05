@@ -319,7 +319,7 @@ public class ReqOutputProjectionsParserTest {
   public void testRequiredField() {
     ReqEntityProjection vp = testParse(":record ( +id )", 1);
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) vp.tagProjection("record").projection();
-    assertTrue(rmp.fieldProjection("id").fieldProjection().flagged());
+    assertTrue(rmp.fieldProjection("id").fieldProjection().flag());
   }
 
   @Test
@@ -495,15 +495,15 @@ public class ReqOutputProjectionsParserTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testPostProcessor() throws PsiProcessingException {
-    // check that model gets flagged when field/var is flagged
+    // check that model gets flag when field/var is flag
     ReqEntityProjection p = testParse(":record ( +id )", 1);
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
     @NotNull ReqFieldProjection fp = rmp.fieldProjection("id").fieldProjection();
-    assertTrue(fp.flagged());
+    assertTrue(fp.flag());
     ReqEntityProjection ep = fp.entityProjection();
-    assertTrue(ep.flagged());
+    assertTrue(ep.flag());
     ReqModelProjection<?, ?, ?> mp = ep.singleTagProjection().projection();
-    assertTrue(mp.flagged());
+    assertTrue(mp.flag());
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -517,13 +517,13 @@ public class ReqOutputProjectionsParserTest {
     );
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
     @NotNull ReqFieldProjection fp = rmp.fieldProjection("bestFriend2").fieldProjection();
-    assertTrue(fp.flagged());
+    assertTrue(fp.flag());
     @NotNull ReqEntityProjection ep = fp.entityProjection();
-    assertTrue(ep.flagged());
+    assertTrue(ep.flag());
     ReqTagProjectionEntry tpe = ep.tagProjection("id");
     assertNotNull(tpe);
     ReqModelProjection<?, ?, ?> mp = tpe.projection();
-    assertTrue(mp.flagged());
+    assertTrue(mp.flag());
   }
 
   @SuppressWarnings("ConstantConditions")

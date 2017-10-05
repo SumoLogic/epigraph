@@ -43,7 +43,7 @@ public class OpInputGDataValidator extends GenGDataValidator<
 
   @Override
   protected void validateDataOnly(final @NotNull GData data, final @NotNull OpEntityProjection projection) {
-    projection.tagProjections().values().stream().filter(p -> p.projection().flagged()).forEach(tp -> {
+    projection.tagProjections().values().stream().filter(p -> p.projection().flag()).forEach(tp -> {
       final String tagName = tp.tag().name();
 
       if (!data.tags().containsKey(tagName))
@@ -55,7 +55,7 @@ public class OpInputGDataValidator extends GenGDataValidator<
   protected void validateRecordDatumOnly(
       final @NotNull GRecordDatum datum,
       final @NotNull OpRecordModelProjection projection) {
-    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flagged()).forEach(fp -> {
+    projection.fieldProjections().values().stream().filter(p -> p.fieldProjection().flag()).forEach(fp -> {
       final String fieldName = fp.field().name();
 
       if (!datum.fields().containsKey(fieldName))

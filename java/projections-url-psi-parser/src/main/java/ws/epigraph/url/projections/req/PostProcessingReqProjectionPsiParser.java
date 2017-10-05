@@ -32,6 +32,7 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
+import ws.epigraph.util.Tuple2;
 
 import java.util.function.Function;
 
@@ -154,8 +155,9 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       return ep;
     else {
       ReqProjectionTransformer transformer = transformerFactory.apply(context);
-      ReqProjectionTransformationMap transformationMap = new ReqProjectionTransformationMap();
-      ReqEntityProjection transformedEp = transformer.transform(transformationMap, ep, null);
+      Tuple2<ReqEntityProjection, ReqProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
+      ReqEntityProjection transformedEp = tuple2._1;
+      ReqProjectionTransformationMap transformationMap = tuple2._2;
 
       context.referenceContext().transform(transformationMap);
       return transformedEp;

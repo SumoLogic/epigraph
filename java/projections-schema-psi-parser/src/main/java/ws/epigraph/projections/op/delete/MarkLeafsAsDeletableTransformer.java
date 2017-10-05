@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.op.OpProjectionTransformer;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpTagProjectionEntry;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
@@ -34,8 +33,9 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransformer {
+  public static final MarkLeafsAsDeletableTransformer INSTANCE = new MarkLeafsAsDeletableTransformer();
 
-  MarkLeafsAsDeletableTransformer(final PsiProcessingContext context) { }
+  private MarkLeafsAsDeletableTransformer() { }
 
   @Override
   protected OpEntityProjection transformEntityProjection(
@@ -56,24 +56,16 @@ public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransform
       else if (type.kind() == TypeKind.ENTITY && retroTag != null) {
 
         // questionable heuristic to keep things compatible when introducing retro tags:
-        // mark entity projection is deletable if it's only tag is a retro tag
+        // mark entity projection as deletable if it's only tag is a retro tag
 
         OpTagProjectionEntry singleTagProjection = entityProjection.singleTagProjection();
         markDeletable = singleTagProjection != null && singleTagProjection.tag().equals(retroTag);
       }
     }
 
-    if (!entityProjection.flagged() && markDeletable) {
-      return transformEntityProjection(
-          entityProjection,
-          true,
-          transformedTagProjections,
-          transformedTails,
-          mustRebuild
-      );
-    } else return super.transformEntityProjection(
+    return transformEntityProjection(
         entityProjection,
-        dataType,
+        entityProjection.flag() || markDeletable,
         transformedTagProjections,
         transformedTails,
         mustRebuild

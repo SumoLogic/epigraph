@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.TypeKind;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,19 +37,15 @@ public class OpEntityProjection extends AbstractVarProjection<
     OpModelProjection<?, ?, ?, ?>
     > {
 
-  protected /*final*/ boolean flagged;
-
   public OpEntityProjection(
       @NotNull TypeApi type,
-      boolean flagged,
+      boolean flag,
       @NotNull Map<String, OpTagProjectionEntry> tagProjections,
       boolean parenthesized,
       @Nullable List<OpEntityProjection> polymorphicTails,
       @NotNull TextLocation location) {
-    super(type, tagProjections, parenthesized, polymorphicTails, location);
-    //noinspection ConstantConditions
-    this.flagged =
-        flagged || (!isPathEnd() && type.kind() != TypeKind.ENTITY && singleTagProjection().projection().flagged());
+
+    super(type, flag, tagProjections, parenthesized, polymorphicTails, location);
   }
 
   public static @NotNull OpEntityProjection path(
@@ -77,20 +71,18 @@ public class OpEntityProjection extends AbstractVarProjection<
     super(type, location);
   }
 
-  public boolean flagged() { return flagged; }
-
   @Override
   protected OpEntityProjection merge(
       final @NotNull TypeApi effectiveType,
       final @NotNull List<OpEntityProjection> varProjections,
+      boolean mergedFlag,
       final @NotNull Map<String, OpTagProjectionEntry> mergedTags,
       final boolean mergedParenthesized,
       final List<OpEntityProjection> mergedTails) {
 
-    boolean mergedFlagged = varProjections.stream().anyMatch(OpEntityProjection::flagged);
     return new OpEntityProjection(
         effectiveType,
-        mergedFlagged,
+        mergedFlag,
         mergedTags,
         mergedParenthesized,
         mergedTails,
@@ -106,21 +98,14 @@ public class OpEntityProjection extends AbstractVarProjection<
   }
 
   @Override
-  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull OpEntityProjection value) {
-    preResolveCheck(value);
-    this.flagged = value.flagged();
-    super.resolve(name, value);
-  }
-
-  @Override
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     final OpEntityProjection that = (OpEntityProjection) o;
-    return flagged == that.flagged;
+    return flag == that.flag;
   }
 
   @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), flagged); }
+  public int hashCode() { return Objects.hash(super.hashCode(), flag); }
 }

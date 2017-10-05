@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op.delete;
+package ws.epigraph.projections.op;
 
-import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
+import ws.epigraph.projections.gen.GenProjectionTransformationMapImpl;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class OpDeleteProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
-  public static final OpDeleteProjectionsPsiParser INSTANCE = new OpDeleteProjectionsPsiParser();
-
-  private OpDeleteProjectionsPsiParser() {
-    super(
-        OpDeleteOnlyOnEntitiesChecker::new,
-        context -> MarkLeafsAsDeletableTransformer.INSTANCE
-    );
-  }
-
+public class OpProjectionTransformationMapImpl
+    extends GenProjectionTransformationMapImpl<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+    implements OpProjectionTransformationMap {
 }

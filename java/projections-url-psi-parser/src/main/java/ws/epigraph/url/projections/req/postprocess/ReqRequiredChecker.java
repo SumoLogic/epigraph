@@ -47,7 +47,7 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
       String tagName = entry.getKey();
       OpTagProjectionEntry gtpe = entry.getValue();
 
-      if (projection.tagProjection(tagName) == null && gtpe.projection().flagged()) {
+      if (projection.tagProjection(tagName) == null && gtpe.projection().flag()) {
         context.addError(String.format("Required tag '%s' is missing", tagName), projection.location());
       }
     }
@@ -66,7 +66,7 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
       String fieldName = entry.getKey();
       OpFieldProjectionEntry gfpe = entry.getValue();
 
-      if (projection.fieldProjection(fieldName) == null && gfpe.fieldProjection().flagged()) {
+      if (projection.fieldProjection(fieldName) == null && gfpe.fieldProjection().flag()) {
         context.addError(String.format("Required field '%s' is missing", fieldName), projection.location());
       }
     }

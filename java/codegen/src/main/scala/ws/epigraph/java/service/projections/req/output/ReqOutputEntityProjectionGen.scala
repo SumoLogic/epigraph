@@ -86,12 +86,12 @@ class ReqOutputEntityProjectionGen(
     if (tagGenerators.isEmpty /*|| namespace.contains(Namespaces.TAILS_SEGMENT)*/ ) super.children
     else super.children ++ Iterable(new EntityAsmGen(this, ctx))
 
-  override protected lazy val flagged: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
+  override protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if entity is requried
    */
   public boolean required() {
-    return raw.flagged();
+    return raw.flag();
   }
 """/*@formatter:on*/
   )
