@@ -16,6 +16,7 @@
 
 package ws.epigraph.url.projections.req.output;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
 
@@ -23,7 +24,6 @@ import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReqOutputProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
-  public static final ReqOutputProjectionPsiParser INSTANCE = new ReqOutputProjectionPsiParser();
 
-  private ReqOutputProjectionPsiParser() { super(null, ReqRequiredSynchronizer::new); }
+  public ReqOutputProjectionPsiParser(MessagesContext context) { super(null, new ReqRequiredSynchronizer(context)); }
 }

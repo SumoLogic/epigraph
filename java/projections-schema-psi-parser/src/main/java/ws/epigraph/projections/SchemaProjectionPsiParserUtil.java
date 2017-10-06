@@ -119,7 +119,8 @@ public final class SchemaProjectionPsiParserUtil {
         return null;
       }
 
-      return OpInputProjectionsPsiParser.INSTANCE.parseModelProjection(
+      // should be schema-wide instance ?
+      return new OpInputProjectionsPsiParser(context).parseModelProjection(
           keyType,
           true,
           inputModelProjectionPsi,
@@ -206,7 +207,8 @@ public final class SchemaProjectionPsiParserUtil {
           paramPsi,
           context
       );
-    else paramModelProjection = OpInputProjectionsPsiParser.INSTANCE.parseModelProjection(
+    // should be schema-wide instance ?
+    else paramModelProjection = new OpInputProjectionsPsiParser(context).parseModelProjection(
         paramType,
         paramPsi.getPlus() != null,
         paramModelProjectionPsi,

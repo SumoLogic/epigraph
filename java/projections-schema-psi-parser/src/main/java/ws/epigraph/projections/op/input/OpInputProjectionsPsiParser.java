@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.op.input;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
 import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
 
@@ -23,8 +24,12 @@ import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OpInputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
-  public static final OpInputProjectionsPsiParser INSTANCE = new OpInputProjectionsPsiParser();
 
-  private OpInputProjectionsPsiParser() { super(null, context -> new OpFlagSynchronizer("required", context));}
+  public OpInputProjectionsPsiParser(MessagesContext context) {
+    super(
+        null,
+        new OpFlagSynchronizer("required", context)
+    );
+  }
 
 }

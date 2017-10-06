@@ -95,7 +95,7 @@ public class DeleteRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull RequestUrl requestUrl = DeleteRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = new DeleteRequestUrlPsiParser(context).parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

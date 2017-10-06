@@ -18,7 +18,6 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
@@ -29,21 +28,21 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.util.Tuple2;
 
-import java.util.function.Function;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParser {
-  private final @Nullable Function<PsiProcessingContext, OpProjectionTraversal> traversalFactory;
-  private final @Nullable Function<PsiProcessingContext, OpProjectionTransformer> transformerFactory;
+  // keep in sync with PostProcessingReqProjectionsPsiParser
+
+  private final @Nullable OpProjectionTraversal traversal;
+  private final @Nullable OpProjectionTransformer transformer;
 
   public PostProcessingOpProjectionPsiParser(
-      final @Nullable Function<PsiProcessingContext, OpProjectionTraversal> traversalFactory,
-      final @Nullable Function<PsiProcessingContext, OpProjectionTransformer> transformerFactory) {
+      @Nullable OpProjectionTraversal traversal,
+      @Nullable OpProjectionTransformer transformer) {
 
-    this.traversalFactory = traversalFactory;
-    this.transformerFactory = transformerFactory;
+    this.traversal = traversal;
+    this.transformer = transformer;
   }
 
   @Override
@@ -108,15 +107,13 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       @NotNull OpEntityProjection ep,
       @NotNull OpPsiProcessingContext context) {
 
-    if (traversalFactory != null) {
-      OpProjectionTraversal traversal = traversalFactory.apply(context);
+    if (traversal != null) {
       traversal.traverse(ep);
     }
 
-    if (transformerFactory == null)
+    if (transformer == null)
       return ep;
     else {
-      OpProjectionTransformer transformer = transformerFactory.apply(context);
       Tuple2<OpEntityProjection, OpProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
 
       OpEntityProjection transformedMp = tuple2._1;
@@ -131,15 +128,13 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       @NotNull OpModelProjection<?, ?, ?, ?> mp,
       @NotNull OpPsiProcessingContext context) {
 
-    if (traversalFactory != null) {
-      OpProjectionTraversal traversal = traversalFactory.apply(context);
+    if (traversal != null) {
       traversal.traverse(mp);
     }
 
-    if (transformerFactory == null)
+    if (transformer == null)
       return mp;
     else {
-      OpProjectionTransformer transformer = transformerFactory.apply(context);
       Tuple2<OpModelProjection<?, ?, ?, ?>, OpProjectionTransformationMap> tuple2 = transformer.transform(mp);
 
       OpModelProjection<?, ?, ?, ?> transformedMp = tuple2._1;

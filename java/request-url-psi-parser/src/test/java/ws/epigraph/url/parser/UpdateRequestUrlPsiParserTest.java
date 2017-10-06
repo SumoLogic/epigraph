@@ -92,7 +92,7 @@ public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull RequestUrl requestUrl = UpdateRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = new UpdateRequestUrlPsiParser(context).parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

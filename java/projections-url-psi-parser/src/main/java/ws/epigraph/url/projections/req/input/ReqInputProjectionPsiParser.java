@@ -16,6 +16,7 @@
 
 package ws.epigraph.url.projections.req.input;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredChecker;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
@@ -24,9 +25,8 @@ import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReqInputProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
-  public static final ReqInputProjectionPsiParser INSTANCE = new ReqInputProjectionPsiParser();
 
-  private ReqInputProjectionPsiParser() {
-    super(ReqRequiredChecker::new, ReqRequiredSynchronizer::new);
+  public ReqInputProjectionPsiParser(MessagesContext context) {
+    super(new ReqRequiredChecker(context), new ReqRequiredSynchronizer(context));
   }
 }

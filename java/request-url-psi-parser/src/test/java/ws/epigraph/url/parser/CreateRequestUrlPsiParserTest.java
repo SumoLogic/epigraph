@@ -132,7 +132,7 @@ public class CreateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull RequestUrl requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = new CustomRequestUrlPsiParser(context).parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

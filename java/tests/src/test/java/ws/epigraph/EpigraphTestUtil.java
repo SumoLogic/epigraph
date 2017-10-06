@@ -109,7 +109,7 @@ public final class EpigraphTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
+      OpEntityProjection vp = new OpOutputProjectionsPsiParser(context).parseEntityProjection(
           varDataType,
           false,
           psiEntityProjection,
@@ -147,14 +147,15 @@ public final class EpigraphTestUtil {
       ReqPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
-          type,
-          false,
-          op,
-          psi,
-          resolver,
-          reqOutputPsiProcessingContext
-      );
+      @NotNull StepsAndProjection<ReqEntityProjection> res =
+          new ReqOutputProjectionPsiParser(context).parseTrunkEntityProjection(
+              type,
+              false,
+              op,
+              psi,
+              resolver,
+              reqOutputPsiProcessingContext
+          );
 
       reqOutputReferenceContext.ensureAllReferencesResolved();
 

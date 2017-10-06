@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.parser;
+package ws.epigraph.lang;
 
-import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class ReadRequestUrlPsiParser extends RequestUrlPsiParser {
+public interface MessagesContext {
+  void addError(@NotNull String message, @NotNull TextLocation location);
 
-  public ReadRequestUrlPsiParser(MessagesContext context) {
-    super(
-        new ReqOutputProjectionPsiParser(context),
-        null
-    );
-  }
+  void addWarning(@NotNull String message, @NotNull TextLocation location);
 }

@@ -17,13 +17,13 @@
 package ws.epigraph.url.projections.req.postprocess;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
+import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpFieldProjectionEntry;
 import ws.epigraph.projections.op.OpRecordModelProjection;
 import ws.epigraph.projections.op.OpTagProjectionEntry;
-import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.url.projections.req.AbstractReqTraversal;
 
 import java.util.Map;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqRequiredChecker extends AbstractReqTraversal {
-  public ReqRequiredChecker(final @NotNull PsiProcessingContext context) {
+  public ReqRequiredChecker(final @NotNull MessagesContext context) {
     super(context);
   }
 

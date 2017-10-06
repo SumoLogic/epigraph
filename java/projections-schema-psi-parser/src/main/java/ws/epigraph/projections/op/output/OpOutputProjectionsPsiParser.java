@@ -16,14 +16,23 @@
 
 package ws.epigraph.projections.op.output;
 
+import ws.epigraph.lang.MessagesContext;
+import ws.epigraph.projections.op.CompositeOpProjectionTransformer;
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
-import ws.epigraph.projections.op.postprocess.OpFlaggedNotSupportedChecker;
+import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OpOutputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
-  public static final OpOutputProjectionsPsiParser INSTANCE = new OpOutputProjectionsPsiParser();
 
-  private OpOutputProjectionsPsiParser() { super(OpFlaggedNotSupportedChecker::new, null);}
+  public OpOutputProjectionsPsiParser(MessagesContext context) {
+    super(
+        null,
+        new CompositeOpProjectionTransformer(
+            new DefaultsPopulatingTransformer(),
+            new OpFlagSynchronizer("default", context)
+        )
+    );
+  }
 }

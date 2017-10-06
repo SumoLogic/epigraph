@@ -17,10 +17,10 @@
 package ws.epigraph.projections.op.postprocess;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.op.OpProjectionTraversal;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.projections.op.OpProjectionTraversal;
 
 /**
  * Checks for flag presence and reports as 'flagged not supported' if found
@@ -28,11 +28,11 @@ import ws.epigraph.psi.PsiProcessingContext;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpFlaggedNotSupportedChecker extends OpProjectionTraversal {
-  private final @NotNull PsiProcessingContext context;
+  private final @NotNull MessagesContext context;
 
   // keep in sync with ReqFlaggedNotSupportedChecker
 
-  public OpFlaggedNotSupportedChecker(final @NotNull PsiProcessingContext context) {this.context = context;}
+  public OpFlaggedNotSupportedChecker(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
   protected boolean visitVarProjection(final @NotNull OpEntityProjection projection) {

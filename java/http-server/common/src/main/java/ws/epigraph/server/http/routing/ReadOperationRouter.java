@@ -60,7 +60,7 @@ public final class ReadOperationRouter
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return ReadRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    return new ReadRequestUrlPsiParser(context).parseRequestUrl(
         resourceType,
         opDecl,
         urlPsi,

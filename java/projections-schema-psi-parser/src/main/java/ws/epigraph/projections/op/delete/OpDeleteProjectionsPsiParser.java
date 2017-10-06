@@ -16,18 +16,17 @@
 
 package ws.epigraph.projections.op.delete;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OpDeleteProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
-  public static final OpDeleteProjectionsPsiParser INSTANCE = new OpDeleteProjectionsPsiParser();
-
-  private OpDeleteProjectionsPsiParser() {
+  public OpDeleteProjectionsPsiParser(MessagesContext context) {
     super(
-        OpDeleteOnlyOnEntitiesChecker::new,
-        context -> MarkLeafsAsDeletableTransformer.INSTANCE
+        new OpDeleteOnlyOnEntitiesChecker(context),
+        new MarkLeafsAsDeletableTransformer()
     );
   }
 

@@ -52,13 +52,6 @@ public abstract class GenProjectionTransformer<
 
   private GenProjectionTransformationMapImpl<EP, MP> transformationMap = null;
 
-  public void reset() {
-    transformedEntitiesCache.clear();
-    transformedModelsCache.clear();
-    visited.clear();
-    usedRecursively.clear();
-  }
-
   public @NotNull Tuple2<EP, TM> transform(@NotNull EP projection, @Nullable DataTypeApi dataType) {
     this.transformationMap = newTransformationMap();
     return Tuple2.of(transformEntityProjection(projection, dataType), transformationMap());
@@ -79,40 +72,64 @@ public abstract class GenProjectionTransformer<
 
   // -------------------------------------------------------------------------------------------------------------------
 
+  public void reset() {
+    transformedEntitiesCache.clear();
+    transformedModelsCache.clear();
+    visited.clear();
+    usedRecursively.clear();
+  }
+
   protected @NotNull EP transformEntityProjection(@NotNull EP projection, @Nullable DataTypeApi dataType) {
-    EP cached = transformedEntitiesCache.get(projection);
+    EP cached = cachedTransformedEntityProjection(projection);
     if (cached != null)
       return cached;
-    if (transformedEntitiesCache.values().contains(projection))
-      return projection; // avoid transforming what is already transformed
-
 
     // postpone transformation if projection is not resolved yet
 
     if (projection.isResolved()) {
       return transformResolvedEntityProjection(projection, dataType);
     } else {
-      final String me = getClass().getSimpleName();
       final EP ref = newEntityRef(projection.type(), projection.location());
-      System.out.println(String.format(
-          "%s %d postponed, ref: %d",
-          me,
-          System.identityHashCode(projection),
-          System.identityHashCode(ref)
-      ));
+
+//      final String me = getClass().getSimpleName();
+//      final ProjectionReferenceName rn = projection.referenceName();
+//      final String rns = rn == null ? "<no name>" : rn.last().toString();
+//      System.out.println(String.format(
+//          "%s %s %d postponed, ref: %d",
+//          me,
+//          rns,
+//          System.identityHashCode(projection),
+//          System.identityHashCode(ref)
+//      ));
+
       transformedEntitiesCache.put(projection, ref);
       projection.runOnResolved(() -> {
-        System.out.println(String.format(
-            "%s %d resolved, resuming ref %d",
-            me,
-            System.identityHashCode(projection),
-            System.identityHashCode(ref)
-        ));
+//        final ProjectionReferenceName rn2 = projection.referenceName();
+//        final String rns2 = rn2 == null ? "<no name>" : rn2.last().toString();
+//        System.out.println(String.format(
+//            "%s %s %d resolved, resuming ref %d",
+//            me,
+//            rns2,
+//            System.identityHashCode(projection),
+//            System.identityHashCode(ref)
+//        ));
         EP transformed = transformResolvedEntityProjection(projection, dataType);
         transformed.runOnResolved(() -> ref.resolve(projection.referenceName(), transformed));
       });
       return ref;
     }
+  }
+
+  public /*protected*/ @Nullable EP cachedTransformedEntityProjection(@NotNull EP ep) {
+    // have to make it public for composite transformer
+
+    EP cached = transformedEntitiesCache.get(ep);
+    if (cached != null)
+      return cached;
+    if (transformedEntitiesCache.values().contains(ep))
+      return ep; // avoid transforming what is already transformed
+
+    return null;
   }
 
   protected @NotNull EP transformResolvedEntityProjection(@NotNull EP projection, @Nullable DataTypeApi dataType) {
@@ -181,11 +198,9 @@ public abstract class GenProjectionTransformer<
 
   @SuppressWarnings("unchecked")
   protected @NotNull MP transformModelProjection(@NotNull MP projection) {
-    MP cached = transformedModelsCache.get(projection);
+    MP cached = cachedTransformedModelProjection(projection);
     if (cached != null)
       return cached;
-    if (transformedModelsCache.values().contains(projection))
-      return projection; // avoid transforming what is already transformed
 
     // postpone transformation if projection is not resolved yet
 
@@ -204,6 +219,16 @@ public abstract class GenProjectionTransformer<
       return ref;
     }
 
+  }
+
+  public /*protected*/ MP cachedTransformedModelProjection(@NotNull MP projection) {
+    MP cached = transformedModelsCache.get(projection);
+    if (cached != null)
+      return cached;
+    if (transformedModelsCache.values().contains(projection))
+      return projection; // avoid transforming what is already transformed
+
+    return null;
   }
 
   @SuppressWarnings("unchecked")

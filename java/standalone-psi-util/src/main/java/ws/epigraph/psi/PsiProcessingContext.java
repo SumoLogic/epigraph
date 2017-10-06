@@ -18,6 +18,7 @@ package ws.epigraph.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.lang.TextLocation;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface PsiProcessingContext {
+public interface PsiProcessingContext extends MessagesContext {
   @NotNull
   List<PsiProcessingMessage> messages();
 
@@ -40,6 +41,7 @@ public interface PsiProcessingContext {
   // todo PsiProcessingException ctor should only be called from this class
   // todo PsiProcessingException should also hold additional context information (see first todo)
 
+  @Override
   default void addError(@NotNull String message, @NotNull TextLocation location) {
     messages().add(PsiProcessingMessage.error(message, location));
   }
@@ -48,6 +50,7 @@ public interface PsiProcessingContext {
     messages().add(new PsiProcessingMessage(PsiProcessingMessage.Level.ERROR, message, psi));
   }
 
+  @Override
   default void addWarning(@NotNull String message, @NotNull TextLocation location) {
     messages().add(PsiProcessingMessage.warning(message, location));
   }

@@ -66,7 +66,7 @@ public final class WireTestUtil {
       OpPsiProcessingContext outputPsiProcessingContext =
           new OpPsiProcessingContext(context, outputReferenceContext);
 
-      OpEntityProjection vp = OpOutputProjectionsPsiParser.INSTANCE.parseEntityProjection(
+      OpEntityProjection vp = new OpOutputProjectionsPsiParser(context).parseEntityProjection(
           varDataType,
           false,
           psiEntityProjection,
@@ -101,7 +101,7 @@ public final class WireTestUtil {
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqPsiProcessingContext psiProcessingContext = new ReqPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqEntityProjection> res = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
+      StepsAndProjection<ReqEntityProjection> res = new ReqOutputProjectionPsiParser(context).parseTrunkEntityProjection(
           type,
           false,
           op,

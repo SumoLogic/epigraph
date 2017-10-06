@@ -21,6 +21,7 @@ import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
@@ -31,6 +32,8 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
 import ws.epigraph.types.DataType;
+
+import java.util.function.Function;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -46,7 +49,7 @@ public final class OpTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpOutputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   public static @NotNull OpEntityProjection parseOpInputVarProjection(
@@ -54,7 +57,7 @@ public final class OpTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpInputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   public static @NotNull OpEntityProjection parseOpDeleteVarProjection(
@@ -62,11 +65,11 @@ public final class OpTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpDeleteProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpDeleteProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   private static @NotNull OpEntityProjection parseOpEntityProjection(
-      @NotNull OpProjectionPsiParser parser,
+      @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -89,6 +92,7 @@ public final class OpTestUtil {
           context,
           opOutputReferenceContext
       );
+      OpProjectionPsiParser parser = parserFactory.apply(context);
       OpEntityProjection vp = parser.parseEntityProjection(
           varDataType,
           false,

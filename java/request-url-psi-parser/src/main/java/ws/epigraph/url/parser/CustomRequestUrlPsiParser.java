@@ -16,6 +16,7 @@
 
 package ws.epigraph.url.parser;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 
@@ -23,12 +24,11 @@ import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class CustomRequestUrlPsiParser extends RequestUrlPsiParser {
-  public static final CustomRequestUrlPsiParser INSTANCE = new CustomRequestUrlPsiParser();
 
-  private CustomRequestUrlPsiParser() {
+  public CustomRequestUrlPsiParser(MessagesContext context) {
     super(
-        ReqInputProjectionPsiParser.INSTANCE,
-        ReqOutputProjectionPsiParser.INSTANCE
+        new ReqInputProjectionPsiParser(context),
+        new ReqOutputProjectionPsiParser(context)
     );
   }
 }

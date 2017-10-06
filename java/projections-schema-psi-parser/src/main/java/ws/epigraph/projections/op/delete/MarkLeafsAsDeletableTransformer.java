@@ -33,9 +33,8 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class MarkLeafsAsDeletableTransformer extends OpProjectionTransformer {
-  public static final MarkLeafsAsDeletableTransformer INSTANCE = new MarkLeafsAsDeletableTransformer();
 
-  private MarkLeafsAsDeletableTransformer() { }
+  public MarkLeafsAsDeletableTransformer() { }
 
   @Override
   protected OpEntityProjection transformEntityProjection(

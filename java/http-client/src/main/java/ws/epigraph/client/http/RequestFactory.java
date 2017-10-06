@@ -22,6 +22,7 @@ import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.StepsAndProjection;
@@ -100,6 +101,7 @@ public final class RequestFactory {
     final StepsAndProjection<ReqFieldProjection> reqFieldProjection;
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
+    ReqOutputProjectionPsiParser outputProjectionPsiParser = new ReqOutputProjectionPsiParser(context);
 
     OpFieldProjection opPath = operationDeclaration.path();
 
@@ -111,7 +113,7 @@ public final class RequestFactory {
         ReqPsiProcessingContext reqOutputPsiProcessingContext =
             new ReqPsiProcessingContext(context, reqOutputReferenceContext);
         StepsAndProjection<ReqFieldProjection> stepsAndProjection =
-            ReqOutputProjectionPsiParser.INSTANCE.parseTrunkFieldProjection(
+            outputProjectionPsiParser.parseTrunkFieldProjection(
                 resourceType,
                 false,  // ?
                 operationDeclaration.outputProjection(),
@@ -144,7 +146,7 @@ public final class RequestFactory {
             new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
         if (trunkEntityProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
+          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseTrunkEntityProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().entityProjection(),
@@ -158,7 +160,7 @@ public final class RequestFactory {
               new ReqFieldProjection(r.projection(), r.projection().location())
           );
         } else if (comaEntityProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = ReqOutputProjectionPsiParser.INSTANCE.parseComaEntityProjection(
+          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseComaEntityProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().entityProjection(),
@@ -531,7 +533,7 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    return parseReqProjection(ReqOutputProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
+    return parseReqProjection(ReqOutputProjectionPsiParser::new, false, projection, type, op, resolver);
   }
 
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputProjection(
@@ -541,7 +543,7 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    return parseReqProjection(ReqInputProjectionPsiParser.INSTANCE, required, projection, type, op, resolver);
+    return parseReqProjection(ReqInputProjectionPsiParser::new, required, projection, type, op, resolver);
   }
 
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqUpdateProjection(
@@ -552,7 +554,7 @@ public final class RequestFactory {
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(
-        ReqUpdateProjectionPsiParser.INSTANCE,
+        ReqUpdateProjectionPsiParser::new,
         replace,
         projection,
         dataType,
@@ -567,11 +569,11 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    return parseReqProjection(ReqDeleteProjectionPsiParser.INSTANCE, false, projection, type, op, resolver);
+    return parseReqProjection(ReqDeleteProjectionPsiParser::new, false, projection, type, op, resolver);
   }
 
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqProjection(
-      @NotNull ReqProjectionPsiParser parser,
+      @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
       boolean flagged,
       @NotNull String projection,
       @NotNull DataTypeApi type,
@@ -587,6 +589,7 @@ public final class RequestFactory {
         new ReqPsiProcessingContext(context, referenceContext);
 
     try {
+      ReqProjectionPsiParser parser = parserFactory.apply(context);
       @NotNull StepsAndProjection<ReqEntityProjection> res =
           parser.parseTrunkEntityProjection(
               type,

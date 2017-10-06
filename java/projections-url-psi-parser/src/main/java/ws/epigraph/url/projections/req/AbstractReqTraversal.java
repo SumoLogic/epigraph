@@ -17,21 +17,21 @@
 package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpRecordModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.TagApi;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class AbstractReqTraversal extends ReqProjectionTraversal {
-  protected final @NotNull PsiProcessingContext context;
+  protected final @NotNull MessagesContext context;
 
-  public AbstractReqTraversal(final @NotNull PsiProcessingContext context) {this.context = context;}
+  public AbstractReqTraversal(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
   protected void registerMissingGuideTag(

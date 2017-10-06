@@ -192,14 +192,15 @@ public class ReqInputProjectionParserTest {
         ReqPsiProcessingContext psiProcessingContext =
             new ReqPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp = ReqInputProjectionPsiParser.INSTANCE.parseTrunkEntityProjection(
-            dataType,
-            false,
-            personOpProjection,
-            psi,
-            resolver,
-            psiProcessingContext
-        );
+        @NotNull StepsAndProjection<ReqEntityProjection> vp =
+            new ReqInputProjectionPsiParser(context).parseTrunkEntityProjection(
+                dataType,
+                false,
+                personOpProjection,
+                psi,
+                resolver,
+                psiProcessingContext
+            );
 
         referenceContext.ensureAllReferencesResolved();
 

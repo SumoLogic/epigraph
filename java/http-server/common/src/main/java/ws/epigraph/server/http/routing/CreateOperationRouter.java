@@ -33,7 +33,7 @@ public final class CreateOperationRouter
 
   public static final CreateOperationRouter INSTANCE = new CreateOperationRouter();
 
-  private CreateOperationRouter() {super(CreateRequestUrlPsiParser.INSTANCE);}
+  private CreateOperationRouter() {super(CreateRequestUrlPsiParser::new);}
 
   @Override
   protected @Nullable CreateOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {

@@ -36,7 +36,7 @@ public final class DeleteOperationRouter
 
   public static final DeleteOperationRouter INSTANCE = new DeleteOperationRouter();
 
-  private DeleteOperationRouter() { super(DeleteRequestUrlPsiParser.INSTANCE); }
+  private DeleteOperationRouter() { super(DeleteRequestUrlPsiParser::new); }
 
   @Override
   protected @Nullable DeleteOperation<?> namedOperation(final @Nullable String name, final @NotNull Resource resource) {

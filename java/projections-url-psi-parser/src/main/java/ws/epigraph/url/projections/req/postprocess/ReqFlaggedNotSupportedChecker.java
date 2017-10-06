@@ -17,10 +17,11 @@
 package ws.epigraph.url.projections.req.postprocess;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.projections.req.*;
-import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.url.projections.req.AbstractReqTraversal;
 
 /**
@@ -29,7 +30,7 @@ import ws.epigraph.url.projections.req.AbstractReqTraversal;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
-  public ReqFlaggedNotSupportedChecker(final @NotNull PsiProcessingContext context) {
+  public ReqFlaggedNotSupportedChecker(final @NotNull MessagesContext context) {
     super(context);
   }
 

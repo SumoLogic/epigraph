@@ -25,9 +25,6 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.*;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
-import ws.epigraph.projections.op.output.*;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -176,13 +173,14 @@ public final class OperationsPsiParser {
             context
         );
 
-    final OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
-        resolveInputType(resourceType, entityProjection, inputTypePsi, resolver, context),
-        true,
-        inputFieldProjectionPsi,
-        resolver,
-        new OpPsiProcessingContext(context, referenceContext)
-    );
+    final OpFieldProjection fieldProjection =
+        context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
+            resolveInputType(resourceType, entityProjection, inputTypePsi, resolver, context),
+            true,
+            inputFieldProjectionPsi,
+            resolver,
+            new OpPsiProcessingContext(context, referenceContext)
+        );
     referenceContext.ensureAllReferencesResolved();
 
     return new CreateOperationDeclaration(
@@ -258,13 +256,14 @@ public final class OperationsPsiParser {
             context
         );
 
-    final @NotNull OpFieldProjection fieldProjection = OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
-        resolveInputType(resourceType, entityPath, inputTypePsi, resolver, context),
-        true,
-        inputFieldProjectionPsi,
-        resolver,
-        new OpPsiProcessingContext(context, referenceContext)
-    );
+    final @NotNull OpFieldProjection fieldProjection =
+        context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
+            resolveInputType(resourceType, entityPath, inputTypePsi, resolver, context),
+            true,
+            inputFieldProjectionPsi,
+            resolver,
+            new OpPsiProcessingContext(context, referenceContext)
+        );
     referenceContext.ensureAllReferencesResolved();
 
     return new UpdateOperationDeclaration(
@@ -336,13 +335,14 @@ public final class OperationsPsiParser {
             context
         );
 
-    final OpFieldProjection fieldProjection = OpDeleteProjectionsPsiParser.INSTANCE.parseFieldProjection(
-        resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.entityProjection()),
-        deleteProjectionPsi.getPlus() != null,
-        deleteFieldProjectionPsi,
-        resolver,
-        new OpPsiProcessingContext(context, referenceContext)
-    );
+    final OpFieldProjection fieldProjection =
+        context.schemaPsiProcessingContext().deleteProjectionsParser().parseFieldProjection(
+            resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.entityProjection()),
+            deleteProjectionPsi.getPlus() != null,
+            deleteFieldProjectionPsi,
+            resolver,
+            new OpPsiProcessingContext(context, referenceContext)
+        );
 
     referenceContext.ensureAllReferencesResolved();
 
@@ -425,7 +425,8 @@ public final class OperationsPsiParser {
         parsePath(operationName, OperationKind.CUSTOM, resourceType, pathPsi, resolver, context);
 
     final OpFieldProjection fieldProjection =
-        inputFieldProjectionPsi == null ? null : OpInputProjectionsPsiParser.INSTANCE.parseFieldProjection(
+        inputFieldProjectionPsi == null ? null :
+        context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
             resolveInputType(
                 resourceType,
                 opPath == null ? null : opPath.entityProjection(),
@@ -505,13 +506,14 @@ public final class OperationsPsiParser {
 
 //      throw new PsiProcessingException("Output projection must be specified", location, context);
     } else {
-      fieldProjection = OpOutputProjectionsPsiParser.INSTANCE.parseFieldProjection(
-          outputType,
-          false,
-          outputFieldProjectionPsi,
-          resolver,
-          opPsiProcessingContext
-      );
+      fieldProjection =
+          resourcePsiProcessingContext.schemaPsiProcessingContext().outputProjectionsParser().parseFieldProjection(
+              outputType,
+              false,
+              outputFieldProjectionPsi,
+              resolver,
+              opPsiProcessingContext
+          );
     }
     outputReferenceContext.ensureAllReferencesResolved();
 

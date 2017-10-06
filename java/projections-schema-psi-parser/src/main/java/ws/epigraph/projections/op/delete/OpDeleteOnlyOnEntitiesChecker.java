@@ -17,10 +17,10 @@
 package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.abs.AbstractVarProjection;
-import ws.epigraph.projections.op.OpProjectionTraversal;
 import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.psi.PsiProcessingContext;
+import ws.epigraph.projections.op.OpProjectionTraversal;
 import ws.epigraph.types.TypeKind;
 
 /**
@@ -29,9 +29,9 @@ import ws.epigraph.types.TypeKind;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpDeleteOnlyOnEntitiesChecker extends OpProjectionTraversal {
-  private final @NotNull PsiProcessingContext context;
+  private final @NotNull MessagesContext context;
 
-  public OpDeleteOnlyOnEntitiesChecker(final @NotNull PsiProcessingContext context) {this.context = context;}
+  public OpDeleteOnlyOnEntitiesChecker(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
   protected boolean visitModelProjection(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {

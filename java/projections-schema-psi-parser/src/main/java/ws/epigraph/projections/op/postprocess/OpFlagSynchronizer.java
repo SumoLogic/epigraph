@@ -18,8 +18,8 @@ package ws.epigraph.projections.op.postprocess;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.*;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeKind;
@@ -34,14 +34,14 @@ import java.util.Map;
 public class OpFlagSynchronizer extends OpProjectionTransformer {
   // logic here is similar to ReqRequiredSynchronizer, keep them in sync todo extract common code
 
-  private final @NotNull PsiProcessingContext context;
+  private final @NotNull MessagesContext context;
 
   private final Map<OpModelProjection<?, ?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
 
   private final String flagSemantics;
 
-  public OpFlagSynchronizer(final String flagSemantics, final @NotNull PsiProcessingContext context) {
+  public OpFlagSynchronizer(final String flagSemantics, final @NotNull MessagesContext context) {
     this.flagSemantics = flagSemantics;
     this.context = context;
   }

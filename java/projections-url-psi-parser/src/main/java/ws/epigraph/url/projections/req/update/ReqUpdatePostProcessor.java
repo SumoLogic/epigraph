@@ -18,11 +18,11 @@ package ws.epigraph.url.projections.req.update;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqPrimitiveModelProjection;
 import ws.epigraph.projections.req.ReqTagProjectionEntry;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
@@ -38,7 +38,7 @@ import java.util.List;
 public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
   private int flaggedInCurrentPath = 0;
 
-  public ReqUpdatePostProcessor(final @NotNull PsiProcessingContext context) { super(context); }
+  public ReqUpdatePostProcessor(final @NotNull MessagesContext context) { super(context); }
 
   @Override
   public void reset() {

@@ -17,6 +17,7 @@
 package ws.epigraph.server.http.routing;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -27,16 +28,20 @@ import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.RequestUrlPsiParser;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
+import java.util.function.Function;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractNonReadOperationRouter<OD extends OperationDeclaration, O extends Operation<OD, ?, ?>>
     extends AbstractOperationRouter<UrlUrl, OD, O> {
 
-  private final @NotNull RequestUrlPsiParser requestUrlPsiParser;
+  private final @NotNull Function<MessagesContext, RequestUrlPsiParser> requestUrlPsiParserFactory;
 
-  protected AbstractNonReadOperationRouter(final @NotNull RequestUrlPsiParser requestUrlPsiParser) {
-    this.requestUrlPsiParser = requestUrlPsiParser;
+  protected AbstractNonReadOperationRouter(
+      @NotNull Function<MessagesContext, RequestUrlPsiParser> requestUrlPsiParserFactory) {
+
+    this.requestUrlPsiParserFactory = requestUrlPsiParserFactory;
   }
 
   @Override
@@ -47,7 +52,7 @@ public abstract class AbstractNonReadOperationRouter<OD extends OperationDeclara
       final @NotNull TypesResolver resolver,
       final @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    return requestUrlPsiParser.parseRequestUrl(
+    return requestUrlPsiParserFactory.apply(context).parseRequestUrl(
         resourceType,
         opDecl,
         urlPsi,

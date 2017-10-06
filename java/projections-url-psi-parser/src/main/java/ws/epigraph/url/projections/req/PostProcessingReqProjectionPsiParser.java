@@ -25,7 +25,6 @@ import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
@@ -34,8 +33,6 @@ import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.util.Tuple2;
 
-import java.util.function.Function;
-
 /**
  * Psi parser that calls {@link ReqBasicProjectionPsiParser} to build basic structure, then
  * optionally applies supplied traversal and transformer to it.
@@ -43,15 +40,17 @@ import java.util.function.Function;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiParser {
-  private final @Nullable Function<PsiProcessingContext, ReqProjectionTraversal> traversalFactory;
-  private final @Nullable Function<PsiProcessingContext, ReqProjectionTransformer> transformerFactory;
+  // keep in sync with PostProcessingOpProjectionsPsiParser
 
-  protected PostProcessingReqProjectionPsiParser(
-      @Nullable Function<PsiProcessingContext, ReqProjectionTraversal> traversalFactory,
-      @Nullable Function<PsiProcessingContext, ReqProjectionTransformer> transformerFactory) {
+  private final @Nullable ReqProjectionTraversal traversal;
+  private final @Nullable ReqProjectionTransformer transformer;
 
-    this.traversalFactory = traversalFactory;
-    this.transformerFactory = transformerFactory;
+  public PostProcessingReqProjectionPsiParser(
+      @Nullable ReqProjectionTraversal traversal,
+      @Nullable ReqProjectionTransformer transformer) {
+
+    this.traversal = traversal;
+    this.transformer = transformer;
   }
 
   @Override
@@ -146,15 +145,13 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull OpEntityProjection op,
       @NotNull ReqPsiProcessingContext context) {
 
-    if (traversalFactory != null) {
-      ReqProjectionTraversal traversal = traversalFactory.apply(context);
+    if (traversal != null) {
       traversal.traverse(ep, op);
     }
 
-    if (transformerFactory == null)
+    if (transformer == null)
       return ep;
     else {
-      ReqProjectionTransformer transformer = transformerFactory.apply(context);
       Tuple2<ReqEntityProjection, ReqProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
       ReqEntityProjection transformedEp = tuple2._1;
       ReqProjectionTransformationMap transformationMap = tuple2._2;

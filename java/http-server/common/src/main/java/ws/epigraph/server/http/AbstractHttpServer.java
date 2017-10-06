@@ -809,7 +809,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
     RequestUrl requestUrl = null;
     PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
     try {
-      requestUrl = CustomRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+      requestUrl = new CustomRequestUrlPsiParser(psiProcessingContext).parseRequestUrl(
           resource.declaration().fieldType(),
           operation.declaration(),
           urlPsi,

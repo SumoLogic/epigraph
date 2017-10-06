@@ -16,6 +16,7 @@
 
 package ws.epigraph.url.projections.req.update;
 
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredChecker;
 
@@ -23,9 +24,8 @@ import ws.epigraph.url.projections.req.postprocess.ReqRequiredChecker;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReqUpdateProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
-  public static final ReqUpdateProjectionPsiParser INSTANCE = new ReqUpdateProjectionPsiParser();
 
-  private ReqUpdateProjectionPsiParser() {
-    super(ReqRequiredChecker::new, ReqUpdatePostProcessor::new);
+  public ReqUpdateProjectionPsiParser(MessagesContext context) {
+    super(new ReqRequiredChecker(context), new ReqUpdatePostProcessor(context));
   }
 }

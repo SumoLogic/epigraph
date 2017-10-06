@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.parser;
+package ws.epigraph.util;
 
-import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class ReadRequestUrlPsiParser extends RequestUrlPsiParser {
+public class CachingFunction<F, T> implements Function<F, T> {
+  private final @NotNull Function<F, T> delegate;
+  private final Map<F, T> cache = new ConcurrentHashMap<>();
 
-  public ReadRequestUrlPsiParser(MessagesContext context) {
-    super(
-        new ReqOutputProjectionPsiParser(context),
-        null
-    );
+  public CachingFunction(final @NotNull Function<F, T> delegate) {this.delegate = delegate;}
+
+  @Override
+  public T apply(final F f) {
+    T res = cache.get(f);
+
+    if (res == null) {
+      res = delegate.apply(f);
+      cache.put(f, res);
+    }
+
+    return res;
   }
 }

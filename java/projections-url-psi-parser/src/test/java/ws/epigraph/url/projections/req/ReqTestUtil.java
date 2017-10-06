@@ -17,15 +17,16 @@
 package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpProjectionPsiParser;
-import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
-import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.op.OpProjectionPsiParser;
 import ws.epigraph.projections.op.OpPsiProcessingContext;
 import ws.epigraph.projections.op.OpReferenceContext;
+import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
+import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
 import ws.epigraph.projections.req.ReqEntityProjection;
@@ -44,6 +45,8 @@ import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionPsiParser;
 
+import java.util.function.Function;
+
 import static org.junit.Assert.fail;
 import static ws.epigraph.test.TestUtil.*;
 
@@ -59,7 +62,7 @@ public final class ReqTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpOutputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   public static @NotNull OpEntityProjection parseOpInputEntityProjection(
@@ -67,7 +70,7 @@ public final class ReqTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpInputProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   public static @NotNull OpEntityProjection parseOpDeleteEntityProjection(
@@ -75,11 +78,11 @@ public final class ReqTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpDeleteProjectionsPsiParser.INSTANCE, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpDeleteProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
   private static @NotNull OpEntityProjection parseOpEntityProjection(
-      @NotNull OpProjectionPsiParser parser,
+      @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -102,6 +105,7 @@ public final class ReqTestUtil {
           context,
           opOutputReferenceContext
       );
+      OpProjectionPsiParser parser = parserFactory.apply(context);
       OpEntityProjection vp = parser.parseEntityProjection(
           varDataType,
           false,
@@ -124,7 +128,7 @@ public final class ReqTestUtil {
       @NotNull TypesResolver resolver) {
 
     return parseReqVarProjection(
-        ReqOutputProjectionPsiParser.INSTANCE,
+        ReqOutputProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
@@ -136,7 +140,7 @@ public final class ReqTestUtil {
       @NotNull TypesResolver resolver) {
 
     return parseReqVarProjection(
-        ReqInputProjectionPsiParser.INSTANCE,
+        ReqInputProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
@@ -148,7 +152,7 @@ public final class ReqTestUtil {
       @NotNull TypesResolver resolver) {
 
     return parseReqVarProjection(
-        ReqUpdateProjectionPsiParser.INSTANCE,
+        ReqUpdateProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
@@ -160,13 +164,13 @@ public final class ReqTestUtil {
       @NotNull TypesResolver resolver) {
 
     return parseReqVarProjection(
-        ReqDeleteProjectionPsiParser.INSTANCE,
+        ReqDeleteProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
 
   public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqVarProjection(
-      @NotNull ReqProjectionPsiParser parser,
+      @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
@@ -189,6 +193,7 @@ public final class ReqTestUtil {
       ReqPsiProcessingContext reqPsiProcessingContext =
           new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
+      ReqProjectionPsiParser parser = parserFactory.apply(context);
       @NotNull StepsAndProjection<ReqEntityProjection> res =
           parser.parseTrunkEntityProjection(
               type,

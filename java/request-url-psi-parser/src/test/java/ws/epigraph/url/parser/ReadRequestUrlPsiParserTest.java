@@ -115,7 +115,7 @@ public class ReadRequestUrlPsiParserTest {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
 
-    final @NotNull RequestUrl requestUrl = ReadRequestUrlPsiParser.INSTANCE.parseRequestUrl(
+    final @NotNull RequestUrl requestUrl = new ReadRequestUrlPsiParser(context).parseRequestUrl(
         resourceType,
         op,
         parseUrlPsi(url),

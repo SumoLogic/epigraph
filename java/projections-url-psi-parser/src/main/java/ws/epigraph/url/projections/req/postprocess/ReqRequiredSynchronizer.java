@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.postprocess;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.req.*;
-import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeKind;
@@ -41,12 +41,12 @@ import java.util.Map;
 public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
   // logic here is similar to OpRequiredSynchronizer, keep them in sync todo extract common code
 
-  protected final @NotNull PsiProcessingContext context;
+  protected final @NotNull MessagesContext context;
 
   private final Map<ReqModelProjection<?, ?, ?>, EntityProjectionAndDataType> modelToEntity =
       new IdentityHashMap<>();
 
-  public ReqRequiredSynchronizer(final @NotNull PsiProcessingContext context) {this.context = context;}
+  public ReqRequiredSynchronizer(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
   protected @NotNull ReqEntityProjection transformResolvedEntityProjection(

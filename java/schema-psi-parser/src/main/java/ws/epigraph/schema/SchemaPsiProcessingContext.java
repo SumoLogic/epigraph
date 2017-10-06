@@ -21,6 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpReferenceContext;
+import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
+import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -40,6 +43,10 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
 
   private final @NotNull Map<String, ResourceDeclaration> resources = new LinkedHashMap<>();
   private final @NotNull Map<String, TransformerDeclaration> transformers = new LinkedHashMap<>();
+
+  private final @NotNull OpOutputProjectionsPsiParser outputProjectionsParser;
+  private final @NotNull OpInputProjectionsPsiParser inputProjectionsParser;
+  private final @NotNull OpDeleteProjectionsPsiParser deleteProjectionsParser;
 
   public SchemaPsiProcessingContext(
       final @NotNull PsiProcessingContext psiProcessingContext,
@@ -68,6 +75,10 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
         null,
         psiProcessingContext
     );
+
+    outputProjectionsParser = new OpOutputProjectionsPsiParser(psiProcessingContext);
+    inputProjectionsParser = new OpInputProjectionsPsiParser(psiProcessingContext);
+    deleteProjectionsParser = new OpDeleteProjectionsPsiParser(psiProcessingContext);
   }
 
   public @NotNull Qn namespace() { return namespace; }
@@ -94,4 +105,10 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
     assert !transformers.containsKey(transformer.name()) : transformer.name();
     transformers.put(transformer.name(), transformer);
   }
+
+  public @NotNull OpOutputProjectionsPsiParser outputProjectionsParser() { return outputProjectionsParser; }
+
+  public @NotNull OpInputProjectionsPsiParser inputProjectionsParser() { return inputProjectionsParser; }
+
+  public @NotNull OpDeleteProjectionsPsiParser deleteProjectionsParser() { return deleteProjectionsParser; }
 }

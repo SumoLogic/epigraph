@@ -34,15 +34,18 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
   private final @NotNull OpReferenceContext outputReferenceContext;
   private final @NotNull OpReferenceContext deleteReferenceContext;
 
+  private final @NotNull SchemaPsiProcessingContext schemaPsiProcessingContext;
+
   public ResourcePsiProcessingContext(
-      @NotNull SchemaPsiProcessingContext psiProcessingContext,
+      @NotNull SchemaPsiProcessingContext schemaPsiProcessingContext,
       @NotNull Qn namespace,
       @NotNull String resourceName) {
 
-    super(psiProcessingContext);
+    super(schemaPsiProcessingContext);
 
     this.namespace = namespace;
     this.resourceName = resourceName;
+    this.schemaPsiProcessingContext = schemaPsiProcessingContext;
 
     final Namespaces namespaces = new Namespaces(namespace);
 
@@ -50,25 +53,26 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
         ProjectionReferenceName.fromQn(
             namespaces.inputProjectionsNamespace(resourceName)
         ),
-        psiProcessingContext.inputReferenceContext(),
-        psiProcessingContext
+        schemaPsiProcessingContext.inputReferenceContext(),
+        schemaPsiProcessingContext
     );
 
     outputReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(
             namespaces.outputProjectionsNamespace(resourceName)
         ),
-        psiProcessingContext.outputReferenceContext(),
-        psiProcessingContext
+        schemaPsiProcessingContext.outputReferenceContext(),
+        schemaPsiProcessingContext
     );
 
     deleteReferenceContext = new OpReferenceContext(
         ProjectionReferenceName.fromQn(
             namespaces.deleteProjectionsNamespace(resourceName)
         ),
-        psiProcessingContext.deleteReferenceContext(),
-        psiProcessingContext
+        schemaPsiProcessingContext.deleteReferenceContext(),
+        schemaPsiProcessingContext
     );
+
   }
 
   public @NotNull Qn namespace() { return namespace; }
@@ -83,4 +87,6 @@ public class ResourcePsiProcessingContext extends DelegatingPsiProcessingContext
 
   @Override
   public @NotNull OpReferenceContext deleteReferenceContext() { return deleteReferenceContext; }
+
+  public @NotNull SchemaPsiProcessingContext schemaPsiProcessingContext() { return schemaPsiProcessingContext; }
 }
