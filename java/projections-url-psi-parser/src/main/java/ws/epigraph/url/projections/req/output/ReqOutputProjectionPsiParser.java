@@ -17,13 +17,18 @@
 package ws.epigraph.url.projections.req.output;
 
 import ws.epigraph.lang.MessagesContext;
+import ws.epigraph.url.projections.req.DefaultReqProjectionConstructor;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
+
+import static ws.epigraph.url.projections.req.DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class ReqOutputProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
 
-  public ReqOutputProjectionPsiParser(MessagesContext context) { super(null, new ReqRequiredSynchronizer(context)); }
+  public ReqOutputProjectionPsiParser(MessagesContext context) {
+    super(null, new ReqRequiredSynchronizer(context), new DefaultReqProjectionConstructor(INCLUDE_FLAGGED_ONLY));
+  }
 }

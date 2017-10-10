@@ -84,12 +84,57 @@ public class ReqInputProjectionParserTest {
 
   @Test
   public void testParseRecordTag() {
-    testParse(":record");
+    testParse(
+        ":record",
+        lines(
+            ":record (",
+            "  id,",
+            "  bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ),",
+            "  bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
+            "  bestFriend3",
+            "    :(",
+            "      id,",
+            "      record (",
+            "        id,",
+            "        firstName,",
+            "        bestFriend3",
+            "          :record ( id, lastName, bestFriend3 :record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )",
+            "      )",
+            "    ),",
+            "  friends *( :id ),",
+            "  friendsMap [ * ]( :( id, record ( id, firstName ) ) )",
+            ") ~ws.epigraph.tests.UserRecord ( profile )"
+        )
+    );
   }
 
   @Test
   public void testParseMultiTag() {
-    testParse(":(id,record)", ":( id, record )");
+    testParse(
+        ":(id,record)",
+        lines(
+            ":(",
+            "  id,",
+            "  record (",
+            "    id,",
+            "    bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ),",
+            "    bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
+            "    bestFriend3",
+            "      :(",
+            "        id,",
+            "        record (",
+            "          id,",
+            "          firstName,",
+            "          bestFriend3",
+            "            :record ( id, lastName, bestFriend3 :record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )",
+            "        )",
+            "      ),",
+            "    friends *( :id ),",
+            "    friendsMap [ * ]( :( id, record ( id, firstName ) ) )",
+            "  ) ~ws.epigraph.tests.UserRecord ( profile )",
+            ")"
+        )
+    );
   }
 
   @Test

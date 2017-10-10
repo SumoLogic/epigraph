@@ -315,7 +315,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
 
   @Override
   public boolean modelParamsEmpty(final @NotNull MP mp) {
-    return super.modelParamsEmpty(mp) && mp.params().isEmpty() && mp.annotations.isEmpty();
+    return mp.metaProjection() == null && mp.params().isEmpty() && mp.annotations.isEmpty();
   }
 
   public boolean isPrintoutEmpty(@NotNull FP fieldProjection) {

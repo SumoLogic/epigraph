@@ -302,7 +302,7 @@ public abstract class AbstractHttpServerTest {
     assertEquals(actualBody, expectedStatus, status);
     Pattern p = Pattern.compile(unescape(expectedBodyRegex));
     final Matcher matcher = p.matcher(actualBody);
-    assertTrue(actualBody, matcher.matches());
+    assertTrue("actual body: <" + actualBody + ">", matcher.matches());
     return matcher;
   }
 

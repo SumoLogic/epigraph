@@ -57,7 +57,7 @@ import static ws.epigraph.test.TestUtil.*;
 public final class ReqTestUtil {
   private ReqTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpEntityProjection(
+  public static @NotNull OpEntityProjection parseOpOutputEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {

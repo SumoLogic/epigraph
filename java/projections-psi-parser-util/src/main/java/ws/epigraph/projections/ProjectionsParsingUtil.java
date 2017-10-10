@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
  */
 public final class ProjectionsParsingUtil {
 
+  // todo rename to ProjectionsUtil
+  // todo take MessagesContext instead of PsiProcessingContext
+
   private ProjectionsParsingUtil() {}
 
   /**

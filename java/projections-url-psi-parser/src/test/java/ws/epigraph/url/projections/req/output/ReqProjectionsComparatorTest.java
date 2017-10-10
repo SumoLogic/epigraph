@@ -29,7 +29,7 @@ import ws.epigraph.types.DataType;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpEntityProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
@@ -87,7 +87,7 @@ public class ReqProjectionsComparatorTest {
   }
 
   private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
-    return parseOpEntityProjection(dataType, projectionString, resolver);
+    return parseOpOutputEntityProjection(dataType, projectionString, resolver);
   }
 
   // todo more tests

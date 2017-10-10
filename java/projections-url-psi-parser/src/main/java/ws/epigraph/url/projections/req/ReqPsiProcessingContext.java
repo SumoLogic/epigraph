@@ -32,19 +32,19 @@ import java.util.Queue;
  */
 public class ReqPsiProcessingContext extends DelegatingPsiProcessingContext {
 
-  private final @NotNull ReqReferenceContext varReferenceContext;
+  private final @NotNull ReqReferenceContext entityReferenceContext;
   private final @NotNull Map<String, Queue<OpEntityProjection>> verifiedRefOps = new HashMap<>();
   private final @NotNull Map<String, Queue<OpEntityProjection>> unverifiedRefOps = new HashMap<>();
 
   public ReqPsiProcessingContext(
       final @NotNull PsiProcessingContext delegate,
-      final @NotNull ReqReferenceContext context) {
+      final @NotNull ReqReferenceContext entityReferenceContext) {
 
     super(delegate);
-    varReferenceContext = context;
+    this.entityReferenceContext = entityReferenceContext;
   }
 
-  public @NotNull ReqReferenceContext referenceContext() { return varReferenceContext; }
+  public @NotNull ReqReferenceContext referenceContext() { return entityReferenceContext; }
 
   public @Nullable Queue<OpEntityProjection> verifiedRefOps(@NotNull String name) {
     return verifiedRefOps.get(name);

@@ -18,9 +18,12 @@ package ws.epigraph.url.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
+import ws.epigraph.url.projections.req.DefaultReqProjectionConstructor;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqFlaggedNotSupportedChecker;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
+
+import static ws.epigraph.url.projections.req.DefaultReqProjectionConstructor.Mode.INCLUDE_NONE;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -28,6 +31,10 @@ import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
 public final class ReqDeleteProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
 
   public ReqDeleteProjectionPsiParser(@NotNull MessagesContext messagesContext) {
-    super(new ReqFlaggedNotSupportedChecker(messagesContext), new ReqRequiredSynchronizer(messagesContext));
+    super(
+        new ReqFlaggedNotSupportedChecker(messagesContext),
+        new ReqRequiredSynchronizer(messagesContext),
+        new DefaultReqProjectionConstructor(INCLUDE_NONE)
+    );
   }
 }

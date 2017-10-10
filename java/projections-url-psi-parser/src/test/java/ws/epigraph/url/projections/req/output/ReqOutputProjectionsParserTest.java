@@ -36,7 +36,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpEntityProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputEntityProjection;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
 
 /**
@@ -293,7 +293,7 @@ public class ReqOutputProjectionsParserTest {
             "  firstName,",
             "  middleName,",
             "  bestFriend :(),",
-            "  bestFriend2 :( id ),",
+            "  bestFriend2 $bf2 = :( id ),",
             "  bestFriend3 :(),",
             "  friends *( :() ),",
             "  friendRecords,",
@@ -400,7 +400,7 @@ public class ReqOutputProjectionsParserTest {
   public void testModelTailsNormalization() throws PsiProcessingException {
 
     testModelTailsNormalization(
-        parseOpEntityProjection(
+        parseOpOutputEntityProjection(
             new DataType(Person.type, null),
             ":`record`(id)~ws.epigraph.tests.UserRecord(firstName)",
             resolver
@@ -411,7 +411,7 @@ public class ReqOutputProjectionsParserTest {
     );
 
     testModelTailsNormalization(
-        parseOpEntityProjection(
+        parseOpOutputEntityProjection(
             new DataType(Person.type, null),
             ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(firstName))",
             resolver
@@ -422,7 +422,7 @@ public class ReqOutputProjectionsParserTest {
     );
 
     testModelTailsNormalization(
-        parseOpEntityProjection(
+        parseOpOutputEntityProjection(
             new DataType(Person.type, null),
             ":`record`( worstEnemy(id)~ws.epigraph.tests.UserRecord(lastName)~ws.epigraph.tests.SubUserRecord(firstName))",
             resolver
@@ -438,7 +438,7 @@ public class ReqOutputProjectionsParserTest {
   public void testDiamond() throws PsiProcessingException {
 
     testModelTailsNormalization(
-        parseOpEntityProjection(
+        parseOpOutputEntityProjection(
             new DataType(Person.type, null),
             ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
             resolver
@@ -455,7 +455,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ ;param: epigraph.String, meta: ( start, count ) } [ required ] :`record` ( id, firstName )";
-    @NotNull OpEntityProjection opProjection = parseOpEntityProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     String projection = "@+( start, count ) ;param = 'foo' [ 2 ]( :record ( id, firstName ) )";
 
@@ -472,7 +472,7 @@ public class ReqOutputProjectionsParserTest {
     final DataType dataType = new DataType(PersonMap.type, null);
 
     String opProjectionStr = "{ ;+param: epigraph.String } [ ]( :id )";
-    @NotNull OpEntityProjection opProjection = parseOpEntityProjection(dataType, opProjectionStr, resolver);
+    @NotNull OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     try {
       testParse(
@@ -604,7 +604,7 @@ public class ReqOutputProjectionsParserTest {
   }
 
   private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
-    return parseOpEntityProjection(dataType, projectionString, resolver);
+    return parseOpOutputEntityProjection(dataType, projectionString, resolver);
   }
 
 }

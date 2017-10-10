@@ -114,8 +114,13 @@ public abstract class AbstractProjectionsPrettyPrinter<
     Map<String, TP> tagProjections = p.tagProjections();
     if (p.type().kind() != TypeKind.ENTITY) {
       // samovar
-      TP tp = tagProjections.values().iterator().next();
-      printTag(null, tp, decSteps(pathSteps));
+
+      if (tagProjections.size() == 1) {
+        TP tp = tagProjections.values().iterator().next();
+        printTag(null, tp, decSteps(pathSteps));
+      } else
+        l.print("< invalid " + p.type().name() + " data, 1 tag expected but " + tagProjections.size() + " found >");
+
     } else if (!p.parenthesized() && !tagProjections.isEmpty()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
@@ -356,7 +361,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  public boolean modelParamsEmpty(@NotNull MP mp) { return mp.metaProjection() == null ; }
+  public boolean modelParamsEmpty(@NotNull MP mp) { return true; }
 
   protected int decSteps(int pathSteps) {
     return pathSteps == 0 ? 0 : pathSteps - 1;

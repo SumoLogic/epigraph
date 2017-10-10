@@ -25,4 +25,6 @@ public interface MessagesContext {
   void addError(@NotNull String message, @NotNull TextLocation location);
 
   void addWarning(@NotNull String message, @NotNull TextLocation location);
+
+  // todo addDeprecationWarning ?
 }
