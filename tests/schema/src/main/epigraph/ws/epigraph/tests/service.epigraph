@@ -30,8 +30,8 @@ resource users: PersonMap {
         id,
         `record`(
           id,
-          firstName,
-          lastName,
+          +firstName,
+          +lastName,
           bestFriend:(
             id,
             `record`( id, firstName, lastName, bestFriend:id, worstEnemy )

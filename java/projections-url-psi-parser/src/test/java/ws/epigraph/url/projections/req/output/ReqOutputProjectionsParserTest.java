@@ -70,7 +70,7 @@ public class ReqOutputProjectionsParserTest {
           "      ;param1 : epigraph.String,",
           "      ;param2 : ws.epigraph.tests.UserRecord",
           "    },",
-          "    firstName{;param:epigraph.String},",
+          "    +firstName{;param:epigraph.String},",
           "    middleName{",
           "      ;+param1:epigraph.String,",
           "      ;+param2:epigraph.String { default: \"p2\" },",
@@ -340,7 +340,26 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testModelRequired() {
-    testParse(":( +id, +record )", 0);
+    testParse(":( +id, +record ( firstName ) )", 0);
+  }
+
+  @Test
+  public void testDefaultProjection() {
+    testParse("", ":id", 1); // default tag takes over
+    testParse(":record", ":record ( firstName )", 1);
+
+    // now without default tag
+    DataType dataType = new DataType(Person.type, null);
+
+    String opProjectionStr = ":( id, `record` ( +firstName ) )";
+    @NotNull OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
+
+    testParse(
+        dataType,
+        opProjection,
+        ":( record ( firstName ) )",
+        0
+    );
   }
 
   @Test

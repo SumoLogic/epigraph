@@ -68,7 +68,7 @@ public final class ReqBasicProjectionPsiParser {
 
       if (unnamedOrRefEntityProjection == null)
         throw new PsiProcessingException(
-            "Incomplete var projection definition",
+            "Incomplete entity projection definition",
             psi,
             context
         );
@@ -150,12 +150,12 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull DefaultReqProjectionConstructor defaultProjectionConstructor,
       final @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    final UrlReqTrunkEntityProjectionRef varProjectionRef = psi.getReqTrunkEntityProjectionRef();
-    if (varProjectionRef == null) {
+    final UrlReqTrunkEntityProjectionRef entityProjectionRef = psi.getReqTrunkEntityProjectionRef();
+    if (entityProjectionRef == null) {
       // usual var projection
       final UrlReqUnnamedTrunkEntityProjection unnamedEntityProjection = psi.getReqUnnamedTrunkEntityProjection();
       if (unnamedEntityProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
+        throw new PsiProcessingException("Incomplete entity projection definition", psi, context.messages());
       else {
         return parseUnnamedTrunkEntityProjection(
             dataType,
@@ -212,9 +212,21 @@ public final class ReqBasicProjectionPsiParser {
         // will be OK in only one case: if singleTagProjectionPsi is empty
         // we want to treat `( bestFriend )` as `( bestFriend:() )`
         if (singleTagProjectionPsi.getText().trim().isEmpty()) {
+          /*
           // tagProjections stay empty
           parenthesized = false;
           steps = 0;
+          */
+          return new StepsAndProjection<>(
+              0,
+              defaultProjectionConstructor.createDefaultEntityProjection(
+                  dataType,
+                  op,
+                  flagged,
+                  EpigraphPsiUtil.getLocation(psi),
+                  context
+              )
+          );
         } else {
           throw noRetroTagError(dataType, tagLocation, context);
         }
@@ -225,8 +237,7 @@ public final class ReqBasicProjectionPsiParser {
             getTagProjection(tag.name(), op, tagLocation, context);
 
         @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
-        @NotNull UrlReqTrunkModelProjection modelProjectionPsi =
-            singleTagProjectionPsi.getReqTrunkModelProjection();
+        @NotNull UrlReqTrunkModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqTrunkModelProjection();
 
         StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
             opModelProjection,
@@ -544,7 +555,18 @@ public final class ReqBasicProjectionPsiParser {
         raiseNoTagsError(dataType, op, singleTagProjectionPsi, context);
       }
 
-      if (tag != null) {
+      if (tag == null) {
+        return new StepsAndProjection<>(
+            0,
+            defaultProjectionConstructor.createDefaultEntityProjection(
+                dataType,
+                op,
+                flagged,
+                EpigraphPsiUtil.getLocation(psi),
+                context
+            )
+        );
+      } else {
         @NotNull OpTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, EpigraphPsiUtil.getLocation(singleTagProjectionPsi), context);
 
@@ -1025,8 +1047,7 @@ public final class ReqBasicProjectionPsiParser {
 
         final OpRecordModelProjection opRecord = (OpRecordModelProjection) op;
 
-        @Nullable UrlReqComaRecordModelProjection recordModelProjectionPsi =
-            psi.getReqComaRecordModelProjection();
+        @Nullable UrlReqComaRecordModelProjection recordModelProjectionPsi = psi.getReqComaRecordModelProjection();
 
         if (recordModelProjectionPsi == null) {
           checkModelPsi(psi, TypeKind.RECORD, context);

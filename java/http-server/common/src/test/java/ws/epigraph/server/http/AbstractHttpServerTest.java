@@ -89,6 +89,11 @@ public abstract class AbstractHttpServerTest {
   }
 
   @Test
+  public void testGetWithDefault() throws IOException {
+    get("/users/1", 200, "{'record':{'firstName':'First1','lastName':'Last1'}}");
+  }
+
+  @Test
   public void testPolymorphicGet() throws IOException {
     get(
         "/users[4,5](:record(id,firstName,lastName,bestFriend:record(id):~User:record(profile)))",

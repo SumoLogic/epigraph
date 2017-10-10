@@ -86,6 +86,15 @@ public abstract class AbstractHttpClientTest {
   }
 
   @Test
+  public void testSimpleReadWithDefault() throws ExecutionException, InterruptedException {
+    testRead(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "[1,2]",
+        "( 1: < record: { firstName: 'First1', lastName: 'Last1' } >, 2: < record: { firstName: 'First2', lastName: 'Last2' } > )"
+    );
+  }
+
+  @Test
   public void testReadWithPath() throws ExecutionException, InterruptedException {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
@@ -226,7 +235,7 @@ public abstract class AbstractHttpClientTest {
         updateProjection,
         PersonMap.Type.instance().createDataBuilder()
             .set(PersonMap.create()
-                .put$(PersonId.create(1), Person.create().setRecord(PersonRecord.create().setFirstName("Alfred")))
+                .put$(PersonId.create(1), Person.create().setRecord(PersonRecord.create().setFirstName("First1")))
             ),
         "[*](code,message)",
         "( )"

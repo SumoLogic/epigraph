@@ -28,8 +28,7 @@ import ws.epigraph.data.ListDatum;
 import ws.epigraph.lang.Qn;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.refs.QnTypeRef;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.schema.Namespaces;
@@ -44,8 +43,7 @@ import ws.epigraph.types.ListType;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -158,6 +156,50 @@ public class GeneratedClassesTest {
       UserId u = p.getParamParameter(); // should not be Long
     } catch (NullPointerException ignored) {
     }
+  }
+
+  @Test
+  public void testOpOutputDefaults() {
+    OpFieldProjection fieldProjection = ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
+    OpEntityProjection entityProjection = fieldProjection.entityProjection();
+    assertTrue(entityProjection.flag());
+
+    OpTagProjectionEntry tpe = entityProjection.singleTagProjection(); // self
+    assertNotNull(tpe);
+
+    OpModelProjection<?, ?, ?, ?> modelProjection = tpe.projection();
+    assertTrue(modelProjection.flag());
+    assertTrue(modelProjection instanceof OpMapModelProjection);
+    OpMapModelProjection mapModelProjection = (OpMapModelProjection) modelProjection;
+    entityProjection = mapModelProjection.itemsProjection();
+    assertTrue(entityProjection.flag());
+
+    tpe = entityProjection.tagProjection("id");
+    assertNotNull(tpe);
+    assertFalse(tpe.projection().flag());
+
+    tpe = entityProjection.tagProjection("record");
+    assertNotNull(tpe);
+    modelProjection = tpe.projection();
+    assertTrue(modelProjection.flag());
+    assertTrue(modelProjection instanceof OpRecordModelProjection);
+    OpRecordModelProjection recordModelProjection = (OpRecordModelProjection) modelProjection;
+
+    OpFieldProjectionEntry fpe = recordModelProjection.fieldProjection("id");
+    assertNotNull(fpe);
+    assertFalse(fpe.fieldProjection().flag());
+
+    fpe = recordModelProjection.fieldProjection("firstName");
+    assertNotNull(fpe);
+    assertTrue(fpe.fieldProjection().flag());
+
+    fpe = recordModelProjection.fieldProjection("lastName");
+    assertNotNull(fpe);
+    assertTrue(fpe.fieldProjection().flag());
+
+    fpe = recordModelProjection.fieldProjection("bestFriend");
+    assertNotNull(fpe);
+    assertFalse(fpe.fieldProjection().flag());
   }
 
   private static @NotNull String printOpDeleteVarProjection(
