@@ -246,6 +246,7 @@ public abstract class RequestUrlPsiParser {
                     op.outputType().dataType(),
                     op.outputProjection().entityProjection(),
                     false, // todo this should come from op
+                    typesResolver,
                     TextLocation.UNKNOWN,
                     firstProjectionProcessingContext
                 ),

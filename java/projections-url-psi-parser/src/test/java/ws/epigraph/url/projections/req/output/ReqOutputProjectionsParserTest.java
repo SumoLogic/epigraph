@@ -291,7 +291,7 @@ public class ReqOutputProjectionsParserTest {
             ":record (",
             "  id,",
             "  firstName,",
-            "  middleName,",
+            "  middleName ;param2 = 'p2',",
             "  bestFriend :(),",
             "  bestFriend2 $bf2 = :( id ),",
             "  bestFriend3 :(),",

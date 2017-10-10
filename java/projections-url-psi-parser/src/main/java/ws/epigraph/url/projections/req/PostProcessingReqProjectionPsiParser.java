@@ -89,15 +89,16 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull ReqEntityProjection createDefaultEntityProjection(
+  public ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
+      @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
     return defaultProjectionConstructor.createDefaultEntityProjection(
-        type, op, required, location, context
+        type, op, required, resolver,location, context
     );
   }
 

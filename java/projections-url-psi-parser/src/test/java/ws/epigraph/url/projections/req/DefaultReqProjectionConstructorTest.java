@@ -47,7 +47,8 @@ public class DefaultReqProjectionConstructorTest {
       User.type,
       UserId.type,
       UserRecord.type,
-      epigraph.String.type
+      epigraph.String.type,
+      epigraph.Integer.type
   );
 
   private final OpEntityProjection personOpProjection = parsePersonOpOutputVarProjection(
@@ -56,13 +57,16 @@ public class DefaultReqProjectionConstructorTest {
           "  id,",
           "  `record` (",
           "    id,",
-          "    bestFriend :(+id, `record` (",
-          "      +id,",
-          "      bestFriend :`record` (",
-          "        id,",
-          "        firstName",
+          "    bestFriend :(",
+          "      +id { ;param1: epigraph.Integer },",
+          "      `record` (",
+          "        +id { ;param2: epigraph.Integer { default: 333 } },",
+          "        bestFriend :`record` (",
+          "          id,",
+          "          firstName",
+          "        ),",
           "      ),",
-          "    )),",
+          "    ),",
           "    bestFriend2 $bf2 = :`record` ( +id, bestFriend2 $bf2 ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( +id, bestFriend3 $bf3 ) ) ) ) ),",
           "    friends *( :+id ),",
@@ -163,7 +167,7 @@ public class DefaultReqProjectionConstructorTest {
         lines(
             ":(",
             "  record (",
-            "    bestFriend :( id, record ( id ) ),",
+            "    bestFriend :( id, record ( id ;param2 = 333 ) ),",
             "    bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
             "    bestFriend3",
             "      :( record ( bestFriend3 :record ( bestFriend3 :record ( bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) ) ) ),",
@@ -183,7 +187,7 @@ public class DefaultReqProjectionConstructorTest {
             "  id,",
             "  record (",
             "    id,",
-            "    bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ),",
+            "    bestFriend :( id, record ( id ;param2 = 333, bestFriend :record ( id, firstName ) ) ),",
             "    bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
             "    bestFriend3",
             "      :(",
@@ -216,6 +220,7 @@ public class DefaultReqProjectionConstructorTest {
         type,
         op,
         false,
+        resolver,
         TextLocation.UNKNOWN,
         ppc
     );

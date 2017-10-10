@@ -1,6 +1,9 @@
 # General
 - [ ] Schema/IDL: enforce folders structure based on namespace?
 - [ ] gradle/maven build: add verification that all files have apache license headers
+- [ ] release task should create correctly named idea plugin
+  - [ ] and ideally publish it to github
+- [ ] upgrade gradle to 4.x
 
 # Framework
 - [ ] `ReqDelete` psi parser must ensure that leaf items have `op.canDelete` set to `true`

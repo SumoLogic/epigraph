@@ -367,7 +367,10 @@ public final class UrlProjectionsPsiParserUtil {
             else
               paramMap.put(paramName, new ReqParam(paramName, datum, TextLocation.UNKNOWN));
           } catch (GDataToData.ProcessingException e) {
-            throw new PsiProcessingException(e, paramsLocation, context);
+            context.addError(
+                "Malformed default value in op projection for parameter '" + paramName + "': " + e,
+                paramsLocation
+            );
           }
         }
       }

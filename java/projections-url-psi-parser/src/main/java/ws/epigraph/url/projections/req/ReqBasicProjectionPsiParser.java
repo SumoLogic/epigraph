@@ -195,7 +195,7 @@ public final class ReqBasicProjectionPsiParser {
       parenthesized = true;
 
       tagProjections = new LinkedHashMap<>();
-      addStarTags(op, tagProjections, context, psi);
+      addStarTags(op, tagProjections, typesResolver, context, psi);
     } else if (singleTagProjectionPsi != null) {
       // try to improve error reporting: singleTagProjectionPsi may be empty
       TextLocation tagLocation = getSingleTagLocation(singleTagProjectionPsi);
@@ -223,6 +223,7 @@ public final class ReqBasicProjectionPsiParser {
                   dataType,
                   op,
                   flagged,
+                  typesResolver,
                   EpigraphPsiUtil.getLocation(psi),
                   context
               )
@@ -344,6 +345,7 @@ public final class ReqBasicProjectionPsiParser {
   private static void addStarTags(
       final @NotNull OpEntityProjection op,
       final @NotNull LinkedHashMap<String, ReqTagProjectionEntry> tagProjections,
+      final @NotNull TypesResolver resolver,
       final @NotNull ReqPsiProcessingContext context,
       final @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
@@ -365,8 +367,9 @@ public final class ReqBasicProjectionPsiParser {
                   tag.type(),
                   false,
                   opModelProjection,
-                  ReqParams.EMPTY,
+                  null,
                   Directives.EMPTY,
+                  resolver,
                   location,
                   context
               ),
@@ -537,7 +540,7 @@ public final class ReqBasicProjectionPsiParser {
       parenthesized = true;
 
       tagProjections = new LinkedHashMap<>();
-      addStarTags(op, tagProjections, context, psi);
+      addStarTags(op, tagProjections, typesResolver, context, psi);
     } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
@@ -562,6 +565,7 @@ public final class ReqBasicProjectionPsiParser {
                 dataType,
                 op,
                 flagged,
+                typesResolver,
                 EpigraphPsiUtil.getLocation(psi),
                 context
             )
@@ -1058,6 +1062,7 @@ public final class ReqBasicProjectionPsiParser {
               opRecord,
               params,
               directives,
+              typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
           );
@@ -1099,6 +1104,7 @@ public final class ReqBasicProjectionPsiParser {
               opMap,
               params,
               directives,
+              typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
           );
@@ -1141,6 +1147,7 @@ public final class ReqBasicProjectionPsiParser {
               opList,
               params,
               directives,
+              typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
           );
@@ -1382,6 +1389,7 @@ public final class ReqBasicProjectionPsiParser {
           fieldType,
           opFieldProjection.entityProjection(),
           fieldFlagged,
+          resolver,
           EpigraphPsiUtil.getLocation(psi),
           context
       );
@@ -1599,6 +1607,7 @@ public final class ReqBasicProjectionPsiParser {
                         field.dataType(),
                         opFieldProjection.entityProjection(),
                         false,
+                        resolver,
                         EpigraphPsiUtil.getLocation(psi.getReqAll()),
                         context
                     ),
@@ -1756,6 +1765,7 @@ public final class ReqBasicProjectionPsiParser {
           op.type().valueType(),
           op.itemsProjection(),
           psi.getPlus() != null,
+          resolver,
           EpigraphPsiUtil.getLocation(psi),
           context
       );
@@ -1806,6 +1816,7 @@ public final class ReqBasicProjectionPsiParser {
               op.type().elementType(),
               op.itemsProjection(),
               true,
+              resolver,
               EpigraphPsiUtil.getLocation(psi),
               context
           );

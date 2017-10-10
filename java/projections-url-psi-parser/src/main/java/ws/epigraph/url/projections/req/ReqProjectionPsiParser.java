@@ -50,10 +50,11 @@ public interface ReqProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull ReqEntityProjection createDefaultEntityProjection(
+  ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi type,
       @NotNull OpEntityProjection op,
       boolean required,
+      @NotNull  TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
