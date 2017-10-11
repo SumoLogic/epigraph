@@ -51,11 +51,11 @@ resource books: map[BookId, BookRecord] {
     title,
     author :(
       id,
-      `record` (firstName, middleName, lastName)
+      `record` (+firstName, middleName, +lastName)
     ),
-    text :plain {
+    text :+plain {
       ;offset: Long,                 // input parameter
-      ;count: Long,                  // input parameter
+      ;count: Long { default: 100 }, // input parameter with default
       meta: (offset, count)          // supported meta-data projection
     }
   )

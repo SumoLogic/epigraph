@@ -18,6 +18,9 @@ plugins {
   id 'ws.epigraph.java' version '0.0.7'
 }
 
+apply plugin: 'application'
+mainClassName = 'ws.epigraph.examples.library.LibraryServer'
+
 group = 'ws.epigraph.examples'
 
 dependencies {
