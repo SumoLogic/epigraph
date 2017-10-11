@@ -145,7 +145,7 @@ resource users: PersonMap {
     path /.              // only applicable to a single map key
 
     inputType PersonRecord
-    inputProjection (firstName, lastName)
+    inputProjection { ;useLowerCase:Boolean { default: false } } (firstName, lastName)
 
     outputType PersonRecord
     outputProjection (firstName, lastName)

@@ -1756,13 +1756,33 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // datum reqParamsAndAnnotations
+  // datum ( '[' reqParamsAndAnnotations ']' )?
   static boolean reqTrunkKeyProjection(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqTrunkKeyProjection")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = datum(b, l + 1);
+    p = r; // pin = 1
+    r = r && reqTrunkKeyProjection_1(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // ( '[' reqParamsAndAnnotations ']' )?
+  private static boolean reqTrunkKeyProjection_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkKeyProjection_1")) return false;
+    reqTrunkKeyProjection_1_0(b, l + 1);
+    return true;
+  }
+
+  // '[' reqParamsAndAnnotations ']'
+  private static boolean reqTrunkKeyProjection_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqTrunkKeyProjection_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = datum(b, l + 1);
+    r = consumeToken(b, U_BRACKET_LEFT);
     r = r && reqParamsAndAnnotations(b, l + 1);
+    r = r && consumeToken(b, U_BRACKET_RIGHT);
     exit_section_(b, m, null, r);
     return r;
   }

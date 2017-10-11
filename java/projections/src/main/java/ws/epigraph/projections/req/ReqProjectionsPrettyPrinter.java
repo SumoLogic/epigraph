@@ -91,7 +91,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
 //      if (mp.keysRequired()) l.print("+");
 
       if (keys != null && keys.size() == 1) {
-        printReqKey(keys.iterator().next());
+        printReqKey(keys.iterator().next(), true);
       } else
         throw new IllegalArgumentException(
             String.format(
@@ -122,7 +122,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
             nbsp();
           }
 
-          printReqKey(key);
+          printReqKey(key, false);
         }
         if (!first) brk();
       }

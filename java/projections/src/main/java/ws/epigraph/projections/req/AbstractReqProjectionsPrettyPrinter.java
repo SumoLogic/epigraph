@@ -18,13 +18,12 @@ package ws.epigraph.projections.req;
 
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
-import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.gen.*;
+import ws.epigraph.projections.gen.GenFieldProjectionEntry;
+import ws.epigraph.projections.gen.GenRecordModelProjection;
+import ws.epigraph.projections.gen.GenTagProjectionEntry;
+import ws.epigraph.projections.gen.GenVarProjection;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,25 +36,13 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends AbstractReqFieldProjection<VP, TP, MP, FP>,
-    E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
-
-  protected @NotNull DataPrinter<E> dataPrinter;
-  protected @NotNull DataPrinter<E> paramsDataPrinter;
+    E extends Exception> extends AbstractReqPrettyPrinter<VP, TP, MP, E> {
 
   protected AbstractReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
       final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
     super(layouter, context);
 
-    dataPrinter = new DataPrinter<>(layouter, false);
-
-    paramsDataPrinter = new DataPrinter<E>(layouter, true) {
-      @Override
-      protected Layouter<E> brk(final int i) { return lo; }
-
-      @Override
-      protected Layouter<E> brk(final int i, final int k) { return lo; }
-    };
   }
 
   @Override
@@ -86,36 +73,6 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     l.print("@");
     printModel(metaProjection, 0);
     return false;
-  }
-
-  protected void printParams(@NotNull ReqParams params) throws E { // move to req common?
-    l.beginCInd();
-    if (!params.isEmpty()) {
-      for (ReqParam param : params.asMap().values()) {
-        l.beginIInd();
-        l.print(";").print(param.name());
-        brk().print("=");
-        brk();
-        paramsDataPrinter.print(null, param.value());
-        l.end();
-      }
-    }
-    l.end();
-  }
-
-  public void printDirectives(@NotNull Directives directives) throws E {
-    l.beginCInd();
-    if (!directives.isEmpty()) {
-      for (Directive directive : directives.asMap().values()) {
-        l.beginIInd();
-        l.print("!").print(directive.name());
-        brk().print("=");
-        brk();
-        gdataPrettyPrinter.print(directive.value());
-        l.end();
-      }
-    }
-    l.end();
   }
 
   public void print(@NotNull RP recordProjection, int pathSteps) throws E {
@@ -197,11 +154,6 @@ public abstract class AbstractReqProjectionsPrettyPrinter<
     return super.modelParamsEmpty(mp) && mp.directives().isEmpty() && mp.params().isEmpty();
   }
 
-  protected void printReqKey(final AbstractReqKeyProjection key) throws E {
-    dataPrinter.print(null, key.value());
-    printParams(key.params());
-    printDirectives(key.directives());
-  }
 
 //  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
 //      throws E {

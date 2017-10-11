@@ -344,7 +344,9 @@ public final class OpPathPsiParser {
           context
       );
 
-    final @NotNull SchemaOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
+    final @Nullable SchemaOpFieldPath fieldPathPsi = fieldPathEntryPsi.getOpFieldPath();
+    if (fieldPathPsi == null)
+      throw new PsiProcessingException(String.format("Incomplete field '%s' path", fieldName), psi, context);
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(fieldPathEntryPsi);
 

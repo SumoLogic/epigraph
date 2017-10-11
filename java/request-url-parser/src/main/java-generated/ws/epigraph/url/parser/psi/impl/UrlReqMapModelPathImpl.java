@@ -67,6 +67,18 @@ public class UrlReqMapModelPathImpl extends ASTWrapperPsiElement implements UrlR
   }
 
   @Override
+  @Nullable
+  public PsiElement getBracketLeft() {
+    return findChildByType(U_BRACKET_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getBracketRight() {
+    return findChildByType(U_BRACKET_RIGHT);
+  }
+
+  @Override
   @NotNull
   public PsiElement getSlash() {
     return findNotNullChildByType(U_SLASH);

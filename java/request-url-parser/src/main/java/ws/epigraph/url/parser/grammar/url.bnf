@@ -134,6 +134,7 @@ private reqParamsAndAnnotations ::= ( reqParam | reqAnnotation )*
 // req path --------------------------------------------------------
 
 // no tails, no branching, no meta
+// keep syntax in sync with req*Trunk*
 
 // used by (client) request builders
 reqEntityPath ::= ( ':' tagName)? reqModelPath
@@ -192,7 +193,7 @@ reqTrunkRecordModelProjection ::= '/' '+'? qid reqTrunkFieldProjection {pin=3}
 reqTrunkFieldProjection ::= /* reqParamsAndAnnotations */ reqTrunkEntityProjection
 
 reqTrunkMapModelProjection ::= '/' reqTrunkKeyProjection '+'? reqTrunkEntityProjection
-private reqTrunkKeyProjection ::= datum reqParamsAndAnnotations {pin=2}
+private reqTrunkKeyProjection ::= datum ( '[' reqParamsAndAnnotations ']' )? {pin=1}
 
 // req output coma part
 

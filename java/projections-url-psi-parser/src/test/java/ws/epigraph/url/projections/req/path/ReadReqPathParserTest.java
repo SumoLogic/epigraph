@@ -56,7 +56,7 @@ public class ReadReqPathParserTest {
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
-          "    / . { ;p3:epigraph.String }",
+          "    / . [ ;p3:epigraph.String ]",
           "      :`record` { ;p4:epigraph.String }",
           "        / bestFriend"
       )
@@ -64,14 +64,14 @@ public class ReadReqPathParserTest {
 
   @Test
   public void testParsePath() {
-    testParse(personOpPath, ":record / friendsMap / 'John';p3 = 'foo' :record / bestFriend");
+    testParse(personOpPath, ":record / friendsMap / 'John'[;p3 = 'foo'] :record / bestFriend");
   }
 
   @Test
   public void testParseParam() {
     testParse(
         personOpPath,
-        ":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John';p3 = 'c' :record ;p4 = 'd' / bestFriend"
+        ":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John'[;p3 = 'c'] :record ;p4 = 'd' / bestFriend"
     );
   }
 

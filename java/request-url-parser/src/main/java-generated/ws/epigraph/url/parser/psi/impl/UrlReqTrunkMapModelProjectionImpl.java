@@ -68,6 +68,18 @@ public class UrlReqTrunkMapModelProjectionImpl extends ASTWrapperPsiElement impl
 
   @Override
   @Nullable
+  public PsiElement getBracketLeft() {
+    return findChildByType(U_BRACKET_LEFT);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getBracketRight() {
+    return findChildByType(U_BRACKET_RIGHT);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getPlus() {
     return findChildByType(U_PLUS);
   }

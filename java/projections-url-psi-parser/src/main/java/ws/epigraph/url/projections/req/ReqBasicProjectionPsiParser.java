@@ -143,7 +143,7 @@ public final class ReqBasicProjectionPsiParser {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefTrunkEntityProjection(
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefTrunkEntityProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull OpEntityProjection op,
@@ -175,7 +175,7 @@ public final class ReqBasicProjectionPsiParser {
     }
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedTrunkEntityProjection(
+  private static @NotNull StepsAndProjection<ReqEntityProjection> parseUnnamedTrunkEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
@@ -197,14 +197,13 @@ public final class ReqBasicProjectionPsiParser {
       parenthesized = true;
 
       tagProjections = new LinkedHashMap<>();
-      addStarTags(op, tagProjections, typesResolver, context, psi);
+      addStarTags(op, tagProjections, typesResolver, psi);
     } else if (singleTagProjectionPsi != null) {
       // try to improve error reporting: singleTagProjectionPsi may be empty
       TextLocation tagLocation = getSingleTagLocation(singleTagProjectionPsi);
 
       tagProjections = new LinkedHashMap<>();
 
-      final ReqModelProjection<?, ?, ?> parsedModelProjection;
       final @Nullable UrlTagName tagNamePsi = singleTagProjectionPsi.getTagName();
 
       @Nullable TagApi tag = findTag(dataType, getTagName(tagNamePsi), op, tagLocation, context);
@@ -266,14 +265,13 @@ public final class ReqBasicProjectionPsiParser {
             context
         );
 
-        parsedModelProjection = stepsAndProjection.projection();
         steps = stepsAndProjection.pathSteps() + 1;
 
         tagProjections.put(
             tag.name(),
             new ReqTagProjectionEntry(
                 tag,
-                parsedModelProjection,
+                stepsAndProjection.projection(),
                 tagLocation
             )
         );
@@ -348,7 +346,6 @@ public final class ReqBasicProjectionPsiParser {
       final @NotNull OpEntityProjection op,
       final @NotNull LinkedHashMap<String, ReqTagProjectionEntry> tagProjections,
       final @NotNull TypesResolver resolver,
-      final @NotNull ReqPsiProcessingContext context,
       final @NotNull PsiElement locationPsi) throws PsiProcessingException {
 
     TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
@@ -385,7 +382,7 @@ public final class ReqBasicProjectionPsiParser {
 
   // coma var ================================================
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
+  static @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
@@ -473,7 +470,7 @@ public final class ReqBasicProjectionPsiParser {
 
   }
 
-  public static StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefComaEntityProjection(
+  private static StepsAndProjection<ReqEntityProjection> parseUnnamedOrRefComaEntityProjection(
       final @NotNull DataTypeApi dataType,
       boolean flagged,
       final @NotNull OpEntityProjection op,
@@ -524,7 +521,7 @@ public final class ReqBasicProjectionPsiParser {
 
   }
 
-  public static StepsAndProjection<ReqEntityProjection> parseUnnamedComaEntityProjection(
+  private static StepsAndProjection<ReqEntityProjection> parseUnnamedComaEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpEntityProjection op,
@@ -544,7 +541,7 @@ public final class ReqBasicProjectionPsiParser {
       parenthesized = true;
 
       tagProjections = new LinkedHashMap<>();
-      addStarTags(op, tagProjections, typesResolver, context, psi);
+      addStarTags(op, tagProjections, typesResolver, psi);
     } else if (singleTagProjectionPsi != null) {
       tagProjections = new LinkedHashMap<>();
 
@@ -1015,7 +1012,7 @@ public final class ReqBasicProjectionPsiParser {
   private static void checkModelPsi(
       @NotNull UrlReqTrunkModelProjection psi,
       @NotNull TypeKind expectedKind,
-      @NotNull ReqPsiProcessingContext context) {
+      @NotNull PsiProcessingContext context) {
 
     TypeKind actualKind = null;
 
@@ -1210,7 +1207,7 @@ public final class ReqBasicProjectionPsiParser {
   private static void checkModelPsi(
       @NotNull UrlReqComaModelProjection psi,
       @NotNull TypeKind expectedKind,
-      @NotNull ReqPsiProcessingContext context) {
+      @NotNull PsiProcessingContext context) {
 
     TypeKind actualKind = null;
 
@@ -1455,7 +1452,7 @@ public final class ReqBasicProjectionPsiParser {
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
+  static @NotNull StepsAndProjection<ReqFieldProjection> parseTrunkFieldProjection(
       @NotNull DataTypeApi fieldType,
       boolean flagged,
       @NotNull OpFieldProjection op,
@@ -1667,9 +1664,6 @@ public final class ReqBasicProjectionPsiParser {
         EpigraphPsiUtil.getLocation(psi)
     );
 
-    final int steps;
-    final ReqEntityProjection valueProjection;
-
     @Nullable UrlReqTrunkEntityProjection valueProjectionPsi = psi.getReqTrunkEntityProjection();
     StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseTrunkEntityProjection(
@@ -1682,11 +1676,8 @@ public final class ReqBasicProjectionPsiParser {
             context
         );
 
-    valueProjection = stepsAndProjection.projection();
-    steps = stepsAndProjection.pathSteps() + 1;
-
     return new StepsAndProjection<>(
-        steps,
+        stepsAndProjection.pathSteps() + 1,
         new ReqMapModelProjection(
             op.type(),
             flag,
@@ -1695,7 +1686,7 @@ public final class ReqBasicProjectionPsiParser {
             metaProjection,
             Collections.singletonList(keyProjection),
             psi.getPlus() != null,
-            valueProjection,
+            stepsAndProjection.projection(),
             tails,
             EpigraphPsiUtil.getLocation(psi)
         )

@@ -152,7 +152,7 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParsePathMap() {
-    testParse(":record / friendsMap / 'John';keyParam = 'foo' :record ( +firstName )", 5);
+    testParse(":record / friendsMap / 'John'[;keyParam = 'foo'] :record ( +firstName )", 5);
   }
 
   @Test

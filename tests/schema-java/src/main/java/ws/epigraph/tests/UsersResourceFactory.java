@@ -434,18 +434,19 @@ public class UsersResourceFactory extends AbstractUsersResourceFactory {
         if (personRecord != null) {
           if (inputFieldProjection != null) {
             @NotNull InputPersonRecordProjection inputProjection = inputFieldProjection.dataProjection();
+            boolean useLowerCase = inputProjection.getUseLowerCaseParameter();
 
             if (inputProjection.firstName() != null) {
               final String firstName = personRecord.getFirstName();
               if (firstName != null) {
-                personRecord.setFirstName(firstName.toUpperCase());
+                personRecord.setFirstName(useLowerCase ? firstName.toLowerCase() : firstName.toUpperCase());
               }
             }
 
             if (inputProjection.lastName() != null) {
               final String lastName = personRecord.getFirstName();
               if (lastName != null) {
-                personRecord.setFirstName(lastName.toUpperCase());
+                personRecord.setFirstName(useLowerCase ? lastName.toLowerCase() : lastName.toUpperCase());
               }
             }
 

@@ -346,11 +346,38 @@ public abstract class AbstractHttpClientTest {
     testCustom(
         UsersResourceDeclaration.capitalizeCustomOperationDeclaration,
         "/" + key,
+        null,
+        null,
+        "(firstName,lastName)",
+        "null"
+    );
+
+//    testCustom(
+//        UsersResourceDeclaration.capitalizeCustomOperationDeclaration,
+//        "/" + key,
+//        ";useLowerCase=true",
+//        null,
+//        "(firstName,lastName)",
+//        "null"
+//    );
+
+    testCustom(
+        UsersResourceDeclaration.capitalizeCustomOperationDeclaration,
+        "/" + key,
         "(lastName)",
         null,
         "(firstName,lastName)",
         "{ firstName: 'FIRST', lastName: 'last' }"
     );
+
+//    testCustom(
+//        UsersResourceDeclaration.capitalizeCustomOperationDeclaration,
+//        "/" + key,
+//        ";useLowerCase=false(lastName)",
+//        null,
+//        "(firstName,lastName)",
+//        "{ firstName: 'first', lastName: 'last' }"
+//    );
 
     testDelete(
         UsersResourceDeclaration.deleteOperationDeclaration,

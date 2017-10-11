@@ -53,7 +53,7 @@ public class ReqPathParserTest {
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
-          "    / . { ;p3:epigraph.String }",
+          "    / . [ ;p3:epigraph.String ]",
           "      :`record` { ;p4:epigraph.String }",
           "        / id { ;p5:epigraph.String }"
       )
@@ -61,17 +61,17 @@ public class ReqPathParserTest {
 
   @Test
   public void testParsePath() {
-    testParse(":record / friendsMap / 'John';p3 = 'foo' :record / id");
+    testParse(":record / friendsMap / 'John'[;p3 = 'foo'] :record / id");
   }
 
   @Test
   public void testParseParam() {
-    testParse(":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John';p3 = 'c' :record ;p4 = 'd' / id ;p5 = 'e'");
+    testParse(":record ;p1 = 'a' / friendsMap ;p2 = 'b' / 'John'[;p3 = 'c'] :record ;p4 = 'd' / id ;p5 = 'e'");
   }
 
   @Test
   public void testShortPathNotMatching() {
-    String expr = ":record / friendsMap / 'John' ;p3 = 'foo' :record";
+    String expr = ":record / friendsMap / 'John'[;p3 = 'foo'] :record";
     UrlReqEntityPath psi = getPsi(expr);
 
     try {

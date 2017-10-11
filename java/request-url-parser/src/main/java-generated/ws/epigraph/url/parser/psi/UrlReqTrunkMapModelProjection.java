@@ -36,6 +36,12 @@ public interface UrlReqTrunkMapModelProjection extends PsiElement {
   UrlReqTrunkEntityProjection getReqTrunkEntityProjection();
 
   @Nullable
+  PsiElement getBracketLeft();
+
+  @Nullable
+  PsiElement getBracketRight();
+
+  @Nullable
   PsiElement getPlus();
 
   @NotNull

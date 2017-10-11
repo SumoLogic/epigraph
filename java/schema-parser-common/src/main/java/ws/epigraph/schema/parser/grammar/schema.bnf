@@ -467,7 +467,6 @@ opParam ::= ';' '+'? qid ':' typeRef opModelProjection /*opParamDefault?*/ /* op
 //private opParamBody ::= '{' ( opParamBodyPart ','? )* '}'
 //private opParamBodyPart ::= opParam | annotation
 
-private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 
 opKeyProjection ::= 'projection' ':' opModelProjection { pin=1 }
 
@@ -487,7 +486,7 @@ opModelPathProperty ::= opParam | annotation
 
 // op record path
 opRecordModelPath ::= '/' opFieldPathEntry
-opFieldPathEntry ::= qid opFieldPath
+opFieldPathEntry ::= qid opFieldPath {pin=1}
 opFieldPath ::= /* opFieldPathBody? */ opEntityPath // {pin=1}
 //private opFieldPathBody ::= '{' (opFieldPathBodyPart ','? )* '}'
 //opFieldPathBodyPart ::= opParam | annotation
@@ -495,8 +494,9 @@ opFieldPath ::= /* opFieldPathBody? */ opEntityPath // {pin=1}
 // op map path
 opMapModelPath ::= '/' opPathKeyProjection opEntityPath {pin=2}
 opPathKeyProjection ::= '.' opPathKeyProjectionBody? {pin=1}
-opPathKeyProjectionBody ::= '{' (opPathKeyProjectionPart ','?)*  '}' {pin=1}
-opPathKeyProjectionPart ::= opKeyProjection | opParam | annotation
+opPathKeyProjectionBody ::= '[' (opPathKeyProjectionPart ','?)*  ']' {pin=1}
+opPathKeyProjectionPart ::= opKeyProjection | opParam | annotation {recoverWhile = opPathKeyProjectionRecover}
+private opPathKeyProjectionRecover ::= ! ( ',' | ']' )
 
 // -------------------------------------------------------------------------------------------------------------- output
 
@@ -542,6 +542,7 @@ opModelMeta ::= 'meta' ':' '+'? opModelProjection
 // op output record
 opRecordModelProjection ::= '(' (opFieldProjectionEntry ','?)* ')' { pin=1 }
 opFieldProjectionEntry ::= '+'? qid opFieldProjection { pin=2 recoverWhile=recordModelProjectionRecover}
+private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
 opFieldProjection ::= opEntityProjection
 
 // op output list

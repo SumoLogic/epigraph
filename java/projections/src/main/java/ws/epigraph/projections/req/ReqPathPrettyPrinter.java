@@ -19,22 +19,17 @@ package ws.epigraph.projections.req;
 import de.uka.ilkd.pp.Layouter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
-import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqPathPrettyPrinter<E extends Exception>
-    extends AbstractProjectionsPrettyPrinter<ReqEntityProjection, ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>, E> {
-
-  protected @NotNull DataPrinter<E> dataPrinter;
+    extends AbstractReqPrettyPrinter<ReqEntityProjection, ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>, E> {
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
-    dataPrinter = new DataPrinter<>(layouter);
   }
 
   @Override
@@ -113,9 +108,7 @@ public class ReqPathPrettyPrinter<E extends Exception>
     l.print("/");
     brk();
 
-    dataPrinter.print(null, key.value());
-    printParams(key.params());
-    printDirectives(key.directives());
+    printReqKey(key, true);
 
     if (!isPrintoutEmpty(mp.itemsProjection()))
       brk();
@@ -130,19 +123,6 @@ public class ReqPathPrettyPrinter<E extends Exception>
       return super.isPrintoutNoParamsEmpty(mp);
 
     return !(mp instanceof ReqMapModelProjection); // map key always present
-  }
-
-  private void printParams(@NotNull ReqParams params) throws E { // move to req common?
-    if (!params.isEmpty()) {
-      for (ReqParam param : params.asMap().values()) {
-        l.beginIInd();
-        l.print(";").print(param.name());
-        brk().print("=");
-        brk();
-        dataPrinter.print(null, param.value());
-        l.end();
-      }
-    }
   }
 
   @Override
@@ -160,16 +140,4 @@ public class ReqPathPrettyPrinter<E extends Exception>
     return modelPath.params().isEmpty() && modelPath.directives().isEmpty();
   }
 
-  public void printDirectives(@NotNull Directives directives) throws E {
-    if (!directives.isEmpty()) {
-      for (Directive directive : directives.asMap().values()) {
-        l.beginIInd();
-        l.print("!").print(directive.name());
-        brk().print("=");
-        brk();
-        gdataPrettyPrinter.print(directive.value());
-        l.end();
-      }
-    }
-  }
 }

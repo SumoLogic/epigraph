@@ -86,15 +86,13 @@ public class SchemaSyntaxHighlighter extends SyntaxHighlighterBase {
     }
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return SchemaFlexAdapter.newInstance();
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public @NotNull TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(keys.get(tokenType), EMPTY);
   }
 }

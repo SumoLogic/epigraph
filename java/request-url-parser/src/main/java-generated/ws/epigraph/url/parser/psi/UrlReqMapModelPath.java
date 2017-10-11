@@ -35,6 +35,12 @@ public interface UrlReqMapModelPath extends PsiElement {
   @NotNull
   List<UrlReqParam> getReqParamList();
 
+  @Nullable
+  PsiElement getBracketLeft();
+
+  @Nullable
+  PsiElement getBracketRight();
+
   @NotNull
   PsiElement getSlash();
 

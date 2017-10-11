@@ -81,7 +81,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
     if (!keyParams.isEmpty() || !keyAnnotations.isEmpty()) {
       l.beginCInd();
-      brk().print("{");
+      brk().print("[");
 
       boolean commaNeeded = false;
 
@@ -92,7 +92,7 @@ public class OpPathPrettyPrinter<E extends Exception>
 
       if (!keyAnnotations.isEmpty()) printAnnotations(keyAnnotations, true, !commaNeeded);
 
-      brk(1, -l.getDefaultIndentation()).end().print("}");
+      brk(1, -l.getDefaultIndentation()).end().print("]");
     } else {
       if (!isPrintoutEmpty(mp.itemsProjection())) brk();
     }
