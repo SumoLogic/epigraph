@@ -33,6 +33,7 @@ public class StepsAndProjection<P> {
   private final @NotNull P projection;
 
   public StepsAndProjection(int pathSteps, @NotNull P projection) {
+    if (pathSteps < 0) throw new IllegalArgumentException("Path steps: " + pathSteps);
     this.pathSteps = pathSteps;
     this.projection = projection;
   }

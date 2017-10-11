@@ -28,7 +28,9 @@ import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.*;
+import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
+import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
@@ -356,26 +358,28 @@ public final class ReqBasicProjectionPsiParser {
       final OpModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
 
       DefaultReqProjectionConstructor defaultProjectionConstructor =
-          new DefaultReqProjectionConstructor(DefaultReqProjectionConstructor.Mode.INCLUDE_NONE);
+          new DefaultReqProjectionConstructor(DefaultReqProjectionConstructor.Mode.INCLUDE_NONE, true, false);
 
-      tagProjections.put(
-          entry.getKey(),
-          new ReqTagProjectionEntry(
-              tag,
-              defaultProjectionConstructor.createDefaultModelProjection(
-                  ReqRecordModelProjection.class,
-                  tag.type(),
-                  false,
-                  opModelProjection,
-                  null,
-                  Directives.EMPTY,
-                  resolver,
-                  location,
-                  context
-              ),
-              location
-          )
+      PsiProcessingContext errorsIgnoringContext = new DefaultPsiProcessingContext();
+
+      ReqTagProjectionEntry tpe = new ReqTagProjectionEntry(
+          tag,
+          defaultProjectionConstructor.createDefaultModelProjection(
+              ReqRecordModelProjection.class,
+              tag.type(),
+              false,
+              opModelProjection,
+              null,
+              Directives.EMPTY,
+              resolver,
+              location,
+              errorsIgnoringContext
+          ),
+          location
       );
+
+      if (errorsIgnoringContext.messages().isEmpty())
+        tagProjections.put(entry.getKey(), tpe);
     }
   }
 
@@ -1590,33 +1594,36 @@ public final class ReqBasicProjectionPsiParser {
       TextLocation location = EpigraphPsiUtil.getLocation(psi.getReqAll());
 
       DefaultReqProjectionConstructor defaultStarProjectionConstructor =
-          new DefaultReqProjectionConstructor(DefaultReqProjectionConstructor.Mode.INCLUDE_NONE);
+          new DefaultReqProjectionConstructor(DefaultReqProjectionConstructor.Mode.INCLUDE_NONE, true, false);
 
       for (final Map.Entry<String, OpFieldProjectionEntry> entry : opFields.entrySet()) {
         final FieldApi field = entry.getValue().field();
         final @NotNull OpFieldProjection opFieldProjection = entry.getValue().fieldProjection();
 
-        fieldProjections.put(
-            entry.getKey(),
-            new ReqFieldProjectionEntry(
-                field,
-                new ReqFieldProjection(
+        // ignore fields that cause errors (e.g. required paramters missing)
+        PsiProcessingContext ignoredErrorsCtx = new DefaultPsiProcessingContext();
+
+        ReqFieldProjectionEntry fpe = new ReqFieldProjectionEntry(
+            field,
+            new ReqFieldProjection(
 //                    ReqParams.EMPTY,
 //                    Annotations.EMPTY,
-                    defaultStarProjectionConstructor.createDefaultEntityProjection(
-                        field.dataType(),
-                        opFieldProjection.entityProjection(),
-                        false,
-                        resolver,
-                        EpigraphPsiUtil.getLocation(psi.getReqAll()),
-                        context
-                    ),
-//                    false,
-                    location
+                defaultStarProjectionConstructor.createDefaultEntityProjection(
+                    field.dataType(),
+                    opFieldProjection.entityProjection(),
+                    false,
+                    resolver,
+                    EpigraphPsiUtil.getLocation(psi.getReqAll()),
+                    ignoredErrorsCtx
                 ),
+//                    false,
                 location
-            )
+            ),
+            location
         );
+
+        if (ignoredErrorsCtx.messages().isEmpty())
+          fieldProjections.put(entry.getKey(), fpe);
       }
 
     }

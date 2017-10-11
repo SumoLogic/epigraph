@@ -89,7 +89,7 @@ public class ReqInputProjectionParserTest {
         lines(
             ":record (",
             "  id,",
-            "  bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ),",
+            "  bestFriend :( +id, record ( +id, bestFriend :record ( id, firstName ) ) ),",
             "  bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
             "  bestFriend3",
             "    :(",
@@ -117,7 +117,7 @@ public class ReqInputProjectionParserTest {
             "  id,",
             "  record (",
             "    id,",
-            "    bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ),",
+            "    bestFriend :( +id, record ( +id, bestFriend :record ( id, firstName ) ) ),",
             "    bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
             "    bestFriend3",
             "      :(",

@@ -51,7 +51,7 @@ public class DefaultReqProjectionConstructorTest {
       epigraph.Integer.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpOutputVarProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpOutputEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -145,7 +145,7 @@ public class DefaultReqProjectionConstructorTest {
   public void testRetro() throws PsiProcessingException {
     test(
         dataType,
-        parsePersonOpOutputVarProjection(":`record`(+bestFriend2)"),
+        parsePersonOpOutputEntityProjection(":`record`(+bestFriend2)"),
         DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
         ":record ( bestFriend2 :id )"
     );
@@ -153,9 +153,25 @@ public class DefaultReqProjectionConstructorTest {
 
   @Test
   public void testMeta() throws PsiProcessingException {
+    OpEntityProjection op = parsePersonOpOutputEntityProjection(":`record`(friendsMap2 {meta:(+start,count)}[](:+id))");
+
     test(
         dataType,
-        parsePersonOpOutputVarProjection(":`record`(friendsMap2 {meta:(start,count)}[](:id))"),
+        op,
+        DefaultReqProjectionConstructor.Mode.INCLUDE_NONE,
+        ":()"
+    );
+
+    test(
+        dataType,
+        op,
+        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        ":record ( friendsMap2 @( start ) [ * ]( :id ) )"
+    );
+
+    test(
+        dataType,
+        op,
         DefaultReqProjectionConstructor.Mode.INCLUDE_ALL,
         ":record ( friendsMap2 @( start, count ) [ * ]( :id ) )"
     );
@@ -216,7 +232,7 @@ public class DefaultReqProjectionConstructorTest {
       throws PsiProcessingException {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
-    ReqEntityProjection req = new DefaultReqProjectionConstructor(mode).createDefaultEntityProjection(
+    ReqEntityProjection req = new DefaultReqProjectionConstructor(mode, true, false).createDefaultEntityProjection(
         type,
         op,
         false,
@@ -235,7 +251,7 @@ public class DefaultReqProjectionConstructorTest {
     return req;
   }
 
-  private @NotNull OpEntityProjection parsePersonOpOutputVarProjection(@NotNull String projectionString) {
+  private @NotNull OpEntityProjection parsePersonOpOutputEntityProjection(@NotNull String projectionString) {
     return ReqTestUtil.parseOpOutputEntityProjection(dataType, projectionString, resolver);
   }
 

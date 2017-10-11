@@ -109,7 +109,8 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
       l.print("[");
 
       if (keys == null) {
-        brk().print("*").brk();
+        brk().print("*");
+        brk();
       } else {
         boolean first = true;
         for (ReqKeyProjection key : keys) {

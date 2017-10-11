@@ -21,8 +21,6 @@ import ws.epigraph.url.projections.req.DefaultReqProjectionConstructor;
 import ws.epigraph.url.projections.req.PostProcessingReqProjectionPsiParser;
 import ws.epigraph.url.projections.req.postprocess.ReqRequiredChecker;
 
-import static ws.epigraph.url.projections.req.DefaultReqProjectionConstructor.Mode.INCLUDE_ALL;
-
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -32,7 +30,7 @@ public final class ReqUpdateProjectionPsiParser extends PostProcessingReqProject
     super(
         new ReqRequiredChecker(context),
         new ReqUpdatePostProcessor(context),
-        new DefaultReqProjectionConstructor(INCLUDE_ALL)
+        DefaultReqProjectionConstructor.updateProjectionDefaultConstructor()
     );
   }
 }

@@ -34,7 +34,7 @@ public final class ReqDeleteProjectionPsiParser extends PostProcessingReqProject
     super(
         new ReqFlaggedNotSupportedChecker(messagesContext),
         new ReqRequiredSynchronizer(messagesContext),
-        new DefaultReqProjectionConstructor(INCLUDE_NONE)
+        new DefaultReqProjectionConstructor(INCLUDE_NONE, true, false)
     );
   }
 }

@@ -50,11 +50,34 @@ public class DefaultReqProjectionConstructor {
   }
 
   private final @NotNull Mode mode;
+  private final boolean checkForRequiredMapKeys;
+  private final boolean copyFlagsFromOp;
+
   private final WeakHashMap<ProjectionReferenceName, ReqEntityProjection> visitedEntityRefs = new WeakHashMap<>();
 
-  public DefaultReqProjectionConstructor(final @NotNull Mode mode) {
+  public DefaultReqProjectionConstructor(
+      final @NotNull Mode mode,
+      final boolean checkForRequiredMapKeys,
+      final boolean copyFlagsFromOp) {
+
     this.mode = mode;
+    this.checkForRequiredMapKeys = checkForRequiredMapKeys;
+    this.copyFlagsFromOp = copyFlagsFromOp;
   }
+
+  public static DefaultReqProjectionConstructor outputProjectionDefaultConstructor() {
+    return new DefaultReqProjectionConstructor(Mode.INCLUDE_FLAGGED_ONLY, true, false);
+  }
+
+  public static DefaultReqProjectionConstructor inputProjectionDefaultConstructor() {
+    return new DefaultReqProjectionConstructor(Mode.INCLUDE_ALL, false, true);
+  }
+
+  public static DefaultReqProjectionConstructor updateProjectionDefaultConstructor() {
+    return new DefaultReqProjectionConstructor(Mode.INCLUDE_ALL, false, false);
+  }
+
+//  public boolean checkForRequiredMapKeys() { return checkForRequiredMapKeys; }
 
   public @NotNull ReqEntityProjection createDefaultEntityProjection(
       @NotNull DataTypeApi dataType,
@@ -137,8 +160,8 @@ public class DefaultReqProjectionConstructor {
     LinkedHashMap<String, ReqTagProjectionEntry> tagProjections = new LinkedHashMap<>();
 
     for (TagApi tag : tags) {
-      final OpTagProjectionEntry opOutputTagProjection = op.tagProjections().get(tag.name());
-      if (opOutputTagProjection != null) {
+      final OpTagProjectionEntry opTagProjection = op.tagProjections().get(tag.name());
+      if (opTagProjection != null) {
         tagProjections.put(
             tag.name(),
             new ReqTagProjectionEntry(
@@ -146,8 +169,8 @@ public class DefaultReqProjectionConstructor {
                 createDefaultModelProjection(
                     ReqRecordModelProjection.class,
                     tag.type(),
-                    flag,
-                    opOutputTagProjection.projection(),
+                    copyFlagsFromOp && opTagProjection.projection().flag(),
+                    opTagProjection.projection(),
                     null,
                     Directives.EMPTY,
                     resolver,
@@ -173,7 +196,7 @@ public class DefaultReqProjectionConstructor {
               createDefaultEntityProjection(
                   opTail.type().dataType(),
                   opTail,
-                  false,
+                  copyFlagsFromOp && opTail.flag(),
                   resolver,
                   location,
                   context
@@ -185,7 +208,7 @@ public class DefaultReqProjectionConstructor {
 
     return new ReqEntityProjection(
         type,
-        false,
+        flag,
         tagProjections,
         op.parenthesized() || tagProjections.size() != 1,
         tails != null && tails.isEmpty() ? null : tails,
@@ -208,7 +231,7 @@ public class DefaultReqProjectionConstructor {
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     if (params == null)
-      params = getDefaultParams(op, resolver, context);
+      params = getDefaultParams(op, resolver, location, context);
 
     switch (type.kind()) {
       case RECORD:
@@ -235,7 +258,7 @@ public class DefaultReqProjectionConstructor {
                           createDefaultEntityProjection(
                               fpe.field().dataType(),
                               fieldProjection.entityProjection(),
-                              false,
+                              copyFlagsFromOp && fieldProjection.flag(),
                               resolver,
                               location,
                               context
@@ -264,7 +287,7 @@ public class DefaultReqProjectionConstructor {
       case MAP:
         OpMapModelProjection opMap = (OpMapModelProjection) op;
 
-        if (opMap.keyProjection().presence() == AbstractOpKeyPresence.REQUIRED)
+        if (opMap.keyProjection().presence() == AbstractOpKeyPresence.REQUIRED && checkForRequiredMapKeys)
           throw new PsiProcessingException(
               String.format("Can't build default projection for '%s': keys are required", type.name()),
               location,
@@ -344,19 +367,24 @@ public class DefaultReqProjectionConstructor {
     }
   }
 
-  private <MP extends ReqModelProjection<?, ?, ?>> MP createDefaultMetaProjection(
+  private <MP extends ReqModelProjection<?, ?, ?>> @Nullable MP createDefaultMetaProjection(
       @NotNull Class<MP> modelClass,
       final @NotNull OpModelProjection<?, ?, ?, ?> op,
       @NotNull TypesResolver resolver,
       final @NotNull TextLocation location,
       final @NotNull PsiProcessingContext context) {
 
+    if (mode == Mode.INCLUDE_NONE)
+      return null;
+
     return Optional.ofNullable(op.metaProjection()).map(mp -> {
+      if (mode == Mode.INCLUDE_FLAGGED_ONLY && !mp.flag())
+        return null;
       try {
         return createDefaultModelProjection(
             modelClass,
             mp.type(),
-            false,
+            copyFlagsFromOp && mp.flag(),
             mp,
             null,
             Directives.EMPTY,
@@ -399,7 +427,7 @@ public class DefaultReqProjectionConstructor {
         return createDefaultModelProjection(
             modelClass,
             ot.type(),
-            false,
+            copyFlagsFromOp && ot.flag(),
             ot,
             null,
             Directives.EMPTY,
@@ -418,11 +446,28 @@ public class DefaultReqProjectionConstructor {
   private @NotNull ReqParams getDefaultParams(
       @NotNull OpModelProjection<?, ?, ?, ?> mp,
       @NotNull TypesResolver resolver,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context
   ) {
     OpParams opParams = mp.params();
     if (opParams.isEmpty())
       return ReqParams.EMPTY;
+
+    // check that there are no required parameters without defaults
+    List<String> opRequiredParamsWithoutDefaults = opParams.asMap()
+        .values()
+        .stream()
+        .filter(opParam -> opParam.projection().flag() && opParam.projection().defaultValue() == null)
+        .map(OpParam::name)
+        .collect(Collectors.toList());
+
+    if (!opRequiredParamsWithoutDefaults.isEmpty()) {
+      context.addError(String.format(
+          "Can't build default projection for '%s': required parameter(s) have no default value: {%s}",
+          mp.type().name(),
+          String.join(", ", opRequiredParamsWithoutDefaults)
+      ), location);
+    }
 
     List<OpParam> opParamsWithDefaults = opParams.asMap()
         .values()

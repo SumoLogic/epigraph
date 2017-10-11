@@ -67,7 +67,7 @@ public class ReqOutputProjectionsParserTest {
           "  id,",
           "  `record` (",
           "    id {",
-          "      ;param1 : epigraph.String,",
+          "      ;param1 : epigraph.String { default: \"p1\" },",
           "      ;param2 : ws.epigraph.tests.UserRecord",
           "    },",
           "    +firstName{;param:epigraph.String},",
@@ -184,14 +184,14 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParseEmptyRecordParam() {
-    testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{} ) )", 0);
+    testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{};param1 = 'p1' ) )", 0);
   }
 
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testParseEmptyRecordFieldParam() {
     ReqEntityProjection
-        vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null} ) )", 0);
+        vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null};param1 = 'p1' ) )", 0);
 
     ReqRecordModelProjection recordProjection =
         (ReqRecordModelProjection) vp.tagProjection("record").projection();
@@ -207,7 +207,7 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParseParamDefault() {
-    testParse(":( id, record ( id ) )", 0); // defaults are not substituted!
+    testParse(":( id, record ( id ;param1 = 'p1' ) )", 0); // defaults are not substituted!
   }
 
   @Test
@@ -224,12 +224,12 @@ public class ReqOutputProjectionsParserTest {
 
   @Test
   public void testParseRecursive() {
-    testParse(":( id, record ( id, bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )", 0);
+    testParse(":( id, record ( id ;param1 = 'p', bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ) ) )", 0);
   }
 
   @Test
   public void testParseRecursiveDifferentOpRecursion() {
-    testParse(":( id, record ( id, bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )", 0);
+    testParse(":( id, record ( id ;param1 = 'p', bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) )", 0);
   }
 
   @Test
@@ -254,7 +254,7 @@ public class ReqOutputProjectionsParserTest {
   public void testParseModelTail() {
     testParse(
         ":record (id) ~+UserRecord (profile)",
-        ":record ( id ) ~+ws.epigraph.tests.UserRecord ( profile )",
+        ":record ( id ;param1 = 'p1' ) ~+ws.epigraph.tests.UserRecord ( profile )",
         1
     );
   }
@@ -289,9 +289,9 @@ public class ReqOutputProjectionsParserTest {
         ":record(...)",
         lines(
             ":record (",
-            "  id,",
+            "  id ;param1 = 'p1',",
             "  firstName,",
-            "  middleName ;param2 = 'p2',",
+//            "  middleName ;param2 = 'p2',", // required param1 missing => field not included
             "  bestFriend :(),",
             "  bestFriend2 $bf2 = :( id ),",
             "  bestFriend3 :(),",
@@ -317,7 +317,7 @@ public class ReqOutputProjectionsParserTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void testRequiredField() {
-    ReqEntityProjection vp = testParse(":record ( +id )", 1);
+    ReqEntityProjection vp = testParse(":record ( +id ;param1 = 'p1' )", 1);
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) vp.tagProjection("record").projection();
     assertTrue(rmp.fieldProjection("id").fieldProjection().flag());
   }
@@ -367,27 +367,27 @@ public class ReqOutputProjectionsParserTest {
     testTailsNormalization(
         ":record(id):~ws.epigraph.tests.User :record(firstName)",
         User.type,
-        ":record ( firstName, id )"
+        ":record ( firstName, id ;param1 = 'p1' )"
     );
 
     testTailsNormalization(
         ":record(id):~ws.epigraph.tests.SubUser :record(firstName)",
         SubUser.type,
-        ":record ( firstName, id )"
+        ":record ( firstName, id ;param1 = 'p1' )"
     );
 
     // parameters merging
     testTailsNormalization(
         ":record(id,firstName;param='foo'):~ws.epigraph.tests.User :record(firstName;param='bar')",
         User.type,
-        ":record ( firstName ;param = 'bar', id )"
+        ":record ( firstName ;param = 'bar', id ;param1 = 'p1' )"
     );
 
     // annotations merging
     testTailsNormalization(
         ":record(id,firstName!doc='doc1'):~ws.epigraph.tests.User :record(firstName!doc='doc2')",
         User.type,
-        ":record ( firstName !doc = \"doc2\", id )"
+        ":record ( firstName !doc = \"doc2\", id ;param1 = 'p1' )"
     );
   }
 
@@ -515,7 +515,7 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testPostProcessor() throws PsiProcessingException {
     // check that model gets flag when field/var is flag
-    ReqEntityProjection p = testParse(":record ( +id )", 1);
+    ReqEntityProjection p = testParse(":record ( +id ;param1 = 'p1' )", 1);
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
     @NotNull ReqFieldProjection fp = rmp.fieldProjection("id").fieldProjection();
     assertTrue(fp.flag());
