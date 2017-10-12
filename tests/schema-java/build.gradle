@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id 'ws.epigraph.java' version '0.0.7'
+  id 'ws.epigraph.java' version '999'
 }
 
 group = 'ws.epigraph.tests'

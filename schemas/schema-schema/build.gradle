@@ -15,7 +15,7 @@
  */
 
 plugins {
-  id 'ws.epigraph' version '0.0.7'
+  id 'ws.epigraph' version '999'
 }
 
 dependencies {

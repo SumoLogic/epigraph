@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.*;
 import ws.epigraph.gdata.validation.OpInputGDataValidator;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.ReferenceContext;
@@ -40,10 +41,7 @@ import ws.epigraph.types.*;
 import ws.epigraph.types.TypeKind;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static ws.epigraph.projections.ProjectionsParsingUtil.*;
 import static ws.epigraph.projections.SchemaProjectionPsiParserUtil.findTag;
@@ -1032,6 +1030,8 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
 
+    TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
+
     switch (type.kind()) {
       case RECORD:
         return new OpRecordModelProjection(
@@ -1043,7 +1043,7 @@ public final class OpBasicProjectionPsiParser {
             null,
             Collections.emptyMap(),
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       case MAP:
         MapTypeApi mapType = (MapTypeApi) type;
@@ -1051,10 +1051,11 @@ public final class OpBasicProjectionPsiParser {
         final OpKeyProjection keyProjection =
             new OpKeyProjection(
                 AbstractOpKeyPresence.OPTIONAL,
+                location,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 null,
-                EpigraphPsiUtil.getLocation(locationPsi)
+                location
             );
 
         @NotNull DataTypeApi valueType = mapType.valueType();
@@ -1084,7 +1085,7 @@ public final class OpBasicProjectionPsiParser {
             keyProjection,
             valueEntityProjection,
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       case LIST:
         ListTypeApi listType = (ListTypeApi) type;
@@ -1114,7 +1115,7 @@ public final class OpBasicProjectionPsiParser {
             null,
             itemEntityProjection,
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       case ENTITY:
         throw new PsiProcessingException(
@@ -1133,7 +1134,7 @@ public final class OpBasicProjectionPsiParser {
             annotations,
             null,
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, context);
@@ -1294,13 +1295,18 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     final AbstractOpKeyPresence presence;
+    final TextLocation presenceLocation;
 
-    if (keySpecPsi.getForbidden() != null)
+    if (keySpecPsi.getForbidden() != null) {
       presence = AbstractOpKeyPresence.FORBIDDEN;
-    else if (keySpecPsi.getRequired() != null)
+      presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi.getForbidden());
+    } else if (keySpecPsi.getRequired() != null) {
       presence = AbstractOpKeyPresence.REQUIRED;
-    else
+      presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi.getRequired());
+    } else {
       presence = AbstractOpKeyPresence.OPTIONAL;
+      presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi);
+    }
 
     final @NotNull List<SchemaOpKeySpecPart> keyPartsPsi =
         keySpecPsi.getOpKeySpecPartList();
@@ -1327,6 +1333,7 @@ public final class OpBasicProjectionPsiParser {
 
     return new OpKeyProjection(
         presence,
+        presenceLocation,
         keyParams,
         keyAnnotations,
         keyProjection,

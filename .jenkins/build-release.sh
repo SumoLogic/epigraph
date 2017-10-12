@@ -60,6 +60,7 @@ set -x
 ./mvnw --show-version --batch-mode -Dbuildtime.output.log "$RELEASE_REPO_OPTION" \
   clean deploy -Plight-psi,release "-Drevision=$NEW_VERSION" -DdeployAtEnd=true
 
+./gradlew -c settings-bootstrap.gradle clean publishGradlePlugins
 ./gradlew -PepigraphVersion=$NEW_VERSION clean :idea-plugin:buildPlugin
 
 git tag "v$NEW_VERSION" && git push origin "v$NEW_VERSION"

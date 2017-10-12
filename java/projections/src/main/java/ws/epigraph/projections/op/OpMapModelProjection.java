@@ -159,6 +159,7 @@ public class OpMapModelProjection
         mergedMetaProjection,
         new OpKeyProjection(
             mergedKeysPresence,
+            TextLocation.UNKNOWN,
             OpParams.merge(keysParams),
             Annotations.merge(keysAnnotations),
             AbstractOpKeyProjection.mergeProjections(

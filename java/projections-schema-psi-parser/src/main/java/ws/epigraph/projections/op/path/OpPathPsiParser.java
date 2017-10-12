@@ -242,6 +242,7 @@ public final class OpPathPsiParser {
       @NotNull Annotations annotations,
       @NotNull PsiElement locationPsi, @NotNull OpPathPsiProcessingContext context) throws PsiProcessingException {
 
+    TextLocation location = EpigraphPsiUtil.getLocation(locationPsi);
     switch (type.kind()) {
       case RECORD:
         return new OpRecordModelProjection(
@@ -253,7 +254,7 @@ public final class OpPathPsiParser {
             null,
             Collections.emptyMap(),
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       case MAP:
         MapTypeApi mapType = (MapTypeApi) type;
@@ -261,10 +262,11 @@ public final class OpPathPsiParser {
         final OpKeyProjection keyProjection =
             new OpKeyProjection(
                 AbstractOpKeyPresence.OPTIONAL,
+                location,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
                 null,
-                EpigraphPsiUtil.getLocation(locationPsi)
+                location
             );
 
         @NotNull DataTypeApi valueType = mapType.valueType();
@@ -297,7 +299,7 @@ public final class OpPathPsiParser {
             keyProjection,
             valueVarProjection,
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       case LIST:
         throw new PsiProcessingException("Unsupported type kind: " + type.kind(), locationPsi, context);
@@ -318,7 +320,7 @@ public final class OpPathPsiParser {
             annotations,
             null,
             null,
-            EpigraphPsiUtil.getLocation(locationPsi)
+            location
         );
       default:
         throw new PsiProcessingException("Unknown type kind: " + type.kind(), locationPsi, context);
@@ -473,6 +475,7 @@ public final class OpPathPsiParser {
 
     return new OpKeyProjection(
         AbstractOpKeyPresence.REQUIRED,
+        EpigraphPsiUtil.getLocation(keyProjectionPsi),
         OpParams.fromCollection(params),
         Annotations.fromMap(annotationsMap),
         projection,

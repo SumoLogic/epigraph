@@ -29,6 +29,7 @@ class OpKeyProjectionGen(kp: OpKeyProjection) extends ObjectGen[OpKeyProjection]
   /*@formatter:off*/sn"""\
 new $o(
   ${gen(kp.presence(), ctx)},
+  ${gen(kp.presenceLocation(), ctx)},
   ${i(gen(kp.params(), ctx))},
   ${i(gen(kp.annotations(), ctx))},
   ${i(gen(kp.projection(), ctx))},

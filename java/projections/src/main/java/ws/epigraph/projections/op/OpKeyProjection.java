@@ -28,9 +28,11 @@ import java.util.Objects;
  */
 public class OpKeyProjection extends AbstractOpKeyProjection {
   private final @NotNull AbstractOpKeyPresence presence;
+  private final @NotNull TextLocation presenceLocation;
 
   public @NotNull OpKeyProjection(
       @NotNull AbstractOpKeyPresence presence,
+      @NotNull TextLocation presenceLocation,
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> projection,
@@ -38,9 +40,12 @@ public class OpKeyProjection extends AbstractOpKeyProjection {
 
     super(params, annotations, projection, location);
     this.presence = presence;
+    this.presenceLocation = presenceLocation;
   }
 
   public AbstractOpKeyPresence presence() { return presence; }
+
+  public @NotNull TextLocation presenceLocation() { return presenceLocation; }
 
   @Override
   public boolean equals(final Object o) {
