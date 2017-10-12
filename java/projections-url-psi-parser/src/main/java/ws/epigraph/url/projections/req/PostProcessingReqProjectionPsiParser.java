@@ -65,9 +65,10 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseTrunkEntityProjection(
-        dataType, flagged, op, psi, resolver, defaultProjectionConstructor, context
-    );
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
+        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseTrunkEntityProjection(
+            dataType, flagged, op, psi, resolver
+        );
 
     return processEntityProjection(stepsAndProjection, op, context);
   }
@@ -81,9 +82,10 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseComaEntityProjection(
-        dataType, flagged, op, psi, resolver, defaultProjectionConstructor, context
-    );
+    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
+        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseComaEntityProjection(
+            dataType, flagged, op, psi, resolver
+        );
 
     return processEntityProjection(stepsAndProjection, op, context);
   }
@@ -98,7 +100,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
     return defaultProjectionConstructor.createDefaultEntityProjection(
-        type, op, required, resolver,location, context
+        type, op, required, resolver, location, context
     );
   }
 
@@ -111,9 +113,10 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqFieldProjection> stepsAndProjection = ReqBasicProjectionPsiParser.parseTrunkFieldProjection(
-        fieldType, flagged, op, psi, resolver, defaultProjectionConstructor, context
-    );
+    StepsAndProjection<ReqFieldProjection> stepsAndProjection =
+        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseTrunkFieldProjection(
+            fieldType, flagged, op, psi, resolver
+        );
 
     ReqFieldProjection fieldProjection = stepsAndProjection.projection();
     ReqEntityProjection ep = fieldProjection.entityProjection();

@@ -94,6 +94,7 @@ resource users: PersonMap {
   }
 
   update {
+    // todo add param here and pass it without the rest of the projection
     inputProjection [ required ](
       :(
         `record`(
