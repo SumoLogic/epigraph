@@ -27,11 +27,11 @@ import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
  */
 public final class ReqInputProjectionPsiParser extends PostProcessingReqProjectionPsiParser {
 
-  public ReqInputProjectionPsiParser(MessagesContext context) {
+  public ReqInputProjectionPsiParser(boolean includeAllFromOp, MessagesContext context) {
     super(
         new ReqRequiredChecker(context),
         new ReqRequiredSynchronizer(context),
-        DefaultReqProjectionConstructor.inputProjectionDefaultConstructor()
+        DefaultReqProjectionConstructor.inputProjectionDefaultConstructor(includeAllFromOp)
     );
   }
 }

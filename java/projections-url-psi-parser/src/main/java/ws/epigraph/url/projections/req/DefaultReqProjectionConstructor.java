@@ -69,12 +69,12 @@ public class DefaultReqProjectionConstructor {
     return new DefaultReqProjectionConstructor(Mode.INCLUDE_FLAGGED_ONLY, true, false);
   }
 
-  public static DefaultReqProjectionConstructor inputProjectionDefaultConstructor() {
-    return new DefaultReqProjectionConstructor(Mode.INCLUDE_ALL, false, true);
+  public static DefaultReqProjectionConstructor inputProjectionDefaultConstructor(boolean includeAll) {
+    return new DefaultReqProjectionConstructor(includeAll ? Mode.INCLUDE_ALL : Mode.INCLUDE_NONE, false, true);
   }
 
-  public static DefaultReqProjectionConstructor updateProjectionDefaultConstructor() {
-    return new DefaultReqProjectionConstructor(Mode.INCLUDE_ALL, false, false);
+  public static DefaultReqProjectionConstructor updateProjectionDefaultConstructor(boolean includeAll) {
+    return new DefaultReqProjectionConstructor(includeAll ? Mode.INCLUDE_ALL : Mode.INCLUDE_NONE, false, false);
   }
 
 //  public boolean checkForRequiredMapKeys() { return checkForRequiredMapKeys; }

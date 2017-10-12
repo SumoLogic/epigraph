@@ -273,7 +273,7 @@ public class ReqUpdateProjectionsParserTest {
             new ReqPsiProcessingContext(context, referenceContext);
 
         @NotNull StepsAndProjection<ReqEntityProjection> vp =
-            new ReqUpdateProjectionPsiParser(context).parseTrunkEntityProjection(
+            new ReqUpdateProjectionPsiParser(true, context).parseTrunkEntityProjection(
                 dataType,
                 false,
                 personOpProjection,

@@ -238,7 +238,7 @@ public class ReqInputProjectionParserTest {
             new ReqPsiProcessingContext(context, referenceContext);
 
         @NotNull StepsAndProjection<ReqEntityProjection> vp =
-            new ReqInputProjectionPsiParser(context).parseTrunkEntityProjection(
+            new ReqInputProjectionPsiParser(true, context).parseTrunkEntityProjection(
                 dataType,
                 false,
                 personOpProjection,
@@ -258,7 +258,7 @@ public class ReqInputProjectionParserTest {
 
   private void testParse(String expr, String expectedProjection) {
     final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
-        ReqTestUtil.parseReqInputVarProjection(dataType, personOpProjection, expr, resolver);
+        ReqTestUtil.parseReqInputEntityProjection(dataType, personOpProjection, expr, resolver);
 
     String s = TestUtil.printReqEntityProjection(varProjection);
 

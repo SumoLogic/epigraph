@@ -27,7 +27,7 @@ public final class CreateRequestUrlPsiParser extends RequestUrlPsiParser {
 
   public CreateRequestUrlPsiParser(MessagesContext context) {
     super(
-        new ReqInputProjectionPsiParser(context),
+        new ReqInputProjectionPsiParser(true, context),
         new ReqOutputProjectionPsiParser(context)
     );
   }

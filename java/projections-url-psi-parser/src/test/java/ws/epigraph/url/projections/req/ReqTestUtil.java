@@ -121,7 +121,7 @@ public final class ReqTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
@@ -133,14 +133,14 @@ public final class ReqTestUtil {
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputEntityProjection(
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     return parseReqEntityProjection(
-        ReqInputProjectionPsiParser::new,
+        mc -> new ReqInputProjectionPsiParser(true, mc),
         type, op, projectionString, resolver
     );
   }
@@ -152,7 +152,7 @@ public final class ReqTestUtil {
       @NotNull TypesResolver resolver) {
 
     return parseReqEntityProjection(
-        ReqUpdateProjectionPsiParser::new,
+        mc -> new ReqUpdateProjectionPsiParser(true, mc),
         type, op, projectionString, resolver
     );
   }

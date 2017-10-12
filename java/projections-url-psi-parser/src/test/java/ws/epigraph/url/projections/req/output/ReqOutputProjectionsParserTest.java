@@ -37,7 +37,7 @@ import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.lines;
 import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputEntityProjection;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputVarProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -556,7 +556,7 @@ public class ReqOutputProjectionsParserTest {
 
   private void testTailsNormalization(String str, Type type, String expected) {
     final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
-        parseReqOutputVarProjection(dataType, personOpProjection, str, resolver);
+        parseReqOutputEntityProjection(dataType, personOpProjection, str, resolver);
 
     ReqEntityProjection varProjection = stepsAndProjection.projection();
     final @NotNull ReqEntityProjection normalized = varProjection.normalizedForType(type);
@@ -566,7 +566,7 @@ public class ReqOutputProjectionsParserTest {
   }
 
   private void testModelTailsNormalization(OpEntityProjection op, String str, DatumType type, String expected) {
-    ReqEntityProjection varProjection = parseReqOutputVarProjection(dataType, op, str, resolver).projection();
+    ReqEntityProjection varProjection = parseReqOutputEntityProjection(dataType, op, str, resolver).projection();
     final ReqTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
     final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
@@ -609,7 +609,7 @@ public class ReqOutputProjectionsParserTest {
       int steps) {
 
     final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
-        parseReqOutputVarProjection(dataType, opProjection, expr, resolver);
+        parseReqOutputEntityProjection(dataType, opProjection, expr, resolver);
 
     assertEquals(steps, stepsAndProjection.pathSteps());
 

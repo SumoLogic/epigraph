@@ -543,7 +543,14 @@ public final class RequestFactory {
       @NotNull OpEntityProjection op,
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
-    return parseReqProjection(ReqInputProjectionPsiParser::new, required, projection, type, op, resolver);
+    return parseReqProjection(
+        mc -> new ReqInputProjectionPsiParser(false, mc),
+        required,
+        projection,
+        type,
+        op,
+        resolver
+    );
   }
 
   private static @NotNull StepsAndProjection<ReqEntityProjection> parseReqUpdateProjection(
@@ -554,7 +561,7 @@ public final class RequestFactory {
       @NotNull TypesResolver resolver) throws IllegalArgumentException {
 
     return parseReqProjection(
-        ReqUpdateProjectionPsiParser::new,
+        mc -> new ReqUpdateProjectionPsiParser(false, mc),
         replace,
         projection,
         dataType,
