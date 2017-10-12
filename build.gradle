@@ -21,10 +21,11 @@ buildscript {
 }
 
 plugins {
-  id 'nebula.dependency-recommender' version '3.6.3' // '4.2.0' has a bug: https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/43
-  id 'nebula.maven-publish' version '5.0.1'
+  id 'nebula.dependency-recommender' version '3.6.3' // '4.3.0' has a bug: https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/43 -- this holds us back from gradle 4
+  id 'nebula.maven-publish' version '5.1.0'
 }
 
+// NB not compatible with gradle 4 yet, see https://github.com/passy/build-time-tracker-plugin/blob/master/CHANGELOG.md
 apply plugin: "build-time-tracker"
 
 allprojects {
