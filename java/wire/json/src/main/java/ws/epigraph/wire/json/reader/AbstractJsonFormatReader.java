@@ -1212,7 +1212,7 @@ abstract class AbstractJsonFormatReader<
     }
 
     boolean matches(Collection<VP> projections) {
-      return projectionsComparator().varEquals(projections, this.projections);
+      return projectionsComparator().entitiesEquals(projections, this.projections);
     }
   }
 

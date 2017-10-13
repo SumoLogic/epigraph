@@ -48,7 +48,7 @@ public class GenProjectionsComparator<
    * @return {@code true} iff projections are structurally equal
    */
   public boolean equals(@NotNull VP vp1, @NotNull VP vp2) {
-    return varEquals(Collections.singleton(vp1), Collections.singleton(vp2));
+    return entitiesEquals(Collections.singleton(vp1), Collections.singleton(vp2));
   }
 
   public static <
@@ -61,7 +61,7 @@ public class GenProjectionsComparator<
       PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
       FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
       FP extends GenFieldProjection<VP, TP, MP, FP>
-      > boolean varEquals(@NotNull VP vp1, @NotNull VP vp2) {
+      > boolean entitiesEquals(@NotNull VP vp1, @NotNull VP vp2) {
     return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().equals(vp1, vp2);
   }
 
@@ -69,7 +69,7 @@ public class GenProjectionsComparator<
     visited.clear();
   }
 
-  public boolean varEquals(@NotNull Collection<@NotNull VP> vps1, @NotNull Collection<@NotNull VP> vps2) {
+  public boolean entitiesEquals(@NotNull Collection<@NotNull VP> vps1, @NotNull Collection<@NotNull VP> vps2) {
     if (vps1.isEmpty())
       return vps2.isEmpty();
 
@@ -111,7 +111,7 @@ public class GenProjectionsComparator<
     final List<VP> tails1 = collectTails(vps1);
     final List<VP> tails2 = collectTails(vps2);
 
-    return varEquals(tails1, tails2);
+    return entitiesEquals(tails1, tails2);
   }
 
   private @NotNull Map<String, Collection<TP>> collectTags(@NotNull Collection<@NotNull VP> vps) {
@@ -187,7 +187,7 @@ public class GenProjectionsComparator<
       final List<@NotNull VP> vps2 = fields2.get(fieldName)
           .stream().map(e -> e.fieldProjection().entityProjection()).collect(Collectors.toList());
 
-      if (!varEquals(vps1, vps2))
+      if (!entitiesEquals(vps1, vps2))
         return false;
     }
 
@@ -212,14 +212,14 @@ public class GenProjectionsComparator<
     final List<@NotNull VP> vps1 = mps1.stream().map(MMP::itemsProjection).collect(Collectors.toList());
     final List<@NotNull VP> vps2 = mps2.stream().map(MMP::itemsProjection).collect(Collectors.toList());
 
-    return varEquals(vps1, vps2);
+    return entitiesEquals(vps1, vps2);
   }
 
   protected boolean listModelEquals(@NotNull Collection<@NotNull LMP> mps1, @NotNull Collection<@NotNull LMP> mps2) {
     final List<@NotNull VP> vps1 = mps1.stream().map(LMP::itemsProjection).collect(Collectors.toList());
     final List<@NotNull VP> vps2 = mps2.stream().map(LMP::itemsProjection).collect(Collectors.toList());
 
-    return varEquals(vps1, vps2);
+    return entitiesEquals(vps1, vps2);
   }
 
   protected boolean primitiveModelEquals(

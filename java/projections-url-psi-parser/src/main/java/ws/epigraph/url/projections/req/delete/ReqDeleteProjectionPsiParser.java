@@ -32,7 +32,7 @@ public final class ReqDeleteProjectionPsiParser extends PostProcessingReqProject
 
   public ReqDeleteProjectionPsiParser(@NotNull MessagesContext messagesContext) {
     super(
-        new ReqFlaggedNotSupportedChecker(messagesContext),
+        null, //new ReqFlaggedNotSupportedChecker(messagesContext),
         new ReqRequiredSynchronizer(messagesContext),
         new DefaultReqProjectionConstructor(INCLUDE_NONE, true, false)
     );

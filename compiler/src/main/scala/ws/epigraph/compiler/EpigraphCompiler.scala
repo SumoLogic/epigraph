@@ -332,11 +332,12 @@ object EpigraphCompiler extends Logging {
 //    width = 120, colors = pprint.Colors(fansi.Color.Green, fansi.Color.LightBlue)
 //  )
 
+  //noinspection ConvertibleToMethodValue
   def renderErrors(ctx: CContext): Unit = ctx.errors.foreach { msg =>
     val renderer: String => Unit = msg.level match {
-      case CMessageLevel.Error => log.error
-      case CMessageLevel.Warning => log.warn
-      case _ => log.info
+      case CMessageLevel.Error => log.error(_)
+      case CMessageLevel.Warning => log.warn(_)
+      case _ => log.info(_)
     }
     renderer.apply(msg.toString)
   }

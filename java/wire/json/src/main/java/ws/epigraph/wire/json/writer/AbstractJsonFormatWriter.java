@@ -643,7 +643,7 @@ public abstract class AbstractJsonFormatWriter<
     }
 
     boolean matches(Collection<VP> projections) {
-      return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().varEquals(
+      return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().entitiesEquals(
           projections,
           this.projections
       );
