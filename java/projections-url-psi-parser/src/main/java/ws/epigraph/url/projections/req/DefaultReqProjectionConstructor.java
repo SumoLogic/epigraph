@@ -19,7 +19,7 @@ package ws.epigraph.url.projections.req;
 import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.data.Val;
+import ws.epigraph.data.*;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.gdata.GDatum;
@@ -37,6 +37,8 @@ import ws.epigraph.types.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static ws.epigraph.projections.op.AbstractOpKeyPresence.REQUIRED;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -83,6 +85,7 @@ public class DefaultReqProjectionConstructor {
       @NotNull DataTypeApi dataType,
       @NotNull OpEntityProjection op,
       boolean flag,
+      @Nullable List<Data> datas,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -135,7 +138,7 @@ public class DefaultReqProjectionConstructor {
         throw new IllegalStateException("Unknown mode: " + mode);
     }
 
-    ReqEntityProjection res = createDefaultEntityProjection(type, tags, op, flag, resolver, location, context);
+    ReqEntityProjection res = createDefaultEntityProjection(type, tags, op, flag, datas, resolver, location, context);
     if (ref == null) {
       return res;
     } else {
@@ -153,6 +156,7 @@ public class DefaultReqProjectionConstructor {
       @NotNull Iterable<TagApi> tags,
       @NotNull OpEntityProjection op,
       boolean flag,
+      @Nullable List<Data> datas,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -162,24 +166,31 @@ public class DefaultReqProjectionConstructor {
     for (TagApi tag : tags) {
       final OpTagProjectionEntry opTagProjection = op.tagProjections().get(tag.name());
       if (opTagProjection != null) {
-        tagProjections.put(
-            tag.name(),
-            new ReqTagProjectionEntry(
-                tag,
-                createDefaultModelProjection(
-                    ReqRecordModelProjection.class,
-                    tag.type(),
-                    copyFlagsFromOp && opTagProjection.projection().flag(),
-                    opTagProjection.projection(),
-                    null,
-                    Directives.EMPTY,
-                    resolver,
-                    location,
-                    context
-                ),
-                location
-            )
-        );
+
+        List<Datum> datums = datas == null ? null :
+                             datas.stream().map(d -> d._raw().getDatum((Tag) tag)).collect(Collectors.toList());
+
+        if (datums != null || datas == null) { // no need to cover non-existent data
+          tagProjections.put(
+              tag.name(),
+              new ReqTagProjectionEntry(
+                  tag,
+                  createDefaultModelProjection(
+                      ReqRecordModelProjection.class,
+                      tag.type(),
+                      opTagProjection.projection(), copyFlagsFromOp && opTagProjection.projection().flag(),
+                      null,
+                      Directives.EMPTY,
+                      datums,
+                      resolver,
+                      location,
+                      context
+                  ),
+                  location
+              )
+          );
+        }
+
       }
     }
 
@@ -197,6 +208,7 @@ public class DefaultReqProjectionConstructor {
                   opTail.type().dataType(),
                   opTail,
                   copyFlagsFromOp && opTail.flag(),
+                  datas,
                   resolver,
                   location,
                   context
@@ -222,10 +234,11 @@ public class DefaultReqProjectionConstructor {
   @NotNull MP createDefaultModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
-      boolean flag,
       @NotNull OpModelProjection<?, ?, ?, ?> op,
+      boolean flag,
       @Nullable ReqParams params,
       @NotNull Directives directives,
+      @Nullable List<Datum> datums,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -233,9 +246,15 @@ public class DefaultReqProjectionConstructor {
     if (params == null)
       params = getDefaultParams(op, resolver, location, context);
 
+    List<Datum> metaDatas = datums == null ? null :
+                            datums.stream().map(d -> d._raw().meta()).collect(Collectors.toList());
+
     switch (type.kind()) {
       case RECORD:
         OpRecordModelProjection opRecord = (OpRecordModelProjection) op;
+        List<RecordDatum> recordDatums = datums == null ? null :
+                                         datums.stream().map(d -> (RecordDatum) d).collect(Collectors.toList());
+
         final Map<String, OpFieldProjectionEntry> opFields = opRecord.fieldProjections();
 
         final @NotNull Map<String, ReqFieldProjectionEntry> fields;
@@ -248,8 +267,11 @@ public class DefaultReqProjectionConstructor {
           for (final Map.Entry<String, OpFieldProjectionEntry> entry : opFields.entrySet()) {
             OpFieldProjectionEntry fpe = entry.getValue();
             OpFieldProjection fieldProjection = fpe.fieldProjection();
+            List<Data> fieldDatas = recordDatums == null ? null :
+                                    recordDatums.stream().map(rd -> rd._raw().getData((Field) fpe.field()))
+                                        .collect(Collectors.toList());
 
-            if (mode == Mode.INCLUDE_ALL || fieldProjection.flag()) {
+            if ((mode == Mode.INCLUDE_ALL || fieldProjection.flag()) && (fieldDatas != null || datums == null)) {
               fields.put(
                   entry.getKey(),
                   new ReqFieldProjectionEntry(
@@ -259,6 +281,7 @@ public class DefaultReqProjectionConstructor {
                               fpe.field().dataType(),
                               fieldProjection.entityProjection(),
                               copyFlagsFromOp && fieldProjection.flag(),
+                              fieldDatas,
                               resolver,
                               location,
                               context
@@ -278,27 +301,52 @@ public class DefaultReqProjectionConstructor {
             flag,
             params,
             directives,
-            createDefaultMetaProjection(ReqModelProjection.class, op, resolver, location, context),
+            createDefaultMetaProjection(ReqModelProjection.class, op, metaDatas, resolver, location, context),
             fields,
-            createDefaultModelTails(ReqRecordModelProjection.class, op, resolver, location, context),
+            createDefaultModelTails(ReqRecordModelProjection.class, op, datums, resolver, location, context),
             location
         );
 
       case MAP:
         OpMapModelProjection opMap = (OpMapModelProjection) op;
+        List<MapDatum> mapDatums = datums == null ? null :
+                                   datums.stream().map(d -> (MapDatum) d).collect(Collectors.toList());
 
-        if (opMap.keyProjection().presence() == AbstractOpKeyPresence.REQUIRED && checkForRequiredMapKeys)
+        if (opMap.keyProjection().presence() == REQUIRED && checkForRequiredMapKeys && mapDatums == null)
           throw new PsiProcessingException(
               String.format("Can't build default projection for '%s': keys are required", type.name()),
               location,
               context
           );
 
+        List<ReqKeyProjection> keys = mapDatums == null ? null :
+                                      mapDatums.stream().flatMap(md ->
+                                          md._raw().elements().keySet().stream().map(kd ->
+                                              new ReqKeyProjection(
+                                                  kd,
+                                                  getDefaultParams(
+                                                      opMap.keyProjection().params(),
+                                                      String.format("Type '%s' keys", op.type().name().toString()),
+                                                      resolver,
+                                                      location,
+                                                      context
+                                                  ),
+                                                  Directives.EMPTY,
+                                                  location
+                                              )
+                                          )
+                                      ).collect(Collectors.toList());
+
+        List<Data> mapItemDatas = mapDatums == null ? null :
+                                  mapDatums.stream().flatMap(md -> md._raw().elements().values().stream())
+                                      .collect(Collectors.toList());
+
         MapTypeApi mapType = (MapTypeApi) type;
         final ReqEntityProjection valueEntityProjection = createDefaultEntityProjection(
             mapType.valueType(),
             opMap.itemsProjection(),
             flag,
+            mapItemDatas,
             resolver,
             location,
             context
@@ -309,22 +357,29 @@ public class DefaultReqProjectionConstructor {
             flag,
             params,
             directives,
-            createDefaultMetaProjection(ReqModelProjection.class, op, resolver, location, context),
-            null,
+            createDefaultMetaProjection(ReqModelProjection.class, op, metaDatas, resolver, location, context),
+            keys,
             false,
             valueEntityProjection,
-            createDefaultModelTails(ReqMapModelProjection.class, op, resolver, location, context),
+            createDefaultModelTails(ReqMapModelProjection.class, op, datums, resolver, location, context),
             location
         );
 
       case LIST:
         OpListModelProjection opList = (OpListModelProjection) op;
+        List<ListDatum> listDatums = datums == null ? null :
+                                     datums.stream().map(d -> (ListDatum) d).collect(Collectors.toList());
         ListTypeApi listType = (ListTypeApi) type;
+
+        List<Data> listItemDatas = listDatums == null ? null :
+                                   listDatums.stream().flatMap(md -> md._raw().elements().stream())
+                                       .collect(Collectors.toList());
 
         final ReqEntityProjection itemEntityProjection = createDefaultEntityProjection(
             listType.elementType(),
             opList.itemsProjection(),
             flag,
+            listItemDatas,
             resolver,
             location,
             context
@@ -335,9 +390,9 @@ public class DefaultReqProjectionConstructor {
             flag,
             params,
             directives,
-            createDefaultMetaProjection(ReqModelProjection.class, op, resolver, location, context),
+            createDefaultMetaProjection(ReqModelProjection.class, op, metaDatas, resolver, location, context),
             itemEntityProjection,
-            createDefaultModelTails(ReqListModelProjection.class, op, resolver, location, context),
+            createDefaultModelTails(ReqListModelProjection.class, op, datums, resolver, location, context),
             location
         );
 
@@ -358,8 +413,8 @@ public class DefaultReqProjectionConstructor {
             flag,
             params,
             directives,
-            createDefaultMetaProjection(ReqModelProjection.class, op, resolver, location, context),
-            createDefaultModelTails(ReqPrimitiveModelProjection.class, op, resolver, location, context),
+            createDefaultMetaProjection(ReqModelProjection.class, op, metaDatas, resolver, location, context),
+            createDefaultModelTails(ReqPrimitiveModelProjection.class, op, datums, resolver, location, context),
             location
         );
       default:
@@ -369,10 +424,11 @@ public class DefaultReqProjectionConstructor {
 
   private <MP extends ReqModelProjection<?, ?, ?>> @Nullable MP createDefaultMetaProjection(
       @NotNull Class<MP> modelClass,
-      final @NotNull OpModelProjection<?, ?, ?, ?> op,
+      @NotNull OpModelProjection<?, ?, ?, ?> op,
+      @Nullable List<Datum> metaDatas,
       @NotNull TypesResolver resolver,
-      final @NotNull TextLocation location,
-      final @NotNull PsiProcessingContext context) {
+      @NotNull TextLocation location,
+      @NotNull PsiProcessingContext context) {
 
     if (mode == Mode.INCLUDE_NONE)
       return null;
@@ -384,10 +440,11 @@ public class DefaultReqProjectionConstructor {
         return createDefaultModelProjection(
             modelClass,
             mp.type(),
-            copyFlagsFromOp && mp.flag(),
             mp,
+            copyFlagsFromOp && mp.flag(),
             null,
             Directives.EMPTY,
+            metaDatas,
             resolver,
             location,
             context
@@ -404,6 +461,7 @@ public class DefaultReqProjectionConstructor {
   @Nullable List<MP> createDefaultModelTails(
       @NotNull Class<MP> modelClass,
       @NotNull OpModelProjection<?, ?, ?, ?> op,
+      @Nullable List<Datum> datums,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
@@ -427,10 +485,11 @@ public class DefaultReqProjectionConstructor {
         return createDefaultModelProjection(
             modelClass,
             ot.type(),
-            copyFlagsFromOp && ot.flag(),
             ot,
+            copyFlagsFromOp && ot.flag(),
             null,
             Directives.EMPTY,
+            datums,
             resolver,
             location,
             context
@@ -447,9 +506,18 @@ public class DefaultReqProjectionConstructor {
       @NotNull OpModelProjection<?, ?, ?, ?> mp,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
-      @NotNull PsiProcessingContext context
-  ) {
-    OpParams opParams = mp.params();
+      @NotNull PsiProcessingContext context) {
+
+    return getDefaultParams(mp.params(), mp.type().name().toString(), resolver, location, context);
+  }
+
+  private @NotNull ReqParams getDefaultParams(
+      @NotNull OpParams opParams,
+      @NotNull String name,
+      @NotNull TypesResolver resolver,
+      @NotNull TextLocation location,
+      @NotNull PsiProcessingContext context) {
+
     if (opParams.isEmpty())
       return ReqParams.EMPTY;
 
@@ -464,7 +532,7 @@ public class DefaultReqProjectionConstructor {
     if (!opRequiredParamsWithoutDefaults.isEmpty()) {
       context.addError(String.format(
           "Can't build default projection for '%s': required parameter(s) have no default value: {%s}",
-          mp.type().name(),
+          name,
           String.join(", ", opRequiredParamsWithoutDefaults)
       ), location);
     }
@@ -480,7 +548,7 @@ public class DefaultReqProjectionConstructor {
 
     return new ReqParams(
         opParamsWithDefaults.stream().map(p -> {
-          String name = p.name();
+          String paramName = p.name();
 
           GDatum d = p.projection().defaultValue();
           assert d != null;
@@ -490,14 +558,17 @@ public class DefaultReqProjectionConstructor {
             ErrorValue error = val.getError();
 
             if (error != null) {
-              context.addError("Malformed default value in op projection for parameter '" + name + "'", p.location());
+              context.addError(
+                  "Malformed default value in op projection for parameter '" + paramName + "'",
+                  p.location()
+              );
               return null;
             }
 
-            return new ReqParam(name, val.getDatum(), TextLocation.UNKNOWN);
+            return new ReqParam(paramName, val.getDatum(), TextLocation.UNKNOWN);
           } catch (GDataToData.ProcessingException e) {
             context.addError(
-                "Malformed default value in op projection for parameter '" + name + "': " + e,
+                "Malformed default value in op projection for parameter '" + paramName + "': " + e,
                 p.location()
             );
             return null;

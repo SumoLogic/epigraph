@@ -17,6 +17,7 @@
   - then add `@NotNull` on fields in schema, translated into `@NotNull` on generated records
   - https://sumologic.slack.com/archives/D0JPD1FKN/p1507142820000118
 - [ ] server based on spring http handler
+- [ ] codegen: Map.put with primitive keys: understand java primitives
 
 - Federator
   - [ ] allow paths to end with model types (prereq. for fed. ?)

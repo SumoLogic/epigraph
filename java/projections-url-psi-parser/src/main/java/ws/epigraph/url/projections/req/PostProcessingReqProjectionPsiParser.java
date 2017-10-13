@@ -100,7 +100,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
     return defaultProjectionConstructor.createDefaultEntityProjection(
-        type, op, required, resolver, location, context
+        type, op, required, null, resolver, location, context
     );
   }
 

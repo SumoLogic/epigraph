@@ -183,6 +183,7 @@ public final class ReqBasicProjectionPsiParser {
                   dataType,
                   op,
                   flagged,
+                  null,
                   typesResolver,
                   EpigraphPsiUtil.getLocation(psi),
                   context
@@ -300,10 +301,11 @@ public final class ReqBasicProjectionPsiParser {
           defaultProjectionConstructor.createDefaultModelProjection(
               ReqRecordModelProjection.class,
               tag.type(),
-              false,
               opModelProjection,
+              false,
               null,
               Directives.EMPTY,
+              null,
               resolver,
               location,
               errorsIgnoringContext
@@ -482,6 +484,7 @@ public final class ReqBasicProjectionPsiParser {
                 dataType,
                 op,
                 flagged,
+                null,
                 typesResolver,
                 EpigraphPsiUtil.getLocation(psi),
                 context
@@ -907,10 +910,10 @@ public final class ReqBasicProjectionPsiParser {
           return defaultProjectionConstructor.createDefaultModelProjection(
               modelClass,
               model,
-              flag,
-              opRecord,
+              opRecord, flag,
               params,
               directives,
+              null,
               typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
@@ -940,10 +943,10 @@ public final class ReqBasicProjectionPsiParser {
           return defaultProjectionConstructor.createDefaultModelProjection(
               modelClass,
               model,
-              flag,
-              opMap,
+              opMap, flag,
               params,
               directives,
+              null,
               typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
@@ -974,10 +977,10 @@ public final class ReqBasicProjectionPsiParser {
           return defaultProjectionConstructor.createDefaultModelProjection(
               modelClass,
               model,
-              flag,
-              opList,
+              opList, flag,
               params,
               directives,
+              null,
               typesResolver,
               EpigraphPsiUtil.getLocation(psi),
               context
@@ -1186,6 +1189,7 @@ public final class ReqBasicProjectionPsiParser {
           fieldType,
           opFieldProjection.entityProjection(),
           fieldFlagged,
+          null,
           resolver,
           EpigraphPsiUtil.getLocation(psi),
           context
@@ -1390,6 +1394,7 @@ public final class ReqBasicProjectionPsiParser {
                     field.dataType(),
                     opFieldProjection.entityProjection(),
                     false,
+                    null,
                     resolver,
                     EpigraphPsiUtil.getLocation(psi.getReqAll()),
                     ignoredErrorsCtx
@@ -1538,6 +1543,7 @@ public final class ReqBasicProjectionPsiParser {
           op.type().valueType(),
           op.itemsProjection(),
           psi.getPlus() != null,
+          null,
           resolver,
           EpigraphPsiUtil.getLocation(psi),
           context
@@ -1585,6 +1591,7 @@ public final class ReqBasicProjectionPsiParser {
               op.type().elementType(),
               op.itemsProjection(),
               true,
+              null,
               resolver,
               EpigraphPsiUtil.getLocation(psi),
               context

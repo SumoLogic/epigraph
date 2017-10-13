@@ -18,6 +18,7 @@ package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.data.Data;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.*;
@@ -30,6 +31,8 @@ import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumTypeApi;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -224,10 +227,57 @@ public class DefaultReqProjectionConstructorTest {
     );
   }
 
+  @Test
+  public void testWithData() throws PsiProcessingException {
+    test(
+        dataType,
+        parsePersonOpOutputEntityProjection(":`record`(friendsMap[required]:id)"),
+        DefaultReqProjectionConstructor.Mode.INCLUDE_ALL,
+        Person.create().setRecord(
+            PersonRecord.create().setFriendsMap(
+                String_Person_Map.create()
+                    .put$(epigraph.String.create("a"), Person.create().setId(PersonId.create(1)))
+                    .put$(epigraph.String.create("b"), Person.create().setId(PersonId.create(2)))
+            )
+        ),
+        ":record ( friendsMap [ 'a', 'b' ]( :id ) )"
+    );
+  }
+
+  @Test
+  public void testWithKeyParams() throws PsiProcessingException {
+    test(
+        dataType,
+        parsePersonOpOutputEntityProjection(
+            ":`record`(friendsMap[required,;p:epigraph.Integer {default: 555} ]:id)"
+        ),
+        DefaultReqProjectionConstructor.Mode.INCLUDE_ALL,
+        Person.create().setRecord(
+            PersonRecord.create().setFriendsMap(
+                String_Person_Map.create()
+                    .put$(epigraph.String.create("a"), Person.create().setId(PersonId.create(1)))
+                    .put$(epigraph.String.create("b"), Person.create().setId(PersonId.create(2)))
+            )
+        ),
+        ":record ( friendsMap [ 'a';p = 555, 'b';p = 555 ]( :id ) )"
+    );
+  }
+
   private ReqEntityProjection test(
       DataType type,
       OpEntityProjection op,
       DefaultReqProjectionConstructor.Mode mode,
+      String expectedReq)
+      throws PsiProcessingException {
+
+    return test(type, op, mode, null, expectedReq);
+  }
+
+  private ReqEntityProjection test(
+      DataType type,
+      OpEntityProjection op,
+      DefaultReqProjectionConstructor.Mode mode,
+      Data data,
       String expectedReq)
       throws PsiProcessingException {
 
@@ -236,6 +286,7 @@ public class DefaultReqProjectionConstructorTest {
         type,
         op,
         false,
+        data == null ? null : Collections.singletonList(data),
         resolver,
         TextLocation.UNKNOWN,
         ppc

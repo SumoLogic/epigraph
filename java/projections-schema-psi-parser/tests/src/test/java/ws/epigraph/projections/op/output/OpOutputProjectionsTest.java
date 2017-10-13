@@ -521,8 +521,11 @@ public class OpOutputProjectionsTest {
     testParsingEntityProjection(
         lines(
             ":`record` (",
-            "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection: ( firstName, lastName ) ](",
-            "    ( firstName ) )",
+            "  personRecToPersonRec [",
+            "    ;param: epigraph.String { default: \"foo\" },",
+            "    @epigraph.annotations.Doc \"bla\",",
+            "    projection: ( firstName, lastName )",
+            "  ]( ( firstName ) )",
             ")"
         )
     );

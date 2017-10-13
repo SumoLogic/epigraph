@@ -221,7 +221,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
       @NotNull String itemsProjectionPrefix,
       VP itemsProjection) throws E {
 
-    l.beginIInd();
+    l.beginIInd(0);
     { // keys
       l.beginCInd();
       l.print("[");
@@ -270,9 +270,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<
     }
     l.print(itemsProjectionPrefix);
     l.print("(");
+    l.beginIInd();
     brk();
     printEntity(itemsProjection, 0);
-    brk(1, -l.getDefaultIndentation()).end().print(")");
+    brk(1, -l.getDefaultIndentation()).end().print(")").end();
   }
 
   public void printFieldProjection(@NotNull String prefix, @NotNull FP fieldProjection) throws E {
