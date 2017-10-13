@@ -296,7 +296,7 @@ class EpigraphCompiler(
     handlePsiMessages(ErrorReporter.reporter(csfs), psiMessages)
   }
 
-  private def handlePsiMessages(reporter: ErrorReporter, psiMessages: util.List[PsiProcessingMessage]) = {
+  private def handlePsiMessages(reporter: ErrorReporter, psiMessages: util.List[PsiProcessingMessage]): Unit = {
     psiMessages.foreach { e =>
       reporter.message(
         e.message(), e.location(), e.level() match {
@@ -334,9 +334,9 @@ object EpigraphCompiler extends Logging {
 
   def renderErrors(ctx: CContext): Unit = ctx.errors.foreach { msg =>
     val renderer: String => Unit = msg.level match {
-      case CMessageLevel.Error => log.error(_)
-      case CMessageLevel.Warning => log.warn(_)
-      case _ => log.info(_)
+      case CMessageLevel.Error => log.error
+      case CMessageLevel.Warning => log.warn
+      case _ => log.info
     }
     renderer.apply(msg.toString)
   }

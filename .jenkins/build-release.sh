@@ -5,10 +5,10 @@
 # Note: This script cannot currently handle -SNAPSHOT version deployments.
 # Note: The script is expected to be run from the root of the project.
 
-set -e
-
 # command line args, all optional:
 # -t {github access token} -v {new version}
+
+set -e
 
 while getopts ":v:t:" opt; do
   case $opt in

@@ -92,7 +92,7 @@ case class CMessage(filename: String, position: CMessagePosition, message: Strin
     sb.append('\n').append(level.name).append(": ").append(message)
     position.lineText.foreach { text =>
       sb.append('\n').append(text)
-      sb.append('\n').append(" " * (position.column - 1)).append("^")
+      sb.append('\n').append(" " * (position.column - 1)).append("^" * position.tokenLength)
     }
     sb
   }
