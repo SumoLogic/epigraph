@@ -17,6 +17,8 @@
 package ws.epigraph.projections.gen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TagApi;
 
 import java.util.*;
@@ -50,6 +52,9 @@ public abstract class GenGuidedProjectionTraversal<
 
   private final Set<VP> visitedEntities = Collections.newSetFromMap(new IdentityHashMap<>());
   private final Set<MP> visitedModels = Collections.newSetFromMap(new IdentityHashMap<>());
+
+  protected @Nullable String currentEntityDataDescription; // e.g. a field name or a map value reference
+  protected @Nullable TextLocation currentEntityDataLocation;
 
   public boolean traverse(@NotNull VP projection, @NotNull GVP guide) {
     if (visitedEntities.contains(projection)) return true;
@@ -168,6 +173,9 @@ public abstract class GenGuidedProjectionTraversal<
   }
 
   protected boolean traverse(@NotNull RMP projection, @NotNull GRMP gp, @NotNull FPE fpe, @NotNull GFPE gfpe) {
+    currentEntityDataDescription = String.format("field '%s'", fpe.field().name());
+    currentEntityDataLocation = fpe.location();
+
     return visitFieldProjectionEntry(projection, gp, fpe, gfpe) &&
            traverse(fpe.fieldProjection(), gfpe.fieldProjection());
   }
@@ -181,15 +189,23 @@ public abstract class GenGuidedProjectionTraversal<
   }
 
   protected boolean traverse(@NotNull MMP projection, @NotNull GMMP guide) {
-    //noinspection unchecked
-    return visitMapModelProjection(projection, guide) &&
-           traverse(projection.itemsProjection(), guide.itemsProjection());
+    if (!visitMapModelProjection(projection, guide))
+      return false;
+
+    currentEntityDataDescription += " value";
+    currentEntityDataLocation = projection.itemsProjection().location();
+
+    return traverse(projection.itemsProjection(), guide.itemsProjection());
   }
 
   protected boolean traverse(@NotNull LMP projection, @NotNull GLMP guide) {
-    //noinspection unchecked
-    return visitListModelProjection(projection, guide) &&
-           traverse(projection.itemsProjection(), guide.itemsProjection());
+    if (!visitListModelProjection(projection, guide))
+      return false;
+
+    currentEntityDataDescription += " item";
+    currentEntityDataLocation = projection.itemsProjection().location();
+
+    return traverse(projection.itemsProjection(), guide.itemsProjection());
   }
 
   protected boolean traverse(@NotNull PMP projection, @NotNull GPMP guide) {

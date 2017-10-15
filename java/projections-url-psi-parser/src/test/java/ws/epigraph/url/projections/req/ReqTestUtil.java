@@ -73,6 +73,15 @@ public final class ReqTestUtil {
     return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
+  public static @NotNull OpEntityProjection parseOpUpdateEntityProjection(
+      @NotNull DataType varDataType,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    // same parser for now
+    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+  }
+
   public static @NotNull OpEntityProjection parseOpDeleteEntityProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,

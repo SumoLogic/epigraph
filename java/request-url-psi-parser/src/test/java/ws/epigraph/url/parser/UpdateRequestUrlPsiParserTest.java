@@ -50,7 +50,7 @@ public class UpdateRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
       "resource users : map[String,Person] {",
       "  update {",
       "    inputType UserRecord",
-      "    inputProjection (id, firstName)",
+      "    inputProjection +(id, firstName)",
       "    outputProjection [required]( :`record` (id, firstName) )",
       "  }",
       "}"

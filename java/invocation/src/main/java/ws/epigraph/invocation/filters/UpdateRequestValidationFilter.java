@@ -36,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@Deprecated
 public class UpdateRequestValidationFilter<Rsp extends OperationResponse>
     extends AbstractOperationInvocationFilter<UpdateOperationRequest, Rsp, UpdateOperationDeclaration> {
 

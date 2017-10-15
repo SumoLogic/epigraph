@@ -21,7 +21,6 @@ import ws.epigraph.data.Data;
 import ws.epigraph.invocation.filters.CreateRequestValidationFilter;
 import ws.epigraph.invocation.filters.CustomRequestValidationFilter;
 import ws.epigraph.invocation.filters.ReadResponsePruningFilter;
-import ws.epigraph.invocation.filters.UpdateRequestValidationFilter;
 import ws.epigraph.schema.operations.*;
 import ws.epigraph.service.operations.*;
 
@@ -99,7 +98,7 @@ public final class OperationFilterChains<D extends Data> {
         //update
         new DefaultOperationInvocationFiltersChain<>(
             Arrays.asList(
-                new UpdateRequestValidationFilter<>(),
+                //new UpdateRequestValidationFilter<>(),
                 new ReadResponsePruningFilter<>()
             )
         ),

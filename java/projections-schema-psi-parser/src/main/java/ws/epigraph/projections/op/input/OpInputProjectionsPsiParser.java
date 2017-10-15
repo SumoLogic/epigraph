@@ -24,12 +24,19 @@ import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class OpInputProjectionsPsiParser extends PostProcessingOpProjectionPsiParser {
+  public static final String FLAG_REQUIRED = "required";
+  public static final String FLAG_CAN_REPLACE = "'can replace'";
+  public static final String FLAGGED = "flagged";
 
-  public OpInputProjectionsPsiParser(MessagesContext context) {
+  public OpInputProjectionsPsiParser(String flagSemantics, MessagesContext context) {
     super(
         null,
-        new OpFlagSynchronizer("required", context)
+        new OpFlagSynchronizer(flagSemantics, context)
     );
+  }
+
+  public OpInputProjectionsPsiParser(MessagesContext context) {
+    this(FLAGGED, context);
   }
 
 }

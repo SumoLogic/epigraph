@@ -80,6 +80,9 @@
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
 - [x] sort out 'path steps' for input projections: input data should respect them
 - [ ] consider removing model kinds separation from grammar/psi to allow more flexible syntax, e.g. `friendsMap * ( foo )`
+- [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
+      in filter chains, otherwise it won't affect projections constructed using builders.
+      On the other hand if it only happens in filter chains it will be hard to report errors with pointers to the original parsed string.
 
 # Operations
 

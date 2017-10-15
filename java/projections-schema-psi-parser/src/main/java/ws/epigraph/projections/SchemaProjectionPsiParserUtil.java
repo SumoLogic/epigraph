@@ -120,7 +120,7 @@ public final class SchemaProjectionPsiParserUtil {
       }
 
       // should be schema-wide instance ?
-      return new OpInputProjectionsPsiParser(context).parseModelProjection(
+      return new OpInputProjectionsPsiParser(OpInputProjectionsPsiParser.FLAG_REQUIRED, context).parseModelProjection(
           keyType,
           true,
           inputModelProjectionPsi,
@@ -207,14 +207,15 @@ public final class SchemaProjectionPsiParserUtil {
           paramPsi,
           context
       );
-    // should be schema-wide instance ?
-    else paramModelProjection = new OpInputProjectionsPsiParser(context).parseModelProjection(
-        paramType,
-        paramPsi.getPlus() != null,
-        paramModelProjectionPsi,
-        resolver,
-        context
-    );
+      // should be schema-wide instance ?
+    else paramModelProjection =
+        new OpInputProjectionsPsiParser(OpInputProjectionsPsiParser.FLAG_REQUIRED, context).parseModelProjection(
+            paramType,
+            paramPsi.getPlus() != null,
+            paramModelProjectionPsi,
+            resolver,
+            context
+        );
 
     return new OpParam(paramName, paramModelProjection, EpigraphPsiUtil.getLocation(paramPsi));
   }

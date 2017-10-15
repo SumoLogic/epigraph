@@ -55,7 +55,7 @@ public class ReqUpdateProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpInputEntityProjection(
+  private final OpEntityProjection personOpProjection = parsePersonOpUpdateEntityProjection(
       lines(
           ":(",
           "  id,",
@@ -63,8 +63,8 @@ public class ReqUpdateProjectionsParserTest {
           "    id {",
           "      ;param1 : epigraph.String,",
           "    },",
-          "    bestFriend :(+id, `record` (",
-          "      +id,",
+          "    +bestFriend :(id, `record` (",
+          "      id,",
           "      bestFriend :`record` (",
           "        id,",
           "        firstName",
@@ -150,8 +150,8 @@ public class ReqUpdateProjectionsParserTest {
   @Test
   public void testParseMap() {
     testParse(
-        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )",
-        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]+( :id ) )"
+        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]( :id ) )",
+        ":record ( friendsMap [ '1';param = 'foo', '2'!ann = true ]( :+id ) )"
     );
   }
 
@@ -161,6 +161,11 @@ public class ReqUpdateProjectionsParserTest {
         ":record ( friends *( :id ) )",
         ":record ( friends *( :+id ) )"
     );
+  }
+
+  @Test
+  public void testReplace() {
+    testParse(":record ( +bestFriend :id )");
   }
 
   @Test
@@ -193,14 +198,17 @@ public class ReqUpdateProjectionsParserTest {
 
   @Test
   public void testUpdateField() {
-    testParse(":record ( +bestFriend :id )");
+    testParse(
+        ":record ( bestFriend :id )",
+        ":record ( bestFriend :+id )"
+    );
   }
 
   @Test
   public void testUpdateModel() {
     testParse(
-        ":+record ( id )",
-        ":+record ( id )"
+        ":record ( id )",
+        ":record ( +id )"
     );
   }
 
@@ -231,13 +239,13 @@ public class ReqUpdateProjectionsParserTest {
   // negative cases
 
   @Test
-  public void testRequiredTag() {
-    testParseFail(":record(bestFriend:record(id))");
+  public void testFieldReplaceNotSupported() {
+    testParseFail(":record ( +worstEnemy ( id ) )");
   }
 
   @Test
-  public void testRequiredField() {
-    testParseFail(":record(bestFriend:(id,record()))");
+  public void testTagReplaceNotSupported() {
+    testParseFail(":+record ( id )");
   }
 
   @Test
@@ -304,7 +312,7 @@ public class ReqUpdateProjectionsParserTest {
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpInputEntityProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpEntityProjection parsePersonOpUpdateEntityProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpUpdateEntityProjection(dataType, projectionString, resolver);
   }
 }

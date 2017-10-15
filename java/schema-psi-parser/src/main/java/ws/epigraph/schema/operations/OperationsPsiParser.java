@@ -176,7 +176,7 @@ public final class OperationsPsiParser {
     final OpFieldProjection fieldProjection =
         context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
             resolveInputType(resourceType, entityProjection, inputTypePsi, resolver, context),
-            true,
+            inputProjectionPsi.getPlus() != null,
             inputFieldProjectionPsi,
             resolver,
             new OpPsiProcessingContext(context, referenceContext)
@@ -257,9 +257,9 @@ public final class OperationsPsiParser {
         );
 
     final @NotNull OpFieldProjection fieldProjection =
-        context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
+        context.schemaPsiProcessingContext().updateProjectionsParser().parseFieldProjection(
             resolveInputType(resourceType, entityPath, inputTypePsi, resolver, context),
-            true,
+            inputProjectionPsi.getPlus() != null,
             inputFieldProjectionPsi,
             resolver,
             new OpPsiProcessingContext(context, referenceContext)

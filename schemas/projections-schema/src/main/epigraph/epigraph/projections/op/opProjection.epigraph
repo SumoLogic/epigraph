@@ -21,7 +21,7 @@ import epigraph.data.PrimitiveDatum
 record OpEntityProjection {
   type: Type
   flagged: Boolean {
-    @Doc "'default' for output projection, 'required' for input projection, 'can delete' for delete projection"
+    @Doc "'default' for output, 'required' for input, 'can replace' for replace and 'can delete' for delete projection"
   }
   tagProjections: list[OpTagProjectionEntry]
   polymorphicTail: list[OpEntityProjection]

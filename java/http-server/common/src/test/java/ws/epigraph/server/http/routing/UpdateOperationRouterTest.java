@@ -94,7 +94,7 @@ public class UpdateOperationRouterTest {
       "    @String \"path.3\"",
       "    path /.:`record`/bestFriend",
       "    inputType UserRecord",
-      "    inputProjection (id, firstName )",
+      "    inputProjection +(id, firstName )",
       "    outputProjection :`record` (id, firstName)",
       "  }",
       "}"
@@ -222,10 +222,10 @@ public class UpdateOperationRouterTest {
   @Test
   public void testPath3WithUpdate() throws PsiProcessingException {
     testRouting(
-        "/users/1:record/bestFriend(id)>:record(id)",
-        "path.3", // should not select path.2 because required field is missing from update projection
+        "/users/1:record/bestFriend+(id)>:record(id)",
+        "path.3", // should not select path.2 because we're asking to replace best friend and only path3 supports it
         "/ '1' :record / bestFriend",
-        "( +id )",
+        "( id )",
         1,
         ":record ( id )"
     );

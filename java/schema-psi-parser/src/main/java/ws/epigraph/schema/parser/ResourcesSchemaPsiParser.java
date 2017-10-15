@@ -534,7 +534,7 @@ public final class ResourcesSchemaPsiParser {
         projectionDefPsi.getTypeRef(),
         projectionDefPsi.getOpUnnamedOrRefEntityProjection(),
         resolver,
-        context.outputReferenceContext(),
+        context.inputReferenceContext(),
         projectionName -> new OpReferenceContext(
             ProjectionReferenceName.fromQn(
                 resourceName == null ?

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Synchronizes 'flag' between model and entity projections for datum types and entity types with retro tags.
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpFlagSynchronizer extends OpProjectionTransformer {

@@ -46,6 +46,7 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
 
   private final @NotNull OpOutputProjectionsPsiParser outputProjectionsParser;
   private final @NotNull OpInputProjectionsPsiParser inputProjectionsParser;
+  private final @NotNull OpInputProjectionsPsiParser updateProjectionsParser;
   private final @NotNull OpDeleteProjectionsPsiParser deleteProjectionsParser;
 
   public SchemaPsiProcessingContext(
@@ -77,7 +78,10 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
     );
 
     outputProjectionsParser = new OpOutputProjectionsPsiParser(psiProcessingContext);
-    inputProjectionsParser = new OpInputProjectionsPsiParser(psiProcessingContext);
+    inputProjectionsParser =
+        new OpInputProjectionsPsiParser(OpInputProjectionsPsiParser.FLAG_REQUIRED, psiProcessingContext);
+    updateProjectionsParser =
+        new OpInputProjectionsPsiParser(OpInputProjectionsPsiParser.FLAG_CAN_REPLACE, psiProcessingContext);
     deleteProjectionsParser = new OpDeleteProjectionsPsiParser(psiProcessingContext);
   }
 
@@ -109,6 +113,8 @@ public class SchemaPsiProcessingContext extends DelegatingPsiProcessingContext
   public @NotNull OpOutputProjectionsPsiParser outputProjectionsParser() { return outputProjectionsParser; }
 
   public @NotNull OpInputProjectionsPsiParser inputProjectionsParser() { return inputProjectionsParser; }
+
+  public @NotNull OpInputProjectionsPsiParser updateProjectionsParser() { return updateProjectionsParser; }
 
   public @NotNull OpDeleteProjectionsPsiParser deleteProjectionsParser() { return deleteProjectionsParser; }
 }
