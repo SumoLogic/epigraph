@@ -37,8 +37,6 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
     ReqFieldProjection,
     E> {
 
-  // todo: take var projection's 'parenthesized' into account
-
   public ReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
       final @NotNull ProjectionsPrettyPrinterContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> context) {

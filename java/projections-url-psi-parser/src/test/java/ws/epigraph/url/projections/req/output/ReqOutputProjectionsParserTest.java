@@ -293,7 +293,7 @@ public class ReqOutputProjectionsParserTest {
             "  firstName,",
 //            "  middleName ;param2 = 'p2',", // required param1 missing => field not included
             "  bestFriend :(),",
-            "  bestFriend2 $bf2 = :( id ),",
+            "  bestFriend2 $bf2 = :id,",
             "  bestFriend3 :(),",
             "  friends *( :() ),",
             "  friendRecords,",

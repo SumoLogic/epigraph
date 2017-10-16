@@ -222,7 +222,7 @@ public class DefaultReqProjectionConstructor {
         type,
         flag,
         tagProjections,
-        op.parenthesized() || tagProjections.size() != 1,
+        tagProjections.size() != 1,
         tails != null && tails.isEmpty() ? null : tails,
         location
     );

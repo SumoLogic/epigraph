@@ -49,7 +49,7 @@ class CGenProjections {
 
     private def validateTags(rep: ErrorReporter) = {
       if (!parenthesized && tagProjections.size != 1)
-        rep.error(s"Non-parenthesized var projection can only contain one tag; was passed ${tagProjections.size} tags",
+        rep.error(s"Non-parenthesized entity projection can only contain one tag; was passed ${tagProjections.size} tags",
           location)
 
       for ((tagName, tagProjection) <- tagProjections) {

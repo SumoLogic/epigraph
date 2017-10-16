@@ -34,6 +34,7 @@ import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Collections;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -184,15 +185,13 @@ public class DefaultReqProjectionConstructorTest {
   public void testIncludeFlaggedOnly() throws PsiProcessingException {
     test(dataType, personOpProjection, DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
         lines(
-            ":(",
-            "  record (",
-            "    bestFriend :( id, record ( id ;param2 = 333 ) ),",
-            "    bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
-            "    bestFriend3",
-            "      :( record ( bestFriend3 :record ( bestFriend3 :record ( bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) ) ) ),",
-            "    friends *( :id ),",
-            "    friendsMap [ * ]( :( record ( firstName ) ) )",
-            "  )",
+            ":record (",
+            "  bestFriend :( id, record ( id ;param2 = 333 ) ),",
+            "  bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
+            "  bestFriend3",
+            "    :record ( bestFriend3 :record ( bestFriend3 :record ( bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) ) ),",
+            "  friends *( :id ),",
+            "  friendsMap [ * ]( :record ( firstName ) )",
             ")"
         )
     );
@@ -261,6 +260,17 @@ public class DefaultReqProjectionConstructorTest {
         ),
         ":record ( friendsMap [ 'a';p = 555, 'b';p = 555 ]( :id ) )"
     );
+  }
+
+  @Test
+  public void testSingleTagNonParenthesized() throws PsiProcessingException {
+    ReqEntityProjection req = test(
+        dataType,
+        parsePersonOpOutputEntityProjection(":( id, `record`(+id) )"),
+        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        ":record ( id )"
+    );
+    assertFalse(req.parenthesized());
   }
 
   private ReqEntityProjection test(

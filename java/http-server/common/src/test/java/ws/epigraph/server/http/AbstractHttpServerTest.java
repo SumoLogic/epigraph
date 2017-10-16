@@ -90,7 +90,7 @@ public abstract class AbstractHttpServerTest {
 
   @Test
   public void testGetWithDefault() throws IOException {
-    get("/users/1", 200, "{'record':{'firstName':'First1','lastName':'Last1'}}");
+    get("/users/1", 200, "{'firstName':'First1','lastName':'Last1'}");
   }
 
   @Test
