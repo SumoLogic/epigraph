@@ -83,7 +83,12 @@
 - [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
       in filter chains, otherwise it won't affect projections constructed using builders.
       On the other hand if it only happens in filter chains it will be hard to report errors with pointers to the original parsed string.
-
+- [ ] implement https://github.com/SumoLogic/epigraph/wiki/default-projections
+  - [ ] `ReqBasicProjectionPsiParser` should take `Nullable` data, traverse it and pass to the default projection constructor
+  - [ ] request body should be marshalled using (expanded) request projection
+  - [ ] request body should be deserialized using op projection
+  - [ ] req input projection should be parsed after body deserialization, see step 1
+  - [ ] UT: `AbstractHttpClientTest::testCustomWithPath`, add another one with param on `list[]` on `create` operation
 # Operations
 
 # Service
