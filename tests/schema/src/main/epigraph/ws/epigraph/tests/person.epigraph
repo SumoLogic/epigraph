@@ -39,11 +39,16 @@ record PersonRecord {
   friendsMap2: PersonMap
   friendRecordMap: map[String, PersonRecord]
   personRecToPersonRec: map[PersonRecord, PersonRecord]
+  singleTagField: SingleTagEntity
 }
 
 record PaginationInfo {
   start: Long
   count: Long
+}
+
+entity SingleTagEntity {
+  tag: String
 }
 
 map[PersonId, Person] PersonMap meta PaginationInfo

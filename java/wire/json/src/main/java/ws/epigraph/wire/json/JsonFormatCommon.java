@@ -21,12 +21,10 @@ package ws.epigraph.wire.json;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.*;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.FieldApi;
-import ws.epigraph.types.TagApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class JsonFormatCommon {

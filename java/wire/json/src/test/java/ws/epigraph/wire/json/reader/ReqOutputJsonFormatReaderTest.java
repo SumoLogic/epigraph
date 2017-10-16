@@ -62,6 +62,7 @@ public class ReqOutputJsonFormatReaderTest {
       String_Person_Map.type,
       PaginationInfo.type,
       PersonMap.type,
+      SingleTagEntity.type,
       epigraph.String.type,
       epigraph.Boolean.type
   );
@@ -85,7 +86,8 @@ public class ReqOutputJsonFormatReaderTest {
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
           "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
           "    friends *( :id ),",
-          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
+          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) ),",
+          "    singleTagField :tag",
           "  )",
           ") :~(",
           "      ws.epigraph.tests.User :`record` (profile)",
@@ -467,6 +469,17 @@ public class ReqOutputJsonFormatReaderTest {
 
     );
 
+  }
+
+  @Test
+  public void testSingleTagEntity() throws IOException {
+    testRead(
+        ":record(singleTagField:tag)",
+        "{\"singleTagField\":\"foo\"}",
+        Person.create()
+            .setRecord(PersonRecord.create()
+                .setSingleTagField(SingleTagEntity.create().setTag(epigraph.String.create("foo"))))
+    );
   }
 
   private void testRead(

@@ -54,6 +54,7 @@ public class ReqOutputJsonFormatWriterTest {
       String_Person_Map.type,
       PaginationInfo.type,
       PersonMap.type,
+      SingleTagEntity.type,
       epigraph.String.type,
       epigraph.Boolean.type
   );
@@ -77,7 +78,8 @@ public class ReqOutputJsonFormatWriterTest {
       "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
       "    worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ),",
       "    friends *( :id ),",
-      "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
+      "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) ),",
+      "    singleTagField :tag",
       "  )",
       ") :~(",
       "      ws.epigraph.tests.User :`record` (profile)",
@@ -293,7 +295,12 @@ public class ReqOutputJsonFormatWriterTest {
 
     String reqProjectionStr = "@(start,count)[ 2 ]:record(id, firstName)";
     final @NotNull ReqEntityProjection reqProjection =
-        parseReqOutputEntityProjection(personMapDataType, personMapOpProjection, reqProjectionStr, resolver).projection();
+        parseReqOutputEntityProjection(
+            personMapDataType,
+            personMapOpProjection,
+            reqProjectionStr,
+            resolver
+        ).projection();
 
     final PersonMap.Builder personMap = PersonMap.create();
     personMap.put$(
@@ -410,6 +417,17 @@ public class ReqOutputJsonFormatWriterTest {
         "{\"firstName\":\"fn1\"}," +
         "{\"TYPE\":\"ws.epigraph.tests.UserRecord\",\"DATA\":{\"firstName\":\"fn2\"}}" +
         "]}}"
+    );
+  }
+
+  @Test
+  public void testSingleTagEntity() throws IOException {
+    testRender(
+        ":record(singleTagField:tag)",
+        Person.create()
+            .setRecord(PersonRecord.create()
+                .setSingleTagField(SingleTagEntity.create().setTag(epigraph.String.create("foo")))),
+        "{\"singleTagField\":\"foo\"}"
     );
   }
 
