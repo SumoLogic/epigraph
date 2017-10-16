@@ -53,6 +53,7 @@ Map<String, String> modules = [
     'java/http-server/common'                   : 'epigraph-java-http-server-common',
     'java/http-server/jetty-handler'            : 'epigraph-java-http-server-jetty-handler',
     'java/http-server/servlet'                  : 'epigraph-java-http-server-servlet',
+    'java/http-server/spring-handler'           : 'epigraph-java-http-server-spring-handler',
     'java/http-server/undertow'                 : 'epigraph-java-http-server-undertow',
     'java/invocation'                           : 'epigraph-java-invocation',
     'java/lang-common'                          : 'epigraph-java-lang-common',

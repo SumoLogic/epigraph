@@ -153,6 +153,12 @@
       </dependency>
       <dependency>
         <groupId>ws.epigraph</groupId>
+        <artifactId>epigraph-java-http-server-spring-handler</artifactId>
+        <version>${revision}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>ws.epigraph</groupId>
         <artifactId>epigraph-java-http-server-undertow</artifactId>
         <version>${revision}</version>
         <type>jar</type>

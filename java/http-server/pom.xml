@@ -33,6 +33,7 @@
     <module>common</module>
     <module>jetty-handler</module>
     <module>servlet</module>
+    <module>spring-handler</module>
     <module>undertow</module>
   </modules>
 
