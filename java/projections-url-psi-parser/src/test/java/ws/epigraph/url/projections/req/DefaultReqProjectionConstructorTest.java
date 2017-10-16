@@ -235,8 +235,8 @@ public class DefaultReqProjectionConstructorTest {
         Person.create().setRecord(
             PersonRecord.create().setFriendsMap(
                 String_Person_Map.create()
-                    .put$(epigraph.String.create("a"), Person.create().setId(PersonId.create(1)))
-                    .put$(epigraph.String.create("b"), Person.create().setId(PersonId.create(2)))
+                    .put$("a", Person.create().setId(PersonId.create(1)))
+                    .put$("b", Person.create().setId(PersonId.create(2)))
             )
         ),
         ":record ( friendsMap [ 'a', 'b' ]( :id ) )"
@@ -254,8 +254,8 @@ public class DefaultReqProjectionConstructorTest {
         Person.create().setRecord(
             PersonRecord.create().setFriendsMap(
                 String_Person_Map.create()
-                    .put$(epigraph.String.create("a"), Person.create().setId(PersonId.create(1)))
-                    .put$(epigraph.String.create("b"), Person.create().setId(PersonId.create(2)))
+                    .put$("a", Person.create().setId(PersonId.create(1)))
+                    .put$("b", Person.create().setId(PersonId.create(2)))
             )
         ),
         ":record ( friendsMap [ 'a';p = 555, 'b';p = 555 ]( :id ) )"

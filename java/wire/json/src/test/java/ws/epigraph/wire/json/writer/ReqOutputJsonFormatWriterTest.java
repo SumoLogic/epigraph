@@ -185,18 +185,9 @@ public class ReqOutputJsonFormatWriterTest {
                 PersonRecord.create()
                     .setFriendsMap(
                         String_Person_Map.create()
-                            .put$(
-                                epigraph.String.create("key1"),
-                                Person.create().setId(PersonId.create(1))
-                            )
-                            .put$(
-                                epigraph.String.create("key2"),
-                                Person.create().setId(PersonId.create(2))
-                            )
-                            .put$(
-                                epigraph.String.create("key3"),
-                                Person.create().setId(PersonId.create(3))
-                            )
+                            .put$("key1", Person.create().setId(PersonId.create(1)))
+                            .put$("key2", Person.create().setId(PersonId.create(2)))
+                            .put$("key3", Person.create().setId(PersonId.create(3)))
                     )
             )
             .toImmutable();

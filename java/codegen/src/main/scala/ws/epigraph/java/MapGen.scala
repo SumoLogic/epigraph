@@ -139,11 +139,11 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
       case None => ""
       case Some(dtn) =>
 
-        def primitiveKeyType(nativeType: String) = nativeType
+        def primitiveKeyType(nativeType: String) = JavaGenUtils.nativeSetterArgType(nativeType)
         def nonPrimitiveKeyType: String = lqn(kt, t)
         val keyType = JavaGenUtils.builtInPrimitives.get(ktr.resolved.name.name).map(primitiveKeyType).getOrElse(nonPrimitiveKeyType)
 
-        def primitiveKeyExpr = s"${lqn(tt(ktr, dtn), t)}.create(key)"
+        def primitiveKeyExpr = s"${lqn(kt, t)}.create(key)"
         val nonPrimitiveKeyExpr = "key"
         val keyExpr = if (JavaGenUtils.builtInPrimitives.contains(ktr.resolved.name.name)) primitiveKeyExpr else nonPrimitiveKeyExpr
 
@@ -184,8 +184,8 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
     }
 
     ${"/**"} Associates specified${vt(vt, s" default `$dtn` tag", "")} error with specified key in this map. */
-    public @NotNull $ln.Builder putError(@NotNull ${lqn(kt, t)} key, @NotNull ws.epigraph.errors.ErrorValue error) {
-      datas().put(key.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_Error(error));
+    public @NotNull $ln.Builder putError(@NotNull $keyType key, @NotNull ws.epigraph.errors.ErrorValue error) {
+      datas().put($keyExpr.toImmutable(), ${lqn(vt, t)}.Type.instance().createDataBuilder().set${vt(vt, up(dtn), "")}_Error(error));
       return this;
     }
 
@@ -201,7 +201,16 @@ ${t.effectiveDefaultValueTagName match { // default value tag (if defined) views
   }
 }\
 ${vt match { // data view (for vartypes)
-    case evt: CEntityTypeDef => sn"""\
+    case evt: CEntityTypeDef =>
+        def primitiveKeyType(nativeType: String) = JavaGenUtils.nativeSetterArgType(nativeType)
+        def nonPrimitiveKeyType: String = lqn(kt, t)
+        val keyType = JavaGenUtils.builtInPrimitives.get(ktr.resolved.name.name).map(primitiveKeyType).getOrElse(nonPrimitiveKeyType)
+
+        def primitiveKeyExpr = s"${lqn(kt, t)}.create(key)"
+        val nonPrimitiveKeyExpr = "key"
+        val keyExpr = if (JavaGenUtils.builtInPrimitives.contains(ktr.resolved.name.name)) primitiveKeyExpr else nonPrimitiveKeyExpr
+
+      sn"""\
 
     ${"/**"} Returns modifiable map view of element data builders. */
     @Override
@@ -210,8 +219,8 @@ ${vt match { // data view (for vartypes)
     }
 
     ${"/**"} Associates specified data with specified key in this map. */
-    public @NotNull $ln.Builder put$$(@NotNull ${lqn(kt, t)} key, @NotNull ${lqn(vt, t)} data) {
-      datas().put(key.toImmutable(), data);
+    public @NotNull $ln.Builder put$$(@NotNull $keyType key, @NotNull ${lqn(vt, t)} data) {
+      datas().put($keyExpr.toImmutable(), data);
       return this;
     }
 ${
