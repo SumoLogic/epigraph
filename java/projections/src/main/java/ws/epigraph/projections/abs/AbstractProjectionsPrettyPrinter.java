@@ -130,8 +130,9 @@ public abstract class AbstractProjectionsPrettyPrinter<
     } else {
       if (pathSteps > 0) throw new IllegalArgumentException(
           String.format(
-              "found %d var tags and parenthesized = %b while path still contains %d steps",
+              "found %d entity tags (%s) and parenthesized = %b while path still contains %d steps",
               tagProjections.size(),
+              String.join(", ", tagProjections.keySet()),
               p.parenthesized(),
               pathSteps
           )

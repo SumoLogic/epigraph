@@ -192,7 +192,7 @@ public final class RequestFactory {
           reqFieldProjection
       );
     } catch (PsiProcessingException e) {
-      context.setErrors(e.messages());
+      context.setMessages(e.messages());
     }
 
     throw new IllegalArgumentException(dumpErrors(context.messages()));
@@ -505,7 +505,7 @@ public final class RequestFactory {
           new ReqPathPsiProcessingContext(context)
       );
     } catch (PsiProcessingException e) {
-      context.setErrors(e.messages());
+      context.setMessages(e.messages());
     }
 
     throw new IllegalArgumentException(dumpErrors(context.messages()));
@@ -613,7 +613,7 @@ public final class RequestFactory {
       return res;
 
     } catch (PsiProcessingException e) {
-      context.setErrors(e.messages());
+      context.setMessages(e.messages());
     }
 
 

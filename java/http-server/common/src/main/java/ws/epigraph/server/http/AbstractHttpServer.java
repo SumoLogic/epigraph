@@ -817,7 +817,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           psiProcessingContext
       );
     } catch (PsiProcessingException e) {
-      psiProcessingContext.setErrors(e.messages());
+      psiProcessingContext.setMessages(e.messages());
     }
 
     if (!psiProcessingContext.messages().isEmpty()) {

@@ -91,7 +91,7 @@ public final class SchemaGDataPsiParser {
         );
         else fields.put(entry.getQid().getCanonicalName(), parseValue(value, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.messages());
+        context.setMessages(e.messages());
       }
     }
 
@@ -111,7 +111,7 @@ public final class SchemaGDataPsiParser {
         );
         else map.put(parseDatum(entry.getDatum(), context), parseValue(dataValue, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.messages());
+        context.setMessages(e.messages());
       }
     }
 
@@ -129,7 +129,7 @@ public final class SchemaGDataPsiParser {
       try {
         items.add(parseValue(value, context));
       } catch (PsiProcessingException e) {
-        context.setErrors(e.messages());
+        context.setMessages(e.messages());
       }
 
     return new GListDatum(getTypeRef(typeRef, context), items, EpigraphPsiUtil.getLocation(psi));

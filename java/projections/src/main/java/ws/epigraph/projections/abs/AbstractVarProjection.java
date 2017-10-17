@@ -123,7 +123,7 @@ public abstract class AbstractVarProjection<
     if (!parenthesized && tagProjections().size() > 1)
       throw new IllegalArgumentException(
           String.format(
-              "Non-parenthesized var projection can only contain one tag; was passed %d tags",
+              "Non-parenthesized entity projection can only contain one tag; was passed %d tags",
               tagProjections().size()
           ));
 
@@ -136,7 +136,7 @@ public abstract class AbstractVarProjection<
 
       if (!type.tagsMap().containsKey(tagName))
         throw new IllegalArgumentException(
-            String.format("Tag '%s' does not belong to var type '%s'",
+            String.format("Tag '%s' does not belong to entity type '%s'",
                 tagName, type.name()
             )
         );
@@ -614,6 +614,8 @@ public abstract class AbstractVarProjection<
     this.normalizedFrom = value.normalizedFrom();
 //    this.normalizedCache.putAll(((AbstractVarProjection<VP, TP, MP>) value).normalizedCache);
     this.normalizedTailNames.putAll(value.normalizedTailNames);
+
+    validateTags();
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks)

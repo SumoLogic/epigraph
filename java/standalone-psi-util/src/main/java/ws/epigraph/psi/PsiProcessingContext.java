@@ -30,7 +30,7 @@ public interface PsiProcessingContext extends MessagesContext {
   @NotNull
   List<PsiProcessingMessage> messages();
 
-  default void setErrors(@NotNull List<PsiProcessingMessage> messages) {
+  default void setMessages(@NotNull List<PsiProcessingMessage> messages) {
     if (messages() != messages) {
       messages().clear();
       messages().addAll(messages);

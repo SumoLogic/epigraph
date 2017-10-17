@@ -116,7 +116,7 @@ public abstract class AbstractOperationRouter<
             context
         );
       } catch (PsiProcessingException e) {
-        context.setErrors(e.messages());
+        context.setMessages(e.messages());
       }
 
       if (request != null)

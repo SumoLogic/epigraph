@@ -404,7 +404,7 @@ public final class TestUtil {
     try {
       r = closure.runParser(context);
     } catch (PsiProcessingException e) {
-      context.setErrors(e.messages());
+      context.setMessages(e.messages());
     }
 
     failIfHasErrors(failOnWarnings, context.messages());

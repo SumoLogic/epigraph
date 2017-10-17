@@ -34,8 +34,8 @@ public class DelegatingPsiProcessingContext implements PsiProcessingContext {
   public @NotNull List<PsiProcessingMessage> messages() { return delegate.messages(); }
 
   @Override
-  public void setErrors(final @NotNull List<PsiProcessingMessage> messages) {
-    delegate.setErrors(messages);
+  public void setMessages(final @NotNull List<PsiProcessingMessage> messages) {
+    delegate.setMessages(messages);
   }
 
   @Override

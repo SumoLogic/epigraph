@@ -345,7 +345,7 @@ class EpigraphJavaGenerator private(
     val postponedGeneratorsSize = postponedGenerators.size
     if (postponedGeneratorsSize > 0) {
       //noinspection ComparingUnrelatedTypes  (should actually be OK?)
-      if (generatorsCopy == postponedGenerators) { // couldn't make any progress, abort
+      if (generatorsCopy.toSet == postponedGenerators.toSet) { // couldn't make any progress, abort
         val msg = new StringWriter()
         msg.append("The following generators couldn't finish:\n")
         postponedGenerators.foreach(

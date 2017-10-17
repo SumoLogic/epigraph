@@ -83,12 +83,24 @@
 - [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
       in filter chains, otherwise it won't affect projections constructed using builders.
       On the other hand if it only happens in filter chains it will be hard to report errors with pointers to the original parsed string.
+- [ ] reverse the meaning of `+` on op output projections: it should be used to mark "expensive" (do not include by default) fields
+  - if field is datum type: return `$self`
+  - else if field has retro: use retro tag
+  - else return all tags not marked as `+`
+- [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections. In the future: nullable fields should not be included in default req output
 - [ ] implement https://github.com/SumoLogic/epigraph/wiki/default-projections
   - [ ] `ReqBasicProjectionPsiParser` should take `Nullable` data, traverse it and pass to the default projection constructor
   - [ ] request body should be marshalled using (expanded) request projection
   - [ ] request body should be deserialized using op projection
   - [ ] req input projection should be parsed after body deserialization, see step 1
   - [ ] UT: `AbstractHttpClientTest::testCustomWithPath`, add another one with param on `list[]` on `create` operation
+- [ ] do something about nullable/optional in schema/projections
+  - make generated records throw errors if asked for non-existing fields?
+  - then add `@NotNull` on fields in schema, translated into `@NotNull` on generated records
+  - https://sumologic.slack.com/archives/D0JPD1FKN/p1507142820000118
+  - default req output projections should not include nullable fields (otherwise whole requests will start failing)
+- [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
+
 # Operations
 
 # Service

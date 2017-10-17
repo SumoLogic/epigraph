@@ -66,7 +66,7 @@ public final class RequestUrlPsiParserTestUtil {
           schemasPsiProcessingContext
       );
       schemasPsiProcessingContext.ensureAllReferencesResolved();
-      context.setErrors(schemasPsiProcessingContext.messages());
+      context.setMessages(schemasPsiProcessingContext.messages());
       return schema;
     });
   }

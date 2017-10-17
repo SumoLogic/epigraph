@@ -276,14 +276,14 @@ class EpigraphCompiler(
 
       try {
         val resourcesSchema = ResourcesSchemaPsiParser.parseResourcesSchema(csf.psi, typesResolver, context)
-        handlePsiMessages(csf, context.messages())
         ctx.resourcesSchemas.put(csf, resourcesSchema)
       } catch {
-        case e: PsiProcessingException => handlePsiMessages(csf, e.messages())
+        case e: PsiProcessingException => context.setMessages(e.messages())
       }
     }
 
     context.ensureAllReferencesResolved()
+
     if (context.messages().nonEmpty)
       handlePsiMessages(ctx.schemaFiles.toMap, context.messages())
   }

@@ -312,7 +312,7 @@ public final class UrlProjectionsPsiParserUtil {
       try {
         paramMap = parseAnnotation(paramMap, annotation.getAnnotation(), context);
       } catch (PsiProcessingException e) {
-        context.setErrors(e.messages());
+        context.setMessages(e.messages());
       }
     }
 

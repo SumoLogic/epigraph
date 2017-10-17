@@ -416,6 +416,19 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
+  public void testDoubleTailNormalized() {
+    ReqEntityProjection n = testTailsNormalization(
+        ":id :~User :record ( profile ) :~SubUser $su = :record (worstEnemy(id))",
+        SubUser.type,
+        ":( record ( worstEnemy ( id ), profile ), id )"
+    );
+
+    ReqEntityProjection normalizedFrom = n.normalizedFrom();
+    assertNotNull(normalizedFrom);
+    assertEquals(Person.type, normalizedFrom.type());
+  }
+
+  @Test
   public void testModelTailsNormalization() throws PsiProcessingException {
 
     testModelTailsNormalization(
@@ -554,15 +567,17 @@ public class ReqOutputProjectionsParserTest {
 
   // todo negative test cases too
 
-  private void testTailsNormalization(String str, Type type, String expected) {
+  private ReqEntityProjection testTailsNormalization(String str, Type type, String expected) {
     final @NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection =
         parseReqOutputEntityProjection(dataType, personOpProjection, str, resolver);
 
     ReqEntityProjection varProjection = stepsAndProjection.projection();
     final @NotNull ReqEntityProjection normalized = varProjection.normalizedForType(type);
 
-    String actual = TestUtil.printReqEntityProjection(normalized, stepsAndProjection.pathSteps());
+    String actual = TestUtil.printReqEntityProjection(normalized, 0);
     assertEquals(expected, actual);
+
+    return normalized;
   }
 
   private void testModelTailsNormalization(OpEntityProjection op, String str, DatumType type, String expected) {

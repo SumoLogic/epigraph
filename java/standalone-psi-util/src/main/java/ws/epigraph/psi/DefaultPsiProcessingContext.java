@@ -33,7 +33,7 @@ public class DefaultPsiProcessingContext implements PsiProcessingContext {
   }
 
   @Override
-  public void setErrors(final @NotNull List<PsiProcessingMessage> messages) {
+  public void setMessages(final @NotNull List<PsiProcessingMessage> messages) {
     this.errors = new ArrayList<>(messages);
   }
 }

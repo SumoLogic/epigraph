@@ -658,7 +658,7 @@ public class SchemaParserTest {
           schemasPsiProcessingContext
       );
       schemasPsiProcessingContext.ensureAllReferencesResolved();
-      context.setErrors(schemasPsiProcessingContext.messages());
+      context.setMessages(schemasPsiProcessingContext.messages());
       return schema;
     });
   }
