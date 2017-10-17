@@ -224,7 +224,13 @@ public abstract class ReferenceContext<
           context.addError(String.format("Can't override projection '%s' from parent context", name), location);
 
         } else {
-          context.addError(String.format("Projection '%s' reference not found", name), location);
+          // race?
+          context.addError(String.format(
+              "Projection '%s' entity reference not found (context: '%s')",
+              name,
+              referencesNamespace.toString()
+          ), location);
+//          entityReferences.put(name, new IdRefItem<>(value));
         }
       }
     });
@@ -294,7 +300,13 @@ public abstract class ReferenceContext<
           context.addError(String.format("Can't override projection '%s' from parent context", name), location);
 
         } else {
-          context.addError(String.format("Projection '%s' reference not found", name), location);
+          // race?
+          context.addError(String.format(
+              "Projection '%s' model reference not found (context: '%s')",
+              name,
+              referencesNamespace.toString()
+          ), location);
+//          modelReferences.put(name, new IdRefItem<>(value));
         }
       }
     });

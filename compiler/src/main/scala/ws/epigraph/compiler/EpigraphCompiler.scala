@@ -271,7 +271,8 @@ class EpigraphCompiler(
   private def parseResources(): Unit = {
     val context: SchemasPsiProcessingContext = new SchemasPsiProcessingContext
 
-    ctx.schemaFiles.values().par.foreach { csf =>
+    // todo: make sure all data structures used by "context" are thread safe and enable "par" back
+    ctx.schemaFiles.values()/*.par*/.foreach { csf =>
       val typesResolver = new CTypesResolver(csf)
 
       try {
