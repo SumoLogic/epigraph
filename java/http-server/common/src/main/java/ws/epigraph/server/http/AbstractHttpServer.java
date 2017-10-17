@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
-  private static final Pattern RESOURCE_PATTERN = Pattern.compile("/(\\p{Lower}\\p{Alnum}*)(.*)");
+  private static final Pattern RESOURCE_PATTERN = Pattern.compile("/\\+?(\\p{Lower}\\p{Alnum}*)(.*)");
 
   protected final @NotNull Service service;
   private final @NotNull ServerProtocol<C> serverProtocol;

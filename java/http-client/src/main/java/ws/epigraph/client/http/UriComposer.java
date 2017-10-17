@@ -82,9 +82,11 @@ public final class UriComposer {
 
     final StringBuilder decodedUri = new StringBuilder();
 
-    if (path == null)
+    if (path == null) {
+      if (inputStepsAndProjection !=null && inputStepsAndProjection.projection().flag())
+        decodedUri.append('+');
       decodedUri.append(fieldName);
-    else
+    } else
       decodedUri.append(printReqPath(fieldName, path));
 
     if (inputStepsAndProjection != null) {
@@ -104,9 +106,9 @@ public final class UriComposer {
 
     final StringBuilder decodedUri = new StringBuilder();
 
-    if (path == null)
-      decodedUri.append(fieldName);
-    else
+    if (path == null) {
+      appendFieldName(decodedUri, fieldName, updateStepsAndProjection);
+    } else
       decodedUri.append(printReqPath(fieldName, path));
 
     if (updateStepsAndProjection != null) {
@@ -126,9 +128,9 @@ public final class UriComposer {
 
     final StringBuilder decodedUri = new StringBuilder();
 
-    if (path == null)
-      decodedUri.append(fieldName);
-    else
+    if (path == null) {
+      appendFieldName(decodedUri, fieldName, deleteStepsAndProjection);
+    } else
       decodedUri.append(printReqPath(fieldName, path));
 
     decodedUri.append(printReqProjection(deleteStepsAndProjection));
@@ -145,6 +147,17 @@ public final class UriComposer {
       @NotNull StepsAndProjection<ReqFieldProjection> outputStepsAndProjection) {
 
     return composeCreateUri(fieldName, path, inputStepsAndProjection, outputStepsAndProjection); // same
+  }
+
+  private static void appendFieldName(
+      StringBuilder decodedUri,
+      String fieldName,
+      @Nullable StepsAndProjection<ReqFieldProjection> stepsAndProjection) {
+
+    if (stepsAndProjection !=null && stepsAndProjection.projection().flag())
+      decodedUri.append('+');
+
+    decodedUri.append(fieldName);
   }
 
   private static @NotNull String encodeUri(@NotNull String decodedUriNoLeadSlash) {

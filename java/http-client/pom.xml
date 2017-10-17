@@ -105,10 +105,9 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>epigraph-java-test-util</artifactId>
+      <artifactId>epigraph-java-projections-schema-psi-parser</artifactId>
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>

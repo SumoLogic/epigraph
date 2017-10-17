@@ -31,10 +31,11 @@ dependencies {
 
   compile 'org.slf4j:slf4j-api'
 
-  testCompile project(':epigraph-java-test-util')
   testCompile project(':epigraph-java-http-server-jetty-handler')
   testCompile project(':epigraph-java-http-server-servlet')
   testCompile project(':epigraph-java-http-server-undertow')
+  testCompile project(':epigraph-java-projections-schema-psi-parser')
+  testCompile project(':epigraph-java-test-util')
   testCompile project(':tests-schema-java')
   testCompile 'junit:junit'
   testCompile 'org.eclipse.jetty:jetty-servlet'

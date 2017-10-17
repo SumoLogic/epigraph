@@ -89,6 +89,10 @@ public class ReqPathPrettyPrinter<E extends Exception>
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
+
+    if (fieldProjection.flag())
+      l.print("+");
+
     l.print(fieldName);
 
 //    printParams(fieldProjection.params());

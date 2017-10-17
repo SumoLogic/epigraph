@@ -144,7 +144,7 @@ public class ReqDeleteProjectionsParserTest {
 
   private void testParse(String expr, String expectedProjection) {
     final @NotNull ReqEntityProjection varProjection =
-        ReqTestUtil.parseReqDeleteVarProjection(dataType, personOpProjection, expr, resolver).projection();
+        ReqTestUtil.parseReqDeleteEntityProjection(dataType, personOpProjection, expr, resolver).projection();
 
     String s = TestUtil.printReqEntityProjection(varProjection, 0);
 

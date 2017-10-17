@@ -166,7 +166,7 @@ public final class ReqTestUtil {
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteVarProjection(
+  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteEntityProjection(
       @NotNull DataType type,
       @NotNull OpEntityProjection op,
       @NotNull String projectionString,
