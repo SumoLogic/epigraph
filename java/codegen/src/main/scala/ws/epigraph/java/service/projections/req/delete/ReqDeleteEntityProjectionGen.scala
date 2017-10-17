@@ -19,10 +19,10 @@ package ws.epigraph.java.service.projections.req.delete
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.delete.ReqDeleteProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqEntityProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqEntityProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op._
-import ws.epigraph.types.TypeKind
+import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -113,43 +113,19 @@ object ReqDeleteEntityProjectionGen {
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteEntityProjectionGen]),
             ctx
           )
-        case TypeKind.RECORD =>
-          new ReqDeleteRecordModelProjectionGen(
+
+        case _ =>
+          val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
+            op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+
+          ReqDeleteModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
+            modelOp,
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
             ctx
           )
-        case TypeKind.MAP =>
-          new ReqDeleteMapModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.LIST =>
-          new ReqDeleteListModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpListModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.PRIMITIVE =>
-          new ReqDeletePrimitiveModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteModelProjectionGen]),
-            ctx
-          )
-        case x => throw new RuntimeException(s"Unknown projection kind: $x")
 
       }
 

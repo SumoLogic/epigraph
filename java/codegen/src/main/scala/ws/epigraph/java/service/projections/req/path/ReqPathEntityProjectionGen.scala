@@ -22,7 +22,7 @@ import ws.epigraph.java.service.projections.req.path.ReqPathProjectionGen.{class
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqEntityProjectionGen, ReqProjectionGen}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op._
-import ws.epigraph.types.TypeKind
+import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -66,28 +66,16 @@ object ReqPathEntityProjectionGen {
     case TypeKind.ENTITY =>
       new ReqPathEntityProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
 
-    case TypeKind.RECORD =>
-      new ReqPathRecordModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.MAP =>
-      new ReqPathMapModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
-        namespaceSuffix,
-        ctx
-      )
-    case TypeKind.PRIMITIVE =>
-      new ReqPathPrimitiveModelProjectionGen(
-        baseNamespaceProvider,
-        op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
-        namespaceSuffix,
-        ctx
-      )
-    case x => throw new RuntimeException(s"Unknown path kind: $x")
 
+    case _ =>
+      val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
+        op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+
+      ReqPathModelProjectionGen.dataProjectionGen(
+        baseNamespaceProvider,
+        modelOp,
+        namespaceSuffix,
+        ctx
+      )
   }
 }

@@ -23,7 +23,7 @@ import ws.epigraph.java.service.projections.req._
 import ws.epigraph.java.service.projections.req.update.ReqUpdateProjectionGen.{classNamePrefix, classNameSuffix}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op._
-import ws.epigraph.types.TypeKind
+import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -119,43 +119,18 @@ object ReqUpdateEntityProjectionGen {
             ctx
           )
 
-        case TypeKind.RECORD =>
-          new ReqUpdateRecordModelProjectionGen(
+        case _ =>
+          val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
+            op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+
+          ReqUpdateModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
+            modelOp,
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
             ctx
           )
-        case TypeKind.MAP =>
-          new ReqUpdateMapModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.LIST =>
-          new ReqUpdateListModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpListModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.PRIMITIVE =>
-          new ReqUpdatePrimitiveModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateModelProjectionGen]),
-            ctx
-          )
-        case x => throw new RuntimeException(s"Unknown projection kind: $x")
 
       }
 

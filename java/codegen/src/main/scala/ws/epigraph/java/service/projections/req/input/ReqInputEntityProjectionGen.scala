@@ -19,10 +19,10 @@ package ws.epigraph.java.service.projections.req.input
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.JavaGenNames.jn
 import ws.epigraph.java.service.projections.req.input.ReqInputProjectionGen.{classNamePrefix, classNameSuffix}
-import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqProjectionGen, ReqTypeProjectionGenCache, ReqEntityProjectionGen}
+import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqEntityProjectionGen, ReqProjectionGen, ReqTypeProjectionGenCache}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.op._
-import ws.epigraph.types.TypeKind
+import ws.epigraph.types.{DatumTypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -112,44 +112,19 @@ object ReqInputEntityProjectionGen {
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputEntityProjectionGen]),
             ctx
           )
-        case TypeKind.RECORD =>
-          new ReqInputRecordModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpRecordModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.MAP =>
-          new ReqInputMapModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpMapModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.LIST =>
-          new ReqInputListModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpListModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
-            ctx
-          )
-        case TypeKind.PRIMITIVE =>
-          new ReqInputPrimitiveModelProjectionGen(
-            baseNamespaceProvider,
-            op.singleTagProjection().projection().asInstanceOf[OpPrimitiveModelProjection],
-            baseNamespaceOpt,
-            namespaceSuffix,
-            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
-            ctx
-          )
-        case x => throw new RuntimeException(s"Unknown projection kind: $x")
 
+        case _ =>
+          val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
+            op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+
+          ReqInputModelProjectionGen.dataProjectionGen(
+            baseNamespaceProvider,
+            modelOp,
+            baseNamespaceOpt,
+            namespaceSuffix,
+            parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputModelProjectionGen]),
+            ctx
+          )
       }
     )
 }
