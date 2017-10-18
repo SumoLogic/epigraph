@@ -37,6 +37,7 @@ import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
@@ -507,7 +508,10 @@ public class OpOutputProjectionsTest {
 
   @Test
   public void testParseList3() throws PsiProcessingException {
-    testParsingEntityProjection(":`record` ( friends * :`record` ( id ) )", ":`record` ( friends *( :`record` ( id ) ) )");
+    testParsingEntityProjection(
+        ":`record` ( friends * :`record` ( id ) )",
+        ":`record` ( friends *( :`record` ( id ) ) )"
+    );
   }
 
   @Test
@@ -722,7 +726,8 @@ public class OpOutputProjectionsTest {
         testConfig,
         ":id :~ws.epigraph.tests.User $user = :`record` ( id, bestFriend4 $user )",
         // should we preserve original label for some reason?
-        ":id :~ws.epigraph.tests.User :`record` ( id, bestFriend4 <UNRESOLVED> )" // $user is unresolved in parser's scope
+        ":id :~ws.epigraph.tests.User :`record` ( id, bestFriend4 <UNRESOLVED> )"
+        // $user is unresolved in parser's scope
     );
 
     referenceContext.ensureAllReferencesResolved();
@@ -924,6 +929,59 @@ public class OpOutputProjectionsTest {
           e.getMessage().contains("Can't merge recursive projection 'p' with other projection")
       );
     }
+  }
+
+  @Test
+  public void testDoubleNormalizedTailRef() {
+    AtomicReference<OpReferenceContext> refRef = new AtomicReference<>();
+
+    TestConfig cfg = new TestConfig() {
+      @Override
+      @NotNull OpReferenceContext outputReferenceContext(final PsiProcessingContext ctx) {
+        OpReferenceContext rctx = super.outputReferenceContext(ctx);
+        refRef.set(rctx);
+        return rctx;
+      }
+    };
+
+    OpEntityProjection entityProjection = testParsingEntityProjection(
+        cfg,
+        ":id :~ws.epigraph.tests.User :`record` ( firstName ) :~ws.epigraph.tests.SubUser $sub = :`record` ( lastName )",
+        ":id :~ws.epigraph.tests.User :`record` ( firstName ) :~ws.epigraph.tests.SubUser :`record` ( lastName )"
+    );
+
+    OpReferenceContext referenceContext = refRef.get();
+    assertNotNull(referenceContext);
+    ReferenceContext.RefItem<OpEntityProjection> refItem = referenceContext.lookupEntityReference("sub", false);
+    assertNotNull(refItem);
+    OpEntityProjection sub = refItem.apply();
+    assertNotNull(sub);
+    OpEntityProjection normalizedFrom = sub.normalizedFrom();
+    assertEquals(entityProjection, normalizedFrom);
+
+    // now same, but with named User
+
+    entityProjection = testParsingEntityProjection(
+        cfg,
+        ":id :~ws.epigraph.tests.User $user = :`record` ( firstName ) :~ws.epigraph.tests.SubUser $sub = :`record` ( lastName )",
+        ":id :~ws.epigraph.tests.User :`record` ( firstName ) :~ws.epigraph.tests.SubUser :`record` ( lastName )"
+    );
+
+    referenceContext = refRef.get();
+    assertNotNull(referenceContext);
+    refItem = referenceContext.lookupEntityReference("sub", false);
+    assertNotNull(refItem);
+    sub = refItem.apply();
+    assertNotNull(sub);
+    normalizedFrom = sub.normalizedFrom();
+    assertEquals(entityProjection, normalizedFrom);
+
+    refItem = referenceContext.lookupEntityReference("user", false);
+    assertNotNull(refItem);
+    sub = refItem.apply();
+    assertNotNull(sub);
+    normalizedFrom = sub.normalizedFrom();
+    assertEquals(entityProjection, normalizedFrom);
   }
 
   @SuppressWarnings("ConstantConditions")

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.*;
@@ -31,6 +32,9 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
+import ws.epigraph.url.projections.req.ReqReferenceContext;
+import ws.epigraph.url.projections.req.ReqTestUtil;
+import ws.epigraph.util.Tuple2;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -191,7 +195,8 @@ public class ReqOutputProjectionsParserTest {
   @Test
   public void testParseEmptyRecordFieldParam() {
     ReqEntityProjection
-        vp = testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null};param1 = 'p1' ) )", 0);
+        vp =
+        testParse(":( id, record ( id ;param2 = ws.epigraph.tests.UserRecord{firstName: null};param1 = 'p1' ) )", 0);
 
     ReqRecordModelProjection recordProjection =
         (ReqRecordModelProjection) vp.tagProjection("record").projection();
@@ -486,7 +491,8 @@ public class ReqOutputProjectionsParserTest {
   public void testParseMeta() throws PsiProcessingException {
     final DataType dataType = new DataType(PersonMap.type, null);
 
-    String opProjectionStr = "{ ;param: epigraph.String, meta: ( start, count ) } [ required ] :`record` ( id, firstName )";
+    String opProjectionStr =
+        "{ ;param: epigraph.String, meta: ( start, count ) } [ required ] :`record` ( id, firstName )";
     @NotNull OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     String projection = "@+( start, count ) ;param = 'foo' [ 2 ]( :record ( id, firstName ) )";
@@ -564,6 +570,35 @@ public class ReqOutputProjectionsParserTest {
     // no retro and no tags
     testParse(":record ( +bestFriend :() )", 1); // should be an error?
   }
+
+  // todo fix (implement) this
+//  @Test
+//  public void testDoubleNormalizedTailRef() {
+//    Tuple2<StepsAndProjection<ReqEntityProjection>, ReqReferenceContext> tuple2 = ReqTestUtil.parseReqEntityProjection2(
+//        ReqOutputProjectionPsiParser::new,
+//        dataType,
+//        personOpProjection,
+//        ":id :~ws.epigraph.tests.User $user = :record(firstName) :~ws.epigraph.tests.SubUser $sub = :record(middleName;param1 = 'foo')",
+//        resolver
+//    );
+//
+//    ReqEntityProjection projection = tuple2._1.projection();
+//    ReqReferenceContext referenceContext = tuple2._2;
+//
+//    ReferenceContext.RefItem<ReqEntityProjection> refItem = referenceContext.lookupEntityReference("sub", false);
+//    assertNotNull(refItem);
+//    ReqEntityProjection s = refItem.apply();
+//    assertNotNull(s);
+//    ReqEntityProjection nf = s.normalizedFrom();
+//    assertEquals(projection, nf);
+//
+//    refItem = referenceContext.lookupEntityReference("user", false);
+//    assertNotNull(refItem);
+//    s = refItem.apply();
+//    assertNotNull(s);
+//    nf = s.normalizedFrom();
+//    assertEquals(projection, nf);
+//  }
 
   // todo negative test cases too
 

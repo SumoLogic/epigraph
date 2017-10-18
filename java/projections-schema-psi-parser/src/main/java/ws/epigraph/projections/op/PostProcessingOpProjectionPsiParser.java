@@ -84,7 +84,14 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     OpEntityProjection res =
-        OpBasicProjectionPsiParser.parseUnnamedOrRefEntityProjection(dataType, flagged, psi, typesResolver, context);
+        OpBasicProjectionPsiParser.parseUnnamedOrRefEntityProjection(
+            dataType,
+            flagged,
+            psi,
+            null,
+            typesResolver,
+            context
+        );
 
     return processEntityProjection(res, context);
   }
