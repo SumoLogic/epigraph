@@ -406,15 +406,20 @@ public final class ProjectionsParsingUtil {
       @NotNull PsiElement tailTypeRefPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!dataType.type().isAssignableFrom(tailType))
-      throw new PsiProcessingException(
-          String.format(
-              "Tail type '%s' is not compatible with type '%s'",
-              tailType.name(), dataType.type().name()
-          ),
-          tailTypeRefPsi,
-          context
-      );
+    // it is actually possible to have:
+    // A, B, C extends A, B
+    // outputProjection b : B = ( .. ) ~A ( .. )
+    // 'A' branch can be satisfied by 'C'
+
+//    if (!dataType.type().isAssignableFrom(tailType))
+//      throw new PsiProcessingException(
+//          String.format(
+//              "Tail type '%s' is not compatible with type '%s'",
+//              tailType.name(), dataType.type().name()
+//          ),
+//          tailTypeRefPsi,
+//          context
+//      );
   }
 
   public static void checkEntityTailType(
