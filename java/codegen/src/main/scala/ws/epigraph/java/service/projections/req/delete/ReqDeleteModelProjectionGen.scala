@@ -68,7 +68,19 @@ object ReqDeleteModelProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqDeleteModelProjectionGen) {
+          override def apply(): ReqDeleteModelProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf.asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]],
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqDeleteProjections,
 
       op.`type`().kind() match {

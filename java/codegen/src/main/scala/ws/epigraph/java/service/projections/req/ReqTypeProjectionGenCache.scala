@@ -48,7 +48,7 @@ object ReqTypeProjectionGenCache {
    *
    * @param refOpt               projection reference `Option`
    * @param hasParentGen         `true` if resulting generator, if created by `default` provider, will have a parent generator
-   * @param isNormalized         `true` if resulting generator will create a normalized version (normalized tail) of some projection
+   * @param normalizedFromGen    optional generator for the projection whose normalized version produces the one we want to generate
    * @param generatedProjections a map of references to already created generators
    * @param default              generator factory to use in case of cache miss
    * @tparam G generator type
@@ -58,7 +58,7 @@ object ReqTypeProjectionGenCache {
   def lookup[G <: ReqTypeProjectionGen](
     refOpt: Option[ProjectionReferenceName],
     hasParentGen: Boolean,
-    isNormalized: Boolean,
+    normalizedFromGen: Option[Function0[G]],
     generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen],
     default: => G): G = {
 
@@ -67,9 +67,12 @@ object ReqTypeProjectionGenCache {
       if (existingGen != null)
         existingGen.asInstanceOf[G]
       else {
-        if (!hasParentGen && isNormalized) {
+        if (!hasParentGen && normalizedFromGen.isDefined) {
           // can't create new generator before parent generator has run (and produced this instance as one of it's children)
-          throw new TryLaterException(s"Can't create generator for '$ref' because it's parent wasn't invoked yet")
+          throw new TryLaterException(
+            s"Can't create generator for '$ref' because it's parent wasn't invoked yet",
+            Seq(normalizedFromGen.get.apply())
+          )
         }
 
         val newGen = default

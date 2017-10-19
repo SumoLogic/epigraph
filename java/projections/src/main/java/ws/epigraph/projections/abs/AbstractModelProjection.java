@@ -306,6 +306,7 @@ public abstract class AbstractModelProjection<
             SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
             assert res != null; // since effectiveProjections is non-empty, at least self is there
             res = postNormalizedForType(targetType, res);
+            res.normalizedTailNames().putAll(normalizedTailNames());
             res.normalizedFrom = self();
 
             ref.resolve(normalizedRefName, res);

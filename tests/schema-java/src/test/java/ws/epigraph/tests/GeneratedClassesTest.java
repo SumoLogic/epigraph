@@ -38,6 +38,7 @@ import ws.epigraph.tests._resources.users.operations.update._default.update.Upda
 import ws.epigraph.tests._resources.users.operations.update._default.update.UpdateUsersFieldProjection;
 import ws.epigraph.tests._resources.users.operations.update._default.update.elements.UpdatePersonProjection;
 import ws.epigraph.tests._resources.users.operations.update._default.update.elements.record.UpdatePersonRecordProjection;
+import ws.epigraph.tests.codegenstress._projections.output.sub.OutputSubUserRecordProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.ListType;
 
@@ -140,7 +141,8 @@ public class GeneratedClassesTest {
 
   @Test
   public void testIndex() {
-    assertNotNull(StaticTypesResolver.instance().resolve(new QnTypeRef(Qn.fromDotSeparated("ws.epigraph.tests.PersonMap"))));
+    assertNotNull(StaticTypesResolver.instance()
+        .resolve(new QnTypeRef(Qn.fromDotSeparated("ws.epigraph.tests.PersonMap"))));
   }
 
   @Test
@@ -160,7 +162,8 @@ public class GeneratedClassesTest {
 
   @Test
   public void testOpOutputDefaults() {
-    OpFieldProjection fieldProjection = ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
+    OpFieldProjection fieldProjection =
+        ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
     OpEntityProjection entityProjection = fieldProjection.entityProjection();
     assertTrue(entityProjection.flag());
 
@@ -200,6 +203,17 @@ public class GeneratedClassesTest {
     fpe = recordModelProjection.fieldProjection("bestFriend");
     assertNotNull(fpe);
     assertFalse(fpe.fieldProjection().flag());
+  }
+
+  @Test
+  public void testNamedDoubleTail() {
+    OutputSubUserRecordProjection p = null;
+    // should compile, all fields must be present
+    try {
+      p.lastName();
+      p.firstName();
+      p.id();
+    } catch (NullPointerException ignored) {}
   }
 
   private static @NotNull String printOpDeleteVarProjection(

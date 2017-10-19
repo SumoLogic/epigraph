@@ -98,7 +98,19 @@ object ReqInputEntityProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqInputTypeProjectionGen) {
+          override def apply(): ReqInputTypeProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf,
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqInputProjections,
 
       op.`type`().kind() match {

@@ -28,11 +28,16 @@ class ReqProjectionShouldRunStrategy(
 ) extends ShouldRunStrategy {
 
   override def checkAndMark: Boolean = generatedProjections.synchronized {
-    val shouldRun = gen.referenceNameOpt.forall(ref => !generatedProjections.containsKey(ref))
+    val shouldRun = check
     if (shouldRun) {
       gen.referenceNameOpt.foreach(ref => generatedProjections.put(ref, gen))
     }
     shouldRun
+  }
+
+
+  override def check: Boolean = generatedProjections.synchronized {
+    gen.referenceNameOpt.forall(ref => !generatedProjections.containsKey(ref))
   }
 
   // generatedProjections is a concurrent collection, no need for synchronized {}

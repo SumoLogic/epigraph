@@ -44,6 +44,6 @@ trait JavaGen {
   /** Yields "@Nullable " annotation in case java 8 (type use, type parameter) annotations are enabled. */
   def `Nullable_`: String = if (ctx.java8Annotations) "@Nullable " else ""
 
-  def description: String = s"[${getClass.getSimpleName}] ~ $relativeFilePath"
+  def description: String = s"${getClass.getSimpleName}\n\trelative path $relativeFilePath"
 
 }

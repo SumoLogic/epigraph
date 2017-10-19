@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import ws.epigraph.lang.GenQn;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
@@ -37,6 +38,7 @@ import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static junit.framework.TestCase.fail;
@@ -958,6 +960,8 @@ public class OpOutputProjectionsTest {
     assertNotNull(sub);
     OpEntityProjection normalizedFrom = sub.normalizedFrom();
     assertEquals(entityProjection, normalizedFrom);
+    assertNotNull(sub.referenceName());
+    assertEquals(Optional.of("sub"), Optional.ofNullable(sub.referenceName()).map(GenQn::toString));
 
     // now same, but with named User
 
@@ -975,13 +979,82 @@ public class OpOutputProjectionsTest {
     assertNotNull(sub);
     normalizedFrom = sub.normalizedFrom();
     assertEquals(entityProjection, normalizedFrom);
+    assertEquals(Optional.of("sub"), Optional.ofNullable(sub.referenceName()).map(GenQn::toString));
+
+    OpEntityProjection norm = entityProjection.normalizedForType(sub.type());
+    assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(sub, norm);
 
     refItem = referenceContext.lookupEntityReference("user", false);
     assertNotNull(refItem);
-    sub = refItem.apply();
-    assertNotNull(sub);
-    normalizedFrom = sub.normalizedFrom();
+    OpEntityProjection user = refItem.apply();
+    assertNotNull(user);
+    normalizedFrom = user.normalizedFrom();
     assertEquals(entityProjection, normalizedFrom);
+    assertEquals(Optional.of("user"), Optional.ofNullable(user.referenceName()).map(GenQn::toString));
+
+    norm = entityProjection.normalizedForType(user.type());
+    assertEquals(Optional.of("user"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(user, norm);
+
+    norm = user.normalizedForType(sub.type());
+    assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(sub, norm);
+  }
+
+  @Test
+  public void testModelDoubleNormalizedTailRef() {
+    AtomicReference<OpReferenceContext> refRef = new AtomicReference<>();
+
+    TestConfig cfg = new TestConfig() {
+      @Override
+      @NotNull OpReferenceContext outputReferenceContext(final PsiProcessingContext ctx) {
+        OpReferenceContext rctx = super.outputReferenceContext(ctx);
+        refRef.set(rctx);
+        return rctx;
+      }
+    };
+
+    OpEntityProjection entityProjection = testParsingEntityProjection(
+        cfg,
+        ":`record` ( id ) ~ws.epigraph.tests.UserRecord $user = ( firstName ) ~ws.epigraph.tests.SubUserRecord $sub = ( lastName )",
+        ":`record` ( id ) ~ws.epigraph.tests.UserRecord ( firstName ) ~ws.epigraph.tests.SubUserRecord ( lastName )"
+    );
+
+    OpTagProjectionEntry tagProjection = entityProjection.singleTagProjection();
+    assertNotNull(tagProjection);
+    OpModelProjection<?, ?, ?, ?> modelProjection = tagProjection.projection();
+
+    OpReferenceContext referenceContext = refRef.get();
+    assertNotNull(referenceContext);
+    ReferenceContext.RefItem<OpModelProjection<?, ?, ?, ?>> refItem =
+        referenceContext.lookupModelReference("sub", false);
+    assertNotNull(refItem);
+    OpModelProjection<?, ?, ?, ?> sub = refItem.apply();
+    assertNotNull(sub);
+    OpModelProjection<?, ?, ?, ?> normalizedFrom = sub.normalizedFrom();
+    assertEquals(modelProjection, normalizedFrom);
+    assertEquals(Optional.of("sub"), Optional.ofNullable(sub.referenceName()).map(GenQn::toString));
+
+    OpModelProjection<?, ?, ?, ?> norm = modelProjection.normalizedForType(sub.type());
+    assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(sub, norm);
+
+    refItem = referenceContext.lookupModelReference("user", false);
+    assertNotNull(refItem);
+    OpModelProjection<?, ?, ?, ?> user = refItem.apply();
+    assertNotNull(user);
+    normalizedFrom = user.normalizedFrom();
+    assertEquals(modelProjection, normalizedFrom);
+    assertEquals(Optional.of("user"), Optional.ofNullable(user.referenceName()).map(GenQn::toString));
+
+    norm = modelProjection.normalizedForType(user.type());
+    assertEquals(Optional.of("user"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(user, norm);
+
+    norm = user.normalizedForType(sub.type());
+    assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
+    assertEquals(sub, norm);
   }
 
   @SuppressWarnings("ConstantConditions")

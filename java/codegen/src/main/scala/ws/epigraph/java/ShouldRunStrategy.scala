@@ -28,12 +28,16 @@ trait ShouldRunStrategy {
    */
   def checkAndMark: Boolean
 
+  def check: Boolean
+
   /** unmark generator as run allowing it to be called again */
   def unmark(): Unit
 }
 
 object AlwaysRunStrategry extends ShouldRunStrategy {
   override def checkAndMark: Boolean = true
+
+  override def check = true
 
   override def unmark(): Unit = {}
 }

@@ -99,7 +99,19 @@ object ReqDeleteEntityProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqDeleteTypeProjectionGen) {
+          override def apply(): ReqDeleteTypeProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf,
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqDeleteProjections,
 
       op.`type`().kind() match {

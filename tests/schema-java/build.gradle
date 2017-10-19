@@ -36,7 +36,8 @@ epigraph {
   server {
     services = [
       "ws.epigraph.tests.user",
-      "ws.epigraph.tests.users"
+      "ws.epigraph.tests.users",
+      "ws.epigraph.tests.codegenstress.namedDoubleTail"
     ]
   }
 }

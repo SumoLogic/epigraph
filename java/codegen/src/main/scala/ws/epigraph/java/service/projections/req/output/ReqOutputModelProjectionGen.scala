@@ -40,8 +40,6 @@ abstract class ReqOutputModelProjectionGen(
   override type OpMetaProjectionType = OpModelProjection[_, _, _ <: DatumTypeApi, _]
   override type GenType = ReqOutputModelProjectionGen
 
-//  referenceName.foreach(ref => ctx.reqOutputProjections.put(ref, this)) // todo rest
-
   override protected def baseNamespace: Qn = ReqProjectionGen.baseNamespace(
     referenceNameOpt,
     baseNamespaceOpt.getOrElse(super.baseNamespace)
@@ -92,7 +90,19 @@ object ReqOutputModelProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqOutputModelProjectionGen) {
+          override def apply(): ReqOutputModelProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf.asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]],
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqOutputProjections,
 
       op.`type`().kind() match {

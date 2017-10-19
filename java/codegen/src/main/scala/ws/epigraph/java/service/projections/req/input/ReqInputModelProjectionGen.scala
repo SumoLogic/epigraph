@@ -68,7 +68,19 @@ object ReqInputModelProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqInputModelProjectionGen) {
+          override def apply(): ReqInputModelProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf.asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]],
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqInputProjections,
 
       op.`type`().kind() match {

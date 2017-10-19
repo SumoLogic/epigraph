@@ -327,6 +327,7 @@ public abstract class AbstractVarProjection<
             VP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge, normalizedRefName);
             res.normalizedFrom = self();
 
+            res.normalizedTailNames.putAll(normalizedTailNames);
             // sync reference name with model projection if needed
             if (type().kind() != TypeKind.ENTITY && resultReferenceName == null) {
               TP tp = res.singleTagProjection();

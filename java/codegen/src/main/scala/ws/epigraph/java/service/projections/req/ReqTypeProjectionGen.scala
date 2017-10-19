@@ -58,7 +58,7 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
 
   def typeNameToMethodName(_type: CType): String = jn(lqn(_type, cType).replace('.', '_'))
 
-  override def description = s"${ super.description } (${ cType.name.name }) @ $referenceNameOpt"
+  override def description = s"${ super.description }\n\ttype ${ cType.name.name }\n\treference $referenceNameOpt"
 }
 
 object ReqTypeProjectionGen {

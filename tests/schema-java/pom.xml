@@ -80,6 +80,7 @@
             <services>
               <service>ws.epigraph.tests.user</service>
               <service>ws.epigraph.tests.users</service>
+              <service>ws.epigraph.tests.codegenstress.namedDoubleTail</service>
             </services>
           </server>
         </configuration>

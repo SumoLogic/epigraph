@@ -44,6 +44,7 @@ import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
 import ws.epigraph.url.projections.req.input.ReqInputProjectionPsiParser;
 import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.update.ReqUpdateProjectionPsiParser;
+import ws.epigraph.util.Tuple2;
 
 import java.util.function.Function;
 
@@ -185,6 +186,16 @@ public final class ReqTestUtil {
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
+    return parseReqEntityProjection2(parserFactory, type, op, projectionString, resolver)._1;
+  }
+
+  public static @NotNull Tuple2<StepsAndProjection<ReqEntityProjection>, ReqReferenceContext> parseReqEntityProjection2(
+      @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
+      @NotNull DataType type,
+      @NotNull OpEntityProjection op,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
     UrlReqTrunkEntityProjection psi = EpigraphPsiUtil.parseText(
@@ -215,7 +226,7 @@ public final class ReqTestUtil {
 
       reqOutputReferenceContext.ensureAllReferencesResolved();
 
-      return res;
+      return Tuple2.of(res, reqOutputReferenceContext);
     });
   }
 
@@ -259,7 +270,8 @@ public final class ReqTestUtil {
       OpPathPsiProcessingContext opPathPsiProcessingContext =
           new OpPathPsiProcessingContext(context, psiProcessingContext);
 
-      OpEntityProjection vp = OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
+      OpEntityProjection vp =
+          OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 

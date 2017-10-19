@@ -110,7 +110,19 @@ object ReqOutputEntityProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqOutputTypeProjectionGen) {
+          override def apply(): ReqOutputTypeProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf,
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqOutputProjections,
 
       op.`type`().kind() match {

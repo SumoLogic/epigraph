@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package ws.epigraph.java;
+package ws.epigraph.java
 
 /**
  * Indicates that some generator can't be executed at this point and should be re-scheduled for later time
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class TryLaterException extends RuntimeException {
-  public TryLaterException() { }
-
-  public TryLaterException(final String message) { super(message); }
+class TryLaterException(message: String, val extraGeneratorsToRun: Seq[JavaGen] = Seq())
+    extends RuntimeException(message) {
 }

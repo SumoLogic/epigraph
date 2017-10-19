@@ -104,7 +104,19 @@ object ReqUpdateEntityProjectionGen {
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
       parentClassGenOpt.isDefined,
-      op.normalizedFrom() != null,
+      Option(op.normalizedFrom()).map { nf =>
+        new (() => ReqUpdateTypeProjectionGen) {
+          override def apply(): ReqUpdateTypeProjectionGen =
+            dataProjectionGen(
+              baseNamespaceProvider,
+              nf,
+              baseNamespaceOpt,
+              namespaceSuffix,
+              None,
+              ctx
+            )
+        }
+      },
       ctx.reqUpdateProjections,
 
       op.`type`().kind() match {

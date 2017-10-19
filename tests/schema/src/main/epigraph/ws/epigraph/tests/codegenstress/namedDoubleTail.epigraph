@@ -1,0 +1,14 @@
+namespace ws.epigraph.tests.codegenstress
+
+import ws.epigraph.tests.PersonRecord
+import ws.epigraph.tests.UserRecord
+import ws.epigraph.tests.SubUserRecord
+
+outputProjection personRecord: PersonRecord =
+  ( id ) ~UserRecord ( firstName ) ~SubUserRecord $sub = ( lastName )
+
+resource namedDoubleTail: SubUserRecord {
+  read {
+    outputProjection $sub
+  }
+}

@@ -34,10 +34,10 @@ import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, immutable, mutable}
 
 class EpigraphJavaGenerator private(
-    val cctx: CContext,
-    val javaOutputRoot: Path,
-    val resourcesOutputRoot: Path,
-    val settings: Settings
+  val cctx: CContext,
+  val javaOutputRoot: Path,
+  val resourcesOutputRoot: Path,
+  val settings: Settings
 ) {
 
   /**
@@ -45,7 +45,7 @@ class EpigraphJavaGenerator private(
    * and returns true if the directories are the same.
    */
   @throws[IllegalArgumentException]
-  private def validateOutputRoots():Boolean = {
+  private def validateOutputRoots(): Boolean = {
     val javaPath = javaOutputRoot.toAbsolutePath
     val resourcesPath = resourcesOutputRoot.toAbsolutePath
     val samePaths = javaPath == resourcesPath
@@ -258,9 +258,11 @@ class EpigraphJavaGenerator private(
 
       if (showGensProducingSameFile) {
         val samePathGens = genParents.keys.filter(_.relativeFilePath == g.relativeFilePath)
-        sw.append("Producing: " + g.relativeFilePath).append("\n  also produced by: \n")
-        if (samePathGens.isEmpty) sw.append("<none>\n")
-        else samePathGens.foreach(t => sw.append(describeGenerator(t, showGensProducingSameFile = false)))
+        sw.append("Producing: " + g.relativeFilePath)
+        if (samePathGens.nonEmpty) {
+          sw.append("\n  also produced by: \n")
+          samePathGens.foreach(t => sw.append(describeGenerator(t, showGensProducingSameFile = false)))
+        }
       }
       sw.toString
     }
@@ -270,7 +272,12 @@ class EpigraphJavaGenerator private(
         // see ReqTypeProjectionGenCache for one use case of this exception
         log.info(s"Postponing '${ g.description }' because: ${ tle.getMessage }")
         runStrategy.unmark()
+        postponedGenerators.addAll(tle.extraGeneratorsToRun)
         postponedGenerators.add(g)
+        if (tle.extraGeneratorsToRun.nonEmpty) {
+          log.info(s"Also postponing ${ tle.extraGeneratorsToRun.size } generators:")
+          tle.extraGeneratorsToRun.foreach(g => log.info(g.description))
+        }
 
       case ex =>
         def msg = if (doDebugTraces) {
@@ -342,13 +349,16 @@ class EpigraphJavaGenerator private(
     }
 
     // run postponed generators, if any
-    val postponedGeneratorsSize = postponedGenerators.size
+    // some of the postponed generators may have been executed by concurrent threads, so check again here
+    val postponedNotRun = postponedGenerators.toSeq.filter(_.shouldRunStrategy.check)
+    postponedGenerators.clear()
+    val postponedGeneratorsSize = postponedNotRun.size
     if (postponedGeneratorsSize > 0) {
       //noinspection ComparingUnrelatedTypes  (should actually be OK?)
-      if (generatorsCopy.toSet == postponedGenerators.toSet) { // couldn't make any progress, abort
+      if (generatorsCopy == postponedNotRun) { // couldn't make any progress, abort
         val msg = new StringWriter()
         msg.append("The following generators couldn't finish:\n")
-        postponedGenerators.foreach(
+        postponedNotRun.foreach(
           pg => msg.append(describeGenerator(pg, showGensProducingSameFile = true)).append(
             "\n"
           )
@@ -358,7 +368,8 @@ class EpigraphJavaGenerator private(
         handleErrors()
       } else {
         log.info(s"Retrying $postponedGeneratorsSize generators")
-        runGeneratorsAndHandleErrors(queue(postponedGenerators), runner)
+        val postponedQueue = queue(postponedNotRun)
+        runGeneratorsAndHandleErrors(postponedQueue, runner)
       }
     } else {
       handleErrors()
