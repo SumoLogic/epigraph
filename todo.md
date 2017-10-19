@@ -73,7 +73,7 @@
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 - [ ] ~~op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`~~
 - [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
-- [ ] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
+- [x] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)

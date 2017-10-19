@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.req.*;
@@ -32,9 +31,6 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
-import ws.epigraph.url.projections.req.ReqReferenceContext;
-import ws.epigraph.url.projections.req.ReqTestUtil;
-import ws.epigraph.util.Tuple2;
 
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -357,12 +353,24 @@ public class ReqOutputProjectionsParserTest {
     DataType dataType = new DataType(Person.type, null);
 
     String opProjectionStr = ":( id, `record` ( +firstName ) )";
-    @NotNull OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
+    OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     testParse(
         dataType,
         opProjection,
         ":( record ( firstName ) )",
+        0
+    );
+
+    // tails
+    opProjectionStr = ":( id, `record` ( +firstName ) ) :~ws.epigraph.tests.User :`record` ( +lastName )";
+    opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
+
+    testParse(
+        dataType,
+        opProjection,
+        "",
+        ":record ( firstName ) :~ws.epigraph.tests.User :record ( lastName )",
         0
     );
   }
