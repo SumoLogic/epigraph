@@ -10,6 +10,9 @@
 
 set -e
 
+# by some reason gradle fails to download plex-utils on jenkins slaves. disabling for now
+BUILD_PLUGIN=false
+
 while getopts ":v:t:" opt; do
   case $opt in
     v) NEW_VERSION="$OPTARG"
@@ -60,8 +63,10 @@ set -x
 ./mvnw --show-version --batch-mode -Dbuildtime.output.log "$RELEASE_REPO_OPTION" \
   clean deploy -Plight-psi,release "-Drevision=$NEW_VERSION" -DdeployAtEnd=true
 
-./gradlew -c settings-bootstrap.gradle clean publishGradlePlugins
-./gradlew -PepigraphVersion=$NEW_VERSION clean :idea-plugin:buildPlugin
+if $BUILD_PLUGIN; then
+  ./gradlew -c settings-bootstrap.gradle clean publishGradlePlugins
+  ./gradlew -PepigraphVersion=$NEW_VERSION clean :idea-plugin:buildPlugin
+fi
 
 git tag "v$NEW_VERSION" && git push origin "v$NEW_VERSION"
 
@@ -75,8 +80,10 @@ if [ ! -z "$GITHUB_TOKEN" ]; then
     curl -s --data "{\"tag_name\":\"v$NEW_VERSION\",\"name\": \"v$NEW_VERSION\",\"body\": \"Release $NEW_VERSION\",\"draft\": false,\"prerelease\": false}" \
       "https://api.github.com/repos/$GITHUB_REPO/releases?access_token=$GITHUB_TOKEN" > /tmp/epigraph_release.json
 
-    RELEASE_ID=$(grep "^  \"id\":" /tmp/epigraph_release.json | sed -e "s/^  \"id\": \([0-9]*\),$/\1/")
+    if $BUILD_PLUGIN; then
+      RELEASE_ID=$(grep "^  \"id\":" /tmp/epigraph_release.json | sed -e "s/^  \"id\": \([0-9]*\),$/\1/")
 
-    curl -s -X POST --header "Content-Type:application/zip" --data-binary "@idea-plugin/build/distributions/$PLUGIN" \
+      curl -s -X POST --header "Content-Type:application/zip" --data-binary "@idea-plugin/build/distributions/$PLUGIN" \
       "https://uploads.github.com/repos/$GITHUB_REPO/releases/$RELEASE_ID/assets?name=$PLUGIN&access_token=$GITHUB_TOKEN"
+    fi
 fi

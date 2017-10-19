@@ -100,6 +100,9 @@
   - https://sumologic.slack.com/archives/D0JPD1FKN/p1507142820000118
   - default req output projections should not include nullable fields (otherwise whole requests will start failing)
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
+- [ ] bug: there seems to be a race in projections codegen. Uncomment parallel execution in `EpigraphJavaGenerator` and
+  do `gradle --rerun-tasks :epigraph-builtin-services-service:compileJava`, sometimes `OutputDatumTypeProjection` won't
+  extend `OutputType_Projection`
 
 # Operations
 

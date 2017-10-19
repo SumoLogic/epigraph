@@ -63,6 +63,10 @@ class EpigraphJavaGenerator private(
 
   private val ctx: GenContext = new GenContext(settings)
 
+  // there seems to be a hard to find race in projections codegen, manifesting in
+  // sometimes broken builtin-services-service code. Temporarily disabling parallel codegen to help find it
+  private val parallel: Boolean = false // ! ctx.settings.debug
+
   def this(ctx: CContext, javaOutputRoot: File, resourcesOutputRoot: File, settings: Settings) {
     this(ctx, javaOutputRoot.toPath, resourcesOutputRoot.toPath, settings)
   }
@@ -295,7 +299,7 @@ class EpigraphJavaGenerator private(
         cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
     }
 
-    if (ctx.settings.debug) {
+    if (parallel) {
       // run sequentially
       var _generators = generators
       while (_generators.nonEmpty) {
