@@ -35,9 +35,10 @@ epigraph {
   java8Annotations = false
   server {
     services = [
-      "ws.epigraph.tests.user",
-      "ws.epigraph.tests.users",
-      "ws.epigraph.tests.codegenstress.namedDoubleTail"
+        "ws.epigraph.tests.user",
+        "ws.epigraph.tests.users",
+        "ws.epigraph.tests.codegenstress.namedDoubleTail",
+        "ws.epigraph.tests.codegenstress.some"
     ]
   }
 }

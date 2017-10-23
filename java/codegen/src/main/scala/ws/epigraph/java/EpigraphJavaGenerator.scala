@@ -29,7 +29,6 @@ import ws.epigraph.java.service._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 
-import scala.annotation.tailrec
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, immutable, mutable}
 
@@ -228,7 +227,6 @@ class EpigraphJavaGenerator private(
 
   }
 
-  @tailrec
   private def runGeneratorsAndHandleErrors(generators: immutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
     val doDebugTraces = true // ctx.settings.debug()
     val generatorsCopy = generators
@@ -253,7 +251,7 @@ class EpigraphJavaGenerator private(
       while (gen != null && !visited.contains(gen)) {
         sw.append(sp)
         sw.append(gen.hashCode().toString).append(" ")
-        sw.append(gen.description)
+        sw.append(gen.description.replace("\n", "\n" + sp))
         sw.append("\n")
         sp = sp + "  "
         visited.add(gen)
@@ -276,17 +274,17 @@ class EpigraphJavaGenerator private(
         // see ReqTypeProjectionGenCache for one use case of this exception
         log.info(s"Postponing '${ g.description }' because: ${ tle.getMessage }")
         runStrategy.unmark()
-        postponedGenerators.addAll(tle.extraGeneratorsToRun)
         postponedGenerators.add(g)
         if (tle.extraGeneratorsToRun.nonEmpty) {
           log.info(s"Also postponing ${ tle.extraGeneratorsToRun.size } generators:")
           tle.extraGeneratorsToRun.foreach(g => log.info(g.description))
+          runGeneratorsAndHandleErrors(immutable.Queue[JavaGen](tle.extraGeneratorsToRun: _*), runner)
         }
 
       case ex =>
         def msg = if (doDebugTraces) {
           val sw = new StringWriter
-          sw.append(ex.getMessage).append("\n")
+          sw.append(ex.toString).append("\n")
 
           sw.append(describeGenerator(g, showGensProducingSameFile = true))
           if (!ex.isInstanceOf[FileAlreadyExistsException]) { // not interested in these traces
@@ -296,6 +294,7 @@ class EpigraphJavaGenerator private(
           sw.toString
         } else ex.toString
 
+        log.debug(ex.toString)
         cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
     }
 

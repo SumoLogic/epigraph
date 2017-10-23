@@ -85,7 +85,8 @@ case class CMessage(filename: String, position: CMessagePosition, message: Strin
   override def toString: String = toStringBuilder(new java.lang.StringBuilder).toString
 
   def toStringBuilder(sb: java.lang.StringBuilder): java.lang.StringBuilder = {
-    sb.append(filename)
+    if (filename != null)
+      sb.append(filename)
     if (position != CMessagePosition.NA) {
       sb.append(':').append(position.line).append(':').append(position.column)
     }
@@ -135,6 +136,11 @@ object CMessagePosition {
 
   val NA: CMessagePosition = CMessagePosition(0, 0, 0, None)
 
-  def apply(line: Int, column: Int, lineText: Option[String]):CMessagePosition = CMessagePosition(line, column, 1, lineText)
+  def apply(line: Int, column: Int, lineText: Option[String]): CMessagePosition = CMessagePosition(
+    line,
+    column,
+    1,
+    lineText
+  )
 
 }

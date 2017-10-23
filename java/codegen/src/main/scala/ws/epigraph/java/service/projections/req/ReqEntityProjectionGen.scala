@@ -45,44 +45,49 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
 
   override def children: Iterable[JavaGen] =
     tagGenerators.values ++ /*tailGenerators.values ++*/
-    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/.values // filter out named generators
+    normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/ .values // filter out named generators
 
   override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
 
   /**
-   * tag projections: should only include new or overridden tags, should not include inherited
-   * maps tag names to (generatorOpt, projection) pairs, where generatorOpt contains generator of the
+   * Tag projections: should only include new or overridden tags, should not include inherited.
+   * Maps tag names to (generatorOpt, projection) pairs, where generatorOpt contains generator of the
    * overriden tag, or None if field is not overriding anything
+   *
+   * @param t overriding type
    */
   private def tagProjections(
     g: ReqEntityProjectionGen,
     t: CEntityTypeDef): Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] = {
-    val p = g.op
+    val op = g.op
 
     g.parentClassGenOpt.map(
       pg => tagProjections(
         pg.asInstanceOf[ReqEntityProjectionGen], t
       )
     ).getOrElse(Map()) ++
-    p.tagProjections().toSeq.toListMap
-      .filter { case (tn, tp) =>
-        // only keep overriden tags
-        t.findEffectiveTag(tn).exists(tag => tag.typeRef.resolved != tp.tag().`type`())
-      }
-      .map { case (tn, fp) =>
-        // convert overriden tags to be of proper type.
-        tn -> (
-          Some(g),
-          fp.overridenTagProjection(new CTagApiWrapper(t.findEffectiveTag(tn).get)).asInstanceOf[OpTagProjectionEntryType]
-        )
-      }
+    op.tagProjections().toSeq.toListMap
+        .filter { case (tn, tp) =>
+          // only keep overriden tags of compatible types
+          t.findEffectiveTag(tn).exists { tag =>
+            val tagType = new CTagApiWrapper(tag).`type`
+            tagType != tp.tag().`type`() && tp.tag().`type`().isAssignableFrom(tagType)
+          }
+        }
+        .map { case (tn, tp) =>
+          // convert overriden tags to be of proper type.
+          tn -> (
+              Some(g),
+              tp.overridenTagProjection(new CTagApiWrapper(t.findEffectiveTag(tn).get)).asInstanceOf[OpTagProjectionEntryType]
+          )
+        }
   }
 
   /** tag projections: should only include new or overridden tags, should not include inherited */
   lazy val tagProjections: Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] =
     op.tagProjections().toSeq.toListMap
-      .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
-      .mapValues(p => (None, p)) ++
+        .filterKeys(tn => !parentClassGenOpt.exists(_.tagProjections.contains(tn)))
+        .mapValues(p => (None, p)) ++
     parentClassGenOpt.map(
       pg => tagProjections(
         pg, cType

@@ -2,7 +2,6 @@ namespace ws.epigraph.tests.codegenstress
 
 // resource output projection uses normalized $child projection
 // while $parent projection is never used
-// todo this shoud cause codegen to fail due to existing bug
 
 entity SomeParentEntity {
   id: Long

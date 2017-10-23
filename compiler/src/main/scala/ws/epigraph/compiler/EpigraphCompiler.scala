@@ -340,7 +340,7 @@ object EpigraphCompiler extends Logging {
       case CMessageLevel.Warning => log.warn(_)
       case _ => log.info(_)
     }
-    renderer.apply(msg.toString)
+    renderer.apply("\n" + msg.toString)
   }
 
 }

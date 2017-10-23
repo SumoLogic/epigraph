@@ -36,6 +36,7 @@
 - [x] codegen: primitive `String` setters should accept `CharSequence`
 - [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
+- [x] codegen bug: see `childProjectionWithUnusedParent.epigraph` and `tests-schema-java.gradle`
 
 
 # Type system
@@ -69,7 +70,7 @@
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
 - [ ] allow merging multiple recursive projections (seems to be a hard task)
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
-- [ ] op input projections: move `required` from fields/map keys to vars for consistency reasons
+- [x] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 - [ ] ~~op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`~~
 - [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
@@ -103,6 +104,12 @@
 - [ ] bug: there seems to be a race in projections codegen. Uncomment parallel execution in `EpigraphJavaGenerator` and
   do `gradle --rerun-tasks :epigraph-builtin-services-service:compileJava`, sometimes `OutputDatumTypeProjection` won't
   extend `OutputType_Projection`
+- [ ] global named projections should be visible between files
+- [ ] Make op projections merge tags from entity tails. Having an op projection like `:rec(a) :~ Bar:rec(b)` should
+  allow request projection like `:rec(a) ~ BRec(b)` (if `Bar:rec` type is `BarRec`). Procedure should be:
+  - for every entity tail: for every tag: if this tag is present in the main projection
+  - if tag type is the same: merge tag projections (? or ignore?)
+  - else add it as main projection tag's tail
 
 # Operations
 

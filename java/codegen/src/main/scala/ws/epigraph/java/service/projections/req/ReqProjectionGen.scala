@@ -57,7 +57,7 @@ trait ReqProjectionGen extends JavaGen {
 
   protected val packageStatement: String = s"package $namespace;"
 
-  override def description: String = s"${super.description}\n\tjava class $namespace::$shortClassName"
+  override def description: String = s"${super.description}\n  java class $namespace::$shortClassName"
 
   def extendsClause: String = parentClassGenOpt.map(p => s"extends ${ p.fullClassName } ").getOrElse("")
 }
