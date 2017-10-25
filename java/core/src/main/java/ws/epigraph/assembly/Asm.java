@@ -53,6 +53,28 @@ public interface Asm<D, P, R> {
   }
 
   /**
+   * Composes a function {@code f} with an assembler by applying {@code f} to the data object
+   * before {@code assemble} call. Ideologically it would be similar to {@code f.andThen(this)}
+   *
+   * @param f   function to run on the data object
+   * @param ef  function to be called if {@code f} application produces an error
+   * @param <T> new data object type
+   *
+   * @return composed assembler
+   */
+  default <T> @NotNull Asm<T, P, R> on(@NotNull Function<T, D> f, @NotNull Function<RuntimeException, R> ef) {
+    return (dto, projection, ctx) -> {
+      D d;
+      try {
+        d = f.apply(dto);
+      } catch (RuntimeException ex) {
+        return ef.apply(ex);
+      }
+      return assemble(d, projection, ctx);
+    };
+  }
+
+  /**
    * Composes a function {@code f} with an assembler by applying {@code f} to the result object
    * after {@code assemble} call.
    *
