@@ -307,15 +307,15 @@ class EpigraphJavaGenerator private(
       } catch {
         case tle: TryLaterException =>
           val description = generator.description
-          log.info(s"Postponing '$description' because: ${ tle.getMessage }")
+          log.debug(s"Postponing '$description' because: ${ tle.getMessage }")
           generator.shouldRunStrategy.unmark()
           postponedGenerators.add(generator) // run generator on next iteration
 
           if (tle.extraGeneratorsToRun.nonEmpty) {
             // these are the generators that have to be finished before `generator` is tried again
             // won't postpone them till next run but will include in the current one
-            log.info(s"Also including ${ tle.extraGeneratorsToRun.size } generators that have to run first:")
-            tle.extraGeneratorsToRun.foreach(g => log.info(g.description))
+            log.debug(s"Also including ${ tle.extraGeneratorsToRun.size } generators that have to run first:")
+            tle.extraGeneratorsToRun.foreach(g => log.debug(g.description))
             tle.extraGeneratorsToRun.foreach(scheduleGeneratorRun)
           }
 
@@ -399,7 +399,7 @@ class EpigraphJavaGenerator private(
 
         handleErrors()
       } else {
-        log.info(s"Retrying $postponedGeneratorsSize generators")
+        log.debug(s"Retrying $postponedGeneratorsSize generators")
         val postponedQueue = queue(postponedNotRun)
         // don't schedule children to run again on retries (have already been scheduled during this run)
         runGeneratorsAndHandleErrors(postponedQueue, runner)
