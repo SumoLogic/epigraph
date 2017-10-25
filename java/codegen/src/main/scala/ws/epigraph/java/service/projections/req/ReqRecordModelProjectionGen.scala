@@ -85,15 +85,18 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
    * overriden field, or None if field is not overriding anything
    */
   lazy val fieldProjections: Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] =
-    op.fieldProjections().toSeq.toListMap
-        .filterKeys { !isInherited(_) }
-        .mapValues(p => (None, p.asInstanceOf[OpFieldProjectionType])) ++
-    parentClassGenOpt.map(
-      pg => overridingFieldProjections(
-        pg.asInstanceOf[ReqRecordModelProjectionGen],
-        cRecordType
-      )
-    ).getOrElse(Map())
+    if (invalidParentClassGenerator) // don't produce (invalid) tags if generator is broken, will be recreated & retried
+      Map()
+    else
+      op.fieldProjections().toSeq.toListMap
+          .filterKeys { !isInherited(_) }
+          .mapValues(p => (None, p.asInstanceOf[OpFieldProjectionType])) ++
+      parentClassGenOpt.map(
+        pg => overridingFieldProjections(
+          pg.asInstanceOf[ReqRecordModelProjectionGen],
+          cRecordType
+        )
+      ).getOrElse(Map())
 
   def isInherited(fieldName: String): Boolean = parentClassGenOpt.exists { pg =>
     val rpg = pg.asInstanceOf[ReqRecordModelProjectionGen]
@@ -132,14 +135,14 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   }
 """/*@formatter:on*/
 
-      val dataGenerator = fieldGenerator.dataProjectionGen
+      val dataGenFQN = fieldGenerator.dataProjectionGen.fullClassName
       val modelProjection = /*@formatter:off*/sn"""\
   /**
    * @return {@code ${field.name}} field data projection
    */
-  public @Nullable ${dataGenerator.fullClassName} ${jn(field.name)}() {
+  public @Nullable $dataGenFQN ${jn(field.name)}() {
     ${reqFieldProjectionEntryFqn.last()} fpe = raw.fieldProjection("${field.name}");
-    return fpe == null ? null : new ${dataGenerator.fullClassName}(fpe.fieldProjection().entityProjection());
+    return fpe == null ? null : new $dataGenFQN(fpe.fieldProjection().entityProjection());
   }
 """/*@formatter:on*/
 
@@ -194,7 +197,7 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectio
 }"""/*@formatter:on*/
   }
 
-  override protected def generate: String = generate(
+  protected def generate0: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqRecordModelProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqFieldProjectionEntry"),
     flag

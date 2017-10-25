@@ -26,14 +26,15 @@ trait JavaGen {
 
   def relativeFilePath: Path
 
-  def shouldRunStrategy: ShouldRunStrategy = AlwaysRunStrategry
+  def shouldRunStrategy: ShouldRunStrategy = new FileBasedRunStrategy(relativeFilePath, ctx.writtenPaths)
 
+  @throws[TryLaterException]
   protected def generate: String
 
   def children: Iterable[JavaGen] = Iterable()
 
   final def writeUnder(sourcesRoot: Path, resourcesRoot: Path): Unit = {
-      JavaGenUtils.writeFile(pickRoot(sourcesRoot, resourcesRoot), relativeFilePath, generate)
+    JavaGenUtils.writeFile(pickRoot(sourcesRoot, resourcesRoot), relativeFilePath, generate)
   }
 
   protected def pickRoot(sourcesRoot: Path, resourcesRoot: Path): Path = sourcesRoot
@@ -44,6 +45,6 @@ trait JavaGen {
   /** Yields "@Nullable " annotation in case java 8 (type use, type parameter) annotations are enabled. */
   def `Nullable_`: String = if (ctx.java8Annotations) "@Nullable " else ""
 
-  def description: String = s"${getClass.getSimpleName}\n  relative path $relativeFilePath"
+  def description: String = s"${ getClass.getSimpleName }\n  relative path $relativeFilePath"
 
 }

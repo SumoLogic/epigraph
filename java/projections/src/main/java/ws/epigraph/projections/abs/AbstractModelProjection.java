@@ -65,8 +65,6 @@ public abstract class AbstractModelProjection<
   protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
   protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
 
-  private final Throwable allocationTrace = new Throwable();
-
   protected AbstractModelProjection(
       @NotNull M model,
       boolean flag,
@@ -544,7 +542,6 @@ public abstract class AbstractModelProjection<
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
-    setReferenceName(name);
     this.flag = value.flag();
     this.metaProjection = (MP) value.metaProjection();
     this.polymorphicTails = value.polymorphicTails();
@@ -553,6 +550,8 @@ public abstract class AbstractModelProjection<
 //    normalizedCache.putAll(((AbstractModelProjection<MP, SMP, M>) value).normalizedCache);
     this.normalizedTailNames().putAll(value.normalizedTailNames());
     this.entityProjection = value.entityProjection;
+
+    setReferenceName(name);
 
     if (entityProjection != null && !Objects.equals(name, entityProjection.referenceName()))
       throw new IllegalStateException(String.format(
@@ -598,9 +597,6 @@ public abstract class AbstractModelProjection<
            Objects.equals(flag, that.flag) &&
            Objects.equals(metaProjection, that.metaProjection);
   }
-
-  @Override
-  public @Nullable Throwable allocationTrace() { return allocationTrace; }
 
   @Override
   public int hashCode() {

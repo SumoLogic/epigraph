@@ -31,16 +31,28 @@ class ReqInputListModelProjectionGen(
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqListModelProjectionGen {
+    extends ReqInputModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpListModelProjection
+
+  override protected def normalizedFromGenOpt: Option[ReqInputModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqInputListModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   val elementGen: ReqInputTypeProjectionGen = ReqInputEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,

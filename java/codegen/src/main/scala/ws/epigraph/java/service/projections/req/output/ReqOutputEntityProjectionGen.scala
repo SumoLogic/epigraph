@@ -50,6 +50,18 @@ class ReqOutputEntityProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
+  override protected def normalizedFromGenOpt: Option[ReqOutputEntityProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqOutputEntityProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqOutputEntityProjectionGen =
     new ReqOutputEntityProjectionGen(
       baseNamespaceProvider,
@@ -109,20 +121,6 @@ object ReqOutputEntityProjectionGen {
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
-      parentClassGenOpt.isDefined,
-      Option(op.normalizedFrom()).map { nf =>
-        new (() => ReqOutputTypeProjectionGen) {
-          override def apply(): ReqOutputTypeProjectionGen =
-            dataProjectionGen(
-              baseNamespaceProvider,
-              nf,
-              baseNamespaceOpt,
-              namespaceSuffix,
-              None,
-              ctx
-            )
-        }
-      },
       ctx.reqOutputProjections,
 
       op.`type`().kind() match {

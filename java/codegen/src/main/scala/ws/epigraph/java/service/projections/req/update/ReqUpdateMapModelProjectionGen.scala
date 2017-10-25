@@ -32,16 +32,28 @@ class ReqUpdateMapModelProjectionGen(
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqUpdateModelProjectionGen],
   ctx: GenContext)
-  extends ReqUpdateModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqMapModelProjectionGen {
+    extends ReqUpdateModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelProjection
+
+  override protected def normalizedFromGenOpt: Option[ReqUpdateModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqUpdateMapModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 
@@ -63,6 +75,7 @@ class ReqUpdateMapModelProjectionGen(
       case Some(mmpg: ReqUpdateMapModelProjectionGen) => Some(mmpg.elementGen)
       case _ => None
     },
+//    checkParentGenHasRun = true,
     ctx
   )
 

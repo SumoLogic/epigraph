@@ -63,8 +63,6 @@ public abstract class AbstractVarProjection<
 
   protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
-  private final Throwable allocationTrace = new Throwable();
-
   @SuppressWarnings("unchecked")
   protected AbstractVarProjection(
       @NotNull TypeApi type,
@@ -88,7 +86,7 @@ public abstract class AbstractVarProjection<
 
     // set model projection name in case of self-var
     if (type.kind() != TypeKind.ENTITY) {
-      final TP tp = singleTagProjection();
+      TP tp = singleTagProjection();
       if (tp != null) {
         MP mp = tp.projection();
         setReferenceName0(mp.referenceName());
@@ -97,6 +95,11 @@ public abstract class AbstractVarProjection<
         if (mp != mp2)
           tagProjections.put(tagProjections.keySet().iterator().next(), tp.setModelProjection(mp2));
       }
+//
+//      // check
+//      tp = singleTagProjection();
+//      if (tp != null && tp.projection().entityProjection() != this)
+//        System.out.println("not me: " + this + " != " + tp.projection().entityProjection());
     }
   }
 
@@ -659,9 +662,6 @@ public abstract class AbstractVarProjection<
   public @NotNull TextLocation location() {
     return location;
   }
-
-  @Override
-  public @Nullable Throwable allocationTrace() { return allocationTrace; }
 
   @SuppressWarnings("unchecked")
   @Override

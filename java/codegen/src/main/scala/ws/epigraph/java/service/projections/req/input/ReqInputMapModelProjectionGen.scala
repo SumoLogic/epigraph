@@ -32,16 +32,28 @@ class ReqInputMapModelProjectionGen(
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqInputModelProjectionGen],
   ctx: GenContext)
-  extends ReqInputModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqMapModelProjectionGen {
+    extends ReqInputModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelProjection
+
+  override protected def normalizedFromGenOpt: Option[ReqInputModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqInputMapModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 

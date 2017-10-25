@@ -42,6 +42,18 @@ class ReqUpdateListModelProjectionGen(
 
   override type OpProjectionType = OpListModelProjection
 
+  override protected def normalizedFromGenOpt: Option[ReqUpdateModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqUpdateListModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   val elementGen: ReqUpdateTypeProjectionGen = ReqUpdateEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,
     op.itemsProjection(),
@@ -51,6 +63,7 @@ class ReqUpdateListModelProjectionGen(
       case Some(lmpg: ReqUpdateListModelProjectionGen) => Some(lmpg.elementGen)
       case _ => None
     },
+//    checkParentGenHasRun = true,
     ctx
   )
 

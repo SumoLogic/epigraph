@@ -81,11 +81,11 @@ trait AbstractOperationGen extends JavaGen {
 
     val notnull = sctx.use("org.jetbrains.annotations.NotNull")
     val operation = sctx.use(s"ws.epigraph.service.operations.${ operationKindUpper }Operation")
-//    val opreq = sctx.use(s"ws.epigraph.service.operations.${ operationKindUpper }OperationRequest")
+    //    val opreq = sctx.use(s"ws.epigraph.service.operations.${ operationKindUpper }OperationRequest")
     val opdecl = sctx.use(s"ws.epigraph.schema.operations.${ operationKindUpper }OperationDeclaration")
-//    sctx.use("java.util.concurrent.CompletableFuture")
+    //    sctx.use("java.util.concurrent.CompletableFuture")
 //    sctx.use(outputFieldProjectionGen.fullClassName)
-    val shortDataType = sctx.use(lqdrn2(outputType, nsString))
+val shortDataType = sctx.use(lqdrn2(outputType, nsString))
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}

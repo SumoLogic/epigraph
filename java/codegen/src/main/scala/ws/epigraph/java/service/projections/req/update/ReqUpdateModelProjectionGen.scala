@@ -79,20 +79,6 @@ object ReqUpdateModelProjectionGen {
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
-      op.normalizedFrom() != null,
-      Option(op.normalizedFrom()).map { nf =>
-        new (() => ReqUpdateModelProjectionGen) {
-          override def apply(): ReqUpdateModelProjectionGen =
-            dataProjectionGen(
-              baseNamespaceProvider,
-              nf.asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]],
-              baseNamespaceOpt,
-              namespaceSuffix,
-              None,
-              ctx
-            )
-        }
-      },
       ctx.reqUpdateProjections,
 
       op.`type`().kind() match {

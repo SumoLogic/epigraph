@@ -61,7 +61,7 @@ trait ModelAsmGen extends AsmGen {
 
     val tailResultType: importManager.ImportedName = importManager.use(lqn2(`type`, nsString))
 
-    def assembler: String = JavaGenUtils.lo(ln(`type`)) + "Asm"
+    def assembler: String = JavaGenUtils.lo(ln(`type`)) + "TailAsm"
 
     def assemblerType: String = s"${ Imports.assembler }<? super D, ? super $tailGenName, ? extends $tailResultType.Value>"
 

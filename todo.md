@@ -32,11 +32,14 @@
 - [x] better implementation of schema annotations. Get inspiration from Java annotations?
   - [ ] Figure out injections: how to add annotations to existing types/fields.
 - [ ] codegen: need better framework for generating imports and imported names
+  - try building strings with markers inside: "$imports", "$typeref{fqn,shortname}". Keep in mind that types can be
+    nested, e.g. "some.package.Foo<some.other.Bar>"
 - [x] codegen: `_resources/*` package name should be in lower case
 - [x] codegen: primitive `String` setters should accept `CharSequence`
 - [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 - [x] codegen bug: see `childProjectionWithUnusedParent.epigraph` and `tests-schema-java.gradle`
+- [x] codegen bug: impossible to have tail type as a field, see `childUsedByParent.epigraph`
 
 
 # Type system
@@ -110,6 +113,8 @@
   - for every entity tail: for every tag: if this tag is present in the main projection
   - if tag type is the same: merge tag projections (? or ignore?)
   - else add it as main projection tag's tail
+- [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
+  be represented by entity-model projections pair, this leads to messy code
 
 # Operations
 

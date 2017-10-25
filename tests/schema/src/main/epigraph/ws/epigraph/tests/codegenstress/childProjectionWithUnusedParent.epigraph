@@ -12,7 +12,7 @@ entity SomeChildEntity extends SomeParentEntity {
 
 outputProjection parent: SomeParentEntity = :( id ) :~ SomeChildEntity $child = :( name )
 
-resource some : SomeChildEntity {
+resource childWithUnusedParent : SomeChildEntity {
   read {
     outputProjection $child
   }

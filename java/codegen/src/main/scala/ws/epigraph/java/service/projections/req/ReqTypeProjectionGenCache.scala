@@ -16,7 +16,6 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.java.TryLaterException
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
@@ -46,9 +45,9 @@ object ReqTypeProjectionGenCache {
    * `foo` generator and it's children should've run by then, which resolves the problem (with additional help
    * of `ReqProjectionShouldRunStrategy` which won't allow `bar` generator to run twice)
    *
+   * UPDATE this logic is now handled by ReqTypeProjectionGen::generate
+   *
    * @param refOpt               projection reference `Option`
-   * @param hasParentGen         `true` if resulting generator, if created by `default` provider, will have a parent generator
-   * @param normalizedFromGen    optional generator for the projection whose normalized version produces the one we want to generate
    * @param generatedProjections a map of references to already created generators
    * @param default              generator factory to use in case of cache miss
    * @tparam G generator type
@@ -57,8 +56,6 @@ object ReqTypeProjectionGenCache {
    */
   def lookup[G <: ReqTypeProjectionGen](
     refOpt: Option[ProjectionReferenceName],
-    hasParentGen: Boolean,
-    normalizedFromGen: Option[Function0[G]],
     generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen],
     default: => G): G = {
 
@@ -67,21 +64,11 @@ object ReqTypeProjectionGenCache {
       if (existingGen != null)
         existingGen.asInstanceOf[G]
       else {
-        if (!hasParentGen && normalizedFromGen.isDefined) {
-          // can't create new generator before parent generator has run (and produced this instance as one of it's children)
-          throw new TryLaterException(
-            s"Can't create generator for '$ref' because it's parent wasn't invoked yet",
-            Seq(normalizedFromGen.get.apply())
-          )
-        }
-
         val newGen = default
-        // cache.put(ref, newGen) // gets updated by ReqTypeProjectionGen.shouldRun todo cleanup
+        // generatedProjections.put(ref, newGen) // gets updated by ReqProjectionShouldRunStrategy.checkAndMark todo cleanup
         newGen
       }
     }.getOrElse(default)
-
-//    default
 
   }
 }

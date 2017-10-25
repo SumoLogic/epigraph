@@ -81,7 +81,8 @@
               <service>ws.epigraph.tests.user</service>
               <service>ws.epigraph.tests.users</service>
               <service>ws.epigraph.tests.codegenstress.namedDoubleTail</service>
-              <service>ws.epigraph.tests.codegenstress.some</service>
+              <service>ws.epigraph.tests.codegenstress.childWithUnusedParent</service>
+              <service>ws.epigraph.tests.codegenstress.childUsedByParent</service>
             </services>
           </server>
         </configuration>

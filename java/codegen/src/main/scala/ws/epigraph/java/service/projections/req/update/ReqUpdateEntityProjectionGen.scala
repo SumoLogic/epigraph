@@ -49,6 +49,18 @@ class ReqUpdateEntityProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
+  override protected def normalizedFromGenOpt: Option[ReqUpdateEntityProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqUpdateEntityProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqUpdateEntityProjectionGen =
     new ReqUpdateEntityProjectionGen(
       baseNamespaceProvider,
@@ -103,20 +115,6 @@ object ReqUpdateEntityProjectionGen {
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
-      parentClassGenOpt.isDefined,
-      Option(op.normalizedFrom()).map { nf =>
-        new (() => ReqUpdateTypeProjectionGen) {
-          override def apply(): ReqUpdateTypeProjectionGen =
-            dataProjectionGen(
-              baseNamespaceProvider,
-              nf,
-              baseNamespaceOpt,
-              namespaceSuffix,
-              None,
-              ctx
-            )
-        }
-      },
       ctx.reqUpdateProjections,
 
       op.`type`().kind() match {

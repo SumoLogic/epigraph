@@ -167,6 +167,21 @@ public abstract class ReferenceContext<
     value.runOnResolved(() -> {
       ProjectionReferenceName referenceName = projectionReferenceName(name);
 
+      ProjectionReferenceName valueReferenceName = value.referenceName();
+      if (valueReferenceName == null)
+        value.setReferenceName(referenceName);
+      // this is valid, e.g.
+      // outputProjection $foo = $bar
+      // 'name' is 'foo', 'referenceName' is 'some.foo', 'valueReferenceName' is 'some.bar'
+//      else if (!referenceName.equals(valueReferenceName))
+//        context.addError(
+//            String.format(
+//                "Internal error for entity projection '%s': reference inconsistency: '%s' != '%s'",
+//                name, referenceName, valueReferenceName
+//            ),
+//            location
+//        );
+
       RefItem<EP> eitem = entityReferences.get(name);
       RefItem<MP> mitem = modelReferences.get(name);
 
@@ -247,8 +262,22 @@ public abstract class ReferenceContext<
       @NotNull TextLocation location) {
 
     value.runOnResolved(() -> {
-      ProjectionReferenceName referenceName =
-          projectionReferenceName(name);
+      ProjectionReferenceName referenceName = projectionReferenceName(name);
+
+      ProjectionReferenceName valueReferenceName = value.referenceName();
+      if (valueReferenceName == null)
+        value.setReferenceName(referenceName);
+      // this is valid, e.g.
+      // outputProjection $foo = $bar
+      // 'name' is 'foo', 'referenceName' is 'some.foo', 'valueReferenceName' is 'some.bar'
+//      else if (!referenceName.equals(valueReferenceName))
+//        context.addError(
+//            String.format(
+//                "Internal error for model projection '%s': reference inconsistency: '%s' != '%s'",
+//                name, referenceName, valueReferenceName
+//            ),
+//            location
+//        );
 
       RefItem<EP> eitem = entityReferences.get(name);
       RefItem<MP> mitem = modelReferences.get(name);

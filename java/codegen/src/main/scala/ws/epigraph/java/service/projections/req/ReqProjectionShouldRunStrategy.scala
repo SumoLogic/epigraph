@@ -20,9 +20,13 @@ import ws.epigraph.java.ShouldRunStrategy
 import ws.epigraph.projections.gen.ProjectionReferenceName
 
 /**
+ * Checks if generator with given reference name has run. Uses
+ * same map as `ReqTypeProjectionGenCache` as a backend, thus ensuring proper caching
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ReqProjectionShouldRunStrategy(
+  // todo remove this class, use file-based strategy and file-based caching
   gen: ReqTypeProjectionGen,
   generatedProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen]
 ) extends ShouldRunStrategy {
@@ -34,7 +38,6 @@ class ReqProjectionShouldRunStrategy(
     }
     shouldRun
   }
-
 
   override def check: Boolean = generatedProjections.synchronized {
     gen.referenceNameOpt.forall(ref => !generatedProjections.containsKey(ref))

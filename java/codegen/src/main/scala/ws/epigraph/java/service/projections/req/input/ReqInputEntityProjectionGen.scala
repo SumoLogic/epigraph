@@ -46,6 +46,17 @@ class ReqInputEntityProjectionGen(
 
   override protected def namespaceSuffix: Qn = ReqProjectionGen.namespaceSuffix(referenceNameOpt, _namespaceSuffix)
 
+  override protected def normalizedFromGenOpt: Option[ReqInputEntityProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqInputEntityProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqInputEntityProjectionGen =
@@ -97,20 +108,6 @@ object ReqInputEntityProjectionGen {
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
-      parentClassGenOpt.isDefined,
-      Option(op.normalizedFrom()).map { nf =>
-        new (() => ReqInputTypeProjectionGen) {
-          override def apply(): ReqInputTypeProjectionGen =
-            dataProjectionGen(
-              baseNamespaceProvider,
-              nf,
-              baseNamespaceOpt,
-              namespaceSuffix,
-              None,
-              ctx
-            )
-        }
-      },
       ctx.reqInputProjections,
 
       op.`type`().kind() match {

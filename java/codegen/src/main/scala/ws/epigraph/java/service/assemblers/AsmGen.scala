@@ -30,9 +30,9 @@ trait AsmGen extends JavaGen {
 
   protected object Imports {
     val notNull: ImportManager.Imported =
-      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.NotNull").prepend("@") else ImportManager.empty
+      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.NotNull").prepend("@").append(" ") else ImportManager.empty
     val nullable: ImportManager.Imported =
-      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.Nullable").prepend("@") else ImportManager.empty
+      if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.Nullable").prepend("@").append(" ") else ImportManager.empty
     val func: ImportManager.Imported = importManager.use("java.util.function.Function")
     val assembler: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Asm")
     val assemblerContext: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AsmContext")

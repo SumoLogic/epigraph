@@ -65,7 +65,7 @@ class EntityAsmGen(g: ReqOutputEntityProjectionGen, val ctx: GenContext) extends
 
       def tagAsmType: String = s"$assembler<? super D, ? super $tagGenName, ? extends $assemblerResultType.Value>"
 
-      def fbf: String = tag.name + "Asm"
+      def fbf: String = tag.name + "TagAsm"
 
       def getter: String = tagName + "()"
 
@@ -93,7 +93,7 @@ class EntityAsmGen(g: ReqOutputEntityProjectionGen, val ctx: GenContext) extends
 
       val tts: importManager.ImportedName = importManager.use(lqn2(tt, g.namespace.toString))
 
-      def fbf: String = JavaGenUtils.lo(ln(tt)) + "Asm"
+      def fbf: String = JavaGenUtils.lo(ln(tt)) + "TailAsm"
 
       def fbft: String = s"$assembler<? super D, ? super $tailGenName, ? extends $tts>"
 
@@ -147,11 +147,11 @@ ${JavaGenUtils.generateImports(importManager.imports)}
  * Asm for {@code ${ln(cType)}} instance from data transfer object, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements $assembler<D, $notNull $projectionName, $notNull $t> {
-${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
+public class $shortClassName<D> implements $assembler<D, $notNull$projectionName, $notNull$t> {
+${if (hasTails) s"  private final $notNull$func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   //tag assemblers
-${fps.map { fp => s"  private final $notNull ${fp.tagAsmType} ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
+${fps.map { fp => s"  private final $notNull${fp.tagAsmType} ${fp.fbf};"}.mkString("\n") }\
+${if (hasTails) tps.map { tp => s"  private final $notNull${tp.fbft} ${tp.fbf};"}.mkString("\n  //tail assemblers\n","\n","") else "" }
 
   /**
    * Asm constructor
@@ -161,9 +161,9 @@ ${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }
    */
   public $shortClassName(
-${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    $notNull ${fp.tagAsmType} ${fp.fbf}"}.mkString(",\n") }\
-${if (hasTails) tps.map { tp => s"    $notNull ${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
+${if (hasTails) s"    $notNull$func<? super D, ? extends Type> typeExtractor,\n" else "" }\
+${fps.map { fp => s"    $notNull${fp.tagAsmType} ${fp.fbf}"}.mkString(",\n") }\
+${if (hasTails) tps.map { tp => s"    $notNull${tp.fbft} ${tp.fbf}"}.mkString(",\n", ",\n", "") else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
 ${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
@@ -180,7 +180,7 @@ ${if (hasTails) tps.map { tp => s"    this.${tp.fbf} = ${tp.fbf};"}.mkString("\n
    * @return {@code $t} object
    */
   @Override
-  public $notNull $t assemble(D dto, $notNull $projectionName p, $notNull $assemblerContext ctx) {
+  public $notNull$t assemble(D dto, $notNull$projectionName p, $notNull$assemblerContext ctx) {
     if (dto == null) {
       $t.Builder b = $t.create();
 ${fps.map { fp => s"      if (p.${fp.getter} != null) b.${fp.setter}Error($errValue.NULL);" }.mkString("", "\n", "\n")}\

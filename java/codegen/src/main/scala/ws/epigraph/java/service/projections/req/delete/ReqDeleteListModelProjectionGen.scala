@@ -31,16 +31,29 @@ class ReqDeleteListModelProjectionGen(
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqListModelProjectionGen {
+    extends ReqDeleteModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpListModelProjection
+
+
+  override protected def normalizedFromGenOpt: Option[ReqDeleteModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqDeleteListModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   val elementGen: ReqDeleteTypeProjectionGen = ReqDeleteEntityProjectionGen.dataProjectionGen(
     baseNamespaceProvider,

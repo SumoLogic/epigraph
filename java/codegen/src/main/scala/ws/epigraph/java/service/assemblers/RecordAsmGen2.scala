@@ -52,7 +52,7 @@ class RecordAsmGen2(
       )
     }${ if (isEntity) "" else ".Value" }>"
 
-    def fbf: String = field.name + "Asm"
+    def fbf: String = field.name + "FieldAsm"
 
     def getter: String = fieldName + "()"
 

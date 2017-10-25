@@ -32,28 +32,41 @@ class ReqOutputListModelProjectionGen(
   _namespaceSuffix: Qn,
   override val parentClassGenOpt: Option[ReqOutputModelProjectionGen],
   ctx: GenContext)
-  extends ReqOutputModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqListModelProjectionGen {
+    extends ReqOutputModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqListModelProjectionGen {
 
   override type OpProjectionType = OpListModelProjection
 
+  override protected def normalizedFromGenOpt: Option[ReqOutputModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqOutputListModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   val elementGen: ReqOutputTypeProjectionGen = ReqOutputEntityProjectionGen.dataProjectionGen(
-      baseNamespaceProvider,
-      op.itemsProjection(),
-      Some(baseNamespace),
-      namespaceSuffix.append(elementsNamespaceSuffix),
-      parentClassGenOpt match {
-        case Some(lmpg: ReqOutputListModelProjectionGen) => Some(lmpg.elementGen)
-        case _ => None
-      },
-      ctx
-    )
+    baseNamespaceProvider,
+    op.itemsProjection(),
+    Some(baseNamespace),
+    namespaceSuffix.append(elementsNamespaceSuffix),
+    parentClassGenOpt match {
+      case Some(lmpg: ReqOutputListModelProjectionGen) => Some(lmpg.elementGen)
+      case _ => None
+    },
+//    checkParentGenHasRun = true,
+    ctx
+  )
 
   override protected def tailGenerator(
     parentGen: ReqOutputModelProjectionGen,
@@ -74,7 +87,7 @@ class ReqOutputListModelProjectionGen(
 
   override def children: Iterable[JavaGen] = super.children ++ Iterable(new ListAsmGen(this, ctx))
 
-  override protected def generate: String = generate(
+  override protected def generate0: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqListModelProjection"),
     flag
   )

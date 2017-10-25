@@ -151,6 +151,13 @@ object ImportManager {
       }
     }
 
+    def append(s: String): Imported = {
+      lazy val ts = toString
+      new Imported {
+        override def toString: String = ts + s
+      }
+    }
+
 //    override def compare(that: Imported): Int = toString.compareTo(that.toString)
   }
 

@@ -68,7 +68,7 @@ public class Namespaces {
   public @NotNull Qn transformersNamespace() { return namespace.append(TRANSFORMERS_SEGMENT); }
 
   public @NotNull Qn transformerNamespace(@NotNull String transformerName) {
-    return transformersNamespace().append(transformerName);
+    return transformersNamespace().append(transformerName.toLowerCase());
   }
 
   // resource stuff
@@ -76,7 +76,7 @@ public class Namespaces {
   public @NotNull Qn resourcesNamespace() { return namespace.append(RESOURCES_SEGMENT); }
 
   public @NotNull Qn resourceNamespace(@NotNull String resourceName) {
-    return resourcesNamespace().append(resourceName);
+    return resourcesNamespace().append(resourceName.toLowerCase());
   }
 
   public @NotNull Qn clientNamespace(@NotNull String resourceName) {

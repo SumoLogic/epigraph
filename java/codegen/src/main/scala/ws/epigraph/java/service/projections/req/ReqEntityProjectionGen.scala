@@ -61,12 +61,13 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
     t: CEntityTypeDef): Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] = {
     val op = g.op
 
-    g.parentClassGenOpt.map(
+    val parentOverridingTagProjections = g.parentClassGenOpt.map(
       pg => tagProjections(
         pg.asInstanceOf[ReqEntityProjectionGen], t
       )
-    ).getOrElse(Map()) ++
-    op.tagProjections().toSeq.toListMap
+    ).getOrElse(Map())
+
+    val gOverridingTagProjections = op.tagProjections().toSeq.toListMap
         .filter { case (tn, tp) =>
           // only keep overriden tags of compatible types
           t.findEffectiveTag(tn).exists { tag =>
@@ -81,6 +82,8 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
               tp.overridenTagProjection(new CTagApiWrapper(t.findEffectiveTag(tn).get)).asInstanceOf[OpTagProjectionEntryType]
           )
         }
+
+    parentOverridingTagProjections ++ gOverridingTagProjections
   }
 
   /** tag projections: should only include new or overridden tags, should not include inherited */
@@ -95,10 +98,13 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
     ).getOrElse(Map())
 
   /** tag generators: should only include new or overridden tags, should not include inherited */
-  def tagGenerators: Map[CTag, ReqProjectionGen] =
-    tagProjections.values.map { case (pgo, tpe) =>
-      findTag(tpe.tag().name()) -> tagGenerator(pgo, tpe)
-    }.toListMap
+  lazy val tagGenerators: Map[CTag, ReqProjectionGen] =
+    if (invalidParentClassGenerator) // don't produce (invalid) tags if generator is broken, will be recreated & retried
+      Map()
+    else
+      tagProjections.values.map { case (pgo, tpe) =>
+        findTag(tpe.tag().name()) -> tagGenerator(pgo, tpe)
+      }.toListMap
 
   protected def findTag(name: String): CTag = cType.effectiveTags.find(_.name == name).getOrElse {
     throw new RuntimeException(s"Can't find tag '$name' in type '${ cType.name.toString }'")
@@ -270,7 +276,7 @@ ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqVarProjectionFqn.las
 """/*@formatter:on*/
   )
 
-  override protected def generate: String = generate(
+  protected def generate0: String = generate(
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqEntityProjection"),
     Qn.fromDotSeparated("ws.epigraph.projections.req.ReqTagProjectionEntry"),
     flag

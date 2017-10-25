@@ -46,6 +46,18 @@ class ReqDeleteRecordModelProjectionGen(
   override type OpProjectionType = OpRecordModelProjection
   override type OpFieldProjectionType = OpFieldProjectionEntry
 
+  override protected def normalizedFromGenOpt: Option[ReqDeleteModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqDeleteRecordModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override lazy val fieldGenerators: Map[CField, ReqDeleteFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
       val field = fpe.field()

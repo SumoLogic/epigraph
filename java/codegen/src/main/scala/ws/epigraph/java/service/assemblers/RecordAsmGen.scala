@@ -54,7 +54,7 @@ class RecordAsmGen(
 
     def fieldAsmType: String = s"$assembler<? super D, ? super $fieldGenType, ? extends $assemblerResultType${ if (isEntity) "" else ".Value" }>"
 
-    def fbf: String = field.name + "Asm"
+    def fbf: String = field.name + "FieldAsm"
 
     def getter: String = fieldName + "()"
 

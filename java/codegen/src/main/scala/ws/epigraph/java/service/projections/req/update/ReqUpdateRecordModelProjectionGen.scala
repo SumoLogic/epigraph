@@ -46,6 +46,18 @@ class ReqUpdateRecordModelProjectionGen(
   override type OpProjectionType = OpRecordModelProjection
   override type OpFieldProjectionType = OpFieldProjectionEntry
 
+  override protected def normalizedFromGenOpt: Option[ReqUpdateModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqUpdateRecordModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override lazy val fieldGenerators: Map[CField, ReqUpdateFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
       val field = fpe.field()

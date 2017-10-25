@@ -16,6 +16,8 @@
 
 package ws.epigraph.java
 
+import java.nio.file.Path
+import java.util
 import java.util.concurrent.ConcurrentHashMap
 
 import ws.epigraph.compiler.CTypeName
@@ -36,6 +38,8 @@ class GenContext(val settings: Settings) {
   val reqUpdateProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
   val reqDeleteProjections: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
   val reqPaths: java.util.Map[ProjectionReferenceName, ReqTypeProjectionGen] = new ConcurrentHashMap()
+
+  val writtenPaths: java.util.Set[Path] = new util.HashSet[Path]()
 
   /** Returns `true` if java 8 annotations are enabled. */
   def java8Annotations: Boolean = settings.java8Annotations()

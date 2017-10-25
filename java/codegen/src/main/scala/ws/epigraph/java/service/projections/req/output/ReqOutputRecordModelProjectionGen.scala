@@ -47,6 +47,18 @@ class ReqOutputRecordModelProjectionGen(
   override type OpProjectionType = OpRecordModelProjection
   override type OpFieldProjectionType = OpFieldProjectionEntry
 
+  override protected def normalizedFromGenOpt: Option[ReqOutputModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqOutputRecordModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override lazy val fieldGenerators: Map[CField, ReqOutputFieldProjectionGen] =
     fieldProjections.values.map { case (fgo, fpe) =>
       val field = fpe.field()

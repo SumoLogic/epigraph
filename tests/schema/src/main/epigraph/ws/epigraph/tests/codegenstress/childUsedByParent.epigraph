@@ -1,0 +1,19 @@
+namespace ws.epigraph.tests.codegenstress
+
+record Parent {
+  child: Child
+}
+
+record Child extends Parent {
+  extra: Integer
+}
+
+resource childUsedByParent: Parent {
+  outputProjection parent2: Parent = (
+    child $child2
+  ) ~Child $child2 = ( extra )
+
+  read {
+    outputProjection $parent2
+  }
+}

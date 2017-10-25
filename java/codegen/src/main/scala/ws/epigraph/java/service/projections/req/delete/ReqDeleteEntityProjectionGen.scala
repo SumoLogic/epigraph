@@ -48,6 +48,18 @@ class ReqDeleteEntityProjectionGen(
 
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
+  override protected def normalizedFromGenOpt: Option[ReqDeleteEntityProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqDeleteEntityProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
+
   override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqDeleteEntityProjectionGen =
     new ReqDeleteEntityProjectionGen(
       baseNamespaceProvider,
@@ -98,20 +110,6 @@ object ReqDeleteEntityProjectionGen {
 
     ReqTypeProjectionGenCache.lookup(
       Option(op.referenceName()),
-      parentClassGenOpt.isDefined,
-      Option(op.normalizedFrom()).map { nf =>
-        new (() => ReqDeleteTypeProjectionGen) {
-          override def apply(): ReqDeleteTypeProjectionGen =
-            dataProjectionGen(
-              baseNamespaceProvider,
-              nf,
-              baseNamespaceOpt,
-              namespaceSuffix,
-              None,
-              ctx
-            )
-        }
-      },
       ctx.reqDeleteProjections,
 
       op.`type`().kind() match {

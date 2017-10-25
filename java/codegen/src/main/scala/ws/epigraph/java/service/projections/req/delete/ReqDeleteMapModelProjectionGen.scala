@@ -32,16 +32,28 @@ class ReqDeleteMapModelProjectionGen(
   _namespaceSuffix: Qn,
   override protected val parentClassGenOpt: Option[ReqDeleteModelProjectionGen],
   ctx: GenContext)
-  extends ReqDeleteModelProjectionGen(
-    baseNamespaceProvider,
-    op,
-    baseNamespaceOpt,
-    _namespaceSuffix,
-    parentClassGenOpt,
-    ctx
-  ) with ReqMapModelProjectionGen {
+    extends ReqDeleteModelProjectionGen(
+      baseNamespaceProvider,
+      op,
+      baseNamespaceOpt,
+      _namespaceSuffix,
+      parentClassGenOpt,
+      ctx
+    ) with ReqMapModelProjectionGen {
 
   override type OpProjectionType = OpMapModelProjection
+
+  override protected def normalizedFromGenOpt: Option[ReqDeleteModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqDeleteMapModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
 

@@ -42,6 +42,17 @@ class ReqOutputPrimitiveModelProjectionGen(
 
   override type OpProjectionType = OpPrimitiveModelProjection
 
+  override protected def normalizedFromGenOpt: Option[ReqOutputModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqOutputPrimitiveModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   override protected def tailGenerator(
     parentGen: ReqOutputModelProjectionGen,

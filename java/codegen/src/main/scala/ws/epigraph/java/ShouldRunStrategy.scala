@@ -16,6 +16,8 @@
 
 package ws.epigraph.java
 
+import java.nio.file.Path
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -34,10 +36,22 @@ trait ShouldRunStrategy {
   def unmark(): Unit
 }
 
-object AlwaysRunStrategry extends ShouldRunStrategy {
+object AlwaysRunStrategy extends ShouldRunStrategy {
   override def checkAndMark: Boolean = true
 
   override def check = true
 
   override def unmark(): Unit = {}
+}
+
+class FileBasedRunStrategy(path: Path, writtenPaths: java.util.Set[Path]) extends ShouldRunStrategy {
+  override def checkAndMark: Boolean = writtenPaths.synchronized {
+    val res = check
+    if (res) { writtenPaths.add(path) }
+    res
+  }
+
+  override def check: Boolean = writtenPaths.synchronized { !writtenPaths.contains(path) }
+
+  override def unmark(): Unit = writtenPaths.synchronized { writtenPaths.remove(path) }
 }

@@ -29,6 +29,7 @@ import ws.epigraph.java.service._
 import ws.epigraph.lang.Qn
 import ws.epigraph.schema.ResourcesSchema
 
+import scala.annotation.tailrec
 import scala.collection.JavaConversions._
 import scala.collection.{JavaConversions, immutable, mutable}
 
@@ -227,19 +228,130 @@ class EpigraphJavaGenerator private(
 
   }
 
-  private def runGeneratorsAndHandleErrors(generators: immutable.Queue[JavaGen], runner: JavaGen => Unit): Unit = {
-    val doDebugTraces = true // ctx.settings.debug()
+  @tailrec
+  private def runGeneratorsAndHandleErrors(
+    generators: immutable.Queue[JavaGen],
+    runner: JavaGen => Unit): Unit = {
+
+    val doDebugTraces = ctx.settings.debug()
     val generatorsCopy = generators
 
     // mutable state, should be thread-safe
     val postponedGenerators = new java.util.concurrent.ConcurrentLinkedQueue[JavaGen]()
     val genParents = new java.util.concurrent.ConcurrentHashMap[JavaGen, JavaGen]()
+    // will synchronize on this one
 
+    if (parallel) { // run asynchronously
+      val executor = Executors.newWorkStealingPool()
+      val phaser = new Phaser(1) // active jobs counter + 1
+
+      def submit(generator: JavaGen): Unit = {
+        val runStrategy = generator.shouldRunStrategy
+        if (runStrategy.checkAndMark) {
+          phaser.register()
+          executor.submit(
+            new Runnable {
+              override def run(): Unit = {
+                try {
+                  runGenerator(generator)(submit)
+                } catch {
+                  case e: Exception => exceptionHandler(generator, runStrategy, e)
+                } finally {
+                  phaser.arriveAndDeregister()
+                }
+              }
+            }
+          )
+        }
+      }
+
+      generators.foreach { submit }
+//      generators.clear()
+
+      phaser.arriveAndAwaitAdvance()
+      executor.shutdown()
+      if (!executor.awaitTermination(10, TimeUnit.MINUTES)) throw new RuntimeException("Code generation timeout")
+
+    } else { // run sequentially
+
+      var _generators = generators
+      while (_generators.nonEmpty) {
+        val (generator, newGenerators) = _generators.dequeue
+        _generators = newGenerators
+
+        val runStrategy = generator.shouldRunStrategy
+        if (runStrategy.checkAndMark) {
+          try {
+            runGenerator(generator) { ch => _generators :+= ch }
+          } catch {
+            case e: Exception => exceptionHandler(generator, runStrategy, e)
+          }
+        }
+      }
+    }
+
+    // child -> submit subgens (child.name, child asm)
+    // child -> fail, run parent first, postpone child
+    // parent -> submit subgens (child!)
+    // parent -> run
+    // child -> submit subgens again(!!) --> clash
+    // child -> run
+
+    def runGenerator(generator: JavaGen)(scheduleGeneratorRun: JavaGen => Unit): Unit = {
+      addDebugInfo(generator)
+
+      generator.children.foreach(scheduleGeneratorRun)
+
+      try {
+        runner.apply(generator)
+      } catch {
+        case tle: TryLaterException =>
+          val description = generator.description
+          log.info(s"Postponing '$description' because: ${ tle.getMessage }")
+          generator.shouldRunStrategy.unmark()
+          postponedGenerators.add(generator) // run generator on next iteration
+
+          if (tle.extraGeneratorsToRun.nonEmpty) {
+            // these are the generators that have to be finished before `generator` is tried again
+            // won't postpone them till next run but will include in the current one
+            log.info(s"Also including ${ tle.extraGeneratorsToRun.size } generators that have to run first:")
+            tle.extraGeneratorsToRun.foreach(g => log.info(g.description))
+            tle.extraGeneratorsToRun.foreach(scheduleGeneratorRun)
+          }
+
+      }
+    }
+
+    def exceptionHandler(generator: JavaGen, runStrategy: ShouldRunStrategy, ex: Exception) = {
+      def msg = if (doDebugTraces) {
+        val sw = new StringWriter
+        sw.append(ex.toString).append("\n")
+
+        sw.append(describeGenerator(generator, showGensProducingSameFile = true))
+        if (!ex.isInstanceOf[FileAlreadyExistsException]) { // not interested in these traces
+          sw.append("\n")
+          ex.printStackTrace(new PrintWriter(sw))
+        }
+        sw.toString
+      } else ex.toString
+
+      log.debug("Unhandled exception", ex)
+
+      cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
+    }
+
+    //<editor-fold desc="Debugging stuff">
     def addDebugInfo(gen: JavaGen): Unit = {
       log.debug("Running: " + gen.description)
       if (doDebugTraces) {
         val children = gen.children
-        children.foreach(c => genParents.put(c, gen))
+        children.foreach { c =>
+          try {
+            genParents.put(c, gen)
+          } catch {
+            case _: Exception => // ignore exceptions here
+          }
+        }
       }
     }
 
@@ -268,92 +380,11 @@ class EpigraphJavaGenerator private(
       }
       sw.toString
     }
-
-    def exceptionHandler(g: JavaGen, runStrategy: ShouldRunStrategy, e: Exception) = e match {
-      case tle: TryLaterException =>
-        // see ReqTypeProjectionGenCache for one use case of this exception
-        log.info(s"Postponing '${ g.description }' because: ${ tle.getMessage }")
-        runStrategy.unmark()
-        postponedGenerators.add(g)
-        if (tle.extraGeneratorsToRun.nonEmpty) {
-          log.info(s"Also postponing ${ tle.extraGeneratorsToRun.size } generators:")
-          tle.extraGeneratorsToRun.foreach(g => log.info(g.description))
-          runGeneratorsAndHandleErrors(immutable.Queue[JavaGen](tle.extraGeneratorsToRun: _*), runner)
-        }
-
-      case ex =>
-        def msg = if (doDebugTraces) {
-          val sw = new StringWriter
-          sw.append(ex.toString).append("\n")
-
-          sw.append(describeGenerator(g, showGensProducingSameFile = true))
-          if (!ex.isInstanceOf[FileAlreadyExistsException]) { // not interested in these traces
-            sw.append("\n")
-            ex.printStackTrace(new PrintWriter(sw))
-          }
-          sw.toString
-        } else ex.toString
-
-        log.debug(ex.toString)
-        cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg))
-    }
-
-    if (parallel) {
-      // run sequentially
-      var _generators = generators
-      while (_generators.nonEmpty) {
-        val (generator, newGenerators) = _generators.dequeue
-        _generators = newGenerators
-
-        val runStrategy = generator.shouldRunStrategy
-        if (runStrategy.checkAndMark) {
-          try {
-            addDebugInfo(generator)
-            _generators ++= generator.children
-            runner.apply(generator)
-          } catch {
-            case e: Exception => exceptionHandler(generator, runStrategy, e)
-          }
-        }
-      }
-    } else {
-      // run asynchronously
-      val executor = Executors.newWorkStealingPool()
-      val phaser = new Phaser(1) // active jobs counter + 1
-
-      def submit(generator: JavaGen): Unit = {
-        val runStrategy = generator.shouldRunStrategy
-        if (runStrategy.checkAndMark) {
-          phaser.register()
-          executor.submit(
-            new Runnable {
-              override def run(): Unit = {
-                try {
-                  addDebugInfo(generator)
-                  generator.children.foreach(submit)
-                  runner.apply(generator)
-                } catch {
-                  case e: Exception => exceptionHandler(generator, runStrategy, e)
-                } finally {
-                  phaser.arriveAndDeregister()
-                }
-              }
-            }
-          )
-        }
-      }
-
-      generators.foreach { submit }
-//      generators.clear()
-
-      phaser.arriveAndAwaitAdvance()
-      executor.shutdown()
-      if (!executor.awaitTermination(10, TimeUnit.MINUTES)) throw new RuntimeException("Code generation timeout")
-    }
+    //</editor-fold>
 
     // run postponed generators, if any
     // some of the postponed generators may have been executed by concurrent threads, so check again here
-    val postponedNotRun = postponedGenerators.toSeq.filter(_.shouldRunStrategy.check)
+    val postponedNotRun = postponedGenerators.toSeq.filter(gp => gp.shouldRunStrategy.check)
     postponedGenerators.clear()
     val postponedGeneratorsSize = postponedNotRun.size
     if (postponedGeneratorsSize > 0) {
@@ -362,9 +393,7 @@ class EpigraphJavaGenerator private(
         val msg = new StringWriter()
         msg.append("The following generators couldn't finish:\n")
         postponedNotRun.foreach(
-          pg => msg.append(describeGenerator(pg, showGensProducingSameFile = true)).append(
-            "\n"
-          )
+          sg => msg.append(describeGenerator(sg, showGensProducingSameFile = true)).append("\n")
         )
         cctx.errors.add(CMessage.error(null, CMessagePosition.NA, msg.toString))
 
@@ -372,11 +401,13 @@ class EpigraphJavaGenerator private(
       } else {
         log.info(s"Retrying $postponedGeneratorsSize generators")
         val postponedQueue = queue(postponedNotRun)
+        // don't schedule children to run again on retries (have already been scheduled during this run)
         runGeneratorsAndHandleErrors(postponedQueue, runner)
       }
     } else {
       handleErrors()
     }
+
   }
 
   private def queue[T](i: Iterable[T]): immutable.Queue[T] = {

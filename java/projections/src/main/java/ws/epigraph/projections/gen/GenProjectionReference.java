@@ -86,5 +86,4 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
 
   }
 
-  @Nullable Throwable allocationTrace();
 }

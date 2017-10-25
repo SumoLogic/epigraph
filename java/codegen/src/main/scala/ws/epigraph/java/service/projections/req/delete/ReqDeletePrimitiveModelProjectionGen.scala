@@ -42,6 +42,17 @@ class ReqDeletePrimitiveModelProjectionGen(
 
   override type OpProjectionType = OpPrimitiveModelProjection
 
+  override protected def normalizedFromGenOpt: Option[ReqDeleteModelProjectionGen] =
+    Option(op.normalizedFrom()).map { nfo =>
+      new ReqDeletePrimitiveModelProjectionGen(
+        baseNamespaceProvider,
+        nfo,
+        baseNamespaceOpt,
+        _namespaceSuffix,
+        None,
+        ctx
+      )
+    }
 
   override protected def tailGenerator(
     parentGen: ReqDeleteModelProjectionGen,

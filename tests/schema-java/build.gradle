@@ -38,7 +38,8 @@ epigraph {
         "ws.epigraph.tests.user",
         "ws.epigraph.tests.users",
         "ws.epigraph.tests.codegenstress.namedDoubleTail",
-        "ws.epigraph.tests.codegenstress.some"
+        "ws.epigraph.tests.codegenstress.childWithUnusedParent",
+        "ws.epigraph.tests.codegenstress.childUsedByParent"
     ]
   }
 }
