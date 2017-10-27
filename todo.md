@@ -128,6 +128,7 @@
 
 # Cleanup
   - [ ] check out artifactory-tools to clean up old light-psi versions
+    - see `ArtifactoryClient`
   - [ ] DataType(Api): type should be EntityType ?
   - [ ] Rename Data/Var/Union type to some common name
 

@@ -29,7 +29,7 @@ public final class BookRecordAsmImpl extends BookRecordAsm<BooksBackend.BookData
   private BookRecordAsmImpl() {
     super(
         // author
-        AuthorAsmImpl.INSTANCE.on(bd -> AuthorsBackend.get(bd.authorId)),
+        AuthorAsmImpl.INSTANCE.from(bd -> AuthorsBackend.get(bd.authorId)),
 
         // text
         new TextAsm<>(PlainTextAsm.INSTANCE),

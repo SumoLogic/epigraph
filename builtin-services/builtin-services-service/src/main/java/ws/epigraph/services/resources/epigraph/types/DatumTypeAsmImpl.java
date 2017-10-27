@@ -47,16 +47,16 @@ public class DatumTypeAsmImpl extends DatumTypeAsm<DatumTypeApi> {
               throw new RuntimeException("unknown kind: " + t.kind());
           }
         },
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (DatumTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(DatumTypeApi::annotations), // annotations
-        INSTANCE.on(DatumTypeApi::metaType), // meta
-        TypeNameAsmImpl.INSTANCE.on(DatumTypeApi::name), // name
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (DatumTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(DatumTypeApi::annotations), // annotations
+        INSTANCE.from(DatumTypeApi::metaType), // meta
+        TypeNameAsmImpl.INSTANCE.from(DatumTypeApi::name), // name
         new DatumType_ListAsm<>(DatumTypeApi::supertypes, INSTANCE), // supertypes
         //tails
-        RecordTypeAsmImpl.INSTANCE.on(t -> (RecordTypeApi) t), // record
-        MapTypeAsmImpl.INSTANCE.on(t -> (MapTypeApi) t), // map
-        ListTypeAsmImpl.INSTANCE.on(t -> (ListTypeApi) t), // list
-        PrimitiveTypeAsmImpl.INSTANCE.on(t -> (PrimitiveTypeApi) t) // primitive
+        RecordTypeAsmImpl.INSTANCE.from(t -> (RecordTypeApi) t), // record
+        MapTypeAsmImpl.INSTANCE.from(t -> (MapTypeApi) t), // map
+        ListTypeAsmImpl.INSTANCE.from(t -> (ListTypeApi) t), // list
+        PrimitiveTypeAsmImpl.INSTANCE.from(t -> (PrimitiveTypeApi) t) // primitive
     );
   }
 }

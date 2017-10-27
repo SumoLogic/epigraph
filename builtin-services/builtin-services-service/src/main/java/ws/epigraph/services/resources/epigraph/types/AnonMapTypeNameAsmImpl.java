@@ -30,7 +30,7 @@ public final class AnonMapTypeNameAsmImpl extends AnonMapTypeNameAsm<AnonMapType
     super(
         new AnonMapTypeNameRecordAsm<>(
             TypeNameAsmImpl.INSTANCE,
-            DataTypeNameAsmImpl.INSTANCE.on(tn -> tn.valueTypeName)
+            DataTypeNameAsmImpl.INSTANCE.from(tn -> tn.valueTypeName)
         ),
         TypeNameAsmImpl.TYPE_NAME_ASM
     );

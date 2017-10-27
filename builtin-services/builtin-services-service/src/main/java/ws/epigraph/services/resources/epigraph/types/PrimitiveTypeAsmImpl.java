@@ -28,10 +28,10 @@ public final class PrimitiveTypeAsmImpl extends PrimitiveTypeAsm<PrimitiveTypeAp
 
   private PrimitiveTypeAsmImpl() {
     super(
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (PrimitiveTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(PrimitiveTypeApi::annotations), // annotations
-        DatumTypeAsmImpl.INSTANCE.on(PrimitiveTypeApi::metaType), // meta
-        QualifiedTypeNameAsmImpl.INSTANCE.on(PrimitiveTypeApi::name), // name
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (PrimitiveTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(PrimitiveTypeApi::annotations), // annotations
+        DatumTypeAsmImpl.INSTANCE.from(PrimitiveTypeApi::metaType), // meta
+        QualifiedTypeNameAsmImpl.INSTANCE.from(PrimitiveTypeApi::name), // name
         new PrimitiveType_ListAsm<>(PrimitiveTypeApi::supertypes, INSTANCE) // supertypes
     );
 

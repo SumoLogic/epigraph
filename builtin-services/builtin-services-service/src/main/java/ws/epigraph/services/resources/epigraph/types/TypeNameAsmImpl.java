@@ -46,9 +46,9 @@ public final class TypeNameAsmImpl extends TypeNameAsm<TypeName> {
           else throw new IllegalArgumentException(tn.getClass().getName());
         },
         TYPE_NAME_ASM,
-        QualifiedTypeNameAsmImpl.INSTANCE.on(tn -> (QualifiedTypeName) tn),
-        AnonListTypeNameAsmImpl.INSTANCE.on(tn -> (AnonListTypeName) tn),
-        AnonMapTypeNameAsmImpl.INSTANCE.on(tn -> (AnonMapTypeName) tn)
+        QualifiedTypeNameAsmImpl.INSTANCE.from(tn -> (QualifiedTypeName) tn),
+        AnonListTypeNameAsmImpl.INSTANCE.from(tn -> (AnonListTypeName) tn),
+        AnonMapTypeNameAsmImpl.INSTANCE.from(tn -> (AnonMapTypeName) tn)
     );
   }
 

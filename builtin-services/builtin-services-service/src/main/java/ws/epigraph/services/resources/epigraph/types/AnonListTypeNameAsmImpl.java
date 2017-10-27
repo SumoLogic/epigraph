@@ -27,7 +27,7 @@ public final class AnonListTypeNameAsmImpl extends AnonListTypeNameAsm<AnonListT
 
   private AnonListTypeNameAsmImpl() {
     super(
-        DataTypeNameAsmImpl.INSTANCE.on(tn -> tn.elementTypeName),
+        DataTypeNameAsmImpl.INSTANCE.from(tn -> tn.elementTypeName),
         TypeNameAsmImpl.TYPE_NAME_ASM
     );
   }

@@ -29,9 +29,9 @@ public final class TagAsmImpl extends Tag_Asm<TagApi> {
 
   private TagAsmImpl() {
     super(
-        AnnotationsAsmImpl.INSTANCE.on(TagApi::annotations),
+        AnnotationsAsmImpl.INSTANCE.from(TagApi::annotations),
         (tag, projection, ctx) -> TagName.create().setString(NameString.create(tag.name())),
-        DatumTypeAsmImpl.INSTANCE.on(TagApi::type)
+        DatumTypeAsmImpl.INSTANCE.from(TagApi::type)
     );
   }
 }

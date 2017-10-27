@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package ws.epigraph.services.resources.epigraph.types;
-
-import epigraph.schema.NameString;
-import ws.epigraph.services._resources.epigraph.operations.read.types.output.NameString_Type_MapAsm;
-import ws.epigraph.types.TypeApi;
-import ws.epigraph.util.Function2;
-
-import java.util.Map;
+package ws.epigraph.util;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class NameString_Type_MapAsmImpl
-    extends NameString_Type_MapAsm<Map<String, ? extends TypeApi>, String, TypeApi> {
+@FunctionalInterface
+public interface Function2<A, B, C> {
+  C apply(A a, B b);
 
-  public static final NameString_Type_MapAsmImpl INSTANCE = new NameString_Type_MapAsmImpl();
+  static <T, A> Function2<T, A, T> identity1() {
+    return (x, a) -> x;
+  }
 
-  private NameString_Type_MapAsmImpl() {
-    super(
-        NameString::create,
-        Function2.identity1(),
-        TypeAsmImpl.INSTANCE
-    );
+  static <T, A> Function2<A, T, T> identity2() {
+    return (x, a) -> a;
   }
 }

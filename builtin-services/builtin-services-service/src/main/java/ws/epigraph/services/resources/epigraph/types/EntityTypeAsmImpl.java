@@ -29,9 +29,9 @@ public final class EntityTypeAsmImpl extends EntityTypeAsm<EntityTypeApi> {
 
   private EntityTypeAsmImpl() {
     super(
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (EntityTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(EntityTypeApi::annotations), // annotations
-        QualifiedTypeNameAsmImpl.INSTANCE.on(EntityTypeApi::name), // name
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (EntityTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(EntityTypeApi::annotations), // annotations
+        QualifiedTypeNameAsmImpl.INSTANCE.from(EntityTypeApi::name), // name
         new EntityType_ListAsm<>(EntityTypeApi::supertypes, INSTANCE),  // supertypes
         new Tag_ListAsm<>(EntityTypeApi::tags, TagAsmImpl.INSTANCE) // tags
     );

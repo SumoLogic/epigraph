@@ -28,13 +28,13 @@ public final class MapTypeAsmImpl extends MapTypeAsm<MapTypeApi> {
 
   private MapTypeAsmImpl() {
     super(
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (MapTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(MapTypeApi::annotations), // annotations
-        DatumTypeAsmImpl.INSTANCE.on(MapTypeApi::keyType), // key type
-        DatumTypeAsmImpl.INSTANCE.on(MapTypeApi::metaType), // meta
-        TypeNameAsmImpl.INSTANCE.on(MapTypeApi::name), // name
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (MapTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(MapTypeApi::annotations), // annotations
+        DatumTypeAsmImpl.INSTANCE.from(MapTypeApi::keyType), // key type
+        DatumTypeAsmImpl.INSTANCE.from(MapTypeApi::metaType), // meta
+        TypeNameAsmImpl.INSTANCE.from(MapTypeApi::name), // name
         new MapType_ListAsm<>(MapTypeApi::supertypes, INSTANCE), // supertypes
-        DataTypeAsmImpl.INSTANCE.on(MapTypeApi::valueType) // value type
+        DataTypeAsmImpl.INSTANCE.from(MapTypeApi::valueType) // value type
     );
   }
 }

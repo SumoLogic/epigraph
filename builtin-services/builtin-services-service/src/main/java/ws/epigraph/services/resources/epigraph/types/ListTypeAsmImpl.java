@@ -28,12 +28,12 @@ public final class ListTypeAsmImpl extends ListTypeAsm<ListTypeApi> {
 
   private ListTypeAsmImpl() {
     super(
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (ListTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(ListTypeApi::annotations), // annotations
-        DatumTypeAsmImpl.INSTANCE.on(ListTypeApi::metaType), // meta
-        TypeNameAsmImpl.INSTANCE.on(ListTypeApi::name), // name
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (ListTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(ListTypeApi::annotations), // annotations
+        DatumTypeAsmImpl.INSTANCE.from(ListTypeApi::metaType), // meta
+        TypeNameAsmImpl.INSTANCE.from(ListTypeApi::name), // name
         new ListType_ListAsm<>(ListTypeApi::supertypes, INSTANCE), // supertypes
-        DataTypeAsmImpl.INSTANCE.on(ListTypeApi::elementType) // element type
+        DataTypeAsmImpl.INSTANCE.from(ListTypeApi::elementType) // element type
     );
   }
 }

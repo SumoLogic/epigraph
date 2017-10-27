@@ -29,11 +29,11 @@ public final class RecordTypeAsmImpl extends RecordTypeAsm<RecordTypeApi> {
 
   private RecordTypeAsmImpl() {
     super(
-        TypeAsmImpl.ABSTRACT_ASM.on(t -> (RecordTypeApi) t), // abstract
-        AnnotationsAsmImpl.INSTANCE.on(RecordTypeApi::annotations), // annotations
+        TypeAsmImpl.ABSTRACT_ASM.from(t -> (RecordTypeApi) t), // abstract
+        AnnotationsAsmImpl.INSTANCE.from(RecordTypeApi::annotations), // annotations
         new Field_ListAsm<>(RecordTypeApi::immediateFields, FieldAsmImpl.INSTANCE), // declared fields
-        DatumTypeAsmImpl.INSTANCE.on(RecordTypeApi::metaType), // meta
-        QualifiedTypeNameAsmImpl.INSTANCE.on(RecordTypeApi::name), // name
+        DatumTypeAsmImpl.INSTANCE.from(RecordTypeApi::metaType), // meta
+        QualifiedTypeNameAsmImpl.INSTANCE.from(RecordTypeApi::name), // name
         new RecordType_ListAsm<>(RecordTypeApi::supertypes, INSTANCE) // supertypes
     );
   }

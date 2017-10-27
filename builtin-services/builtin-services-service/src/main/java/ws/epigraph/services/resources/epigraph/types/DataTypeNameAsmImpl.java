@@ -37,7 +37,7 @@ public final class DataTypeNameAsmImpl extends DataTypeNameAsm<DataTypeName> {
                     .<NameString.Value>map(retro -> NameString.create(retro).asValue())
                     .orElse(NameString.type.createValue(null))
         ),
-        TypeNameAsmImpl.INSTANCE.on(dtn -> dtn.typeName)
+        TypeNameAsmImpl.INSTANCE.from(dtn -> dtn.typeName)
     );
   }
 }

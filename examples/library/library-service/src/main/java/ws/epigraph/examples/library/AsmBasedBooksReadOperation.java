@@ -22,6 +22,7 @@ import ws.epigraph.examples.library._resources.books.operations.read._default.Ab
 import ws.epigraph.examples.library._resources.books.operations.read._default.output.BookId_BookRecord_MapAsm;
 import ws.epigraph.examples.library._resources.books.operations.read._default.output.OutputBooksFieldProjection;
 import ws.epigraph.schema.operations.ReadOperationDeclaration;
+import ws.epigraph.util.Function2;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -42,7 +43,7 @@ public class AsmBasedBooksReadOperation extends AbstractReadOperation {
     BookId_BookRecord_Map.Value value =
         new BookId_BookRecord_MapAsm<>(
             Function.identity(), // key converter
-            Function.identity(), // map extractor
+            Function2.identity1(), // map extractor
             BookRecordAsmImpl.INSTANCE // items assembler
         ).assemble(BooksBackend.getBooks(), projection.dataProjection(), new AsmContext());
 

@@ -29,9 +29,9 @@ public final class FieldAsmImpl extends Field_Asm<FieldApi> {
 
   private FieldAsmImpl() {
     super(
-        AnnotationsAsmImpl.INSTANCE.on(FieldApi::annotations),
+        AnnotationsAsmImpl.INSTANCE.from(FieldApi::annotations),
         (f, p, c) -> FieldName.create().setString(NameString.create(f.name())),
-        DataTypeAsmImpl.INSTANCE.on(FieldApi::dataType)
+        DataTypeAsmImpl.INSTANCE.from(FieldApi::dataType)
     );
   }
 

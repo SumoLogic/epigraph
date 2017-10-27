@@ -46,6 +46,7 @@ class MapAsmGen(
   private val kt = importManager.use(lqn2(keyCType, nsString))
   private val it = importManager.use(lqn2(itemCType, nsString))
   private val elementGenName = importManager.use(g.elementGen.fullClassName)
+  private val fun2 = importManager.use(classOf[ws.epigraph.util.Function2[_, _, _]].getName)
 
   import Imports._
 
@@ -62,7 +63,7 @@ else {
   $t.Builder b = $t.create();
   ctx.visited.put(key, b.asValue());
   $elementGenName itemsProjection = p.itemsProjection();
-  $mp<K, ? extends V> map = mapExtractor.apply(dto);
+  $mp<K, ? extends V> map = mapExtractor.apply(dto, p);
   for ($mp.Entry<K, ? extends V> entry: map.entrySet()) {
     $kt k = keyConverter.apply(entry.getKey());
     b.put${if (isEntity) "$" else "_"}(k, itemAsm.assemble(entry.getValue(), itemsProjection, ctx));
@@ -96,7 +97,7 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D, K, V> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   private final $notNull $keysConverterType keyConverter;
-  private final $notNull $func<D, $mp<K, ? extends V>> mapExtractor;
+  private final $notNull $fun2<D, $projectionName, $mp<K, ? extends V>> mapExtractor;
   private final $notNull $itemAsmType itemAsm;
 ${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
 ${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaAsm;" else ""}
@@ -114,7 +115,7 @@ ${if (hasMeta) s"\n   * @param metaAsm metadata assembler" else ""}
   public $shortClassName(
 ${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
     $notNull $keysConverterType keyConverter,
-    $notNull $func<D, $mp<K, ? extends V>> mapExtractor,
+    $notNull $fun2<D, $projectionName, $mp<K, ? extends V>> mapExtractor,
     $notNull $itemAsmType itemAsm\
 ${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
 ${if (hasMeta) s",\n    $notNull $metaAsmType metaAsm" else ""}

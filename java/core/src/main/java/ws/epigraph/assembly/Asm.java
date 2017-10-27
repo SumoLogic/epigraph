@@ -48,7 +48,7 @@ public interface Asm<D, P, R> {
    *
    * @return composed assembler
    */
-  default <T> @NotNull Asm<T, P, R> on(@NotNull Function<T, D> f) {
+  default <T> @NotNull Asm<T, P, R> from(@NotNull Function<T, D> f) {
     return (dto, projection, ctx) -> assemble(f.apply(dto), projection, ctx);
   }
 
@@ -62,7 +62,7 @@ public interface Asm<D, P, R> {
    *
    * @return composed assembler
    */
-  default <T> @NotNull Asm<T, P, R> on(@NotNull Function<T, D> f, @NotNull Function<RuntimeException, R> ef) {
+  default <T> @NotNull Asm<T, P, R> from(@NotNull Function<T, D> f, @NotNull Function<RuntimeException, R> ef) {
     return (dto, projection, ctx) -> {
       D d;
       try {

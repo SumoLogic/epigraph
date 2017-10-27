@@ -16,6 +16,7 @@
 
 package ws.epigraph.util;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -31,6 +32,12 @@ public final class Tuple2<T1, T2> {
     this._1 = _1;
     this._2 = _2;
   }
+
+  @Contract(pure = true)
+  public T1 first() { return _1; }
+
+  @Contract(pure = true)
+  public T2 second() { return _2; }
 
   public static @NotNull <T1, T2> Tuple2<T1, T2> of(T1 _1, T2 _2) { return new Tuple2<>(_1, _2); }
 

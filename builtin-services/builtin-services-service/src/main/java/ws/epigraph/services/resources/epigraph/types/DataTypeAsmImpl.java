@@ -28,8 +28,8 @@ public final class DataTypeAsmImpl extends DataTypeAsm<DataTypeApi> {
   private DataTypeAsmImpl() {
 
     super(
-        TagAsmImpl.INSTANCE.on(DataTypeApi::retroTag),
-        TypeAsmImpl.INSTANCE.on(DataTypeApi::type)
+        TagAsmImpl.INSTANCE.from(DataTypeApi::retroTag),
+        TypeAsmImpl.INSTANCE.from(DataTypeApi::type)
     );
 
   }
