@@ -43,8 +43,14 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
 
   protected def genShortClassName(prefix: String, suffix: String): String = genShortClassName(prefix, suffix, cType)
 
-  override def children: Iterable[JavaGen] =
-    tagGenerators.values ++ /*tailGenerators.values ++*/
+  override def children: Iterable[JavaGen]
+  = {
+      if (invalidParentClassGenerator)
+        Iterable()
+      else
+        tagGenerators.values
+    } ++
+    /*tailGenerators.values ++*/
     normalizedTailGenerators/*.filterKeys(p => p.referenceName() == null)*/ .values // filter out named generators
 
   override protected val cType: CEntityTypeDef = toCType(op.`type`()).asInstanceOf[CEntityTypeDef]
@@ -61,11 +67,11 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
     t: CEntityTypeDef): Map[String, (Option[ReqEntityProjectionGen], OpTagProjectionEntryType)] = {
     val op = g.op
 
-    val parentOverridingTagProjections = g.parentClassGenOpt.map(
-      pg => tagProjections(
-        pg.asInstanceOf[ReqEntityProjectionGen], t
-      )
-    ).getOrElse(Map())
+//    val parentOverridingTagProjections = g.parentClassGenOpt.map(
+//      pg => tagProjections(
+//        pg.asInstanceOf[ReqEntityProjectionGen], t
+//      )
+//    ).getOrElse(Map())
 
     val gOverridingTagProjections = op.tagProjections().toSeq.toListMap
         .filter { case (tn, tp) =>
@@ -83,7 +89,8 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
           )
         }
 
-    parentOverridingTagProjections ++ gOverridingTagProjections
+//    parentOverridingTagProjections ++ gOverridingTagProjections
+    gOverridingTagProjections
   }
 
   /** tag projections: should only include new or overridden tags, should not include inherited */

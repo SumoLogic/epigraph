@@ -3,16 +3,24 @@ namespace ws.epigraph.tests.codegenstress
 // resource output projection uses normalized $child projection
 // while $parent projection is never used
 
-entity SomeParentEntity {
+record SomeParent {
   id: Long
+  me: SomeParent
 }
-entity SomeChildEntity extends SomeParentEntity {
+record SomeChild extends SomeParent {
   name: String
+  override me: SomeChild
 }
 
-outputProjection parent: SomeParentEntity = :( id ) :~ SomeChildEntity $child = :( name )
+record SomeChild2 extends SomeChild {
+  child2: String
+}
 
-resource childWithUnusedParent : SomeChildEntity {
+outputProjection parent: SomeParent = ( id, me )
+                                        ~ SomeChild $child = ( name )
+                                          ~ SomeChild2 ( child2 )
+
+resource childWithUnusedParent : SomeChild {
   read {
     outputProjection $child
   }

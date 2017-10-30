@@ -44,16 +44,16 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
 
   protected val cRecordType: CRecordTypeDef = cType.asInstanceOf[CRecordTypeDef]
 
-  /** get field projections from `g.op` if they override fields from `t` */
+  /** get field projections from `g.op` if they are overridden in type `t` */
   def overridingFieldProjections(
     g: ReqRecordModelProjectionGen,
     t: CRecordTypeDef): Map[String, (Option[ReqRecordModelProjectionGen], OpFieldProjectionType)] = {
 
     val p = g.op
 
-    val parentOverridingFieldProjections = g.parentClassGenOpt.map(
-      pg => overridingFieldProjections(pg.asInstanceOf[ReqRecordModelProjectionGen], t)
-    ).getOrElse(Map())
+//    val parentOverridingFieldProjections = g.parentClassGenOpt.map(
+//      pg => overridingFieldProjections(pg.asInstanceOf[ReqRecordModelProjectionGen], t)
+//    ).getOrElse(Map())
 
     val gOverridingFieldProjections = p.fieldProjections().toSeq.toListMap
         .filter { case (fieldName, fieldProjection) =>
@@ -75,7 +75,8 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
           )
         }
 
-    parentOverridingFieldProjections ++ gOverridingFieldProjections
+//    parentOverridingFieldProjections ++ gOverridingFieldProjections
+    gOverridingFieldProjections
   }
 
   /**
@@ -104,8 +105,9 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   }
 
   override def children: Iterable[JavaGen] = super.children ++ {
-    // exclude (overriden) fields taken from parent generator
-    if (ReqFieldProjectionGen.generateFieldProjections)
+    if (invalidParentClassGenerator)
+      Iterable()
+    else if (ReqFieldProjectionGen.generateFieldProjections)
       fieldGenerators.values
     else
       fieldGenerators.values.flatMap(_.children)

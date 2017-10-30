@@ -80,7 +80,10 @@ trait ReqTypeProjectionGen extends ReqProjectionGen {
   }
 
   protected def invalidParentClassGenerator: Boolean =
-    parentClassGenOpt.isEmpty && normalizedFromGenOpt.isDefined
+    parentClassGenOpt match {
+      case Some(parentGen) => parentGen.invalidParentClassGenerator
+      case None => normalizedFromGenOpt.isDefined
+    }
 
   protected def generate0: String
 }
