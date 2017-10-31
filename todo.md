@@ -40,6 +40,16 @@
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 - [x] codegen bug: see `childProjectionWithUnusedParent.epigraph` and `tests-schema-java.gradle`
 - [x] codegen bug: impossible to have tail type as a field, see `childUsedByParent.epigraph`
+- [ ] codegen: a hierarchy of `N` record types with `N` new fields each will result in `N^3` lines of code, since
+      every new type assembler has to include all parent field assemblers. Proposed way out:
+      - introduce `final` fields/tags
+      - codegen `$TypeFinalFieldAssemblers` interfaces with inheritance
+      - make `$TypeAsm` take final field assemblers using this interface, the rest - directly, like it is now
+
+      Will make it possible to do
+      ```
+      BFinalFieldsAssemberImpl extends AFinalFieldsAssemberImpl implements BFinalFieldsAssember { /* only new fields here */ }
+      ```
 
 
 # Type system

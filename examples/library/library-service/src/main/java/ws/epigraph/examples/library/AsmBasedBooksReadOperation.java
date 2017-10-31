@@ -42,8 +42,8 @@ public class AsmBasedBooksReadOperation extends AbstractReadOperation {
 
     BookId_BookRecord_Map.Value value =
         new BookId_BookRecord_MapAsm<>(
-            Function.identity(), // key converter
             Function2.identity1(), // map extractor
+            Function.identity(), // key converter
             BookRecordAsmImpl.INSTANCE // items assembler
         ).assemble(BooksBackend.getBooks(), projection.dataProjection(), new AsmContext());
 

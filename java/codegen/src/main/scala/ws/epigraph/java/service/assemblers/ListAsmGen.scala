@@ -87,7 +87,7 @@ ${JavaGenUtils.generateImports(importManager.imports)}
 ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D, I> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
-  private final $notNull $func<D, $iterable<? extends I>> itemsExtractor;
+  private final $notNull $func<D, ? extends $iterable<? extends I>> itemsExtractor;
   private final $notNull $itemAsmType itemAsm;
 ${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
 ${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaAsm;" else ""}
@@ -103,7 +103,7 @@ ${if (hasMeta) s"\n   * @param metaAsm metadata assembler" else ""}
    */
   public $shortClassName(
 ${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
-    $notNull $func<D, $iterable<? extends I>> itemsExtractor,
+    $notNull $func<D, ? extends $iterable<? extends I>> itemsExtractor,
     $notNull $itemAsmType itemAsm\
 ${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
 ${if (hasMeta) s",\n    $notNull $metaAsmType metaAsm" else ""}

@@ -24,6 +24,10 @@ import java.util.function.Function;
  * Base interface for generated data assemblers. Builds Epigraph
  * data instance based on data transfer object and request projection.
  *
+ * @param <R> result type
+ * @param <D> source data type
+ * @param <P> projection type
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 @FunctionalInterface

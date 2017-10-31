@@ -33,8 +33,8 @@ public final class NameString_Type_MapAsmImpl
 
   private NameString_Type_MapAsmImpl() {
     super(
-        NameString::create,
         Function2.identity1(),
+        NameString::create,
         TypeAsmImpl.INSTANCE
     );
   }

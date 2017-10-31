@@ -96,8 +96,8 @@ ${JavaGenUtils.generateImports(importManager.imports)}
 ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName<D, K, V> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
+  private final $notNull $fun2<D, $projectionName, ? extends $mp<K, ? extends V>> mapExtractor;
   private final $notNull $keysConverterType keyConverter;
-  private final $notNull $fun2<D, $projectionName, $mp<K, ? extends V>> mapExtractor;
   private final $notNull $itemAsmType itemAsm;
 ${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
 ${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaAsm;" else ""}
@@ -106,23 +106,23 @@ ${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaA
    * Asm constructor
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
-   * @param keyConverter key converter
    * @param mapExtractor map extractor
+   * @param keyConverter key converter
    * @param itemAsm items assembler\
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n","") else "" }\
 ${if (hasMeta) s"\n   * @param metaAsm metadata assembler" else ""}
    */
   public $shortClassName(
 ${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
+    $notNull $fun2<D, $projectionName, ? extends $mp<K, ? extends V>> mapExtractor,
     $notNull $keysConverterType keyConverter,
-    $notNull $fun2<D, $projectionName, $mp<K, ? extends V>> mapExtractor,
     $notNull $itemAsmType itemAsm\
 ${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
 ${if (hasMeta) s",\n    $notNull $metaAsmType metaAsm" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
-    this.keyConverter = keyConverter;
     this.mapExtractor = mapExtractor;
+    this.keyConverter = keyConverter;
     this.itemAsm = itemAsm;\
 ${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
 ${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
