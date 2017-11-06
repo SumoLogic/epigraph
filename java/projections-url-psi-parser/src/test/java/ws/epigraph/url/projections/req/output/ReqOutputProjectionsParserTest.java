@@ -58,7 +58,8 @@ public class ReqOutputProjectionsParserTest {
       SubUser.type,
       SubUserId.type,
       SubUserRecord.type,
-      epigraph.String.type
+      epigraph.String.type,
+      SingleTagEntity.type
   );
 
   private final OpEntityProjection personOpProjection = parsePersonOpEntityProjection(
@@ -99,6 +100,60 @@ public class ReqOutputProjectionsParserTest {
   );
 
 //  private OpOutputFieldProjection personFieldProjection =
+
+  @Test
+  public void testNonExistingEntityTailErrorMsg() {
+    try {
+      testParse(":id:~X:id", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage()
+          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}"));
+    }
+  }
+
+  @Test
+  public void testWrongEntityTailErrorMsg() {
+    try {
+      testParse(":record(id):~ws.epigraph.tests.SingleTagEntity(tag)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      String message = e.getMessage();
+      assertNotNull(message);
+      assertTrue(
+          message,
+          message.contains(
+              "Polymorphic tail for type 'ws.epigraph.tests.SingleTagEntity' is not supported. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}")
+      );
+    }
+  }
+
+  @Test
+  public void testNonExistingModelTailErrorMsg() {
+    try {
+      testParse(":record(id)~X(lastName)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage()
+          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.UserRecord}"));
+    }
+  }
+
+  @Test
+  public void testWrongModelTailErrorMsg() {
+    try {
+      testParse(":record(id)~epigraph.String(lastName)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      String message = e.getMessage();
+      assertNotNull(message);
+      assertTrue(
+          message,
+          message.contains(
+              "Polymorphic tail for type 'epigraph.String' is not supported. Supported tail types: {ws.epigraph.tests.UserRecord}")
+      );
+    }
+  }
 
   @Test
   public void testRequiredParam() {

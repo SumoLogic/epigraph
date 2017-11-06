@@ -203,44 +203,58 @@ public final class ProjectionsParsingUtil {
     return String.join(", ", op.tagProjections().keySet());
   }
 
-  public static @NotNull TypeApi getType(
+  public static TypeApi getType(
       @NotNull TypeRef typeRef,
+      boolean allowNull,
       @NotNull TypesResolver resolver,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
     @Nullable TypeApi type = typeRef.resolve(resolver);
-    if (type == null)
-      throw new PsiProcessingException(String.format("Can't find type '%s'", typeRef.toString()), location, context);
+    if (type == null && !allowNull)
+      throw new PsiProcessingException(String.format("Unknown type '%s'", typeRef.toString()), location, context);
+
     return type;
   }
 
 
-  public static @NotNull EntityTypeApi getEntityType(
+  public static EntityTypeApi getEntityType(
       @NotNull TypeRef typeRef,
+      boolean allowNull,
       @NotNull TypesResolver resolver,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    TypeApi type = getType(typeRef, resolver, location, context);
+    TypeApi type = getType(typeRef, allowNull, resolver, location, context);
     if (type instanceof EntityTypeApi)
       return (EntityTypeApi) type;
 
+    if (type == null && allowNull)
+      return null;
+
+    assert type != null; // otherwise `getType` would blow up
+
     throw new PsiProcessingException(
-        String.format("Expected '%s' to be a var type, but actual kind is '%s'",
+        String.format("Expected '%s' to be an entity type, but actual kind is '%s'",
             type.name().toString(), type.kind().toString()
         ), location, context);
   }
 
-  public static @NotNull DatumTypeApi getDatumType(
+  public static DatumTypeApi getDatumType(
       @NotNull TypeRef typeRef,
+      boolean allowNull,
       @NotNull TypesResolver resolver,
-      @NotNull PsiElement location,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    TypeApi type = getType(typeRef, resolver, location, context);
+    TypeApi type = getType(typeRef, allowNull, resolver, location, context);
     if (type instanceof DatumTypeApi)
       return (DatumTypeApi) type;
+
+    if (type == null && allowNull)
+      return null;
+
+    assert type != null; // otherwise `getType` would blow up
 
     throw new PsiProcessingException(
         String.format("Expected '%s' to be a model type, but actual kind is '%s'",
@@ -303,22 +317,35 @@ public final class ProjectionsParsingUtil {
     return null;
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getTail(
+  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getEntityTail(
       @NotNull VP vp,
-      @NotNull EntityTypeApi targetType,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext ctx) {
+      @NotNull TypeRef tailTypeRef,
+      @NotNull TypesResolver resolver,
+      @NotNull TextLocation location,
+      @NotNull PsiProcessingContext ctx) throws PsiProcessingException {
+
+    @Nullable EntityTypeApi targetType = getEntityType(tailTypeRef, true, resolver, location, ctx);
+
+    if (targetType == null) {
+      throw new PsiProcessingException(
+          String.format(
+              "Unknown tail type '%s'. Supported tail types: {%s}",
+              tailTypeRef.toString(),
+              String.join(", ", supportedEntityTailTypes(vp))
+          ), location, ctx
+      );
+    }
 
     if (targetType.equals(vp.type())) return vp;
 
     if (!hasTail(vp, targetType)) {
-      ctx.addError(
+      throw new PsiProcessingException(
           String.format(
               "Polymorphic tail for type '%s' is not supported. Supported tail types: {%s}",
               targetType.name(),
-              String.join(", ", supportedVarTailTypes(vp))
+              String.join(", ", supportedEntityTailTypes(vp))
           ),
-          location
+          location, ctx
       );
     }
 
@@ -335,39 +362,52 @@ public final class ProjectionsParsingUtil {
     return tails != null && tails.stream().anyMatch(t -> hasTail((VP) t, tailType));
   }
 
-  public static @NotNull List<String> supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
+  public static @NotNull List<String> supportedEntityTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
     if (vp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
-    supportedVarTailTypes(vp, acc);
+    supportedEntityTailTypes(vp, acc);
     List<String> res = new ArrayList<>(acc);
     Collections.sort(res);
     return res;
   }
 
   @SuppressWarnings("unchecked")
-  private static void supportedVarTailTypes(@NotNull GenVarProjection<?, ?, ?> vp, Set<String> acc) {
+  private static void supportedEntityTailTypes(@NotNull GenVarProjection<?, ?, ?> vp, Set<String> acc) {
     final List<GenVarProjection<?, ?, ?>> tails = (List<GenVarProjection<?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getModelTail(
       @NotNull MP mp,
-      @NotNull DatumTypeApi targetType,
-      @NotNull PsiElement location,
-      @NotNull PsiProcessingContext ctx) {
+      @NotNull TypeRef tailTypeRef,
+      @NotNull TypesResolver resolver,
+      @NotNull TextLocation location,
+      @NotNull PsiProcessingContext ctx) throws PsiProcessingException {
+
+    @Nullable DatumTypeApi targetType = getDatumType(tailTypeRef, true, resolver, location, ctx);
+
+    if (targetType == null) {
+      throw new PsiProcessingException(
+          String.format(
+              "Unknown tail type '%s'. Supported tail types: {%s}",
+              tailTypeRef.toString(),
+              String.join(", ", supportedModelTailTypes(mp))
+          ), location, ctx
+      );
+    }
 
     if (targetType.equals(mp.type())) return mp;
 
-    if (!hasTail(mp, targetType)) {
-      ctx.addError(
+    if (!hasModelTail(mp, targetType)) {
+      throw new PsiProcessingException(
           String.format(
               "Polymorphic tail for type '%s' is not supported. Supported tail types: {%s}",
               targetType.name(),
               String.join(", ", supportedModelTailTypes(mp))
           ),
-          location
+          location, ctx
       );
     }
 
@@ -375,13 +415,13 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasModelTail(
       @NotNull MP mp,
       @NotNull DatumTypeApi tailType) {
 
     if (mp.tailByType(tailType) != null) return true;
     final List<?> tails = mp.polymorphicTails();
-    return tails != null && tails.stream().anyMatch(t -> hasTail((MP) t, tailType));
+    return tails != null && tails.stream().anyMatch(t -> hasModelTail((MP) t, tailType));
   }
 
   public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp) {
@@ -418,15 +458,25 @@ public final class ProjectionsParsingUtil {
   }
 
   public static void checkEntityTailType(
+      @NotNull TypeApi rootProjectionType,
       @NotNull EntityTypeApi tailType,
-      @NotNull GenVarProjection<?, ?, ?> ep,
+      @NotNull TypeApi tailProjectionType,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!tailType.isAssignableFrom(ep.type()))
+    if (!rootProjectionType.isAssignableFrom(tailType))
       throw new PsiProcessingException(
           String.format(
-              "Tail projection type '%s' is not a subtype of '%s'", ep.type().name(), tailType.name()
+              "Tail type '%s' is not a subtype of '%s'", tailType.name(), rootProjectionType.name()
+          ),
+          location,
+          context
+      );
+
+    if (!tailType.isAssignableFrom(tailProjectionType))
+      throw new PsiProcessingException(
+          String.format(
+              "Tail projection type '%s' is not a subtype of tail type '%s'", tailProjectionType.name(), tailType.name()
           ),
           location,
           context
@@ -434,15 +484,25 @@ public final class ProjectionsParsingUtil {
   }
 
   public static void checkModelTailType(
+      @NotNull DatumTypeApi rootProjectionType,
       @NotNull DatumTypeApi tailType,
-      @NotNull GenModelProjection<?, ?, ?, ?> mp,
-      @NotNull PsiElement location,
+      @NotNull DatumTypeApi tailProjectionType,
+      @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!tailType.isAssignableFrom(mp.type()))
+    if (!rootProjectionType.isAssignableFrom(tailType))
       throw new PsiProcessingException(
           String.format(
-              "Tail projection type '%s' is not a subtype of '%s'", mp.type().name(), tailType.name()
+              "Tail type '%s' is not a subtype of '%s'", tailType.name(), rootProjectionType.name()
+          ),
+          location,
+          context
+      );
+
+    if (!tailType.isAssignableFrom(tailProjectionType))
+      throw new PsiProcessingException(
+          String.format(
+              "Tail projection type '%s' is not a subtype of tail type '%s'", tailProjectionType.name(), tailType.name()
           ),
           location,
           context

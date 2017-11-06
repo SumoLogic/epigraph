@@ -875,9 +875,11 @@ public class OpOutputProjectionsTest {
           ""
       );
     } catch (AssertionError error) {
-      assertTrue(error.getMessage()
-          .contains(
-              "Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of 'ws.epigraph.tests.UserRecord'"));
+      assertTrue(
+          error.getMessage(),
+          error.getMessage().contains(
+              "Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of tail type 'ws.epigraph.tests.UserRecord'")
+      );
     }
   }
 

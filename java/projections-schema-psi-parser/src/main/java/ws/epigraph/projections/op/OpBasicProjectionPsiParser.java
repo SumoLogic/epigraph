@@ -481,7 +481,9 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull EntityTypeApi tailType = getEntityType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    EntityTypeApi tailType =
+        getEntityType(tailTypeRef, false, typesResolver, EpigraphPsiUtil.getLocation(tailTypeRefPsi), context);
+    assert tailType != null;
     checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
 
     OpEntityProjection ep = parseEntityProjection(
@@ -493,7 +495,7 @@ public final class OpBasicProjectionPsiParser {
         context
     );
 
-    checkEntityTailType(tailType, ep, psiTailProjection, context);
+    checkEntityTailType(rootProjection.type(), tailType, ep.type(), psiTailProjection, context);
 
     return ep;
   }
@@ -997,7 +999,9 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    DatumTypeApi tailType =
+        getDatumType(tailTypeRef, false, typesResolver, EpigraphPsiUtil.getLocation(tailTypeRefPsi), context);
+    assert tailType != null;
 
     MP mp = parseModelProjection(
         modelClass,
@@ -1009,7 +1013,13 @@ public final class OpBasicProjectionPsiParser {
         context
     );
 
-    checkModelTailType(tailType, mp, modelProjectionPsi, context);
+    checkModelTailType(
+        rootProjection.type(),
+        tailType,
+        mp.type(),
+        EpigraphPsiUtil.getLocation(modelProjectionPsi),
+        context
+    );
 
     return mp;
   }

@@ -676,7 +676,7 @@ public final class ReqBasicProjectionPsiParser {
             @NotNull UrlTypeRef tailTypeRef = tailItem.getTypeRef();
             @NotNull UrlReqComaEntityProjection psiTailProjection = tailItem.getReqComaEntityProjection();
             @NotNull ReqEntityProjection tailProjection =
-                buildTailProjection(
+                buildEntityTailProjection(
                     dataType,
                     flagged,
                     op,
@@ -693,7 +693,7 @@ public final class ReqBasicProjectionPsiParser {
         @NotNull UrlTypeRef tailTypeRef = singleTail.getTypeRef();
         @NotNull UrlReqComaEntityProjection psiTailProjection = singleTail.getReqComaEntityProjection();
         @NotNull ReqEntityProjection tailProjection =
-            buildTailProjection(
+            buildEntityTailProjection(
                 dataType,
                 flagged,
                 op,
@@ -744,7 +744,7 @@ public final class ReqBasicProjectionPsiParser {
     );
   }
 
-  private ReqEntityProjection buildTailProjection(
+  private ReqEntityProjection buildEntityTailProjection(
       @NotNull DataTypeApi dataType,
       boolean flag,
       @NotNull OpEntityProjection op,
@@ -753,10 +753,14 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull EntityTypeApi tailType = getEntityType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
-
+    @NotNull OpEntityProjection opTail = ProjectionsParsingUtil.getEntityTail(op,
+        tailTypeRef,
+        typesResolver,
+        EpigraphPsiUtil.getLocation(tailTypeRefPsi),
+        context
+    );
+    EntityTypeApi tailType = (EntityTypeApi) opTail.type();
     checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
-    @NotNull OpEntityProjection opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
 
     return parseComaEntityProjection(
         tailType.dataType(dataType.retroTag()),
@@ -1111,9 +1115,21 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull DatumTypeApi tailType = getDatumType(tailTypeRef, typesResolver, tailTypeRefPsi, context);
+    final OpModelProjection<?, ?, ?, ?> opTail = ProjectionsParsingUtil.getModelTail(
+        op,
+        tailTypeRef,
+        typesResolver,
+        EpigraphPsiUtil.getLocation(tailTypeRefPsi),
+        context
+    );
 
-    final OpModelProjection<?, ?, ?, ?> opTail = ProjectionsParsingUtil.getTail(op, tailType, tailTypeRefPsi, context);
+    ProjectionsParsingUtil.checkModelTailType(
+        op.type(),
+        opTail.type(),
+        opTail.type(),
+        EpigraphPsiUtil.getLocation(tailTypeRefPsi),
+        context
+    );
 
     return parseComaModelProjection(
         modelClass,

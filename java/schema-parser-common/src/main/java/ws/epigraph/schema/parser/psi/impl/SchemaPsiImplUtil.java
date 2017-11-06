@@ -40,6 +40,7 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.S_WITH;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaPsiImplUtil {
+  private SchemaPsiImplUtil() {}
 //  private static final SchemaTypeDef[] EMPTY_TYPE_DEFS = new SchemaTypeDef[0];
 
   // namespace --------------------------------------------

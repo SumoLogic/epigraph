@@ -186,7 +186,7 @@ public abstract class RequestUrlPsiParser {
 
     if (op.kind() == OperationKind.READ) {
 
-      StepsAndProjection<ReqFieldProjection> stepsAndProjection = parseFirstFieldProjection(
+      StepsAndProjection<ReqFieldProjection> outputStepsAndProjection = parseFirstFieldProjection(
           type,
           firstProjectionFlagged,
           op.outputProjection(),
@@ -197,8 +197,23 @@ public abstract class RequestUrlPsiParser {
           firstProjectionProcessingContext
       );
 
-      if (stepsAndProjection == null)
-        throw new PsiProcessingException("Output projection must be specified", TextLocation.UNKNOWN, context);
+      if (outputStepsAndProjection == null) {
+//        throw new PsiProcessingException("Output projection must be specified", TextLocation.UNKNOWN, context);
+        outputStepsAndProjection = new StepsAndProjection<>(
+            1,
+            new ReqFieldProjection(
+                firstProjectionParser.createDefaultEntityProjection(
+                    op.outputType().dataType(),
+                    op.outputProjection().entityProjection(),
+                    false, // todo this should come from op
+                    typesResolver,
+                    TextLocation.UNKNOWN,
+                    firstProjectionProcessingContext
+                ),
+                TextLocation.UNKNOWN
+            )
+        );
+      }
 
       firstProjectionReferenceContext.ensureAllReferencesResolved();
 
@@ -212,7 +227,7 @@ public abstract class RequestUrlPsiParser {
           fieldName,
           null,
           null,
-          stepsAndProjection.unwrap(Function.identity()),
+          outputStepsAndProjection.unwrap(Function.identity()),
           requestParams
       );
 
@@ -240,7 +255,7 @@ public abstract class RequestUrlPsiParser {
       final StepsAndProjection<ReqFieldProjection> outputStepsAndProjection;
       if (outputPsi == null) {
         outputStepsAndProjection = new StepsAndProjection<>(
-            0,
+            1,
             new ReqFieldProjection(
                 outputProjectionParser.createDefaultEntityProjection(
                     op.outputType().dataType(),
