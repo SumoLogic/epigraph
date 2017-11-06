@@ -20,10 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.OpProjectionPsiParser;
-import ws.epigraph.projections.op.OpPsiProcessingContext;
-import ws.epigraph.projections.op.OpReferenceContext;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.op.delete.OpDeleteProjectionsPsiParser;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
@@ -36,8 +33,10 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityPath;
 import ws.epigraph.schema.parser.psi.SchemaOpEntityProjection;
+import ws.epigraph.schema.parser.psi.SchemaOpModelProjection;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.types.DataType;
+import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.delete.ReqDeleteProjectionPsiParser;
@@ -59,11 +58,19 @@ public final class ReqTestUtil {
   private ReqTestUtil() {}
 
   public static @NotNull OpEntityProjection parseOpOutputEntityProjection(
-      @NotNull DataType varDataType,
+      @NotNull DataType entityDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, entityDataType, projectionString, resolver);
+  }
+
+  public static @NotNull OpModelProjection<?,?,?,?> parseOpOutputModelProjection(
+      @NotNull DatumTypeApi type,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    return parseOpModelProjection(OpOutputProjectionsPsiParser::new, type, projectionString, resolver);
   }
 
   public static @NotNull OpEntityProjection parseOpInputEntityProjection(
@@ -93,19 +100,19 @@ public final class ReqTestUtil {
 
   private static @NotNull OpEntityProjection parseOpEntityProjection(
       @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
-      @NotNull DataType varDataType,
+      @NotNull DataType entityDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpEntityProjection psiVarProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection entityProjectionPsi = EpigraphPsiUtil.parseText(
         projectionString,
         SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiVarProjection, errorsAccumulator);
+    failIfHasErrors(entityProjectionPsi, errorsAccumulator);
 
     return runPsiParser(true, context -> {
       OpReferenceContext opOutputReferenceContext =
@@ -116,17 +123,57 @@ public final class ReqTestUtil {
           opOutputReferenceContext
       );
       OpProjectionPsiParser parser = parserFactory.apply(context);
-      OpEntityProjection vp = parser.parseEntityProjection(
-          varDataType,
+      OpEntityProjection ep = parser.parseEntityProjection(
+          entityDataType,
           false,
-          psiVarProjection,
+          entityProjectionPsi,
           resolver,
           opPsiProcessingContext
       );
 
       opOutputReferenceContext.ensureAllReferencesResolved();
 
-      return vp;
+      return ep;
+    });
+
+  }
+
+  private static @NotNull OpModelProjection<?,?,?,?> parseOpModelProjection(
+      @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
+      @NotNull DatumTypeApi type,
+      @NotNull String projectionString,
+      @NotNull TypesResolver resolver) {
+
+    EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
+
+    SchemaOpModelProjection modelProjectionPsi = EpigraphPsiUtil.parseText(
+        projectionString,
+        SchemaSubParserDefinitions.OP_MODEL_PROJECTION,
+        errorsAccumulator
+    );
+
+    failIfHasErrors(modelProjectionPsi, errorsAccumulator);
+
+    return runPsiParser(true, context -> {
+      OpReferenceContext opOutputReferenceContext =
+          new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
+
+      OpPsiProcessingContext opPsiProcessingContext = new OpPsiProcessingContext(
+          context,
+          opOutputReferenceContext
+      );
+      OpProjectionPsiParser parser = parserFactory.apply(context);
+      OpModelProjection<?,?,?,?> mp = parser.parseModelProjection(
+          type,
+          false,
+          modelProjectionPsi,
+          resolver,
+          opPsiProcessingContext
+      );
+
+      opOutputReferenceContext.ensureAllReferencesResolved();
+
+      return mp;
     });
 
   }

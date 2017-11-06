@@ -27,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqModelSingleTailImpl extends ASTWrapperPsiElement implements UrlReqModelSingleTail {
+public class UrlReqComaModelProjectionRefImpl extends ASTWrapperPsiElement implements UrlReqComaModelProjectionRef {
 
-  public UrlReqModelSingleTailImpl(ASTNode node) {
+  public UrlReqComaModelProjectionRefImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqModelSingleTail(this);
+    visitor.visitReqComaModelProjectionRef(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -43,21 +43,15 @@ public class UrlReqModelSingleTailImpl extends ASTWrapperPsiElement implements U
   }
 
   @Override
-  @NotNull
-  public UrlReqUnnamedOrRefComaModelProjection getReqUnnamedOrRefComaModelProjection() {
-    return findNotNullChildByClass(UrlReqUnnamedOrRefComaModelProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public UrlTypeRef getTypeRef() {
-    return findNotNullChildByClass(UrlTypeRef.class);
-  }
-
-  @Override
   @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(U_PLUS);
+  public UrlQid getQid() {
+    return findChildByClass(UrlQid.class);
+  }
+
+  @Override
+  @NotNull
+  public PsiElement getDollar() {
+    return findNotNullChildByType(U_DOLLAR);
   }
 
 }

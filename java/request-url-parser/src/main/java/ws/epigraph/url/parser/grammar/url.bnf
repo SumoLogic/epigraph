@@ -213,9 +213,12 @@ reqComaMultiTagProjectionItem ::= '+'? tagName reqComaModelProjectionWithPropert
 
 //
 reqModelPolymorphicTail ::= '~' ( reqModelSingleTail | reqModelMultiTail ) // {pin=1}
-reqModelSingleTail ::= '+'? typeRef reqComaModelProjectionWithProperties
+reqModelSingleTail ::= '+'? typeRef reqUnnamedOrRefComaModelProjection
 reqModelMultiTail ::= '(' (reqModelMultiTailItem ','?)* ')' {pin=1}
-reqModelMultiTailItem ::= '+'? typeRef reqComaModelProjectionWithProperties
+reqModelMultiTailItem ::= '+'? typeRef reqUnnamedOrRefComaModelProjection
+
+reqUnnamedOrRefComaModelProjection ::= reqComaModelProjectionRef | reqComaModelProjectionWithProperties
+reqComaModelProjectionRef ::= '$' qid {pin = 1}
 
 private reqComaModelProjectionWithProperties ::= reqParamsAndAnnotations reqComaModelProjection reqModelMeta?
 

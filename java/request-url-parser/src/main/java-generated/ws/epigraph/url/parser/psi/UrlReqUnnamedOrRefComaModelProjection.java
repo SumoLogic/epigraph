@@ -21,15 +21,21 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UrlReqModelMultiTailItem extends PsiElement {
+public interface UrlReqUnnamedOrRefComaModelProjection extends PsiElement {
 
   @NotNull
-  UrlReqUnnamedOrRefComaModelProjection getReqUnnamedOrRefComaModelProjection();
-
-  @NotNull
-  UrlTypeRef getTypeRef();
+  List<UrlReqAnnotation> getReqAnnotationList();
 
   @Nullable
-  PsiElement getPlus();
+  UrlReqComaModelProjection getReqComaModelProjection();
+
+  @Nullable
+  UrlReqComaModelProjectionRef getReqComaModelProjectionRef();
+
+  @Nullable
+  UrlReqModelMeta getReqModelMeta();
+
+  @NotNull
+  List<UrlReqParam> getReqParamList();
 
 }

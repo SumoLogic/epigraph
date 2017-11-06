@@ -24,16 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface UrlReqModelSingleTail extends PsiElement {
 
   @NotNull
-  List<UrlReqAnnotation> getReqAnnotationList();
-
-  @NotNull
-  UrlReqComaModelProjection getReqComaModelProjection();
-
-  @Nullable
-  UrlReqModelMeta getReqModelMeta();
-
-  @NotNull
-  List<UrlReqParam> getReqParamList();
+  UrlReqUnnamedOrRefComaModelProjection getReqUnnamedOrRefComaModelProjection();
 
   @NotNull
   UrlTypeRef getTypeRef();

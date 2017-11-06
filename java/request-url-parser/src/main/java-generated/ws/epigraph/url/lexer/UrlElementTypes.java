@@ -56,6 +56,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_COMA_LIST_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_LIST_MODEL_PROJECTION");
   IElementType U_REQ_COMA_MAP_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_MAP_MODEL_PROJECTION");
   IElementType U_REQ_COMA_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_MODEL_PROJECTION");
+  IElementType U_REQ_COMA_MODEL_PROJECTION_REF = new UrlElementType("U_REQ_COMA_MODEL_PROJECTION_REF");
   IElementType U_REQ_COMA_MULTI_TAG_PROJECTION = new UrlElementType("U_REQ_COMA_MULTI_TAG_PROJECTION");
   IElementType U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM = new UrlElementType("U_REQ_COMA_MULTI_TAG_PROJECTION_ITEM");
   IElementType U_REQ_COMA_RECORD_MODEL_PROJECTION = new UrlElementType("U_REQ_COMA_RECORD_MODEL_PROJECTION");
@@ -88,6 +89,7 @@ public interface UrlElementTypes {
   IElementType U_REQ_TRUNK_SINGLE_TAG_PROJECTION = new UrlElementType("U_REQ_TRUNK_SINGLE_TAG_PROJECTION");
   IElementType U_REQ_UNNAMED_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_COMA_ENTITY_PROJECTION");
   IElementType U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION");
+  IElementType U_REQ_UNNAMED_OR_REF_COMA_MODEL_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_COMA_MODEL_PROJECTION");
   IElementType U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION");
   IElementType U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION = new UrlElementType("U_REQ_UNNAMED_TRUNK_ENTITY_PROJECTION");
   IElementType U_TAG_NAME = new UrlElementType("U_TAG_NAME");
@@ -227,6 +229,9 @@ public interface UrlElementTypes {
       else if (type == U_REQ_COMA_MODEL_PROJECTION) {
         return new UrlReqComaModelProjectionImpl(node);
       }
+      else if (type == U_REQ_COMA_MODEL_PROJECTION_REF) {
+        return new UrlReqComaModelProjectionRefImpl(node);
+      }
       else if (type == U_REQ_COMA_MULTI_TAG_PROJECTION) {
         return new UrlReqComaMultiTagProjectionImpl(node);
       }
@@ -322,6 +327,9 @@ public interface UrlElementTypes {
       }
       else if (type == U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION) {
         return new UrlReqUnnamedOrRefComaEntityProjectionImpl(node);
+      }
+      else if (type == U_REQ_UNNAMED_OR_REF_COMA_MODEL_PROJECTION) {
+        return new UrlReqUnnamedOrRefComaModelProjectionImpl(node);
       }
       else if (type == U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION) {
         return new UrlReqUnnamedOrRefTrunkEntityProjectionImpl(node);

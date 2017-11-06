@@ -753,7 +753,8 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull TypesResolver typesResolver) throws PsiProcessingException {
 
     @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    @NotNull OpEntityProjection opTail = ProjectionsParsingUtil.getEntityTail(op,
+    @NotNull OpEntityProjection opTail = ProjectionsParsingUtil.getEntityTail(
+        op,
         tailTypeRef,
         typesResolver,
         EpigraphPsiUtil.getLocation(tailTypeRefPsi),
@@ -1071,11 +1072,7 @@ public final class ReqBasicProjectionPsiParser {
                     op,
                     tailItemPsi.getPlus() != null,
                     tailItemPsi.getTypeRef(),
-                    tailItemPsi.getReqComaModelProjection(),
-                    tailItemPsi,
-                    tailItemPsi.getReqParamList(),
-                    tailItemPsi.getReqAnnotationList(),
-                    tailItemPsi.getReqModelMeta(),
+                    tailItemPsi.getReqUnnamedOrRefComaModelProjection(),
                     typesResolver
                 )
             );
@@ -1088,16 +1085,79 @@ public final class ReqBasicProjectionPsiParser {
                 op,
                 singleTailPsi.getPlus() != null,
                 singleTailPsi.getTypeRef(),
-                singleTailPsi.getReqComaModelProjection(),
-                singleTailPsi,
-                singleTailPsi.getReqParamList(),
-                singleTailPsi.getReqAnnotationList(),
-                singleTailPsi.getReqModelMeta(),
+                singleTailPsi.getReqUnnamedOrRefComaModelProjection(),
                 typesResolver
             )
         );
       }
       return tails;
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <MP extends ReqModelProjection<?, ?, ?>>
+  @NotNull MP buildModelTailProjection(
+      @NotNull Class<MP> modelClass,
+      @NotNull OpModelProjection<?, ?, ?, ?> op,
+      boolean flag,
+      @NotNull UrlTypeRef tailTypeRefPsi,
+      @NotNull UrlReqUnnamedOrRefComaModelProjection unnamedOrRefModelProjectionPsi,
+      @NotNull TypesResolver typesResolver) throws PsiProcessingException {
+
+    UrlReqComaModelProjectionRef refPsi = unnamedOrRefModelProjectionPsi.getReqComaModelProjectionRef();
+
+    if (refPsi == null) {
+      UrlReqComaModelProjection modelProjectionPsi = unnamedOrRefModelProjectionPsi.getReqComaModelProjection();
+
+      if (modelProjectionPsi == null)
+        throw new PsiProcessingException("Incomplete model tail expression", unnamedOrRefModelProjectionPsi, context);
+
+      return buildModelTailProjection(
+          modelClass,
+          op,
+          flag,
+          tailTypeRefPsi,
+          modelProjectionPsi,
+          unnamedOrRefModelProjectionPsi,
+          unnamedOrRefModelProjectionPsi.getReqParamList(),
+          unnamedOrRefModelProjectionPsi.getReqAnnotationList(),
+          unnamedOrRefModelProjectionPsi.getReqModelMeta(),
+          typesResolver
+      );
+    } else {
+      @Nullable UrlQid namePsi = refPsi.getQid();
+      if (namePsi == null)
+        throw new PsiProcessingException("Model tail reference name missing", refPsi, context);
+      @NotNull String referenceName = namePsi.getCanonicalName();
+
+      @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
+      @NotNull DatumTypeApi tailType = ProjectionsParsingUtil.getModelTailType(
+          op,
+          tailTypeRef,
+          typesResolver,
+          EpigraphPsiUtil.getLocation(tailTypeRefPsi),
+          context
+      );
+
+      ReqReferenceContext referenceContext = this.context.referenceContext();
+      ReqModelProjection<?, ?, ?> tailProjectionReference =
+          referenceContext.modelReference(tailType, referenceName, true, EpigraphPsiUtil.getLocation(refPsi));
+
+      tailProjectionReference.runOnResolved(() -> {
+        try {
+          checkModelTailType(
+              op.type(),
+              tailType,
+              tailProjectionReference.type(),
+              EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi),
+              context
+          );
+        } catch (PsiProcessingException e) {
+          context.addException(e);
+        }
+      });
+
+      return (MP) tailProjectionReference;
     }
   }
 

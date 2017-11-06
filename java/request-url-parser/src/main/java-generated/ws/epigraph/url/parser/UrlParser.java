@@ -132,6 +132,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     else if (t == U_REQ_COMA_MODEL_PROJECTION) {
       r = reqComaModelProjection(b, 0);
     }
+    else if (t == U_REQ_COMA_MODEL_PROJECTION_REF) {
+      r = reqComaModelProjectionRef(b, 0);
+    }
     else if (t == U_REQ_COMA_MULTI_TAG_PROJECTION) {
       r = reqComaMultiTagProjection(b, 0);
     }
@@ -227,6 +230,9 @@ public class UrlParser implements PsiParser, LightPsiParser {
     }
     else if (t == U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION) {
       r = reqUnnamedOrRefComaEntityProjection(b, 0);
+    }
+    else if (t == U_REQ_UNNAMED_OR_REF_COMA_MODEL_PROJECTION) {
+      r = reqUnnamedOrRefComaModelProjection(b, 0);
     }
     else if (t == U_REQ_UNNAMED_OR_REF_TRUNK_ENTITY_PROJECTION) {
       r = reqUnnamedOrRefTrunkEntityProjection(b, 0);
@@ -1077,6 +1083,20 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '$' qid
+  public static boolean reqComaModelProjectionRef(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqComaModelProjectionRef")) return false;
+    if (!nextTokenIs(b, U_DOLLAR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_COMA_MODEL_PROJECTION_REF, null);
+    r = consumeToken(b, U_DOLLAR);
+    p = r; // pin = 1
+    r = r && qid(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  /* ********************************************************** */
   // reqParamsAndAnnotations reqComaModelProjection reqModelMeta?
   static boolean reqComaModelProjectionWithProperties(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqComaModelProjectionWithProperties")) return false;
@@ -1498,14 +1518,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? typeRef reqComaModelProjectionWithProperties
+  // '+'? typeRef reqUnnamedOrRefComaModelProjection
   public static boolean reqModelMultiTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqModelMultiTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_MULTI_TAIL_ITEM, "<req model multi tail item>");
     r = reqModelMultiTailItem_0(b, l + 1);
     r = r && typeRef(b, l + 1);
-    r = r && reqComaModelProjectionWithProperties(b, l + 1);
+    r = r && reqUnnamedOrRefComaModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -1579,14 +1599,14 @@ public class UrlParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '+'? typeRef reqComaModelProjectionWithProperties
+  // '+'? typeRef reqUnnamedOrRefComaModelProjection
   public static boolean reqModelSingleTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reqModelSingleTail")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, U_REQ_MODEL_SINGLE_TAIL, "<req model single tail>");
     r = reqModelSingleTail_0(b, l + 1);
     r = r && typeRef(b, l + 1);
-    r = r && reqComaModelProjectionWithProperties(b, l + 1);
+    r = r && reqUnnamedOrRefComaModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -2032,6 +2052,18 @@ public class UrlParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_OR_REF_COMA_ENTITY_PROJECTION, "<req unnamed or ref coma entity projection>");
     r = reqComaEntityProjectionRef(b, l + 1);
     if (!r) r = reqUnnamedComaEntityProjection(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // reqComaModelProjectionRef | reqComaModelProjectionWithProperties
+  public static boolean reqUnnamedOrRefComaModelProjection(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "reqUnnamedOrRefComaModelProjection")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, U_REQ_UNNAMED_OR_REF_COMA_MODEL_PROJECTION, "<req unnamed or ref coma model projection>");
+    r = reqComaModelProjectionRef(b, l + 1);
+    if (!r) r = reqComaModelProjectionWithProperties(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

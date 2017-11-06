@@ -147,6 +147,10 @@ public class UrlVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitReqComaModelProjectionRef(@NotNull UrlReqComaModelProjectionRef o) {
+    visitPsiElement(o);
+  }
+
   public void visitReqComaMultiTagProjection(@NotNull UrlReqComaMultiTagProjection o) {
     visitPsiElement(o);
   }
@@ -272,6 +276,10 @@ public class UrlVisitor extends PsiElementVisitor {
   }
 
   public void visitReqUnnamedOrRefComaEntityProjection(@NotNull UrlReqUnnamedOrRefComaEntityProjection o) {
+    visitPsiElement(o);
+  }
+
+  public void visitReqUnnamedOrRefComaModelProjection(@NotNull UrlReqUnnamedOrRefComaModelProjection o) {
     visitPsiElement(o);
   }
 

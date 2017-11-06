@@ -86,6 +86,8 @@ public class ReqOutputProjectionsParserTest {
           "    ) ) :~ws.epigraph.tests.User : profile ,",
           "    bestFriend2 $bf2 = :( id, `record` ( id, bestFriend2 $bf2 ) ),",
           "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
+          "    worstEnemy ( firstName ) ~ws.epigraph.tests.UserRecord $wu",
+          "    worstUser $wu = ( id )",
           "    friends *( :(id,`record`(id)) ),",
           "    friendRecords * (id),",
           "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
@@ -101,59 +103,6 @@ public class ReqOutputProjectionsParserTest {
 
 //  private OpOutputFieldProjection personFieldProjection =
 
-  @Test
-  public void testNonExistingEntityTailErrorMsg() {
-    try {
-      testParse(":id:~X:id", 1);
-      fail();
-    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      assertTrue(e.getMessage(), e.getMessage()
-          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}"));
-    }
-  }
-
-  @Test
-  public void testWrongEntityTailErrorMsg() {
-    try {
-      testParse(":record(id):~ws.epigraph.tests.SingleTagEntity(tag)", 1);
-      fail();
-    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      String message = e.getMessage();
-      assertNotNull(message);
-      assertTrue(
-          message,
-          message.contains(
-              "Polymorphic tail for type 'ws.epigraph.tests.SingleTagEntity' is not supported. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}")
-      );
-    }
-  }
-
-  @Test
-  public void testNonExistingModelTailErrorMsg() {
-    try {
-      testParse(":record(id)~X(lastName)", 1);
-      fail();
-    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      assertTrue(e.getMessage(), e.getMessage()
-          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.UserRecord}"));
-    }
-  }
-
-  @Test
-  public void testWrongModelTailErrorMsg() {
-    try {
-      testParse(":record(id)~epigraph.String(lastName)", 1);
-      fail();
-    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      String message = e.getMessage();
-      assertNotNull(message);
-      assertTrue(
-          message,
-          message.contains(
-              "Polymorphic tail for type 'epigraph.String' is not supported. Supported tail types: {ws.epigraph.tests.UserRecord}")
-      );
-    }
-  }
 
   @Test
   public void testRequiredParam() {
@@ -198,6 +147,12 @@ public class ReqOutputProjectionsParserTest {
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage().contains("Required field 'lastName' is missing"));
     }
+  }
+
+  @Test
+  public void testRetro() throws PsiProcessingException {
+    testParse(":record ( bestFriend :() )", 1); // no retro - no tags
+//    testParse(":record ( bestFriend2 )", ":record ( bestFriend2:id )", 1); // bestFriend2: Person retro id
   }
 
   @Test
@@ -316,6 +271,14 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
+  public void testParseModelTailRef() {
+    testParse(
+        ":record ( worstUser $wu = ( id ), worstEnemy ( firstName ) ~ws.epigraph.tests.UserRecord $wu )",
+        1
+    );
+  }
+
+  @Test
   public void testStarTags() {
     testParse(
         ":...",
@@ -351,6 +314,8 @@ public class ReqOutputProjectionsParserTest {
             "  bestFriend :(),",
             "  bestFriend2 $bf2 = :id,",
             "  bestFriend3 :(),",
+            "  worstEnemy,",
+            "  worstUser,",
             "  friends *( :() ),",
             "  friendRecords,",
             "  friendsMap [ * ]( :() ),",
@@ -588,10 +553,59 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
-  public void testRetro() throws PsiProcessingException {
-    testParse(":record ( bestFriend :() )", 1); // no retro - no tags
-//    testParse(":record ( bestFriend2 )", ":record ( bestFriend2:id )", 1); // bestFriend2: Person retro id
+  public void testNonExistingEntityTailErrorMsg() {
+    try {
+      testParse(":id:~X:id", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage()
+          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}"));
+    }
   }
+
+  @Test
+  public void testWrongEntityTailErrorMsg() {
+    try {
+      testParse(":record(id):~ws.epigraph.tests.SingleTagEntity(tag)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      String message = e.getMessage();
+      assertNotNull(message);
+      assertTrue(
+          message,
+          message.contains(
+              "Polymorphic tail for type 'ws.epigraph.tests.SingleTagEntity' is not supported. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}")
+      );
+    }
+  }
+
+  @Test
+  public void testNonExistingModelTailErrorMsg() {
+    try {
+      testParse(":record(id)~X(lastName)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage()
+          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.UserRecord}"));
+    }
+  }
+
+  @Test
+  public void testWrongModelTailErrorMsg() {
+    try {
+      testParse(":record(id)~epigraph.String(lastName)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      String message = e.getMessage();
+      assertNotNull(message);
+      assertTrue(
+          message,
+          message.contains(
+              "Polymorphic tail for type 'epigraph.String' is not supported. Supported tail types: {ws.epigraph.tests.UserRecord}")
+      );
+    }
+  }
+
 
   @SuppressWarnings("ConstantConditions")
   @Test

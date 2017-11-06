@@ -44,26 +44,8 @@ public class UrlReqModelMultiTailItemImpl extends ASTWrapperPsiElement implement
 
   @Override
   @NotNull
-  public List<UrlReqAnnotation> getReqAnnotationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
-  }
-
-  @Override
-  @NotNull
-  public UrlReqComaModelProjection getReqComaModelProjection() {
-    return findNotNullChildByClass(UrlReqComaModelProjection.class);
-  }
-
-  @Override
-  @Nullable
-  public UrlReqModelMeta getReqModelMeta() {
-    return findChildByClass(UrlReqModelMeta.class);
-  }
-
-  @Override
-  @NotNull
-  public List<UrlReqParam> getReqParamList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
+  public UrlReqUnnamedOrRefComaModelProjection getReqUnnamedOrRefComaModelProjection() {
+    return findNotNullChildByClass(UrlReqUnnamedOrRefComaModelProjection.class);
   }
 
   @Override

@@ -33,6 +33,7 @@ record PersonRecord {
   bestFriend2: Person retro id
   bestFriend3: Person
   worstEnemy: PersonRecord
+  worstUser: UserRecord
   friends: list[Person]
   friendRecords: list[PersonRecord]
   friendsMap: map[String, Person]

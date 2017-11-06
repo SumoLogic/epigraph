@@ -36,12 +36,16 @@ public final class SchemaSubParserDefinitions {
   public static final SchemaSubParserDefinition<SchemaOpEntityProjection> OP_ENTITY_PROJECTION =
       new SchemaSubParserDefinition<>(S_OP_ENTITY_PROJECTION, SchemaOpEntityProjection.class);
 
+  public static final SchemaSubParserDefinition<SchemaOpModelProjection> OP_MODEL_PROJECTION =
+      new SchemaSubParserDefinition<>(S_OP_MODEL_PROJECTION, SchemaOpModelProjection.class);
+
   public static final SchemaSubParserDefinition<SchemaDataValue> DATA_VALUE =
       new SchemaSubParserDefinition<>(S_DATA_VALUE, SchemaDataValue.class);
 
   private SchemaSubParserDefinitions() {}
 
-  public static final class SchemaSubParserDefinition<T> extends SchemaParserDefinition implements SubParserDefinition<T> {
+  public static final class SchemaSubParserDefinition<T> extends SchemaParserDefinition
+      implements SubParserDefinition<T> {
     private final @NotNull Class<T> rootElementClass;
 
     private final @NotNull IElementType rootElementType;

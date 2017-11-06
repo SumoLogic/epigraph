@@ -386,17 +386,7 @@ public final class ProjectionsParsingUtil {
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext ctx) throws PsiProcessingException {
 
-    @Nullable DatumTypeApi targetType = getDatumType(tailTypeRef, true, resolver, location, ctx);
-
-    if (targetType == null) {
-      throw new PsiProcessingException(
-          String.format(
-              "Unknown tail type '%s'. Supported tail types: {%s}",
-              tailTypeRef.toString(),
-              String.join(", ", supportedModelTailTypes(mp))
-          ), location, ctx
-      );
-    }
+    @Nullable DatumTypeApi targetType = getModelTailType(mp, tailTypeRef, resolver, location, ctx);
 
     if (targetType.equals(mp.type())) return mp;
 
@@ -414,6 +404,27 @@ public final class ProjectionsParsingUtil {
     return (MP) mp.normalizedForType(targetType);
   }
 
+  public static @NotNull <MP extends GenModelProjection<?, ?, ?, ?>> DatumTypeApi getModelTailType(
+      final @NotNull MP mp,
+      final @NotNull TypeRef tailTypeRef,
+      final @NotNull TypesResolver resolver,
+      final @NotNull TextLocation location,
+      final @NotNull PsiProcessingContext ctx) throws PsiProcessingException {
+
+    @Nullable DatumTypeApi targetType = getDatumType(tailTypeRef, true, resolver, location, ctx);
+
+    if (targetType == null) {
+      throw new PsiProcessingException(
+          String.format(
+              "Unknown tail type '%s'. Supported tail types: {%s}",
+              tailTypeRef.toString(),
+              String.join(", ", supportedModelTailTypes(mp))
+          ), location, ctx
+      );
+    }
+    return targetType;
+  }
+
   @SuppressWarnings("unchecked")
   public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasModelTail(
       @NotNull MP mp,
@@ -424,10 +435,10 @@ public final class ProjectionsParsingUtil {
     return tails != null && tails.stream().anyMatch(t -> hasModelTail((MP) t, tailType));
   }
 
-  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp) {
-    if (vp.polymorphicTails() == null) return Collections.emptyList();
+  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> mp) {
+    if (mp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
-    supportedModelTailTypes(vp, acc);
+    supportedModelTailTypes(mp, acc);
     List<String> res = new ArrayList<>(acc);
     Collections.sort(res);
     return res;

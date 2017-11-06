@@ -109,7 +109,7 @@
 - [ ] bug: there seems to be a race in projections codegen. Uncomment parallel execution in `EpigraphJavaGenerator` and
   do `gradle --rerun-tasks :epigraph-builtin-services-service:compileJava`, sometimes `OutputDatumTypeProjection` won't
   extend `OutputType_Projection`
-- [ ] global named projections should be visible between files
+- [ ] global named projections should be visible between files (it is somewhat visible now, only from the same namespace)
 - [ ] Make op projections merge tags from entity tails. Having an op projection like `:rec(a) :~ Bar:rec(b)` should
   allow request projection like `:rec(a) ~ BRec(b)` (if `Bar:rec` type is `BarRec`). Procedure should be:
   - for every entity tail: for every tag: if this tag is present in the main projection
@@ -117,6 +117,7 @@
   - else add it as main projection tag's tail
 - [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
   be represented by entity-model projections pair, this leads to messy code
+- [x] req projections syntax: allow model tail references
 
 # Operations
 

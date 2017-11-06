@@ -27,14 +27,14 @@ import static ws.epigraph.url.lexer.UrlElementTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import ws.epigraph.url.parser.psi.*;
 
-public class UrlReqModelSingleTailImpl extends ASTWrapperPsiElement implements UrlReqModelSingleTail {
+public class UrlReqUnnamedOrRefComaModelProjectionImpl extends ASTWrapperPsiElement implements UrlReqUnnamedOrRefComaModelProjection {
 
-  public UrlReqModelSingleTailImpl(ASTNode node) {
+  public UrlReqUnnamedOrRefComaModelProjectionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UrlVisitor visitor) {
-    visitor.visitReqModelSingleTail(this);
+    visitor.visitReqUnnamedOrRefComaModelProjection(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -44,20 +44,32 @@ public class UrlReqModelSingleTailImpl extends ASTWrapperPsiElement implements U
 
   @Override
   @NotNull
-  public UrlReqUnnamedOrRefComaModelProjection getReqUnnamedOrRefComaModelProjection() {
-    return findNotNullChildByClass(UrlReqUnnamedOrRefComaModelProjection.class);
-  }
-
-  @Override
-  @NotNull
-  public UrlTypeRef getTypeRef() {
-    return findNotNullChildByClass(UrlTypeRef.class);
+  public List<UrlReqAnnotation> getReqAnnotationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqAnnotation.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getPlus() {
-    return findChildByType(U_PLUS);
+  public UrlReqComaModelProjection getReqComaModelProjection() {
+    return findChildByClass(UrlReqComaModelProjection.class);
+  }
+
+  @Override
+  @Nullable
+  public UrlReqComaModelProjectionRef getReqComaModelProjectionRef() {
+    return findChildByClass(UrlReqComaModelProjectionRef.class);
+  }
+
+  @Override
+  @Nullable
+  public UrlReqModelMeta getReqModelMeta() {
+    return findChildByClass(UrlReqModelMeta.class);
+  }
+
+  @Override
+  @NotNull
+  public List<UrlReqParam> getReqParamList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UrlReqParam.class);
   }
 
 }
