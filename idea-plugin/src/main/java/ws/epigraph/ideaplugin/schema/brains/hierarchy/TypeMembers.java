@@ -38,55 +38,47 @@ import java.util.stream.Stream;
 public final class TypeMembers {
   private TypeMembers() {}
 
-  @NotNull
-  public static List<SchemaFieldDecl> getOverridenFields(@NotNull SchemaFieldDecl fieldDecl) {
+  public static @NotNull List<SchemaFieldDecl> getOverridenFields(@NotNull SchemaFieldDecl fieldDecl) {
     Project project = fieldDecl.getProject();
     return getSameNameFields(fieldDecl, HierarchyCache.getHierarchyCache(project).getTypeParents(fieldDecl.getRecordTypeDef()));
   }
 
-  @NotNull
-  public static List<SchemaFieldDecl> getOverridingFields(@NotNull SchemaFieldDecl fieldDecl) {
+  public static @NotNull List<SchemaFieldDecl> getOverridingFields(@NotNull SchemaFieldDecl fieldDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(fieldDecl.getProject());
     return getSameNameFields(fieldDecl, hierarchyCache.getTypeInheritors(fieldDecl.getRecordTypeDef()));
   }
 
-  @NotNull
-  public static List<SchemaFieldDecl> getOverridableFields(@NotNull SchemaRecordTypeDef recordTypeDef) {
-    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(recordTypeDef.getProject());
+  public static @NotNull List<SchemaFieldDecl> getOverridableFields(@NotNull SchemaRecordTypeDef recordTypeDef) {
+//    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(recordTypeDef.getProject());
     List<SchemaFieldDecl> allFieldDecls = getFieldDecls(recordTypeDef, null);
     List<SchemaFieldDecl> existingFieldDecls = getFieldDecls(null, Collections.singletonList(recordTypeDef));
     allFieldDecls.removeAll(existingFieldDecls);
     return allFieldDecls;
   }
 
-  @NotNull
-  public static List<SchemaEntityTagDecl> getOverridenTags(@NotNull SchemaEntityTagDecl varTagDecl) {
+  public static @NotNull List<SchemaEntityTagDecl> getOverridenTags(@NotNull SchemaEntityTagDecl varTagDecl) {
     final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(varTagDecl.getProject());
     return getSameNameTags(varTagDecl, hierarchyCache.getTypeParents(varTagDecl.getEntityDef()));
   }
 
-  @NotNull
-  public static List<SchemaEntityTagDecl> getOverridingTags(@NotNull SchemaEntityTagDecl varTagDecl) {
+  public static @NotNull List<SchemaEntityTagDecl> getOverridingTags(@NotNull SchemaEntityTagDecl varTagDecl) {
     Project project = varTagDecl.getProject();
     return getSameNameTags(varTagDecl, HierarchyCache.getHierarchyCache(project).getTypeInheritors(varTagDecl.getEntityDef()));
   }
 
-  @NotNull
-  public static List<SchemaEntityTagDecl> getOverridableTags(@NotNull SchemaEntityTypeDef entityTypeDef) {
-    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(entityTypeDef.getProject());
+  public static @NotNull List<SchemaEntityTagDecl> getOverridableTags(@NotNull SchemaEntityTypeDef entityTypeDef) {
+//    final HierarchyCache hierarchyCache = HierarchyCache.getHierarchyCache(entityTypeDef.getProject());
     List<SchemaEntityTagDecl> allTagDecls = getEntityTagDecls(entityTypeDef, null);
     List<SchemaEntityTagDecl> existingFieldDecls = getEntityTagDecls(null, Collections.singletonList(entityTypeDef));
     allTagDecls.removeAll(existingFieldDecls);
     return allTagDecls;
   }
 
-  @NotNull
-  public static List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
+  public static @NotNull List<SchemaFieldDecl> getFieldDecls(@NotNull SchemaTypeDef hostType, @Nullable String fieldName) {
     return getFieldDecls(fieldName, getTypeAndParents(hostType));
   }
 
-  @NotNull
-  public static List<SchemaEntityTagDecl> getEntityTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
+  public static @NotNull List<SchemaEntityTagDecl> getEntityTagDecls(@NotNull SchemaTypeDef hostType, @Nullable String tagName) {
     return getEntityTagDecls(tagName, getTypeAndParents(hostType));
   }
 
@@ -100,8 +92,7 @@ public final class TypeMembers {
     } else return false;
   }
 
-  @Nullable
-  public static SchemaEntityTagDecl getEffectiveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
+  public static @Nullable SchemaEntityTagDecl getEffectiveRetro(@NotNull SchemaValueTypeRef valueTypeRef) {
     if (!canHaveRetro(valueTypeRef)) return null;
 
     SchemaEntityTagDecl defaultTag = getRetroTag(valueTypeRef);
@@ -123,8 +114,7 @@ public final class TypeMembers {
   }
 
   @Contract("null -> null")
-  @Nullable
-  private static SchemaEntityTagDecl getRetroTag(@Nullable SchemaValueTypeRef valueTypeRef) {
+  private static @Nullable SchemaEntityTagDecl getRetroTag(@Nullable SchemaValueTypeRef valueTypeRef) {
     if (valueTypeRef == null) return null;
 
     SchemaRetroDecl retroDecl = valueTypeRef.getRetroDecl();
@@ -148,9 +138,8 @@ public final class TypeMembers {
     return res;
   }
 
-  @NotNull
-  private static List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
-                                                         @NotNull List<SchemaTypeDef> types) {
+  private static @NotNull List<SchemaFieldDecl> getSameNameFields(@NotNull SchemaFieldDecl fieldDecl,
+                                                                  @NotNull List<SchemaTypeDef> types) {
     final String fieldName = fieldDecl.getQid().getCanonicalName();
 
     PsiElement body = fieldDecl.getParent();
@@ -182,9 +171,8 @@ public final class TypeMembers {
         .collect(Collectors.toList());
   }
 
-  @NotNull
-  private static List<SchemaEntityTagDecl> getSameNameTags(@NotNull SchemaEntityTagDecl varTagDecl,
-                                                        @NotNull List<SchemaTypeDef> types) {
+  private static @NotNull List<SchemaEntityTagDecl> getSameNameTags(@NotNull SchemaEntityTagDecl varTagDecl,
+                                                                    @NotNull List<SchemaTypeDef> types) {
     final String entityTypeMemberName = varTagDecl.getQid().getCanonicalName();
 
     PsiElement body = varTagDecl.getParent();

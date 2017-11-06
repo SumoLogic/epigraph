@@ -85,8 +85,7 @@ public class SchemaRetroTagLinePainter extends EditorLinePainter {
     return res;
   }
 
-  @Nullable
-  private PsiElement addExtensions(@NotNull List<LineExtensionInfo> res, @NotNull PsiElement element) {
+  private @Nullable PsiElement addExtensions(@NotNull List<LineExtensionInfo> res, @NotNull PsiElement element) {
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(element, SchemaValueTypeRef.class);
     if (valueTypeRef == null) return PsiTreeUtil.nextVisibleLeaf(element);
 
@@ -117,8 +116,7 @@ public class SchemaRetroTagLinePainter extends EditorLinePainter {
     return ColorUtil.isDark(bg);
   }
 
-  @Nullable
-  private String getDefaultTagTypeName(@NotNull SchemaEntityTagDecl defaultTag) {
+  private @Nullable String getDefaultTagTypeName(@NotNull SchemaEntityTagDecl defaultTag) {
     SchemaTypeRef defaultTagTypeRef = defaultTag.getTypeRef();
     String defaultTagTypeName = defaultTagTypeRef == null ? null : defaultTagTypeRef.getText();
     if (defaultTagTypeRef instanceof SchemaQnTypeRef) {

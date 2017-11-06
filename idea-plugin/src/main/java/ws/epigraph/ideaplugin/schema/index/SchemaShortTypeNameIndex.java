@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaShortTypeNameIndex extends StringStubIndexExtension<SchemaTypeDef> {
-  @NotNull
   @Override
-  public StubIndexKey<String, SchemaTypeDef> getKey() {
+  public @NotNull StubIndexKey<String, SchemaTypeDef> getKey() {
     return SchemaStubIndexKeys.TYPE_SHORT_NAMES;
   }
 }

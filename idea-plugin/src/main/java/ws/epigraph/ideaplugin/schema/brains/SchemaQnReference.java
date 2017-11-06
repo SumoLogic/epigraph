@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,15 +69,13 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
 
   }
 
-  @NotNull
-  public SchemaQnReferenceResolver getResolver() {
+  public @NotNull SchemaQnReferenceResolver getResolver() {
     return resolver;
   }
 
   @Override
-  @Nullable
-  public final PsiElement resolve() {
-    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
+  public final @Nullable PsiElement resolve() {
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, true, false);
   }
 
   @Override
@@ -86,26 +84,22 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
     return super.isReferenceTo(element);
   }
 
-  @Nullable
-  private PsiElement resolveImpl() {
+  private @Nullable PsiElement resolveImpl() {
     return resolver.resolve(myElement.getProject());
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public @NotNull ResolveResult[] multiResolve(boolean incompleteCode) {
     return ResolveCache.getInstance(myElement.getProject())
         .resolveWithCaching(this, polyVariantResolver, false, incompleteCode);
   }
 
-  @NotNull
-  private ResolveResult[] multiResolveImpl() {
+  private @NotNull ResolveResult[] multiResolveImpl() {
     return resolver.multiResolve(myElement.getProject());
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public @NotNull Object[] getVariants() {
     final boolean isImport = isImport();
     final boolean isNamespaceDecl = isNamespaceDecl();
     final Project project = myElement.getProject();
