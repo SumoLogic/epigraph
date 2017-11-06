@@ -56,25 +56,14 @@ public interface Asm<D, P, R> {
     return (dto, projection, ctx) -> assemble(f.apply(dto), projection, ctx);
   }
 
-  /**
-   * Composes a function {@code f} with an assembler by applying {@code f} to the data object
-   * before {@code assemble} call. Ideologically it would be similar to {@code f.andThen(this)}
-   *
-   * @param f   function to run on the data object
-   * @param ef  function to be called if {@code f} application produces an error
-   * @param <T> new data object type
-   *
-   * @return composed assembler
-   */
-  default <T> @NotNull Asm<T, P, R> from(@NotNull Function<T, D> f, @NotNull Function<Exception, R> ef) {
+  // parameterize on exception class?
+  default @NotNull Asm<D, P, R> catching(@NotNull Function<Exception, R> handler) {
     return (dto, projection, ctx) -> {
-      D d;
       try {
-        d = f.apply(dto);
-      } catch (Exception ex) {
-        return ef.apply(ex);
+        return assemble(dto, projection, ctx);
+      } catch (Exception e) {
+        return handler.apply(e);
       }
-      return assemble(d, projection, ctx);
     };
   }
 
