@@ -130,7 +130,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     printOutputProjections(
         null,
-        null,
+        globalOutputProjectionsContext,
         globalOutputProjectionsContext.entityProjections(),
         globalOutputProjectionsContext.modelProjections(),
         namespaces
@@ -138,7 +138,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     printInputProjections(
         null,
-        null,
+        globalInputProjectionsContext,
         globalInputProjectionsContext.entityProjections(),
         globalInputProjectionsContext.modelProjections(),
         namespaces
@@ -146,7 +146,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     printDeleteProjections(
         null,
-        null,
+        globalDeleteProjectionsContext,
         globalDeleteProjectionsContext.entityProjections(),
         globalDeleteProjectionsContext.modelProjections(),
         namespaces

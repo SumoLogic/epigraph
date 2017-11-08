@@ -118,6 +118,17 @@
 - [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
   be represented by entity-model projections pair, this leads to messy code
 - [x] req projections syntax: allow model tail references
+- [ ] BIG move flag from entity projections to fields/collection items. Because:
+  ```
+  outputProjection user: User = :(
+    rec (
+      bestFriend $user
+      +worstEnemy $user
+    )
+  )
+  ```
+  By the same reason flag should be moved from models to tags.
+  Think about how this flag is going to be passed around. Projection + flag in the signatures?
 
 # Operations
 
