@@ -171,9 +171,9 @@ object JavaGenNames {
 
   def qnameArgs(fqn: Qn): Seq[String] = fqn.last() +: fqn.removeLastSegment().segments.toSeq
 
-  def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else ln
+  def javaTypeName(ln: String): String = if (ReservedTypeNames.contains(ln)) ln + '_' else JavaNames.javaName(ln)
 
-  def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else fn
+  def javaFieldName(fn: String): String = if (ReservedFieldNames.contains(fn)) fn + '_' else JavaNames.javaName(fn)
 
   /** set of type names that conflict with our own generated java classes */
   private val ReservedTypeNames: Set[String] = Set(

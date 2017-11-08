@@ -29,10 +29,14 @@ import scala.collection.immutable.ListMap
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class RecordAsmGen(
-  override protected val g: ReqOutputRecordModelProjectionGen,
+  override val g: ReqOutputRecordModelProjectionGen,
   val ctx: GenContext) extends JavaGen with ModelAsmGen {
 
   override protected type G = ReqOutputRecordModelProjectionGen
+
+  lazy val fieldAssemblersGen: FieldAssemblersGen = new FieldAssemblersGen(this, ctx)
+
+  override def children = Iterable(fieldAssemblersGen)
 
   import Imports._
 
@@ -43,7 +47,7 @@ class RecordAsmGen(
 
     def isEntity: Boolean = fieldType.kind == CTypeKind.ENTITY
 
-    val fieldGenType: importManager.ImportedName = importManager.use(fieldGen.fullClassName)
+    val fieldProjection: importManager.ImportedName = importManager.use(fieldGen.fullClassName)
 
     val assemblerResultType: importManager.ImportedName = importManager.use(
       lqn2(
@@ -52,7 +56,7 @@ class RecordAsmGen(
       )
     )
 
-    def fieldAsmType: String = s"$assembler<? super D, ? super $fieldGenType, ? extends $assemblerResultType${ if (isEntity) "" else ".Value" }>"
+    def fieldAsmType: String = s"$assembler<? super D, ? super $fieldProjection, ? extends $assemblerResultType${ if (isEntity) "" else ".Value" }>"
 
     def fbf: String = field.name + "FieldAsm"
 
@@ -75,6 +79,8 @@ class RecordAsmGen(
     FieldParts(f, fg.dataProjectionGen)
   }.toSeq.sorted
 
+  def fieldPart(fieldName: String): Option[FieldParts] = fps.find(_.field.name == fieldName)
+
   private val obj = importManager.use("java.lang.Object")
 
   protected override lazy val defaultBuild: String = {
@@ -94,6 +100,8 @@ ${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
   }
 
   override protected def generate: String = {
+    val fieldAssembersImp = importManager.use(fieldAssemblersGen.fullClassName)
+
     closeImports()
 
     /*@formatter:off*/sn"""\
@@ -106,15 +114,15 @@ ${JavaGenUtils.generateImports(importManager.imports)}
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
-${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
+public class $shortClassName<D> implements $assembler<D, $notNull$projectionName, $notNull$t.Value> {
+${if (hasTails) s"  private final $notNull$func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   //field assemblers
-${fps.map { fp => s"  private final $notNull ${fp.fieldAsmType} ${fp.fbf};"}.mkString("\n") }\
-${if (hasTails) tps.map { tp => s"  private final $notNull ${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
-${if (hasMeta) s"  //meta assembler\n  private final $notNull $metaAsmType metaAsm;" else ""}
+${fps.map { fp => s"  private final $notNull${fp.fieldAsmType} ${fp.fbf};"}.mkString("\n") }\
+${if (hasTails) tps.map { tp => s"  private final $notNull${tp.assemblerType} ${tp.assembler};"}.mkString("\n  //tail assemblers\n","\n","") else "" }\
+${if (hasMeta) s"  //meta assembler\n  private final $notNull$metaAsmType metaAsm;" else ""}
 
   /**
-   * Asm constructor
+   * Asm constructor from individual field assemblers
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
 ${fps.map { fp => s"   * @param ${fp.javadoc}"}.mkString("\n") }\
@@ -122,15 +130,37 @@ ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("\n","\n"
 ${if (hasMeta) s"\n   * @param metaAsm metadata assembler" else ""}
    */
   public $shortClassName(
-${if (hasTails) s"    $notNull $func<? super D, ? extends Type> typeExtractor,\n" else "" }\
-${fps.map { fp => s"    $notNull ${fp.fieldAsmType} ${fp.fbf}"}.mkString(",\n") }\
-${if (hasTails) tps.map { tp => s"    $notNull ${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
-${if (hasMeta) s",\n    $notNull $metaAsmType metaAsm" else ""}
+${if (hasTails) s"    $notNull$func<? super D, ? extends Type> typeExtractor,\n" else "" }\
+${fps.map { fp => s"    $notNull${fp.fieldAsmType} ${fp.fbf}"}.mkString(",\n") }\
+${if (hasTails) tps.map { tp => s"    $notNull${tp.assemblerType} ${tp.assembler}"}.mkString(",\n", ",\n", "") else ""}\
+${if (hasMeta) s",\n    $notNull$metaAsmType metaAsm" else ""}
   ) {
 ${if (hasTails) s"    this.typeExtractor = typeExtractor;\n" else "" }\
 ${fps.map { fp => s"    this.${fp.fbf} = ${fp.fbf};"}.mkString("\n") }\
 ${if (hasTails) tps.map { tp => s"    this.${tp.assembler} = ${tp.assembler};"}.mkString("\n","\n","") else ""}\
 ${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
+  }
+
+  /**
+   * Asm factory using field assemblers supplier object
+   *
+${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
+   * @param fieldAssemblers field assemblers supplier object
+${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("","\n","\n") else "" }\
+${if (hasMeta) s"\n   * @param metaAsm metadata assembler\n" else ""}\
+   */
+  public static <D> $shortClassName<D> fromFieldAssemblers(
+${if (hasTails) s"    $notNull$func<? super D, ? extends Type> typeExtractor,\n" else "" }\
+    $notNull$fieldAssembersImp<D> fieldAssemblers\
+${if (hasTails) tps.map { tp => s"$notNull${tp.assemblerType} ${tp.assembler}"}.mkString(",\n    ", ",\n    ","") else ""}\
+${if (hasMeta) s",\n    $notNull$metaAsmType metaAsm" else ""}
+  ) {
+    return new $shortClassName<D>(\
+${if (hasTails)  s"\n        typeExtractor," else "" }\
+${fps.map {fp => s"\n        fieldAssemblers::${fieldAssemblersGen.methodName(fp.field.name)}"}.mkString("", ",", if(hasTails||hasMeta) "," else "")}\
+${if (hasTails) tps.map { tp => s"        ${tp.assembler}"}.mkString("\n", ",\n", if(hasMeta) "," else "") else ""}\
+${if (hasMeta) "\n        metaAsm" else ""}
+    );
   }
 
   /**
@@ -143,7 +173,7 @@ ${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
    * @return {@code $t} value object
    */
   @Override
-  public $notNull $t.Value assemble(D dto, $notNull $projectionName p, $notNull $assemblerContext ctx) {
+  public $notNull$t.Value assemble(D dto, $notNull$projectionName p, $notNull$assemblerContext ctx) {
     if (dto == null)
       return $t.type.createValue($errValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}
