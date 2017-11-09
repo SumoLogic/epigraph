@@ -72,7 +72,7 @@ class FieldAssemblersGen(rag: RecordAsmGen, val ctx: GenContext) extends JavaGen
    *
    * @return field value
    */
-  public ${Imports.notNull}$assemblerResultType$resultTypeSuffix ${methodName(fieldName)}(${Imports.notNull}D dto, ${Imports.notNull}$projectionType projection, ${Imports.notNull}${Imports.assemblerContext} context);
+  public ${Imports.notNull}$assemblerResultType$resultTypeSuffix ${methodName(fieldName)}(${Imports.notNull}D dto, ${Imports.notNull}$projectionType projection, ${Imports.notNull}${Imports.assemblerContext} ctx);
 """/*@formatter:on*/
   }
 
