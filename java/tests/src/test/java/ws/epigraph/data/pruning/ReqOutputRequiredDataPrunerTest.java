@@ -69,6 +69,20 @@ public class ReqOutputRequiredDataPrunerTest {
   }
 
   @Test
+  public void testRequiredFieldMissingInsideOptionalField() {
+    assertFail(
+        prune(
+            Person.create()
+                .setRecord(PersonRecord.create()
+                    .setWorstEnemy(PersonRecord.create())),
+            ":`record`(worstEnemy(id))",
+            ":record(worstEnemy(+id))"
+        ),
+        ":record/worstEnemy : Required field 'id' is missing"
+    );
+  }
+
+  @Test
   public void testRequiredFieldErrorInSelfVar() {
     assertRemove(
         prune(
@@ -141,6 +155,25 @@ public class ReqOutputRequiredDataPrunerTest {
             "[](id)",
             "[1,2,3](+id)"
         )
+    );
+  }
+
+  @Test
+  public void testMissingRequiredMapKeyInsideOptField() {
+    assertFail(
+        prune(
+            Person.create().setRecord(
+                PersonRecord.create()
+                    .setId(PersonId.create(1))
+                    .setFriendRecordMap(
+                        String_PersonRecord_Map.create()
+                            .put("1", PersonRecord.create().setId(PersonId.create(1)))
+                    )
+            ),
+            ":`record`(id,friendRecordMap[](id))",
+            ":record(id, friendRecordMap['1','2']+(id))"
+        ),
+        "reason=:record/friendRecordMap : Required key ['2'] is missing"
     );
   }
 
