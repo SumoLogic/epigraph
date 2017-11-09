@@ -130,8 +130,13 @@ public final class ProjectionsParsingUtil {
       if (retroTag == null) {
         if (type.kind() == TypeKind.ENTITY) return null;
         else tag = ((DatumTypeApi) type).self();
-      } else
-        tag = retroTag;
+      } else {
+        if (op == null || op.tagProjections().containsKey(retroTag.name())) {
+          tag = retroTag;
+        } else {
+          tag = null;
+        }
+      }
 
     } else {
       tag = type.tagsMap().get(tagName);
@@ -142,7 +147,9 @@ public final class ProjectionsParsingUtil {
         );
     }
 
-    verifyTag(type, tag, op, location, context);
+    if (tag != null)
+      verifyTag(type, tag, op, location, context);
+
     return tag;
   }
 

@@ -17,7 +17,6 @@
 package ws.epigraph.projections.op.output;
 
 import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.projections.op.CompositeOpProjectionTransformer;
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
 import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
 
@@ -29,10 +28,7 @@ public final class OpOutputProjectionsPsiParser extends PostProcessingOpProjecti
   public OpOutputProjectionsPsiParser(MessagesContext context) {
     super(
         null,
-        new CompositeOpProjectionTransformer(
-            new DefaultsPopulatingTransformer(),
-            new OpFlagSynchronizer("default", context)
-        )
+        new OpFlagSynchronizer("default", context)
     );
   }
 }

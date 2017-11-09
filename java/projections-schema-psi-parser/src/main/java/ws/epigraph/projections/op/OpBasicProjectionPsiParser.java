@@ -346,17 +346,15 @@ public final class OpBasicProjectionPsiParser {
     if (tailPsi == null) tails = null;
     else {
       tails = new ArrayList<>();
-      boolean flagged = rootProjection.flag(); // todo separate flag for tails
-
       @Nullable SchemaOpEntityTailItem singleTail = tailPsi.getOpEntityTailItem();
       if (singleTail == null) {
         @Nullable SchemaOpEntityMultiTail multiTail = tailPsi.getOpEntityMultiTail();
         assert multiTail != null;
         for (SchemaOpEntityTailItem tailItem : multiTail.getOpEntityTailItemList()) {
-          tails.add(parseEntityTailItem(tailItem, flagged, dataType, rootProjection, typesResolver, context));
+          tails.add(parseEntityTailItem(tailItem, dataType, rootProjection, typesResolver, context));
         }
       } else {
-        tails.add(parseEntityTailItem(singleTail, flagged, dataType, rootProjection, typesResolver, context));
+        tails.add(parseEntityTailItem(singleTail, dataType, rootProjection, typesResolver, context));
       }
 
       SchemaProjectionPsiParserUtil.checkDuplicatingEntityTails(tails, context);
@@ -367,7 +365,6 @@ public final class OpBasicProjectionPsiParser {
 
   private static @NotNull OpEntityProjection parseEntityTailItem(
       final @NotNull SchemaOpEntityTailItem tailItem,
-      final boolean flagged,
       final @NotNull DataTypeApi dataType,
       final @NotNull OpEntityProjection rootProjection,
       final @NotNull TypesResolver typesResolver,
@@ -377,7 +374,7 @@ public final class OpBasicProjectionPsiParser {
     @NotNull SchemaOpEntityProjection psiTailProjection = tailItem.getOpEntityProjection();
     return buildTailProjection(
         dataType,
-        flagged,
+        tailItem.getPlus() != null,
         tailTypeRef,
         psiTailProjection,
         rootProjection,
@@ -965,6 +962,7 @@ public final class OpBasicProjectionPsiParser {
                   tailItemPsi.getTypeRef(),
                   tailItemPsi.getOpModelProjection(),
                   rootProjection,
+                  tailItemPsi.getPlus() != null,
                   typesResolver,
                   context
               )
@@ -977,6 +975,7 @@ public final class OpBasicProjectionPsiParser {
                 singleTailPsi.getTypeRef(),
                 singleTailPsi.getOpModelProjection(),
                 rootProjection,
+                singleTailPsi.getPlus() != null,
                 typesResolver,
                 context
             )
@@ -995,6 +994,7 @@ public final class OpBasicProjectionPsiParser {
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpModelProjection modelProjectionPsi,
       @NotNull MP rootProjection,
+      boolean flagged,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
@@ -1006,7 +1006,7 @@ public final class OpBasicProjectionPsiParser {
     MP mp = parseModelProjection(
         modelClass,
         tailType,
-        false, // todo add flags to tails?
+        flagged,
         modelProjectionPsi,
         rootProjection,
         typesResolver,

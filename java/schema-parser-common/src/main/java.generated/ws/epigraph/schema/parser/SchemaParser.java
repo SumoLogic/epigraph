@@ -2214,15 +2214,23 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opEntityProjection
+  // typeRef '+'? opEntityProjection
   public static boolean opEntityTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opEntityTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_ENTITY_TAIL_ITEM, "<op entity tail item>");
     r = typeRef(b, l + 1);
+    r = r && opEntityTailItem_1(b, l + 1);
     r = r && opEntityProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean opEntityTailItem_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opEntityTailItem_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2822,15 +2830,23 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // typeRef opModelProjection
+  // typeRef '+'? opModelProjection
   public static boolean opModelTailItem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "opModelTailItem")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, S_OP_MODEL_TAIL_ITEM, "<op model tail item>");
     r = typeRef(b, l + 1);
+    r = r && opModelTailItem_1(b, l + 1);
     r = r && opModelProjection(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  // '+'?
+  private static boolean opModelTailItem_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "opModelTailItem_1")) return false;
+    consumeToken(b, S_PLUS);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3897,7 +3913,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ! ( ',' | ')' | qid )
+  // ! ( ',' | ')' | qid | '+' )
   static boolean recordModelProjectionRecover(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordModelProjectionRecover")) return false;
     boolean r;
@@ -3907,7 +3923,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ',' | ')' | qid
+  // ',' | ')' | qid | '+'
   private static boolean recordModelProjectionRecover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recordModelProjectionRecover_0")) return false;
     boolean r;
@@ -3915,6 +3931,7 @@ public class SchemaParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, S_COMMA);
     if (!r) r = consumeToken(b, S_PAREN_RIGHT);
     if (!r) r = qid(b, l + 1);
+    if (!r) r = consumeToken(b, S_PLUS);
     exit_section_(b, m, null, r);
     return r;
   }

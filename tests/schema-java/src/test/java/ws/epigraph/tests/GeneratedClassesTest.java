@@ -165,44 +165,44 @@ public class GeneratedClassesTest {
     OpFieldProjection fieldProjection =
         ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
     OpEntityProjection entityProjection = fieldProjection.entityProjection();
-    assertTrue(entityProjection.flag());
+    assertFalse(entityProjection.flag());
 
     OpTagProjectionEntry tpe = entityProjection.singleTagProjection(); // self
     assertNotNull(tpe);
 
     OpModelProjection<?, ?, ?, ?> modelProjection = tpe.projection();
-    assertTrue(modelProjection.flag());
+    assertFalse(modelProjection.flag());
     assertTrue(modelProjection instanceof OpMapModelProjection);
     OpMapModelProjection mapModelProjection = (OpMapModelProjection) modelProjection;
     entityProjection = mapModelProjection.itemsProjection();
-    assertTrue(entityProjection.flag());
+    assertFalse(entityProjection.flag());
 
     tpe = entityProjection.tagProjection("id");
     assertNotNull(tpe);
-    assertFalse(tpe.projection().flag());
+    assertTrue(tpe.projection().flag());
 
     tpe = entityProjection.tagProjection("record");
     assertNotNull(tpe);
     modelProjection = tpe.projection();
-    assertTrue(modelProjection.flag());
+    assertFalse(modelProjection.flag());
     assertTrue(modelProjection instanceof OpRecordModelProjection);
     OpRecordModelProjection recordModelProjection = (OpRecordModelProjection) modelProjection;
 
     OpFieldProjectionEntry fpe = recordModelProjection.fieldProjection("id");
     assertNotNull(fpe);
-    assertFalse(fpe.fieldProjection().flag());
+    assertTrue(fpe.fieldProjection().flag());
 
     fpe = recordModelProjection.fieldProjection("firstName");
     assertNotNull(fpe);
-    assertTrue(fpe.fieldProjection().flag());
+    assertFalse(fpe.fieldProjection().flag());
 
     fpe = recordModelProjection.fieldProjection("lastName");
     assertNotNull(fpe);
-    assertTrue(fpe.fieldProjection().flag());
+    assertFalse(fpe.fieldProjection().flag());
 
     fpe = recordModelProjection.fieldProjection("bestFriend");
     assertNotNull(fpe);
-    assertFalse(fpe.fieldProjection().flag());
+    assertTrue(fpe.fieldProjection().flag());
   }
 
   @Test

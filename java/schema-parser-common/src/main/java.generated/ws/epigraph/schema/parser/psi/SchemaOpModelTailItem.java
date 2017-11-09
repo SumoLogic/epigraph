@@ -29,4 +29,7 @@ public interface SchemaOpModelTailItem extends PsiElement {
   @NotNull
   SchemaTypeRef getTypeRef();
 
+  @Nullable
+  PsiElement getPlus();
+
 }

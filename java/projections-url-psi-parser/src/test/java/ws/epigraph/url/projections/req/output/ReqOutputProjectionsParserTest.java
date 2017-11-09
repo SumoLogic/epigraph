@@ -65,38 +65,38 @@ public class ReqOutputProjectionsParserTest {
   private final OpEntityProjection personOpProjection = parsePersonOpEntityProjection(
       lines(
           ":(",
-          "  id,",
+          "  +id,",
           "  `record` (",
-          "    id {",
+          "    +id {",
           "      ;param1 : epigraph.String { default: \"p1\" },",
           "      ;param2 : ws.epigraph.tests.UserRecord",
           "    },",
-          "    +firstName{;param:epigraph.String},",
-          "    middleName{",
+          "    firstName{;param:epigraph.String},",
+          "    +middleName{",
           "      ;+param1:epigraph.String,",
           "      ;+param2:epigraph.String { default: \"p2\" },",
           "      ;param3:ws.epigraph.tests.PersonRecord (+firstName, bestFriend:`record`(+lastName))",
           "    },",
-          "    bestFriend :( id, `record` (",
+          "    +bestFriend :( id, `record` (",
           "      id,",
           "      bestFriend :`record` (",
           "        id,",
           "        firstName",
           "      ),",
           "    ) ) :~ws.epigraph.tests.User : profile ,",
-          "    bestFriend2 $bf2 = :( id, `record` ( id, bestFriend2 $bf2 ) ),",
-          "    bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
-          "    worstEnemy ( firstName ) ~ws.epigraph.tests.UserRecord $wu",
-          "    worstUser $wu = ( id )",
-          "    friends *( :(id,`record`(id)) ),",
-          "    friendRecords * (id),",
-          "    friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
-          "    friendRecordMap [ forbidden ] (id, firstName)",
-          "  ) ~ws.epigraph.tests.UserRecord (profile)",
+          "    +bestFriend2 $bf2 = :( id, `record` ( id, bestFriend2 $bf2 ) ),",
+          "    +bestFriend3 :( id, `record` ( id, firstName, bestFriend3 :`record` ( id, lastName, bestFriend3 : `record` ( id, bestFriend3 $bf3 = :`record` ( id, bestFriend3 $bf3 ) ) ) ) ),",
+          "    +worstEnemy ( firstName ) ~ws.epigraph.tests.UserRecord $wu",
+          "    +worstUser $wu = ( id )",
+          "    +friends *( :(id,`record`(id)) ),",
+          "    +friendRecords * (id),",
+          "    +friendsMap [;keyParam:epigraph.String]( :(id, `record` (id, firstName) ) )",
+          "    +friendRecordMap [ forbidden ] (id, firstName)",
+          "  ) ~ws.epigraph.tests.UserRecord +(profile)",
           ") :~(",
-          "      ws.epigraph.tests.User :`record` (profile)",
+          "      ws.epigraph.tests.User +:`record` (profile)",
           "        :~ws.epigraph.tests.SubUser :`record` (worstEnemy(id)),",
-          "      ws.epigraph.tests.User2 :`record` (worstEnemy(id))",
+          "      ws.epigraph.tests.User2 +:`record` (worstEnemy(id))",
           ")"
       )
   );
@@ -356,7 +356,7 @@ public class ReqOutputProjectionsParserTest {
   public void testRequiredFieldMultiModel() {
     // + on field implies + on models
 //    testParse(":record ( +bestFriend :( id, record ) )", ":record ( +bestFriend :( +id, +record ) )", 1);
-    testParse(":record ( +bestFriend :( id, record ) )", 1);
+    testParse(":record ( +bestFriend :( id, record ( id, bestFriend :record ( id, firstName ) ) ) )", 1);
   }
 
   @Test
@@ -372,7 +372,7 @@ public class ReqOutputProjectionsParserTest {
     // now without default tag
     DataType dataType = new DataType(Person.type, null);
 
-    String opProjectionStr = ":( id, `record` ( +firstName ) )";
+    String opProjectionStr = ":( +id, `record` ( firstName ) )";
     OpEntityProjection opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     testParse(
@@ -383,7 +383,7 @@ public class ReqOutputProjectionsParserTest {
     );
 
     // tails
-    opProjectionStr = ":( id, `record` ( +firstName ) ) :~ws.epigraph.tests.User :`record` ( +lastName )";
+    opProjectionStr = ":( +id, `record` ( firstName ) ) :~ws.epigraph.tests.User :`record` ( lastName )";
     opProjection = parseOpOutputEntityProjection(dataType, opProjectionStr, resolver);
 
     testParse(

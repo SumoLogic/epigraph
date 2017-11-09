@@ -27,12 +27,12 @@ resource users: PersonMap {
   read {
     outputProjection { ;start: Long, ;count: Long, meta: (start, count) } [](
       :(
-        id,
+        +id,
         `record`(
-          id,
-          +firstName,
-          +lastName,
-          bestFriend:(
+          +id,
+          firstName,
+          lastName,
+          +bestFriend:(
             id,
             `record`( id, firstName, lastName, bestFriend:id, worstEnemy )
           ):~User:(
@@ -40,16 +40,16 @@ resource users: PersonMap {
               worstEnemy( id, firstName, lastName, profile )
               profile
             )
-          )
-          worstEnemy( id, firstName, lastName ) ~UserRecord( profile )
-          friends *(
+          ),
+          +worstEnemy( id, firstName, lastName ) ~UserRecord( profile ),
+          +friends *(
             :(
               id,
               `record`( id, firstName, lastName )
             )
           )
         )
-      ):~User:(
+      ):~User +:(
         id,
         `record`( profile, worstEnemy( profile ) )
       )

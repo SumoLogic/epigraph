@@ -40,7 +40,7 @@
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
 - [x] codegen bug: see `childProjectionWithUnusedParent.epigraph` and `tests-schema-java.gradle`
 - [x] codegen bug: impossible to have tail type as a field, see `childUsedByParent.epigraph`
-- [ ] codegen: a hierarchy of `N` record types with `N` new fields each will result in `N^3` lines of code, since
+- [x] codegen: a hierarchy of `N` record types with `N` new fields each will result in `N^3` lines of code, since
       every new type assembler has to include all parent field assemblers. Proposed way out:
       https://sumologic.slack.com/archives/D0JPD1FKN/p1509569946000092
 
@@ -89,7 +89,7 @@
 - [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
       in filter chains, otherwise it won't affect projections constructed using builders.
       On the other hand if it only happens in filter chains it will be hard to report errors with pointers to the original parsed string.
-- [ ] reverse the meaning of `+` on op output projections: it should be used to mark "expensive" (do not include by default) fields
+- [x] reverse the meaning of `+` on op output projections: it should be used to mark "expensive" (do not include by default) fields
   - if field is datum type: return `$self`
   - else if field has retro: use retro tag
   - else return all tags not marked as `+`
@@ -119,6 +119,7 @@
   be represented by entity-model projections pair, this leads to messy code
 - [x] req projections syntax: allow model tail references
 - [ ] BIG move flag from entity projections to fields/collection items. Because:
+- [ ] op output parser: check if 'include in default' fields have required parameters without defaults
   ```
   outputProjection user: User = :(
     rec (

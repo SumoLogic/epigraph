@@ -541,15 +541,15 @@ public class OpOutputProjectionsTest {
   public void testFlag() throws PsiProcessingException {
     testParsingEntityProjection(":+id");
     testParsingEntityProjection(":+`record` ( +id )");
-    testParsingEntityProjection(":`record` ( id+ )", ":+`record` ( +id )");
-    testParsingEntityProjection(":`record` ( bestFriend2+ )", ":+`record` ( +bestFriend2 :+id )");
-    testParsingEntityProjection(":`record` ( +bestFriend2 )", ":+`record` ( +bestFriend2 :+id )");
+    testParsingEntityProjection(":`record` ( id+ )", ":`record` ( +id )");
+    testParsingEntityProjection(":`record` ( bestFriend2+ )", ":`record` ( bestFriend2 :+id )");
+    testParsingEntityProjection(":`record` ( +bestFriend2 )", ":`record` ( +bestFriend2 :+id )");
 
     // todo: enable smarter output in pretty printer
-    testParsingEntityProjection(":`record` ( friends*+:id )", ":+`record` ( +friends *+( :id ) )");
+    testParsingEntityProjection(":`record` ( friends*+:id )", ":`record` ( friends *+( :id ) )");
     testParsingEntityProjection(
         ":`record` ( friendsMap[forbidden]+:id)",
-        ":+`record` ( +friendsMap [ forbidden ]+( :id ) )"
+        ":`record` ( friendsMap [ forbidden ]+( :id ) )"
     );
 
     testParsingEntityProjection(":`record` ( friendsMap2 { meta: +( start ) } [ required ]( :id ) )");

@@ -25,7 +25,6 @@ import ws.epigraph.gdata.GDataToData;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionsParsingUtil;
-import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.abs.AbstractTagProjectionEntry;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.*;
@@ -46,14 +45,17 @@ import static ws.epigraph.projections.op.AbstractOpKeyPresence.REQUIRED;
 @NotThreadSafe
 public class DefaultReqProjectionConstructor {
   public enum Mode {
+    /** Include nothing but $self and retro tags */
     INCLUDE_NONE,
-    INCLUDE_FLAGGED_ONLY,
+    /** Include only things not flagged in op projection, plus $self and retro tags */
+    INCLUDE_UNFLAGGED_ONLY,
+    /** Include everything */
     INCLUDE_ALL
   }
 
   private final @NotNull Mode mode;
   private final boolean checkForRequiredMapKeys;
-  private final boolean copyFlagsFromOp;
+  private final boolean copyFlagsFromOp; // flags are currently inverted, until '+' on req means 'optional' (currently it means 'required')
 
   private final WeakHashMap<ProjectionReferenceName, ReqEntityProjection> visitedEntityRefs = new WeakHashMap<>();
 
@@ -68,7 +70,7 @@ public class DefaultReqProjectionConstructor {
   }
 
   public static DefaultReqProjectionConstructor outputProjectionDefaultConstructor() {
-    return new DefaultReqProjectionConstructor(Mode.INCLUDE_FLAGGED_ONLY, true, false);
+    return new DefaultReqProjectionConstructor(Mode.INCLUDE_UNFLAGGED_ONLY, true, false);
   }
 
   public static DefaultReqProjectionConstructor inputProjectionDefaultConstructor(boolean includeAll) {
@@ -107,22 +109,24 @@ public class DefaultReqProjectionConstructor {
     final Iterable<TagApi> tags;
 
     Collection<OpTagProjectionEntry> opTagEntries = op.tagProjections().values();
+    @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(dataType, null, op, location, context);
 
     switch (mode) {
       case INCLUDE_NONE:
-        @Nullable TagApi defaultTag = ProjectionsParsingUtil.findTag(dataType, null, op, location, context);
         tags = defaultTag == null ?
                Collections.emptyList() :
                Collections.singletonList(defaultTag);
         break;
 
-      case INCLUDE_FLAGGED_ONLY:
+      case INCLUDE_UNFLAGGED_ONLY:
         if (type.kind() == TypeKind.ENTITY) {
-          tags = opTagEntries
-              .stream()
-              .filter(tpe -> tpe.projection().flag())
-              .map(AbstractTagProjectionEntry::tag)
-              .collect(Collectors.toList());
+          tags = defaultTag == null ?
+                 opTagEntries
+                     .stream()
+                     .filter(tpe -> !tpe.projection().flag())
+                     .map(AbstractTagProjectionEntry::tag)
+                     .collect(Collectors.toList()) :
+                 Collections.singletonList(defaultTag);
         } else {
           OpTagProjectionEntry opSingleTag = op.singleTagProjection();
           assert opSingleTag != null;
@@ -178,7 +182,8 @@ public class DefaultReqProjectionConstructor {
                   createDefaultModelProjection(
                       ReqRecordModelProjection.class,
                       tag.type(),
-                      opTagProjection.projection(), copyFlagsFromOp && opTagProjection.projection().flag(),
+                      opTagProjection.projection(),
+                      copyFlagsFromOp && !opTagProjection.projection().flag(),
                       null,
                       Directives.EMPTY,
                       datums,
@@ -202,12 +207,12 @@ public class DefaultReqProjectionConstructor {
     else {
       tails = new ArrayList<>(opTails.size());
       for (final OpEntityProjection opTail : opTails) {
-        if (mode == Mode.INCLUDE_ALL || opTail.flag()) {
+        if (mode == Mode.INCLUDE_ALL || !opTail.flag()) {
           tails.add(
               createDefaultEntityProjection(
                   opTail.type().dataType(),
                   opTail,
-                  copyFlagsFromOp && opTail.flag(),
+                  copyFlagsFromOp && !opTail.flag(),
                   datas,
                   resolver,
                   location,
@@ -271,7 +276,7 @@ public class DefaultReqProjectionConstructor {
                                     recordDatums.stream().map(rd -> rd._raw().getData((Field) fpe.field()))
                                         .collect(Collectors.toList());
 
-            if ((mode == Mode.INCLUDE_ALL || fieldProjection.flag()) && (fieldDatas != null || datums == null)) {
+            if ((mode == Mode.INCLUDE_ALL || !fieldProjection.flag()) && (fieldDatas != null || datums == null)) {
               fields.put(
                   entry.getKey(),
                   new ReqFieldProjectionEntry(
@@ -280,7 +285,7 @@ public class DefaultReqProjectionConstructor {
                           createDefaultEntityProjection(
                               fpe.field().dataType(),
                               fieldProjection.entityProjection(),
-                              copyFlagsFromOp && fieldProjection.flag(),
+                              copyFlagsFromOp && !fieldProjection.flag(),
                               fieldDatas,
                               resolver,
                               location,
@@ -434,14 +439,14 @@ public class DefaultReqProjectionConstructor {
       return null;
 
     return Optional.ofNullable(op.metaProjection()).map(mp -> {
-      if (mode == Mode.INCLUDE_FLAGGED_ONLY && !mp.flag())
+      if (mode == Mode.INCLUDE_UNFLAGGED_ONLY && mp.flag())
         return null;
       try {
         return createDefaultModelProjection(
             modelClass,
             mp.type(),
             mp,
-            copyFlagsFromOp && mp.flag(),
+            copyFlagsFromOp && !mp.flag(),
             null,
             Directives.EMPTY,
             metaDatas,
@@ -472,9 +477,9 @@ public class DefaultReqProjectionConstructor {
         case INCLUDE_NONE:
           opTailsToInclude = null;
           break;
-        case INCLUDE_FLAGGED_ONLY:
+        case INCLUDE_UNFLAGGED_ONLY:
           opTailsToInclude =
-              opTailsToInclude.stream().filter(AbstractModelProjection::flag).collect(Collectors.toList());
+              opTailsToInclude.stream().filter(projection -> !projection.flag()).collect(Collectors.toList());
           break;
         case INCLUDE_ALL: // keep all
       }
@@ -486,7 +491,7 @@ public class DefaultReqProjectionConstructor {
             modelClass,
             ot.type(),
             ot,
-            copyFlagsFromOp && ot.flag(),
+            copyFlagsFromOp && !ot.flag(),
             null,
             Directives.EMPTY,
             datums,

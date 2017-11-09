@@ -35,6 +35,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class DefaultsPopulatingTransformer extends OpProjectionTransformer {
+  // todo unused, delete (since '+' semantics is reversed now)
 
   public DefaultsPopulatingTransformer() {}
 

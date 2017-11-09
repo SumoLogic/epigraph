@@ -76,7 +76,7 @@ public class DefaultReqProjectionConstructorTest {
           "    friends *( :+id ),",
           "    friendsMap []( :(id, `record` (id, +firstName) ) )",
           "    friendsMap2 { meta: (+start, count) } [] (:id)",
-          "  ) ~ws.epigraph.tests.UserRecord (profile)",
+          "  ) ~ws.epigraph.tests.UserRecord +(profile)",
           ") :~ws.epigraph.tests.User :`record` (profile)"
       )
   );
@@ -92,7 +92,7 @@ public class DefaultReqProjectionConstructorTest {
     ReqEntityProjection req = test(
         dataType,
         ReqTestUtil.parseOpOutputEntityProjection(dataType, "", resolver),
-        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ""
     );
 
@@ -130,7 +130,7 @@ public class DefaultReqProjectionConstructorTest {
     ReqEntityProjection req = test(
         dataType,
         ReqTestUtil.parseOpOutputEntityProjection(dataType, "", resolver),
-        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         "" // * :id
     );
 
@@ -149,15 +149,15 @@ public class DefaultReqProjectionConstructorTest {
   public void testRetro() throws PsiProcessingException {
     test(
         dataType,
-        parsePersonOpOutputEntityProjection(":`record`(+bestFriend2)"),
-        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        parsePersonOpOutputEntityProjection(":`record`(bestFriend2)"),
+        DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ":record ( bestFriend2 :id )"
     );
   }
 
   @Test
   public void testMeta() throws PsiProcessingException {
-    OpEntityProjection op = parsePersonOpOutputEntityProjection(":`record`(friendsMap2 {meta:(+start,count)}[](:+id))");
+    OpEntityProjection op = parsePersonOpOutputEntityProjection(":`record`(friendsMap2 {meta:(+start,count)}[](:id))");
 
     test(
         dataType,
@@ -169,8 +169,8 @@ public class DefaultReqProjectionConstructorTest {
     test(
         dataType,
         op,
-        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
-        ":record ( friendsMap2 @( start ) [ * ]( :id ) )"
+        DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
+        ":record ( friendsMap2 @( count ) [ * ]( :id ) )"
     );
 
     test(
@@ -182,17 +182,30 @@ public class DefaultReqProjectionConstructorTest {
   }
 
   @Test
-  public void testIncludeFlaggedOnly() throws PsiProcessingException {
-    test(dataType, personOpProjection, DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+  public void testIncludeUnflaggedOnly() throws PsiProcessingException {
+    test(dataType, personOpProjection, DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         lines(
-            ":record (",
-            "  bestFriend :( id, record ( id ;param2 = 333 ) ),",
-            "  bestFriend2 $bf2 = :record ( id, bestFriend2 $bf2 ),",
-            "  bestFriend3",
-            "    :record ( bestFriend3 :record ( bestFriend3 :record ( bestFriend3 $bf3 = :record ( id, bestFriend3 $bf3 ) ) ) ),",
-            "  friends *( :id ),",
-            "  friendsMap [ * ]( :record ( firstName ) )",
-            ")"
+            ":(",
+            "  id,",
+            "  record (",
+            "    id,",
+            "    bestFriend :record ( bestFriend :record ( id, firstName ) ),",
+            "    bestFriend2 $bf2 = :record ( bestFriend2 $bf2 ),",
+            "    bestFriend3",
+            "      :(",
+            "        id,",
+            "        record (",
+            "          id,",
+            "          firstName,",
+            "          bestFriend3",
+            "            :record ( id, lastName, bestFriend3 :record ( id, bestFriend3 $bf3 = :record ( bestFriend3 $bf3 ) ) )",
+            "        )",
+            "      ),",
+            "    friends *( :() ),",
+            "    friendsMap [ * ]( :( id, record ( id ) ) ),",
+            "    friendsMap2 @( count ) [ * ]( :id )",
+            "  )",
+            ") :~ws.epigraph.tests.User :record ( profile )"
         )
     );
   }
@@ -266,8 +279,8 @@ public class DefaultReqProjectionConstructorTest {
   public void testSingleTagNonParenthesized() throws PsiProcessingException {
     ReqEntityProjection req = test(
         dataType,
-        parsePersonOpOutputEntityProjection(":( id, `record`(+id) )"),
-        DefaultReqProjectionConstructor.Mode.INCLUDE_FLAGGED_ONLY,
+        parsePersonOpOutputEntityProjection(":( +id, `record`(id) )"),
+        DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ":record ( id )"
     );
     assertFalse(req.parenthesized());

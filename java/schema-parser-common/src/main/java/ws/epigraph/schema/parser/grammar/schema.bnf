@@ -513,11 +513,11 @@ opMultiTagProjectionItem ::= '+'? tagName opModelProjection
 
 opEntityPolymorphicTail ::= ':' '~' ( opEntityTailItem | opEntityMultiTail ) {pin=2}
 opEntityMultiTail ::= '(' (opEntityTailItem ','?)* ')' {pin=1}
-opEntityTailItem ::= typeRef opEntityProjection
+opEntityTailItem ::= typeRef '+'? opEntityProjection // todo
 
 opModelPolymorphicTail ::= '~' ( opModelTailItem | opModelMultiTail ) // {pin=1}
 opModelMultiTail ::= '(' (opModelTailItem ','?)* ')' {pin=1}
-opModelTailItem ::= typeRef opModelProjection
+opModelTailItem ::= typeRef '+'? opModelProjection // todo
 
 opModelProjection ::= opNamedModelProjection | opUnnamedOrRefModelProjection
 opUnnamedOrRefModelProjection ::= opModelProjectionRef | opUnnamedModelProjection
@@ -542,7 +542,7 @@ opModelMeta ::= 'meta' ':' '+'? opModelProjection
 // op output record
 opRecordModelProjection ::= '(' (opFieldProjectionEntry ','?)* ')' { pin=1 }
 opFieldProjectionEntry ::= '+'? qid opFieldProjection { pin=2 recoverWhile=recordModelProjectionRecover}
-private recordModelProjectionRecover ::= ! ( ',' | ')' | qid )
+private recordModelProjectionRecover ::= ! ( ',' | ')' | qid | '+' )
 opFieldProjection ::= opEntityProjection
 
 // op output list

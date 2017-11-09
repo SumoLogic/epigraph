@@ -54,4 +54,10 @@ public class SchemaOpEntityTailItemImpl extends ASTWrapperPsiElement implements 
     return notNullChild(PsiTreeUtil.getChildOfType(this, SchemaTypeRef.class));
   }
 
+  @Override
+  @Nullable
+  public PsiElement getPlus() {
+    return findChildByType(S_PLUS);
+  }
+
 }
