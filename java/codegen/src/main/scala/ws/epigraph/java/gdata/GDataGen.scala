@@ -31,7 +31,7 @@ class GDataGen(data: GData) extends ObjectGen[GData](data) {
   /*@formatter:off*/sn"""\
 new $o(
   ${gen(data.typeRef(), ctx)},
-  ${i(ObjectGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
+  ${i(ObjectGenUtils.genLinkedMap("String", "GDatum", data.tags().entrySet().toList.map{e => (gen(e.getKey, ctx), gen(e.getValue, ctx))}, ctx))},
   ${gen(data.location(), ctx)}
 )"""/*@formatter:on*/
 }

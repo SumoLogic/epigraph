@@ -61,7 +61,7 @@ private static $o $methodName() {
     $o value = new $o(
       ${genTypeExpr(p.`type`(), ctx.gctx)},
       ${p.flag().toString},
-      ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+      ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().toList.map{ e =>
         (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
       ${p.parenthesized().toString},
       ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
@@ -83,7 +83,7 @@ private static $o $methodName() {
 new $o(
   ${genTypeExpr(p.`type`(), ctx.gctx)},
   ${p.flag().toString},
-  ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().map{ e =>
+  ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().toList.map{ e =>
     (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${p.parenthesized().toString},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},

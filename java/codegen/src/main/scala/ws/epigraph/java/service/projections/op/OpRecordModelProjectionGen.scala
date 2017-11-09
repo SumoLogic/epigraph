@@ -43,7 +43,7 @@ new $o(
   ${i(gen(p.params(), ctx))},
   ${i(gen(p.annotations(), ctx))},
   ${i(gen(p.metaProjection(), ctx))},
-  ${i(genLinkedMap("java.lang.String", fpe.toString, p.fieldProjections().entrySet().map{e =>
+  ${i(genLinkedMap("java.lang.String", fpe.toString, p.fieldProjections().entrySet().toList.map{e =>
       ("\"" + e.getKey + "\"", genFieldProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}

@@ -553,6 +553,17 @@ public class ReqOutputProjectionsParserTest {
   }
 
   @Test
+  public void testNonExistingFieldErrorMsg() {
+    try {
+      testParse(":record(xx)", 1);
+      fail();
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(e.getMessage(), e.getMessage()
+          .contains("Field 'xx' is not supported, supported fields: (id,firstName,middleName,bestFriend,bestFriend2,bestFriend3,worstEnemy,worstUser,friends,friendRecords,friendsMap,friendRecordMap)"));
+    }
+  }
+
+  @Test
   public void testNonExistingEntityTailErrorMsg() {
     try {
       testParse(":id:~X:id", 1);
