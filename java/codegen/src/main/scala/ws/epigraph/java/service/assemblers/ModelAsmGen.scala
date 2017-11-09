@@ -63,7 +63,7 @@ trait ModelAsmGen extends AsmGen {
 
     def assembler: String = JavaGenUtils.lo(ln(`type`)) + "TailAsm"
 
-    def assemblerType: String = s"${ Imports.assembler }<? super D, ? super $tailGenName, ? extends $tailResultType.Value>"
+    def assemblerType: String = s"${ Imports.asm }<? super D, ? super $tailGenName, ? extends $tailResultType.Value>"
 
     def javadoc: String = s"$assembler {@code ${ ln(`type`) }} value assembler"
   }
@@ -103,7 +103,7 @@ ${if (tps.nonEmpty) tps.map { tp => s"tp -> ${tp.assembler}.assemble(dto, tp, ct
     )
   )
 
-  protected lazy val metaAsmType: String = s"${ Imports.assembler }<? super D, ? super ${ metaGeneratorNameOpt.get }, ? extends ${
+  protected lazy val metaAsmType: String = s"${ Imports.asm }<? super D, ? super ${ metaGeneratorNameOpt.get }, ? extends ${
     lqn2(
       metaCType,
       g.namespace.toString

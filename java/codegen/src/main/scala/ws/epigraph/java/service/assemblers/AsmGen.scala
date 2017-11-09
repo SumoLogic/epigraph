@@ -34,14 +34,14 @@ trait AsmGen extends JavaGen {
     val nullable: ImportManager.Imported =
       if (ctx.java8Annotations) importManager.use("org.jetbrains.annotations.Nullable").prepend("@").append(" ") else ImportManager.empty
     val func: ImportManager.Imported = importManager.use("java.util.function.Function")
-    val assembler: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Asm")
-    val assemblerContext: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AsmContext")
+    val asm: ImportManager.Imported = importManager.use("ws.epigraph.assembly.Asm")
+    val asmCtx: ImportManager.Imported = importManager.use("ws.epigraph.assembly.AsmContext")
     val _type: ImportManager.Imported = importManager.use("ws.epigraph.types.Type")
     val errValue: ImportManager.Imported = importManager.use("ws.epigraph.errors.ErrorValue")
   }
 
   protected def closeImports(): Unit = {
-    val _ = Imports.assembler // cause lazy eval
+    val _ = Imports.asm // cause lazy eval
     importManager.close()
   }
 }

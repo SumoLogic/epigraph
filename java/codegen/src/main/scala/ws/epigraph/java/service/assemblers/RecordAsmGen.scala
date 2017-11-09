@@ -56,7 +56,9 @@ class RecordAsmGen(
       )
     )
 
-    def fieldAsmType: String = s"$assembler<? super D, ? super $fieldProjection, ? extends $assemblerResultType${ if (isEntity) "" else ".Value" }>"
+    def asmResultValueType = s"$assemblerResultType${ if (isEntity) "" else ".Value" }"
+
+    def fieldAsmType: String = s"$asm<? super D, ? super $fieldProjection, ? extends $asmResultValueType>"
 
     def fbf: String = field.name + "FieldAsm"
 
@@ -85,7 +87,7 @@ class RecordAsmGen(
 
   protected override lazy val defaultBuild: String = {
     /*@formatter:off*/sn"""\
-$assemblerContext.Key key = new $assemblerContext.Key(dto, p);
+$asmCtx.Key key = new $asmCtx.Key(dto, p);
 $obj visited = ctx.visited.get(key);
 if (visited != null)
   return ($t.Value) visited;
@@ -104,6 +106,18 @@ ${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
 
     closeImports()
 
+    def shortFieldAsm(fp: FieldParts) = s"fieldAssemblers::${fieldAssemblersGen.methodName(fp.field.name)}"
+
+    // need this in case there's only one field asm, otherwise Java can't figure out which constructor to call
+    def longFieldAsm(fp: FieldParts) = /*@formatter:off*/sn"""\
+new $asm<D, ${fp.fieldProjection}, ${fp.asmResultValueType}>() {
+          public ${fp.asmResultValueType} assemble(D dto, ${fp.fieldProjection} p, $asmCtx ctx) {
+            return fieldAssemblers.${fieldAssemblersGen.methodName(fp.field.name)}(dto, p, ctx);
+          }
+        }"""/*@formatter:on*/
+
+    def fieldAsm(fp: FieldParts, numFields: Int) = if (numFields == 1) longFieldAsm(fp) else shortFieldAsm(fp)
+
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
 package ${g.namespace};
@@ -114,7 +128,7 @@ ${JavaGenUtils.generateImports(importManager.imports)}
  * Value assembler for {@code ${ln(cType)}} type, driven by request output projection
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D> implements $assembler<D, $notNull$projectionName, $notNull$t.Value> {
+public class $shortClassName<D> implements $asm<D, $notNull$projectionName, $notNull$t.Value> {
 ${if (hasTails) s"  private final $notNull$func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   //field assemblers
 ${fps.map { fp => s"  private final $notNull${fp.fieldAsmType} ${fp.fbf};"}.mkString("\n") }\
@@ -142,22 +156,22 @@ ${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
   }
 
   /**
-   * Asm factory using field assemblers supplier object
+   * Asm constructor from the field assemblers supplier object
    *
 ${if (hasTails) s"   * @param typeExtractor data type extractor, used to determine DTO type\n" else ""}\
    * @param fieldAssemblers field assemblers supplier object
 ${if (hasTails) tps.map { tp => s"   * @param ${tp.javadoc}"}.mkString("","\n","\n") else "" }\
 ${if (hasMeta) s"\n   * @param metaAsm metadata assembler\n" else ""}\
    */
-  public static <D> $shortClassName<D> fromFieldAssemblers(
+  public $shortClassName(
 ${if (hasTails) s"    $notNull$func<? super D, ? extends Type> typeExtractor,\n" else "" }\
     $notNull$fieldAssembersImp<D> fieldAssemblers\
 ${if (hasTails) tps.map { tp => s"$notNull${tp.assemblerType} ${tp.assembler}"}.mkString(",\n    ", ",\n    ","") else ""}\
 ${if (hasMeta) s",\n    $notNull$metaAsmType metaAsm" else ""}
   ) {
-    return new $shortClassName<D>(\
+    this(\
 ${if (hasTails)  s"\n        typeExtractor," else "" }\
-${fps.map {fp => s"\n        fieldAssemblers::${fieldAssemblersGen.methodName(fp.field.name)}"}.mkString("", ",", if(hasTails||hasMeta) "," else "")}\
+${fps.map {fp => s"\n        ${fieldAsm(fp, fps.size)}"}.mkString("", ",", if(hasTails||hasMeta) "," else "")}\
 ${if (hasTails) tps.map { tp => s"        ${tp.assembler}"}.mkString("\n", ",\n", if(hasMeta) "," else "") else ""}\
 ${if (hasMeta) "\n        metaAsm" else ""}
     );
@@ -173,7 +187,7 @@ ${if (hasMeta) "\n        metaAsm" else ""}
    * @return {@code $t} value object
    */
   @Override
-  public $notNull$t.Value assemble(D dto, $notNull$projectionName p, $notNull$assemblerContext ctx) {
+  public $notNull$t.Value assemble(D dto, $notNull$projectionName p, $notNull$asmCtx ctx) {
     if (dto == null)
       return $t.type.createValue($errValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}

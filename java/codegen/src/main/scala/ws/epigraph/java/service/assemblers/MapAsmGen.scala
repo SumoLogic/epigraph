@@ -55,7 +55,7 @@ class MapAsmGen(
 
   protected lazy val defaultBuild: String = {
     /*@formatter:off*/sn"""\
-$assemblerContext.Key key = new $assemblerContext.Key(dto, p);
+$asmCtx.Key key = new $asmCtx.Key(dto, p);
 $obj visited = ctx.visited.get(key);
 if (visited != null)
   return ($t.Value) visited;
@@ -78,7 +78,7 @@ ${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
     closeImports()
 
     val keysConverterType = s"$func<K, $kt>"
-    val itemAsmType = s"$assembler<V, $elementGenName, /*$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
+    val itemAsmType = s"$asm<V, $elementGenName, /*$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}
@@ -94,7 +94,7 @@ ${JavaGenUtils.generateImports(importManager.imports)}
  * @param <V> DTO map keys type
  */
 ${JavaGenUtils.generatedAnnotation(this)}
-public class $shortClassName<D, K, V> implements $assembler<D, $notNull $projectionName, $notNull $t.Value> {
+public class $shortClassName<D, K, V> implements $asm<D, $notNull $projectionName, $notNull $t.Value> {
 ${if (hasTails) s"  private final $notNull $func<? super D, ? extends Type> typeExtractor;\n" else "" }\
   private final $notNull $fun2<D, $projectionName, ? extends $mp<K, ? extends V>> mapExtractor;
   private final $notNull $keysConverterType keyConverter;
@@ -138,7 +138,7 @@ ${if (hasMeta) s"\n    this.metaAsm = metaAsm;" else ""}
    * @return {@code $t} value object
    */
   @Override
-  public $notNull $t.Value assemble(D dto, $notNull $projectionName p, $notNull $assemblerContext ctx) {
+  public $notNull $t.Value assemble(D dto, $notNull $projectionName p, $notNull $asmCtx ctx) {
     if (dto == null)
       return $t.type.createValue($errValue.NULL);
     else ${if (hasTails) tailsBuild else nonTailsBuild}
