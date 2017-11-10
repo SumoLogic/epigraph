@@ -19,9 +19,10 @@ package ws.epigraph.java.service.assemblers
 import ws.epigraph.compiler.{CDatumType, CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
-import ws.epigraph.java.service.projections.req.output.ReqOutputMapModelProjectionGen
-import ws.epigraph.java.service.projections.req.{ReqModelProjectionGen, ReqEntityProjectionGen}
+import ws.epigraph.java.service.projections.req.output.{ReqOutputEntityProjectionGen, ReqOutputMapModelProjectionGen}
+import ws.epigraph.java.service.projections.req.{ReqEntityProjectionGen, ReqModelProjectionGen}
 import ws.epigraph.java.{GenContext, JavaGen, JavaGenUtils}
+import ws.epigraph.util.HttpStatusCode
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -45,13 +46,45 @@ class MapAsmGen(
 
   private val kt = importManager.use(lqn2(keyCType, nsString))
   private val it = importManager.use(lqn2(itemCType, nsString))
+  private val keyGenName = importManager.use(g.keyGen.fullClassName)
   private val elementGenName = importManager.use(g.elementGen.fullClassName)
+  private val fun = importManager.use(classOf[java.util.function.Function[_, _]].getName)
   private val fun2 = importManager.use(classOf[ws.epigraph.util.Function2[_, _, _]].getName)
+  private val listImp = importManager.use(classOf[java.util.List[_]].getName)
+  private val mapImp = importManager.use(classOf[java.util.Map[_, _]].getName)
+  private val collectorsImp = importManager.use(classOf[java.util.stream.Collectors].getName)
+  private val statusCodeImp = importManager.use(classOf[HttpStatusCode].getName)
 
   import Imports._
 
   private val obj = importManager.use("java.lang.Object")
   private val mp = importManager.use("java.util.Map")
+
+  private val vp = if (isEntity) "" else ".Value"
+  private val pp = if (isEntity) "$" else "_"
+
+  private def datumNotFound = /*@formatter:off*/ sn"""\
+        value = $it.type.createValue(new $errValue($statusCodeImp.NOT_FOUND, "item not found"));\
+"""/*@formatter:on*/
+
+  private def dataNotFound = {
+    val eeg: ReqOutputEntityProjectionGen = g.elementGen.asInstanceOf[ReqOutputEntityProjectionGen]
+
+    def tagError(tagName: String) = /*@formatter:off*/ sn"""\
+        if (itemsProjection.${eeg.tagMethodName(tagName)}() != null)
+          builder.set${JavaGenUtils.up(tagName)}_Error(error);\
+"""/*@formatter:on*/
+
+    /*@formatter:off*/ sn"""\
+        $errValue error = new $errValue($statusCodeImp.NOT_FOUND, "object not found");
+        $it.Builder builder = $it.create();
+${ eeg.tagProjections.keys.map (tagError).mkString("", "\n", "\n") }\
+        value = builder;\
+"""/*@formatter:on*/
+  }
+
+  private val builtInPrimitiveKey = JavaGenUtils.builtInPrimitives.contains(keyCType.name.name.toString)
+  private val keyValueSuffix = if (isEntity && builtInPrimitiveKey) ".getVal()" else ""
 
   protected lazy val defaultBuild: String = {
     /*@formatter:off*/sn"""\
@@ -64,9 +97,25 @@ else {
   ctx.visited.put(key, b.asValue());
   $elementGenName itemsProjection = p.itemsProjection();
   $mp<K, ? extends V> map = mapExtractor.apply(dto, p);
-  for ($mp.Entry<K, ? extends V> entry: map.entrySet()) {
-    $kt k = keyConverter.apply(entry.getKey());
-    b.put${if (isEntity) "$" else "_"}(k, itemAsm.assemble(entry.getValue(), itemsProjection, ctx));
+  $listImp<$keyGenName> keys = p.keys();
+  if (keys == null) {
+    for ($mp.Entry<K, ? extends V> entry: map.entrySet()) {
+      $kt k = keyConverter.apply(entry.getKey());
+      b.put$pp(k$keyValueSuffix, itemAsm.assemble(entry.getValue(), itemsProjection, ctx));
+    }
+  } else {
+    $mapImp<$kt, K> revIndex = map.keySet().stream().collect($collectorsImp.toMap(keyConverter::apply, $fun.identity()));
+    for ($keyGenName keyProjection : keys) {
+      $kt k = keyProjection.value${if (builtInPrimitiveKey) "_" else ""}();
+      K k2 = revIndex.get(k);
+      final $it$vp value;
+      if (k2 == null) {
+${if (isEntity) dataNotFound else datumNotFound}
+      } else {
+        value = itemAsm.assemble(map.get(k2), itemsProjection, ctx);
+      }
+      b.put$pp(k$keyValueSuffix, value);
+    }
   }
 ${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
   return b.asValue();
@@ -78,7 +127,7 @@ ${if (hasMeta) s"  b.setMeta(metaAsm.assemble(dto, p.meta(), ctx));\n" else ""}\
     closeImports()
 
     val keysConverterType = s"$func<K, $kt>"
-    val itemAsmType = s"$asm<V, $elementGenName, /*$notNull*/ $it${ if (isEntity) "" else ".Value" }>"
+    val itemAsmType = s"$asm<V, $elementGenName, /*$notNull*/ $it$vp>"
 
     /*@formatter:off*/sn"""\
 ${JavaGenUtils.topLevelComment}

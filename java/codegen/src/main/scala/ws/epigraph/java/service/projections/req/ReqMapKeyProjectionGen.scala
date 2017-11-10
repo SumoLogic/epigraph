@@ -48,6 +48,10 @@ trait ReqMapKeyProjectionGen extends ReqProjectionGen {
     $keyTypeShortName key = ($keyTypeShortName) raw.value();
     return key.getVal();
   }
+
+  public @NotNull $keyTypeShortName.Imm value_() {
+    return (($keyTypeShortName) raw.value()).toImmutable();
+  }
 """/*@formatter:on*/
 
     def genNonPrimitiveKey: String = /*@formatter:off*/sn"""\

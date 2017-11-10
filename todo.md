@@ -68,12 +68,12 @@
 - [ ] allow to combine schema and java in one module. Make `java/codegen-test` work
 
 # Projections
-- [ ] `*` support in projections improvement: allow `*` to be present along with other fields (currently it's either `*` or fields list)
+- [ ] `...` support in projections improvement: allow `...` to be present along with other fields (currently it's either `...` or fields list)
 - [ ] ~~Add meta-projection to req input model projections?~~ Decided not needed for now.
 - [ ] Feature: Add `throws` to op projections: `:someModel throws ( Error(message) ~MyError(code) )`
 - [ ] Feature: Add `catch` to req projections: `:someModel catch ( Error(message) ~MyError(code) )`. This should guide marshallers/unmarshallers
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
-- [ ] allow merging multiple recursive projections (seems to be a hard task)
+- [ ] HARD allow merging multiple recursive projections
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
 - [x] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
@@ -108,7 +108,7 @@
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] bug: there seems to be a race in projections codegen. Uncomment parallel execution in `EpigraphJavaGenerator` and
   do `gradle --rerun-tasks :epigraph-builtin-services-service:compileJava`, sometimes `OutputDatumTypeProjection` won't
-  extend `OutputType_Projection`
+  extend `OutputType_Projection` (fixed?)
 - [ ] global named projections should be visible between files (it is somewhat visible now, only from the same namespace)
 - [ ] Make op projections merge tags from entity tails. Having an op projection like `:rec(a) :~ Bar:rec(b)` should
   allow request projection like `:rec(a) ~ BRec(b)` (if `Bar:rec` type is `BarRec`). Procedure should be:
@@ -118,8 +118,8 @@
 - [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
   be represented by entity-model projections pair, this leads to messy code
 - [x] req projections syntax: allow model tail references
-- [ ] BIG move flag from entity projections to fields/collection items. Because:
 - [ ] op output parser: check if 'include in default' fields have required parameters without defaults
+- [ ] BIG move flag from entity projections to fields/collection items. Because:
   ```
   outputProjection user: User = :(
     rec (

@@ -138,6 +138,8 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
 
   override def description: String = "[E] " + super.description
 
+  def tagMethodName(tagName: String): String = jn(tagName)
+
   protected def generate(
     reqVarProjectionFqn: Qn,
     reqTagProjectionEntryFqn: Qn,
@@ -149,7 +151,7 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
   /**
    * @return {@code ${tag.name}} tag projection
    */
-  public @Nullable ${tagGenerator.shortClassName} ${jn(tag.name)}() {
+  public @Nullable ${tagGenerator.shortClassName} ${tagMethodName(tag.name)}() {
     ${reqTagProjectionEntryFqn.last()} tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
     return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
   }
