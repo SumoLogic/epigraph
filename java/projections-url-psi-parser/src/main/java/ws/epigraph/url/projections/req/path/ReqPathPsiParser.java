@@ -24,7 +24,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.*;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -213,11 +212,7 @@ public final class ReqPathPsiParser {
 
     if (opFieldEntry == null)
       throw new PsiProcessingException(
-          String.format(
-              "Field '%s' is not supported by operation, supported fields: {%s}",
-              fieldName,
-              ProjectionUtils.listFields(op.fieldProjections().keySet())
-          ),
+          ProjectionsParsingUtil.unsupportedFieldMsg(fieldName, op.fieldProjections().keySet()),
           fieldPathEntryPsi.getQid(),
           context
       );

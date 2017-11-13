@@ -98,7 +98,7 @@ public final class RecordModelProjectionHelper {
       if (field == null)
         throw new IllegalArgumentException(
             String.format("Field '%s' does not belong to record model '%s'. Known fields: %s",
-                fieldName, model.name(), ProjectionUtils.listFields(modelFieldNames)
+                fieldName, model.name(), ProjectionUtils.listStrings(modelFieldNames)
             )
         );
 

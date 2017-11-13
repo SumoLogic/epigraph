@@ -1229,11 +1229,7 @@ public final class ReqBasicProjectionPsiParser {
     OpFieldProjectionEntry opFieldProjectionEntry = opFields.get(fieldName);
     if (opFieldProjectionEntry == null) {
       throw new PsiProcessingException(
-          String.format(
-              "Field '%s' is not supported, supported fields: (%s)",
-              fieldName,
-              ProjectionUtils.listFields(opFields.keySet())
-          ),
+          ProjectionsParsingUtil.unsupportedFieldMsg(fieldName, opFields.keySet()),
           psi.getQid(),
           context
       );
@@ -1400,11 +1396,7 @@ public final class ReqBasicProjectionPsiParser {
 
         if (opFieldProjectionEntry == null)
           context.addError(
-              String.format(
-                  "Field '%s' is not supported, supported fields: (%s)",
-                  fieldName,
-                  ProjectionUtils.listFields(opFields.keySet())
-              ),
+              ProjectionsParsingUtil.unsupportedFieldMsg(fieldName, opFields.keySet()),
               fieldProjectionPsi
           );
         else {

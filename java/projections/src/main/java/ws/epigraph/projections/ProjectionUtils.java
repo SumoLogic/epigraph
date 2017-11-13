@@ -46,7 +46,7 @@ public final class ProjectionUtils {
     return res;
   }
 
-  public static @NotNull String listFields(@Nullable Collection<String> fieldNames) {
+  public static @NotNull String listStrings(@Nullable Collection<String> fieldNames) {
     if (fieldNames == null) return "<none>";
     return String.join(",", fieldNames);
   }

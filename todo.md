@@ -130,6 +130,10 @@
   ```
   By the same reason flag should be moved from models to tags.
   Think about how this flag is going to be passed around. Projection + flag in the signatures?
+- [ ] req projections codegen: try to give better names to ((built-in?) primitive?) field projections, i.e.
+  ```
+  .firstName.OutputStringProjection => .firstName.OutputFirstNameProjection
+  ```
 
 # Operations
 

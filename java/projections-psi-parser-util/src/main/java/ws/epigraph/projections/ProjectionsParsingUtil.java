@@ -29,6 +29,7 @@ import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
+import ws.epigraph.util.WordUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -224,7 +225,6 @@ public final class ProjectionsParsingUtil {
     return type;
   }
 
-
   public static EntityTypeApi getEntityType(
       @NotNull TypeRef typeRef,
       boolean allowNull,
@@ -285,7 +285,7 @@ public final class ProjectionsParsingUtil {
     final TP tagProjection = op.tagProjections().get(tagName);
     if (tagProjection == null) {
       throw new PsiProcessingException(
-          String.format("Tag '%s' is not supported by operation, supported tags: {%s}", tagName, listTags(op)),
+          unsupportedTagMsg(tagName, op.tagProjections().keySet()),
           location,
           context
       );
@@ -293,36 +293,36 @@ public final class ProjectionsParsingUtil {
     return tagProjection;
   }
 
-  /**
-   * Finds default tags for a given {@code type}
-   * <p>
-   * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
-   */
-  public static @Nullable <
-      MP extends GenModelProjection<?, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>
-      >
-  TagApi findSelfOrRetroTag(
-      @NotNull DataTypeApi dataType,
-      @Nullable VP op,
-      @NotNull TextLocation location,
-      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-
-    TagApi retroTag = dataType.retroTag();
-    if (retroTag != null)
-      return retroTag;
-
-    TypeApi type = dataType.type();
-    if (type.kind() != TypeKind.ENTITY) {
-      DatumTypeApi datumType = (DatumTypeApi) type;
-      final @NotNull TagApi self = datumType.self();
-      if (op != null) getTagProjection(self.name(), op, location, context); // check that op contains it
-      return self;
-    }
-
-    return null;
-  }
+//  /**
+//   * Finds default tags for a given {@code type}
+//   * <p>
+//   * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
+//   */
+//  public static @Nullable <
+//      MP extends GenModelProjection<?, ?, ?, ?>,
+//      TP extends GenTagProjectionEntry<TP, MP>,
+//      VP extends GenVarProjection<VP, TP, MP>
+//      >
+//  TagApi findSelfOrRetroTag(
+//      @NotNull DataTypeApi dataType,
+//      @Nullable VP op,
+//      @NotNull TextLocation location,
+//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
+//
+//    TagApi retroTag = dataType.retroTag();
+//    if (retroTag != null)
+//      return retroTag;
+//
+//    TypeApi type = dataType.type();
+//    if (type.kind() != TypeKind.ENTITY) {
+//      DatumTypeApi datumType = (DatumTypeApi) type;
+//      final @NotNull TagApi self = datumType.self();
+//      if (op != null) getTagProjection(self.name(), op, location, context); // check that op contains it
+//      return self;
+//    }
+//
+//    return null;
+//  }
 
   public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getEntityTail(
       @NotNull VP vp,
@@ -525,5 +525,24 @@ public final class ProjectionsParsingUtil {
           location,
           context
       );
+  }
+
+  public static String unsupportedObjMsg(String objName, String objNamePl, String name, Collection<String> supported) {
+    return String.format(
+        "%s '%s' is not supported%supported %s: (%s)",
+        objName,
+        name,
+        WordUtil.suggest(name, supported, ", did you mean '%s'? S", ", s"),
+        objNamePl.toLowerCase(),
+        ProjectionUtils.listStrings(supported)
+    );
+  }
+
+  public static String unsupportedFieldMsg(String name, Collection<String> supported) {
+    return unsupportedObjMsg("Field", "fields", name, supported);
+  }
+
+  public static String unsupportedTagMsg(String name, Collection<String> supported) {
+    return unsupportedObjMsg("Tag", "tags", name, supported);
   }
 }

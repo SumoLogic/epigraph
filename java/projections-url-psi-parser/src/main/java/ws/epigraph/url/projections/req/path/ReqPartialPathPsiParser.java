@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.*;
 import ws.epigraph.projections.ProjectionUtils;
@@ -381,11 +382,7 @@ public final class ReqPartialPathPsiParser {
 
     if (opFieldEntry == null)
       throw new PsiProcessingException(
-          String.format(
-              "Field '%s' is not supported by operation, supported fields: {%s}",
-              fieldName,
-              ProjectionUtils.listFields(op.fieldProjections().keySet())
-          ),
+          ProjectionsParsingUtil.unsupportedFieldMsg(fieldName, op.fieldProjections().keySet()),
           psi.getQid(),
           context
       );
