@@ -163,6 +163,7 @@ public interface MapDatum extends Datum {
           super(type);
           // TODO check types are compatible
           this.raw = raw; // TODO validate raw internals is kosher (i.e. contains static datums)?
+          if (raw == null) throw new IllegalArgumentException();
           this.value = immValConstructor.apply(new Val.Imm.Raw.DatumVal(this));
         }
 

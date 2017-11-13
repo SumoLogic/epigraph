@@ -124,9 +124,17 @@ public abstract class StringType extends PrimitiveType<String> {
       return datumBuilderConstructor.apply(new StringDatum.Builder.Raw(this, val));
     }
 
+    public final @NotNull MyDatumBuilder createBuilder(@NotNull CharSequence val) {
+      return createBuilder(val.toString());
+    }
+
     @Override
     public final @NotNull MyImmVal createValueOfNullable(@Nullable String val) {
       return val == null ? createValue(null) : createBuilder(val).asValue().toImmutable();
+    }
+
+    public final @NotNull MyImmVal createValueOfNullable(@Nullable CharSequence val) {
+      return createValueOfNullable(val == null ? null : val.toString());
     }
 
     @Override

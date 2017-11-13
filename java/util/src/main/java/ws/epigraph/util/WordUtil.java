@@ -37,7 +37,7 @@ public final class WordUtil {
     return toDistance.entrySet().stream()
         .filter(e -> e.getValue() >= threshold)
         .max(Map.Entry.comparingByValue())
-        .map(e -> String.format(format, e.getValue()))
+        .map(e -> String.format(format, e.getKey()))
         .orElse(noSuggestion);
   }
 
