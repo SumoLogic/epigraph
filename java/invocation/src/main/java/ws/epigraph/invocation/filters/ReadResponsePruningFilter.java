@@ -61,16 +61,11 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
 
                 return InvocationResult.success(new ReadOperationResponse<>((D) replaceData.newData));
               } else if (pruningResult instanceof ReqOutputRequiredDataPruner.RemoveData) {
-                return InvocationResult.success(new ReadOperationResponse<>((D) null));
+                // we can't remove top-level data, so this becomes an error
+                // return InvocationResult.success(new ReadOperationResponse<>((D) null));
+                return fail(((ReqOutputRequiredDataPruner.RemoveData) pruningResult).reason);
               } else if (pruningResult instanceof ReqOutputRequiredDataPruner.Fail) {
-                ReqOutputRequiredDataPruner.Fail fail = (ReqOutputRequiredDataPruner.Fail) pruningResult;
-                final ReqOutputRequiredDataPruner.Reason reason = fail.reason;
-                return InvocationResult.failure(
-                    new InvocationErrorImpl(
-                        reason.isOperationError ? HttpStatusCode.INTERNAL_OPERATION_ERROR
-                                                : HttpStatusCode.PRECONDITION_FAILED, reason.toString()
-                    )
-                );
+                return fail(((ReqOutputRequiredDataPruner.Fail) pruningResult).reason);
               } // else keep
 
               return InvocationResult.success(readOperationResponse);
@@ -80,5 +75,15 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
             InvocationResult::failure
         )
     );
+  }
+
+  protected <R> InvocationResult<R> fail(ReqOutputRequiredDataPruner.Reason reason) {
+    return InvocationResult.failure(
+        new InvocationErrorImpl(
+            reason.isOperationError ? HttpStatusCode.INTERNAL_OPERATION_ERROR
+                                    : HttpStatusCode.PRECONDITION_FAILED, reason.toString()
+        )
+    );
+
   }
 }

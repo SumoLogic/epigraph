@@ -383,7 +383,7 @@ public class ReqOutputRequiredDataPruner {
   }
 
   public static class RemoveData implements DataPruningResult { // remove field or map entry
-    final @NotNull Reason reason;
+    public final @NotNull Reason reason;
 
     RemoveData(final @NotNull Reason reason) {this.reason = reason;}
 

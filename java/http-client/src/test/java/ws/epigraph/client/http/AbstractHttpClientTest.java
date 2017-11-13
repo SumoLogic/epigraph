@@ -144,6 +144,17 @@ public abstract class AbstractHttpClientTest {
   }
 
   @Test
+  public void testFailedRequired() throws ExecutionException, InterruptedException {
+    testReadError(
+        UsersResourceDeclaration.readOperationDeclaration,
+        "[666]+:+id",
+        412,
+        "Required data is a [412] error: [666] : Required tag 'id' is a [404] error: User '666' not found",
+        null
+    );
+  }
+
+  @Test
   public void testSimpleCreateWithoutProjection() throws ExecutionException, InterruptedException {
     testSimpleCreate(null);
   }
@@ -308,7 +319,8 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "/8:record/bestFriend:id",
-        "( 8: < record: { bestFriend: < id: null > } > )"  // todo double check if this is correct. Technically we asked for it?
+        "( 8: < record: { bestFriend: < id: null > } > )"
+        // todo double check if this is correct. Technically we asked for it?
     );
 
     // change it back
