@@ -26,7 +26,7 @@
   - [ ] server and client `ServerProtocol.read*` methods must return `CompletableFuture` of results and stay async
   - [ ] `AbstractRemoteOperationInvocation` must use new push readers instead of in-memory buffering `BasicAsyncResponseConsumer`
   - See also: https://github.com/FasterXML/jackson-core/issues/57
-- [ ] remove `requestParams` from requests/URLs?
+- [ ] better support `requestParams` in requests/URLs. Should be guided by op declaraions
 - [ ] generated collections.add: take native primitives as arguments and do auto-wrapping
 - [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
 - [x] better implementation of schema annotations. Get inspiration from Java annotations?
@@ -34,15 +34,7 @@
 - [ ] codegen: need better framework for generating imports and imported names
   - try building strings with markers inside: "$imports", "$typeref{fqn,shortname}". Keep in mind that types can be
     nested, e.g. "some.package.Foo<some.other.Bar>"
-- [x] codegen: `_resources/*` package name should be in lower case
-- [x] codegen: primitive `String` setters should accept `CharSequence`
-- [x] codegen: projection parameter getters should only unwrap built-in primitives (but not, say, `UserId`)
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
-- [x] codegen bug: see `childProjectionWithUnusedParent.epigraph` and `tests-schema-java.gradle`
-- [x] codegen bug: impossible to have tail type as a field, see `childUsedByParent.epigraph`
-- [x] codegen: a hierarchy of `N` record types with `N` new fields each will result in `N^3` lines of code, since
-      every new type assembler has to include all parent field assemblers. Proposed way out:
-      https://sumologic.slack.com/archives/D0JPD1FKN/p1509569946000092
 
 # Type system
 - [ ] Enums
@@ -54,7 +46,6 @@
 - [ ] Feature: add `final` on fields. Codegen: record builders should implement special `FinalFields` interfaces which should inherit each other
 
 # Schema compiler
-- [x] Annotations support. Should they be inherited? Annotations on annotations?
 - [ ] Verbose mode? (propagate it from gradle/maven)
 - [ ] Check that anonymous map keys are datum (not data) type
 - [ ] Generated artifacts index format (json? yaml? both?)
@@ -75,24 +66,17 @@
 - [ ] handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`, see AbstractVarProjection:mergeTags (allow merging recursive and non-recursive projections)
 - [ ] HARD allow merging multiple recursive projections
 - [ ] generated req projections should have equals/hashcode (use `GenProjectionsComparator`)
-- [x] op input projections: move `required` from fields/map keys to vars for consistency reasons
 - [ ] key projections: rename to specs? we now have key model projections inside op key projections which creates naming mess
 - [ ] ~~op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`~~
 - [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
-- [x] bug: `(a, b) ~Foo(c) ~Bar $bar = (d)` => `$bar` will include (d,c) but not (a,b)
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
-- [x] sort out 'path steps' for input projections: input data should respect them
 - [ ] consider removing model kinds separation from grammar/psi to allow more flexible syntax, e.g. `friendsMap * ( foo )`
 - [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
       in filter chains, otherwise it won't affect projections constructed using builders.
       On the other hand if it only happens in filter chains it will be hard to report errors with pointers to the original parsed string.
-- [x] reverse the meaning of `+` on op output projections: it should be used to mark "expensive" (do not include by default) fields
-  - if field is datum type: return `$self`
-  - else if field has retro: use retro tag
-  - else return all tags not marked as `+`
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections. In the future: nullable fields should not be included in default req output
 - [ ] implement https://github.com/SumoLogic/epigraph/wiki/default-projections
   - [ ] `ReqBasicProjectionPsiParser` should take `Nullable` data, traverse it and pass to the default projection constructor
@@ -117,9 +101,8 @@
   - else add it as main projection tag's tail
 - [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
   be represented by entity-model projections pair, this leads to messy code
-- [x] req projections syntax: allow model tail references
 - [ ] op output parser: check if 'include in default' fields have required parameters without defaults
-- [ ] BIG move flag from entity projections to fields/collection items. Because:
+- [ ] BIG move flag from entity back projections to fields/collection items. Because:
   ```
   outputProjection user: User = :(
     rec (
@@ -138,11 +121,9 @@
 # Operations
 
 # Service
-- [x] http client `ServerProtocol`: optimize create/update payloads if they contain only one field, use paths in input projections
 
 # Build
 - Gradle
-  -[ ] ~~light-psi assembly: simplify the code, see `build.gradle` notes on using class symbol tables instead of ASM~~
 - Maven
 
 # Cleanup
