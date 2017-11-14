@@ -335,11 +335,7 @@ public final class ProjectionsParsingUtil {
 
     if (targetType == null) {
       throw new PsiProcessingException(
-          String.format(
-              "Unknown tail type '%s'. Supported tail types: {%s}",
-              tailTypeRef.toString(),
-              String.join(", ", supportedEntityTailTypes(vp))
-          ), location, ctx
+          unsupportedTagMsg(tailTypeRef.toString(), supportedEntityTailTypes(vp)), location, ctx
       );
     }
 
@@ -347,12 +343,7 @@ public final class ProjectionsParsingUtil {
 
     if (!hasTail(vp, targetType)) {
       throw new PsiProcessingException(
-          String.format(
-              "Polymorphic tail for type '%s' is not supported. Supported tail types: {%s}",
-              targetType.name(),
-              String.join(", ", supportedEntityTailTypes(vp))
-          ),
-          location, ctx
+          unsupportedTagMsg(tailTypeRef.toString(), supportedEntityTailTypes(vp)), location, ctx
       );
     }
 
@@ -422,11 +413,7 @@ public final class ProjectionsParsingUtil {
 
     if (targetType == null) {
       throw new PsiProcessingException(
-          String.format(
-              "Unknown tail type '%s'. Supported tail types: {%s}",
-              tailTypeRef.toString(),
-              String.join(", ", supportedModelTailTypes(mp))
-          ), location, ctx
+          unsupportedTailMsg(tailTypeRef.toString(), supportedModelTailTypes(mp)), location, ctx
       );
     }
     return targetType;
@@ -544,5 +531,9 @@ public final class ProjectionsParsingUtil {
 
   public static String unsupportedTagMsg(String name, Collection<String> supported) {
     return unsupportedObjMsg("Tag", "tags", name, supported);
+  }
+
+  public static String unsupportedTailMsg(String name, Collection<String> supported) {
+    return unsupportedObjMsg("Tail type", "tail types", name, supported);
   }
 }

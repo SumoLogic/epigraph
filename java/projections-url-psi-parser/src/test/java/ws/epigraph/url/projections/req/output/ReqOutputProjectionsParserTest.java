@@ -570,7 +570,7 @@ public class ReqOutputProjectionsParserTest {
       fail();
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage(), e.getMessage()
-          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}"));
+          .contains("Tag 'X' is not supported, supported tags: (ws.epigraph.tests.User,ws.epigraph.tests.User2)"));
     }
   }
 
@@ -585,7 +585,7 @@ public class ReqOutputProjectionsParserTest {
       assertTrue(
           message,
           message.contains(
-              "Polymorphic tail for type 'ws.epigraph.tests.SingleTagEntity' is not supported. Supported tail types: {ws.epigraph.tests.User, ws.epigraph.tests.User2}")
+              "Tag 'ws.epigraph.tests.SingleTagEntity' is not supported, did you mean 'ws.epigraph.tests.User'? Supported tags: (ws.epigraph.tests.User,ws.epigraph.tests.User2)")
       );
     }
   }
@@ -597,7 +597,7 @@ public class ReqOutputProjectionsParserTest {
       fail();
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
       assertTrue(e.getMessage(), e.getMessage()
-          .contains("Unknown tail type 'X'. Supported tail types: {ws.epigraph.tests.UserRecord}"));
+          .contains("Tail type 'X' is not supported, supported tail types: (ws.epigraph.tests.UserRecord)"));
     }
   }
 
