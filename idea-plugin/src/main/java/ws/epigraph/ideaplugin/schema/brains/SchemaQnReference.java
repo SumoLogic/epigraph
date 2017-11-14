@@ -75,7 +75,7 @@ public class SchemaQnReference extends PsiReferenceBase<SchemaQnSegment> impleme
 
   @Override
   public final @Nullable PsiElement resolve() {
-    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, true, false);
+    return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, cachedResolver, false, false);
   }
 
   @Override
