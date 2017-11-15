@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import java.util.regex.Matcher
+
 buildscript {
   dependencies {
     classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.9.+"
@@ -21,24 +23,48 @@ buildscript {
 }
 
 plugins {
-  id 'nebula.dependency-recommender' version '3.6.3' // '4.3.0' has a bug: https://github.com/nebula-plugins/nebula-dependency-recommender-plugin/issues/43 -- this holds us back from gradle 4
   id 'nebula.maven-publish' version '5.1.0'
 }
 
 // NB not compatible with gradle 4 yet, see https://github.com/passy/build-time-tracker-plugin/blob/master/CHANGELOG.md
 apply plugin: "build-time-tracker"
 
+def pom = new XmlParser().parse(file("$rootDir/pom.xml"))
+
+// load properties from pom.xml, e.g. 'scala.compat.version' -> '2.11'
+def pomProps = [:]
+pom.properties.'*'.each { prop -> pomProps.put(prop.name().localPart, prop.text()) }
+
+// resolve properties, e.g. '${scala.compat.version}.11 -> '2.11.11'
+def resolveProps (s, props) {
+  if (s =~ ~/.*\$\{(.+)\}.*/) {
+    def match = Matcher.lastMatcher[0][1]
+    return resolveProps(s.replace("\${$match}", props[match]), props)
+  }
+  return s
+}
+
+def javaSourceVersion = pomProps['maven.compiler.source']
+def javaTargetVersion = pomProps['maven.compiler.target']
+
 allprojects {
   apply plugin: 'idea'
-  apply plugin: 'nebula.dependency-recommender'
   apply plugin: 'nebula.maven-publish'
   apply plugin: 'nebula.maven-resolved-dependencies'
 
   group = epigraphGroup
   version = epigraphVersion
 
-  dependencyRecommendations {
-    mavenBom file: file("$rootDir/pom.xml")
+  pom.dependencyManagement.dependencies.dependency.each { dep ->
+    def version = resolveProps("${dep.groupId.text()}:${dep.artifactId.text()}:${dep.version.text()}", pomProps)
+    configurations.all {
+      // https://github.com/typesafehub/zinc/issues/87#issuecomment-139236549
+      if (it.name != 'zinc') {
+        resolutionStrategy {
+          force version
+        }
+      }
+    }
   }
 }
 
@@ -49,15 +75,15 @@ subprojects {
   }
 
   tasks.withType(JavaCompile) {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = javaSourceVersion
+    targetCompatibility = javaTargetVersion
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Xdiags:verbose"
   }
 
   tasks.withType(ScalaCompile) {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = javaSourceVersion
+    targetCompatibility = javaTargetVersion
 
     ScalaCompileOptions.metaClass.daemonServer = true
     ScalaCompileOptions.metaClass.fork = true
@@ -75,8 +101,8 @@ subprojects {
 // importing gradle project from IDEA is preferred to using 'gradle idea'
 idea {
   project {
-    jdkName = javaVersion
-    languageLevel = javaVersion
+    jdkName = javaSourceVersion
+    languageLevel = javaSourceVersion
     vcs = 'Git'
   }
 }
