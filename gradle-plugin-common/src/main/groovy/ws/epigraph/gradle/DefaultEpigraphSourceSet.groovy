@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ class DefaultEpigraphSourceSet implements EpigraphSourceSet {
   private final SourceDirectorySet epigraph
 
   DefaultEpigraphSourceSet(String displayName, SourceDirectorySetFactory sourceDirectorySetFactory) {
-    epigraph = sourceDirectorySetFactory.create(displayName + ' Epigraph Schema source')
+    epigraph = sourceDirectorySetFactory.create(EpigraphPluginConvention.NAME, displayName + ' Epigraph Schema source')
     epigraph.getFilter().include('**/*.' + EpigraphConstants.SCHEMA_FILE_EXTENSION)
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,13 +45,13 @@ class EpigraphCompilerPlugin implements Plugin<ProjectInternal> {
   private final Instantiator instantiator
 
   @Inject
-  public EpigraphCompilerPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
+  EpigraphCompilerPlugin(SourceDirectorySetFactory sourceDirectorySetFactory, Instantiator instantiator) {
     this.sourceDirectorySetFactory = sourceDirectorySetFactory
     this.instantiator = instantiator
   }
 
   @Override
-  public void apply(ProjectInternal project) {
+  void apply(ProjectInternal project) {
     PluginManager pluginManager = project.getPluginManager()
     pluginManager.apply(BasePlugin.class)
     pluginManager.apply(LanguageBasePlugin.class)
@@ -90,9 +90,15 @@ class EpigraphCompilerPlugin implements Plugin<ProjectInternal> {
       sourceSet.getAllSource().source(epigraphDirectorySet)
 
       // create compile artifacts task for this source set
-      def classesDir = new File(new File(buildDir, "classes"), sourceSet.name) // any way to get it from standard code?
-//      def classesDir = sourceSet.getOutput().classesDir // this is null
+      // any way to get it from standard code?
+      def classesDir = new File(new File(buildDir, "classes"), sourceSet.name)
       sourceSet.getOutput().classesDir = classesDir
+
+      // todo enable this to deal with gradle warning. Not allowed for now though:
+      // https://github.com/gradle/gradle/issues/2338
+      // see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSetOutput.html , classesDir
+      // def classesDir = new File(new File(new File(buildDir, "classes"), epigraphDirectorySet.name), sourceSet.name)
+      // sourceSet.output.classesDirs.add project.files(classesDir)
 
       String compileTaskName = sourceSet.getCompileTaskName('Epigraph')
       CompileTask compileTask = tasks.create(compileTaskName, CompileTask.class)
