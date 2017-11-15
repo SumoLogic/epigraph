@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,14 @@ package ws.epigraph.gradle
 
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-@ParallelizableTask
 class CompileTask extends SourceTask implements EpigraphCompileTaskBase {
+  // todo use WorkerExecutor to run stuff in parallel
   private File destinationDir;
 
   CompileTask() {}

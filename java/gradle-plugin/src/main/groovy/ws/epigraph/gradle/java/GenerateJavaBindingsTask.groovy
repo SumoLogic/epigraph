@@ -21,15 +21,14 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import ws.epigraph.gradle.EmptyFileTree
 import ws.epigraph.gradle.EpigraphCompileTaskBase
 import ws.epigraph.java.EpigraphJavaGenerator
 import ws.epigraph.java.Settings
 
-@ParallelizableTask
 class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTaskBase {
+  // todo use WorkerExecutor to run stuff in parallel
   private String sourceSetName
   private File destinationSourcesDir
   private File destinationResourcesDir
@@ -49,7 +48,7 @@ class GenerateJavaBindingsTask extends DefaultTask implements EpigraphCompileTas
     Server server = project.epigraph.server
     Client client = project.epigraph.client
     boolean java8Annotations = project.epigraph.java8Annotations
-    
+
     def settings = new Settings(
         new Settings.ServerSettings(
             server != null && server.generate,

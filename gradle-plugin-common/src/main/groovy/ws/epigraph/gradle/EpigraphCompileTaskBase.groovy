@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.ParallelizableTask
 import ws.epigraph.compiler.*
 
 import java.nio.charset.StandardCharsets
@@ -32,8 +31,8 @@ import java.util.jar.JarFile
 import static EpigraphConstants.SCHEMA_FILE_EXTENSION
 import static EpigraphConstants.SCHEMA_FILE_PATH_PATTERN
 
-@ParallelizableTask
 trait EpigraphCompileTaskBase {
+  // todo use WorkerExecutor to run stuff in parallel
   // implementations decide on their own if they want to extend `DefaultTask` or `SourceTask`
 
   private Configuration configuration
