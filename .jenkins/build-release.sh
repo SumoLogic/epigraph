@@ -10,8 +10,7 @@
 
 set -e
 
-# by some reason gradle fails to download plex-utils on jenkins slaves. disabling for now
-BUILD_PLUGIN=false
+BUILD_PLUGIN=true
 
 while getopts ":v:t:" opt; do
   case $opt in
