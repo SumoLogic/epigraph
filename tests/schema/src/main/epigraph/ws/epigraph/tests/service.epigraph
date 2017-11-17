@@ -51,7 +51,8 @@ resource users: PersonMap {
           friendsMap [] :(
             id,
             `record` ( id, firstName, lastName )
-          )
+          ),
+          friendRecordMap [] ( firstName )
         )
       ):~User +:(
         id,

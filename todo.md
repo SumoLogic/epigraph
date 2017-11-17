@@ -35,6 +35,7 @@
   - try building strings with markers inside: "$imports", "$typeref{fqn,shortname}". Keep in mind that types can be
     nested, e.g. "some.package.Foo<some.other.Bar>"
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
+- [ ] BUG in path+data prunser, see `AbstractHttpServerTest::testRequiredInsideMapInPath`
 
 # Type system
 - [ ] Enums

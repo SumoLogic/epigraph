@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.*;
 import static ws.epigraph.client.http.RequestFactory.*;
+import static ws.epigraph.test.TestUtil.lines;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -90,7 +91,26 @@ public abstract class AbstractHttpClientTest {
     testRead(
         UsersResourceDeclaration.readOperationDeclaration,
         "[1,2]",
-        "( 1: < record: { firstName: 'First1', lastName: 'Last1' } >, 2: < record: { firstName: 'First2', lastName: 'Last2' } > )"
+        lines(
+            "(",
+            "  1: <",
+            "    record: {",
+            "      firstName: 'First1',",
+            "      lastName: 'Last1',",
+            "      friendsMap: ( 'Alfred': < id: 1, record: { firstName: ERROR(404, 'not found') } > ),",
+            "      friendRecordMap: ( 'Alfred': { firstName: ERROR(404, 'not found') } )",
+            "    }",
+            "  >,",
+            "  2: <",
+            "    record: {",
+            "      firstName: 'First2',",
+            "      lastName: 'Last2',",
+            "      friendsMap: ( 'Alfred': < id: 1, record: { firstName: ERROR(404, 'not found') } > ),",
+            "      friendRecordMap: ( 'Alfred': { firstName: ERROR(404, 'not found') } )",
+            "    }",
+            "  >",
+            ")"
+        )
     );
   }
 

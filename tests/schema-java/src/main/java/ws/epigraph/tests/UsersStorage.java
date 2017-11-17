@@ -93,6 +93,15 @@ public class UsersStorage {
                     .setLastName("Last" + (id + 3))
                 )
             )
+        )
+        .setFriendsMap(String_Person_Map.create()
+            .put$("Alfred", Person.create()
+                .setId(PersonId.create(1))
+                .setRecord(PersonRecord.create().setFirstName_Error(new ErrorValue(404, "not found")))
+            )
+        )
+        .setFriendRecordMap(String_PersonRecord_Map.create()
+            .put("Alfred", PersonRecord.create().setFirstName_Error(new ErrorValue(404, "not found")))
         );
 
     if (id != 10)

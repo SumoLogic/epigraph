@@ -90,7 +90,11 @@ public abstract class AbstractHttpServerTest {
 
   @Test
   public void testGetWithDefault() throws IOException {
-    get("/users/1", 200, "{'firstName':'First1','lastName':'Last1'}");
+    get(
+        "/users/1",
+        200,
+        "{\"firstName\":\"First1\",\"lastName\":\"Last1\",\"friendsMap\":[{\"K\":\"Alfred\",\"V\":{\"id\":1,\"record\":{\"firstName\":{\"ERROR\":404,\"message\":\"not found\"}}}}],\"friendRecordMap\":[{\"K\":\"Alfred\",\"V\":{\"firstName\":{\"ERROR\":404,\"message\":\"not found\"}}}]}"
+    );
   }
 
   @Test
@@ -144,6 +148,18 @@ public abstract class AbstractHttpServerTest {
         ContentTypes.TEXT_UTF8
     );
   }
+
+//  @Test
+//  public void testRequiredInsideMapInPath() throws IOException {
+//    // todo this must NOT return null
+//    // in order to fix: pass 'path steps' to data pruner
+//    // any missing data inside path => fail (i.e. treat path components as required)
+//    get(
+//        "/users/10:record/friendRecordMap/'Alfred'(+firstName)",
+//        200,
+//        "{'firstName':'First10'}"
+//    );
+//  }
 
   @Test
   public void testRequiredInsideOptional() throws IOException {
