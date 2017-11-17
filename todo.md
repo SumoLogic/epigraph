@@ -73,6 +73,7 @@
 - [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
+  - do NOT mark default projection parts as `required` though
 - [ ] consider removing model kinds separation from grammar/psi to allow more flexible syntax, e.g. `friendsMap * ( foo )`
 - [ ] (?) post-parsing req projections validations/transformations should (also?) actually happen
       in filter chains, otherwise it won't affect projections constructed using builders.
@@ -117,6 +118,7 @@
   ```
   .firstName.OutputStringProjection => .firstName.OutputFirstNameProjection
   ```
+- [ ] req projections: flag should be correctly applied to defaults. `(+bestFriend)` => `(+bestFriend:+id)`
 
 # Operations
 
