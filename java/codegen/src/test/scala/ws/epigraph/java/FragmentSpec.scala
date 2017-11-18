@@ -26,49 +26,78 @@ import org.scalatest.{FlatSpec, Matchers}
 @RunWith(classOf[JUnitRunner])
 class FragmentSpec extends FlatSpec with Matchers {
   "Fragment" should "correctly interpolate empty lines" in {
+    import ws.epigraph.java.Fragment.emptyLine
 
-    Fragment.emptyLine.interpolate() shouldEqual ""
-
-    (Fragment.emptyLine + Fragment("foo")).interpolate() shouldEqual "foo"
-
-    (Fragment.emptyLine + Fragment.emptyLine + Fragment("foo")).interpolate() shouldEqual "foo"
-
-    (Fragment("foo") + Fragment.emptyLine).interpolate() shouldEqual "foo"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment.emptyLine).interpolate() shouldEqual "foo"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n") + Fragment.emptyLine).interpolate() shouldEqual "foo\n"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo\n\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\nbar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n\nbar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo\n") + Fragment.emptyLine + Fragment("\nbar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo\n") + Fragment.emptyLine + Fragment("\n")).interpolate() shouldEqual "foo\n\n"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n")).interpolate() shouldEqual "foo\n"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n\n")).interpolate() shouldEqual "foo\n\n"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n\n\n")).interpolate() shouldEqual "foo\n\n\n"
-
-    (Fragment("\n") + Fragment.emptyLine + Fragment("\nbar")).interpolate() shouldEqual "\n\nbar"
-
-    (Fragment("\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "\nbar"
-
-    (Fragment("\n\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "\n\nbar"
-
-    (Fragment("\n\n\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "\n\n\nbar"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
-
-    (Fragment("foo") + Fragment.emptyLine + Fragment("\n") + Fragment.emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
+    emptyLine.interpolate() shouldEqual ""
+    (emptyLine + Fragment("foo")).interpolate() shouldEqual "foo"
+    (emptyLine + emptyLine + Fragment("foo")).interpolate() shouldEqual "foo"
+    (Fragment("foo") + emptyLine).interpolate() shouldEqual "foo"
+    (Fragment("foo") + emptyLine + emptyLine).interpolate() shouldEqual "foo"
+    (Fragment("foo") + emptyLine + Fragment("\n") + emptyLine).interpolate() shouldEqual "foo\n"
+    (Fragment("foo") + emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo\n\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo") + emptyLine + Fragment("\nbar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo") + emptyLine + Fragment("\n\nbar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo\n") + emptyLine + Fragment("\nbar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo\n") + emptyLine + Fragment("\n")).interpolate() shouldEqual "foo\n\n"
+    (Fragment("foo") + emptyLine + Fragment("\n")).interpolate() shouldEqual "foo\n"
+    (Fragment("foo") + emptyLine + Fragment("\n\n")).interpolate() shouldEqual "foo\n\n"
+    (Fragment("foo") + emptyLine + Fragment("\n\n\n")).interpolate() shouldEqual "foo\n\n\n"
+    (Fragment("\n") + emptyLine + Fragment("\nbar")).interpolate() shouldEqual "\n\nbar"
+    (Fragment("\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "\nbar"
+    (Fragment("\n\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "\n\nbar"
+    (Fragment("\n\n\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "\n\n\nbar"
+    (Fragment("foo") + emptyLine + emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
+    (Fragment("foo") + emptyLine + Fragment("\n") + emptyLine + Fragment("bar")).interpolate() shouldEqual "foo\n\nbar"
   }
+
+//  it should "create fragments with correct short names" in {
+//    Fragment.import_(Qn.fromDotSeparated("Bar")).text shouldEqual "§ref[Bar,Bar]"
+//    Fragment.import_(Qn.fromDotSeparated("foo.Bar")).text shouldEqual "§ref[Bar,foo.Bar]"
+//    Fragment.import_(Qn.fromDotSeparated("foo.Bar[foo.Baz]")).text shouldEqual "§ref[Bar[foo.Baz],foo.Bar[foo.Baz]]"
+//  }
+
+  it should "correctly resolve imports" in {
+    import ws.epigraph.java.Fragment.{emptyLine, imp, imports}
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }hello world
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "hello world"
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }${ imp("java.lang.String") }
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "String"
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }${ imp("java.lang.String") }
+         |${ imp("foo.String") }
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "String\nfoo.String"
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }${ imp("foo.String") }
+         |${ imp("java.lang.String") }
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "foo.String\nString"
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }${ imp(s"java.lang.String<${ imp("foo.String") }>") }
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "String<foo.String>"
+
+    Fragment(
+      s"""
+         |${ imports }${ emptyLine }${ imp(s"foo.String<${ imp("java.lang.String") }>") }
+       """.stripMargin.trim
+    ).interpolate() shouldEqual "foo.String<String>"
+  }
+
 }
