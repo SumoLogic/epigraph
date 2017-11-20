@@ -38,7 +38,10 @@ import java.util.stream.Collectors;
 public class ReqOutputRequiredDataPruner {
   private final DataTraversalContext context = new DataTraversalContext();
 
-  public @NotNull DataPruningResult pruneData(@NotNull Data data, @NotNull ReqEntityProjection projection) {
+  public @NotNull DataPruningResult pruneData(
+      @NotNull Data data,
+      @NotNull ReqEntityProjection projection,
+      int pathSteps) {
 
     projection = projection.normalizedForType(data.type());
 
@@ -61,7 +64,7 @@ public class ReqOutputRequiredDataPruner {
         if (datum != null) {
           final DatumPruningResult datumPruningResult = context.withStackItem(
               new DataTraversalContext.TagStackItem(tag),
-              () -> pruneDatum(datum, modelProjection)
+              () -> pruneDatum(datum, modelProjection, Math.max(0, pathSteps - 1))
           );
 
           if (datumPruningResult instanceof Fail)
@@ -106,7 +109,7 @@ public class ReqOutputRequiredDataPruner {
         if (error == null) {
           if (val.getDatum() == null)
             return new RemoveData(error("Required data is null"));
-        } else
+        } else if (pathSteps == 0)
           return new RemoveData(error(String.format(
               "Required data is a [%d] error: %s",
               error.statusCode(),
@@ -132,17 +135,18 @@ public class ReqOutputRequiredDataPruner {
 
   public @NotNull DatumPruningResult pruneDatum(
       @NotNull Datum datum,
-      @NotNull ReqModelProjection<?, ?, ?> projection) {
+      @NotNull ReqModelProjection<?, ?, ?> projection,
+      int pathSteps) {
 
     projection = projection.normalizedForType(datum.type());
 
     switch (datum.type().kind()) {
       case RECORD:
-        return pruneRecordDatum((RecordDatum) datum, (ReqRecordModelProjection) projection);
+        return pruneRecordDatum((RecordDatum) datum, (ReqRecordModelProjection) projection, pathSteps);
       case MAP:
-        return pruneMapDatum((MapDatum) datum, (ReqMapModelProjection) projection);
+        return pruneMapDatum((MapDatum) datum, (ReqMapModelProjection) projection, pathSteps);
       case LIST:
-        return pruneListDatum((ListDatum) datum, (ReqListModelProjection) projection);
+        return pruneListDatum((ListDatum) datum, (ReqListModelProjection) projection, pathSteps);
       default:
         return Keep.INSTANCE;
     }
@@ -150,7 +154,8 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneRecordDatum(
       @NotNull RecordDatum datum,
-      @NotNull ReqRecordModelProjection projection) {
+      @NotNull ReqRecordModelProjection projection,
+      int pathSteps) {
 
     final Map<@NotNull String, @NotNull ? extends Data> fieldsData = datum._raw().fieldsData();
     final Map<String, Data> replacements = new HashMap<>();
@@ -170,7 +175,7 @@ public class ReqOutputRequiredDataPruner {
         final Data data0 = data;
         final DataPruningResult dataPruningResult = context.withStackItem(
             new DataTraversalContext.FieldStackItem(field),
-            () -> pruneData(data0, dataProjection)
+            () -> pruneData(data0, dataProjection, Math.max(0, pathSteps - 1))
         );
 
         if (dataPruningResult instanceof Fail)
@@ -218,12 +223,12 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneMapDatum(
       @NotNull MapDatum datum,
-      @NotNull ReqMapModelProjection projection) {
+      @NotNull ReqMapModelProjection projection,
+      int pathSteps) {
 
     final ReqEntityProjection itemsProjection = projection.itemsProjection();
     final boolean keysRequired = projection.keysRequired();
     final Map<Datum.Imm, Data> replacements = new HashMap<>();
-
 
     List<ReqKeyProjection> projectionKeys = projection.keys();
     Collection<Datum.Imm> keys =
@@ -239,7 +244,7 @@ public class ReqOutputRequiredDataPruner {
         final DataPruningResult prunedData =
             context.withStackItem(
                 new DataTraversalContext.MapKeyStackItem(key),
-                () -> pruneData(data0, itemsProjection)
+                () -> pruneData(data0, itemsProjection, Math.max(0, pathSteps - 1))
             );
 
         if (prunedData instanceof RemoveData) {
@@ -287,7 +292,11 @@ public class ReqOutputRequiredDataPruner {
 
   private @NotNull DatumPruningResult pruneListDatum(
       @NotNull ListDatum datum,
-      @NotNull ReqListModelProjection projection) {
+      @NotNull ReqListModelProjection projection,
+      int pathSteps) {
+
+    if (pathSteps > 0)
+      throw new IllegalArgumentException("Lists can't be in the path");
 
     final ReqEntityProjection itemsProjection = projection.itemsProjection();
     final Map<Integer, Data> replacements = new HashMap<>();
@@ -300,7 +309,7 @@ public class ReqOutputRequiredDataPruner {
       final DataPruningResult prunedData =
           context.withStackItem(
               new DataTraversalContext.ListIndexStackItem(index),
-              () -> pruneData(data0, itemsProjection)
+              () -> pruneData(data0, itemsProjection, 0)
           );
 
       if (prunedData instanceof RemoveData) {

@@ -40,6 +40,8 @@ import static junit.framework.TestCase.assertTrue;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputRequiredDataPrunerTest {
+  // todo tests with pathSteps > 0
+
   private final ReqOutputRequiredDataPruner pruner = new ReqOutputRequiredDataPruner();
 
   @Test
@@ -285,7 +287,7 @@ public class ReqOutputRequiredDataPrunerTest {
             StaticTypesResolver.instance()
         );
 
-    return pruner.pruneData(data, req.projection());
+    return pruner.pruneData(data, req.projection(), 0);
   }
 
   private @NotNull ReqOutputRequiredDataPruner.DatumPruningResult prune(
@@ -310,7 +312,8 @@ public class ReqOutputRequiredDataPrunerTest {
     //noinspection ConstantConditions
     return pruner.pruneDatum(
         datum,
-        req.projection().singleTagProjection().projection()
+        req.projection().singleTagProjection().projection(),
+        0
     );
   }
 }

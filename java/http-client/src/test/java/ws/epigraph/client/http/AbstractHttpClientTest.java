@@ -169,7 +169,7 @@ public abstract class AbstractHttpClientTest {
         UsersResourceDeclaration.readOperationDeclaration,
         "[666]+:+id",
         412,
-        "Required data is a [412] error: [666] : Required tag 'id' is a [404] error: User '666' not found",
+        "{\"ERROR\":412,\"message\":\"[666] : Required tag 'id' is a [404] error: User '666' not found\"}",
         null
     );
   }

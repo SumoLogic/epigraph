@@ -44,9 +44,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -81,6 +79,11 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testSimpleNotFound() throws IOException {
     get("/users/123:id", 404, "{'ERROR':404,'message':'User ''123'' not found'}");
+  }
+
+  @Test
+  public void testSimpleNotFound2() throws IOException {
+    get("/users/123:record/firstName", 404, "{'ERROR':404,'message':'User ''123'' not found'}");
   }
 
   @Test
@@ -149,17 +152,14 @@ public abstract class AbstractHttpServerTest {
     );
   }
 
-//  @Test
-//  public void testRequiredInsideMapInPath() throws IOException {
-//    // todo this must NOT return null
-//    // in order to fix: pass 'path steps' to data pruner
-//    // any missing data inside path => fail (i.e. treat path components as required)
-//    get(
-//        "/users/10:record/friendRecordMap/'Alfred'(+firstName)",
-//        200,
-//        "{'firstName':'First10'}"
-//    );
-//  }
+  @Test
+  public void testRequiredInsideMapInPath() throws IOException {
+    get(
+        "/users/10:record/friendRecordMap/'Alfred'(+firstName)",
+        412,
+        "{'ERROR':412,'message':'[10]:record/friendRecordMap[''Alfred'']/firstName : Required data is a [404] error: not found'}"
+    );
+  }
 
   @Test
   public void testRequiredInsideOptional() throws IOException {
