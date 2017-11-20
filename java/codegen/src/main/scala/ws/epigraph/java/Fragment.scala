@@ -100,9 +100,13 @@ object Fragment {
 
   def imp(fqn: Qn): Fragment = Fragment(s"${ sign }ref[$fqn]")
 
+  def apply(fqn: Qn): Fragment = imp(fqn)
+
   def imp(fqn: String): Fragment = imp(Qn.fromDotSeparated(fqn))
 
-  val emptyLine = Fragment(sign + "el")
+  val empty: Fragment = Fragment("")
+
+  val emptyLine: Fragment = Fragment(sign + "el")
 
   val javaImportsGenerator: List[String] => String = _.map(i => s"import $i;").mkString("\n")
 
@@ -223,7 +227,7 @@ object Fragment {
     }
 
     for (ref <- refs; if !processedRefs.contains(ref)) {
-      val shortWithParams = shortName(ref, removeTypeParams = false)
+      lazy val shortWithParams = shortName(ref, removeTypeParams = false)
       val shortWithoutParams = shortName(ref, removeTypeParams = true)
 
       if (!newImportedShortNames.contains(shortWithoutParams)) {
@@ -237,10 +241,5 @@ object Fragment {
 
     (t, newImportedShortNames, importedFqns)
   }
-
-//  private def boom() = {
-//    var zzz$: Set[String] = Set()
-//    for (_ <- Set[String]()) { zzz$ += "" }
-//  }
 
 }

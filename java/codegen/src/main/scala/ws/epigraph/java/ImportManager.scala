@@ -19,6 +19,8 @@ package ws.epigraph.java
 import ws.epigraph.lang.Qn
 
 /**
+ * Deprecated. Use `Fragment` instead
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class ImportManager(val namespace: Qn, alwaysUseQualified: Boolean = false) {
@@ -89,11 +91,13 @@ class ImportManager(val namespace: Qn, alwaysUseQualified: Boolean = false) {
   }
 
   private def assertOpen(): Unit = {
-    if (closed) throw new IllegalStateException("ImportManager is already closed")
+    if (closed)
+      throw new IllegalStateException("ImportManager is already closed")
   }
 
   private def assertClosed(): Unit = {
-    if (!closed) throw new IllegalStateException("ImportManager.close() not called yet")
+    if (!closed)
+      throw new IllegalStateException("ImportManager.close() not called yet")
   }
 
 

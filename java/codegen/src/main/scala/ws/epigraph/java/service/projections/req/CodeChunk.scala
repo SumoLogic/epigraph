@@ -17,6 +17,8 @@
 package ws.epigraph.java.service.projections.req
 
 /**
+ * Deprecated. Use `Fragment` instead
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 sealed case class CodeChunk(code: String, imports: Set[String]) {

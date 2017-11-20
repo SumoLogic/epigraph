@@ -31,11 +31,11 @@
 - [ ] find a way to mark `entity` typed fields/keys as errors, for instance 404
 - [x] better implementation of schema annotations. Get inspiration from Java annotations?
   - [ ] Figure out injections: how to add annotations to existing types/fields.
-- [ ] codegen: need better framework for generating imports and imported names
+- [x] codegen: need better framework for generating imports and imported names
   - try building strings with markers inside: "$imports", "$typeref{fqn,shortname}". Keep in mind that types can be
     nested, e.g. "some.package.Foo<some.other.Bar>"
 - [ ] req projections codegen: a lot of code duplication, move stuff up (but don't kill extras like 'required' and 'replace')
-- [ ] BUG in path+data prunser, see `AbstractHttpServerTest::testRequiredInsideMapInPath`
+- [ ] BUG in path+data pruner, see `AbstractHttpServerTest::testRequiredInsideMapInPath`
 
 # Type system
 - [ ] Enums
