@@ -24,7 +24,6 @@ import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class JsonFormatCommon {
@@ -35,7 +34,7 @@ public final class JsonFormatCommon {
    * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
    * with most specific one being last
    */
-  public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> @NotNull Acc flatten(
+  public static <VP extends GenEntityProjection<VP, ?, ?>, Acc extends Collection<VP>> @NotNull Acc flatten(
       @NotNull Acc acc,
       @NotNull Collection<? extends VP> projections,
       @NotNull TypeApi type
@@ -59,7 +58,7 @@ public final class JsonFormatCommon {
     return acc;
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>, Acc extends Collection<VP>> Acc append(
+  public static <VP extends GenEntityProjection<VP, ?, ?>, Acc extends Collection<VP>> Acc append(
       @NotNull Acc acc,
       @NotNull VP varProjection,
       @NotNull TypeApi type
@@ -109,7 +108,7 @@ public final class JsonFormatCommon {
 //  }
 
   // return 'tag' if all projections are of the form ':tag(...)'
-  public static @Nullable <VP extends GenVarProjection<VP, ?, ?>>
+  public static @Nullable <VP extends GenEntityProjection<VP, ?, ?>>
   String monoTag(@NotNull Iterable<? extends VP> projections) {
     String tagName = null;
     for (VP vp : projections) {
@@ -127,7 +126,7 @@ public final class JsonFormatCommon {
    * @return non-empty collection or `null`
    */
   public static <
-      VP extends GenVarProjection<VP, TP, MP>,
+      VP extends GenEntityProjection<VP, TP, MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
       MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
       Coll extends Collection<MP>>
@@ -152,7 +151,7 @@ public final class JsonFormatCommon {
    * @return non-empty collection or `null`
    */
   public static <
-      VP extends GenVarProjection<VP, ?, ?>,
+      VP extends GenEntityProjection<VP, ?, ?>,
       RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, ?, ?>,
       FPE extends GenFieldProjectionEntry<VP, ?, ?, ?>,
       Coll extends Collection<VP>>

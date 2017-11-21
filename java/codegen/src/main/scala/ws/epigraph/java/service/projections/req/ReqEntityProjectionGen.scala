@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenVarProjection}
+import ws.epigraph.projections.gen.{GenTagProjectionEntry, GenEntityProjection}
 
 import scala.collection.JavaConversions._
 
@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
-  override type OpProjectionType <: GenVarProjection[OpProjectionType, OpTagProjectionEntryType, _]
+  override type OpProjectionType <: GenEntityProjection[OpProjectionType, OpTagProjectionEntryType, _]
   type OpTagProjectionEntryType <: GenTagProjectionEntry[OpTagProjectionEntryType, _]
   override protected type GenType <: ReqEntityProjectionGen
 

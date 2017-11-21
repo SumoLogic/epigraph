@@ -41,11 +41,11 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeVarTails;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractVarProjection<
-    VP extends AbstractVarProjection<VP, TP, MP>,
+public abstract class AbstractEntityProjection<
+    VP extends AbstractEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends AbstractModelProjection</*MP*/?, ?, ?>
-    > implements GenVarProjection<VP, TP, MP> {
+    > implements GenEntityProjection<VP, TP, MP> {
 
   private final @NotNull TypeApi type;
   private /*final*/ @Nullable ProjectionReferenceName name;
@@ -64,7 +64,7 @@ public abstract class AbstractVarProjection<
   protected @Nullable VP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
   @SuppressWarnings("unchecked")
-  protected AbstractVarProjection(
+  protected AbstractEntityProjection(
       @NotNull TypeApi type,
       boolean flag,
       @NotNull Map<String, TP> tagProjections,
@@ -114,7 +114,7 @@ public abstract class AbstractVarProjection<
   /**
    * Creates an empty reference instance
    */
-  protected AbstractVarProjection(@NotNull TypeApi type, @NotNull TextLocation location) {
+  protected AbstractEntityProjection(@NotNull TypeApi type, @NotNull TextLocation location) {
     this.type = type;
     this.location = location;
   }
@@ -375,10 +375,10 @@ public abstract class AbstractVarProjection<
     }
   }
 
-  private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractVarProjection<VP, TP, MP>> effectiveProjections) {
+  private @NotNull Map<String, TagApi> collectTags(final Iterable<? extends AbstractEntityProjection<VP, TP, MP>> effectiveProjections) {
     Map<String, TagApi> tags = new LinkedHashMap<>();
 
-    for (final AbstractVarProjection<VP, TP, MP> projection : effectiveProjections)
+    for (final AbstractEntityProjection<VP, TP, MP> projection : effectiveProjections)
       projection.tagProjections().values()
           .stream()
           .map(GenTagProjectionEntry::tag)
@@ -391,13 +391,13 @@ public abstract class AbstractVarProjection<
       TypeApi effectiveType,
       boolean normalizeTags,
       @NotNull Map<String, TagApi> tags,
-      @NotNull Iterable<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+      @NotNull Iterable<? extends AbstractEntityProjection<VP, TP, MP>> sources) {
 
     LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
 
     for (TagApi tag : tags.values()) {
       List<TP> tagProjections = new ArrayList<>();
-      for (AbstractVarProjection<VP, TP, MP> projection : sources) {
+      for (AbstractEntityProjection<VP, TP, MP> projection : sources) {
         @Nullable TP tagProjection = projection.tagProjection(tag.name());
         if (tagProjection != null) {
           if (normalizeTags) {
@@ -456,7 +456,7 @@ public abstract class AbstractVarProjection<
       final @NotNull List<VP> varProjections,
       final @NotNull Map<String, TP> mergedTags) {
 
-    return mergedTags.size() != 1 || varProjections.stream().anyMatch(GenVarProjection::parenthesized);
+    return mergedTags.size() != 1 || varProjections.stream().anyMatch(GenEntityProjection::parenthesized);
   }
 
   @Override
@@ -509,7 +509,7 @@ public abstract class AbstractVarProjection<
                                                   ? buildReferenceName(varProjections, varProjections.get(0).location())
                                                   : defaultReferenceName;
 
-    boolean mergedFlag = varProjections.stream().anyMatch(GenVarProjection::flag);
+    boolean mergedFlag = varProjections.stream().anyMatch(GenEntityProjection::flag);
 
     VP res = merge(effectiveType, varProjections, mergedFlag, mergedTags, mergedParenthesized, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
@@ -524,11 +524,11 @@ public abstract class AbstractVarProjection<
     return res;
   }
 
-  private @Nullable List<VP> mergeTails(final @NotNull List<? extends AbstractVarProjection<VP, TP, MP>> sources) {
+  private @Nullable List<VP> mergeTails(final @NotNull List<? extends AbstractEntityProjection<VP, TP, MP>> sources) {
 
     Map<TypeApi, List<VP>> tailsByType = null;
 
-    for (final AbstractVarProjection<VP, TP, MP> projection : sources) {
+    for (final AbstractEntityProjection<VP, TP, MP> projection : sources) {
       final List<VP> tails = projection.polymorphicTails();
       if (tails != null) {
         if (tailsByType == null) tailsByType = new LinkedHashMap<>();
@@ -668,7 +668,7 @@ public abstract class AbstractVarProjection<
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractVarProjection<?, ?, ?> that = (AbstractVarProjection<?, ?, ?>) o;
+    AbstractEntityProjection<?, ?, ?> that = (AbstractEntityProjection<?, ?, ?>) o;
 
     //noinspection rawtypes
     return new GenProjectionsComparator().equals(this, that);

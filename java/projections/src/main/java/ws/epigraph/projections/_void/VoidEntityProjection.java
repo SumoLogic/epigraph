@@ -16,10 +16,11 @@
 
 package ws.epigraph.projections._void;
 
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface VoidVarProjection extends GenVarProjection<VoidVarProjection, VoidTagProjection, VoidModelProjection<?,?,?>> {
+public interface VoidEntityProjection
+    extends GenEntityProjection<VoidEntityProjection, VoidTagProjection, VoidModelProjection<?,?,?>> {
 }

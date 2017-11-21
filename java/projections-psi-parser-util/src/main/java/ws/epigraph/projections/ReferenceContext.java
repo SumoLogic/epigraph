@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class ReferenceContext<
-    EP extends GenVarProjection<EP, ?, MP>,
+    EP extends GenEntityProjection<EP, ?, MP>,
     MP extends GenModelProjection<?, /*MP*/?, ?, ?>
     > {
 

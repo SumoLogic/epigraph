@@ -25,7 +25,7 @@ import ws.epigraph.types.ListTypeApi;
 public interface VoidListModelProjection
     extends VoidModelProjection<VoidModelProjection<?, ?, ?>, VoidListModelProjection, ListTypeApi>,
     GenListModelProjection<
-        VoidVarProjection,
+        VoidEntityProjection,
         VoidTagProjection,
         VoidModelProjection<?, ?, ?>,
         VoidListModelProjection,

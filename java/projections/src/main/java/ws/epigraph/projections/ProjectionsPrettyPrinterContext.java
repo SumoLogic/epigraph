@@ -19,7 +19,7 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
 import java.util.Collection;
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsPrettyPrinterContext<EP extends GenVarProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> {
+public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> {
   private final @NotNull ProjectionReferenceName namespace;
   private final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent;
   private final Map<ProjectionReferenceName, EP> entityProjections = new HashMap<>();

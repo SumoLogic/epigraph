@@ -27,7 +27,7 @@ import java.util.IdentityHashMap;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GenProjectionTransformationMapImpl<
-    VP extends GenVarProjection<VP, ?, MP>,
+    VP extends GenEntityProjection<VP, ?, MP>,
     MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>
     > implements GenProjectionTransformationMap<VP, MP> {
 

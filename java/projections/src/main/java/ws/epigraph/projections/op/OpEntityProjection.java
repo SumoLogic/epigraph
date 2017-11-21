@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.VarNormalizationContext;
-import ws.epigraph.projections.abs.AbstractVarProjection;
+import ws.epigraph.projections.abs.AbstractEntityProjection;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpEntityProjection extends AbstractVarProjection<
+public class OpEntityProjection extends AbstractEntityProjection<
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>

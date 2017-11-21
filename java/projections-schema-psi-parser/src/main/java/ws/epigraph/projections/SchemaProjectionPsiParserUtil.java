@@ -24,7 +24,7 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
@@ -242,20 +242,20 @@ public final class SchemaProjectionPsiParserUtil {
   }
 
   public static void checkDuplicatingEntityTails(
-      @NotNull List<? extends GenVarProjection<?, ?, ?>> tails,
+      @NotNull List<? extends GenEntityProjection<?, ?, ?>> tails,
       @NotNull PsiProcessingContext context) {
 
     Set<TypeName> reportedTypes = new HashSet<>();
 
     for (int i = 0; i < tails.size(); i++) {
-      GenVarProjection<?, ?, ?> tail = tails.get(i);
+      GenEntityProjection<?, ?, ?> tail = tails.get(i);
       TypeApi type = tail.type();
       TypeName typeName = type.name();
 
       if (!reportedTypes.contains(typeName)) {
 
         for (int j = i + 1; j < tails.size(); j++) {
-          GenVarProjection<?, ?, ?> tail2 = tails.get(j);
+          GenEntityProjection<?, ?, ?> tail2 = tails.get(j);
           TypeApi type2 = tail2.type();
           TypeName typeName2 = type2.name();
 

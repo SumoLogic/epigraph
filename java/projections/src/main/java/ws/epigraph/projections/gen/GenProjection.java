@@ -20,18 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeApi;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface GenVarProjection<
-    VP extends GenVarProjection<VP, TP, MP>,
+public interface GenProjection<
+    P extends GenProjection<P, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>
-    > extends GenProjectionReference<VP> {
+    > extends GenProjectionReference<P> {
 
   /**
    * Type this projection applies to.
@@ -54,67 +53,7 @@ public interface GenVarProjection<
     else return null;
   }
 
-  /**
-   * Tells if projection is parenthesized or not.
-   * <p/>
-   * There are two forms to write down a single tag projection:<br/>
-   * <code>:tag tag_projection</code><br/>
-   * and<br/>
-   * <code>:(tag tag_projection)</code><br/>
-   * Semantically they are the same, but sometimes this information can be taken into account.
-   * <b>Note</b> that it should not be taken into account by the {@code equals/hashCode} implementation.
-   *
-   * @return {@code false} iff there's exactly one tag projection and it was not in parenthesis.
-   */
-  boolean parenthesized();
-
   boolean flag();
-
-  /**
-   * Polymorphic tails for this projection.
-   *
-   * @return polymorphic tails list.
-   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails">polymorphic tails</a>
-   */
-  @Nullable List<VP> polymorphicTails();
-
-  default @Nullable VP tailByType(@NotNull TypeApi type) {
-    Collection<VP> tails = polymorphicTails();
-    return tails == null
-           ? null
-           : tails.stream().filter(t -> t.type().name().equals(type.name())).findFirst().orElse(null);
-  }
-
-  /**
-   * Builds normalized view of this var projection for a given type
-   *
-   * @param type target type
-   *
-   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
-   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
-   */
-  default @NotNull VP normalizedForType(@NotNull TypeApi type) { return normalizedForType(type, null); }
-
-  /**
-   * Builds normalized view of this var projection for a given type
-   *
-   * @param type                target type
-   * @param resultReferenceName optional result reference name
-   *
-   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
-   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
-   */
-  @Deprecated
-  @NotNull VP normalizedForType(@NotNull TypeApi type, @Nullable ProjectionReferenceName resultReferenceName);
-
-  /**
-   * Sets normalized tail reference name. Normalized tail produced using
-   * {@link #normalizedForType(TypeApi)} will have this reference name assigned
-   *
-   * @param type              target type
-   * @param tailReferenceName normalized tail reference name
-   */
-  void setNormalizedTailReferenceName(@NotNull TypeApi type, @NotNull ProjectionReferenceName tailReferenceName);
 
   /**
    * Merges var projections together.
@@ -128,17 +67,7 @@ public interface GenVarProjection<
    * @return merged var projection
    */
   /* static */
-  @NotNull VP merge(@NotNull List<VP> varProjections);
-
-//  @Nullable
-//  default VP tailByType(@NotNull TypeApi tailType) {
-//    // not too efficient if there are many tails.. change List to LinkedHashMap?
-//    List<VP> tails = polymorphicTails();
-//    if (tails == null) return null;
-//    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
-//  }
-
-  // references
+  @NotNull P merge(@NotNull List<P> varProjections);
 
   /**
    * Gets projection reference qualified name, if there exists one.
@@ -172,11 +101,4 @@ public interface GenVarProjection<
    */
   @Override
   ProjectionReferenceName referenceName();
-
-  /**
-   * Tells if this projection is a normalized version of some other projection
-   *
-   * @return another projection which yields this projection if normalized to {@code type()} or else {@code null}
-   */
-  @Nullable VP normalizedFrom();
 }

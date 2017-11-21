@@ -29,7 +29,7 @@ import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Map;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractOpProjectionsPrettyPrinter<
-    VP extends GenVarProjection<VP, TP, MP>,
+    VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends AbstractOpModelProjection</*MP*/?, ?, ?>,
     RP extends GenRecordModelProjection<VP, TP, MP, RP, FPE, FP, ?>,

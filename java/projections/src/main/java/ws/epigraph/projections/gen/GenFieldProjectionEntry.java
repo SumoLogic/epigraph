@@ -24,7 +24,7 @@ import ws.epigraph.types.FieldApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenFieldProjectionEntry<
-    VP extends GenVarProjection<VP, TP, MP>,
+    VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<VP, TP, MP, FP>

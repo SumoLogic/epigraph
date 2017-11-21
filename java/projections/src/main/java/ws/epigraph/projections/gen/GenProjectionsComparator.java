@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GenProjectionsComparator<
-    VP extends GenVarProjection<VP, TP, MP>,
+    VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
@@ -52,7 +52,7 @@ public class GenProjectionsComparator<
   }
 
   public static <
-      VP extends GenVarProjection<VP, TP, MP>,
+      VP extends GenEntityProjection<VP, TP, MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
       MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
       RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
@@ -73,8 +73,8 @@ public class GenProjectionsComparator<
     if (vps1.isEmpty())
       return vps2.isEmpty();
 
-    boolean flag1 = vps1.stream().anyMatch(GenVarProjection::flag);
-    boolean flag2 = vps2.stream().anyMatch(GenVarProjection::flag);
+    boolean flag1 = vps1.stream().anyMatch(GenEntityProjection::flag);
+    boolean flag2 = vps2.stream().anyMatch(GenEntityProjection::flag);
 
     if (flag1 != flag2)
       return false;

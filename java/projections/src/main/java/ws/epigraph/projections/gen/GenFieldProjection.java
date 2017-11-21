@@ -26,7 +26,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenFieldProjection<
-    EP extends GenVarProjection<EP, TP, MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<EP, TP, MP, FP>

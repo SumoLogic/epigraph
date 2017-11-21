@@ -20,7 +20,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.types.DataTypeApi;
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractFieldProjection<
-    EP extends GenVarProjection<EP, TP, MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<EP, TP, MP, FP>

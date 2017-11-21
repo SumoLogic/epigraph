@@ -17,7 +17,7 @@
 package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.types.TypeApi;
 
 import java.util.function.Function;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>>
+public final class VarNormalizationContext<VP extends GenEntityProjection<VP, ?, ?>>
     extends NormalizationContext<TypeApi, VP> {
   // here we heavily assume that the same thread can't be normalizing two projections of different
   // families at the same time, e.g. that normalizing OpOutput projection can't entail
@@ -40,7 +40,7 @@ public final class VarNormalizationContext<VP extends GenVarProjection<VP, ?, ?>
   }
 
   @SuppressWarnings("unchecked")
-  public static <VP extends GenVarProjection<VP, ?, ?>, G>
+  public static <VP extends GenEntityProjection<VP, ?, ?>, G>
   G withContext(
       @NotNull Supplier<VarNormalizationContext<VP>> contextFactory,
       @NotNull Function<VarNormalizationContext<VP>, G> function) {

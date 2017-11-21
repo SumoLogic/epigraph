@@ -27,7 +27,7 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenGuidedProjectionTraversal<
-    VP extends GenVarProjection<VP, TP, MP>,
+    VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
@@ -37,7 +37,7 @@ public abstract class GenGuidedProjectionTraversal<
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
     // "guide" projection (op)
-    GVP extends GenVarProjection<GVP, GTP, GMP>,
+    GVP extends GenEntityProjection<GVP, GTP, GMP>,
     GTP extends GenTagProjectionEntry<GTP, GMP>,
     GMP extends GenModelProjection</*GMP*/?, /*GRMP*/?, /*GRMP*/?, /*M*/?>,
     GRMP extends GenRecordModelProjection<GVP, GTP, GMP, GRMP, GFPE, GFP, ?>,

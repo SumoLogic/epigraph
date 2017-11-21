@@ -20,7 +20,7 @@ package ws.epigraph.projections.gen;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjectionTransformationMap<
-    VP extends GenVarProjection<VP, ?, MP>,
+    VP extends GenEntityProjection<VP, ?, MP>,
     MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>> {
 
   VP getEntityMapping(VP old);

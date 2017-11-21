@@ -33,7 +33,7 @@ import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.op.OpParam;
 import ws.epigraph.projections.op.OpParams;
 import ws.epigraph.projections.op.OpModelProjection;
@@ -126,7 +126,7 @@ public final class UrlProjectionsPsiParserUtil {
   public static <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>>
+      VP extends GenEntityProjection<VP, TP, MP>>
   void raiseNoTagsError(
       @NotNull DataTypeApi type,
       @NotNull VP opOutputVarProjection,

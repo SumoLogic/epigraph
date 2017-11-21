@@ -25,7 +25,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public interface FormatReader<
-    EP extends GenVarProjection<EP, ?, ?>,
+    EP extends GenEntityProjection<EP, ?, ?>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>> {
 
   // with projections

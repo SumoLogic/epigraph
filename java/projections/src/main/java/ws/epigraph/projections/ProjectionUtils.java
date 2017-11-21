@@ -54,7 +54,7 @@ public final class ProjectionUtils {
   /**
    * @return {@code path} tip type
    */
-  public static @NotNull DataTypeApi tipType(@NotNull GenVarProjection<?, ?, ?> path) {
+  public static @NotNull DataTypeApi tipType(@NotNull GenEntityProjection<?, ?, ?> path) {
     DataTypeApi lastDataType;
 
     final TypeApi type = path.type();
@@ -97,7 +97,7 @@ public final class ProjectionUtils {
     return lastDataType;
   }
 
-  public static int pathLength(@NotNull GenVarProjection<?, ?, ?> path) {
+  public static int pathLength(@NotNull GenEntityProjection<?, ?, ?> path) {
     int len = 0;
 
     outer:
@@ -150,7 +150,7 @@ public final class ProjectionUtils {
 
   // var tails linearization
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
       @NotNull TypeApi t,
       @NotNull Stream<VP> tails) {
 
@@ -158,7 +158,7 @@ public final class ProjectionUtils {
   }
 
   @Contract("_, null -> !null")
-  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
       @NotNull TypeApi t,
       @Nullable List<VP> tails) {
 
@@ -174,7 +174,7 @@ public final class ProjectionUtils {
 
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
       @NotNull TypeApi type,
       @NotNull Stream<VP> tails,
       @NotNull LinkedList<VP> linearizedTails) {

@@ -32,7 +32,7 @@ import java.util.function.Function;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenProjectionTransformer<
-    EP extends GenVarProjection<EP, TP, MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,

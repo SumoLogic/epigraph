@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -65,7 +65,7 @@ public final class ProjectionsParsingUtil {
   public static <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>
+      VP extends GenEntityProjection<VP, TP, MP>
       >
   @NotNull TagApi getTag(
       @NotNull DataTypeApi dataType,
@@ -113,7 +113,7 @@ public final class ProjectionsParsingUtil {
   public static @Nullable <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>
+      VP extends GenEntityProjection<VP, TP, MP>
       >
   TagApi findTag(
       @NotNull DataTypeApi dataType,
@@ -157,7 +157,7 @@ public final class ProjectionsParsingUtil {
   public static <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>
+      VP extends GenEntityProjection<VP, TP, MP>
       >
   void verifyTag(
       @NotNull TypeApi type,
@@ -177,7 +177,7 @@ public final class ProjectionsParsingUtil {
       getTagProjection(tag.name(), op, location, context);
   }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> void verifyData(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> void verifyData(
       @NotNull DataTypeApi dataType,
       @NotNull VP varProjection,
       @NotNull PsiElement location,
@@ -207,7 +207,7 @@ public final class ProjectionsParsingUtil {
     return type.tags().stream().map(TagApi::name).collect(Collectors.joining(","));
   }
 
-  public static <VP extends GenVarProjection<?, ?, ?>> String listTags(@NotNull VP op) {
+  public static <VP extends GenEntityProjection<?, ?, ?>> String listTags(@NotNull VP op) {
     return String.join(", ", op.tagProjections().keySet());
   }
 
@@ -275,7 +275,7 @@ public final class ProjectionsParsingUtil {
   public static @NotNull <
       MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenVarProjection<VP, TP, MP>
+      VP extends GenEntityProjection<VP, TP, MP>
       >
   TP getTagProjection(
       @NotNull String tagName,
@@ -324,7 +324,7 @@ public final class ProjectionsParsingUtil {
 //    return null;
 //  }
 
-  public static <VP extends GenVarProjection<VP, ?, ?>> @NotNull VP getEntityTail(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull VP getEntityTail(
       @NotNull VP vp,
       @NotNull TypeRef tailTypeRef,
       @NotNull TypesResolver resolver,
@@ -351,7 +351,7 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <VP extends GenVarProjection<VP, ?, ?>> boolean hasTail(
+  public static <VP extends GenEntityProjection<VP, ?, ?>> boolean hasTail(
       @NotNull VP vp,
       @NotNull EntityTypeApi tailType) {
 
@@ -360,7 +360,7 @@ public final class ProjectionsParsingUtil {
     return tails != null && tails.stream().anyMatch(t -> hasTail((VP) t, tailType));
   }
 
-  public static @NotNull List<String> supportedEntityTailTypes(@NotNull GenVarProjection<?, ?, ?> vp) {
+  public static @NotNull List<String> supportedEntityTailTypes(@NotNull GenEntityProjection<?, ?, ?> vp) {
     if (vp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
     supportedEntityTailTypes(vp, acc);
@@ -370,8 +370,8 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void supportedEntityTailTypes(@NotNull GenVarProjection<?, ?, ?> vp, Set<String> acc) {
-    final List<GenVarProjection<?, ?, ?>> tails = (List<GenVarProjection<?, ?, ?>>) vp.polymorphicTails();
+  private static void supportedEntityTailTypes(@NotNull GenEntityProjection<?, ?, ?> vp, Set<String> acc) {
+    final List<GenEntityProjection<?, ?, ?>> tails = (List<GenEntityProjection<?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }

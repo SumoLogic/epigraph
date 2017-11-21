@@ -22,7 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.projections.gen.GenFieldProjectionEntry;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 import ws.epigraph.types.TypeApi;
@@ -84,7 +84,7 @@ public final class RecordModelProjectionHelper {
   }
 
   public static <
-      VP extends GenVarProjection<VP, ?, ?>,
+      VP extends GenEntityProjection<VP, ?, ?>,
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
   void checkFields(@NotNull Map<String, FPE> fieldProjections, @NotNull RecordTypeApi model) {
@@ -114,7 +114,7 @@ public final class RecordModelProjectionHelper {
 
   @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
   public static <
-      VP extends GenVarProjection<VP, ?, ?>,
+      VP extends GenEntityProjection<VP, ?, ?>,
       RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>
@@ -155,7 +155,7 @@ public final class RecordModelProjectionHelper {
 
   @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
   public static <
-      VP extends GenVarProjection<VP, ?, ?>,
+      VP extends GenEntityProjection<VP, ?, ?>,
       RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
       FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
       FP extends GenFieldProjection<VP, ?, ?, FP>>

@@ -43,7 +43,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  */
 @NotThreadSafe
 public abstract class AbstractJsonFormatWriter<
-    VP extends GenVarProjection<VP, TP, MP>,
+    VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,

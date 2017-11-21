@@ -27,7 +27,7 @@ import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
@@ -37,7 +37,7 @@ import java.nio.charset.Charset;
 
 @NotThreadSafe
 public interface FormatWriter<
-    VP extends GenVarProjection<VP, ?, ?>,
+    VP extends GenEntityProjection<VP, ?, ?>,
     MP extends GenModelProjection</*MP*/?, ?, ?, ?>> extends AutoCloseable {
 
   // with projections

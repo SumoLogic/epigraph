@@ -25,7 +25,7 @@ import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenVarProjection;
+import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpModelProjection;
@@ -389,7 +389,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   }
 
   @SuppressWarnings("unchecked")
-  private <VP extends GenVarProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> void printGlobalProjections(
+  private <VP extends GenEntityProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> void printGlobalProjections(
       @NotNull String prefix,
       @NotNull Collection<VP> varProjections,
       @NotNull Collection<MP> modelProjections,
@@ -398,7 +398,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   ) throws E {
 
     List<ProjectionReferenceName.RefNameSegment> printedVarRefs = varProjections.stream()
-        .map(GenVarProjection::referenceName)
+        .map(GenEntityProjection::referenceName)
         .map(ProjectionReferenceName::last)
         .collect(Collectors.toList());
 

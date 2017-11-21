@@ -63,7 +63,7 @@ public abstract class AbstractModelProjection<
   private final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
   protected @Nullable SMP normalizedFrom = null; // this = normalizedFrom ~ someType ?
-  protected @Nullable AbstractVarProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
+  protected @Nullable AbstractEntityProjection<?, ?, ?> entityProjection = null; // reference to self-entity, if any
 
   protected AbstractModelProjection(
       @NotNull M model,
@@ -147,7 +147,7 @@ public abstract class AbstractModelProjection<
 
 
   @SuppressWarnings("unchecked")
-  public <EP extends AbstractVarProjection<EP, ?, ?>> void setNormalizedFrom(final @Nullable SMP normalizedFrom) {
+  public <EP extends AbstractEntityProjection<EP, ?, ?>> void setNormalizedFrom(final @Nullable SMP normalizedFrom) {
     this.normalizedFrom = normalizedFrom;
 
     if (entityProjection != null && normalizedFrom != null) {
@@ -166,7 +166,7 @@ public abstract class AbstractModelProjection<
    *
    * @return model projection with entity projection reference set up correctly
    */
-  public SMP setEntityProjection(@NotNull AbstractVarProjection<?, ?, ?> entityProjection) {
+  public SMP setEntityProjection(@NotNull AbstractEntityProjection<?, ?, ?> entityProjection) {
     if (entityProjection == this.entityProjection) return self();
     final SMP result;
     if (this.entityProjection == null) {
@@ -209,7 +209,7 @@ public abstract class AbstractModelProjection<
   @Override
   protected abstract SMP clone();
 
-  public @Nullable AbstractVarProjection<?, ?, ?> entityProjection() { return entityProjection; }
+  public @Nullable AbstractEntityProjection<?, ?, ?> entityProjection() { return entityProjection; }
 
   @Override
   public @NotNull SMP normalizedForType(final @NotNull DatumTypeApi type) {

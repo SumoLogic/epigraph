@@ -25,7 +25,7 @@ import ws.epigraph.types.MapTypeApi;
 public interface VoidMapModelProjection
     extends VoidModelProjection<VoidModelProjection<?, ?, ?>, VoidMapModelProjection, MapTypeApi>,
     GenMapModelProjection<
-        VoidVarProjection,
+        VoidEntityProjection,
         VoidTagProjection,
         VoidModelProjection<?, ?, ?>,
         VoidMapModelProjection,
