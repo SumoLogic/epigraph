@@ -295,7 +295,7 @@ public class ReqOutputRequiredDataPruner {
       @NotNull ReqListModelProjection projection,
       int pathSteps) {
 
-    if (pathSteps > 0)
+    if (pathSteps > 1)
       throw new IllegalArgumentException("Lists can't be in the path");
 
     final ReqEntityProjection itemsProjection = projection.itemsProjection();
