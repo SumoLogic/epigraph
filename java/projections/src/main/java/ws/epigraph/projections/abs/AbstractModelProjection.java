@@ -303,7 +303,6 @@ public abstract class AbstractModelProjection<
                 .collect(Collectors.toList());
 
             SMP res = merge((M) effectiveType, filteredMergedTails, projectionsToMerge);
-            assert res != null; // since effectiveProjections is non-empty, at least self is there
             res = postNormalizedForType(targetType, res);
             res.normalizedTailNames().putAll(normalizedTailNames());
             res.normalizedFrom = self();
@@ -351,7 +350,7 @@ public abstract class AbstractModelProjection<
       @NotNull SMP normalizationResult) { return normalizationResult; }
 
   @Override
-  @SuppressWarnings("unchecked") /* static */ public @Nullable SMP merge(
+  @SuppressWarnings("unchecked") /* static */ public @NotNull SMP merge(
       @NotNull M model,
       @NotNull List<SMP> modelProjections) {
 
@@ -387,12 +386,12 @@ public abstract class AbstractModelProjection<
 
   @SuppressWarnings("unchecked")
   /* static */
-  private @Nullable SMP merge(
+  private @NotNull SMP merge(
       final @NotNull M effectiveType,
       final @Nullable List<SMP> mergedTails,
       final @NotNull List<SMP> modelProjections) {
 
-    if (modelProjections.isEmpty()) return null;
+    assert !modelProjections.isEmpty();
 
     List<MP> metaProjectionsList = new ArrayList<>();
 

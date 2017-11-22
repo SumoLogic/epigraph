@@ -30,7 +30,7 @@ public interface GenEntityProjection<
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, /*MP*/?>,
     MP extends GenModelProjection</*TP*/?, /*MP*/?, ?, ?, ?>
-    > extends GenProjection<EP, TP> {
+    > extends GenProjection<EP, TP, TypeApi> { // todo DataTypeApi
 
   /**
    * Tells if projection is parenthesized or not.
@@ -99,6 +99,12 @@ public interface GenEntityProjection<
 //    if (tails == null) return null;
 //    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
 //  }
+
+  @Override
+  default @NotNull EP merge(@NotNull TypeApi type, @NotNull List<EP> projections) {
+    return merge(projections); // todo actually take type into account
+  }
+
   /**
    * Merges var projections together.
    * <p/>

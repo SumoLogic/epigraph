@@ -35,13 +35,10 @@ import java.util.List;
 public interface GenModelProjection<
     TP extends GenTagProjectionEntry<TP, /*MP*/?>,
     MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
-    SMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    SMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
     TMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     M extends DatumTypeApi
-    > extends GenProjection<SMP, TP> {
-
-  @Override
-  @NotNull M type();
+    > extends GenProjection<SMP, TP, M> {
 
   @Nullable MP metaProjection();
 
@@ -95,10 +92,11 @@ public interface GenModelProjection<
    * @param model            resulting model's type
    * @param modelProjections models to merge
    *
-   * @return merged models or {@code null} if {@code modelProjections} is empty
+   * @return merged models
    */
   /* static */
-  @Nullable SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
+  @Override
+  @NotNull SMP merge(@NotNull M model, @NotNull List<SMP> modelProjections);
 
 //  @SuppressWarnings("unchecked")
 //  default @NotNull SMP mergeWith(@NotNull SMP other) {
