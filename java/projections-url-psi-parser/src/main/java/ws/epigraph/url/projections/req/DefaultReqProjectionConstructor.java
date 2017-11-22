@@ -284,7 +284,7 @@ public class DefaultReqProjectionConstructor {
                       new ReqFieldProjection(
                           createDefaultEntityProjection(
                               fpe.field().dataType(),
-                              fieldProjection.entityProjection(),
+                              fieldProjection.projection(),
                               copyFlagsFromOp && !fieldProjection.flag(),
                               fieldDatas,
                               resolver,

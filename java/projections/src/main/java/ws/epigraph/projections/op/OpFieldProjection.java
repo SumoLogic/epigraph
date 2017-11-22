@@ -19,7 +19,6 @@ package ws.epigraph.projections.op;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.abs.AbstractFieldProjection;
-import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -45,11 +44,11 @@ public class OpFieldProjection extends AbstractFieldProjection <
   }
 
   @Override
-  public @NotNull OpFieldProjection setEntityProjection(final @NotNull OpEntityProjection varProjection) {
+  public @NotNull OpFieldProjection setProjection(final @NotNull OpEntityProjection varProjection) {
     return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
-  public boolean flag() { return entityProjection().flag(); }
+  public boolean flag() { return projection().flag(); }
 
   @Override
   protected @NotNull OpFieldProjection merge(

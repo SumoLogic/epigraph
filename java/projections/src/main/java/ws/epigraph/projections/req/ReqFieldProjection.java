@@ -51,7 +51,7 @@ public class ReqFieldProjection extends AbstractFieldProjection<
    * @return {@code true} iff field entity projection is flag
    */
   public boolean flag() {
-    return flag(entityProjection());
+    return flag(projection());
   }
 
   private static boolean flag(@NotNull ReqEntityProjection vp) {
@@ -87,8 +87,8 @@ public class ReqFieldProjection extends AbstractFieldProjection<
 //  }
 
   @Override
-  public @NotNull ReqFieldProjection setEntityProjection(final @NotNull ReqEntityProjection varProjection) {
-    return new ReqFieldProjection(varProjection, TextLocation.UNKNOWN);
+  public @NotNull ReqFieldProjection setProjection(final @NotNull ReqEntityProjection projection) {
+    return new ReqFieldProjection(projection, TextLocation.UNKNOWN);
   }
 
   @Override

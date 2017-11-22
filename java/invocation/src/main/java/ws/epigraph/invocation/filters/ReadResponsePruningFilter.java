@@ -55,7 +55,7 @@ public class ReadResponsePruningFilter<Req extends OperationRequest, D extends D
               final ReqOutputRequiredDataPruner.DataPruningResult pruningResult =
                   pruner.pruneData(
                       data,
-                      request.outputProjection().entityProjection(),
+                      request.outputProjection().projection(),
                       request.outputStepsAndProjection().pathSteps()
                   );
 

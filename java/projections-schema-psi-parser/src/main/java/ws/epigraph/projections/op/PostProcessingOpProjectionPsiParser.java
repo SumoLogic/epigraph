@@ -70,7 +70,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
     OpFieldProjection res =
         OpBasicProjectionPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
 
-    OpEntityProjection transformedEp = processEntityProjection(res.entityProjection(), context);
+    OpEntityProjection transformedEp = processEntityProjection(res.projection(), context);
 
     return new OpFieldProjection(transformedEp, res.location());
   }

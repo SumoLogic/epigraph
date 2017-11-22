@@ -77,8 +77,8 @@ public class RemoteUpdateOperationInvocation
 
     Type dataType = data.type();
     TypeApi projectionType = updateStepsAndProjection == null
-                             ? operationDeclaration.inputProjection().entityProjection().type()
-                             : updateStepsAndProjection.projection().entityProjection().type();
+                             ? operationDeclaration.inputProjection().projection().type()
+                             : updateStepsAndProjection.projection().projection().type();
 
     if (!projectionType.isAssignableFrom(dataType)) {
       throw new IllegalArgumentException(
@@ -86,8 +86,8 @@ public class RemoteUpdateOperationInvocation
     }
 
     return serverProtocol.updateRequestContentProducer(
-        StepsAndProjection.unwrapNullable(updateStepsAndProjection, AbstractFieldProjection::entityProjection),
-        operationDeclaration.inputProjection().entityProjection(),
+        StepsAndProjection.unwrapNullable(updateStepsAndProjection, AbstractFieldProjection::projection),
+        operationDeclaration.inputProjection().projection(),
         data,
         operationInvocationContext
     );

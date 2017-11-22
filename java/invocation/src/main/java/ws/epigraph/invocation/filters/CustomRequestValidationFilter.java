@@ -55,7 +55,7 @@ public class CustomRequestValidationFilter<Rsp extends OperationResponse>
     if (data == null || inputProjection == null)
       return invocation.invoke(request, context);
 
-    validator.validateData(data, inputProjection.entityProjection());
+    validator.validateData(data, inputProjection.projection());
     List<? extends DataValidationError> errors = validator.errors();
 
     return errors.isEmpty()

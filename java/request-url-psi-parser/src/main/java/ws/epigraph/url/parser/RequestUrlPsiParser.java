@@ -108,7 +108,7 @@ public abstract class RequestUrlPsiParser {
     );
 
     @NotNull ReqFieldProjection reqPath = pathParsingResult.path();
-    DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.entityProjection());
+    DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.projection());
     TypesResolver pathTipResolver = addTypeNamespace(pathTipType.type(), typesResolver);
 
     final UrlReqTrunkEntityProjection trunkEntityProjection = pathParsingResult.trunkProjectionPsi();
@@ -204,7 +204,7 @@ public abstract class RequestUrlPsiParser {
             new ReqFieldProjection(
                 firstProjectionParser.createDefaultEntityProjection(
                     op.outputType().dataType(),
-                    op.outputProjection().entityProjection(),
+                    op.outputProjection().projection(),
                     false, // todo this should come from op
                     typesResolver,
                     TextLocation.UNKNOWN,
@@ -259,7 +259,7 @@ public abstract class RequestUrlPsiParser {
             new ReqFieldProjection(
                 outputProjectionParser.createDefaultEntityProjection(
                     op.outputType().dataType(),
-                    op.outputProjection().entityProjection(),
+                    op.outputProjection().projection(),
                     false, // todo this should come from op
                     typesResolver,
                     TextLocation.UNKNOWN,
@@ -337,7 +337,7 @@ public abstract class RequestUrlPsiParser {
       return firstProjectionParser.parseTrunkEntityProjection(
           dataType,
           flagged,
-          op.entityProjection(),
+          op.projection(),
           trunkEntityPsi,
           resolver,
           context
@@ -347,7 +347,7 @@ public abstract class RequestUrlPsiParser {
       return firstProjectionParser.parseComaEntityProjection(
           dataType,
           flagged,
-          op.entityProjection(),
+          op.projection(),
           comaEntityPsi,
           resolver,
           context

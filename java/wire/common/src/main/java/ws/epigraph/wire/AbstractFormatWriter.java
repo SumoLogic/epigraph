@@ -96,7 +96,7 @@ public abstract class AbstractFormatWriter
             FPE fpe = fieldEntries.iterator().next().getValue();
 
             writeData(
-                fpe.fieldProjection().entityProjection(),
+                fpe.fieldProjection().projection(),
                 pathSteps - 1,
                 recordDatum._raw().getData((Field) fpe.field())
             );

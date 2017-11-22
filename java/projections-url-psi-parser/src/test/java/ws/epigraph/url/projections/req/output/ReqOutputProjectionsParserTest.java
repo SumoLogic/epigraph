@@ -207,7 +207,7 @@ public class ReqOutputProjectionsParserTest {
     ReqRecordModelProjection recordProjection =
         (ReqRecordModelProjection) vp.tagProjection("record").projection();
     ReqModelProjection<?, ?, ?> idProjection =
-        recordProjection.fieldProjection("id").fieldProjection().entityProjection().singleTagProjection().projection();
+        recordProjection.fieldProjection("id").fieldProjection().projection().singleTagProjection().projection();
 
     ReqParam param = idProjection.params().get("param2");
     UserRecord paramValue = (UserRecord) param.value();
@@ -626,7 +626,7 @@ public class ReqOutputProjectionsParserTest {
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
     @NotNull ReqFieldProjection fp = rmp.fieldProjection("id").fieldProjection();
     assertTrue(fp.flag());
-    ReqEntityProjection ep = fp.entityProjection();
+    ReqEntityProjection ep = fp.projection();
     assertTrue(ep.flag());
     ReqModelProjection<?, ?, ?> mp = ep.singleTagProjection().projection();
     assertTrue(mp.flag());
@@ -644,7 +644,7 @@ public class ReqOutputProjectionsParserTest {
     ReqRecordModelProjection rmp = (ReqRecordModelProjection) p.singleTagProjection().projection();
     @NotNull ReqFieldProjection fp = rmp.fieldProjection("bestFriend2").fieldProjection();
     assertTrue(fp.flag());
-    @NotNull ReqEntityProjection ep = fp.entityProjection();
+    @NotNull ReqEntityProjection ep = fp.projection();
     assertTrue(ep.flag());
     ReqTagProjectionEntry tpe = ep.tagProjection("id");
     assertNotNull(tpe);

@@ -96,7 +96,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
   }
 
   public void print(@NotNull String fieldName, @NotNull ReqFieldProjection fieldProjection, int pathSteps) throws E {
-    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.entityProjection();
+    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.projection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -114,7 +114,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
   }
 
   public boolean isPrintoutEmpty(@NotNull ReqFieldProjection fieldProjection) {
-    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.entityProjection();
+    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.projection();
 //    @NotNull ReqParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 

@@ -40,7 +40,7 @@ class ReqPathRecordModelProjectionGen(
 
   override lazy val fieldGenerators: Map[CField, ReqPathFieldProjectionGen] =
     fieldProjections.values
-      .filter { case (fgo, fpe) => !fpe.fieldProjection().entityProjection().isPathEnd }
+      .filter { case (fgo, fpe) => !fpe.fieldProjection().projection().isPathEnd }
       .map { case (fgo, fpe) =>
         (
           findField(fpe.field().name()),

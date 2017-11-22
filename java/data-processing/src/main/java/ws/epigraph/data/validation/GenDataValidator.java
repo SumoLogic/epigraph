@@ -114,7 +114,7 @@ public abstract class GenDataValidator<
       context.withStackItem(new DataValidationContext.FieldStackItem(field), () -> {
         final Data data = datum._raw().getData((Field) field);
         if (data != null)
-          validateData(data, fpe.fieldProjection().entityProjection());
+          validateData(data, fpe.fieldProjection().projection());
       });
     }
   }

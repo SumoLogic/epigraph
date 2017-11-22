@@ -111,7 +111,7 @@ public class DeleteRequestUrlPsiParserTest extends NonReadRequestUrlPsiParserTes
     assertNotNull(deleteStepsAndProjection);
     assertNotNull(deleteStepsAndProjection.projection());
     final @Nullable ReqFieldProjection deleteProjection = deleteStepsAndProjection.projection();
-    assertEquals(expectedDeleteProjection, printReqEntityProjection(deleteProjection.entityProjection(), 0));
+    assertEquals(expectedDeleteProjection, printReqEntityProjection(deleteProjection.projection(), 0));
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

@@ -107,7 +107,7 @@ public final class DataPathRemover {
                       HttpStatusCode.NOT_FOUND, String.format("field '%s' not found", entry.field().name())
                   )
               );
-            return removePath(entry.fieldProjection().entityProjection(), fieldData, steps - 1);
+            return removePath(entry.fieldProjection().projection(), fieldData, steps - 1);
           default:
             throw new AmbiguousPathException();
         }

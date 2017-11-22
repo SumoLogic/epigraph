@@ -258,7 +258,7 @@ public final class ReqPathPsiParser {
 
     final ReqEntityProjection varProjection;
 
-    varProjection = parseEntityPath(op.entityProjection(), fieldType, fieldEntityProjectionPsi, typesResolver, context);
+    varProjection = parseEntityPath(op.projection(), fieldType, fieldEntityProjectionPsi, typesResolver, context);
 
 //    final ReadReqPathParsingResult<ReqEntityProjection> fieldVarParsingResult;
 

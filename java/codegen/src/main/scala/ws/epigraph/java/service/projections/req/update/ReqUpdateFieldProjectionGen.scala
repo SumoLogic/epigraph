@@ -42,7 +42,7 @@ class ReqUpdateFieldProjectionGen(
   override lazy val dataProjectionGen: ReqUpdateProjectionGen =
     ReqUpdateEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.entityProjection(),
+      op.projection(),
       baseNamespaceOpt,
       namespaceSuffix,
       dataParentClassGenOpt,

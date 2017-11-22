@@ -183,9 +183,9 @@ public class GenProjectionsComparator<
       String fieldName = entry.getKey();
 
       final List<@NotNull VP> vps1 = entry.getValue()
-          .stream().map(e -> e.fieldProjection().entityProjection()).collect(Collectors.toList());
+          .stream().map(e -> e.fieldProjection().projection()).collect(Collectors.toList());
       final List<@NotNull VP> vps2 = fields2.get(fieldName)
-          .stream().map(e -> e.fieldProjection().entityProjection()).collect(Collectors.toList());
+          .stream().map(e -> e.fieldProjection().projection()).collect(Collectors.toList());
 
       if (!entitiesEquals(vps1, vps2))
         return false;

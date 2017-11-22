@@ -84,7 +84,7 @@ public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPretty
 
   public void print(@NotNull String fieldName, @NotNull ReqFieldProjection fieldProjection) throws E {
 
-    @NotNull ReqEntityProjection fieldVarProjection = fieldProjection.entityProjection();
+    @NotNull ReqEntityProjection fieldVarProjection = fieldProjection.projection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();

@@ -1258,7 +1258,7 @@ public final class ReqBasicProjectionPsiParser {
 
       @NotNull ReqEntityProjection varProjection = defaultProjectionConstructor.createDefaultEntityProjection(
           fieldType,
-          opFieldProjection.entityProjection(),
+          opFieldProjection.projection(),
           fieldFlagged,
           null,
           resolver,
@@ -1331,7 +1331,7 @@ public final class ReqBasicProjectionPsiParser {
     return parseTrunkFieldProjection(
         fieldType,
         flagged,  /*op.params(), */
-        op.entityProjection(),
+        op.projection(),
         psi,
         resolver
     );
@@ -1415,7 +1415,7 @@ public final class ReqBasicProjectionPsiParser {
                 parseComaEntityProjection(
                     field.dataType(),
                     fieldFlagged,
-                    opFieldProjection.entityProjection(),
+                    opFieldProjection.projection(),
                     psiEntityProjection,
                     resolver
                 ).projection();
@@ -1459,7 +1459,7 @@ public final class ReqBasicProjectionPsiParser {
 //                    Annotations.EMPTY,
                 defaultStarProjectionConstructor.createDefaultEntityProjection(
                     field.dataType(),
-                    opFieldProjection.entityProjection(),
+                    opFieldProjection.projection(),
                     false,
                     null,
                     resolver,

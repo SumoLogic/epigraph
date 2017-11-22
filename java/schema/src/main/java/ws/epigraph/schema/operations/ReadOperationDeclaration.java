@@ -53,7 +53,7 @@ public class ReadOperationDeclaration extends OperationDeclaration {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        outputProjection().entityProjection(),
+        outputProjection().projection(),
         "output",
         errors
     );

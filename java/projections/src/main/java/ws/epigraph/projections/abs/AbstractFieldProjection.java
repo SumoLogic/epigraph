@@ -57,7 +57,7 @@ public abstract class AbstractFieldProjection<
 //  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
-  public @NotNull EP entityProjection() { return projection; }
+  public @NotNull EP projection() { return projection; }
 
   @Override
   public FP merge(
@@ -71,7 +71,7 @@ public abstract class AbstractFieldProjection<
     final List<@NotNull EP> entityProjections =
         fieldProjections
             .stream()
-            .map(fp -> fp.entityProjection().normalizedForType(type.type()))
+            .map(fp -> fp.projection().normalizedForType(type.type()))
             .collect(Collectors.toList());
 
     assert entityProjections.size() >= 1;

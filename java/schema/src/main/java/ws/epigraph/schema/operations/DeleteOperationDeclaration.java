@@ -47,8 +47,8 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
     );
 
     if (path != null) {
-      TypeApi tipType = ProjectionUtils.tipType(path.entityProjection()).type();
-      TypeApi deleteType = deleteProjection.entityProjection().type();
+      TypeApi tipType = ProjectionUtils.tipType(path.projection()).type();
+      TypeApi deleteType = deleteProjection.projection().type();
 
       if (!deleteType.isAssignableFrom(tipType))
         throw new IllegalArgumentException(
@@ -74,7 +74,7 @@ public class DeleteOperationDeclaration extends OperationDeclaration {
 
     ensureProjectionStartsWithResourceType(
         resource,
-        deleteProjection().entityProjection(),
+        deleteProjection().projection(),
         "delete",
         errors
     );

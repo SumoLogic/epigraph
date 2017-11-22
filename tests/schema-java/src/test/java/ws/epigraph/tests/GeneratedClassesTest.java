@@ -90,7 +90,7 @@ public class GeneratedClassesTest {
   @Test
   public void testRecursiveOpProjection() {
     final @NotNull OpEntityProjection varProjection =
-        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().entityProjection();
+        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().projection();
 
     assertEquals(
         "[ ]( $recTest = :`record` ( bestFriend $recTest ) )",
@@ -164,7 +164,7 @@ public class GeneratedClassesTest {
   public void testOpOutputDefaults() {
     OpFieldProjection fieldProjection =
         ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
-    OpEntityProjection entityProjection = fieldProjection.entityProjection();
+    OpEntityProjection entityProjection = fieldProjection.projection();
     assertFalse(entityProjection.flag());
 
     OpTagProjectionEntry tpe = entityProjection.singleTagProjection(); // self

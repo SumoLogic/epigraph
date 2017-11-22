@@ -150,7 +150,7 @@ public abstract class AbstractRemoteOperationInvocation<
                   serverProtocol.readResponse(
                       new StepsAndProjection<>(
                           Math.max(0, request.outputStepsAndProjection().pathSteps() - 1), // minus one for field
-                          request.outputProjection().entityProjection()
+                          request.outputProjection().projection()
                       ),
                       context,
                       result,

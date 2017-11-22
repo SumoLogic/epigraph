@@ -25,7 +25,6 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.*;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -389,7 +388,7 @@ public final class ReqPartialPathPsiParser {
 
     FieldApi field = opFieldEntry.field();
     final @NotNull OpFieldProjection opFieldPath = opFieldEntry.fieldProjection();
-    final @NotNull OpEntityProjection opFieldEntityProjection = opFieldPath.entityProjection();
+    final @NotNull OpEntityProjection opFieldEntityProjection = opFieldPath.projection();
 
     final @Nullable UrlReqTrunkFieldProjection fieldProjectionPsi = psi.getReqTrunkFieldProjection();
 
@@ -476,7 +475,7 @@ public final class ReqPartialPathPsiParser {
 
     final ReqPartialPathParsingResult<ReqEntityProjection> fieldVarParsingResult;
 
-    if (op.entityProjection().isPathEnd()) {
+    if (op.projection().isPathEnd()) {
       fieldVarParsingResult = new ReqPartialPathParsingResult<>(
           ReqEntityProjection.pathEnd(
               fieldType.type(),
@@ -487,7 +486,7 @@ public final class ReqPartialPathPsiParser {
       );
     } else
       fieldVarParsingResult =
-          parseEntityPath(op.entityProjection(), fieldType, fieldVarPathPsi, typesResolver, context);
+          parseEntityPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, context);
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 

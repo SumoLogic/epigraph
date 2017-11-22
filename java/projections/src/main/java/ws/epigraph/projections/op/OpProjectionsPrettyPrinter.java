@@ -93,7 +93,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
   @Override
   protected String fieldNamePrefix(final @NotNull OpFieldProjectionEntry fieldEntry) {
-    return fieldEntry.fieldProjection().entityProjection().flag() ? "+" : "";
+    return fieldEntry.fieldProjection().projection().flag() ? "+" : "";
     // todo: don't print '+' for vars/models if printed for field
   }
 

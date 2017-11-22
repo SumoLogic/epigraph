@@ -249,7 +249,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
       assertNull(path);
     else {
       assertNotNull(path);
-      assertEquals(expectedPath, TestUtil.printReqEntityPath(path.entityProjection()));
+      assertEquals(expectedPath, TestUtil.printReqEntityPath(path.projection()));
     }
 
     final @Nullable StepsAndProjection<ReqFieldProjection> inputStepsAndProjection = createRequestUrl.inputProjection();
@@ -260,7 +260,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
       assertEquals(
           expectedInputProjection,
           TestUtil.printReqEntityProjection(
-              inputStepsAndProjection.projection().entityProjection(),
+              inputStepsAndProjection.projection().projection(),
               inputStepsAndProjection.pathSteps()
           )
       );
@@ -271,7 +271,7 @@ public class CreateOperationRouterTest { private final TypesResolver resolver = 
     assertEquals(expectedOutputSteps, stepsAndProjection.pathSteps());
     assertEquals(
         expectedOutputProjection,
-        TestUtil.printReqEntityProjection(stepsAndProjection.projection().entityProjection(), expectedOutputSteps)
+        TestUtil.printReqEntityProjection(stepsAndProjection.projection().projection(), expectedOutputSteps)
     );
   }
 

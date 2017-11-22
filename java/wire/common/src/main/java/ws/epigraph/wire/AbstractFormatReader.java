@@ -102,7 +102,7 @@ public abstract class AbstractFormatReader
           RecordDatum.Builder recordDatum = recordType.createBuilder();
           recordDatum._raw().setData(
               (Field) fieldEntry.field(),
-              readData(fieldEntry.fieldProjection().entityProjection(), pathSteps - 1)
+              readData(fieldEntry.fieldProjection().projection(), pathSteps - 1)
           );
 
           return recordDatum.asValue();

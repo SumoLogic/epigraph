@@ -106,7 +106,7 @@ public final class OperationsPsiParser {
         OperationKind.READ,
         resolveOutputType(
             resourceType,
-            fieldPath == null ? null : fieldPath.entityProjection(),
+            fieldPath == null ? null : fieldPath.projection(),
             null,
             resolver,
             context
@@ -155,7 +155,7 @@ public final class OperationsPsiParser {
 
     @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.CREATE, resourceType, pathPsi, resolver, context);
-    OpEntityProjection entityProjection = fieldPath == null ? null : fieldPath.entityProjection();
+    OpEntityProjection entityProjection = fieldPath == null ? null : fieldPath.projection();
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
@@ -193,7 +193,7 @@ public final class OperationsPsiParser {
             OperationKind.CREATE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.entityProjection(),
+                fieldPath == null ? null : fieldPath.projection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -245,7 +245,7 @@ public final class OperationsPsiParser {
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
-    final @Nullable OpEntityProjection entityPath = fieldPath == null ? null : fieldPath.entityProjection();
+    final @Nullable OpEntityProjection entityPath = fieldPath == null ? null : fieldPath.projection();
 
     OpReferenceContext referenceContext =
         createReferenceContext(
@@ -276,7 +276,7 @@ public final class OperationsPsiParser {
             OperationKind.UPDATE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.entityProjection(),
+                fieldPath == null ? null : fieldPath.projection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -337,7 +337,7 @@ public final class OperationsPsiParser {
 
     final OpFieldProjection fieldProjection =
         context.schemaPsiProcessingContext().deleteProjectionsParser().parseFieldProjection(
-            resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.entityProjection()),
+            resolveDeleteType(resourceType, fieldPath == null ? null : fieldPath.projection()),
             deleteProjectionPsi.getPlus() != null,
             deleteFieldProjectionPsi,
             resolver,
@@ -356,7 +356,7 @@ public final class OperationsPsiParser {
             OperationKind.DELETE,
             resolveOutputType(
                 resourceType,
-                fieldPath == null ? null : fieldPath.entityProjection(),
+                fieldPath == null ? null : fieldPath.projection(),
                 outputTypePsi,
                 resolver,
                 context
@@ -429,7 +429,7 @@ public final class OperationsPsiParser {
         context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
             resolveInputType(
                 resourceType,
-                opPath == null ? null : opPath.entityProjection(),
+                opPath == null ? null : opPath.projection(),
                 inputTypePsi,
                 resolver,
                 context
@@ -453,7 +453,7 @@ public final class OperationsPsiParser {
             OperationKind.CUSTOM,
             resolveOutputType(
                 resourceType,
-                opPath == null ? null : opPath.entityProjection(),
+                opPath == null ? null : opPath.projection(),
                 outputTypePsi,
                 resolver,
                 context

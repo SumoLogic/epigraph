@@ -42,7 +42,7 @@ class ReqOutputFieldProjectionGen(
   override lazy val dataProjectionGen: ReqOutputProjectionGen =
     ReqOutputEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.entityProjection(),
+      op.projection(),
       baseNamespaceOpt,
       namespaceSuffix,
       dataParentClassGenOpt,

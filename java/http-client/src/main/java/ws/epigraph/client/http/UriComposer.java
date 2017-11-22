@@ -167,7 +167,7 @@ public final class UriComposer {
 
   private static @NotNull String printReqProjection(@NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection) {
     return printReqProjection(
-        stepsAndProjection.projection().entityProjection(),
+        stepsAndProjection.projection().projection(),
         stepsAndProjection.pathSteps() - 1
     );
   }

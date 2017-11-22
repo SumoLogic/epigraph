@@ -38,7 +38,7 @@ class ReqPathFieldProjectionGen(
   override lazy val dataProjectionGen: ReqPathProjectionGen =
     ReqPathEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      op.entityProjection(),
+      op.projection(),
       namespaceSuffix,
       ctx
     )

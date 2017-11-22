@@ -135,7 +135,7 @@ public final class RequestFactory {
         );
 
         reqPath = pathParsingResult.path();
-        DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.entityProjection());
+        DataTypeApi pathTipType = ProjectionUtils.tipType(reqPath.projection());
 
         UrlReqTrunkEntityProjection trunkEntityProjection = pathParsingResult.trunkProjectionPsi();
         UrlReqComaEntityProjection comaEntityProjection = pathParsingResult.comaProjectionPsi();
@@ -149,7 +149,7 @@ public final class RequestFactory {
           StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseTrunkEntityProjection(
               pathTipType,
               false,
-              operationDeclaration.outputProjection().entityProjection(),
+              operationDeclaration.outputProjection().projection(),
               trunkEntityProjection,
               typesResolver,
               reqOutputPsiProcessingContext
@@ -163,7 +163,7 @@ public final class RequestFactory {
           StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseComaEntityProjection(
               pathTipType,
               false,
-              operationDeclaration.outputProjection().entityProjection(),
+              operationDeclaration.outputProjection().projection(),
               comaEntityProjection,
               typesResolver,
               reqOutputPsiProcessingContext
@@ -233,7 +233,7 @@ public final class RequestFactory {
             )
         );
 
-      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.projection(), typesResolver);
       reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
@@ -244,7 +244,7 @@ public final class RequestFactory {
     StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
         outputRequestString,
         operationDeclaration.outputType().dataType(),
-        operationDeclaration.outputProjection().entityProjection(),
+        operationDeclaration.outputProjection().projection(),
         typesResolver
     );
 
@@ -254,7 +254,7 @@ public final class RequestFactory {
           inputRequestString,
           true, // todo take from inputRequestString
           operationDeclaration.inputType().dataType(),
-          operationDeclaration.inputProjection().entityProjection(),
+          operationDeclaration.inputProjection().projection(),
           typesResolver
       );
     }
@@ -302,7 +302,7 @@ public final class RequestFactory {
             )
         );
 
-      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.projection(), typesResolver);
       reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
@@ -312,7 +312,7 @@ public final class RequestFactory {
     StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
         outputRequestString,
         operationDeclaration.outputType().dataType(),
-        operationDeclaration.outputProjection().entityProjection(),
+        operationDeclaration.outputProjection().projection(),
         typesResolver
     );
 
@@ -325,7 +325,7 @@ public final class RequestFactory {
           replace ? updateRequestString.substring(1) : updateRequestString,
           replace,
           operationDeclaration.inputType().dataType(),
-          operationDeclaration.inputProjection().entityProjection(),
+          operationDeclaration.inputProjection().projection(),
           typesResolver
       );
 
@@ -372,7 +372,7 @@ public final class RequestFactory {
             )
         );
 
-      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.projection(), typesResolver);
       reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
@@ -382,15 +382,15 @@ public final class RequestFactory {
     StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
         outputRequestString,
         operationDeclaration.outputType().dataType(),
-        operationDeclaration.outputProjection().entityProjection(),
+        operationDeclaration.outputProjection().projection(),
         typesResolver
     );
 
     ReqFieldProjection reqDeleteFieldProjection = new ReqFieldProjection(
         parseReqDeleteProjection(
             deleteRequestString,
-            operationDeclaration.deleteProjection().entityProjection().type().dataType(),
-            operationDeclaration.deleteProjection().entityProjection(),
+            operationDeclaration.deleteProjection().projection().type().dataType(),
+            operationDeclaration.deleteProjection().projection(),
             typesResolver
         ).projection(),
         TextLocation.UNKNOWN
@@ -440,7 +440,7 @@ public final class RequestFactory {
             )
         );
 
-      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.entityProjection(), typesResolver);
+      ReqEntityProjection reqVarPath = parseReqPath(pathString, resourceType, opPath.projection(), typesResolver);
       reqFieldPath = new ReqFieldProjection(
           reqVarPath,
           TextLocation.UNKNOWN
@@ -450,7 +450,7 @@ public final class RequestFactory {
     StepsAndProjection<ReqEntityProjection> outputStepsAndProjection = parseReqOutputProjection(
         outputRequestString,
         operationDeclaration.outputType().dataType(),
-        operationDeclaration.outputProjection().entityProjection(),
+        operationDeclaration.outputProjection().projection(),
         typesResolver
     );
 
@@ -472,7 +472,7 @@ public final class RequestFactory {
           inputRequestString,
           true, // todo take from inputRequestString
           inputType.dataType(),
-          opInputFieldProjection.entityProjection(),
+          opInputFieldProjection.projection(),
           typesResolver
       );
 

@@ -179,7 +179,7 @@ public class OpOutputProjectionsTest {
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
@@ -200,7 +200,7 @@ public class OpOutputProjectionsTest {
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
@@ -220,14 +220,14 @@ public class OpOutputProjectionsTest {
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
@@ -248,14 +248,14 @@ public class OpOutputProjectionsTest {
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
@@ -276,7 +276,7 @@ public class OpOutputProjectionsTest {
     // rmp = $rmp/worstEnemy:record
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
     assertEquals(2, rmp.fieldProjections().size());
@@ -287,7 +287,7 @@ public class OpOutputProjectionsTest {
     // rmp = $rmp/worstEnemy:record
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
@@ -1084,7 +1084,7 @@ public class OpOutputProjectionsTest {
     //noinspection OverlyStrongTypeCast
     vp = ((OpRecordModelProjection) vp.singleTagProjection().projection()).fieldProjection("bestFriend")
         .fieldProjection()
-        .entityProjection();
+        .projection();
 
     assertEquals(PersonId.type, vp.tagProjection("id").projection().type());
 
@@ -1105,24 +1105,24 @@ public class OpOutputProjectionsTest {
     OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
         .fieldProjection()
-        .entityProjection()
+        .projection()
         .singleTagProjection()
         .projection();
 
     OpModelProjection<?, ?, ?, ?> idProjection =
-        rmp.fieldProjection("id").fieldProjection().entityProjection().singleTagProjection().projection();
+        rmp.fieldProjection("id").fieldProjection().projection().singleTagProjection().projection();
 
     assertEquals(PersonId.type, idProjection.type());
 
     OpRecordModelProjection t = rmp.tailByType(UserRecord.type);
     assertNotNull(t);
-    idProjection = t.fieldProjection("id").fieldProjection().entityProjection().singleTagProjection().projection();
+    idProjection = t.fieldProjection("id").fieldProjection().projection().singleTagProjection().projection();
 //    assertEquals(UserId.type, idProjection.type());
     assertEquals(PersonId.type, idProjection.type()); // it's not overridden
 
     t = rmp.normalizedForType(UserRecord.type);
     assertNotNull(t);
-    idProjection = t.fieldProjection("id").fieldProjection().entityProjection().singleTagProjection().projection();
+    idProjection = t.fieldProjection("id").fieldProjection().projection().singleTagProjection().projection();
 //    assertEquals(UserId.type, idProjection.type());
     assertEquals(PersonId.type, idProjection.type()); // it's not overridden
   }

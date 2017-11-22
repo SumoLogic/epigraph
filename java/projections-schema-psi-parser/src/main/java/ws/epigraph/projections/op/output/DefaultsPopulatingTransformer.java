@@ -72,7 +72,7 @@ public final class DefaultsPopulatingTransformer extends OpProjectionTransformer
     boolean newFlag = recordModelProjection.flag() ||
                       transformedFields.values()
                           .stream()
-                          .anyMatch(fpe -> fpe.fieldProjection().entityProjection().flag());
+                          .anyMatch(fpe -> fpe.fieldProjection().projection().flag());
 
     return super.transformRecordProjection(
         recordModelProjection,

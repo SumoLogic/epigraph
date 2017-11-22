@@ -90,7 +90,7 @@ public final class DataErrorLocator {
         ReqFieldProjectionEntry fpe = fieldEntries.iterator().next().getValue();
 
         return getError(
-            fpe.fieldProjection().entityProjection(),
+            fpe.fieldProjection().projection(),
             pathSteps - 1,
             recordDatum._raw().getData((Field) fpe.field())
         );

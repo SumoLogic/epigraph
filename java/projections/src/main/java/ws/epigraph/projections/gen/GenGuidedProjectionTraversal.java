@@ -182,8 +182,8 @@ public abstract class GenGuidedProjectionTraversal<
 
   public boolean traverse(@NotNull FP fp, @NotNull GFP gfp) {
     if (visitFieldProjection(fp, gfp)) {
-      VP vp = fp.entityProjection();
-      GVP gvp = gfp.entityProjection();
+      VP vp = fp.projection();
+      GVP gvp = gfp.projection();
       return traverse(vp, gvp);
     } else return false;
   }

@@ -47,7 +47,7 @@ public class UpdateRequestValidationFilter<Rsp extends OperationResponse>
       final @NotNull OperationInvocationContext context) {
 
     OpInputDataValidator validator = new OpInputDataValidator();
-    validator.validateData(request.data(), invocation.operationDeclaration().inputProjection().entityProjection());
+    validator.validateData(request.data(), invocation.operationDeclaration().inputProjection().projection());
     List<? extends DataValidationError> errors = validator.errors();
 
     return errors.isEmpty()

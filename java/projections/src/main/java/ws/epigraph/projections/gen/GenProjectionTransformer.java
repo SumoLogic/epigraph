@@ -340,7 +340,7 @@ public abstract class GenProjectionTransformer<
 
 
   private @NotNull FP transformFieldProjection(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    EP ep = fp.entityProjection();
+    EP ep = fp.projection();
     EP transformedEp = transformEntityProjection(ep, dataType);
     return transformFieldProjection(fp, transformedEp, ep != transformedEp);
   }

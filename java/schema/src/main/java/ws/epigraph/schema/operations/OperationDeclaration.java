@@ -86,12 +86,12 @@ public abstract class OperationDeclaration implements Annotated {
   public @Nullable OpFieldProjection path() { return path; }
 
   public @Nullable TypeApi inputType() {
-    return inputProjection == null ? null : inputProjection.entityProjection().type();
+    return inputProjection == null ? null : inputProjection.projection().type();
   }
 
   public @Nullable OpFieldProjection inputProjection() { return inputProjection; }
 
-  public @NotNull TypeApi outputType() { return outputProjection.entityProjection().type(); }
+  public @NotNull TypeApi outputType() { return outputProjection.projection().type(); }
 
   public @NotNull OpFieldProjection outputProjection() { return outputProjection; }
 
@@ -106,7 +106,7 @@ public abstract class OperationDeclaration implements Annotated {
       @NotNull List<ResourceDeclarationError> errors) {
 
     @NotNull TypeApi outputType = resource.fieldType().type();
-    if (path != null) outputType = ProjectionUtils.tipType(path.entityProjection()).type();
+    if (path != null) outputType = ProjectionUtils.tipType(path.projection()).type();
 
     final TypeApi outputProjectionType = projection.type();
 

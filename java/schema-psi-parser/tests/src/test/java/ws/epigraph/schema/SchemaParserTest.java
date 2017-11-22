@@ -262,14 +262,14 @@ public class SchemaParserTest {
     ResourceDeclaration users = schema.resources().get("users");
     for (final OperationDeclaration op : users.operations()) {
       OpFieldProjection outputProjection = op.outputProjection();
-      ProjectionReferenceName referenceName = outputProjection.entityProjection().referenceName();
+      ProjectionReferenceName referenceName = outputProjection.projection().referenceName();
       if (referenceName != null) {
         assertTrue(referenceName.toString(), referenceName.toString().contains("projections.output"));
       }
 
       OpFieldProjection inputProjection = op.inputProjection();
-      if (inputProjection != null && inputProjection.entityProjection().referenceName() != null) {
-        referenceName = inputProjection.entityProjection().referenceName();
+      if (inputProjection != null && inputProjection.projection().referenceName() != null) {
+        referenceName = inputProjection.projection().referenceName();
         assertNotNull(referenceName);
 
         switch (op.kind()) {

@@ -33,9 +33,9 @@ public interface GenFieldProjection<
     > {
 //  @NotNull Annotations annotations();
 
-  @NotNull EP entityProjection();
+  @NotNull EP projection();
 
-  @NotNull FP setEntityProjection(@NotNull EP varProjection);
+  @NotNull FP setProjection(@NotNull EP projection);
 
   /**
    * Merges a list of field projections together
