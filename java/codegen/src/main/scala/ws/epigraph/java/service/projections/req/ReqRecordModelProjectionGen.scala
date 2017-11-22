@@ -23,7 +23,7 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenFieldProjectionEntry, GenRecordModelProjection}
-import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 import scala.collection.JavaConversions._
@@ -32,7 +32,8 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
-  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenRecordModelProjection[_, _, _, _, _, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
+      with GenRecordModelProjection[_, _, _, _, _, _, _ <: DatumTypeApi]
 //  override protected type GenType <: ReqRecordModelProjectionGen
 
   /** field generators: should only include new or overridden fields, should not include inherited */

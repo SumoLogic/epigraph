@@ -26,6 +26,7 @@ import ws.epigraph.util.Tuple2;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class CompositeOpProjectionTransformer extends OpProjectionTransformer {
+  // todo unused, remove?
   private final @NotNull OpProjectionTransformer t1;
   private final @NotNull OpProjectionTransformer t2;
 

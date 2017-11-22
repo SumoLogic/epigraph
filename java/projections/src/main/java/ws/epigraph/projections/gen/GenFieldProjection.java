@@ -28,7 +28,7 @@ import java.util.List;
 public interface GenFieldProjection<
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<EP, TP, MP, FP>
     > {
 //  @NotNull Annotations annotations();

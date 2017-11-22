@@ -25,8 +25,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathPrettyPrinter<E extends Exception>
-    extends AbstractReqPrettyPrinter<ReqEntityProjection, ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>, E> {
+public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPrettyPrinter<E> {
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class ReferenceContext<
     EP extends GenEntityProjection<EP, ?, MP>,
-    MP extends GenModelProjection<?, /*MP*/?, ?, ?>
+    MP extends GenModelProjection<?, ?, /*MP*/?, ?, ?>
     > {
 
   @NotNull
@@ -512,9 +512,9 @@ public abstract class ReferenceContext<
   protected @NotNull MP fromSelfVar(@NotNull EP eRef) {
     assert eRef.isResolved();
     assert eRef.type().kind() != TypeKind.ENTITY;
-    GenTagProjectionEntry<?, MP> tpe = eRef.singleTagProjection();
+    GenTagProjectionEntry<?, ?> tpe = eRef.singleTagProjection();
     assert tpe != null;
-    return tpe.projection();
+    return (MP) tpe.projection();
   }
 
   /**

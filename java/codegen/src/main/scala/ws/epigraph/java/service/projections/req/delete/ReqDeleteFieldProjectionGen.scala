@@ -35,8 +35,6 @@ class ReqDeleteFieldProjectionGen(
   dataParentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
   protected val ctx: GenContext) extends ReqDeleteProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpFieldProjection
-
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"

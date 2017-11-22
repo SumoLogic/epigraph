@@ -26,7 +26,7 @@ import ws.epigraph.types.FieldApi;
 public interface GenFieldProjectionEntry<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {
   @NotNull FieldApi field();

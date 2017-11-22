@@ -35,7 +35,7 @@ import java.util.Map;
 public abstract class AbstractProjectionsPrettyPrinter<
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;

@@ -35,8 +35,6 @@ class ReqOutputFieldProjectionGen(
   dataParentClassGenOpt: Option[ReqOutputTypeProjectionGen],
   protected val ctx: GenContext) extends ReqOutputProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpFieldProjection
-
   override protected def baseNamespace: Qn = baseNamespaceOpt.getOrElse(super.baseNamespace)
 
   override val shortClassName: String = s"$classNamePrefix${ up(fieldName) }Field$classNameSuffix"

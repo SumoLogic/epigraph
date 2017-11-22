@@ -129,7 +129,7 @@ public class ReqMapModelProjection
       mergedKeys = null;
     } else {
       //noinspection ConstantConditions
-      mergedKeys = AbstractReqKeyProjection.merge(
+      mergedKeys = ReqKeyProjection.merge(
           modelProjections.stream().flatMap(projection -> projection.keys().stream()),
           (keysToMerge, value, mergedKeyParams, mergedKeyAnnotations) ->
               new ReqKeyProjection(value, mergedKeyParams, mergedKeyAnnotations, TextLocation.UNKNOWN)

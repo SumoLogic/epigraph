@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractFieldProjection<
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
     FP extends GenFieldProjection<EP, TP, MP, FP>
     > implements GenFieldProjection<EP, TP, MP, FP> {
 

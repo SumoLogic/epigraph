@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
+@SuppressWarnings("unchecked")
 public class OpTagProjectionEntry
     extends AbstractTagProjectionEntry<OpTagProjectionEntry, OpModelProjection<?, ?, ?, ?>> {
 

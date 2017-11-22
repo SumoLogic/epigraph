@@ -20,10 +20,10 @@ package ws.epigraph.projections.gen;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjectionTransformationMap<
-    VP extends GenEntityProjection<VP, ?, MP>,
-    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>> {
+    EP extends GenEntityProjection<EP, ?, MP>,
+    MP extends GenModelProjection<?, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>> {
 
-  VP getEntityMapping(VP old);
+  EP getEntityMapping(EP old);
 
   MP getModelMapping(MP old);
 

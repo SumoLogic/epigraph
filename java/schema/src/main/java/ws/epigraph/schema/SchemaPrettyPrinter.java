@@ -389,7 +389,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   }
 
   @SuppressWarnings("unchecked")
-  private <VP extends GenEntityProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> void printGlobalProjections(
+  private <VP extends GenEntityProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?, ?>> void printGlobalProjections(
       @NotNull String prefix,
       @NotNull Collection<VP> varProjections,
       @NotNull Collection<MP> modelProjections,
@@ -456,10 +456,10 @@ public class SchemaPrettyPrinter<E extends Exception> {
             }
 
           } else { // self-var
-            final GenTagProjectionEntry<?, MP> tp = outputProjection.singleTagProjection();
+            final GenTagProjectionEntry<?, ?> tp = outputProjection.singleTagProjection();
 
             if (tp != null) {
-              final MP mp = tp.projection();
+              final MP mp = (MP) tp.projection();
               if (mp.referenceName() != null)
                 nextModelProjections.add(mp);
 

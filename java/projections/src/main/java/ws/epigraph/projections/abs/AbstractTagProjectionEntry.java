@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractTagProjectionEntry<
-    TP extends AbstractTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
+    TP extends AbstractTagProjectionEntry</*TP*/?, /*MP*/?>,
+    MP extends AbstractModelProjection</*TP*/?, /*MP*/?, ?, ?>
     > implements GenTagProjectionEntry<TP, MP> {
 
   private final @NotNull TagApi tag;
@@ -52,7 +52,6 @@ public abstract class AbstractTagProjectionEntry<
               tag.name(), tag.type().name(), projection().type().name()
           )
       );
-
   }
 
   @Override
@@ -67,10 +66,10 @@ public abstract class AbstractTagProjectionEntry<
     if (tagEntries.isEmpty()) return null;
 
     final List</*@NotNull */MP> models =
-        tagEntries.stream().map(AbstractTagProjectionEntry::projection).collect(Collectors.toList());
+        tagEntries.stream().map(tp -> (MP) tp.projection()).collect(Collectors.toList());
 
     final /*@NotNull*/ MP mp = models.get(0);
-    MP mergedModel = ((GenModelProjection<MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
+    MP mergedModel = ((GenModelProjection<?, MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }

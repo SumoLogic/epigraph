@@ -45,13 +45,13 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
 public abstract class AbstractJsonFormatWriter<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
+    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
     KP // key projection
     > extends AbstractFormatWriter<VP, TP, MP, RMP, FPE, FP, MMP> {
 

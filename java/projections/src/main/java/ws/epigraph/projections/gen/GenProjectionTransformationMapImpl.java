@@ -28,7 +28,7 @@ import java.util.IdentityHashMap;
  */
 public class GenProjectionTransformationMapImpl<
     VP extends GenEntityProjection<VP, ?, MP>,
-    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>
+    MP extends GenModelProjection<?, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>
     > implements GenProjectionTransformationMap<VP, MP> {
 
   private final @NotNull IdentityHashMap<VP, VP> epMapping = new IdentityHashMap<>();

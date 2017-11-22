@@ -33,8 +33,6 @@ class ReqPathFieldProjectionGen(
   override protected val namespaceSuffix: Qn,
   protected val ctx: GenContext) extends ReqPathProjectionGen with ReqFieldProjectionGen {
 
-  override type OpFieldProjectionType = OpFieldProjection
-
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
   override lazy val dataProjectionGen: ReqPathProjectionGen =

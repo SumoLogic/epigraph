@@ -116,7 +116,7 @@ public class OpMapModelProjection
 
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
-    AbstractOpKeyPresence mergedKeysPresence = null;
+    OpKeyPresence mergedKeysPresence = null;
     List<OpEntityProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
 
     OpMapModelProjection prevProjection = null;
@@ -125,12 +125,12 @@ public class OpMapModelProjection
       final /*@NotNull*/ OpKeyProjection keyProjection = projection.keyProjection();
       keysParams.add(keyProjection.params());
       keysAnnotations.add(keyProjection.annotations());
-      final AbstractOpKeyPresence presence = keyProjection.presence();
+      final OpKeyPresence presence = keyProjection.presence();
 
       if (mergedKeysPresence == null) mergedKeysPresence = presence;
       else {
         /*@Nullable*/
-        AbstractOpKeyPresence newKeysPresence = AbstractOpKeyPresence.merge(mergedKeysPresence, presence);
+        OpKeyPresence newKeysPresence = OpKeyPresence.merge(mergedKeysPresence, presence);
         if (newKeysPresence == null)
           throw new IllegalArgumentException(
               String.format(
@@ -162,9 +162,9 @@ public class OpMapModelProjection
             TextLocation.UNKNOWN,
             OpParams.merge(keysParams),
             Annotations.merge(keysAnnotations),
-            AbstractOpKeyProjection.mergeProjections(
+            OpKeyProjection.mergeProjections(
                 model.keyType(),
-                modelProjections.stream().map(mp -> mp.keyProjection().projection())
+                modelProjections.stream().map(mp -> mp.keyProjection().spec())
             ),
             TextLocation.UNKNOWN
         ),

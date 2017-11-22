@@ -20,7 +20,7 @@ import ws.epigraph.compiler.CMapType
 import ws.epigraph.java.GenContext
 import ws.epigraph.java.service.projections.req.{BaseNamespaceProvider, ReqMapModelProjectionGen}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.{AbstractOpKeyPresence, OpMapModelProjection}
+import ws.epigraph.projections.op.{OpKeyPresence, OpMapModelProjection}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -55,7 +55,7 @@ class ReqUpdateMapModelProjectionGen(
       )
     }
 
-  override protected def keysNullable: Boolean = op.keyProjection().presence() != AbstractOpKeyPresence.REQUIRED
+  override protected def keysNullable: Boolean = op.keyProjection().presence() != OpKeyPresence.REQUIRED
 
   override val keyGen: ReqUpdateMapKeyProjectionGen = new ReqUpdateMapKeyProjectionGen(
     baseNamespaceProvider,

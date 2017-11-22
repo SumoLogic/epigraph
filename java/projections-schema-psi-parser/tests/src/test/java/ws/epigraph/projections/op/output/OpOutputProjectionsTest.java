@@ -27,7 +27,6 @@ import ws.epigraph.projections.op.*;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
@@ -54,7 +53,7 @@ public class OpOutputProjectionsTest {
   private final DataType dataType = new DataType(Person.type, Person.id);
 
   @Test
-  public void testParsing() throws PsiProcessingException {
+  public void testParsing() {
     // todo more elaborate example (multiple tails!).
     // Make pretty-printed result consistent with grammar?
     String projectionStr = lines(
@@ -123,7 +122,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseEmpty() throws PsiProcessingException {
+  public void testParseEmpty() {
     testParsingEntityProjection(
         dataType,
         ""
@@ -133,7 +132,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseParam() throws PsiProcessingException {
+  public void testParseParam() {
     testParsingEntityProjection(
         lines(
             ":id {",
@@ -145,12 +144,12 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseMultipleTags() throws PsiProcessingException {
+  public void testParseMultipleTags() {
     testParsingEntityProjection(":( id, `record` )");
   }
 
   @Test
-  public void testParseRecursive() throws PsiProcessingException {
+  public void testParseRecursive() {
     OpEntityProjection vp = testParsingEntityProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
     final ProjectionReferenceName name = vp.referenceName();
     assertNotNull(name);
@@ -158,7 +157,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseStupidRecursive() throws PsiProcessingException {
+  public void testParseStupidRecursive() {
     try {
       testParsingEntityProjection("$self = $self");
       fail("Expected to get an error");
@@ -169,7 +168,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testParseModelRecursive() throws PsiProcessingException {
+  public void testParseModelRecursive() {
     final OpEntityProjection vp =
         testParsingEntityProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
 
@@ -189,7 +188,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testNormalizeRecursive() throws PsiProcessingException {
+  public void testNormalizeRecursive() {
     final OpEntityProjection vp =
         testParsingEntityProjection(":`record` $rr = ( id, bestFriend :`record` $rr )")
             .normalizedForType(User.type);
@@ -210,7 +209,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testParseSelfVarRecursive() throws PsiProcessingException {
+  public void testParseSelfVarRecursive() {
     final OpEntityProjection vp =
         testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
 
@@ -237,7 +236,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testNormalizeSelfVarRecursive() throws PsiProcessingException {
+  public void testNormalizeSelfVarRecursive() {
     final OpEntityProjection vp =
         testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
             .normalizedForType(User.type);
@@ -265,7 +264,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testNormalizeSelfVarModelRecursive() throws PsiProcessingException {
+  public void testNormalizeSelfVarModelRecursive() {
     final OpEntityProjection vp =
         testParsingEntityProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )");
 
@@ -296,7 +295,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testNormalizeDiamond() throws PsiProcessingException {
+  public void testNormalizeDiamond() {
     final OpEntityProjection vp = testParsingEntityProjection(
         lines(
             ":`record` ( id )",
@@ -315,7 +314,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testSuperTypeRef() throws PsiProcessingException {
+  public void testSuperTypeRef() {
     // todo add to other parser tests too
     OpEntityProjection personProjection = testParsingEntityProjection(":id");
 
@@ -344,7 +343,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseModelRef() throws PsiProcessingException {
+  public void testParseModelRef() {
     OpEntityProjection personProjection = testParsingEntityProjection(":`record` ( id )");
 
     @SuppressWarnings("ConstantConditions")
@@ -398,7 +397,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseWrongTypeRef() throws PsiProcessingException {
+  public void testParseWrongTypeRef() {
     // todo add to other parser tests too
     OpEntityProjection paginationProjection =
         testParsingEntityProjection(new DataType(PaginationInfo.type, null), "()", "");
@@ -431,7 +430,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseTail() throws PsiProcessingException {
+  public void testParseTail() {
     testParsingEntityProjection(
         ":~ws.epigraph.tests.User :id"
         ,
@@ -440,7 +439,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseDoubleTail() throws PsiProcessingException {
+  public void testParseDoubleTail() {
     final OpEntityProjection projection = testParsingEntityProjection(
         dataType,
         ":~ws.epigraph.tests.User :id :~ws.epigraph.tests.SubUser :id"
@@ -463,7 +462,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseTails() throws PsiProcessingException {
+  public void testParseTails() {
     testParsingEntityProjection(
         ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
         ,
@@ -472,44 +471,44 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseModelTail() throws PsiProcessingException {
+  public void testParseModelTail() {
     testParsingEntityProjection(
         ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
     );
   }
 
   @Test
-  public void testParseCustomParams() throws PsiProcessingException {
+  public void testParseCustomParams() {
     testParsingEntityProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
-  public void testParseRecordDefaultFields() throws PsiProcessingException {
+  public void testParseRecordDefaultFields() {
     testParsingEntityProjection(":`record` ( id, firstName )");
   }
 
   @Test
-  public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
+  public void testParseRecordFieldsWithStructure() {
     testParsingEntityProjection(":`record` ( id, bestFriend :`record` ( id ) )");
   }
 
   @Test
-  public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
+  public void testParseRecordFieldsWithCustomParams() {
     testParsingEntityProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
   }
 
   @Test
-  public void testParseList() throws PsiProcessingException {
+  public void testParseList() {
     testParsingEntityProjection(":`record` ( friends *( :id ) )");
   }
 
   @Test
-  public void testParseList2() throws PsiProcessingException {
+  public void testParseList2() {
     testParsingEntityProjection(":`record` ( friends * :id )", ":`record` ( friends *( :id ) )");
   }
 
   @Test
-  public void testParseList3() throws PsiProcessingException {
+  public void testParseList3() {
     testParsingEntityProjection(
         ":`record` ( friends * :`record` ( id ) )",
         ":`record` ( friends *( :`record` ( id ) ) )"
@@ -517,13 +516,13 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseMap() throws PsiProcessingException {
+  public void testParseMap() {
     testParsingEntityProjection(
         ":`record` ( friendsMap [ forbidden, ;+param: epigraph.String, @epigraph.annotations.Doc \"no keys\" ]( :id ) )");
   }
 
   @Test
-  public void testParseMapWithKeyProjection() throws PsiProcessingException {
+  public void testParseMapWithKeyProjection() {
     testParsingEntityProjection(
         lines(
             ":`record` (",
@@ -538,7 +537,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testFlag() throws PsiProcessingException {
+  public void testFlag() {
     testParsingEntityProjection(":+id");
     testParsingEntityProjection(":+`record` ( +id )");
     testParsingEntityProjection(":`record` ( id+ )", ":`record` ( +id )");
@@ -556,7 +555,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseDefault() throws PsiProcessingException {
+  public void testParseDefault() {
     TestConfig cfg = new TestConfig() {
       @Override
       boolean failOnWarnings() { return false; }
@@ -566,7 +565,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testTailsNormalization() throws PsiProcessingException {
+  public void testTailsNormalization() {
     testTailsNormalization(
         ":id :~ws.epigraph.tests.User:`record`(id)",
         Person.type,
@@ -656,7 +655,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testRecursiveTailNormalization() throws PsiProcessingException {
+  public void testRecursiveTailNormalization() {
     testTailsNormalization(
         "$self = :( id, `record` ( bestFriend $self ) ) :~ws.epigraph.tests.User :`record` ( id )",
         Person.type,
@@ -673,7 +672,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testListTailsNormalization() throws PsiProcessingException {
+  public void testListTailsNormalization() {
     testTailsNormalization(
         ":`record`(friends*(:id)):~ws.epigraph.tests.User :`record`(friends*(:`record`(id)))",
         User.type,
@@ -682,7 +681,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testMapTailsNormalization() throws PsiProcessingException {
+  public void testMapTailsNormalization() {
     testTailsNormalization(
         ":`record`(friendsMap[](:id)):~ws.epigraph.tests.User :`record`(friendsMap[required, ;param:epigraph.String](:`record`(id)))",
         User.type,
@@ -691,7 +690,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testModelTailsNormalization() throws PsiProcessingException {
+  public void testModelTailsNormalization() {
     testModelTailsNormalization(
         ":`record`(id, lastName)~ws.epigraph.tests.UserRecord(firstName)~ws.epigraph.tests.UserRecord2(worstEnemy)",
         UserRecord.type,
@@ -706,7 +705,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testNamedEntityTail() throws PsiProcessingException {
+  public void testNamedEntityTail() {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
     final OpReferenceContext referenceContext =
@@ -748,7 +747,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testNamedModelTail() throws PsiProcessingException {
+  public void testNamedModelTail() {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
     final OpReferenceContext referenceContext =
@@ -794,7 +793,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testDiamond() throws PsiProcessingException {
+  public void testDiamond() {
     testModelTailsNormalization(
         ":`record`(id)~(ws.epigraph.tests.UserRecord(firstName),ws.epigraph.tests.UserRecord2(lastName))",
         UserRecord3.type,
@@ -803,7 +802,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testParseMeta() throws PsiProcessingException {
+  public void testParseMeta() {
     String projection = "{ meta: ( start, count ) } [ required ]( :`record` ( id, firstName ) )";
 
     testParsingEntityProjection(
@@ -814,7 +813,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testSameTypeTails() throws PsiProcessingException {
+  public void testSameTypeTails() {
     //noinspection ErrorNotRethrown
     try {
       testTailsNormalization(
@@ -828,7 +827,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testSameTypeModelTails() throws PsiProcessingException {
+  public void testSameTypeModelTails() {
     //noinspection ErrorNotRethrown
     try {
       testModelTailsNormalization(

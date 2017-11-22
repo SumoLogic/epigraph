@@ -26,26 +26,26 @@ import java.util.function.Supplier;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class VarNormalizationContext<VP extends GenEntityProjection<VP, ?, ?>>
-    extends NormalizationContext<TypeApi, VP> {
+public final class EntityNormalizationContext<EP extends GenEntityProjection<EP, ?, ?>>
+    extends NormalizationContext<TypeApi, EP> {
   // here we heavily assume that the same thread can't be normalizing two projections of different
   // families at the same time, e.g. that normalizing OpOutput projection can't entail
   // normalizing OpInputProjection
   // see also javadoc comment in NormalizationContext
 
-  private static final ThreadLocal<VarNormalizationContext<?>> tl = new ThreadLocal<>();
+  private static final ThreadLocal<EntityNormalizationContext<?>> tl = new ThreadLocal<>();
 
-  public VarNormalizationContext(final @NotNull Function<TypeApi, VP> referenceFactory) {
+  public EntityNormalizationContext(final @NotNull Function<TypeApi, EP> referenceFactory) {
     super(referenceFactory);
   }
 
   @SuppressWarnings("unchecked")
   public static <VP extends GenEntityProjection<VP, ?, ?>, G>
   G withContext(
-      @NotNull Supplier<VarNormalizationContext<VP>> contextFactory,
-      @NotNull Function<VarNormalizationContext<VP>, G> function) {
+      @NotNull Supplier<EntityNormalizationContext<VP>> contextFactory,
+      @NotNull Function<EntityNormalizationContext<VP>, G> function) {
     return withContext(
-        (ThreadLocal<VarNormalizationContext<VP>>) (Object) tl,
+        (ThreadLocal<EntityNormalizationContext<VP>>) (Object) tl,
         contextFactory,
         function
     );

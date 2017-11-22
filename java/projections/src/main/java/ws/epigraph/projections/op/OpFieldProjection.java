@@ -18,6 +18,8 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.abs.AbstractFieldProjection;
+import ws.epigraph.projections.gen.GenFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpFieldProjection extends AbstractOpFieldProjection<
+public class OpFieldProjection extends AbstractFieldProjection <
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,

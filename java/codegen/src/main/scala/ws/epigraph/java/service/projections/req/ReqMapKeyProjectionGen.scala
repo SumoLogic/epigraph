@@ -21,15 +21,13 @@ import ws.epigraph.java.JavaGenNames.{ln, lqn2}
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.AbstractOpKeyProjection
+import ws.epigraph.projections.op.OpKeyProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqMapKeyProjectionGen extends ReqProjectionGen {
-  type OpKeyProjectionType <: AbstractOpKeyProjection
-
-  protected def op: OpKeyProjectionType
+  protected def op: OpKeyProjection
 
   protected def cMapType: CMapType
 

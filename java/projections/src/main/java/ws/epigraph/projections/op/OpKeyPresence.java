@@ -14,14 +14,30 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections._void;
+package ws.epigraph.projections.op;
 
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.types.DatumTypeApi;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface VoidModelProjection<MP extends VoidModelProjection<?, ?, ?>, SMP extends VoidModelProjection<?, ?, ?>, M extends DatumTypeApi>
-    extends GenModelProjection<MP, SMP, SMP, M> {
+public enum OpKeyPresence {
+  OPTIONAL, REQUIRED, FORBIDDEN;
+
+  @Contract(pure = true)
+  public @Nullable String getPrettyPrinterString() {
+    if (this == REQUIRED) return "required";
+    if (this == FORBIDDEN) return "forbidden";
+    return null;
+  }
+
+  @Contract(pure = true)
+  public static @Nullable OpKeyPresence merge(OpKeyPresence p1, OpKeyPresence p2) {
+    if (p1 == OPTIONAL) return p2;
+    if (p2 == OPTIONAL) return p1;
+    if (p1 == p2) return p1;
+
+    return null; // not compatible
+  }
 }

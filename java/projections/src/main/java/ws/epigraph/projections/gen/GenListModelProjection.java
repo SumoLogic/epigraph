@@ -25,10 +25,10 @@ import ws.epigraph.types.ListTypeApi;
 public interface GenListModelProjection<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, /*LMP*/?, /*LMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*LMP*/?, /*LMP*/?, /*M*/?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, M>,
     M extends ListTypeApi
-    > extends GenModelProjection<MP, LMP, LMP, M> {
+    > extends GenModelProjection<TP, MP, LMP, LMP, M> {
 
   @NotNull VP itemsProjection();
 }

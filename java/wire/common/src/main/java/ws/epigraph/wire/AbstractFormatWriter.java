@@ -40,7 +40,7 @@ public abstract class AbstractFormatWriter
     <
         EP extends GenEntityProjection<EP, TP, MP>,
         TP extends GenTagProjectionEntry<TP, MP>,
-        MP extends GenModelProjection</*MP*/?, ?, ?, ?>,
+        MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
         RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
         FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
         FP extends GenFieldProjection<EP, TP, MP, FP>,

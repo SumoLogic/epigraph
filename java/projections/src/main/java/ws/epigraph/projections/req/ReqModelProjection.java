@@ -20,9 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.abs.AbstractModelProjection;
+import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -31,21 +36,48 @@ public abstract class ReqModelProjection<
     MP extends ReqModelProjection</*MP*/?, /*SMP*/?, ?>,
     SMP extends ReqModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
-    extends AbstractReqModelProjection<MP, SMP, M> {
+    extends AbstractModelProjection<ReqTagProjectionEntry, MP, SMP, M> {
+
+  protected final @NotNull ReqTagProjectionEntry selfEntry;
+  protected /*final*/ @NotNull Directives directives;
+  protected /*final*/ @NotNull ReqParams params;
 
   protected ReqModelProjection(
-      @NotNull M model,
-      boolean flag,
-      @NotNull ReqParams params,
-      @NotNull Directives directives,
-      @Nullable MP metaProjection,
-      @Nullable List<SMP> tails,
-      @NotNull TextLocation location) {
-    super(model, flag, params, metaProjection, directives, tails, location);
+      final @NotNull M model,
+      final boolean flag,
+      final @NotNull ReqParams params,
+      final @NotNull Directives directives,
+      final @Nullable MP metaProjection,
+      final @Nullable List<SMP> tails,
+      final @NotNull TextLocation location
+  ) {
+    super(model, flag, metaProjection, tails, location);
+    //noinspection ThisEscapedInObjectConstruction
+    selfEntry = new ReqTagProjectionEntry(model.self(), this, location);
+    this.directives = directives;
+    this.params = params;
   }
 
   protected ReqModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
+    //noinspection ThisEscapedInObjectConstruction
+    selfEntry = new ReqTagProjectionEntry(model.self(), this, location);
+    params = ReqParams.EMPTY;
+    directives = Directives.EMPTY;
+  }
+
+  public @NotNull Directives directives() { return directives; }
+
+  public @NotNull ReqParams params() { return params; }
+
+  @Override
+  public @Nullable ReqTagProjectionEntry singleTagProjection() {
+    return selfEntry;
+  }
+
+  @Override
+  public @NotNull Map<String, ReqTagProjectionEntry> tagProjections() {
+    return Collections.singletonMap(selfEntry.tag().name(), selfEntry);
   }
 
   @SuppressWarnings("unchecked")
@@ -67,4 +99,51 @@ public abstract class ReqModelProjection<
     });
   }
 
+  @Override
+  protected SMP merge(
+      final @NotNull M model,
+      final boolean mergedFlag,
+      final @NotNull List<SMP> modelProjections,
+      final @Nullable MP mergedMetaProjection,
+      final @Nullable List<SMP> mergedTails) {
+
+    return merge(
+        model,
+        mergedFlag,
+        modelProjections,
+        ReqParams.merge(modelProjections.stream().map(ReqModelProjection::params)),
+        Directives.merge(modelProjections.stream().map(ReqModelProjection::directives)),
+        mergedMetaProjection,
+        mergedTails
+    );
+  }
+
+  protected abstract SMP merge(
+      @NotNull M model,
+      boolean mergedFlag,
+      @NotNull List<SMP> modelProjections,
+      @NotNull ReqParams mergedParams,
+      @NotNull Directives mergedDirectives,
+      @Nullable MP mergedMetaProjection,
+      @Nullable List<SMP> mergedTails);
+
+  @Override
+  public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
+    preResolveCheck(value);
+    params = value.params();
+    directives = value.directives();
+    super.resolve(name, value);
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    final ReqModelProjection<?, ?, ?> that = (ReqModelProjection<?, ?, ?>) o;
+    return Objects.equals(params, that.params) && Objects.equals(directives, that.directives);
+  }
+
+  @Override
+  public int hashCode() { return Objects.hash(super.hashCode(), params, directives); }
 }

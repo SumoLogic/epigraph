@@ -18,6 +18,7 @@ package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.types.DataTypeApi;
 
 import java.util.List;
@@ -25,13 +26,14 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqFieldProjection extends AbstractReqFieldProjection<
+public class ReqFieldProjection extends AbstractFieldProjection<
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
     ReqFieldProjection
     > {
 
+//  private final @NotNull ReqParams params;
 //  private final boolean flag;
 
   public ReqFieldProjection(
@@ -42,6 +44,7 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
 //    this.flag = flag;
+//    this.params = params;
   }
 
   /**
@@ -54,6 +57,34 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
   private static boolean flag(@NotNull ReqEntityProjection vp) {
     return vp.flag();
   }
+
+//  public @NotNull ReqParams params() { return params; }
+
+//  @Override
+//  protected FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
+//      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull VP mergedVarProjection) {
+//
+//    return merge(
+//        type,
+//        fieldProjections,
+//        ReqParams.merge(fieldProjections.stream().map(AbstractReqFieldProjection::params)),
+//        mergedAnnotations,
+//        mergedVarProjection
+//    );
+//  }
+//
+//  protected FP merge(
+//      final @NotNull DataTypeApi type,
+//      final @NotNull List<FP> fieldProjections,
+//      final @NotNull ReqParams mergedParams,
+//      final @NotNull Annotations mergedAnnotations,
+//      final @NotNull VP mergedVarProjection) {
+//
+//    throw new RuntimeException("not implemented"); // todo make abstract
+//  }
 
   @Override
   public @NotNull ReqFieldProjection setEntityProjection(final @NotNull ReqEntityProjection varProjection) {
@@ -77,17 +108,4 @@ public class ReqFieldProjection extends AbstractReqFieldProjection<
     );
   }
 
-//  @Override
-//  public boolean equals(final Object o) {
-//    if (this == o) return true;
-//    if (o == null || getClass() != o.getClass()) return false;
-//    if (!super.equals(o)) return false;
-//    final ReqOutputFieldProjection that = (ReqOutputFieldProjection) o;
-//    return flag == that.flag;
-//  }
-//
-//  @Override
-//  public int hashCode() {
-//    return Objects.hash(super.hashCode(), flag);
-//  }
 }

@@ -20,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeApi;
 
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjection<
-    P extends GenProjection<P, TP, MP>,
-    TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
+    P extends GenProjection</*P*/?, /*TP*/?>,
+    TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>
     > extends GenProjectionReference<P> {
 
   /**
@@ -55,19 +53,20 @@ public interface GenProjection<
 
   boolean flag();
 
-  /**
-   * Merges var projections together.
-   * <p/>
-   * Should work as a 'static' method: current object should not be merged (most probably it is going
-   * to be the first item of the list anyways). Such design allows for easier implementations that have to
-   * iterate over all the items being merged.
-   *
-   * @param varProjections var projections to merge, guaranteed to contain at least one element
-   *
-   * @return merged var projection
-   */
-  /* static */
-  @NotNull P merge(@NotNull List<P> varProjections);
+  // todo should take type as a parameter
+//  /**
+//   * Merges var projections together.
+//   * <p/>
+//   * Should work as a 'static' method: current object should not be merged (most probably it is going
+//   * to be the first item of the list anyways). Such design allows for easier implementations that have to
+//   * iterate over all the items being merged.
+//   *
+//   * @param projections var projections to merge, guaranteed to contain at least one element
+//   *
+//   * @return merged var projection
+//   */
+//  /* static */
+//  @NotNull P merge(@NotNull List<P> projections);
 
   /**
    * Gets projection reference qualified name, if there exists one.

@@ -19,7 +19,7 @@ package ws.epigraph.projections.op;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.VarNormalizationContext;
+import ws.epigraph.projections.EntityNormalizationContext;
 import ws.epigraph.projections.abs.AbstractEntityProjection;
 import ws.epigraph.types.TypeApi;
 
@@ -91,8 +91,8 @@ public class OpEntityProjection extends AbstractEntityProjection<
   }
 
   @Override
-  protected @NotNull VarNormalizationContext<OpEntityProjection> newNormalizationContext() {
-    return new VarNormalizationContext<>(
+  protected @NotNull EntityNormalizationContext<OpEntityProjection> newNormalizationContext() {
+    return new EntityNormalizationContext<>(
         t -> new OpEntityProjection(t, location())
     );
   }

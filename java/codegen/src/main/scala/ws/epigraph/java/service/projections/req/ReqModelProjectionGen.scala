@@ -23,7 +23,7 @@ import ws.epigraph.java.JavaGenUtils.{lo, toCType}
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 import scala.collection.JavaConversions._
@@ -32,8 +32,8 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqModelProjectionGen extends ReqTypeProjectionGen {
-  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
-  type OpMetaProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
+  type OpMetaProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
   override protected type GenType <: ReqModelProjectionGen
 
   override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())

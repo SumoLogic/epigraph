@@ -71,7 +71,7 @@ public final class ProjectionUtils {
 
       lastDataType = tagProjection.tag().type().dataType();
 
-      final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
@@ -107,7 +107,7 @@ public final class ProjectionUtils {
 
       len++;
 
-      final GenModelProjection<?, ?, ?, ?> modelPath = tagProjection.projection();
+      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.projection();
       final DatumTypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
@@ -191,7 +191,7 @@ public final class ProjectionUtils {
 
   // model tails linearization
 
-  public static <MP extends GenModelProjection<?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
+  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
       @NotNull TypeApi t,
       @NotNull Stream<MP> tails) {
 
@@ -199,7 +199,7 @@ public final class ProjectionUtils {
   }
 
   @Contract("_, null -> !null")
-  public static <MP extends GenModelProjection<?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
+  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
       @NotNull TypeApi t,
       @Nullable List<MP> tails) {
 
@@ -214,7 +214,7 @@ public final class ProjectionUtils {
 
   }
 
-  public static <MP extends GenModelProjection<?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
+  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
       @NotNull TypeApi type,
       @NotNull Stream<MP> tails,
       @NotNull LinkedList<MP> linearizedTails) {

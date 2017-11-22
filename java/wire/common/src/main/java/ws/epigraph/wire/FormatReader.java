@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
 
 public interface FormatReader<
     EP extends GenEntityProjection<EP, ?, ?>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>> {
+    MP extends GenModelProjection<?, /*MP*/?, ?, ?, ?>> {
 
   // with projections
 

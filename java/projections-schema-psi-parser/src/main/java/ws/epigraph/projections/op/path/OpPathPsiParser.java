@@ -261,7 +261,7 @@ public final class OpPathPsiParser {
 
         final OpKeyProjection keyProjection =
             new OpKeyProjection(
-                AbstractOpKeyPresence.OPTIONAL,
+                OpKeyPresence.OPTIONAL,
                 location,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
@@ -474,7 +474,7 @@ public final class OpPathPsiParser {
     }
 
     return new OpKeyProjection(
-        AbstractOpKeyPresence.REQUIRED,
+        OpKeyPresence.REQUIRED,
         EpigraphPsiUtil.getLocation(keyProjectionPsi),
         OpParams.fromCollection(params),
         Annotations.fromMap(annotationsMap),

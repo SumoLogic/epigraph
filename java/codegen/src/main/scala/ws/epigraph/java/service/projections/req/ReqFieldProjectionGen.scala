@@ -19,15 +19,13 @@ package ws.epigraph.java.service.projections.req
 import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
-import ws.epigraph.projections.op.AbstractOpFieldProjection
+import ws.epigraph.projections.op.OpFieldProjection
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqFieldProjectionGen extends ReqProjectionGen {
-  type OpFieldProjectionType <: AbstractOpFieldProjection[_, _, _, _]
-
-  protected def op: OpFieldProjectionType
+  protected def op: OpFieldProjection
 
   def dataProjectionGen: ReqProjectionGen
 

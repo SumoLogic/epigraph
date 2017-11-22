@@ -90,7 +90,7 @@ public class ReqJsonFormatWriter extends AbstractJsonFormatWriter<
   @Override
   protected @Nullable Collection<Datum> getExpectedKeys(final @NotNull ReqMapModelProjection mapProjection) {
     List<ReqKeyProjection> keys = mapProjection.keys();
-    return keys == null ? null : keys.stream().map(AbstractReqKeyProjection::value).collect(Collectors.toList());
+    return keys == null ? null : keys.stream().map(ReqKeyProjection::value).collect(Collectors.toList());
   }
 
   @ThreadSafe

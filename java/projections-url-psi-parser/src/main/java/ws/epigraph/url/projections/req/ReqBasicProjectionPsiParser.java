@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Datum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsParsingUtil;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.op.*;
@@ -1501,7 +1500,7 @@ public final class ReqBasicProjectionPsiParser {
       @NotNull UrlReqTrunkMapModelProjection psi,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
 
-    if (op.keyProjection().presence() == AbstractOpKeyPresence.FORBIDDEN)
+    if (op.keyProjection().presence() == OpKeyPresence.FORBIDDEN)
       throw new PsiProcessingException("Map keys are forbidden", psi.getDatum(), context);
 
     @NotNull UrlDatum valuePsi = psi.getDatum();
@@ -1564,7 +1563,7 @@ public final class ReqBasicProjectionPsiParser {
 
       final int keysSize = keyProjectionsPsi.size();
 
-      if (opKeyProjection.presence() == AbstractOpKeyPresence.FORBIDDEN) {
+      if (opKeyProjection.presence() == OpKeyPresence.FORBIDDEN) {
         if (keysSize > 0) context.addError("Map keys are forbidden", keysProjectionPsi);
         keyProjections = null;
       } else {
@@ -1598,7 +1597,7 @@ public final class ReqBasicProjectionPsiParser {
         }
       }
     } else {
-      if (opKeyProjection.presence() == AbstractOpKeyPresence.REQUIRED)
+      if (opKeyProjection.presence() == OpKeyPresence.REQUIRED)
         context.addError("Map keys are required", keysProjectionPsi.getStar());
 
       keyProjections = null;

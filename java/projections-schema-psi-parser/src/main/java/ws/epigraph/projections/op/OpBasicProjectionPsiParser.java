@@ -1075,7 +1075,7 @@ public final class OpBasicProjectionPsiParser {
 
         final OpKeyProjection keyProjection =
             new OpKeyProjection(
-                AbstractOpKeyPresence.OPTIONAL,
+                OpKeyPresence.OPTIONAL,
                 location,
                 OpParams.EMPTY,
                 Annotations.EMPTY,
@@ -1319,17 +1319,17 @@ public final class OpBasicProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    final AbstractOpKeyPresence presence;
+    final OpKeyPresence presence;
     final TextLocation presenceLocation;
 
     if (keySpecPsi.getForbidden() != null) {
-      presence = AbstractOpKeyPresence.FORBIDDEN;
+      presence = OpKeyPresence.FORBIDDEN;
       presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi.getForbidden());
     } else if (keySpecPsi.getRequired() != null) {
-      presence = AbstractOpKeyPresence.REQUIRED;
+      presence = OpKeyPresence.REQUIRED;
       presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi.getRequired());
     } else {
-      presence = AbstractOpKeyPresence.OPTIONAL;
+      presence = OpKeyPresence.OPTIONAL;
       presenceLocation = EpigraphPsiUtil.getLocation(keySpecPsi);
     }
 

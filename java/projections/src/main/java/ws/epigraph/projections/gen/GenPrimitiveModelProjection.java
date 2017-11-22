@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import ws.epigraph.types.PrimitiveTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenPrimitiveModelProjection<
-    MP extends GenModelProjection</*MP*/?, /*PMP*/?, /*PMP*/?, /*M*/?>,
-    PMP extends GenPrimitiveModelProjection<MP, PMP, M>,
+    TP extends GenTagProjectionEntry<TP, MP>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*PMP*/?, /*PMP*/?, /*M*/?>,
+    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, M>,
     M extends PrimitiveTypeApi
-    > extends GenModelProjection<MP, PMP, PMP, M> {
+    > extends GenModelProjection<TP, MP, PMP, PMP, M> {
 }

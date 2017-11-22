@@ -30,8 +30,16 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPrimitiveModelProjection
-    extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpPrimitiveModelProjection, PrimitiveTypeApi, GPrimitiveDatum>
-    implements GenPrimitiveModelProjection<OpModelProjection<?, ?, ?, ?>, OpPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends OpModelProjection<
+    OpModelProjection<?, ?, ?, ?>,
+    OpPrimitiveModelProjection,
+    PrimitiveTypeApi,
+    GPrimitiveDatum>
+    implements GenPrimitiveModelProjection<
+    OpTagProjectionEntry,
+    OpModelProjection<?, ?, ?, ?>,
+    OpPrimitiveModelProjection,
+    PrimitiveTypeApi> {
 
   public OpPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,

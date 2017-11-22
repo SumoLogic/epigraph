@@ -20,14 +20,14 @@ import ws.epigraph.java.JavaGenUtils
 import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenPrimitiveModelProjection
-import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
-  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenPrimitiveModelProjection[_, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenPrimitiveModelProjection[_, _, _, _ <: DatumTypeApi]
 
   protected def generate(reqPrimitiveModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val imports: Set[String] = Set(

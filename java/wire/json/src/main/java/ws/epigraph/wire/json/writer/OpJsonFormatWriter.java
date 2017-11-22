@@ -70,7 +70,7 @@ public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
   protected @Nullable Deque<? extends OpModelProjection<?, ?, ?, ?>>
   getKeyModelProjections(@NotNull Collection<OpMapModelProjection> projections) {
     Deque<? extends OpModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
-        .map(mp -> mp.keyProjection().projection())
+        .map(mp -> mp.keyProjection().spec())
         .filter(Objects::nonNull)
         .collect(Collectors.toCollection(ArrayDeque::new));
     return keyProjections.isEmpty() ? null : keyProjections;

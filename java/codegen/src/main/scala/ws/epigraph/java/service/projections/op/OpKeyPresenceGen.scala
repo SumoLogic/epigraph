@@ -17,15 +17,15 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.{ObjectGen, ObjectGenContext}
-import ws.epigraph.projections.op.AbstractOpKeyPresence
+import ws.epigraph.projections.op.OpKeyPresence
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpKeyPresenceGen(kp: AbstractOpKeyPresence) extends ObjectGen[AbstractOpKeyPresence](kp) {
+class OpKeyPresenceGen(kp: OpKeyPresence) extends ObjectGen[OpKeyPresence](kp) {
   override protected def generateObject(ctx: ObjectGenContext): String = kp match {
-    case AbstractOpKeyPresence.REQUIRED => "AbstractOpKeyPresence.REQUIRED"
-    case AbstractOpKeyPresence.FORBIDDEN => "AbstractOpKeyPresence.FORBIDDEN"
-    case _ => "AbstractOpKeyPresence.OPTIONAL"
+    case OpKeyPresence.REQUIRED => "OpKeyPresence.REQUIRED"
+    case OpKeyPresence.FORBIDDEN => "OpKeyPresence.FORBIDDEN"
+    case _ => "OpKeyPresence.OPTIONAL"
   }
 }

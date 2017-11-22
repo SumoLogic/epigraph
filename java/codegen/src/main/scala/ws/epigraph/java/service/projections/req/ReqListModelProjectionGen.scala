@@ -20,14 +20,14 @@ import ws.epigraph.java.NewlineStringInterpolator.NewlineHelper
 import ws.epigraph.java.{JavaGen, JavaGenUtils}
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.GenListModelProjection
-import ws.epigraph.projections.op.AbstractOpModelProjection
+import ws.epigraph.projections.op.OpModelProjection
 import ws.epigraph.types.DatumTypeApi
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqListModelProjectionGen extends ReqModelProjectionGen {
-  override type OpProjectionType <: AbstractOpModelProjection[_, _, _ <: DatumTypeApi] with GenListModelProjection[_, _, _, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenListModelProjection[_, _, _, _, _ <: DatumTypeApi]
 
   protected val elementsNamespaceSuffix = "elements"
 

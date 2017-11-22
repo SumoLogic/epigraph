@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> {
+public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?, ?>> {
   private final @NotNull ProjectionReferenceName namespace;
   private final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent;
   private final Map<ProjectionReferenceName, EP> entityProjections = new HashMap<>();

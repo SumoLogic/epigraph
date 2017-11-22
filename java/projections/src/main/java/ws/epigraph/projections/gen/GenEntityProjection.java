@@ -28,9 +28,9 @@ import java.util.List;
  */
 public interface GenEntityProjection<
     EP extends GenEntityProjection<EP, TP, MP>,
-    TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, ?, ?, ?>
-    > extends GenProjection<EP, TP, MP> {
+    TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>,
+    MP extends GenModelProjection</*TP*/?, /*MP*/?, ?, ?, ?>
+    > extends GenProjection<EP, TP> {
 
   /**
    * Tells if projection is parenthesized or not.
@@ -99,6 +99,19 @@ public interface GenEntityProjection<
 //    if (tails == null) return null;
 //    return tails.stream().filter(t -> t.type().equals(tailType)).findFirst().orElse(null);
 //  }
+  /**
+   * Merges var projections together.
+   * <p/>
+   * Should work as a 'static' method: current object should not be merged (most probably it is going
+   * to be the first item of the list anyways). Such design allows for easier implementations that have to
+   * iterate over all the items being merged.
+   *
+   * @param projections var projections to merge, guaranteed to contain at least one element
+   *
+   * @return merged var projection
+   */
+  /* static */
+  @NotNull EP merge(@NotNull List<EP> projections);
 
   // references
 

@@ -21,24 +21,22 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenEntityProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractReqPrettyPrinter<
-    VP extends GenEntityProjection<VP, TP, MP>,
-    TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends AbstractReqModelProjection</*MP*/?, ?, ?>,
-    E extends Exception> extends AbstractProjectionsPrettyPrinter<VP, TP, MP, E> {
+public abstract class AbstractReqPrettyPrinter<E extends Exception> extends AbstractProjectionsPrettyPrinter<
+    ReqEntityProjection,
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    E> {
 
   protected @NotNull DataPrinter<E> dataPrinter;
   protected @NotNull DataPrinter<E> paramsDataPrinter;
 
   protected AbstractReqPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<VP, MP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<ReqEntityProjection, ReqModelProjection<?,?,?>> context) {
     super(layouter, context);
 
     dataPrinter = new DataPrinter<>(layouter, false);
@@ -50,6 +48,13 @@ public abstract class AbstractReqPrettyPrinter<
       @Override
       protected Layouter<E> brk(final int i, final int k) { return lo; }
     };
+  }
+
+  @Override
+  protected boolean printModelMeta(final @NotNull ReqModelProjection<?, ?, ?> metaProjection) throws E {
+    l.print("@");
+    printModel(metaProjection, 0);
+    return false;
   }
 
   protected void printParams(@NotNull ReqParams params) throws E { // move to req common?
@@ -82,7 +87,7 @@ public abstract class AbstractReqPrettyPrinter<
     l.end();
   }
 
-  protected void printReqKey(final AbstractReqKeyProjection key, boolean bracketsAroundParams) throws E {
+  protected void printReqKey(final ReqKeyProjection key, boolean bracketsAroundParams) throws E {
     dataPrinter.print(null, key.value());
 
     boolean keyParamsOrDirectivesNonEmpty = !key.params().isEmpty() || !key.directives().isEmpty();

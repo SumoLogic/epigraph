@@ -33,16 +33,15 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenModelProjection<
-    MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
-    SMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
-    TMP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    SMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
+    TMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     M extends DatumTypeApi
-    > extends GenProjectionReference<SMP> {
+    > extends GenProjection<SMP, TP> {
 
   @Override
   @NotNull M type();
-
-  boolean flag();
 
   @Nullable MP metaProjection();
 
@@ -68,7 +67,7 @@ public interface GenModelProjection<
   /**
    * Builds normalized view of this model projection for a given type
    *
-   * @param type target type
+   * @param type                target type
    * @param resultReferenceName optional result reference name
    *
    * @return normalized projection without any polymorphic tails. Projection type will be new effective type.

@@ -32,7 +32,7 @@ new $o(
   ${gen(kp.presenceLocation(), ctx)},
   ${i(gen(kp.params(), ctx))},
   ${i(gen(kp.annotations(), ctx))},
-  ${i(gen(kp.projection(), ctx))},
+  ${i(gen(kp.spec(), ctx))},
   ${gen(kp.location(), ctx)}
 )"""/*@formatter:on*/
 }

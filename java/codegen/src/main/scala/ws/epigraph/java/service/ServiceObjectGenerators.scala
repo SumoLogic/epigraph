@@ -37,7 +37,7 @@ object ServiceObjectGenerators extends ObjectGenerators {
 
         case param: OpParam => new OpParamGen(param).generate(ctx)
         case params: OpParams => new OpParamsGen(params).generate(ctx)
-        case kp: AbstractOpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
+        case kp: OpKeyPresence => new OpKeyPresenceGen(kp).generate(ctx)
 
         case oovp: OpEntityProjection => new OpEntityProjectionGen(oovp).generate(ctx)
         case oormp: OpRecordModelProjection => new OpRecordModelProjectionGen(oormp).generate(ctx)

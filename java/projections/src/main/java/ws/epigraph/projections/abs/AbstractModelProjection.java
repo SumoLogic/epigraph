@@ -42,9 +42,10 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractModelProjection<
-    MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*SMP*/?, ?>,
-    SMP extends AbstractModelProjection</*MP*/?, SMP, ?>,
-    M extends DatumTypeApi> implements GenModelProjection<MP, SMP, SMP, M> {
+    TP extends AbstractTagProjectionEntry</*TP*/?, /*MP*/?>,
+    MP extends AbstractModelProjection<TP, /*MP*/?, /*SMP*/?, ?>,
+    SMP extends AbstractModelProjection<TP, /*MP*/?, SMP, ?>,
+    M extends DatumTypeApi> implements GenModelProjection<TP, MP, SMP, SMP, M> {
 
   protected final @NotNull M model;
   private /*final*/ @Nullable ProjectionReferenceName name;
@@ -395,8 +396,8 @@ public abstract class AbstractModelProjection<
 
     List<MP> metaProjectionsList = new ArrayList<>();
 
-    for (final GenModelProjection<?, ?, ?, ?> p : modelProjections) {
-      AbstractModelProjection<MP, SMP, ?> mp = (AbstractModelProjection<MP, SMP, ?>) p;
+    for (final GenModelProjection<?, ?, ?, ?, ?> p : modelProjections) {
+      AbstractModelProjection<TP, MP, SMP, ?> mp = (AbstractModelProjection<TP, MP, SMP, ?>) p;
       final @Nullable MP meta = mp.metaProjection();
       if (meta != null) metaProjectionsList.add(meta);
     }
@@ -410,7 +411,7 @@ public abstract class AbstractModelProjection<
 
 
       //noinspection ConstantConditions
-      mergedMetaProjection = (MP) ((GenModelProjection<MP, MP, MP, M>) metaProjection)
+      mergedMetaProjection = (MP) ((GenModelProjection<?, MP, MP, MP, M>) metaProjection)
           .merge((M) metaModel, metaProjectionsList)
           .normalizedForType(metaModel);
     }
@@ -591,7 +592,7 @@ public abstract class AbstractModelProjection<
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractModelProjection<?, ?, ?> that = (AbstractModelProjection<?, ?, ?>) o;
+    AbstractModelProjection<?, ?, ?, ?> that = (AbstractModelProjection<?, ?, ?, ?>) o;
 
     return Objects.equals(model, that.model) &&
            Objects.equals(flag, that.flag) &&

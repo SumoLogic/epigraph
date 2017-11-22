@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public final class ModelNormalizationContext<M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?/*M*/>>
+public final class ModelNormalizationContext<M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?, ?/*M*/>>
     extends NormalizationContext<M, MP> {
   // here we heavily assume that the same thread can't be normalizing two projections of different
   // families at the same time, e.g. that normalizing OpOutput projection can't entail
@@ -40,7 +40,7 @@ public final class ModelNormalizationContext<M extends DatumTypeApi, MP extends 
   }
 
   @SuppressWarnings("unchecked")
-  public static <M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?/*M*/>, G>
+  public static <M extends DatumTypeApi, MP extends GenModelProjection<?, ?, ?, ?, ?/*M*/>, G>
   G withContext(
       @NotNull Supplier<ModelNormalizationContext<M, MP>> contextFactory,
       @NotNull Function<ModelNormalizationContext<M, MP>, G> function) {

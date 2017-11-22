@@ -27,14 +27,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpProjectionsPrettyPrinter<E extends Exception>
-    extends AbstractOpProjectionsPrettyPrinter<
-    OpEntityProjection,
-    OpTagProjectionEntry,
-    OpModelProjection<?, ?, ?, ?>,
-    OpRecordModelProjection,
-    OpFieldProjectionEntry,
-    OpFieldProjection,
-    E> {
+    extends AbstractOpProjectionsPrettyPrinter<E> {
 
   // todo + on tags/fields/maps/lists
   // todo defaults
@@ -145,7 +138,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
       /*@NotNull*/
       OpKeyProjection keyProjection = mapModelProjection.keyProjection();
 
-      if (keyProjection.presence() != AbstractOpKeyPresence.OPTIONAL) return false;
+      if (keyProjection.presence() != OpKeyPresence.OPTIONAL) return false;
       if (!keyProjection.params().isEmpty()) return false;
       if (!keyProjection.annotations().isEmpty()) return false;
 

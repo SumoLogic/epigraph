@@ -28,8 +28,15 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqPrimitiveModelProjection
-    extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqPrimitiveModelProjection, PrimitiveTypeApi>
-    implements GenPrimitiveModelProjection<ReqModelProjection<?, ?, ?>, ReqPrimitiveModelProjection, PrimitiveTypeApi> {
+    extends ReqModelProjection<
+    ReqModelProjection<?, ?, ?>,
+    ReqPrimitiveModelProjection,
+    PrimitiveTypeApi>
+    implements GenPrimitiveModelProjection<
+    ReqTagProjectionEntry,
+    ReqModelProjection<?, ?, ?>,
+    ReqPrimitiveModelProjection,
+    PrimitiveTypeApi> {
 
   public ReqPrimitiveModelProjection(
       @NotNull PrimitiveTypeApi model,

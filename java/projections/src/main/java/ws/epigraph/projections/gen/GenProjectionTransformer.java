@@ -34,11 +34,11 @@ import java.util.function.Function;
 public abstract class GenProjectionTransformer<
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
     MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>,
     LMP extends GenListModelProjection<EP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
+    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
     FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
     FP extends GenFieldProjection<EP, TP, MP, FP>,
     TM extends GenProjectionTransformationMap<EP, MP>,

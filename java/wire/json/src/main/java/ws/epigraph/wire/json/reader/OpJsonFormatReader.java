@@ -80,7 +80,7 @@ public class OpJsonFormatReader extends AbstractJsonFormatReader<
   protected @Nullable List<? extends OpModelProjection<?, ?, ?, ?>>
   getKeyProjections(@NotNull Collection<OpMapModelProjection> projections) {
     List<? extends OpModelProjection<?, ?, ?, ?>> keyProjections = projections.stream()
-        .map(mp -> mp.keyProjection().projection())
+        .map(mp -> mp.keyProjection().spec())
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
     return keyProjections.isEmpty() ? null : keyProjections;

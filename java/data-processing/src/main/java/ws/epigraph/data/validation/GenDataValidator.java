@@ -33,11 +33,11 @@ import java.util.*;
 public abstract class GenDataValidator<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<MP, PMP, ?>,
+    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>
     > {

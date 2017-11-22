@@ -23,19 +23,12 @@ import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqProjectionsPrettyPrinter<E extends Exception>
-    extends AbstractReqProjectionsPrettyPrinter<
-    ReqEntityProjection,
-    ReqTagProjectionEntry,
-    ReqModelProjection<?, ?, ?>,
-    ReqRecordModelProjection,
-    ReqFieldProjectionEntry,
-    ReqFieldProjection,
-    E> {
+public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractReqPrettyPrinter<E> {
 
   public ReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
@@ -46,6 +39,152 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
   public ReqProjectionsPrettyPrinter(final @NotNull Layouter<E> layouter) {
     this(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
+
+  @Override
+  protected boolean printModelParams(final @NotNull ReqModelProjection<?, ?, ?> projection) throws E {
+    ReqParams params = projection.params();
+    Directives directives = projection.directives();
+
+    l.beginIInd(0);
+    boolean empty = true;
+
+    if (!params.isEmpty()) {
+      printParams(params);
+      empty = false;
+    }
+
+    if (!directives.isEmpty()) {
+      printDirectives(directives);
+      empty = false;
+    }
+
+    l.end();
+
+    return empty;
+  }
+
+  public void print(@NotNull ReqRecordModelProjection recordProjection, int pathSteps) throws E {
+    Map<String, ReqFieldProjectionEntry> fieldProjections = recordProjection.fieldProjections();
+
+    if (pathSteps > 0) {
+      if (fieldProjections.isEmpty()) return;
+      if (fieldProjections.size() > 1) throw new IllegalArgumentException(
+          String.format("Encountered %d fields while still having %d path steps", fieldProjections.size(), pathSteps)
+      );
+
+      Map.Entry<String, ReqFieldProjectionEntry> entry = fieldProjections.entrySet().iterator().next();
+      l.beginIInd();
+      l.print("/");
+      brk();
+      print(entry.getKey(), entry.getValue().fieldProjection(), decSteps(pathSteps));
+      l.end();
+
+    } else {
+
+      l.print("(").beginCInd();
+      boolean first = true;
+      for (Map.Entry<String, ReqFieldProjectionEntry> entry : fieldProjections.entrySet()) {
+        if (first) first = false;
+        else l.print(",");
+        brk();
+
+        print(entry.getKey(), entry.getValue().fieldProjection(), 0);
+
+      }
+      brk(1, -l.getDefaultIndentation()).end().print(")");
+    }
+  }
+
+  public void print(@NotNull String fieldName, @NotNull ReqFieldProjection fieldProjection, int pathSteps) throws E {
+    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.entityProjection();
+//    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    l.beginIInd();
+    l.print(fieldNamePrefix(fieldProjection));
+    l.print(fieldName);
+
+//    printParams(fieldProjection.params());
+//    printAnnotations(fieldAnnotations);
+
+    if (!isPrintoutEmpty(fieldEntityProjection)) {
+      brk();
+      printEntity(fieldEntityProjection, pathSteps - 1);
+    }
+    l.end();
+  }
+
+  public boolean isPrintoutEmpty(@NotNull ReqFieldProjection fieldProjection) {
+    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.entityProjection();
+//    @NotNull ReqParams fieldParams = fieldProjection.params();
+//    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
+
+    return /*fieldParams.isEmpty() && fieldAnnotations.isEmpty() && */isPrintoutEmpty(fieldEntityProjection);
+  }
+
+  @Override
+  protected boolean isPrintoutEmpty(@NotNull ReqEntityProjection ep) {
+
+    if (!super.isPrintoutEmpty(ep)) return false;
+
+    for (ReqTagProjectionEntry tagProjection : ep.tagProjections().values()) {
+      final ReqModelProjection<?, ?, ?> modelProjection = tagProjection.projection();
+      if (!modelProjection.params().isEmpty()) return false;
+      if (!modelProjection.directives().isEmpty()) return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public boolean modelParamsEmpty(final @NotNull ReqModelProjection<?, ?, ?> mp) {
+    return super.modelParamsEmpty(mp) && mp.directives().isEmpty() && mp.params().isEmpty();
+  }
+
+
+//  protected void printMapModelProjection(@Nullable List<? extends AbstractReqKeyProjection> keys, @NotNull VP itemsProjection)
+//      throws E {
+//    printMapModelProjection(keys, "", itemsProjection);
+//  }
+//
+//  protected void printMapModelProjection(
+//      @Nullable List<? extends AbstractReqKeyProjection> keys,
+//      @NotNull String itemsProjectionPrefix,
+//      @NotNull VP itemsProjection)
+//      throws E {
+//
+//    l.beginIInd();
+//    l.print("[");
+//
+//    if (keys == null) {
+//      l.print("*");
+//    } else {
+//      boolean first = true;
+//      for (AbstractReqKeyProjection key : keys) {
+//        if (first) {
+//          brk();
+//          first = false;
+//        } else {
+//          l.print(",");
+//          nbsp(); // why not brk() ?
+//        }
+//
+//        printReqKey(key);
+//      }
+//      if (!first) brk();
+//    }
+//
+//    l.print("]");
+//    l.print(itemsProjectionPrefix);
+//    l.print("(");
+//
+//    if (!isPrintoutEmpty(itemsProjection)) {
+//      brk();
+//      printEntity(itemsProjection, 0);
+//    }
+//    brk(1, -l.getDefaultIndentation()).end().print(")");
+////    brk().end();
+//
+//  }
 
   @Override
   protected void printTagName(
@@ -73,7 +212,6 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
       printModelOnly((ReqListModelProjection) mp, pathSteps);
   }
 
-  @Override
   protected String fieldNamePrefix(final @NotNull ReqFieldProjection fieldProjection) {
     return fieldProjection.flag() ? "+" : "";
   }
@@ -158,7 +296,8 @@ public class ReqProjectionsPrettyPrinter<E extends Exception>
   public boolean isPrintoutNoParamsEmpty(@NotNull ReqModelProjection<?, ?, ?> mp) {
     if (mp instanceof ReqMapModelProjection) {
       ReqMapModelProjection mapModelProjection = (ReqMapModelProjection) mp;
-      /*@Nullable*/ List<ReqKeyProjection> keys = mapModelProjection.keys();
+      /*@Nullable*/
+      List<ReqKeyProjection> keys = mapModelProjection.keys();
       return keys == null && isPrintoutEmpty(mapModelProjection.itemsProjection());
     } else
       return super.isPrintoutNoParamsEmpty(mp);

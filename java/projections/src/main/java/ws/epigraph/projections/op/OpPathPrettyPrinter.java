@@ -26,14 +26,7 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpPathPrettyPrinter<E extends Exception>
-    extends AbstractOpProjectionsPrettyPrinter<
-    OpEntityProjection,
-    OpTagProjectionEntry,
-    OpModelProjection<?, ?, ?, ?>,
-    OpRecordModelProjection,
-    OpFieldProjectionEntry,
-    OpFieldProjection,
-    E> {
+    extends AbstractOpProjectionsPrettyPrinter<E> {
 
   public OpPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));

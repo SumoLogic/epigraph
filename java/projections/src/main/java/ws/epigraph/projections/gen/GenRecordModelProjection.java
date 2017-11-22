@@ -28,12 +28,12 @@ import java.util.Map;
 public interface GenRecordModelProjection<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection</*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, M>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
     M extends RecordTypeApi
-    > extends GenModelProjection<MP, RMP, RMP, M> {
+    > extends GenModelProjection<TP, MP, RMP, RMP, M> {
 
   @NotNull Map<String, FPE> fieldProjections();
 

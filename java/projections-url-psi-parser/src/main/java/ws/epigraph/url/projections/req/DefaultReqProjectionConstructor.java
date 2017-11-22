@@ -37,7 +37,7 @@ import ws.epigraph.types.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ws.epigraph.projections.op.AbstractOpKeyPresence.REQUIRED;
+import static ws.epigraph.projections.op.OpKeyPresence.REQUIRED;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>

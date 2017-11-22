@@ -18,14 +18,18 @@ package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -36,8 +40,12 @@ public abstract class OpModelProjection<
     SMP extends OpModelProjection</*MP*/?, SMP, ?, ?>,
     M extends DatumTypeApi,
     D extends GDatum
-    > extends AbstractOpModelProjection<MP, SMP, M> {
+    > extends AbstractModelProjection<OpTagProjectionEntry, MP, SMP, M>
+    implements Annotated {
 
+  protected final @NotNull OpTagProjectionEntry selfEntry;
+  protected /*final*/ @NotNull Annotations annotations;
+  protected /*final*/ @NotNull OpParams params;
   protected /*final*/ @Nullable D defaultValue;
 
   protected OpModelProjection(
@@ -50,16 +58,37 @@ public abstract class OpModelProjection<
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, flag, metaProjection, params, annotations, tails, location);
+    super(model, flag, metaProjection, tails, location);
+    //noinspection ThisEscapedInObjectConstruction
+    selfEntry = new OpTagProjectionEntry(model.self(), this, location);
+    this.annotations = annotations;
+    this.params = params;
     this.defaultValue = defaultValue;
     // check that defaultValue is covered by the projection? (all required parts are present)
   }
 
   protected OpModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
+    //noinspection ThisEscapedInObjectConstruction
+    selfEntry = new OpTagProjectionEntry(model.self(), this, location);
+    annotations = Annotations.EMPTY;
+    params = OpParams.EMPTY;
   }
 
+  @Override
+  public @NotNull Annotations annotations() { return annotations; }
+
+  public @NotNull OpParams params() { return params; }
+
   public @Nullable D defaultValue() { return defaultValue; }
+
+  @Override
+  public @Nullable OpTagProjectionEntry singleTagProjection() { return selfEntry; }
+
+  @Override
+  public @NotNull Map<String, OpTagProjectionEntry> tagProjections() {
+    return Collections.singletonMap(selfEntry.tag().name(), selfEntry);
+  }
 
   @SuppressWarnings("unchecked")
   @Override
@@ -67,8 +96,6 @@ public abstract class OpModelProjection<
       final @NotNull M model,
       final boolean mergedFlag,
       final @NotNull List<SMP> modelProjections,
-      final @NotNull OpParams mergedParams,
-      final Annotations mergedAnnotations,
       final @Nullable MP mergedMetaProjection,
       final @Nullable List<SMP> mergedTails) {
 
@@ -83,8 +110,8 @@ public abstract class OpModelProjection<
         mergedFlag,
         mergedDefault,
         modelProjections,
-        mergedParams,
-        mergedAnnotations,
+        OpParams.merge(modelProjections.stream().map(OpModelProjection::params)),
+        Annotations.merge(modelProjections.stream().map(OpModelProjection::annotations)),
         mergedMetaProjection,
         mergedTails
     );
@@ -105,6 +132,8 @@ public abstract class OpModelProjection<
   @Override
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     preResolveCheck(value);
+    this.params = value.params();
+    this.annotations = value.annotations();
     this.defaultValue = (D) value.defaultValue();
     super.resolve(name, value);
   }
