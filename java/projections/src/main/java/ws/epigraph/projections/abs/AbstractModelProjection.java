@@ -42,7 +42,7 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeModelTails;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractModelProjection<
-    TP extends AbstractTagProjectionEntry</*TP*/?, /*MP*/?>,
+    TP extends AbstractTagProjectionEntry<TP, /*MP*/?>,
     MP extends AbstractModelProjection<TP, /*MP*/?, /*SMP*/?, ?>,
     SMP extends AbstractModelProjection<TP, /*MP*/?, SMP, ?>,
     M extends DatumTypeApi> implements GenModelProjection<TP, MP, SMP, SMP, M> {

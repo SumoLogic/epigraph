@@ -33,7 +33,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenModelProjection<
-    TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>,
+    TP extends GenTagProjectionEntry<TP, /*MP*/?>,
     MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     SMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,
     TMP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, ?>,

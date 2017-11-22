@@ -26,8 +26,8 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjection<
-    P extends GenProjection</*P*/?, /*TP*/?>,
-    TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>
+    P extends GenProjection</*P*/?, TP>,
+    TP extends GenTagProjectionEntry<TP, /*MP*/?>
     > extends GenProjectionReference<P> {
 
   /**
