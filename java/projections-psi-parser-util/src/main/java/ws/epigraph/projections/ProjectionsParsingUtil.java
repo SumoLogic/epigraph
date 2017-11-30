@@ -63,14 +63,14 @@ public final class ProjectionsParsingUtil {
    * @throws PsiProcessingException in case tag can't be found
    */
   public static <
-      MP extends GenModelProjection<TP, ?, ?, ?>,
+      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenEntityProjection<VP, TP, MP>
+      EP extends GenEntityProjection<EP, TP, MP>
       >
   @NotNull TagApi getTag(
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable VP op,
+      @Nullable EP op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -111,14 +111,14 @@ public final class ProjectionsParsingUtil {
    * @return tag instance or null if not found
    */
   public static @Nullable <
-      MP extends GenModelProjection<TP, ?, ?, ?>,
+      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenEntityProjection<VP, TP, MP>
+      EP extends GenEntityProjection<EP, TP, MP>
       >
   TagApi findTag(
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable VP op,
+      @Nullable EP op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -155,14 +155,14 @@ public final class ProjectionsParsingUtil {
   }
 
   public static <
-      MP extends GenModelProjection<TP, ?, ?, ?>,
+      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenEntityProjection<VP, TP, MP>
+      EP extends GenEntityProjection<EP, TP, MP>
       >
   void verifyTag(
       @NotNull TypeApi type,
       @NotNull TagApi tag,
-      @Nullable VP op,
+      @Nullable EP op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -177,25 +177,25 @@ public final class ProjectionsParsingUtil {
       getTagProjection(tag.name(), op, location, context);
   }
 
-  public static <VP extends GenEntityProjection<VP, ?, ?>> void verifyData(
+  public static <EP extends GenEntityProjection<EP, ?, ?>> void verifyData(
       @NotNull DataTypeApi dataType,
-      @NotNull VP varProjection,
+      @NotNull EP entityProjection,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!varProjection.type().isAssignableFrom(dataType.type())) {
-      final ProjectionReferenceName projectionName = varProjection.referenceName();
+    if (!entityProjection.type().isAssignableFrom(dataType.type())) {
+      final ProjectionReferenceName projectionName = entityProjection.referenceName();
       final String message;
 
       if (projectionName == null)
         message = String.format(
             "Projection type '%s' is not compatible with type '%s'",
-            varProjection.type().name(), dataType.type().name()
+            entityProjection.type().name(), dataType.type().name()
         );
       else
         message = String.format(
             "Projection '%s' type '%s' is not compatible with type '%s'",
-            projectionName, varProjection.type().name(), dataType.type().name()
+            projectionName, entityProjection.type().name(), dataType.type().name()
         );
 
       //context.addError(message, location);
@@ -273,13 +273,13 @@ public final class ProjectionsParsingUtil {
    * Finds tag projection by tag name
    */
   public static @NotNull <
-      MP extends GenModelProjection<TP, ?, ?, ?>,
+      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      VP extends GenEntityProjection<VP, TP, MP>
+      EP extends GenEntityProjection<EP, TP, MP>
       >
   TP getTagProjection(
       @NotNull String tagName,
-      @NotNull VP op,
+      @NotNull EP op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
     final TP tagProjection = op.tagProjections().get(tagName);
@@ -292,37 +292,6 @@ public final class ProjectionsParsingUtil {
     }
     return tagProjection;
   }
-
-//  /**
-//   * Finds default tags for a given {@code type}
-//   * <p>
-//   * If it's a {@code DatumType}, then default tag is {@code self}, provided that {@code op} contains it.
-//   */
-//  public static @Nullable <
-//      MP extends GenModelProjection<?, ?, ?, ?>,
-//      TP extends GenTagProjectionEntry<TP, MP>,
-//      VP extends GenVarProjection<VP, TP, MP>
-//      >
-//  TagApi findSelfOrRetroTag(
-//      @NotNull DataTypeApi dataType,
-//      @Nullable VP op,
-//      @NotNull TextLocation location,
-//      @NotNull PsiProcessingContext context) throws PsiProcessingException {
-//
-//    TagApi retroTag = dataType.retroTag();
-//    if (retroTag != null)
-//      return retroTag;
-//
-//    TypeApi type = dataType.type();
-//    if (type.kind() != TypeKind.ENTITY) {
-//      DatumTypeApi datumType = (DatumTypeApi) type;
-//      final @NotNull TagApi self = datumType.self();
-//      if (op != null) getTagProjection(self.name(), op, location, context); // check that op contains it
-//      return self;
-//    }
-//
-//    return null;
-//  }
 
   public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull VP getEntityTail(
       @NotNull VP vp,
@@ -377,7 +346,7 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getModelTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>> @NotNull MP getModelTail(
       @NotNull MP mp,
       @NotNull TypeRef tailTypeRef,
       @NotNull TypesResolver resolver,
@@ -402,7 +371,7 @@ public final class ProjectionsParsingUtil {
     return (MP) mp.normalizedForType(targetType);
   }
 
-  public static @NotNull <MP extends GenModelProjection<?, ?, ?, ?>> DatumTypeApi getModelTailType(
+  public static @NotNull <MP extends GenModelProjection<?, ?, ?, ?, ?>> DatumTypeApi getModelTailType(
       final @NotNull MP mp,
       final @NotNull TypeRef tailTypeRef,
       final @NotNull TypesResolver resolver,
@@ -420,7 +389,7 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasModelTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>> boolean hasModelTail(
       @NotNull MP mp,
       @NotNull DatumTypeApi tailType) {
 
@@ -429,7 +398,7 @@ public final class ProjectionsParsingUtil {
     return tails != null && tails.stream().anyMatch(t -> hasModelTail((MP) t, tailType));
   }
 
-  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> mp) {
+  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?, ?> mp) {
     if (mp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
     supportedModelTailTypes(mp, acc);
@@ -439,9 +408,9 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp, Set<String> acc) {
-    final List<GenModelProjection<?, ?, ?, ?>> tails =
-        (List<GenModelProjection<?, ?, ?, ?>>) vp.polymorphicTails();
+  private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?, ?> vp, Set<String> acc) {
+    final List<GenModelProjection<?, ?, ?, ?, ?>> tails =
+        (List<GenModelProjection<?, ?, ?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }

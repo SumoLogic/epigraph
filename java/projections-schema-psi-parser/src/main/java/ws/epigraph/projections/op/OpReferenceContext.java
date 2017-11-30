@@ -39,7 +39,7 @@ public class OpReferenceContext
   }
 
   @Override
-  protected @NotNull OpEntityProjection newVarReference(
+  protected @NotNull OpEntityProjection newEntityReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
     return new OpEntityProjection(type, location);

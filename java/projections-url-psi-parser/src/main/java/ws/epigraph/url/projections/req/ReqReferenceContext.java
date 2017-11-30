@@ -40,7 +40,7 @@ public class ReqReferenceContext
   }
 
   @Override
-  protected @NotNull ReqEntityProjection newVarReference(
+  protected @NotNull ReqEntityProjection newEntityReference(
       final @NotNull TypeApi type,
       final @NotNull TextLocation location) {
 
