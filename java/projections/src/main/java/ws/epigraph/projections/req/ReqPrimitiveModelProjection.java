@@ -33,6 +33,7 @@ public class ReqPrimitiveModelProjection
     ReqPrimitiveModelProjection,
     PrimitiveTypeApi>
     implements GenPrimitiveModelProjection<
+    ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
     ReqPrimitiveModelProjection,
@@ -49,17 +50,8 @@ public class ReqPrimitiveModelProjection
     super(model, flag, params, directives, metaProjection, tails, location);
   }
 
-  public ReqPrimitiveModelProjection(
-      final @NotNull PrimitiveTypeApi model,
-      final @NotNull TextLocation location) {
+  public ReqPrimitiveModelProjection( final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
-  }
-
-  @Override
-  protected ReqPrimitiveModelProjection clone() {
-    return new ReqPrimitiveModelProjection(
-        model, flag, params, directives, metaProjection, polymorphicTails, location()
-    );
   }
 
   /* static */

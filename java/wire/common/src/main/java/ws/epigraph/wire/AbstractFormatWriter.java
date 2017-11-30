@@ -40,7 +40,7 @@ public abstract class AbstractFormatWriter
     <
         EP extends GenEntityProjection<EP, TP, MP>,
         TP extends GenTagProjectionEntry<TP, MP>,
-        MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
+        MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
         RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
         FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
         FP extends GenFieldProjection<EP, TP, MP, FP>,
@@ -62,7 +62,7 @@ public abstract class AbstractFormatWriter
         ErrorValue error = data._raw().getError(tag);
         if (error == null) {
           writeDatum(
-              singleTagProjection.projection(),
+              singleTagProjection.modelProjection(),
               pathSteps - 1,
               data._raw().getDatum(tag)
           );

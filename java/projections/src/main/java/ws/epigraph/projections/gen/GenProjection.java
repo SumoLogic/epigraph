@@ -19,17 +19,27 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Generic projection
+ *
+ * @param <P>  this projection type
+ * @param <TP> tag projection entry type
+ * @param <EP> entity projection type
+ * @param <MP> model projection type
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenProjection<
-    P extends GenProjection</*P*/?, TP, /*T*/?>,
+    P extends GenProjection</*P*/?, TP, /*TT*/ /*EP*/?, /*MP*/?>,
     TP extends GenTagProjectionEntry<TP, /*MP*/?>,
-    T extends TypeApi
+    EP extends GenEntityProjection<?, ?, ?>,
+    MP extends GenModelProjection<?, ?, ?, ?, ?>
     > extends GenProjectionReference<P> {
 
   /**
@@ -40,7 +50,7 @@ public interface GenProjection<
    * @return type this projection was constructed for
    */
   @Override
-  @NotNull T type();
+  @NotNull TypeApi type();
 
   @NotNull Map<String, TP> tagProjections();
 
@@ -55,10 +65,65 @@ public interface GenProjection<
 
   boolean flag();
 
-  // todo should take type as a parameter
+  default boolean isEntityProjection() { return type().kind() == TypeKind.ENTITY; }
+
+  default boolean isModelProjection() { return type().kind() != TypeKind.ENTITY; }
+
+  @SuppressWarnings("unchecked")
+  default @NotNull EP asEntityProjection() {
+    assert isEntityProjection();
+    return (EP) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  default @NotNull MP asModelProjection() {
+    assert isModelProjection();
+    return (MP) this;
+  }
 
   /**
-   * Merges var projections together.
+   * Polymorphic tails for this projection.
+   *
+   * @return polymorphic tails list.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails">polymorphic tails</a>
+   */
+  @Nullable List<P> polymorphicTails();
+
+  /**
+   * Builds normalized view of this var projection for a given type
+   *
+   * @param type target type
+   *
+   * @return normalized projection without any polymorphic tails. Projection type will be new effective type.
+   * @see <a href="https://github.com/SumoLogic/epigraph/wiki/polymorphic%20tails#normalized-projections">normalized projections</a>
+   */
+  @NotNull P normalizedForType(@NotNull TypeApi type);
+
+  default @Nullable P tailByType(@NotNull TypeApi type) {
+    Collection<P> tails = polymorphicTails();
+    return tails == null
+           ? null
+           : tails.stream().filter(t -> t.type().name().equals(type.name())).findFirst().orElse(null);
+  }
+
+  /**
+   * Sets normalized tail reference name. Normalized tail produced using
+   * {@link #normalizedForType(TypeApi)} will have this reference name assigned
+   *
+   * @param type              target type
+   * @param tailReferenceName normalized tail reference name
+   */
+  void setNormalizedTailReferenceName(@NotNull TypeApi type, @NotNull ProjectionReferenceName tailReferenceName);
+
+  /**
+   * Tells if this projection is a normalized version of some other projection
+   *
+   * @return another projection which yields this projection if normalized to {@code type()}, or else {@code null}
+   */
+  @Nullable P normalizedFrom();
+
+  /**
+   * Merges projections together.
    * <p/>
    * Should work as a 'static' method: current object should not be merged (most probably it is going
    * to be the first item of the list anyways). Such design allows for easier implementations that have to
@@ -70,7 +135,17 @@ public interface GenProjection<
    * @return merged var projection
    */
   /* static */
-  @NotNull P merge(@NotNull T type, @NotNull List<P> projections);
+  @NotNull P merge(@NotNull TypeApi type, @NotNull List<P> projections);
+
+  /**
+   * Merges a non-empty list of projections together. Result type is taken from the first
+   * element
+   */
+  /*static*/
+  default @NotNull P merge(@NotNull List<P> projections) {
+    assert !projections.isEmpty();
+    return merge(projections.get(0).type(), projections);
+  }
 
   /**
    * Gets projection reference qualified name, if there exists one.

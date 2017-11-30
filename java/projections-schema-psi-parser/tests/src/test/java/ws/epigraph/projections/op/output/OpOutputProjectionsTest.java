@@ -174,7 +174,7 @@ public class OpOutputProjectionsTest {
 
     // check that it's actually correct
 
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
@@ -195,7 +195,7 @@ public class OpOutputProjectionsTest {
 
     // check that it's actually correct
 
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
@@ -215,7 +215,7 @@ public class OpOutputProjectionsTest {
 
     // check that it's actually correct
 
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
@@ -243,7 +243,7 @@ public class OpOutputProjectionsTest {
 
     // check that it's actually correct
 
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     assertEquals(2, rmp.fieldProjections().size());
 
     rmp = (OpRecordModelProjection) rmp.fieldProjection("worstEnemy")
@@ -270,7 +270,7 @@ public class OpOutputProjectionsTest {
 
 
     // rmp = :record
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     assertEquals(2, rmp.fieldProjections().size());
 
     // rmp = $rmp/worstEnemy:record
@@ -306,7 +306,7 @@ public class OpOutputProjectionsTest {
         )
     );
     //noinspection ConstantConditions
-    final OpModelProjection<?, ?, ?, ?> mp = vp.singleTagProjection().projection();
+    final OpModelProjection<?, ?, ?, ?> mp = vp.singleTagProjection().modelProjection();
     final OpModelProjection<?, ?, ?, ?> normalized = mp.normalizedForType(UserRecord3.type);
 
     String p = printOpModelProjection(normalized);
@@ -347,7 +347,7 @@ public class OpOutputProjectionsTest {
     OpEntityProjection personProjection = testParsingEntityProjection(":`record` ( id )");
 
     @SuppressWarnings("ConstantConditions")
-    OpModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().projection();
+    OpModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().modelProjection();
 
     // like `personProjection`, but built for `PersonRecord`, not `Person` type
     OpEntityProjection personRecordVarProjection = new OpEntityProjection(
@@ -776,7 +776,7 @@ public class OpOutputProjectionsTest {
     failIfHasErrors(true, ppc.messages());
 
     @SuppressWarnings("ConstantConditions")
-    OpRecordModelProjection mp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection mp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
 
     ReferenceContext.RefItem<OpModelProjection<?, ?, ?, ?>> userProjection =
         referenceContext.lookupModelReference("user", false);
@@ -1024,7 +1024,7 @@ public class OpOutputProjectionsTest {
 
     OpTagProjectionEntry tagProjection = entityProjection.singleTagProjection();
     assertNotNull(tagProjection);
-    OpModelProjection<?, ?, ?, ?> modelProjection = tagProjection.projection();
+    OpModelProjection<?, ?, ?, ?> modelProjection = tagProjection.modelProjection();
 
     OpReferenceContext referenceContext = refRef.get();
     assertNotNull(referenceContext);
@@ -1065,13 +1065,13 @@ public class OpOutputProjectionsTest {
         ":id :~ws.epigraph.tests.User :id"
     );
 
-    assertEquals(PersonId.type, vp.tagProjection("id").projection().type());
+    assertEquals(PersonId.type, vp.tagProjection("id").modelProjection().type());
 
     OpEntityProjection t = vp.tailByType(User.type);
-    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+    assertEquals(UserId.type, t.tagProjection("id").modelProjection().type());
 
     t = vp.normalizedForType(User.type);
-    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+    assertEquals(UserId.type, t.tagProjection("id").modelProjection().type());
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -1082,17 +1082,17 @@ public class OpOutputProjectionsTest {
     );
 
     //noinspection OverlyStrongTypeCast
-    vp = ((OpRecordModelProjection) vp.singleTagProjection().projection()).fieldProjection("bestFriend")
+    vp = ((OpRecordModelProjection) vp.singleTagProjection().modelProjection()).fieldProjection("bestFriend")
         .fieldProjection()
         .projection();
 
-    assertEquals(PersonId.type, vp.tagProjection("id").projection().type());
+    assertEquals(PersonId.type, vp.tagProjection("id").modelProjection().type());
 
     OpEntityProjection t = vp.tailByType(User.type);
-    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+    assertEquals(UserId.type, t.tagProjection("id").modelProjection().type());
 
     t = vp.normalizedForType(User.type);
-    assertEquals(UserId.type, t.tagProjection("id").projection().type());
+    assertEquals(UserId.type, t.tagProjection("id").modelProjection().type());
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -1102,7 +1102,7 @@ public class OpOutputProjectionsTest {
         ":`record` ( bestFriend :`record` ( id ) ~ws.epigraph.tests.UserRecord ( id ) )"
     );
 
-    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().projection();
+    OpRecordModelProjection rmp = (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
     rmp = (OpRecordModelProjection) rmp.fieldProjection("bestFriend")
         .fieldProjection()
         .projection()
@@ -1204,7 +1204,7 @@ public class OpOutputProjectionsTest {
     OpEntityProjection varProjection = parseOpOutputVarProjection(str);
     final OpTagProjectionEntry tagProjectionEntry = varProjection.singleTagProjection();
     assertNotNull(tagProjectionEntry);
-    final OpModelProjection<?, ?, ?, ?> modelProjection = tagProjectionEntry.projection();
+    final OpModelProjection<?, ?, ?, ?> modelProjection = tagProjectionEntry.modelProjection();
     assertNotNull(modelProjection);
 
 //    final OpOutputModelProjection<?, ?, ?> normalized = modelProjection.normalizedForType(type);

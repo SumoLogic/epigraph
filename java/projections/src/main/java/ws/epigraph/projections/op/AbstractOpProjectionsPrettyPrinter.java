@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
     extends AbstractProjectionsPrettyPrinter<
+    OpProjection<?, ?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
@@ -44,7 +45,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
 
   protected AbstractOpProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpProjection<?, ?>> context) {
     super(layouter, context);
     dataPrinter = new DataPrinter<>(layouter);
   }
@@ -77,7 +78,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
   protected boolean printModelParamsInBlock(final @NotNull OpModelProjection<?, ?, ?, ?> projection) throws E {
     final OpParams params = projection.params();
     final Annotations annotations = projection.annotations();
-    final OpModelProjection<?, ?, ?, ?> metaProjection = (OpModelProjection<?, ?, ?, ?>) projection.metaProjection();
+    final OpModelProjection<?, ?, ?, ?> metaProjection = projection.metaProjection();
 
     boolean first = true;
     if (!params.isEmpty())
@@ -101,9 +102,9 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
     return first;
   }
 
-  public void printOpParams(@NotNull OpParams p) throws E {
-    printOpParams(p, false, true);
-  }
+//  public void printOpParams(@NotNull OpParams p) throws E {
+//    printOpParams(p, false, true);
+//  }
 
   public boolean printOpParams(@NotNull OpParams p, boolean needCommas, boolean first) throws E {
     for (OpParam param : p.asMap().values()) {
@@ -178,13 +179,13 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
   protected String fieldNamePrefix(@NotNull OpFieldProjectionEntry fieldEntry) { return ""; }
 
   public void print(@NotNull OpFieldProjection fieldProjection) throws E {
-    @NotNull OpEntityProjection fieldVarProjection = fieldProjection.projection();
+    OpProjection<?, ?> fieldVarProjection = fieldProjection.projection();
 //    @NotNull OpParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
 //    if (fieldParams.isEmpty() && fieldAnnotations.isEmpty()) {
     if (!isPrintoutEmpty(fieldVarProjection)) {
-      printEntity(fieldVarProjection, 0);
+      printProjection(fieldVarProjection, 0);
     }
 //    } else {
 //      l.beginCInd();
@@ -213,7 +214,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
       @Nullable String keysProjectionPrefix,
       @NotNull OpKeyProjection keyProjection,
       @NotNull String itemsProjectionPrefix,
-      OpEntityProjection itemsProjection) throws E {
+      OpProjection<?,?> itemsProjection) throws E {
 
     l.beginIInd(0);
     { // keys
@@ -266,7 +267,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
     l.print("(");
     l.beginIInd();
     brk();
-    printEntity(itemsProjection, 0);
+    printProjection(itemsProjection, 0);
     brk(1, -l.getDefaultIndentation()).end().print(")").end();
   }
 
@@ -274,7 +275,10 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
     printFieldProjection(prefix, "", fieldProjection);
   }
 
-  public void printFieldProjection(@NotNull String prefix, @NotNull String prefix2, @NotNull OpFieldProjection fieldProjection)
+  public void printFieldProjection(
+      @NotNull String prefix,
+      @NotNull String prefix2,
+      @NotNull OpFieldProjection fieldProjection)
       throws E {
     if (isPrintoutEmpty(fieldProjection)) {
       l.print(prefix);
@@ -300,7 +304,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
     if (!super.isPrintoutEmpty(EP)) return false;
 
     for (OpTagProjectionEntry tagProjection : EP.tagProjections().values()) {
-      final OpModelProjection<?, ?, ?, ?> modelProjection = tagProjection.projection();
+      final OpModelProjection<?, ?, ?, ?> modelProjection = tagProjection.modelProjection();
       if (!modelProjection.params().isEmpty()) return false;
       if (!modelProjection.annotations().isEmpty()) return false;
     }
@@ -314,7 +318,7 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
   }
 
   public boolean isPrintoutEmpty(@NotNull OpFieldProjection fieldProjection) {
-    @NotNull OpEntityProjection fieldVarProjection = fieldProjection.projection();
+    OpProjection<?, ?> fieldVarProjection = fieldProjection.projection();
     return !isBlockProjection(fieldProjection) && isPrintoutEmpty(fieldVarProjection);
   }
 
@@ -325,9 +329,9 @@ public abstract class AbstractOpProjectionsPrettyPrinter<E extends Exception>
 
   protected @NotNull String escape(@NotNull String s) { return Keywords.schema.escape(s); }
 
-  public void printAnnotations(@NotNull Annotations cp) throws E {
-    printAnnotations(cp, false, true);
-  }
+//  public void printAnnotations(@NotNull Annotations cp) throws E {
+//    printAnnotations(cp, false, true);
+//  }
 
   public boolean printAnnotations(@NotNull Annotations cp, boolean needCommas, boolean first) throws E {
     for (Map.Entry<DatumTypeApi, Annotation> entry : cp.asMap().entrySet()) {

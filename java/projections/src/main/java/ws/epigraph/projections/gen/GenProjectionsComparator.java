@@ -27,61 +27,66 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class GenProjectionsComparator<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
+    EP extends GenEntityProjection<EP, TP, MP>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
     > {
 
   private final Map<RecEntry, Set<RecEntry>> visited = new HashMap<>();
 
   /**
-   * Checks if two var projections are structurally equal. Projection types are not checked.
+   * Checks if two projections are structurally equal. Projection types are not checked.
    *
-   * @param vp1 first projection
-   * @param vp2 second projection
+   * @param p1 first projection
+   * @param p2 second projection
+   *
    * @return {@code true} iff projections are structurally equal
    */
-  public boolean equals(@NotNull VP vp1, @NotNull VP vp2) {
-    return entitiesEquals(Collections.singleton(vp1), Collections.singleton(vp2));
+  public boolean equals(@NotNull P p1, @NotNull P p2) {
+    return projectionsEquals(Collections.singleton(p1), Collections.singleton(p2));
   }
 
   public static <
-      VP extends GenEntityProjection<VP, TP, MP>,
+      P extends GenProjection<P, TP, EP, MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
-      RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-      MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-      LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-      PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-      FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-      FP extends GenFieldProjection<VP, TP, MP, FP>
-      > boolean entitiesEquals(@NotNull VP vp1, @NotNull VP vp2) {
-    return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().equals(vp1, vp2);
+      EP extends GenEntityProjection<EP, TP, MP>,
+      MP extends GenModelProjection<EP, TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
+      RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+      MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+      LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+      PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+      FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+      FP extends GenFieldProjection<P, TP, MP, FP>
+      > boolean projectionsEquals(@NotNull P vp1, @NotNull P vp2) {
+    return new GenProjectionsComparator<P, TP, EP, MP, RMP, MMP, LMP, PMP, FPE, FP>().equals(vp1, vp2);
   }
 
   public void reset() {
     visited.clear();
   }
 
-  public boolean entitiesEquals(@NotNull Collection<@NotNull VP> vps1, @NotNull Collection<@NotNull VP> vps2) {
-    if (vps1.isEmpty())
-      return vps2.isEmpty();
+  public boolean projectionsEquals(
+      @NotNull Collection<@NotNull ? extends P> ps1,
+      @NotNull Collection<@NotNull ? extends P> ps2) {
+    if (ps1.isEmpty())
+      return ps2.isEmpty();
 
-    boolean flag1 = vps1.stream().anyMatch(GenEntityProjection::flag);
-    boolean flag2 = vps2.stream().anyMatch(GenEntityProjection::flag);
+    boolean flag1 = ps1.stream().anyMatch(GenProjection::flag);
+    boolean flag2 = ps2.stream().anyMatch(GenProjection::flag);
 
     if (flag1 != flag2)
       return false;
 
     // check for recursion
-    RecEntry entry1 = new RecEntry(vps1);
-    RecEntry entry2 = new RecEntry(vps2);
+    RecEntry entry1 = new RecEntry(ps1);
+    RecEntry entry2 = new RecEntry(ps2);
 
     Set<RecEntry> entries = visited.computeIfAbsent(entry1, k -> new HashSet<>());
     if (entries.contains(entry2))
@@ -89,8 +94,8 @@ public class GenProjectionsComparator<
     else
       entries.add(entry2);
 
-    Map<String, Collection<TP>> tags1 = collectTags(vps1);
-    Map<String, Collection<TP>> tags2 = collectTags(vps2);
+    Map<String, Collection<TP>> tags1 = collectTags(ps1);
+    Map<String, Collection<TP>> tags2 = collectTags(ps2);
 
     if (!tags1.keySet().equals(tags2.keySet()))
       return false;
@@ -99,25 +104,25 @@ public class GenProjectionsComparator<
       String tagName = entry.getKey();
 
       final List<@NotNull MP> models1 = entry.getValue()
-          .stream().map(GenTagProjectionEntry::projection).collect(Collectors.toList());
+          .stream().map(GenTagProjectionEntry::modelProjection).collect(Collectors.toList());
 
       final List<@NotNull MP> models2 = tags2.get(tagName)
-          .stream().map(GenTagProjectionEntry::projection).collect(Collectors.toList());
+          .stream().map(GenTagProjectionEntry::modelProjection).collect(Collectors.toList());
 
       if (!modelEquals(models1, models2))
         return false;
     }
 
-    final List<VP> tails1 = collectTails(vps1);
-    final List<VP> tails2 = collectTails(vps2);
+    final List<? extends P> tails1 = collectTails(ps1);
+    final List<? extends P> tails2 = collectTails(ps2);
 
-    return entitiesEquals(tails1, tails2);
+    return projectionsEquals(tails1, tails2);
   }
 
-  private @NotNull Map<String, Collection<TP>> collectTags(@NotNull Collection<@NotNull VP> vps) {
+  private @NotNull Map<String, Collection<TP>> collectTags(@NotNull Collection<@NotNull ? extends P> vps) {
     final Map<String, Collection<TP>> res = new HashMap<>();
 
-    for (VP vp : vps) {
+    for (P vp : vps) {
       for (final Map.Entry<String, TP> entry : vp.tagProjections().entrySet()) {
         Collection<TP> tps = res.computeIfAbsent(entry.getKey(), k -> new ArrayList<>());
         tps.add(entry.getValue());
@@ -127,9 +132,9 @@ public class GenProjectionsComparator<
     return res;
   }
 
-  private List<VP> collectTails(final Collection<@NotNull VP> vps) {
+  private List<? extends P> collectTails(final Collection<@NotNull ? extends P> vps) {
     return vps.stream()
-        .map(VP::polymorphicTails)
+        .map(GenProjection::polymorphicTails)
         .filter(Objects::nonNull)
         .flatMap(List::stream)
         .collect(Collectors.toList());
@@ -182,12 +187,12 @@ public class GenProjectionsComparator<
     for (final Map.Entry<String, Collection<FPE>> entry : fields1.entrySet()) {
       String fieldName = entry.getKey();
 
-      final List<@NotNull VP> vps1 = entry.getValue()
+      final List<@NotNull P> vps1 = entry.getValue()
           .stream().map(e -> e.fieldProjection().projection()).collect(Collectors.toList());
-      final List<@NotNull VP> vps2 = fields2.get(fieldName)
+      final List<@NotNull P> vps2 = fields2.get(fieldName)
           .stream().map(e -> e.fieldProjection().projection()).collect(Collectors.toList());
 
-      if (!entitiesEquals(vps1, vps2))
+      if (!projectionsEquals(vps1, vps2))
         return false;
     }
 
@@ -209,17 +214,17 @@ public class GenProjectionsComparator<
   }
 
   protected boolean mapModelEquals(@NotNull Collection<@NotNull MMP> mps1, @NotNull Collection<@NotNull MMP> mps2) {
-    final List<@NotNull VP> vps1 = mps1.stream().map(MMP::itemsProjection).collect(Collectors.toList());
-    final List<@NotNull VP> vps2 = mps2.stream().map(MMP::itemsProjection).collect(Collectors.toList());
+    final List<@NotNull P> vps1 = mps1.stream().map(MMP::itemsProjection).collect(Collectors.toList());
+    final List<@NotNull P> vps2 = mps2.stream().map(MMP::itemsProjection).collect(Collectors.toList());
 
-    return entitiesEquals(vps1, vps2);
+    return projectionsEquals(vps1, vps2);
   }
 
   protected boolean listModelEquals(@NotNull Collection<@NotNull LMP> mps1, @NotNull Collection<@NotNull LMP> mps2) {
-    final List<@NotNull VP> vps1 = mps1.stream().map(LMP::itemsProjection).collect(Collectors.toList());
-    final List<@NotNull VP> vps2 = mps2.stream().map(LMP::itemsProjection).collect(Collectors.toList());
+    final List<@NotNull P> vps1 = mps1.stream().map(LMP::itemsProjection).collect(Collectors.toList());
+    final List<@NotNull P> vps2 = mps2.stream().map(LMP::itemsProjection).collect(Collectors.toList());
 
-    return entitiesEquals(vps1, vps2);
+    return projectionsEquals(vps1, vps2);
   }
 
   protected boolean primitiveModelEquals(
@@ -230,14 +235,14 @@ public class GenProjectionsComparator<
   }
 
   private final class RecEntry {
-    private final Collection<VP> vps;
+    private final Collection<? extends P> vps;
     private final int hashCode;
 
-    private RecEntry(final Collection<VP> vps) {
+    private RecEntry(final Collection<? extends P> vps) {
       this.vps = vps;
 
       int hashCode = 31;
-      for (final VP vp : vps) {
+      for (final P vp : vps) {
         hashCode = hashCode * 31 + System.identityHashCode(vp);
       }
 
@@ -252,9 +257,9 @@ public class GenProjectionsComparator<
       final RecEntry entry = (RecEntry) o;
       if (hashCode != entry.hashCode) return false;
 
-      for (final VP vp1 : vps) {
+      for (final P vp1 : vps) {
         boolean found = false;
-        for (final VP vp2 : entry.vps) {
+        for (final P vp2 : entry.vps) {
           if (vp1 == vp2) {
             found = true;
             break;

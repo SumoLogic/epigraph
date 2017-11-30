@@ -58,7 +58,7 @@ public final class DataPathRemover {
           return PathRemovalResult.NULL;
 
         return removePath(
-            tpe.projection(),
+            tpe.modelProjection(),
             val,
             steps - 1
         );

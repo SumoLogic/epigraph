@@ -45,7 +45,7 @@ class ReqPathEntityProjectionGen(
   override protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagProjectionEntry): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      tpe.projection(),
+      tpe.modelProjection(),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       ctx
     )
@@ -69,7 +69,7 @@ object ReqPathEntityProjectionGen {
 
     case _ =>
       val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-        op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+        op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
       ReqPathModelProjectionGen.dataProjectionGen(
         baseNamespaceProvider,

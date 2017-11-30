@@ -27,11 +27,11 @@ import java.util.Objects;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractFieldProjectionEntry<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, ?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
-    > implements GenFieldProjectionEntry<VP, TP, MP, FP> {
+    MP extends GenModelProjection<?, TP, /*MP*/?, /*SMP*/?, ?>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
+    > implements GenFieldProjectionEntry<P, TP, MP, FP> {
 
   private final @NotNull FieldApi field;
   private final @NotNull FP projection;
@@ -61,7 +61,7 @@ public abstract class AbstractFieldProjectionEntry<
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AbstractFieldProjectionEntry<VP, TP, MP, FP> that = (AbstractFieldProjectionEntry<VP, TP, MP, FP>) o;
+    AbstractFieldProjectionEntry<P, TP, MP, FP> that = (AbstractFieldProjectionEntry<P, TP, MP, FP>) o;
     return Objects.equals(field.name(), that.field.name()) &&
            Objects.equals(projection, that.projection);
   }

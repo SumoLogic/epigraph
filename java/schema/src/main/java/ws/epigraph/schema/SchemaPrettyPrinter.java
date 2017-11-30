@@ -192,7 +192,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             globalOutputProjections
         );
 
-    new OpProjectionsPrettyPrinter<>(l, ipc).printEntity(transformer.inputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, ipc).printProjection(transformer.inputProjection(), 0);
     l.end();
 
 
@@ -206,7 +206,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             ProjectionReferenceName.fromQn(namespaces.projectionsNamespace()),
             globalOutputProjections
         );
-    new OpProjectionsPrettyPrinter<>(l, opc).printEntity(transformer.outputProjection(), 0);
+    new OpProjectionsPrettyPrinter<>(l, opc).printProjection(transformer.outputProjection(), 0);
     l.end();
 
     l.end(); //2
@@ -389,7 +389,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
   }
 
   @SuppressWarnings("unchecked")
-  private <VP extends GenEntityProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?, ?>> void printGlobalProjections(
+  private <VP extends GenEntityProjection<VP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?>> void printGlobalProjections(
       @NotNull String prefix,
       @NotNull Collection<VP> varProjections,
       @NotNull Collection<MP> modelProjections,
@@ -437,7 +437,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             l.beginIInd();
             l.print(prefix).brk().print(shortName.toString()).print(":").brk();
             l.print(outputProjection.type().name().toString()).brk().print("=").brk();
-            projectionsPrettyPrinter.printEntityNoRefCheck(outputProjection, 0);
+            projectionsPrettyPrinter.printProjectionNoRefCheck(outputProjection, 0);
             l.end();
 
             ProjectionsPrettyPrinterContext<VP, MP> parentContext = printerContext.parent();
@@ -459,7 +459,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
             final GenTagProjectionEntry<?, ?> tp = outputProjection.singleTagProjection();
 
             if (tp != null) {
-              final MP mp = (MP) tp.projection();
+              final MP mp = (MP) tp.modelProjection();
               if (mp.referenceName() != null)
                 nextModelProjections.add(mp);
 

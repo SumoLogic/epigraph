@@ -19,26 +19,24 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqModelProjection<
-    MP extends ReqModelProjection</*MP*/?, /*SMP*/?, ?>,
+    MP extends ReqModelProjection</*MP*/?, /*SMP*/? extends MP, /*M*/?>,
     SMP extends ReqModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
-    extends AbstractModelProjection<ReqTagProjectionEntry, MP, SMP, M> {
+    extends AbstractModelProjection<ReqEntityProjection, ReqTagProjectionEntry, MP, SMP, M>
+    implements ReqProjection<SMP, MP> {
 
-  protected final @NotNull ReqTagProjectionEntry selfEntry;
   protected /*final*/ @NotNull Directives directives;
   protected /*final*/ @NotNull ReqParams params;
 
@@ -51,17 +49,20 @@ public abstract class ReqModelProjection<
       final @Nullable List<SMP> tails,
       final @NotNull TextLocation location
   ) {
-    super(model, flag, metaProjection, tails, location);
-    //noinspection ThisEscapedInObjectConstruction
-    selfEntry = new ReqTagProjectionEntry(model.self(), this, location);
+    super(
+        model,
+        flag,
+        metaProjection,
+        tails,
+        location,
+        self -> new ReqTagProjectionEntry(model.self(), self, location)
+    );
     this.directives = directives;
     this.params = params;
   }
 
   protected ReqModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
-    //noinspection ThisEscapedInObjectConstruction
-    selfEntry = new ReqTagProjectionEntry(model.self(), this, location);
     params = ReqParams.EMPTY;
     directives = Directives.EMPTY;
   }
@@ -70,20 +71,10 @@ public abstract class ReqModelProjection<
 
   public @NotNull ReqParams params() { return params; }
 
-  @Override
-  public @Nullable ReqTagProjectionEntry singleTagProjection() {
-    return selfEntry;
-  }
-
-  @Override
-  public @NotNull Map<String, ReqTagProjectionEntry> tagProjections() {
-    return Collections.singletonMap(selfEntry.tag().name(), selfEntry);
-  }
-
   @SuppressWarnings("unchecked")
   @Override
-  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> {
+  protected @NotNull NormalizationContext<TypeApi, SMP> newNormalizationContext() {
+    return new NormalizationContext<>(m -> {
       switch (m.kind()) {
         case RECORD:
           return (SMP) new ReqRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);

@@ -49,6 +49,12 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
   private final @NotNull IdentityHashMap<R, R> refToOrigin = new IdentityHashMap<>();
   private final @NotNull Function<T, R> referenceFactory;
 
+  // here we heavily assume that the same thread can't be normalizing two projections of different
+  // families at the same time, e.g. that normalizing OpOutput projection can't entail
+  // normalizing OpInputProjection
+
+  private static final ThreadLocal<NormalizationContext<?, ?>> tl = new ThreadLocal<>();
+
   public NormalizationContext(final @NotNull Function<T, R> referenceFactory) {
     this.referenceFactory = referenceFactory;
   }
@@ -88,6 +94,22 @@ public class NormalizationContext<T extends TypeApi, R extends GenProjectionRefe
       if (created)
         threadLocal.remove();
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <
+      T extends TypeApi,
+      R extends GenProjectionReference<?>,
+      G>
+  G withContext(
+      @NotNull Supplier<NormalizationContext<T, R>> contextFactory,
+      @NotNull Function<NormalizationContext<T, R>, G> function
+  ) {
+    return withContext(
+        (ThreadLocal<NormalizationContext<T, R>>) (Object) tl,
+        contextFactory,
+        function
+    );
   }
 
   public static class VisitedKey {

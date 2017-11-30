@@ -24,6 +24,7 @@ import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjectionTransformer;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;

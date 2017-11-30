@@ -27,39 +27,40 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenGuidedProjectionTraversal<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, /*RMP*/?, /*RMP*/? /*M*/>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
     // "guide" projection (op)
-    GVP extends GenEntityProjection<GVP, GTP, GMP>,
+    GP extends GenProjection<? extends GP, GTP, GEP, ? extends GMP>,
+    GEP extends GenEntityProjection<GEP, GTP, GMP>,
     GTP extends GenTagProjectionEntry<GTP, GMP>,
-    GMP extends GenModelProjection<GTP, /*GMP*/?, /*GRMP*/?, /*GRMP*/?, /*M*/?>,
-    GRMP extends GenRecordModelProjection<GVP, GTP, GMP, GRMP, GFPE, GFP, ?>,
-    GMMP extends GenMapModelProjection<GVP, GTP, GMP, GMMP, ?>,
-    GLMP extends GenListModelProjection<GVP, GTP, GMP, GLMP, ?>,
-    GPMP extends GenPrimitiveModelProjection<GTP, GMP, GPMP, ?>,
-    GFPE extends GenFieldProjectionEntry<GVP, GTP, GMP, GFP>,
-    GFP extends GenFieldProjection<GVP, GTP, GMP, GFP>
+    GMP extends GenModelProjection<GEP, GTP, /*GMP*/?, /*GRMP*/?, /*GRMP*/? /*M*/>,
+    GRMP extends GenRecordModelProjection<GP, GTP, GEP, GMP, GRMP, GFPE, GFP, ?>,
+    GMMP extends GenMapModelProjection<GP, GTP, GEP, GMP, GMMP, ?>,
+    GLMP extends GenListModelProjection<GP, GTP, GEP, GMP, GLMP, ?>,
+    GPMP extends GenPrimitiveModelProjection<GEP, GTP, GMP, GPMP, ?>,
+    GFPE extends GenFieldProjectionEntry<GP, GTP, GMP, GFP>,
+    GFP extends GenFieldProjection<GP, GTP, GMP, GFP>
     > {
 
   // NB keep code in sync with GenProjectionTraversal
 
-  private final Set<VP> visitedEntities = Collections.newSetFromMap(new IdentityHashMap<>());
-  private final Set<MP> visitedModels = Collections.newSetFromMap(new IdentityHashMap<>());
+  private final Set<P> visited = Collections.newSetFromMap(new IdentityHashMap<>());
 
   protected @Nullable String currentEntityDataDescription; // e.g. a field name or a map value reference
   protected @Nullable TextLocation currentEntityDataLocation;
 
-  public boolean traverse(@NotNull VP projection, @NotNull GVP guide) {
-    if (visitedEntities.contains(projection)) return true;
+  public boolean traverse(@NotNull P projection, @NotNull GP guide) {
+    if (visited.contains(projection)) return true;
     else {
-      visitedEntities.add(projection);
+      visited.add(projection);
       if (projection.isResolved())
         return traverse0(projection, guide);
       else {
@@ -69,35 +70,50 @@ public abstract class GenGuidedProjectionTraversal<
     }
   }
 
-  private boolean traverse0(@NotNull VP projection, @NotNull GVP guide) {
-    if (visitVarProjection(projection, guide)) {
-      // tags
-      for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
-        final TP tagProjection = entry.getValue();
-        final GTP guideTagProjection = guide.tagProjections().get(tagProjection.tag().name());
+  @SuppressWarnings("unchecked")
+  private boolean traverse0(@NotNull P projection, @NotNull GP guide) {
+    if (visitProjection(projection, guide)) {
+      if (projection.isEntityProjection()) {
+        EP ep = projection.asEntityProjection();
+        GEP gep = guide.asEntityProjection();
 
-        if (guideTagProjection == null)
-          registerMissingGuideTag(projection, guide, tagProjection.tag());
-        else {
-          if (!visitTagProjection(projection, guide, entry.getKey(), tagProjection, guideTagProjection)) return false;
+        if (visitEntityProjection(ep, gep)) {
+          // tags
+          for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
+            final TP tagProjection = entry.getValue();
+            final GTP guideTagProjection = guide.tagProjections().get(tagProjection.tag().name());
 
-          if (!traverse(tagProjection.projection(), guideTagProjection.projection())) return false;
+            if (guideTagProjection == null)
+              registerMissingGuideTag(ep, gep, tagProjection.tag());
+            else {
+              if (!visitTagProjection(ep, gep, entry.getKey(), tagProjection, guideTagProjection)) return false;
+
+              if (!traverse((P) tagProjection.modelProjection(), (GP) guideTagProjection.modelProjection())) return false;
+            }
+          }
+        }
+      } else {
+        MP mp = projection.asModelProjection();
+        GMP gmp = guide.asModelProjection();
+
+        if (visitModelProjection(mp, gmp)) {
+          if (!traverseModel(mp, gmp)) return false;
         }
       }
 
       // tails
-      final List<VP> tails = projection.polymorphicTails();
+      final List<? extends P> tails = projection.polymorphicTails();
       if (tails != null) {
         assert !tails.isEmpty();
 
-        List<GVP> guideTails = guide.polymorphicTails();
+        List<? extends GP> guideTails = guide.polymorphicTails();
         if (guideTails == null) {
-          for (final VP tail : tails) {
+          for (final P tail : tails) {
             registerMissingGuideTail(projection, guide, tail);
           }
         } else {
-          for (final VP tail : tails) {
-            Optional<GVP> guideTailOpt = guideTails.stream().filter(gt -> gt.type() == tail.type()).findFirst();
+          for (final P tail : tails) {
+            Optional<? extends GP> guideTailOpt = guideTails.stream().filter(gt -> gt.type() == tail.type()).findFirst();
             if (guideTailOpt.isPresent()) {
               if (!traverse(tail, guideTailOpt.get())) return false;
             } else {
@@ -111,21 +127,8 @@ public abstract class GenGuidedProjectionTraversal<
     } else return false;
   }
 
-  private boolean traverse(@NotNull MP projection, @NotNull GMP guide) {
-    if (visitedModels.contains(projection)) return true;
-    else {
-      visitedModels.add(projection);
-      if (projection.isResolved())
-        return this.traverse0(projection, guide);
-      else {
-        projection.runOnResolved(() -> this.traverse0(projection, guide));
-        return true; // ???
-      }
-    }
-  }
-
   @SuppressWarnings("unchecked")
-  private boolean traverse0(@NotNull MP projection, @NotNull GMP guide) {
+  private boolean traverseModel(@NotNull MP projection, @NotNull GMP guide) {
     if (visitModelProjection(projection, guide)) {
 
       switch (projection.type().kind()) {
@@ -182,9 +185,9 @@ public abstract class GenGuidedProjectionTraversal<
 
   public boolean traverse(@NotNull FP fp, @NotNull GFP gfp) {
     if (visitFieldProjection(fp, gfp)) {
-      VP vp = fp.projection();
-      GVP gvp = gfp.projection();
-      return traverse(vp, gvp);
+      P EP = fp.projection();
+      GP GEP = gfp.projection();
+      return traverse(EP, GEP);
     } else return false;
   }
 
@@ -212,15 +215,22 @@ public abstract class GenGuidedProjectionTraversal<
     return visitPrimitiveModelProjection(projection, guide);
   }
 
+  protected boolean visitProjection(@NotNull P projection, @NotNull GP guide) {
+    if (projection.isEntityProjection())
+      return visitEntityProjection(projection.asEntityProjection(), guide.asEntityProjection());
+    else
+      return visitModelProjection(projection.asModelProjection(), guide.asModelProjection());
+  }
+
   /**
    * Visits var projection
    *
-   * @param varProjection instance to visit
-   * @param guide         guide projection
+   * @param entityProjection instance to visit
+   * @param guide            guide projection
    *
    * @return {@code true} iff traversal should continue
    */
-  protected boolean visitVarProjection(@NotNull VP varProjection, @NotNull GVP guide) { return true; }
+  protected boolean visitEntityProjection(@NotNull EP entityProjection, @NotNull GEP guide) { return true; }
 
   /**
    * Visits tag projection
@@ -234,8 +244,8 @@ public abstract class GenGuidedProjectionTraversal<
    * @return {@code true} iff traversal should continue
    */
   protected boolean visitTagProjection(
-      @NotNull VP varProjection,
-      @NotNull GVP guideVarProjection,
+      @NotNull EP varProjection,
+      @NotNull GEP guideVarProjection,
       @NotNull String tagName,
       @NotNull TP tagProjection,
       @NotNull GTP guideTag) {
@@ -327,9 +337,9 @@ public abstract class GenGuidedProjectionTraversal<
     return true;
   }
 
-  protected void registerMissingGuideTag(@NotNull VP vp, @NotNull GVP gvp, @NotNull TagApi tag) {}
+  protected void registerMissingGuideTag(@NotNull EP projection, @NotNull GEP guide, @NotNull TagApi tag) {}
 
-  protected void registerMissingGuideTail(@NotNull VP vp, @NotNull GVP gvp, @NotNull VP tail) {}
+  protected void registerMissingGuideTail(@NotNull P projection, @NotNull GP guide, @NotNull P tail) {}
 
   protected void registerMissingGuideField(@NotNull RMP mp, @NotNull GRMP gmp, @NotNull String fieldName) { }
 }

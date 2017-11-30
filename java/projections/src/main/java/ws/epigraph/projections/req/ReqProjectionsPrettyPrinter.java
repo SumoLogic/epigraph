@@ -28,11 +28,11 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractReqPrettyPrinter<E> {
+public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractReqProjectionsPrettyPrinter<E> {
 
   public ReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<ReqProjection<?, ?>> context) {
     super(layouter, context);
   }
 
@@ -96,7 +96,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
   }
 
   public void print(@NotNull String fieldName, @NotNull ReqFieldProjection fieldProjection, int pathSteps) throws E {
-    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.projection();
+    ReqProjection<?, ?> fieldEntityProjection = fieldProjection.projection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -108,13 +108,13 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
 
     if (!isPrintoutEmpty(fieldEntityProjection)) {
       brk();
-      printEntity(fieldEntityProjection, pathSteps - 1);
+      printProjection(fieldEntityProjection, pathSteps - 1);
     }
     l.end();
   }
 
   public boolean isPrintoutEmpty(@NotNull ReqFieldProjection fieldProjection) {
-    @NotNull ReqEntityProjection fieldEntityProjection = fieldProjection.projection();
+    ReqProjection<?, ?> fieldEntityProjection = fieldProjection.projection();
 //    @NotNull ReqParams fieldParams = fieldProjection.params();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
@@ -127,7 +127,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
     if (!super.isPrintoutEmpty(ep)) return false;
 
     for (ReqTagProjectionEntry tagProjection : ep.tagProjections().values()) {
-      final ReqModelProjection<?, ?, ?> modelProjection = tagProjection.projection();
+      final ReqModelProjection<?, ?, ?> modelProjection = tagProjection.modelProjection();
       if (!modelProjection.params().isEmpty()) return false;
       if (!modelProjection.directives().isEmpty()) return false;
     }
@@ -238,7 +238,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
         );
 
       brk();
-      printEntity(mp.itemsProjection(), decSteps(pathSteps));
+      printProjection(mp.itemsProjection(), decSteps(pathSteps));
       l.end();
     } else {
       l.beginIInd();
@@ -270,7 +270,7 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
 
       if (!isPrintoutEmpty(mp.itemsProjection())) {
         brk();
-        printEntity(mp.itemsProjection(), 0);
+        printProjection(mp.itemsProjection(), 0);
       }
       brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -283,13 +283,13 @@ public class ReqProjectionsPrettyPrinter<E extends Exception> extends AbstractRe
     l.beginIInd();
     l.print("*(");
     brk();
-    printEntity(mp.itemsProjection(), 0);
+    printProjection(mp.itemsProjection(), 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 
   @Override
-  protected String modelTailTypeNamePrefix(final @NotNull ReqModelProjection<?, ?, ?> projection) {
-    return projection.flag() ? "+" : super.modelTailTypeNamePrefix(projection);
+  protected String tailTypeNamePrefix(final @NotNull ReqProjection<?, ?> projection) {
+    return projection.flag() ? "+" : super.tailTypeNamePrefix(projection);
   }
 
   @Override

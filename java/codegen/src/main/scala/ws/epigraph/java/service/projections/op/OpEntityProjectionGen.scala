@@ -104,7 +104,7 @@ new $o(
     /*@formatter:off*/sn"""\
 new OpTagProjectionEntry(
   ${genTagExpr(t, tpe.tag().name(), ctx.gctx)},
-  ${i(gen(tpe.projection(), ctx))},
+  ${i(gen(tpe.modelProjection(), ctx))},
   ${gen(tpe.location(), ctx)}
 )"""/*@formatter:on*/
   }

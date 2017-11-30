@@ -26,14 +26,16 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenRecordModelProjection<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, M>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>,
+    EP extends GenEntityProjection<EP, ?, ?>,
+    MP extends GenModelProjection<?, TP, /*MP*/?, /*RMP*/?, /*RMP*/ /*M*/?>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, M>,
+//    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
     M extends RecordTypeApi
-    > extends GenModelProjection<TP, MP, RMP, RMP, M> {
+    > extends GenModelProjection<EP, TP, MP, RMP, M> {
 
   @NotNull Map<String, FPE> fieldProjections();
 

@@ -17,12 +17,11 @@
 package ws.epigraph.projections.abs;
 
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.gen.GenFieldProjection;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.ProjectionUtils;
+import ws.epigraph.projections.gen.*;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.types.DataTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,21 +31,21 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractFieldProjection<
-    EP extends GenEntityProjection<EP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
-    FP extends GenFieldProjection<EP, TP, MP, FP>
-    > implements GenFieldProjection<EP, TP, MP, FP> {
+    MP extends GenModelProjection<?, TP, /*MP*/?, ?, ?>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
+    > implements GenFieldProjection<P, TP, MP, FP> {
 
 //  private final @NotNull Annotations annotations;
 
-  private final @NotNull EP projection;
+  private final @NotNull P projection;
 
   private final @NotNull TextLocation location;
 
   protected AbstractFieldProjection(
 //      @NotNull Annotations annotations,
-      @NotNull EP projection,
+      @NotNull P projection,
       @NotNull TextLocation location) {
 //    this.annotations = annotations;
     this.projection = projection;
@@ -57,7 +56,7 @@ public abstract class AbstractFieldProjection<
 //  public @NotNull Annotations annotations() { return annotations; }
 
   @Override
-  public @NotNull EP projection() { return projection; }
+  public @NotNull P projection() { return projection; }
 
   @Override
   public FP merge(
@@ -66,23 +65,23 @@ public abstract class AbstractFieldProjection<
     if (fieldProjections.isEmpty()) throw new IllegalArgumentException("Can't merge empty list");
     if (fieldProjections.size() == 1) return fieldProjections.get(0);
 
-//    final List<@NotNull VP> entityProjections =
-//        fieldProjections.stream().map(GenFieldProjection::varProjection).collect(Collectors.toList());
-    final List<@NotNull EP> entityProjections =
+    final TypeApi targetType = type.type();
+    @SuppressWarnings("unchecked")
+    final List<@NotNull P> projections =
         fieldProjections
             .stream()
-            .map(fp -> fp.projection().normalizedForType(type.type()))
+            .map(fp -> (P) fp.projection().normalizedForType(targetType))
             .collect(Collectors.toList());
 
-    assert entityProjections.size() >= 1;
+    assert projections.size() >= 1;
 
-    final @NotNull EP mergedVarProjection = entityProjections.get(0).merge(entityProjections);
+    @SuppressWarnings("unchecked")
+    final @NotNull P mergedProjection = (P) ProjectionUtils.merge(targetType, projections);
 
     return merge(
         type,
         fieldProjections,
-//        Annotations.merge(fieldProjections.stream().map(GenFieldProjection::annotations)),
-        mergedVarProjection
+        mergedProjection
     );
   }
 
@@ -90,7 +89,7 @@ public abstract class AbstractFieldProjection<
       @NotNull DataTypeApi type,
       @NotNull List<FP> fieldProjections,
 //      @NotNull Annotations mergedAnnotations,
-      @NotNull EP mergedEntityProjection);
+      @NotNull P mergedEntityProjection);
 
   @Override
   public @NotNull TextLocation location() { return location; }

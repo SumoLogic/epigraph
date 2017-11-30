@@ -180,7 +180,7 @@ public final class ReqPartialPathPsiParser {
     if (metaPsi != null)
       context.addError("Meta projections are not supported in paths", metaPsi);
 
-    final OpModelProjection<?, ?, ?, ?> opModelPath = opTagPath.projection();
+    final OpModelProjection<?, ?, ?, ?> opModelPath = opTagPath.modelProjection();
 
     final @NotNull UrlReqTrunkModelProjection modelPsi =
         singleTagProjectionPsi.getReqTrunkModelProjection();

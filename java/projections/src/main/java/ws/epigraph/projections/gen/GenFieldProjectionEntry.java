@@ -24,17 +24,17 @@ import ws.epigraph.types.FieldApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenFieldProjectionEntry<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
+    MP extends GenModelProjection<?, TP, /*MP*/?, ?, ?>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
     > {
   @NotNull FieldApi field();
 
   @NotNull FP fieldProjection();
 
   // todo add FPE type parameter
-  @NotNull GenFieldProjectionEntry<VP, TP, MP, FP> overridenFieldProjection(@NotNull FieldApi overridingField);
+  @NotNull GenFieldProjectionEntry<P, TP, MP, FP> overridenFieldProjection(@NotNull FieldApi overridingField);
 
   @NotNull TextLocation location();
 }

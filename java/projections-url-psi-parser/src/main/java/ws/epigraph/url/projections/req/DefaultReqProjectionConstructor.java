@@ -123,7 +123,7 @@ public class DefaultReqProjectionConstructor {
           tags = defaultTag == null ?
                  opTagEntries
                      .stream()
-                     .filter(tpe -> !tpe.projection().flag())
+                     .filter(tpe -> !tpe.modelProjection().flag())
                      .map(AbstractTagProjectionEntry::tag)
                      .collect(Collectors.toList()) :
                  Collections.singletonList(defaultTag);
@@ -182,8 +182,8 @@ public class DefaultReqProjectionConstructor {
                   createDefaultModelProjection(
                       ReqRecordModelProjection.class,
                       tag.type(),
-                      opTagProjection.projection(),
-                      copyFlagsFromOp && !opTagProjection.projection().flag(),
+                      opTagProjection.modelProjection(),
+                      copyFlagsFromOp && !opTagProjection.modelProjection().flag(),
                       null,
                       Directives.EMPTY,
                       datums,

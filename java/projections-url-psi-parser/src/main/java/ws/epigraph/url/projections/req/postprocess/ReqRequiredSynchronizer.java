@@ -23,7 +23,7 @@ import ws.epigraph.projections.req.*;
 import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeKind;
-import ws.epigraph.url.projections.req.ReqProjectionTransformer;
+import ws.epigraph.projections.req.ReqProjectionTransformer;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
 
     // build model -> entity index
     for (final Map.Entry<String, ReqTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
-      modelToEntity.put(entry.getValue().projection(), new EntityProjectionAndDataType(projection, dataType));
+      modelToEntity.put(entry.getValue().modelProjection(), new EntityProjectionAndDataType(projection, dataType));
     }
 
     // check if flag is valid
@@ -95,7 +95,7 @@ public class ReqRequiredSynchronizer extends ReqProjectionTransformer {
 
     // this is either a self-var and model projection is flagged
     // or we have a retro tag and it's model is flagged
-    boolean modelFlagged = tp != null && tp.projection().flag();
+    boolean modelFlagged = tp != null && tp.modelProjection().flag();
 
     return super.transformEntityProjection(
         entityProjection,

@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package ws.epigraph.projections.op;
+package ws.epigraph.projections.req;
 
 import ws.epigraph.projections.gen.GenProjection;
-import ws.epigraph.projections.gen.GenProjectionTraversal;
 
 /**
+ * Request projection - either {@link ReqEntityProjection} or {@link ReqModelProjection}
+ *
+ * @param <P>  this projection type, either {@code ReqEntityProjection} or
+ *             one of {@code ReqModelProjection} subclasses
+ * @param <MP> model projection type, either {@code ReqModelProjection}
+ *             if this is an entity projection, or specific
+ *             {@code ReqModelProjection} subtype if this is a model projection
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpProjectionTraversal extends GenProjectionTraversal<
-    OpProjection<?, ?>,
-    OpTagProjectionEntry,
-    OpEntityProjection,
-    OpModelProjection<?, ?, ?, ?>,
-    OpRecordModelProjection,
-    OpMapModelProjection,
-    OpListModelProjection,
-    OpPrimitiveModelProjection,
-    OpFieldProjectionEntry,
-    OpFieldProjection
-    > {}
+public interface ReqProjection<P extends ReqProjection<?, ?>, MP extends ReqModelProjection<?, ?, ?>>
+    extends GenProjection<P, ReqTagProjectionEntry, ReqEntityProjection, MP> {
+}

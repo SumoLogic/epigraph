@@ -36,6 +36,7 @@ public class OpPrimitiveModelProjection
     PrimitiveTypeApi,
     GPrimitiveDatum>
     implements GenPrimitiveModelProjection<
+    OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
     OpPrimitiveModelProjection,
@@ -55,20 +56,6 @@ public class OpPrimitiveModelProjection
 
   public OpPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
-  }
-
-  @Override
-  protected OpPrimitiveModelProjection clone() {
-    return new OpPrimitiveModelProjection(
-        model,
-        flag,
-        defaultValue,
-        params,
-        annotations,
-        metaProjection,
-        polymorphicTails,
-        location()
-    );
   }
 
   @Override

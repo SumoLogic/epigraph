@@ -21,10 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GMapDatum;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +37,16 @@ import java.util.Objects;
 public class OpMapModelProjection
     extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpMapModelProjection, MapTypeApi, GMapDatum>
     implements GenMapModelProjection<
-    OpEntityProjection,
+    OpProjection<?, ?>,
     OpTagProjectionEntry,
+    OpEntityProjection,
     OpModelProjection<?, ?, ?, ?>,
     OpMapModelProjection,
     MapTypeApi
     > {
 
   private /*final @NotNull*/ @Nullable OpKeyProjection keyProjection;
-  private /*final @NotNull*/ @Nullable OpEntityProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpProjection<?, ?> itemsProjection;
 
   public OpMapModelProjection(
       @NotNull MapTypeApi model,
@@ -54,7 +56,7 @@ public class OpMapModelProjection
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
       @NotNull OpKeyProjection keyProjection,
-      @NotNull OpEntityProjection itemsProjection,
+      @NotNull OpProjection<?, ?> itemsProjection,
       @Nullable List<OpMapModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
@@ -73,32 +75,10 @@ public class OpMapModelProjection
   }
 
   @Override
-  public @NotNull OpEntityProjection itemsProjection() {
+  public @NotNull OpProjection<?, ?> itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
-  }
-
-  @Override
-  protected OpMapModelProjection clone() {
-    if (isResolved) {
-      return new OpMapModelProjection(
-          model,
-          flag,
-          defaultValue,
-          params,
-          annotations,
-          metaProjection,
-          keyProjection(),
-          itemsProjection(),
-          polymorphicTails,
-          location()
-      );
-    } else {
-      return new OpMapModelProjection(
-          model, location()
-      );
-    }
   }
 
   /* static */
@@ -117,7 +97,7 @@ public class OpMapModelProjection
     List<OpParams> keysParams = new ArrayList<>(modelProjections.size());
     List<Annotations> keysAnnotations = new ArrayList<>(modelProjections.size());
     OpKeyPresence mergedKeysPresence = null;
-    List<OpEntityProjection> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
+    List<OpProjection<?, ?>> itemsProjectionsToMerge = new ArrayList<>(modelProjections.size());
 
     OpMapModelProjection prevProjection = null;
     for (final OpMapModelProjection projection : modelProjections) {
@@ -168,7 +148,7 @@ public class OpMapModelProjection
             ),
             TextLocation.UNKNOWN
         ),
-        itemsProjectionsToMerge.get(0).merge(itemsProjectionsToMerge),
+        (OpProjection<?, ?>) ProjectionUtils.merge(itemsProjectionsToMerge),
         mergedTails,
         TextLocation.UNKNOWN
     );
@@ -176,7 +156,7 @@ public class OpMapModelProjection
 
   @Override
   public @NotNull OpMapModelProjection postNormalizedForType(
-      final @NotNull DatumTypeApi targetType,
+      final @NotNull TypeApi targetType,
       final @NotNull OpMapModelProjection n) {
     final MapTypeApi targetMapType = (MapTypeApi) targetType;
     return new OpMapModelProjection(

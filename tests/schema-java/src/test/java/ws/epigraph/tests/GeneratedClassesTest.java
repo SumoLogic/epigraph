@@ -170,7 +170,7 @@ public class GeneratedClassesTest {
     OpTagProjectionEntry tpe = entityProjection.singleTagProjection(); // self
     assertNotNull(tpe);
 
-    OpModelProjection<?, ?, ?, ?> modelProjection = tpe.projection();
+    OpModelProjection<?, ?, ?, ?> modelProjection = tpe.modelProjection();
     assertFalse(modelProjection.flag());
     assertTrue(modelProjection instanceof OpMapModelProjection);
     OpMapModelProjection mapModelProjection = (OpMapModelProjection) modelProjection;
@@ -179,11 +179,11 @@ public class GeneratedClassesTest {
 
     tpe = entityProjection.tagProjection("id");
     assertNotNull(tpe);
-    assertTrue(tpe.projection().flag());
+    assertTrue(tpe.modelProjection().flag());
 
     tpe = entityProjection.tagProjection("record");
     assertNotNull(tpe);
-    modelProjection = tpe.projection();
+    modelProjection = tpe.modelProjection();
     assertFalse(modelProjection.flag());
     assertTrue(modelProjection instanceof OpRecordModelProjection);
     OpRecordModelProjection recordModelProjection = (OpRecordModelProjection) modelProjection;
@@ -237,7 +237,7 @@ public class GeneratedClassesTest {
             null
         )
     );
-    printer.printEntity(projection, 0);
+    printer.printProjection(projection, 0);
     layouter.close();
     return sb.getString();
   }

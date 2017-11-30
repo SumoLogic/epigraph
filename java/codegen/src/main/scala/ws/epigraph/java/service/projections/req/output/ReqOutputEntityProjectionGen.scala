@@ -87,7 +87,7 @@ class ReqOutputEntityProjectionGen(
     parentTagGenOpt: Option[ReqOutputModelProjectionGen]): ReqProjectionGen =
     ReqOutputModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      tpe.projection(),
+      tpe.modelProjection(),
       Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       parentTagGenOpt,
@@ -137,7 +137,7 @@ object ReqOutputEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqOutputModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,

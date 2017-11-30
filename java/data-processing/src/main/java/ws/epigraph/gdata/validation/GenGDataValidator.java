@@ -35,7 +35,7 @@ import java.util.*;
 public abstract class GenGDataValidator<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
@@ -84,7 +84,7 @@ public abstract class GenGDataValidator<
       context.withStackItem(new GDataValidationContext.TagStackItem(tagName), () -> {
         final GDatum datum = data.tags().get(tagName);
         if (datum != null)
-          validateDatum(datum, tagProjection.projection());
+          validateDatum(datum, tagProjection.modelProjection());
       });
     }
 
@@ -143,7 +143,7 @@ public abstract class GenGDataValidator<
       GDatum gDatum = (GDatum) gDataValue;
       final TP tagProjection = projection.singleTagProjection();
       if (tagProjection != null) {
-        validateDatum(gDatum, tagProjection.projection());
+        validateDatum(gDatum, tagProjection.modelProjection());
       }
     } else throw new RuntimeException("Unknown GDataValue type: " + gDataValue.getClass().getName());
   }

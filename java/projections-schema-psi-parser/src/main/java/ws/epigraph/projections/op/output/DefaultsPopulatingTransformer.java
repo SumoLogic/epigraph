@@ -50,7 +50,7 @@ public final class DefaultsPopulatingTransformer extends OpProjectionTransformer
     boolean newFlag = entityProjection.flag() ||
                       transformedTagProjections.values()
                           .stream()
-                          .anyMatch(tpe -> tpe.projection().flag());
+                          .anyMatch(tpe -> tpe.modelProjection().flag());
 
     return super.transformEntityProjection(
         entityProjection,

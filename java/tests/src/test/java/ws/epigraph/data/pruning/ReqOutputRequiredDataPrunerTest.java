@@ -312,7 +312,7 @@ public class ReqOutputRequiredDataPrunerTest {
     //noinspection ConstantConditions
     return pruner.pruneDatum(
         datum,
-        req.projection().singleTagProjection().projection(),
+        req.projection().singleTagProjection().modelProjection(),
         0
     );
   }

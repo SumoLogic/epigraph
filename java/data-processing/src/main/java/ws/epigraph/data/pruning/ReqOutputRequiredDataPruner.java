@@ -53,7 +53,7 @@ public class ReqOutputRequiredDataPruner {
       final Tag tag = data.type().tagsMap().get(tagName);
 
       final ReqTagProjectionEntry tagProjectionEntry = entry.getValue();
-      final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.projection();
+      final ReqModelProjection<?, ?, ?> modelProjection = tagProjectionEntry.modelProjection();
       final boolean required = modelProjection.flag();
 
       Val val = tagValues.get(tagName);

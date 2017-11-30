@@ -16,12 +16,19 @@
 
 package ws.epigraph.projections.op;
 
-import ws.epigraph.projections.gen.GenProjectionTransformationMapImpl;
+import ws.epigraph.projections.gen.GenProjection;
 
 /**
+ * Operation projection - either {@link OpEntityProjection} or {@link OpModelProjection}
+ *
+ * @param <P>  this projection type, either {@code OpEntityProjection} or
+ *             one of {@code OpModelProjection} subclasses
+ * @param <MP> model projection type, either {@code OpModelProjection}
+ *             if this is an entity projection, or specific
+ *             {@code OpModelProjection} subtype if this is a model projection
+ *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpProjectionTransformationMapImpl
-    extends GenProjectionTransformationMapImpl<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
-    implements OpProjectionTransformationMap {
+public interface OpProjection<P extends OpProjection<?, ?>, MP extends OpModelProjection<?, ?, ?, ?>>
+    extends GenProjection<P, OpTagProjectionEntry, OpEntityProjection, MP> {
 }

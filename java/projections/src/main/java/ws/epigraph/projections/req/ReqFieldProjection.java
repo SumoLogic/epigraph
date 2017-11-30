@@ -27,7 +27,7 @@ import java.util.List;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqFieldProjection extends AbstractFieldProjection<
-    ReqEntityProjection,
+    ReqProjection<?, ?>,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
     ReqFieldProjection
@@ -39,7 +39,7 @@ public class ReqFieldProjection extends AbstractFieldProjection<
   public ReqFieldProjection(
 //      @NotNull ReqParams reqParams,
 //      @NotNull Annotations annotations,
-      @NotNull ReqEntityProjection projection,
+      @NotNull ReqProjection<?, ?> projection,
 //      boolean flag,
       @NotNull TextLocation location) {
     super(/*reqParams, annotations, */projection, location);
@@ -54,9 +54,7 @@ public class ReqFieldProjection extends AbstractFieldProjection<
     return flag(projection());
   }
 
-  private static boolean flag(@NotNull ReqEntityProjection vp) {
-    return vp.flag();
-  }
+  private static boolean flag(@NotNull ReqProjection<?, ?> p) { return p.flag(); }
 
 //  public @NotNull ReqParams params() { return params; }
 
@@ -87,7 +85,7 @@ public class ReqFieldProjection extends AbstractFieldProjection<
 //  }
 
   @Override
-  public @NotNull ReqFieldProjection setProjection(final @NotNull ReqEntityProjection projection) {
+  public @NotNull ReqFieldProjection setProjection(final @NotNull ReqProjection<?, ?> projection) {
     return new ReqFieldProjection(projection, TextLocation.UNKNOWN);
   }
 
@@ -97,7 +95,7 @@ public class ReqFieldProjection extends AbstractFieldProjection<
       final @NotNull List<ReqFieldProjection> fieldProjections,
 //      final @NotNull ReqParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull ReqEntityProjection mergedEntityProjection) {
+      final @NotNull ReqProjection<?, ?> mergedEntityProjection) {
 
     return new ReqFieldProjection(
 //        mergedParams,

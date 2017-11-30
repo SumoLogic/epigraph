@@ -26,8 +26,8 @@ import java.util.List;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class OpFieldProjection extends AbstractFieldProjection <
-    OpEntityProjection,
+public class OpFieldProjection extends AbstractFieldProjection<
+    OpProjection<?, ?>,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
     OpFieldProjection
@@ -38,13 +38,13 @@ public class OpFieldProjection extends AbstractFieldProjection <
   public OpFieldProjection(
 //      @NotNull OpParams params,
 //      @NotNull Annotations annotations,
-      @NotNull OpEntityProjection projection,
+      @NotNull OpProjection<?, ?> projection,
       @NotNull TextLocation location) {
     super(/*params, annotations, */projection, location);
   }
 
   @Override
-  public @NotNull OpFieldProjection setProjection(final @NotNull OpEntityProjection varProjection) {
+  public @NotNull OpFieldProjection setProjection(final @NotNull OpProjection<?, ?> varProjection) {
     return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
   }
 
@@ -56,12 +56,12 @@ public class OpFieldProjection extends AbstractFieldProjection <
       final @NotNull List<OpFieldProjection> fieldProjections,
 //      final @NotNull OpParams mergedParams,
 //      final @NotNull Annotations mergedAnnotations,
-      final @NotNull OpEntityProjection mergedEntityProjection) {
+      final @NotNull OpProjection<?, ?> mergedProjection) {
 
     return new OpFieldProjection(
 //        mergedParams,
 //        mergedAnnotations,
-        mergedEntityProjection,
+        mergedProjection,
         TextLocation.UNKNOWN
     );
   }

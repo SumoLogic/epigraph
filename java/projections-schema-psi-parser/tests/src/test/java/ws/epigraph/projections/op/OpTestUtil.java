@@ -124,7 +124,7 @@ public final class OpTestUtil {
         };
 
     OpProjectionsPrettyPrinter<NoExceptions> printer = new OpProjectionsPrettyPrinter<>(layouter, pctx);
-    printer.printEntity(projection, 0);
+    printer.printProjection(projection, 0);
     layouter.close();
     return sb.getString();
   }

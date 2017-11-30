@@ -26,28 +26,27 @@ import ws.epigraph.types.TypeKind;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractProjectionsPrettyPrinter<
+    P extends GenProjection<?, TP, EP, ? extends MP>,
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
     E extends Exception> {
 
   protected final @NotNull Layouter<E> l;
   protected final @NotNull GDataPrettyPrinter<E> gdataPrettyPrinter;
-  protected final @NotNull ProjectionsPrettyPrinterContext<EP, MP> context;
+  protected final @NotNull ProjectionsPrettyPrinterContext<P> context;
 
-  private final Collection<ProjectionReferenceName.RefNameSegment> visitedEntityRefs = new HashSet<>();
-  private final Collection<ProjectionReferenceName.RefNameSegment> visitedModelRefs = new HashSet<>();
+  private final Collection<ProjectionReferenceName.RefNameSegment> visitedRefs = new HashSet<>();
 
   protected AbstractProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<EP, MP> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<P> context) {
     l = layouter;
     this.context = context;
     gdataPrettyPrinter = new GDataPrettyPrinter<>(l);
@@ -69,10 +68,10 @@ public abstract class AbstractProjectionsPrettyPrinter<
   }
 
   public void addVisitedRefs(@NotNull Collection<ProjectionReferenceName.RefNameSegment> names) {
-    visitedEntityRefs.addAll(names);
+    visitedRefs.addAll(names);
   }
 
-  public final void printEntity(@NotNull EP p, int pathSteps) throws E {
+  public final void printProjection(@NotNull P p, int pathSteps) throws E {
     final ProjectionReferenceName name = p.referenceName();
 
     boolean shouldPrint = true;
@@ -81,12 +80,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       ProjectionReferenceName.@Nullable RefNameSegment shortName = name.last();
       assert shortName != null;
 
-      context.addEntityProjection(p);
-      if (!context.inNamespace(name) || visitedEntityRefs.contains(shortName)) {
+      context.addProjection(p);
+      if (!context.inNamespace(name) || visitedRefs.contains(shortName)) {
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
-        visitedEntityRefs.add(shortName);
+        visitedRefs.add(shortName);
         if (p.type().kind() == TypeKind.ENTITY) { // otherwise label will be printed by model
           l.print("$").print(shortName.toString()); //.print(" = ");
           nbsp();
@@ -97,31 +96,30 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
 
     if (shouldPrint)
-      printEntityNoRefCheck(p, pathSteps);
+      printProjectionNoRefCheck(p, pathSteps);
   }
 
-  public final void printEntityNoRefCheck(@NotNull EP p, int pathSteps) throws E {
+  public final void printProjectionNoRefCheck(@NotNull P p, int pathSteps) throws E {
     if (p.isResolved()) {
-      printEntityOnly(p, pathSteps);
+      printProjectionWithoutTails(p, pathSteps);
       printTailsOnly(p);
     } else {
       l.print("<UNRESOLVED>");
     }
   }
 
-  protected void printEntityOnly(@NotNull EP p, int pathSteps) throws E {
-    printEntityDecoration(p);
+  protected void printProjectionWithoutTails(@NotNull P p, int pathSteps) throws E {
     Map<String, TP> tagProjections = p.tagProjections();
     if (p.type().kind() != TypeKind.ENTITY) {
       // samovar
 
-      if (tagProjections.size() == 1) {
-        TP tp = tagProjections.values().iterator().next();
-        printTag(null, tp, decSteps(pathSteps));
-      } else
+      TP tp = p.singleTagProjection();
+      if (tp == null)
         l.print("< invalid " + p.type().name() + " data, 1 tag expected but " + tagProjections.size() + " found >");
+      else
+        printTag(null, tp, decSteps(pathSteps));
 
-    } else if (!p.parenthesized() && !tagProjections.isEmpty()) {
+    } else if (!p.asEntityProjection().parenthesized() && !tagProjections.isEmpty()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
       printTag(entry.getKey(), entry.getValue(), decSteps(pathSteps));
@@ -133,7 +131,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
               "found %d entity tags (%s) and parenthesized = %b while path still contains %d steps",
               tagProjections.size(),
               String.join(", ", tagProjections.keySet()),
-              p.parenthesized(),
+              p.asEntityProjection().parenthesized(),
               pathSteps
           )
       );
@@ -150,32 +148,36 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
-  protected void printEntityDecoration(@NotNull EP p) throws E { }
+  private void printTailsOnly(@NotNull P p) throws E {
+    @SuppressWarnings("unchecked")
+    Collection<P> polymorphicTails = (Collection<P>) p.polymorphicTails();
 
-  private void printTailsOnly(@NotNull EP p) throws E {
-    Collection<EP> polymorphicTails = p.polymorphicTails();
+    String tailSign = p.isEntityProjection() ? ":~" : "~";
 
     if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
       l.beginIInd();
       brk();
       if (polymorphicTails.size() == 1) {
-        l.print(":~");
-        EP tail = polymorphicTails.iterator().next();
+        l.print(tailSign);
+        P tail = polymorphicTails.iterator().next();
+        l.print(tailTypeNamePrefix(tail));
         l.print(tail.type().name().toString());
         brk();
-        printEntity(tail, 0);
+        printProjection(tail, 0);
       } else {
         l.beginCInd();
-        l.print(":~(");
+        l.print(tailSign);
+        l.print("(");
         boolean first = true;
-        for (EP tail : polymorphicTails) {
+        for (P tail : polymorphicTails) {
           if (first) first = false;
           else l.print(",");
           brk();
           l.beginIInd(0);
+          l.print(tailTypeNamePrefix(tail));
           l.print(tail.type().name().toString());
           brk();
-          printEntity(tail, 0);
+          printProjection(tail, 0);
           l.end();
         }
         brk(1, -l.getDefaultIndentation()).end().print(")");
@@ -184,8 +186,10 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
   }
 
+  protected String tailTypeNamePrefix(@NotNull P tail) { return ""; }
+
   public void printTag(final @Nullable String tagName, final @NotNull TP tp, final int pathSteps) throws E {
-    final MP projection = tp.projection();
+    final MP projection = tp.modelProjection();
 
     l.beginIInd(0);
 
@@ -205,6 +209,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E { l.print(tagName); }
 
+  @SuppressWarnings("unchecked")
   public void printModel(@NotNull MP mp, int pathSteps) throws E {
     final ProjectionReferenceName name = mp.referenceName();
 
@@ -214,12 +219,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       ProjectionReferenceName.RefNameSegment shortName = name.last();
       assert shortName != null;
 
-      context.addModelProjection(mp);
-      if (!context.inNamespace(name) || visitedModelRefs.contains(shortName)) {
+      context.addProjection((P) mp);
+      if (!context.inNamespace(name) || visitedRefs.contains(shortName)) {
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
-        visitedModelRefs.add(shortName);
+        visitedRefs.add(shortName);
         l.print("$").print(shortName.toString()).print(" = ");
       }
     }
@@ -251,7 +256,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
       if (!isPrintoutNoParamsEmpty(mp))
         printModelOnly(mp, pathSteps);
 
-      printModelTailsOnly(mp);
+      printTailsOnly((P) mp);
 
       l.end();
     } else
@@ -263,45 +268,6 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected abstract void printModelOnly(@NotNull MP mp, int pathSteps) throws E;
 
   protected boolean printModelMeta(@NotNull MP meta) throws E { return true; }
-
-  @SuppressWarnings("unchecked") // todo introduce TMP extends MP
-  private void printModelTailsOnly(@NotNull MP p) throws E {
-    List<MP> polymorphicTails = (List<MP>) p.polymorphicTails();
-
-    if (polymorphicTails != null && !polymorphicTails.isEmpty()) {
-      l.beginIInd();
-      brk();
-      if (polymorphicTails.size() == 1) {
-        l.print("~");
-        MP tail = polymorphicTails.iterator().next();
-        l.print(modelTailTypeNamePrefix(tail));
-        l.print(tail.type().name().toString());
-        brk();
-        printModel(tail, 0);
-      } else {
-        l.beginCInd();
-        l.print("~(");
-        boolean first = true;
-        for (MP tail : polymorphicTails) {
-          if (first) first = false;
-          else l.print(",");
-          brk();
-          l.beginIInd(0);
-          l.print(modelTailTypeNamePrefix(tail));
-          l.print(tail.type().name().toString());
-          brk();
-          printModel(tail, 0);
-          l.end();
-        }
-        brk(1, -l.getDefaultIndentation()).end().print(")");
-      }
-      l.end();
-    }
-  }
-
-  protected String modelTailTypeNamePrefix(@NotNull MP mp) {
-    return "";
-  }
 
 //  public void printDirectives(@NotNull Directives cp) throws E {
 //    printDirectives(cp, false, true);
@@ -326,6 +292,10 @@ public abstract class AbstractProjectionsPrettyPrinter<
 //    return first;
 //  }
 
+  protected boolean isPrintoutEmpty(@NotNull P p) {
+    return p.isEntityProjection() ? isPrintoutEmpty(p.asEntityProjection()) : isPrintoutEmpty(p.asModelProjection());
+  }
+
   protected boolean isPrintoutEmpty(@NotNull EP EP) {
 
     if (!EP.isResolved()) return false;
@@ -334,7 +304,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (EP.type().kind() == TypeKind.ENTITY) return false; // non-samovar always prints something
 
     for (TP tagProjection : EP.tagProjections().values()) {
-      final MP modelProjection = tagProjection.projection();
+      final MP modelProjection = tagProjection.modelProjection();
       if (!isPrintoutEmpty(modelProjection)) return false;
       if (!modelParamsEmpty(modelProjection)) return false;
       if (!isPrintoutNoParamsEmpty(modelProjection)) return false;
@@ -352,11 +322,11 @@ public abstract class AbstractProjectionsPrettyPrinter<
     if (!mp.isResolved()) return false;
     switch (mp.type().kind()) {
       case RECORD:
-        return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();
+        return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();
       case MAP:
-        return isPrintoutEmpty((EP) ((GenMapModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((EP) ((GenMapModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
       case LIST:
-        return isPrintoutEmpty((EP) ((GenListModelProjection<?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((EP) ((GenListModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
       default:
         return true;
     }

@@ -24,9 +24,9 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.RecordModelProjectionHelper;
 import ws.epigraph.projections.gen.GenRecordModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,8 +41,9 @@ import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields
 public class OpRecordModelProjection
     extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpRecordModelProjection, RecordTypeApi, GRecordDatum>
     implements GenRecordModelProjection<
-    OpEntityProjection,
+    OpProjection<?, ?>,
     OpTagProjectionEntry,
+    OpEntityProjection,
     OpModelProjection<?, ?, ?, ?>,
     OpRecordModelProjection,
     OpFieldProjectionEntry,
@@ -78,25 +79,6 @@ public class OpRecordModelProjection
   public @NotNull Map<String, OpFieldProjectionEntry> fieldProjections() {
     assert isResolved();
     return fieldProjections;
-  }
-
-  @Override
-  protected OpRecordModelProjection clone() {
-    if (isResolved) {
-      return new OpRecordModelProjection(
-          model,
-          flag,
-          defaultValue,
-          params,
-          annotations,
-          metaProjection,
-          fieldProjections,
-          polymorphicTails,
-          location()
-      );
-    } else {
-      return new OpRecordModelProjection(model, location());
-    }
   }
 
   @Override
@@ -140,7 +122,7 @@ public class OpRecordModelProjection
 
   @Override
   public @NotNull OpRecordModelProjection postNormalizedForType(
-      final @NotNull DatumTypeApi targetType,
+      final @NotNull TypeApi targetType,
       final @NotNull OpRecordModelProjection n) {
     RecordTypeApi targetRecordType = (RecordTypeApi) targetType;
 

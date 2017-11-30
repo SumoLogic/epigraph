@@ -38,7 +38,7 @@ import java.nio.charset.Charset;
 @NotThreadSafe
 public interface FormatWriter<
     VP extends GenEntityProjection<VP, ?, ?>,
-    MP extends GenModelProjection<?, /*MP*/?, ?, ?, ?>> extends AutoCloseable {
+    MP extends GenModelProjection<?, /*MP*/?, ?, ?>> extends AutoCloseable {
 
   // with projections
 

@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractTagProjectionEntry<
-    TP extends AbstractTagProjectionEntry</*TP*/?, /*MP*/?>,
-    MP extends AbstractModelProjection</*TP*/?, /*MP*/?, ?, ?>
+    TP extends AbstractTagProjectionEntry<TP, /*MP*/?>,
+    MP extends AbstractModelProjection<?, /*TP*/?, /*MP*/?, ? extends MP, ?>
     > implements GenTagProjectionEntry<TP, MP> {
 
   private final @NotNull TagApi tag;
@@ -49,7 +49,7 @@ public abstract class AbstractTagProjectionEntry<
       throw new IllegalArgumentException(
           String.format(
               "Tag '%s' type '%s' is not compatible with '%s' projection",
-              tag.name(), tag.type().name(), projection().type().name()
+              tag.name(), tag.type().name(), modelProjection().type().name()
           )
       );
   }
@@ -58,7 +58,7 @@ public abstract class AbstractTagProjectionEntry<
   public @NotNull TagApi tag() { return tag; }
 
   @Override
-  public @NotNull MP projection() { return projection; }
+  public MP modelProjection() { return projection; }
 
   @SuppressWarnings("unchecked")
   @Override
@@ -66,10 +66,10 @@ public abstract class AbstractTagProjectionEntry<
     if (tagEntries.isEmpty()) return null;
 
     final List</*@NotNull */MP> models =
-        tagEntries.stream().map(tp -> (MP) tp.projection()).collect(Collectors.toList());
+        tagEntries.stream().map(tp -> (MP) tp.modelProjection()).collect(Collectors.toList());
 
     final /*@NotNull*/ MP mp = models.get(0);
-    MP mergedModel = ((GenModelProjection<?, MP, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
+    MP mergedModel = ((GenModelProjection<?, ?, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
     return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
   }
@@ -85,7 +85,7 @@ public abstract class AbstractTagProjectionEntry<
     return mergeTags(
         overridingTag,
         Collections.singletonList(self()),
-        (MP) (projection().normalizedForType(overridingTag.type()))
+        (MP) (modelProjection().normalizedForType(overridingTag.type()))
     );
   }
 

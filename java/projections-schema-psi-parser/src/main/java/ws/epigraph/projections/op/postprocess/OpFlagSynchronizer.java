@@ -55,7 +55,7 @@ public class OpFlagSynchronizer extends OpProjectionTransformer {
 
     // build model -> entity index
     for (final Map.Entry<String, OpTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
-      modelToEntity.put(entry.getValue().projection(), new EntityProjectionAndDataType(projection, dataType));
+      modelToEntity.put(entry.getValue().modelProjection(), new EntityProjectionAndDataType(projection, dataType));
     }
 
     // check if flag is valid

@@ -24,26 +24,26 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenProjectionTraversal<
-    EP extends GenEntityProjection<EP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<EP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
-    FP extends GenFieldProjection<EP, TP, MP, FP>
+    EP extends GenEntityProjection<EP, TP, MP>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, /*RMP*/?, /*RMP*/? /*M*/>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
     > {
 
   // NB keep code in sync with GenGuidedProjectionTraversal
 
-  private final Set<EP> visitedEntities = Collections.newSetFromMap(new IdentityHashMap<>());
-  private final Set<MP> visitedModels = Collections.newSetFromMap(new IdentityHashMap<>());
+  private final Set<P> visited = Collections.newSetFromMap(new IdentityHashMap<>());
 
-  public boolean traverse(@NotNull EP projection) {
-    if (visitedEntities.contains(projection)) return true;
+  public boolean traverse(@NotNull P projection) {
+    if (visited.contains(projection)) return true;
     else {
-      visitedEntities.add(projection);
+      visited.add(projection);
       if (projection.isResolved())
         return traverse0(projection);
       else {
@@ -53,18 +53,23 @@ public abstract class GenProjectionTraversal<
     }
   }
 
-  private boolean traverse0(final @NotNull EP projection) {
-    if (visitVarProjection(projection)) {
+  @SuppressWarnings("unchecked")
+  private boolean traverse0(final @NotNull P projection) {
+    if (visitProjection(projection)) {
+      if (projection.isModelProjection()) {
+        if (!traverse(projection.asModelProjection())) return false;
+      }
+
       for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
         final TP tagProjection = entry.getValue();
         if (!visitTagProjection(projection, entry.getKey(), tagProjection)) return false;
 
-        if (!traverse(tagProjection.projection())) return false;
+        if (!traverse((P) tagProjection.modelProjection())) return false;
       }
 
-      final List<EP> tails = projection.polymorphicTails();
+      final List<? extends P> tails = projection.polymorphicTails();
       if (tails != null) {
-        for (final EP tail : tails) {
+        for (final P tail : tails) {
           if (!traverse(tail)) return false;
         }
       }
@@ -74,15 +79,11 @@ public abstract class GenProjectionTraversal<
   }
 
   public boolean traverse(@NotNull MP projection) {
-    if (visitedModels.contains(projection)) return true;
+    if (projection.isResolved())
+      return this.traverse0(projection);
     else {
-      visitedModels.add(projection);
-      if (projection.isResolved())
-        return this.traverse0(projection);
-      else {
-        projection.runOnResolved(() -> this.traverse0(projection));
-        return true; // ???
-      }
+      projection.runOnResolved(() -> this.traverse0(projection));
+      return true; // ???
     }
   }
 
@@ -135,8 +136,8 @@ public abstract class GenProjectionTraversal<
 
   public boolean traverse(@NotNull FP fp) {
     if (visitFieldProjection(fp)) {
-      EP EP = fp.projection();
-      return traverse(EP);
+      P P = fp.projection();
+      return traverse(P);
     } else return false;
   }
 
@@ -153,24 +154,38 @@ public abstract class GenProjectionTraversal<
   protected boolean traverse(@NotNull PMP projection) { return visitPrimitiveModelProjection(projection); }
 
   /**
-   * Visits var projection
+   * Visits a projection
    *
-   * @param varProjection instance to visit
+   * @param projection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
-  protected boolean visitVarProjection(@NotNull EP varProjection) { return true; }
+  protected boolean visitProjection(@NotNull P projection) {
+    if (projection.isEntityProjection())
+      return visitEntityProjection(projection.asEntityProjection());
+    else
+      return visitModelProjection(projection.asModelProjection());
+  }
+
+  /**
+   * Visits an entity projection
+   *
+   * @param projection instance to visit
+   *
+   * @return {@code true} iff traversal should continue
+   */
+  protected boolean visitEntityProjection(@NotNull EP projection) { return true; }
 
   /**
    * Visits tag projection
    *
-   * @param varProjection var projection
+   * @param projection    var projection
    * @param tagName       tag name
    * @param tagProjection instance to visit
    *
    * @return {@code true} iff traversal should continue
    */
-  protected boolean visitTagProjection(@NotNull EP varProjection, @NotNull String tagName, @NotNull TP tagProjection) {
+  protected boolean visitTagProjection(@NotNull P projection, @NotNull String tagName, @NotNull TP tagProjection) {
     return true;
   }
 

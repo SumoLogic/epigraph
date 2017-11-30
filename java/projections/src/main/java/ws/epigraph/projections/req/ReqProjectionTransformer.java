@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package ws.epigraph.url.projections.req;
+package ws.epigraph.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenProjectionTransformer;
-import ws.epigraph.projections.req.*;
 import ws.epigraph.types.*;
 
 import java.util.List;
@@ -30,6 +29,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqProjectionTransformer extends GenProjectionTransformer<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
@@ -38,9 +38,7 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
     ReqListModelProjection,
     ReqPrimitiveModelProjection,
     ReqFieldProjectionEntry,
-    ReqFieldProjection,
-    ReqProjectionTransformationMap,
-    ReqProjectionTransformationMapImpl
+    ReqFieldProjection
     > {
 
   // NB keep in sync with OpProjectionTransformer
@@ -146,11 +144,11 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull ReqFieldProjection transformFieldProjection(
       final @NotNull ReqFieldProjection fieldProjection,
-      final @NotNull ReqEntityProjection transformedEntityProjection,
+      final @NotNull ReqProjection<?, ?> transformedProjection,
       final boolean mustRebuild) {
 
     return mustRebuild ? new ReqFieldProjection(
-        transformedEntityProjection,
+        transformedProjection,
         fieldProjection.location()
     ) : fieldProjection;
   }
@@ -172,7 +170,7 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull ReqMapModelProjection transformMapProjection(
       final @NotNull ReqMapModelProjection mapModelProjection,
-      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @NotNull ReqProjection<?, ?> transformedItemsProjection,
       final @Nullable List<ReqMapModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -190,7 +188,7 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   protected final @NotNull ReqMapModelProjection transformMapProjection(
       final @NotNull ReqMapModelProjection mapModelProjection,
       final boolean flagOverride,
-      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @NotNull ReqProjection<?, ?> transformedItemsProjection,
       final @Nullable List<ReqMapModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -217,7 +215,7 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull ReqListModelProjection transformListProjection(
       final @NotNull ReqListModelProjection listModelProjection,
-      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @NotNull ReqProjection<?, ?> transformedItemsProjection,
       final @Nullable List<ReqListModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -235,7 +233,7 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
   protected final @NotNull ReqListModelProjection transformListProjection(
       final @NotNull ReqListModelProjection listModelProjection,
       final boolean flagOverride,
-      final @NotNull ReqEntityProjection transformedItemsProjection,
+      final @NotNull ReqProjection<?, ?> transformedItemsProjection,
       final @Nullable List<ReqListModelProjection> transformedTails,
       final @Nullable ReqModelProjection<?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -336,8 +334,4 @@ public class ReqProjectionTransformer extends GenProjectionTransformer<
     }
   }
 
-  @Override
-  protected @NotNull ReqProjectionTransformationMapImpl newTransformationMap() {
-    return new ReqProjectionTransformationMapImpl();
-  }
 }

@@ -29,6 +29,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpProjectionTransformer extends GenProjectionTransformer<
+    OpProjection<?, ?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
@@ -37,9 +38,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     OpListModelProjection,
     OpPrimitiveModelProjection,
     OpFieldProjectionEntry,
-    OpFieldProjection,
-    OpProjectionTransformationMap,
-    OpProjectionTransformationMapImpl
+    OpFieldProjection
     > {
 
   // NB keep in sync with ReqProjectionTransformer
@@ -148,11 +147,11 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull OpFieldProjection transformFieldProjection(
       final @NotNull OpFieldProjection fieldProjection,
-      final @NotNull OpEntityProjection transformedEntityProjection,
+      final @NotNull OpProjection<?, ?> transformedProjection,
       final boolean mustRebuild) {
 
     return mustRebuild ? new OpFieldProjection(
-        transformedEntityProjection,
+        transformedProjection,
         fieldProjection.location()
     ) : fieldProjection;
   }
@@ -174,7 +173,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull OpMapModelProjection transformMapProjection(
       final @NotNull OpMapModelProjection mapModelProjection,
-      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @NotNull OpProjection<?, ?> transformedItemsProjection,
       final @Nullable List<OpMapModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -192,7 +191,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   protected final @NotNull OpMapModelProjection transformMapProjection(
       final @NotNull OpMapModelProjection mapModelProjection,
       final boolean flagOverride,
-      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @NotNull OpProjection<?, ?> transformedItemsProjection,
       final @Nullable List<OpMapModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -219,7 +218,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   @Override
   protected @NotNull OpListModelProjection transformListProjection(
       final @NotNull OpListModelProjection listModelProjection,
-      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @NotNull OpProjection<?, ?> transformedItemsProjection,
       final @Nullable List<OpListModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -237,7 +236,7 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
   protected final @NotNull OpListModelProjection transformListProjection(
       final @NotNull OpListModelProjection listModelProjection,
       final boolean flagOverride,
-      final @NotNull OpEntityProjection transformedItemsProjection,
+      final @NotNull OpProjection<?, ?> transformedItemsProjection,
       final @Nullable List<OpListModelProjection> transformedTails,
       final @Nullable OpModelProjection<?, ?, ?, ?> transformedMeta,
       final boolean mustRebuild) {
@@ -339,8 +338,4 @@ public abstract class OpProjectionTransformer extends GenProjectionTransformer<
     }
   }
 
-  @Override
-  protected @NotNull OpProjectionTransformationMapImpl newTransformationMap() {
-    return new OpProjectionTransformationMapImpl();
-  }
 }

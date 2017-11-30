@@ -99,7 +99,7 @@ public class DefaultReqProjectionConstructorTest {
     assertEquals(1, req.tagProjections().size());
     ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
     assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.projection();
+    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
     assertTrue(modelProjection instanceof ReqPrimitiveModelProjection);
   }
 
@@ -116,7 +116,7 @@ public class DefaultReqProjectionConstructorTest {
     assertEquals(1, req.tagProjections().size());
     ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
     assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.projection();
+    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
     assertTrue(modelProjection instanceof ReqListModelProjection);
     ReqListModelProjection listModelProjection = (ReqListModelProjection) modelProjection;
     ReqEntityProjection itemsProjection = listModelProjection.itemsProjection();
@@ -137,7 +137,7 @@ public class DefaultReqProjectionConstructorTest {
     assertEquals(1, req.tagProjections().size());
     ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
     assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.projection();
+    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
     assertTrue(modelProjection instanceof ReqListModelProjection);
     ReqListModelProjection listModelProjection = (ReqListModelProjection) modelProjection;
     ReqEntityProjection itemsProjection = listModelProjection.itemsProjection();

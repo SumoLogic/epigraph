@@ -213,7 +213,7 @@ public final class UriComposer {
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
 
-    printer.printEntity(projection, pathSteps);
+    printer.printProjection(projection, pathSteps);
 
     return sb.getString();
   }

@@ -43,7 +43,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
 
     if (varProjection.flag())
       context.addWarning("flag is not supported on output projections, ignoring", varProjection.location());
-    return super.visitVarProjection(varProjection, guide);
+    return super.visitEntityProjection(varProjection, guide);
   }
 
   @Override

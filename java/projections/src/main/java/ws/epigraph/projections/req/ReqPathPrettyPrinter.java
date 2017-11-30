@@ -25,17 +25,17 @@ import ws.epigraph.projections.gen.ProjectionReferenceName;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPrettyPrinter<E> {
+public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqProjectionsPrettyPrinter<E> {
 
   public ReqPathPrettyPrinter(Layouter<E> layouter) {
     super(layouter, new ProjectionsPrettyPrinterContext<>(ProjectionReferenceName.EMPTY, null));
   }
 
   @Override
-  protected void printEntityOnly(@NotNull ReqEntityProjection p, int pathSteps) throws E {
+  protected void printProjectionWithoutTails(@NotNull ReqProjection<?,?> p, int pathSteps) throws E {
     // no tags = end of path
     if (!p.tagProjections().isEmpty()) {
-      super.printEntityOnly(p, pathSteps);
+      super.printProjectionWithoutTails(p, pathSteps);
     }
   }
 
@@ -84,7 +84,7 @@ public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPretty
 
   public void print(@NotNull String fieldName, @NotNull ReqFieldProjection fieldProjection) throws E {
 
-    @NotNull ReqEntityProjection fieldVarProjection = fieldProjection.projection();
+    ReqProjection<?, ?> fieldVarProjection = fieldProjection.projection();
 //    @NotNull Annotations fieldAnnotations = fieldProjection.annotations();
 
     l.beginIInd();
@@ -99,7 +99,7 @@ public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPretty
 
     if (!isPrintoutEmpty(fieldVarProjection)) {
       brk(); // FIXME don't need a break if model parameters will be printed next
-      printEntity(fieldVarProjection, 1);
+      printProjection(fieldVarProjection, 1);
     }
     l.end();
   }
@@ -116,7 +116,7 @@ public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPretty
     if (!isPrintoutEmpty(mp.itemsProjection()))
       brk();
 
-    printEntity(mp.itemsProjection(), 1);
+    printProjection(mp.itemsProjection(), 1);
     l.end();
   }
 
@@ -139,7 +139,7 @@ public class ReqPathPrettyPrinter<E extends Exception> extends AbstractReqPretty
     if (varPath.tagProjections().isEmpty()) return true;
     if (!super.isPrintoutEmpty(varPath)) return false;
     //noinspection ConstantConditions
-    ReqModelProjection<?, ?, ?> modelPath = varPath.singleTagProjection().projection();
+    ReqModelProjection<?, ?, ?> modelPath = varPath.singleTagProjection().modelProjection();
     return modelPath.params().isEmpty() && modelPath.directives().isEmpty();
   }
 

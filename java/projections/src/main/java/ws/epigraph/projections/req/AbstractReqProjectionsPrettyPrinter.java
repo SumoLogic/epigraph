@@ -25,7 +25,8 @@ import ws.epigraph.projections.abs.AbstractProjectionsPrettyPrinter;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractReqPrettyPrinter<E extends Exception> extends AbstractProjectionsPrettyPrinter<
+public abstract class AbstractReqProjectionsPrettyPrinter<E extends Exception> extends AbstractProjectionsPrettyPrinter<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
@@ -34,9 +35,9 @@ public abstract class AbstractReqPrettyPrinter<E extends Exception> extends Abst
   protected @NotNull DataPrinter<E> dataPrinter;
   protected @NotNull DataPrinter<E> paramsDataPrinter;
 
-  protected AbstractReqPrettyPrinter(
+  protected AbstractReqProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<ReqEntityProjection, ReqModelProjection<?,?,?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<ReqProjection<?, ?>> context) {
     super(layouter, context);
 
     dataPrinter = new DataPrinter<>(layouter, false);

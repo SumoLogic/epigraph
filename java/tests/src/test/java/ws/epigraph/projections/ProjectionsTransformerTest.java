@@ -53,13 +53,13 @@ public class ProjectionsTransformerTest {
     OpEntityProjection oPersonProjection = vp;
 
     OpRecordModelProjection oPersonRecordProjection =
-        (OpRecordModelProjection) vp.singleTagProjection().projection();
+        (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
 
     OpEntityProjection oBfProjection =
         oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().projection();
 
     OpRecordModelProjection oBfRecordProjection =
-        (OpRecordModelProjection) oBfProjection.singleTagProjection().projection();
+        (OpRecordModelProjection) oBfProjection.singleTagProjection().modelProjection();
 
     OpProjectionTransformer t = new OpProjectionTransformer() {
       @Override
@@ -94,13 +94,13 @@ public class ProjectionsTransformerTest {
     OpEntityProjection nPersonProjection = vp;
 
     OpRecordModelProjection nPersonRecordProjection =
-        (OpRecordModelProjection) vp.singleTagProjection().projection();
+        (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
 
     OpEntityProjection nBfProjection =
         nPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().projection();
 
     OpRecordModelProjection nBfRecordProjection =
-        (OpRecordModelProjection) nBfProjection.singleTagProjection().projection();
+        (OpRecordModelProjection) nBfProjection.singleTagProjection().modelProjection();
 
     assertEquals(4, transformationMap.size());
     assertTrue(transformationMap.getEntityMapping(oPersonProjection) == nPersonProjection);

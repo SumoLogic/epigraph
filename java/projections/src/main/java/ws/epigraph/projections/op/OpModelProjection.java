@@ -22,28 +22,25 @@ import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GDatum;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ModelNormalizationContext;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.*;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class OpModelProjection<
-    MP extends OpModelProjection</*MP*/?, /*SMP*/?, /*M*/?, /*D*/?>,
+    MP extends OpModelProjection</*MP*/?, /*SMP*/? extends MP, /*M*/?, /*D*/?>,
     SMP extends OpModelProjection</*MP*/?, SMP, ?, ?>,
     M extends DatumTypeApi,
-    D extends GDatum
-    > extends AbstractModelProjection<OpTagProjectionEntry, MP, SMP, M>
-    implements Annotated {
+    D extends GDatum>
+    extends AbstractModelProjection<OpEntityProjection, OpTagProjectionEntry, MP, SMP, M>
+    implements OpProjection<SMP, MP>, Annotated {
 
-  protected final @NotNull OpTagProjectionEntry selfEntry;
   protected /*final*/ @NotNull Annotations annotations;
   protected /*final*/ @NotNull OpParams params;
   protected /*final*/ @Nullable D defaultValue;
@@ -58,9 +55,7 @@ public abstract class OpModelProjection<
       @Nullable List<SMP> tails,
       @NotNull TextLocation location
   ) {
-    super(model, flag, metaProjection, tails, location);
-    //noinspection ThisEscapedInObjectConstruction
-    selfEntry = new OpTagProjectionEntry(model.self(), this, location);
+    super(model, flag, metaProjection, tails, location, self -> new OpTagProjectionEntry(model.self(), self, location));
     this.annotations = annotations;
     this.params = params;
     this.defaultValue = defaultValue;
@@ -69,8 +64,6 @@ public abstract class OpModelProjection<
 
   protected OpModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
     super(model, location);
-    //noinspection ThisEscapedInObjectConstruction
-    selfEntry = new OpTagProjectionEntry(model.self(), this, location);
     annotations = Annotations.EMPTY;
     params = OpParams.EMPTY;
   }
@@ -81,14 +74,6 @@ public abstract class OpModelProjection<
   public @NotNull OpParams params() { return params; }
 
   public @Nullable D defaultValue() { return defaultValue; }
-
-  @Override
-  public @Nullable OpTagProjectionEntry singleTagProjection() { return selfEntry; }
-
-  @Override
-  public @NotNull Map<String, OpTagProjectionEntry> tagProjections() {
-    return Collections.singletonMap(selfEntry.tag().name(), selfEntry);
-  }
 
   @SuppressWarnings("unchecked")
   @Override
@@ -140,8 +125,8 @@ public abstract class OpModelProjection<
 
   @SuppressWarnings("unchecked")
   @Override
-  protected @NotNull ModelNormalizationContext<M, SMP> newNormalizationContext() {
-    return new ModelNormalizationContext<>(m -> {
+  protected @NotNull NormalizationContext<TypeApi, SMP> newNormalizationContext() {
+    return new NormalizationContext<>(m -> {
       switch (m.kind()) {
         case RECORD:
           return (SMP) new OpRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);

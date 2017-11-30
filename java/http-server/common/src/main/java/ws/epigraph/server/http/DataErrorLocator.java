@@ -62,7 +62,7 @@ public final class DataErrorLocator {
     ErrorValue error = data._raw().getError(tag);
     if (error == null) {
       return getError(
-          singleTagProjection.projection(),
+          singleTagProjection.modelProjection(),
           pathSteps - 1,
           data._raw().getDatum(tag)
       );

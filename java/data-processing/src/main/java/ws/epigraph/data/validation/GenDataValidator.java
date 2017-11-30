@@ -33,7 +33,7 @@ import java.util.*;
 public abstract class GenDataValidator<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/?, /*M*/?>,
+    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
     LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
@@ -67,7 +67,7 @@ public abstract class GenDataValidator<
       context.withStackItem(new DataValidationContext.TagStackItem(tag), () -> {
         final Datum datum = data._raw().getDatum((Tag) tag);
         if (datum != null)
-          validateDatum(datum, tagProjection.projection());
+          validateDatum(datum, tagProjection.modelProjection());
       });
     }
 

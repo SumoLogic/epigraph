@@ -64,7 +64,7 @@ public class ReqCanReplaceChecker extends AbstractReqTraversal {
 
         if (gtpe == null)
           context.addError(String.format("Malformed projection: unsupported tag '%s'", tagName), rtpe.location());
-        else if (rtpe.projection().flag() && !gtpe.projection().flag())
+        else if (rtpe.modelProjection().flag() && !gtpe.modelProjection().flag())
           context.addError(
               String.format("Operation doesn't support replacing data for tag '%s'", tagName),
               rtpe.location()
@@ -74,7 +74,7 @@ public class ReqCanReplaceChecker extends AbstractReqTraversal {
 
     // todo replace on tails? (and model tails too)
 
-    return super.visitVarProjection(projection, guide);
+    return super.visitEntityProjection(projection, guide);
   }
 
 }

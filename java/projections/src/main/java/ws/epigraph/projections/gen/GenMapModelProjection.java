@@ -23,12 +23,13 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenMapModelProjection<
-    EP extends GenEntityProjection<EP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*MMP*/?, /*MMP*/?, /*M*/?>,
-    MMP extends GenMapModelProjection<EP, TP, MP, MMP, M>,
+    EP extends GenEntityProjection<EP, ?, ?>,
+    MP extends GenModelProjection<?, TP, /*MP*/?, /*MMP*/?, /*MMP*/ /*M*/?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, M>,
     M extends MapTypeApi
-    > extends GenModelProjection<TP, MP, MMP, MMP, M> {
+    > extends GenModelProjection<EP, TP, MP, MMP, M> {
 
-  @NotNull EP itemsProjection();
+  @NotNull P itemsProjection();
 }

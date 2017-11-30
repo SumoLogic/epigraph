@@ -19,10 +19,11 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,14 +35,15 @@ import java.util.stream.Collectors;
 public class ReqListModelProjection
     extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqListModelProjection, ListTypeApi>
     implements GenListModelProjection<
-    ReqEntityProjection,
+    ReqProjection<?, ?>,
     ReqTagProjectionEntry,
+    ReqEntityProjection,
     ReqModelProjection<?, ?, ?>,
     ReqListModelProjection,
     ListTypeApi
     > {
 
-  private /*final @NotNull*/ @Nullable ReqEntityProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable ReqProjection<?, ?> itemsProjection;
 
   public ReqListModelProjection(
       @NotNull ListTypeApi model,
@@ -49,7 +51,7 @@ public class ReqListModelProjection
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
-      @NotNull ReqEntityProjection itemsProjection,
+      @NotNull ReqProjection<?, ?> itemsProjection,
       @Nullable List<ReqListModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, params, directives, metaProjection, tails, location);
@@ -61,28 +63,10 @@ public class ReqListModelProjection
   }
 
   @Override
-  public @NotNull ReqEntityProjection itemsProjection() {
+  public @NotNull ReqProjection<?, ?> itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
-  }
-
-  @Override
-  protected ReqListModelProjection clone() {
-    if (isResolved) {
-      return new ReqListModelProjection(
-          model,
-          flag,
-          params,
-          directives,
-          metaProjection,
-          itemsProjection(),
-          polymorphicTails,
-          location()
-      );
-    } else {
-      return new ReqListModelProjection(model, location());
-    }
   }
 
   /* static */
@@ -96,13 +80,13 @@ public class ReqListModelProjection
       final @Nullable ReqModelProjection<?, ?, ?> mergedMetaProjection,
       final @Nullable List<ReqListModelProjection> mergedTails) {
 
-    List<ReqEntityProjection> itemProjections =
+    List<ReqProjection<?, ?>> itemProjections =
         modelProjections.stream()
             .map(ReqListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ ReqEntityProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections);
+    final /*@NotNull*/ ReqProjection<?, ?> mergedItemsVarType =
+        (ReqProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 
     return new ReqListModelProjection(
         model,
@@ -118,7 +102,7 @@ public class ReqListModelProjection
 
   @Override
   protected @NotNull ReqListModelProjection postNormalizedForType(
-      final @NotNull DatumTypeApi targetType,
+      final @NotNull TypeApi targetType,
       final @NotNull ReqListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new ReqListModelProjection(

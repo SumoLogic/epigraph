@@ -52,7 +52,7 @@ public final class ProjectionDataTrimmer {
         if (error != null) b.setError(tag, error);
 
         final @Nullable Datum datum = val.getDatum();
-        if (datum != null) b.setDatum(tag, trimDatum(datum, entry.getValue().projection()));
+        if (datum != null) b.setDatum(tag, trimDatum(datum, entry.getValue().modelProjection()));
       }
     }
 

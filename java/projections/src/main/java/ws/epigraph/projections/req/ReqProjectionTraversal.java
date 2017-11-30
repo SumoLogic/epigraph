@@ -23,6 +23,7 @@ import ws.epigraph.projections.op.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class ReqProjectionTraversal extends GenGuidedProjectionTraversal<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
@@ -33,6 +34,7 @@ public abstract class ReqProjectionTraversal extends GenGuidedProjectionTraversa
     ReqFieldProjectionEntry,
     ReqFieldProjection,
 
+    OpProjection<?, ?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,

@@ -18,8 +18,7 @@ package ws.epigraph.projections;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 
 import java.util.Collection;
@@ -29,15 +28,14 @@ import java.util.Map;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, ?, MP>, MP extends GenModelProjection<?, ?, ?, ?, ?>> {
+public class ProjectionsPrettyPrinterContext<P extends GenProjection<?, ?, ?, ?>> {
   private final @NotNull ProjectionReferenceName namespace;
-  private final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent;
-  private final Map<ProjectionReferenceName, EP> entityProjections = new HashMap<>();
-  private final Map<ProjectionReferenceName, MP> modelProjections = new HashMap<>();
+  private final @Nullable ProjectionsPrettyPrinterContext<P> parent;
+  private final Map<ProjectionReferenceName, P> projections = new HashMap<>();
 
   public ProjectionsPrettyPrinterContext(
       final @NotNull ProjectionReferenceName namespace,
-      final @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent) {
+      final @Nullable ProjectionsPrettyPrinterContext<P> parent) {
     this.namespace = namespace;
     this.parent = parent;
 
@@ -49,19 +47,19 @@ public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, 
 //      ));
   }
 
-  public @Nullable ProjectionsPrettyPrinterContext<EP, MP> parent() { return parent; }
+  public @Nullable ProjectionsPrettyPrinterContext<P> parent() { return parent; }
 
   public boolean inNamespace(@Nullable ProjectionReferenceName projectionName) {
     return projectionName != null && projectionName.removeLastSegment().equals(namespace);
   }
 
-  public void addEntityProjection(@NotNull EP projection) {
+  public void addProjection(@NotNull P projection) {
     @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
 
     if (inNamespace(projectionName))
-      entityProjections.put(projectionName, projection);
+      projections.put(projectionName, projection);
     else if (parent != null)
-      parent.addEntityProjection(projection);
+      parent.addProjection(projection);
     else
       throw new IllegalArgumentException(String.format(
           "Can't add '%s' projection to '%s' printer context",
@@ -70,23 +68,6 @@ public class ProjectionsPrettyPrinterContext<EP extends GenEntityProjection<EP, 
       ));
   }
 
-  public void addModelProjection(@NotNull MP projection) {
-    @SuppressWarnings("unchecked") final ProjectionReferenceName projectionName = projection.referenceName();
-
-    if (inNamespace(projectionName))
-      modelProjections.put(projectionName, projection);
-    else if (parent != null)
-      parent.addModelProjection(projection);
-    else
-      throw new IllegalArgumentException(String.format(
-          "Can't add '%s' projection to '%s' printer context",
-          projectionName,
-          namespace
-      ));
-  }
-
-  public @NotNull Collection<EP> entityProjections() { return entityProjections.values(); }
-
-  public @NotNull Collection<MP> modelProjections() { return modelProjections.values(); }
+  public @NotNull Collection<P> entityProjections() { return projections.values(); }
 
 }

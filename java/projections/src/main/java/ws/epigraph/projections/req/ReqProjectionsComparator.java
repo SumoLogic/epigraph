@@ -29,8 +29,9 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqProjectionsComparator extends GenProjectionsComparator<
-    ReqEntityProjection,
+    ReqProjection<?,?>,
     ReqTagProjectionEntry,
+    ReqEntityProjection,
     ReqModelProjection<?, ?, ?>,
     ReqRecordModelProjection,
     ReqMapModelProjection,

@@ -19,10 +19,11 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenMapModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.MapTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +36,9 @@ import java.util.stream.Collectors;
 public class ReqMapModelProjection
     extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqMapModelProjection, MapTypeApi>
     implements GenMapModelProjection<
-    ReqEntityProjection,
+    ReqProjection<?, ?>,
     ReqTagProjectionEntry,
+    ReqEntityProjection,
     ReqModelProjection<?, ?, ?>,
     ReqMapModelProjection,
     MapTypeApi
@@ -44,7 +46,7 @@ public class ReqMapModelProjection
 
   private /*final*/ @Nullable List<ReqKeyProjection> keys;
   private boolean keysRequired;
-  private /*final @NotNull*/ @Nullable ReqEntityProjection valuesProjection;
+  private /*final @NotNull*/ @Nullable ReqProjection<?, ?> valuesProjection;
 
   public ReqMapModelProjection(
       @NotNull MapTypeApi model,
@@ -54,7 +56,7 @@ public class ReqMapModelProjection
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqKeyProjection> keys,
       boolean keysRequired,
-      @NotNull ReqEntityProjection valuesProjection,
+      @NotNull ReqProjection<?, ?> valuesProjection,
       @Nullable List<ReqMapModelProjection> tails,
       @NotNull TextLocation location) {
 
@@ -69,7 +71,7 @@ public class ReqMapModelProjection
   }
 
   @Override
-  public @NotNull ReqEntityProjection itemsProjection() {
+  public @NotNull ReqProjection<?, ?> itemsProjection() {
     assert isResolved();
     assert valuesProjection != null;
     return valuesProjection;
@@ -89,27 +91,6 @@ public class ReqMapModelProjection
 
   public boolean keysRequired() {
     return keysRequired;
-  }
-
-  @Override
-  protected ReqMapModelProjection clone() {
-    if (isResolved()) {
-      return new ReqMapModelProjection(
-          model,
-          flag,
-          params,
-          directives,
-          metaProjection,
-          keys(),
-          keysRequired,
-          itemsProjection(),
-          polymorphicTails,
-          location()
-      );
-    } else {
-      return new ReqMapModelProjection(model, location());
-    }
-
   }
 
   @Override
@@ -136,13 +117,13 @@ public class ReqMapModelProjection
       );
     }
 
-    List<ReqEntityProjection> itemProjections =
+    List<ReqProjection<?, ?>> itemProjections =
         modelProjections.stream()
             .map(ReqMapModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ ReqEntityProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections);
+    final /*@NotNull*/ ReqProjection<?, ?> mergedItemsVarType =
+        (ReqProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 
     return new ReqMapModelProjection(
         model,
@@ -160,7 +141,7 @@ public class ReqMapModelProjection
 
   @Override
   protected @NotNull ReqMapModelProjection postNormalizedForType(
-      final @NotNull DatumTypeApi targetType,
+      final @NotNull TypeApi targetType,
       final @NotNull ReqMapModelProjection n) {
 
     final MapTypeApi targetMapType = (MapTypeApi) targetType;

@@ -34,7 +34,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
   public OpProjectionsPrettyPrinter(
       final @NotNull Layouter<E> layouter,
-      final @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> context) {
+      final @NotNull ProjectionsPrettyPrinterContext<OpProjection<?, ?>> context) {
     super(layouter, context);
   }
 
@@ -109,7 +109,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
 
   private void printModelOnly(OpMapModelProjection mp) throws E {
     @NotNull OpKeyProjection keyProjection = mp.keyProjection();
-    OpEntityProjection itemsProjection = mp.itemsProjection();
+    OpProjection<?, ?> itemsProjection = mp.itemsProjection();
 
     printMapModelProjection(
         keyProjection.presence().getPrettyPrinterString(),
@@ -127,7 +127,7 @@ public class OpProjectionsPrettyPrinter<E extends Exception>
     // todo: don't print '+' for vars/models if printed for items
     l.print("(");
     brk();
-    printEntity(mp.itemsProjection(), 0);
+    printProjection(mp.itemsProjection(), 0);
     brk(1, -l.getDefaultIndentation()).end().print(")");
   }
 

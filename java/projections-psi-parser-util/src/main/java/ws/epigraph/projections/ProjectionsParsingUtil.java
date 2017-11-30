@@ -63,7 +63,7 @@ public final class ProjectionsParsingUtil {
    * @throws PsiProcessingException in case tag can't be found
    */
   public static <
-      MP extends GenModelProjection<TP, ?, ?, ?, ?>,
+      MP extends GenModelProjection<TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenEntityProjection<VP, TP, MP>
       >
@@ -111,7 +111,7 @@ public final class ProjectionsParsingUtil {
    * @return tag instance or null if not found
    */
   public static @Nullable <
-      MP extends GenModelProjection<TP, ?, ?, ?, ?>,
+      MP extends GenModelProjection<TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenEntityProjection<VP, TP, MP>
       >
@@ -155,7 +155,7 @@ public final class ProjectionsParsingUtil {
   }
 
   public static <
-      MP extends GenModelProjection<TP, ?, ?, ?, ?>,
+      MP extends GenModelProjection<TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenEntityProjection<VP, TP, MP>
       >
@@ -273,7 +273,7 @@ public final class ProjectionsParsingUtil {
    * Finds tag projection by tag name
    */
   public static @NotNull <
-      MP extends GenModelProjection<TP, ?, ?, ?, ?>,
+      MP extends GenModelProjection<TP, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenEntityProjection<VP, TP, MP>
       >
@@ -377,7 +377,7 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>> @NotNull MP getModelTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> @NotNull MP getModelTail(
       @NotNull MP mp,
       @NotNull TypeRef tailTypeRef,
       @NotNull TypesResolver resolver,
@@ -402,7 +402,7 @@ public final class ProjectionsParsingUtil {
     return (MP) mp.normalizedForType(targetType);
   }
 
-  public static @NotNull <MP extends GenModelProjection<?, ?, ?, ?, ?>> DatumTypeApi getModelTailType(
+  public static @NotNull <MP extends GenModelProjection<?, ?, ?, ?>> DatumTypeApi getModelTailType(
       final @NotNull MP mp,
       final @NotNull TypeRef tailTypeRef,
       final @NotNull TypesResolver resolver,
@@ -420,7 +420,7 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>> boolean hasModelTail(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>> boolean hasModelTail(
       @NotNull MP mp,
       @NotNull DatumTypeApi tailType) {
 
@@ -429,7 +429,7 @@ public final class ProjectionsParsingUtil {
     return tails != null && tails.stream().anyMatch(t -> hasModelTail((MP) t, tailType));
   }
 
-  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?, ?> mp) {
+  public static @NotNull List<String> supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> mp) {
     if (mp.polymorphicTails() == null) return Collections.emptyList();
     Set<String> acc = new HashSet<>();
     supportedModelTailTypes(mp, acc);
@@ -439,9 +439,9 @@ public final class ProjectionsParsingUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?, ?> vp, Set<String> acc) {
-    final List<GenModelProjection<?, ?, ?, ?, ?>> tails =
-        (List<GenModelProjection<?, ?, ?, ?, ?>>) vp.polymorphicTails();
+  private static void supportedModelTailTypes(@NotNull GenModelProjection<?, ?, ?, ?> vp, Set<String> acc) {
+    final List<GenModelProjection<?, ?, ?, ?>> tails =
+        (List<GenModelProjection<?, ?, ?, ?>>) vp.polymorphicTails();
     if (tails != null)
       tails.stream().map(t -> t.type().name().toString()).forEach(acc::add);
   }

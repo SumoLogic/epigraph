@@ -277,20 +277,20 @@ public final class SchemaProjectionPsiParserUtil {
   }
 
   public static void checkDuplicatingModelTails(
-      @NotNull List<? extends GenModelProjection<?, ?, ?, ?, ?>> tails,
+      @NotNull List<? extends GenModelProjection<?, ?, ?, ?>> tails,
       @NotNull PsiProcessingContext context) {
 
     Set<TypeName> reportedTypes = new HashSet<>();
 
     for (int i = 0; i < tails.size(); i++) {
-      GenModelProjection<?, ?, ?, ?, ?> tail = tails.get(i);
+      GenModelProjection<?, ?, ?, ?> tail = tails.get(i);
       DatumTypeApi type = tail.type();
       TypeName typeName = type.name();
 
       if (!reportedTypes.contains(typeName)) {
 
         for (int j = i + 1; j < tails.size(); j++) {
-          GenModelProjection<?, ?, ?, ?, ?> tail2 = tails.get(j);
+          GenModelProjection<?, ?, ?, ?> tail2 = tails.get(j);
           DatumTypeApi type2 = tail2.type();
           TypeName typeName2 = type2.name();
 

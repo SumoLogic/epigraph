@@ -21,10 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.gdata.GListDatum;
 import ws.epigraph.lang.TextLocation;
+import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenListModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.ListTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,14 +37,15 @@ import java.util.stream.Collectors;
 public class OpListModelProjection
     extends OpModelProjection<OpModelProjection<?, ?, ?, ?>, OpListModelProjection, ListTypeApi, GListDatum>
     implements GenListModelProjection<
-    OpEntityProjection,
+    OpProjection<?, ?>,
     OpTagProjectionEntry,
+    OpEntityProjection,
     OpModelProjection<?, ?, ?, ?>,
     OpListModelProjection,
     ListTypeApi
     > {
 
-  private /*final @NotNull*/ @Nullable OpEntityProjection itemsProjection;
+  private /*final @NotNull*/ @Nullable OpProjection<?, ?> itemsProjection;
 
   public OpListModelProjection(
       @NotNull ListTypeApi model,
@@ -52,7 +54,7 @@ public class OpListModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull OpEntityProjection itemsProjection,
+      @NotNull OpProjection<?, ?> itemsProjection,
       @Nullable List<OpListModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
@@ -64,31 +66,10 @@ public class OpListModelProjection
   }
 
   @Override
-  public @NotNull OpEntityProjection itemsProjection() {
+  public @NotNull OpProjection<?, ?> itemsProjection() {
     assert isResolved();
     assert itemsProjection != null;
     return itemsProjection;
-  }
-
-  @Override
-  protected OpListModelProjection clone() {
-    if (isResolved) {
-      return new OpListModelProjection(
-          model,
-          flag,
-          defaultValue,
-          params,
-          annotations,
-          metaProjection,
-          itemsProjection(),
-          polymorphicTails,
-          location()
-      );
-    } else {
-      return new OpListModelProjection(
-          model, location()
-      );
-    }
   }
 
   @Override
@@ -102,13 +83,12 @@ public class OpListModelProjection
       final @Nullable OpModelProjection<?, ?, ?, ?> mergedMetaProjection,
       final @Nullable List<OpListModelProjection> mergedTails) {
 
-    List<OpEntityProjection> itemProjections =
+    List<OpProjection<?, ?>> itemProjections =
         modelProjections.stream()
             .map(OpListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ OpEntityProjection mergedItemsVarType =
-        itemProjections.get(0).merge(itemProjections);
+    final /*@NotNull*/ OpProjection<?, ?> mergedItems = (OpProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 
     return new OpListModelProjection(
         model,
@@ -117,7 +97,7 @@ public class OpListModelProjection
         mergedParams,
         mergedAnnotations,
         mergedMetaProjection,
-        mergedItemsVarType,
+        mergedItems,
         mergedTails,
         TextLocation.UNKNOWN
     );
@@ -125,7 +105,7 @@ public class OpListModelProjection
 
   @Override
   public @NotNull OpListModelProjection postNormalizedForType(
-      final @NotNull DatumTypeApi targetType,
+      final @NotNull TypeApi targetType,
       final @NotNull OpListModelProjection n) {
     final ListTypeApi targetListType = (ListTypeApi) targetType;
     return new OpListModelProjection(

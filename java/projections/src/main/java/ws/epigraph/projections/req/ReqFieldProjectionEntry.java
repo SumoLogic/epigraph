@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    ReqEntityProjection,
+    ReqProjection<?, ?>,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
     ReqFieldProjection

@@ -16,7 +16,6 @@
 
 package ws.epigraph.projections;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
@@ -25,10 +24,7 @@ import ws.epigraph.names.AnonMapTypeName;
 import ws.epigraph.names.QualifiedTypeName;
 import ws.epigraph.names.TypeName;
 import ws.epigraph.projections.gen.*;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.EntityTypeApi;
+import ws.epigraph.types.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -54,7 +50,7 @@ public final class ProjectionUtils {
   /**
    * @return {@code path} tip type
    */
-  public static @NotNull DataTypeApi tipType(@NotNull GenEntityProjection<?, ?, ?> path) {
+  public static @NotNull DataTypeApi tipType(@NotNull GenProjection<?, ?, ?, ?> path) {
     DataTypeApi lastDataType;
 
     final TypeApi type = path.type();
@@ -71,12 +67,12 @@ public final class ProjectionUtils {
 
       lastDataType = tagProjection.tag().type().dataType();
 
-      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.projection();
-      final DatumTypeApi model = modelPath.type();
+      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.modelProjection();
+      final TypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
-          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
-              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) modelPath;
+          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?> recordPath =
+              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) modelPath;
 
           GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
           if (fieldProjection == null) break;
@@ -84,7 +80,7 @@ public final class ProjectionUtils {
           path = fieldProjection.fieldProjection().projection();
           break;
         case MAP:
-          GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
+          GenMapModelProjection<?, ?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?, ?>) modelPath;
 
           lastDataType = mapPath.type().valueType();
           path = mapPath.itemsProjection();
@@ -97,7 +93,7 @@ public final class ProjectionUtils {
     return lastDataType;
   }
 
-  public static int pathLength(@NotNull GenEntityProjection<?, ?, ?> path) {
+  public static int pathLength(@NotNull GenProjection<?, ?, ?, ?> path) {
     int len = 0;
 
     outer:
@@ -107,12 +103,12 @@ public final class ProjectionUtils {
 
       len++;
 
-      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.projection();
-      final DatumTypeApi model = modelPath.type();
+      final GenModelProjection<?, ?, ?, ?, ?> modelPath = tagProjection.modelProjection();
+      final TypeApi model = modelPath.type();
       switch (model.kind()) {
         case RECORD:
-          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> recordPath =
-              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) modelPath;
+          GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?> recordPath =
+              (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) modelPath;
 
           GenFieldProjectionEntry<?, ?, ?, ?> fieldProjection = recordPath.pathFieldProjection();
           if (fieldProjection == null) break;
@@ -120,7 +116,7 @@ public final class ProjectionUtils {
           path = fieldProjection.fieldProjection().projection();
           break;
         case MAP:
-          GenMapModelProjection<?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?>) modelPath;
+          GenMapModelProjection<?, ?, ?, ?, ?, ?> mapPath = (GenMapModelProjection<?, ?, ?, ?, ?, ?>) modelPath;
           len++;
           path = mapPath.itemsProjection();
           break;
@@ -148,84 +144,57 @@ public final class ProjectionUtils {
     return ifUnrelated;
   }
 
-  // var tails linearization
-
-  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
+  public static <P extends GenProjection<P, ?, ?, ?>> @NotNull List<P> linearizeTails(
       @NotNull TypeApi t,
-      @NotNull Stream<VP> tails) {
-
-    return linearizeVarTails(t, tails, new LinkedList<>());
-  }
-
-  @Contract("_, null -> !null")
-  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
-      @NotNull TypeApi t,
-      @Nullable List<VP> tails) {
+      @Nullable List<P> tails) {
 
     if (tails == null) return Collections.emptyList();
 
-    //noinspection unchecked
     return linearizeTails(
-        VP::type,
-        VP::polymorphicTails,
+        p -> p.type(),
+        P::polymorphicTails,
         t,
         tails
     );
 
   }
 
-  public static <VP extends GenEntityProjection<VP, ?, ?>> @NotNull List<VP> linearizeVarTails(
-      @NotNull TypeApi type,
-      @NotNull Stream<VP> tails,
-      @NotNull LinkedList<VP> linearizedTails) {
+  @SuppressWarnings("unchecked")
+  public static @NotNull <P extends GenProjection<P, ?, ?, ?>> P merge(
+      List<? extends GenProjection<?,?,?,?>> p) {
 
-    //noinspection unchecked
-    return linearizeTails(
-        VP::type,
-        VP::polymorphicTails,
-        type,
-        tails,
-        linearizedTails
-    );
+    // merge heterogeneous list of projections assuming that actually they're all
+    // of the same kind, i.e. either entity or model projections
+
+    List<P> ps = ((List<P>) p);
+    return ps.get(0).merge(ps);
   }
 
-  // model tails linearization
+  @SuppressWarnings("unchecked")
+  public static @NotNull <P extends GenProjection<P, ?, ?, ?>> P merge(
+      @NotNull TypeApi targetType,
+      @NotNull List<? extends GenProjection<?,?,?,?>> p) {
 
-  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
-      @NotNull TypeApi t,
-      @NotNull Stream<MP> tails) {
+    // merge heterogeneous list of projections assuming that actually they're all
+    // of the same kind, i.e. either entity or model projections
 
-    return linearizeModelTails(t, tails, new LinkedList<>());
+    List<P> ps = ((List<P>) p);
+    return ps.get(0).merge(ps);
   }
 
-  @Contract("_, null -> !null")
-  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
+  public static @NotNull <P extends GenProjection<P, ?, ?, ?>> List<P> linearizeTails(
       @NotNull TypeApi t,
-      @Nullable List<MP> tails) {
-
-    if (tails == null) return Collections.emptyList();
+      @NotNull Stream<P> tails,
+      @NotNull LinkedList<P> linearizedTails) {
 
     return linearizeTails(
-        m -> m.type(),
-        MP::polymorphicTails,
+        p -> p.type(),
+        P::polymorphicTails,
         t,
-        tails
-    );
-
-  }
-
-  public static <MP extends GenModelProjection<?, ?, ?, MP, ?>> @NotNull List<MP> linearizeModelTails(
-      @NotNull TypeApi type,
-      @NotNull Stream<MP> tails,
-      @NotNull LinkedList<MP> linearizedTails) {
-
-    return linearizeTails(
-        m -> m.type(),
-        MP::polymorphicTails,
-        type,
         tails,
         linearizedTails
     );
+
   }
 
   // generic tails linearization
@@ -341,7 +310,7 @@ public final class ProjectionUtils {
 //                  rn.toString(), res.toString(), location
 //              )
 //          );
-        return null;
+          return null;
       }
     }
 

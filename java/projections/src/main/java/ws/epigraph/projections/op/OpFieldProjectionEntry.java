@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpFieldProjectionEntry extends AbstractFieldProjectionEntry<
-    OpEntityProjection,
+    OpProjection<?,?>,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
     OpFieldProjection

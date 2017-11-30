@@ -54,7 +54,7 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
     ReqTagProjectionEntry singleTagProjection = projection.singleTagProjection();
     boolean selfModelFlagged = projection.type().kind() != TypeKind.ENTITY &&
                                singleTagProjection != null &&
-                               singleTagProjection.projection().flag();
+                               singleTagProjection.modelProjection().flag();
 
     int flagged = projection.flag() && !selfModelFlagged ? 1 : 0;
     flaggedInCurrentPath += flagged;

@@ -19,77 +19,76 @@ package ws.epigraph.projections.gen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TagApi;
-import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.*;
 import ws.epigraph.util.Tuple2;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenProjectionTransformer<
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
     EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*RMP*/?, /*RMP*/?, /*M*/?>,
-    RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<EP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
-    FP extends GenFieldProjection<EP, TP, MP, FP>,
-    TM extends GenProjectionTransformationMap<EP, MP>,
-    TMI extends GenProjectionTransformationMapImpl<EP, MP> /* & TM */
+    MP extends GenModelProjection<EP, TP, /*MP*/?, /*RMP*/?, /*RMP*/? /*M*/>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
     > {
 
-  private final Map<EP, EP> transformedEntitiesCache = new IdentityHashMap<>();
-  private final Map<MP, MP> transformedModelsCache = new IdentityHashMap<>();
-  private final Map<EP, EP> visited = new IdentityHashMap<>();
-  private final Set<EP> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
+  private final Map<P, P> transformedCache = new IdentityHashMap<>();
+  private final Map<P, P> visited = new IdentityHashMap<>();
+  private final Set<P> usedRecursively = Collections.newSetFromMap(new IdentityHashMap<>());
 
-  private GenProjectionTransformationMapImpl<EP, MP> transformationMap = null;
+  private Map<P, P> transformationMap = null;
 
-  public @NotNull Tuple2<EP, TM> transform(@NotNull EP projection, @Nullable DataTypeApi dataType) {
-    this.transformationMap = newTransformationMap();
-    return Tuple2.of(transformEntityProjection(projection, dataType), transformationMap());
+  public @NotNull Tuple2<P, Map<P, P>> transform(@NotNull P projection, @Nullable DataTypeApi dataType) {
+    this.transformationMap = new HashMap<>();
+    return Tuple2.of(transformProjection(projection, dataType), transformationMap());
   }
 
-  public @NotNull Tuple2<MP, TM> transform(@NotNull MP projection) {
-    this.transformationMap = newTransformationMap();
-    return Tuple2.of(transformModelProjection(projection), transformationMap());
+  @SuppressWarnings("unchecked")
+  public @NotNull Tuple2<MP, Map<P, P>> transform(@NotNull MP projection) {
+    this.transformationMap = new HashMap<>();
+    return Tuple2.of((MP) transformProjection((P) projection), transformationMap());
   }
 
-  public @NotNull Tuple2<FP, TM> transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    this.transformationMap = newTransformationMap();
+  public @NotNull Tuple2<FP, Map<P, P>> transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
+    this.transformationMap = new HashMap<>();
     return Tuple2.of(transformFieldProjection(fp, dataType), transformationMap());
   }
 
   @SuppressWarnings("unchecked")
-  protected @NotNull TM transformationMap() { return (TM) transformationMap; }
+  protected @NotNull Map<P, P> transformationMap() { return transformationMap; }
 
   // -------------------------------------------------------------------------------------------------------------------
 
   public void reset() {
-    transformedEntitiesCache.clear();
-    transformedModelsCache.clear();
+    transformedCache.clear();
     visited.clear();
     usedRecursively.clear();
   }
 
-  protected @NotNull EP transformEntityProjection(@NotNull EP projection, @Nullable DataTypeApi dataType) {
-    EP cached = cachedTransformedEntityProjection(projection);
+  protected @NotNull P transformProjection(@NotNull P projection) {
+    return transformProjection(projection, projection.type().dataType());
+  }
+
+  @SuppressWarnings("unchecked")
+  protected @NotNull P transformProjection(@NotNull P projection, @Nullable DataTypeApi dataType) {
+    P cached = cachedTransformedProjection(projection);
     if (cached != null)
       return cached;
 
     // postpone transformation if projection is not resolved yet
 
     if (projection.isResolved()) {
-      return transformResolvedEntityProjection(projection, dataType);
+      return transformResolvedProjection(projection, dataType);
     } else {
-      final EP ref = newEntityRef(projection.type(), projection.location());
+      final P ref = newRef(projection.type(), projection.location());
 
 //      final String me = getClass().getSimpleName();
 //      final ProjectionReferenceName rn = projection.referenceName();
@@ -102,7 +101,7 @@ public abstract class GenProjectionTransformer<
 //          System.identityHashCode(ref)
 //      ));
 
-      transformedEntitiesCache.put(projection, ref);
+      transformedCache.put(projection, ref);
       projection.runOnResolved(() -> {
 //        final ProjectionReferenceName rn2 = projection.referenceName();
 //        final String rns2 = rn2 == null ? "<no name>" : rn2.last().toString();
@@ -113,42 +112,105 @@ public abstract class GenProjectionTransformer<
 //            System.identityHashCode(projection),
 //            System.identityHashCode(ref)
 //        ));
-        EP transformed = transformResolvedEntityProjection(projection, dataType);
-        transformed.runOnResolved(() -> ref.resolve(projection.referenceName(), transformed));
+        P transformed = transformResolvedProjection(projection, dataType);
+        transformed.runOnResolved(() -> ((GenProjectionReference<P>) ref).resolve(
+            projection.referenceName(),
+            transformed
+        ));
       });
       return ref;
     }
   }
 
-  public /*protected*/ @Nullable EP cachedTransformedEntityProjection(@NotNull EP ep) {
+  public /*protected*/ @Nullable P cachedTransformedProjection(@NotNull P p) {
     // have to make it public for composite transformer
 
-    EP cached = transformedEntitiesCache.get(ep);
+    P cached = transformedCache.get(p);
     if (cached != null)
       return cached;
-    if (transformedEntitiesCache.values().contains(ep))
-      return ep; // avoid transforming what is already transformed
+    if (transformedCache.values().contains(p))
+      return p; // avoid transforming what is already transformed
 
     return null;
   }
 
-  protected @NotNull EP transformResolvedEntityProjection(@NotNull EP projection, @Nullable DataTypeApi dataType) {
-    EP res = visited.get(projection);
+  @SuppressWarnings("unchecked")
+  protected @NotNull P transformResolvedProjection(@NotNull P projection, @Nullable DataTypeApi dataType) {
+    P res = visited.get(projection);
     if (res != null) {
       usedRecursively.add(res); // do the same for models? or vars is enough?
       return res;
     }
 
-    res = newEntityRef(projection.type(), projection.location());
+    res = newRef(projection.type(), projection.location());
+
     visited.put(projection, res);
+
+    boolean tailsChanged = false;
+    List<P> transformedTails = null;
+
+    List<? extends P> tails = projection.polymorphicTails();
+    if (tails != null) {
+      transformedTails = new ArrayList<>(tails.size());
+      for (final P tail : tails) {
+        P transformedTail = transformProjection(tail, dataType);
+
+        if (transformedTail != tail)
+          tailsChanged = true;
+        transformedTails.add(transformedTail);
+      }
+    }
+
+    P transformed;
+
+    // todo we could simply always tranform tags here, for model projections this will lead
+    // to model transformation via self tag. Have to figure out callbacks for this to work with existing code
+
+    if (projection.isEntityProjection()) {
+      transformed = (P) transformResolvedEntityProjection(
+          projection.asEntityProjection(),
+          dataType,
+          (List<EP>) transformedTails,
+          tailsChanged
+      );
+    } else {
+      transformed = (P) transformResolvedModelProjection(
+          projection.asModelProjection(),
+          (List<MP>) transformedTails,
+          tailsChanged
+      );
+    }
+
+    visited.remove(projection);
+    boolean usedRec = usedRecursively.contains(res);
+    usedRecursively.remove(res);
+
+    if (usedRec) {
+      ((GenProjectionReference<P>) res).resolve(projection.referenceName(), transformed);
+      transformationMap.put(projection, res);
+      transformedCache.put(projection, res);
+      return res;
+    } else {
+      transformationMap.put(projection, transformed);
+      transformedCache.put(projection, transformed);
+      return transformed;
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  protected @NotNull EP transformResolvedEntityProjection(
+      @NotNull EP projection,
+      @Nullable DataTypeApi dataType,
+      @Nullable List<EP> transformedTails,
+      boolean tailsChanged) {
 
     boolean tagsChanged = false;
     Map<String, TP> transformedTags = new LinkedHashMap<>(projection.tagProjections().size());
 
     for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
       TP tp = entry.getValue();
-      MP mp = tp.projection();
-      MP transformedMp = transformModelProjection(mp);
+      MP mp = tp.modelProjection();
+      MP transformedMp = transformProjection((P) mp).asModelProjection();
       TagApi tag = projection.type().tagsMap().get(entry.getKey());
       TP transformedTp = transformTagProjection(projection, tag, tp, transformedMp, mp != transformedMp);
 
@@ -158,111 +220,26 @@ public abstract class GenProjectionTransformer<
       transformedTags.put(entry.getKey(), transformedTp);
     }
 
-    boolean tailsChanged = false;
-    List<EP> transformedTails = null;
-
-    List<EP> tails = projection.polymorphicTails();
-    if (tails != null) {
-      transformedTails = new ArrayList<>(tails.size());
-      for (final EP tail : tails) {
-        EP transformedTail = transformEntityProjection(tail, dataType);
-
-        if (transformedTail != tail)
-          tailsChanged = true;
-        transformedTails.add(transformedTail);
-      }
-    }
-
-    EP transformed = transformEntityProjection(
+    return transformEntityProjection(
         projection,
         dataType,
         transformedTags,
         transformedTails,
         tagsChanged || tailsChanged
     );
-    visited.remove(projection);
-    boolean usedRec = usedRecursively.contains(res);
-    usedRecursively.remove(res);
-
-    if (usedRec) {
-      res.resolve(projection.referenceName(), transformed);
-      transformationMap.addEntityMapping(projection, res);
-      transformedEntitiesCache.put(projection, res);
-      return res;
-    } else {
-      transformationMap.addEntityMapping(projection, transformed);
-      transformedEntitiesCache.put(projection, transformed);
-      return transformed;
-    }
   }
 
   @SuppressWarnings("unchecked")
-  protected @NotNull MP transformModelProjection(@NotNull MP projection) {
-    MP cached = cachedTransformedModelProjection(projection);
-    if (cached != null)
-      return cached;
-
-    // postpone transformation if projection is not resolved yet
-
-    if (projection.isResolved()) {
-      return transformResolvedModelProjection(projection);
-    } else {
-      final MP ref = newModelRef(projection.type(), projection.location());
-      transformedModelsCache.put(projection, ref);
-      projection.runOnResolved(() -> {
-        MP transformed = transformResolvedModelProjection(projection);
-        transformed.runOnResolved(() -> ((GenProjectionReference<MP>) ref).resolve(
-            projection.referenceName(),
-            transformed
-        ));
-      });
-      return ref;
-    }
-
-  }
-
-  public /*protected*/ MP cachedTransformedModelProjection(@NotNull MP projection) {
-    MP cached = transformedModelsCache.get(projection);
-    if (cached != null)
-      return cached;
-    if (transformedModelsCache.values().contains(projection))
-      return projection; // avoid transforming what is already transformed
-
-    return null;
-  }
-
-  @SuppressWarnings("unchecked")
-  private @NotNull MP transformResolvedModelProjection(@NotNull MP projection) {
-    // postpone transformation if projection is not resolved yet
-    if (!projection.isResolved()) {
-      final MP ref = newModelRef(projection.type(), projection.location());
-      projection.runOnResolved(() -> {
-        MP transformed = transformModelProjection(projection);
-        ((GenProjectionReference<MP>) ref).resolve(projection.referenceName(), transformed);
-      });
-      return ref;
-    }
-
-    boolean tailsChanged = false;
-    List<MP> transformedTails = null;
-
-    List<MP> tails = (List<MP>) projection.polymorphicTails();
-    if (tails != null) {
-      transformedTails = new ArrayList<>();
-      for (final MP tail : tails) {
-        MP transformedTail = transformModelProjection(tail);
-
-        if (transformedTail != tail)
-          tailsChanged = true;
-        transformedTails.add(transformedTail);
-      }
-    }
+  private @NotNull MP transformResolvedModelProjection(
+      @NotNull MP projection,
+      @Nullable List<MP> transformedTails,
+      boolean tailsChanged) {
 
     MP meta = (MP) projection.metaProjection();
     MP transformedMeta = null;
 
     if (meta != null)
-      transformedMeta = transformModelProjection(meta);
+      transformedMeta = (MP) transformProjection((P) meta);
 
     boolean mustRebuild = tailsChanged || meta != transformedMeta;
     final MP transformed;
@@ -301,7 +278,7 @@ public abstract class GenProjectionTransformer<
     }
 
     if (projection != transformed)
-      transformationMap.addModelMapping(projection, transformed);
+      transformationMap.put((P) projection, (P) transformed);
 
     return transformed;
   }
@@ -340,9 +317,9 @@ public abstract class GenProjectionTransformer<
 
 
   private @NotNull FP transformFieldProjection(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    EP ep = fp.projection();
-    EP transformedEp = transformEntityProjection(ep, dataType);
-    return transformFieldProjection(fp, transformedEp, ep != transformedEp);
+    P p = fp.projection();
+    P transformedP = transformProjection(p, dataType);
+    return transformFieldProjection(fp, transformedP, p != transformedP);
   }
 
   protected @NotNull MMP transformMapProjection(
@@ -352,8 +329,8 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    EP transformedItemsProjection =
-        transformEntityProjection(projection.itemsProjection(), projection.type().valueType());
+    P transformedItemsProjection =
+        transformProjection(projection.itemsProjection(), projection.type().valueType());
     //noinspection unchecked
     return transformMapProjection(
         projection,
@@ -371,8 +348,8 @@ public abstract class GenProjectionTransformer<
       boolean mustRebuild) {
 
     //noinspection unchecked
-    EP transformedItemsProjection =
-        transformEntityProjection(projection.itemsProjection(), projection.type().elementType());
+    P transformedItemsProjection =
+        transformProjection(projection.itemsProjection(), projection.type().elementType());
     //noinspection unchecked
     return transformListProjection(
         projection,
@@ -466,7 +443,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull FP transformFieldProjection(
       @NotNull FP fieldProjection,
-      @NotNull EP transformedEntityProjection,
+      @NotNull P transformedEntityProjection,
       boolean mustRebuild);
 
   /**
@@ -482,7 +459,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull MMP transformMapProjection(
       @NotNull MMP mapModelProjection,
-      @NotNull EP transformedItemsProjection,
+      @NotNull P transformedItemsProjection,
       @Nullable List<MMP> transformedTails,
       @Nullable MP transformedMeta,
       boolean mustRebuild);
@@ -500,7 +477,7 @@ public abstract class GenProjectionTransformer<
    */
   protected abstract @NotNull LMP transformListProjection(
       @NotNull LMP listModelProjection,
-      @NotNull EP transformedItemsProjection,
+      @NotNull P transformedItemsProjection,
       @Nullable List<LMP> transformedTails,
       @Nullable MP transformedMeta,
       boolean mustRebuild);
@@ -521,26 +498,32 @@ public abstract class GenProjectionTransformer<
       @Nullable MP transformedMeta,
       boolean mustRebuild);
 
+  @SuppressWarnings("unchecked")
+  private @NotNull P newRef(@NotNull TypeApi type, @NotNull TextLocation location) {
+    if (type.kind() == TypeKind.ENTITY)
+      return (P) newEntityRef(type, location);
+    else
+      return (P) newModelRef((DatumTypeApi) type, location);
+  }
+
   protected abstract @NotNull EP newEntityRef(@NotNull TypeApi type, @NotNull TextLocation location);
 
   protected abstract @NotNull MP newModelRef(@NotNull DatumTypeApi model, @NotNull TextLocation location);
 
-  protected abstract @NotNull TMI newTransformationMap();
-
-  // helper stuff for transformer chaining
-
-  protected static <T> @Nullable T chainTransMap(@NotNull Function<T, T> f, @NotNull Function<T, T> s, @NotNull T key) {
-    T fv = f.apply(key);
-    T sv = s.apply(key);
-
-    if (fv != null && sv != null)
-      throw new IllegalArgumentException("Both first and second transformation maps contain '" + key + "'");
-
-    if (fv == null) {
-      return sv;
-    } else {
-      sv = s.apply(fv);
-      return sv == null ? fv : sv;
-    }
-  }
+//  // helper stuff for transformer chaining
+//
+//  protected static <T> @Nullable T chainTransMap(@NotNull Function<T, T> f, @NotNull Function<T, T> s, @NotNull T key) {
+//    T fv = f.apply(key);
+//    T sv = s.apply(key);
+//
+//    if (fv != null && sv != null)
+//      throw new IllegalArgumentException("Both first and second transformation maps contain '" + key + "'");
+//
+//    if (fv == null) {
+//      return sv;
+//    } else {
+//      sv = s.apply(fv);
+//      return sv == null ? fv : sv;
+//    }
+//  }
 }

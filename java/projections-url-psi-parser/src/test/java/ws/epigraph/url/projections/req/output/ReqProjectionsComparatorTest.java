@@ -75,7 +75,7 @@ public class ReqProjectionsComparatorTest {
     assertFalse(comparator.equals(vp1, vp2));
 
     final ReqEntityProjection vp1_1 =
-        ((ReqRecordModelProjection) vp1.tagProjection("record").projection()).fieldProjection("bestFriend")
+        ((ReqRecordModelProjection) vp1.tagProjection("record").modelProjection()).fieldProjection("bestFriend")
             .fieldProjection()
             .projection();
 

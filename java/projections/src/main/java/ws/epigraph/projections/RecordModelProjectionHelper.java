@@ -19,10 +19,7 @@ package ws.epigraph.projections;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.gen.GenFieldProjection;
-import ws.epigraph.projections.gen.GenFieldProjectionEntry;
-import ws.epigraph.projections.gen.GenRecordModelProjection;
-import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.FieldApi;
 import ws.epigraph.types.RecordTypeApi;
 import ws.epigraph.types.TypeApi;
@@ -40,7 +37,7 @@ public final class RecordModelProjectionHelper {
   // Concrete implementation would have to extend both abstract record model class and model projection base class
 
   private static final
-  ThreadLocal<IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>>>
+  ThreadLocal<IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>>>
       equalsVisited = new ThreadLocal<>();
 
   private RecordModelProjectionHelper() {}
@@ -61,12 +58,12 @@ public final class RecordModelProjectionHelper {
    *
    * @return {@code true} iff equals
    */
-  public static boolean equals(GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> rmp, Object o) {
+  public static boolean equals(GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?> rmp, Object o) {
     if (rmp == o) return true;
     if (o == null || rmp.getClass() != o.getClass()) return false;
-    GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?> that = (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>) o;
+    GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?> that = (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) o;
 
-    IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?>>
+    IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>>
         visitedMap = equalsVisited.get();
 
     boolean mapWasNull = visitedMap == null;
@@ -84,13 +81,13 @@ public final class RecordModelProjectionHelper {
   }
 
   public static <
-      VP extends GenEntityProjection<VP, ?, ?>,
-      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
-      FP extends GenFieldProjection<VP, ?, ?, FP>>
-  void checkFields(@NotNull Map<String, FPE> fieldProjections, @NotNull RecordTypeApi model) {
+      P extends GenProjection<?, ?, ?, ?>,
+      FPE extends GenFieldProjectionEntry<P, ?, ?, FP>,
+      FP extends GenFieldProjection<P, ?, ?, FP>>
+  void checkFields(@NotNull Map<String, ? extends FPE> fieldProjections, @NotNull RecordTypeApi model) {
     final Set<String> modelFieldNames = model.fieldsMap().keySet();
 
-    for (final Map.Entry<String, FPE> entry : fieldProjections.entrySet()) {
+    for (final Map.Entry<String, ? extends FPE> entry : fieldProjections.entrySet()) {
       String fieldName = entry.getKey();
 
       final FieldApi field = model.fieldsMap().get(fieldName);
@@ -114,10 +111,11 @@ public final class RecordModelProjectionHelper {
 
   @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
   public static <
-      VP extends GenEntityProjection<VP, ?, ?>,
-      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
-      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
-      FP extends GenFieldProjection<VP, ?, ?, FP>>
+      P extends GenProjection<?, ?, EP, ?>,
+      EP extends GenEntityProjection<EP, ?, ?>,
+      RMP extends GenRecordModelProjection<P, ?, EP, ?, RMP, FPE, FP, ?>,
+      FPE extends GenFieldProjectionEntry<P, ?, ?, FP>,
+      FP extends GenFieldProjection<P, ?, ?, FP>>
 
   Map<FieldApi, FP> mergeFieldProjections(@NotNull List<RMP> recordProjections) {
 
@@ -155,10 +153,11 @@ public final class RecordModelProjectionHelper {
 
   @SuppressWarnings("unchecked") // just for IDEA, code is OK actually
   public static <
-      VP extends GenEntityProjection<VP, ?, ?>,
-      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, FP, ?>,
-      FPE extends GenFieldProjectionEntry<VP, ?, ?, FP>,
-      FP extends GenFieldProjection<VP, ?, ?, FP>>
+      P extends GenProjection<?, ?, EP, ?>,
+      EP extends GenEntityProjection<EP, ?, ?>,
+      RMP extends GenRecordModelProjection<P, ?, EP, ?, RMP, FPE, FP, ?>,
+      FPE extends GenFieldProjectionEntry<P, ?, ?, FP>,
+      FP extends GenFieldProjection<P, ?, ?, FP>>
 
   @NotNull Map<String, FP> normalizeFields(
       @NotNull RecordTypeApi effectiveType,
@@ -170,8 +169,8 @@ public final class RecordModelProjectionHelper {
       for (final Map.Entry<String, FPE> entry : projection.fieldProjections().entrySet()) {
         final FieldApi effectiveField = effectiveType.fieldsMap().get(entry.getKey());
         FP fp = entry.getValue().fieldProjection();
-        final VP normalizedVp =
-            fp.projection().normalizedForType(effectiveField.dataType().type());
+        final P normalizedVp =
+            (P) fp.projection().normalizedForType(effectiveField.dataType().type());
         result.put(entry.getKey(), fp.setProjection(normalizedVp));
       }
 

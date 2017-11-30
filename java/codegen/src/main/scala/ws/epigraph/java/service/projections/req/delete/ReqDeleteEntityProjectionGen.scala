@@ -86,7 +86,7 @@ class ReqDeleteEntityProjectionGen(
     parentTagGenOpt: Option[ReqDeleteModelProjectionGen]): ReqProjectionGen =
     ReqDeleteModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
-      tpe.projection(),
+      tpe.modelProjection(),
       Some(baseNamespace),
       namespaceSuffix.append(jn(tpe.tag().name()).toLowerCase),
       parentTagGenOpt,
@@ -126,7 +126,7 @@ object ReqDeleteEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().projection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqDeleteModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,

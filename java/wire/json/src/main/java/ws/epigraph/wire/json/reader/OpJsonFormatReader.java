@@ -68,7 +68,7 @@ public class OpJsonFormatReader extends AbstractJsonFormatReader<
 
   @Override
   protected boolean tagRequired(final @NotNull OpTagProjectionEntry tagProjection) {
-    return tagProjection.projection().flag();
+    return tagProjection.modelProjection().flag();
   }
 
   @Override

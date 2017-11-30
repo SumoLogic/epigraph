@@ -101,7 +101,7 @@ Data ::= BackRef | PolyData | MonoData // PolyData triggered by projection (poly
 abstract class AbstractJsonFormatReader<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
@@ -1212,7 +1212,7 @@ abstract class AbstractJsonFormatReader<
     }
 
     boolean matches(Collection<VP> projections) {
-      return projectionsComparator().entitiesEquals(projections, this.projections);
+      return projectionsComparator().projectionsEquals(projections, this.projections);
     }
   }
 

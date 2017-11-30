@@ -196,7 +196,7 @@ public final class ReqBasicProjectionPsiParser {
 
         @NotNull OpTagProjectionEntry opTagProjection = getTagProjection(tag.name(), op, tagLocation, context);
 
-        @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.modelProjection();
         @NotNull UrlReqTrunkModelProjection modelProjectionPsi = singleTagProjectionPsi.getReqTrunkModelProjection();
 
         StepsAndProjection<? extends ReqModelProjection<?, ?, ?>> stepsAndProjection = parseTrunkModelProjection(
@@ -288,7 +288,7 @@ public final class ReqBasicProjectionPsiParser {
 
     for (final Map.Entry<String, OpTagProjectionEntry> entry : op.tagProjections().entrySet()) {
       final TagApi tag = entry.getValue().tag();
-      final OpModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().projection();
+      final OpModelProjection<?, ?, ?, ?> opModelProjection = entry.getValue().modelProjection();
 
       DefaultReqProjectionConstructor defaultProjectionConstructor =
           new DefaultReqProjectionConstructor(DefaultReqProjectionConstructor.Mode.INCLUDE_NONE, true, false);
@@ -493,7 +493,7 @@ public final class ReqBasicProjectionPsiParser {
         @NotNull OpTagProjectionEntry opTagProjection =
             getTagProjection(tag.name(), op, EpigraphPsiUtil.getLocation(singleTagProjectionPsi), context);
 
-        @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.projection();
+        @NotNull OpModelProjection<?, ?, ?, ?> opModelProjection = opTagProjection.modelProjection();
 
         @NotNull UrlReqComaModelProjection modelProjectionPsi =
             singleTagProjectionPsi.getReqComaModelProjection();
@@ -608,7 +608,7 @@ public final class ReqBasicProjectionPsiParser {
         @NotNull OpTagProjectionEntry opTag =
             getTagProjection(tag.name(), op, EpigraphPsiUtil.getLocation(tagProjectionPsi), context);
 
-        OpModelProjection<?, ?, ?, ?> opTagProjection = opTag.projection();
+        OpModelProjection<?, ?, ?, ?> opTagProjection = opTag.modelProjection();
 
         @NotNull UrlReqComaModelProjection modelProjection = tagProjectionPsi.getReqComaModelProjection();
 

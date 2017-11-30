@@ -124,7 +124,7 @@ public final class UrlProjectionsPsiParserUtil {
 
   @Contract("_, _, _, _ -> fail")
   public static <
-      MP extends GenModelProjection<?, ?, ?, ?, ?>,
+      MP extends GenModelProjection<?, ?, ?, ?>,
       TP extends GenTagProjectionEntry<TP, MP>,
       VP extends GenEntityProjection<VP, TP, MP>>
   void raiseNoTagsError(

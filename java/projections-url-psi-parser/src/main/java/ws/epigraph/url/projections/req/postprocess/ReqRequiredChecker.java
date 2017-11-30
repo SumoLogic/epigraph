@@ -47,14 +47,14 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
       String tagName = entry.getKey();
       OpTagProjectionEntry gtpe = entry.getValue();
 
-      if (projection.tagProjection(tagName) == null && gtpe.projection().flag()) {
+      if (projection.tagProjection(tagName) == null && gtpe.modelProjection().flag()) {
         context.addError(String.format("Required tag '%s' is missing", tagName), projection.location());
       }
     }
 
     // todo required on tails? (and model tails too)
 
-    return super.visitVarProjection(projection, guide);
+    return super.visitEntityProjection(projection, guide);
   }
 
   @Override

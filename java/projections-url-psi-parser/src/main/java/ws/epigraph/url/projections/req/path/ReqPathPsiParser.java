@@ -86,7 +86,7 @@ public final class ReqPathPsiParser {
       );
     }
 
-    final OpModelProjection<?, ?, ?, ?> opModelProjection = opTagPath.projection();
+    final OpModelProjection<?, ?, ?, ?> opModelProjection = opTagPath.modelProjection();
 
 
     final ReqModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(

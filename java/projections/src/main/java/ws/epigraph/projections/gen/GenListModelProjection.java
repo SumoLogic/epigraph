@@ -23,12 +23,13 @@ import ws.epigraph.types.ListTypeApi;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface GenListModelProjection<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection</*P*/?, TP, ?, ?>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*LMP*/?, /*LMP*/?, /*M*/?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, M>,
+    EP extends GenEntityProjection<EP, ?, ?>,
+    MP extends GenModelProjection<?, TP, /*MP*/?, /*LMP*/?, /*LMP*/ /*M*/?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, M>,
     M extends ListTypeApi
-    > extends GenModelProjection<TP, MP, LMP, LMP, M> {
+    > extends GenModelProjection<EP, TP, MP, LMP, M> {
 
-  @NotNull VP itemsProjection();
+  @NotNull P itemsProjection();
 }

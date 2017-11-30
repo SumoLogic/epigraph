@@ -45,7 +45,7 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
 public abstract class AbstractJsonFormatWriter<
     VP extends GenEntityProjection<VP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
+    MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
     RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
     FP extends GenFieldProjection<VP, TP, MP, FP>,
@@ -643,7 +643,7 @@ public abstract class AbstractJsonFormatWriter<
     }
 
     boolean matches(Collection<VP> projections) {
-      return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().entitiesEquals(
+      return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().projectionsEquals(
           projections,
           this.projections
       );

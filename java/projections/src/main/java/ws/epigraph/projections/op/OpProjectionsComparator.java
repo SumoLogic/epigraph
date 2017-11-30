@@ -22,8 +22,9 @@ import ws.epigraph.projections.gen.GenProjectionsComparator;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpProjectionsComparator extends GenProjectionsComparator<
-    OpEntityProjection,
+    OpProjection<?, ?>,
     OpTagProjectionEntry,
+    OpEntityProjection,
     OpModelProjection<?, ?, ?, ?>,
     OpRecordModelProjection,
     OpMapModelProjection,

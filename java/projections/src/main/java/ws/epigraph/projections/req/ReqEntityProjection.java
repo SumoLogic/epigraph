@@ -19,7 +19,7 @@ package ws.epigraph.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.EntityNormalizationContext;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.abs.AbstractEntityProjection;
 import ws.epigraph.types.TypeApi;
 
@@ -34,7 +34,7 @@ public class ReqEntityProjection extends AbstractEntityProjection<
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>
-    > {
+    > implements ReqProjection<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
 
 
   public ReqEntityProjection(
@@ -46,9 +46,6 @@ public class ReqEntityProjection extends AbstractEntityProjection<
       @NotNull TextLocation location) {
 
     super(type, flag, tagProjections, parenthesized, polymorphicTails, location);
-
-    if (tagProjections.size() > 1 && !parenthesized)
-      throw new IllegalArgumentException("'parenthesized' must be 'true' for a multi-tag projection");
   }
 
 
@@ -95,10 +92,8 @@ public class ReqEntityProjection extends AbstractEntityProjection<
   }
 
   @Override
-  protected @NotNull EntityNormalizationContext<ReqEntityProjection> newNormalizationContext() {
-    return new EntityNormalizationContext<>(
-        t -> new ReqEntityProjection(t, location())
-    );
+  protected @NotNull NormalizationContext<TypeApi, ReqEntityProjection> newNormalizationContext() {
+    return new NormalizationContext<>(t -> new ReqEntityProjection(t, location()));
   }
 
 }

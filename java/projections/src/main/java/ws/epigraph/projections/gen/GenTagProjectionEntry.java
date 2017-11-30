@@ -27,12 +27,12 @@ import java.util.List;
  */
 public interface GenTagProjectionEntry<
     TP extends GenTagProjectionEntry</*TP*/?, /*MP*/?>,
-    MP extends GenModelProjection</*TP*/?, /*MP*/?, ?, ?, ?>
+    MP extends GenModelProjection<?, /*TP*/?, /*MP*/?, ?, ?>
     > {
 
   @NotNull TagApi tag();
 
-  @NotNull MP projection(); // todo rename to modelProjection()
+  MP modelProjection();
 
   /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 

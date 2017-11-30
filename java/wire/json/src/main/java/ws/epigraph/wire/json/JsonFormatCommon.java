@@ -48,7 +48,7 @@ public final class JsonFormatCommon {
    * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
    * with most specific one being last
    */
-  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>, Acc extends Collection<MP>> @NotNull Acc flatten(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> @NotNull Acc flatten(
       @NotNull Acc acc,
       @NotNull Collection<? extends MP> projections,
       @NotNull DatumTypeApi type
@@ -75,7 +75,7 @@ public final class JsonFormatCommon {
   }
 
   @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?, ?>, Acc extends Collection<MP>> Acc append(
+  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> Acc append(
       @NotNull Acc acc,
       @NotNull MP modelProjection,
       @NotNull DatumTypeApi type
@@ -128,7 +128,7 @@ public final class JsonFormatCommon {
   public static <
       VP extends GenEntityProjection<VP, TP, MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      MP extends GenModelProjection<TP, /*MP*/?, ?, ?, ?>,
+      MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
       Coll extends Collection<MP>>
 
   @Nullable Coll tagModelProjections(
@@ -141,7 +141,7 @@ public final class JsonFormatCommon {
       TP tagProjection = vp.tagProjections().get(tag.name());
       if (tagProjection != null) {
         if (tagModelProjections == null) tagModelProjections = collSupplier.get();
-        tagModelProjections.add(tagProjection.projection());
+        tagModelProjections.add(tagProjection.modelProjection());
       }
     }
     return tagModelProjections;

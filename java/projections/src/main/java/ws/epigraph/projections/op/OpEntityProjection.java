@@ -19,14 +19,13 @@ package ws.epigraph.projections.op;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.EntityNormalizationContext;
+import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.abs.AbstractEntityProjection;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -35,7 +34,7 @@ public class OpEntityProjection extends AbstractEntityProjection<
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>
-    > {
+    > implements OpProjection<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 
   public OpEntityProjection(
       @NotNull TypeApi type,
@@ -91,21 +90,10 @@ public class OpEntityProjection extends AbstractEntityProjection<
   }
 
   @Override
-  protected @NotNull EntityNormalizationContext<OpEntityProjection> newNormalizationContext() {
-    return new EntityNormalizationContext<>(
+  protected @NotNull NormalizationContext<TypeApi, OpEntityProjection> newNormalizationContext() {
+    return new NormalizationContext<>(
         t -> new OpEntityProjection(t, location())
     );
   }
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    final OpEntityProjection that = (OpEntityProjection) o;
-    return flag == that.flag;
-  }
-
-  @Override
-  public int hashCode() { return Objects.hash(super.hashCode(), flag); }
 }
