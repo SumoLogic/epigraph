@@ -28,6 +28,7 @@ import ws.epigraph.types.TypeKind;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqOutputDataValidator extends GenDataValidator<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,

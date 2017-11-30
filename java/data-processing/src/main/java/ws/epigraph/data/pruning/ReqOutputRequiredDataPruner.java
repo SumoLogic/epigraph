@@ -40,7 +40,7 @@ public class ReqOutputRequiredDataPruner {
 
   public @NotNull DataPruningResult pruneData(
       @NotNull Data data,
-      @NotNull ReqEntityProjection projection,
+      @NotNull ReqProjection<?, ?> projection,
       int pathSteps) {
 
     projection = projection.normalizedForType(data.type());
@@ -167,7 +167,7 @@ public class ReqOutputRequiredDataPruner {
       final ReqFieldProjectionEntry fieldProjectionEntry = entry.getValue();
       final ReqFieldProjection fieldProjection = fieldProjectionEntry.fieldProjection();
       final boolean required = fieldProjection.flag();
-      final ReqEntityProjection dataProjection = fieldProjection.projection();
+      final ReqProjection<?, ?> dataProjection = fieldProjection.projection();
 
       Data data = fieldsData.get(fieldName);
 
@@ -226,7 +226,7 @@ public class ReqOutputRequiredDataPruner {
       @NotNull ReqMapModelProjection projection,
       int pathSteps) {
 
-    final ReqEntityProjection itemsProjection = projection.itemsProjection();
+    final ReqProjection<?, ?> itemsProjection = projection.itemsProjection();
     final boolean keysRequired = projection.keysRequired();
     final Map<Datum.Imm, Data> replacements = new HashMap<>();
 
@@ -298,7 +298,7 @@ public class ReqOutputRequiredDataPruner {
     if (pathSteps > 1)
       throw new IllegalArgumentException("Lists can't be in the path");
 
-    final ReqEntityProjection itemsProjection = projection.itemsProjection();
+    final ReqProjection<?, ?> itemsProjection = projection.itemsProjection();
     final Map<Integer, Data> replacements = new HashMap<>();
 
     int index = 0;

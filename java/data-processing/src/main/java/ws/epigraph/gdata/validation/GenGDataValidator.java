@@ -33,29 +33,30 @@ import java.util.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class GenGDataValidator<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>
+    MP extends GenModelProjection<EP, TP, /*MP*/?, /*SMP*/?, /*TMP*/? /*M*/>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>
     > {
 
   protected final @NotNull TypesResolver typesResolver;
   protected final @NotNull GDataValidationContext context = new GDataValidationContext();
-  protected final @NotNull Map<GData, Set<VP>> visited = new IdentityHashMap<>();
+  protected final @NotNull Map<GData, Set<P>> visited = new IdentityHashMap<>();
 
   protected GenGDataValidator(final @NotNull TypesResolver resolver) {typesResolver = resolver;}
 
   public @NotNull List<? extends GDataValidationError> errors() { return context.errors(); }
 
-  public void validateData(@Nullable GData data, @NotNull VP projection) {
+  public void validateData(@Nullable GData data, @NotNull P projection) {
     if (data == null) return;
 
-    final VP normalizedProjection;
+    final P normalizedProjection;
     final TypeRef typeRef = data.typeRef();
     if (typeRef == null) {
       normalizedProjection = projection;
@@ -68,9 +69,9 @@ public abstract class GenGDataValidator<
       normalizedProjection = projection.normalizedForType(type);
     }
 
-    Set<VP> checkedProjections = visited.get(data);
+    Set<P> checkedProjections = visited.get(data);
     if (checkedProjections == null) {
-      checkedProjections = Collections.newSetFromMap(new IdentityHashMap<VP, Boolean>());
+      checkedProjections = Collections.newSetFromMap(new IdentityHashMap<P, Boolean>());
     } else if (checkedProjections.contains(normalizedProjection))
       return;
 
@@ -93,7 +94,12 @@ public abstract class GenGDataValidator<
       visited.remove(data);
   }
 
-  protected void validateDataOnly(@NotNull GData data, @NotNull VP projection) {}
+  protected void validateDataOnly(@NotNull GData data, @NotNull P projection) {
+    if (projection.isEntityProjection())
+      validateDataOnly(data, projection.asEntityProjection());
+  }
+
+  protected void validateDataOnly(@NotNull GData data, @NotNull EP projection) {}
 
   @SuppressWarnings("unchecked")
   public void validateDatum(@NotNull GDatum datum, @NotNull MP projection) {
@@ -135,7 +141,7 @@ public abstract class GenGDataValidator<
 
   protected void validateDatumOnly(@NotNull GDatum datum, @NotNull MP projection) {}
 
-  protected void validateDataValue(@NotNull GDataValue gDataValue, @NotNull VP projection) {
+  protected void validateDataValue(@NotNull GDataValue gDataValue, @NotNull P projection) {
     if (gDataValue instanceof GData) {
       GData gData = (GData) gDataValue;
       validateData(gData, projection);
