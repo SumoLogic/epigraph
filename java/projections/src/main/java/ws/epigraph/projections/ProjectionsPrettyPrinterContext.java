@@ -68,6 +68,6 @@ public class ProjectionsPrettyPrinterContext<P extends GenProjection<?, ?, ?, ?>
       ));
   }
 
-  public @NotNull Collection<P> entityProjections() { return projections.values(); }
+  public @NotNull Collection<P> projections() { return projections.values(); }
 
 }

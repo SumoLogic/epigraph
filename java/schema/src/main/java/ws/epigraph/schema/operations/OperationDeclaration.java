@@ -23,6 +23,7 @@ import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.schema.ResourceDeclaration;
 import ws.epigraph.schema.ResourceDeclarationError;
@@ -101,7 +102,7 @@ public abstract class OperationDeclaration implements Annotated {
 
   protected void ensureProjectionStartsWithResourceType(
       @NotNull ResourceDeclaration resource,
-      @NotNull GenEntityProjection<?, ?, ?> projection,
+      @NotNull GenProjection<?, ?, ?, ?> projection,
       @NotNull String projectionName,
       @NotNull List<ResourceDeclarationError> errors) {
 

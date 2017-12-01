@@ -21,11 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
-import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.OpPathPrettyPrinter;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.types.TypeApi;
 
 /**
@@ -46,9 +42,9 @@ public class OperationsPrettyPrinter<E extends Exception> {
 
   public void printOperation(
       @NotNull OperationDeclaration operation,
-      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> outputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> inputProjectionsPrinterContext,
-      @NotNull ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> deleteProjectionsPrinterContext
+      @NotNull ProjectionsPrettyPrinterContext<OpProjection<?, ?>> outputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpProjection<?, ?>> inputProjectionsPrinterContext,
+      @NotNull ProjectionsPrettyPrinterContext<OpProjection<?, ?>> deleteProjectionsPrinterContext
   ) throws E {
     opOutputPrinter = new OpProjectionsPrettyPrinter<>(l, outputProjectionsPrinterContext);
     opInputPrinter = new OpProjectionsPrettyPrinter<>(l, inputProjectionsPrinterContext);
