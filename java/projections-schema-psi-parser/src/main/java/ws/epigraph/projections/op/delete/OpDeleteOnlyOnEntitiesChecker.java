@@ -18,8 +18,7 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.projections.abs.AbstractEntityProjection;
-import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpProjectionTraversal;
 import ws.epigraph.types.TypeKind;
 
@@ -34,11 +33,10 @@ public class OpDeleteOnlyOnEntitiesChecker extends OpProjectionTraversal {
   public OpDeleteOnlyOnEntitiesChecker(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
-  protected boolean visitModelProjection(final @NotNull OpModelProjection<?, ?, ?, ?> projection) {
-    AbstractEntityProjection<?, ?, ?> ep = projection.entityProjection();
-    if (projection.flag() && (ep == null || ep.type().kind() == TypeKind.ENTITY))
+  protected boolean visitProjection(final @NotNull OpProjection<?, ?> projection) {
+    if (projection.flag() && projection.type().kind() != TypeKind.ENTITY)
       context.addWarning("'delete' flag is only supported on entity projections, ignoring", projection.location());
-    return super.visitModelProjection(projection);
+    return super.visitProjection(projection);
   }
 
 }

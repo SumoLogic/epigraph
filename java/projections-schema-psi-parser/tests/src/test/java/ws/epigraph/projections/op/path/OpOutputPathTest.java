@@ -19,7 +19,7 @@ package ws.epigraph.projections.op.path;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpPsiProcessingContext;
 import ws.epigraph.projections.op.OpReferenceContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
@@ -46,7 +46,7 @@ public class OpOutputPathTest {
   }
 
   @Test
-  public void testParseTag() throws PsiProcessingException {
+  public void testParseTag() {
     testVarPathParsingErr(":id");
   }
 
@@ -114,15 +114,16 @@ public class OpOutputPathTest {
   private void testEntityPathParsing(DataType varDataType, String projectionString, String expected)
       throws PsiProcessingException {
 
-    OpEntityProjection varPath = parseOpEntityProjection(varDataType, projectionString);
+    OpProjection<?, ?> path = parseOpProjection(varDataType, projectionString);
 
-    String actual = TestUtil.printOpEntityPath(varPath);
+    String actual = TestUtil.printOpPath(path);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());
   }
 
-  private OpEntityProjection parseOpEntityProjection(DataType varDataType, String projectionString) throws PsiProcessingException {
+  private OpProjection<?, ?> parseOpProjection(DataType dataType, String projectionString)
+      throws PsiProcessingException {
 
     TypesResolver
         resolver = new SimpleTypesResolver(
@@ -136,11 +137,11 @@ public class OpOutputPathTest {
         epigraph.annotations.Deprecated.type
     );
 
-    return parseOpEntityProjection(varDataType, projectionString, false, resolver);
+    return parseOpProjection(dataType, projectionString, false, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpEntityProjection(
-      @NotNull DataType varDataType,
+  public static @NotNull OpProjection<?, ?> parseOpProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -155,19 +156,19 @@ public class OpOutputPathTest {
 
     failIfHasErrors(entityPathPsi, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpEntityProjection> closure = context -> {
+    final TestUtil.PsiParserClosure<OpProjection<?, ?>> closure = context -> {
       OpReferenceContext referenceContext =
           new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
       OpPathPsiProcessingContext pathPsiProcessingContext =
           new OpPathPsiProcessingContext(context, new OpPsiProcessingContext(context, referenceContext));
 
-      @NotNull OpEntityProjection
-          vp = OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, pathPsiProcessingContext);
+      OpProjection<?, ?> projection =
+          OpPathPsiParser.parsePath(dataType, entityPathPsi, resolver, pathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 
-      return vp;
+      return projection;
     };
 
     return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);

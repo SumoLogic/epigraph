@@ -19,7 +19,6 @@ package ws.epigraph.projections.op;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -29,11 +28,11 @@ import ws.epigraph.types.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpReferenceContext
-    extends ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
+    extends ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 
   public OpReferenceContext(
       final @NotNull ProjectionReferenceName referencesNamespace,
-      final @Nullable ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> parent,
+      final @Nullable ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
     super(referencesNamespace, parent, context);
   }
@@ -67,37 +66,5 @@ public class OpReferenceContext
   protected OpModelProjection<?, ?, ?, ?> newPrimitiveModelReference(
       final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
     return new OpPrimitiveModelProjection(type, location);
-  }
-
-  @Override
-  protected @NotNull OpEntityProjection toSelfVar(final @NotNull OpModelProjection<?, ?, ?, ?> mRef) {
-    assert mRef.isResolved();
-    OpEntityProjection ep = (OpEntityProjection) mRef.entityProjection();
-    if (ep == null) {
-      final DatumTypeApi modelType = mRef.type();
-      return new OpEntityProjection(
-          modelType,
-          mRef.flag(),
-          ProjectionUtils.singletonLinkedHashMap(
-              modelType.self().name(),
-              new OpTagProjectionEntry(
-                  modelType.self(),
-                  mRef,
-                  TextLocation.UNKNOWN
-              )
-          ),
-          false,
-          null,
-          TextLocation.UNKNOWN
-      );
-    } else
-      return ep;
-  }
-
-  @Override
-  protected @NotNull OpModelProjection<?, ?, ?, ?> fromSelfVar(final @NotNull OpEntityProjection eRef) {
-    OpModelProjection<?, ?, ?, ?> res = super.fromSelfVar(eRef);
-    assert res.flag() == eRef.flag();
-    return res;
   }
 }

@@ -495,7 +495,7 @@ public final class OperationsPsiParser {
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
       final @NotNull OpEntityProjection varProjection =
-          OpBasicProjectionPsiParser.createDefaultEntityProjection(outputType, location, opPsiProcessingContext);
+          OpBasicProjectionPsiParser.createDefaultProjection(outputType, location, opPsiProcessingContext);
 
       fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,

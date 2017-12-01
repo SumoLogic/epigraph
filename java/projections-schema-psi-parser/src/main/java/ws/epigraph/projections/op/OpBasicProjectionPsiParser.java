@@ -55,21 +55,21 @@ public final class OpBasicProjectionPsiParser {
 
   private OpBasicProjectionPsiParser() {}
 
-  public static OpEntityProjection parseEntityProjection(
+  public static OpProjection<?, ?> parseProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpEntityProjection psi,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    return parseEntityProjection(dataType, flagged, psi, null, typesResolver, context);
+    return parseProjection(dataType, flagged, psi, null, typesResolver, context);
   }
 
-  static OpEntityProjection parseEntityProjection(
+  static OpProjection<?, ?> parseProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpEntityProjection psi,
-      @Nullable OpEntityProjection rootProjection,
+      @Nullable OpProjection<?, ?> rootProjection,
       // if parsing tail: root projection this tail is transitively attached to
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
@@ -81,12 +81,12 @@ public final class OpBasicProjectionPsiParser {
 
       if (unnamedOrRefEntityProjection == null)
         throw new PsiProcessingException(
-            "Incomplete entity projection definition",
+            "Incomplete projection definition",
             psi,
             context.messages()
         );
 
-      return parseUnnamedOrRefEntityProjection(
+      return parseUnnamedOrRefProjection(
           dataType,
           flagged,
           unnamedOrRefEntityProjection,
@@ -95,7 +95,7 @@ public final class OpBasicProjectionPsiParser {
           context
       );
     } else {
-      // named var projection
+      // named entity projection
       final @NotNull String projectionName = namedEntityProjection.getQid().getCanonicalName();
 
       final @Nullable SchemaOpUnnamedOrRefEntityProjection unnamedOrRefEntityProjectionPsi =
@@ -103,22 +103,24 @@ public final class OpBasicProjectionPsiParser {
 
       if (unnamedOrRefEntityProjectionPsi == null)
         throw new PsiProcessingException(
-            String.format("Incomplete entity projection '%s' definition", projectionName),
+            String.format("Incomplete projection '%s' definition", projectionName),
             psi,
             context.messages()
         );
 
       TypeApi type = dataType.type();
 
-      ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+      ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
           referenceContext = rootProjection == null
                              ? context.referenceContext()                  // not tail: usual context
                              : context.referenceContext().parentOrThis();  // tail: global context
 
-      final OpEntityProjection reference = referenceContext
-          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+      OpProjection<?, ?> reference =
+          referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+//      final OpEntityProjection reference = referenceContext
+//          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
 
-      final OpEntityProjection value = parseUnnamedOrRefEntityProjection(
+      final OpProjection<?, ?> value = parseUnnamedOrRefProjection(
           dataType,
           flagged,
           unnamedOrRefEntityProjectionPsi,
@@ -128,7 +130,7 @@ public final class OpBasicProjectionPsiParser {
       );
 
       if (rootProjection == null) {
-        referenceContext.resolveEntityRef(
+        referenceContext.resolveRef(
             projectionName,
             value,
             EpigraphPsiUtil.getLocation(unnamedOrRefEntityProjectionPsi)
@@ -147,7 +149,7 @@ public final class OpBasicProjectionPsiParser {
         ProjectionReferenceName referenceName = referenceContext.projectionReferenceName(projectionName);
         rootProjection.setNormalizedTailReferenceName(type, referenceName);
         // add parent reference that will call `normalizedForType` when dereferenced
-        referenceContext.addEntityReference(
+        referenceContext.addReference(
             projectionName,
             new ReferenceContext.RefItem<>(
                 rootProjection,
@@ -156,43 +158,27 @@ public final class OpBasicProjectionPsiParser {
             )
         );
 
-//        GenProjectionReference.runOnResolved(
-//            rootProjection,
-//            () -> {
-//              OpOutputEntityProjection normalizedTail = rootProjection.normalizedForType(
-//                  type,
-//                  referenceName
-//              );
-//
-//              referenceContext.resolveEntityRef( //resolve normalizedTailRef to normalizedTail
-//                  projectionName,
-//                  normalizedTail,
-//                  EpigraphPsiUtil.getLocation(unnamedOrRefEntityProjectionPsi)
-//              );
-//            }
-//        );
-
         return value; // return non-normalized tail
       }
     }
   }
 
-  public static OpEntityProjection parseUnnamedOrRefEntityProjection(
+  public static OpProjection<?, ?> parseUnnamedOrRefProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
-      @Nullable OpEntityProjection rootProjection,
+      @Nullable OpProjection<?, ?> rootProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
 
-    final SchemaOpEntityProjectionRef varProjectionRefPsi = psi.getOpEntityProjectionRef();
-    if (varProjectionRefPsi == null) {
-      // usual var projection
+    final SchemaOpEntityProjectionRef entityProjectionRefPsi = psi.getOpEntityProjectionRef();
+    if (entityProjectionRefPsi == null) {
+      // usual entity projection
       final SchemaOpUnnamedEntityProjection unnamedEntityProjection = psi.getOpUnnamedEntityProjection();
       if (unnamedEntityProjection == null)
-        throw new PsiProcessingException("Incomplete var projection definition", psi, context.messages());
-      else return parseUnnamedEntityProjection(
+        throw new PsiProcessingException("Incomplete projection definition", psi, context.messages());
+      else return parseUnnamedProjection(
           dataType,
           flagged,
           unnamedEntityProjection,
@@ -201,11 +187,11 @@ public final class OpBasicProjectionPsiParser {
           context
       );
     } else {
-      // var projection reference
-      final SchemaQid refNamePsi = varProjectionRefPsi.getQid();
+      // entity projection reference
+      final SchemaQid refNamePsi = entityProjectionRefPsi.getQid();
       if (refNamePsi == null)
         throw new PsiProcessingException(
-            "Incomplete entity projection reference: name not specified",
+            "Incomplete projection reference: name not specified",
             psi,
             context.messages()
         );
@@ -217,11 +203,11 @@ public final class OpBasicProjectionPsiParser {
     }
   }
 
-  static @NotNull OpEntityProjection parseUnnamedEntityProjection(
+  static @NotNull OpProjection<?, ?> parseUnnamedProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpUnnamedEntityProjection psi,
-      @Nullable OpEntityProjection rootProjection,
+      @Nullable OpProjection<?, ?> rootProjection,
       @NotNull TypesResolver typesResolver,
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
@@ -269,29 +255,45 @@ public final class OpBasicProjectionPsiParser {
       }
     }
 
-    OpEntityProjection result = new OpEntityProjection(type, EpigraphPsiUtil.getLocation(psi));
+    if (type.kind() == TypeKind.ENTITY) {
+      OpEntityProjection result = new OpEntityProjection(type, EpigraphPsiUtil.getLocation(psi));
 
-    final List<OpEntityProjection> tails =
-        parseTails(
-            dataType, psi.getOpEntityPolymorphicTail(), rootProjection == null ? result : rootProjection,
-            typesResolver,
-            context
+      final List<OpEntityProjection> tails =
+          parseEntityTails(
+              dataType,
+              psi.getOpEntityPolymorphicTail(),
+              rootProjection == null ? result : rootProjection.asEntityProjection(),
+              typesResolver,
+              context
+          );
+
+      try {
+        OpEntityProjection tmp = new OpEntityProjection(
+            type,
+            flagged,
+            tagProjections,
+            singleTagProjectionPsi == null || tagProjections.size() != 1,
+            tails,
+            EpigraphPsiUtil.getLocation(psi)
         );
 
-    try {
-      OpEntityProjection tmp = new OpEntityProjection(
-          type,
-          flagged,
-          tagProjections,
-          singleTagProjectionPsi == null || tagProjections.size() != 1,
-          tails,
-          EpigraphPsiUtil.getLocation(psi)
-      );
-
-      result.resolve(null, tmp);
-      return result;
-    } catch (RuntimeException e) {
-      throw new PsiProcessingException(e, psi, context);
+        result.resolve(null, tmp);
+        return result;
+      } catch (RuntimeException e) {
+        throw new PsiProcessingException(e, psi, context);
+      }
+    } else {
+      if (tagProjections.size() == 1) {
+        return tagProjections.values().iterator().next().modelProjection();
+      } else {
+        throw new PsiProcessingException(
+            String.format("Projection for model type '%s' should have exactly one tag defined, %d found",
+                type.name(), tagProjections.size()
+            ),
+            EpigraphPsiUtil.getLocation(psi),
+            context
+        );
+      }
     }
   }
 
@@ -333,7 +335,7 @@ public final class OpBasicProjectionPsiParser {
     return tagProjections;
   }
 
-  static List<OpEntityProjection> parseTails(
+  private static List<OpEntityProjection> parseEntityTails(
       final @NotNull DataTypeApi dataType,
       final @Nullable SchemaOpEntityPolymorphicTail tailPsi,
       final @NotNull OpEntityProjection rootProjection,
@@ -372,7 +374,7 @@ public final class OpBasicProjectionPsiParser {
 
     @NotNull SchemaTypeRef tailTypeRef = tailItem.getTypeRef();
     @NotNull SchemaOpEntityProjection psiTailProjection = tailItem.getOpEntityProjection();
-    return buildTailProjection(
+    return buildEntityTailProjection(
         dataType,
         tailItem.getPlus() != null,
         tailTypeRef,
@@ -381,6 +383,35 @@ public final class OpBasicProjectionPsiParser {
         typesResolver,
         context
     );
+  }
+
+  private static @NotNull OpEntityProjection buildEntityTailProjection(
+      @NotNull DataTypeApi dataType,
+      boolean flagged,
+      @NotNull SchemaTypeRef tailTypeRefPsi,
+      @NotNull SchemaOpEntityProjection psiTailProjection,
+      @NotNull OpEntityProjection rootProjection,
+      @NotNull TypesResolver typesResolver,
+      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
+
+    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
+    EntityTypeApi tailType =
+        getEntityType(tailTypeRef, false, typesResolver, EpigraphPsiUtil.getLocation(tailTypeRefPsi), context);
+    assert tailType != null;
+    checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
+
+    OpEntityProjection ep = parseProjection(
+        tailType.dataType(dataType.retroTag()),
+        flagged, // todo allow flags on tails
+        psiTailProjection,
+        rootProjection,
+        typesResolver,
+        context
+    ).asEntityProjection();
+
+    checkEntityTailType(rootProjection.type(), tailType, ep.type(), psiTailProjection, context);
+
+    return ep;
   }
 
   private static @Nullable GDatum getModelDefaultValue(
@@ -408,7 +439,6 @@ public final class OpBasicProjectionPsiParser {
       @NotNull List<SchemaOpModelProperty> modelProperties,
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
-
 
     return parseParams(
         modelProperties.stream().map(SchemaOpModelProperty::getOpParam),
@@ -468,36 +498,6 @@ public final class OpBasicProjectionPsiParser {
     }
   }
 
-  private static @NotNull OpEntityProjection buildTailProjection(
-      @NotNull DataTypeApi dataType,
-      boolean flagged,
-      @NotNull SchemaTypeRef tailTypeRefPsi,
-      @NotNull SchemaOpEntityProjection psiTailProjection,
-      @NotNull OpEntityProjection rootProjection,
-      @NotNull TypesResolver typesResolver,
-      @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
-
-    @NotNull TypeRef tailTypeRef = TypeRefs.fromPsi(tailTypeRefPsi, context);
-    EntityTypeApi tailType =
-        getEntityType(tailTypeRef, false, typesResolver, EpigraphPsiUtil.getLocation(tailTypeRefPsi), context);
-    assert tailType != null;
-    checkEntityTailType(tailType, dataType, tailTypeRefPsi, context);
-
-    OpEntityProjection ep = parseEntityProjection(
-        tailType.dataType(dataType.retroTag()),
-        flagged, // todo allow flags on tails
-        psiTailProjection,
-        rootProjection,
-        typesResolver,
-        context
-    );
-
-    checkEntityTailType(rootProjection.type(), tailType, ep.type(), psiTailProjection, context);
-
-    return ep;
-  }
-
-
   private static @NotNull OpEntityProjection createDefaultEntityProjection(
       @NotNull TypeApi type,
       @NotNull TagApi tag,
@@ -528,36 +528,50 @@ public final class OpBasicProjectionPsiParser {
     );
   }
 
-  private static @NotNull OpEntityProjection createDefaultEntityProjection(
+  private static @NotNull OpProjection<?, ?> createDefaultProjection(
       @NotNull DatumTypeApi type,
       @NotNull PsiElement locationPsi,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
-    return createDefaultEntityProjection(type, type.self(), locationPsi, context);
+
+    return createDefaultModelProjection(
+        type,
+        false,
+        null,
+        OpParams.EMPTY,
+        Annotations.EMPTY,
+        locationPsi,
+        context
+    );
   }
 
-  public static @NotNull OpEntityProjection createDefaultEntityProjection(
+  public static @NotNull OpProjection<?, ?> createDefaultProjection(
       @NotNull DataTypeApi type,
       @NotNull PsiElement locationPsi,
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
 
-    @Nullable TagApi defaultTag = type.retroTag();
-    if (defaultTag == null) {
+    if (type.type().kind() == TypeKind.ENTITY) {
 
-      if (type.type() instanceof DatumType) {
-        DatumTypeApi datumType = (DatumTypeApi) type.type();
-        defaultTag = datumType.self();
-      } else {
-        throw new PsiProcessingException(
-            String.format("Can't build default projection for '%s', retro tag not specified", type.name()),
-            locationPsi,
-            context
-        );
+      @Nullable TagApi defaultTag = type.retroTag();
+      if (defaultTag == null) {
+
+        if (type.type() instanceof DatumType) {
+          DatumTypeApi datumType = (DatumTypeApi) type.type();
+          defaultTag = datumType.self();
+        } else {
+          throw new PsiProcessingException(
+              String.format("Can't build default projection for '%s', retro tag not specified", type.name()),
+              locationPsi,
+              context
+          );
+        }
+
       }
 
+      return createDefaultEntityProjection(type.type(), defaultTag, locationPsi, context);
+    } else {
+      return createDefaultProjection((DatumTypeApi) (type.type()), locationPsi, context);
     }
-
-    return createDefaultEntityProjection(type.type(), defaultTag, locationPsi, context);
   }
 
   public static @NotNull OpModelProjection<?, ?, ?, ?> parseModelProjection(
@@ -582,7 +596,7 @@ public final class OpBasicProjectionPsiParser {
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   private static @NotNull <MP extends OpModelProjection<?, ?, ?, ?>>
-  /*@NotNull*/ MP parseModelProjection(
+    /*@NotNull*/ MP parseModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       boolean flagged,
@@ -629,7 +643,7 @@ public final class OpBasicProjectionPsiParser {
             context.messages()
         );
 
-      ReferenceContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+      ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
           referenceContext = rootProjection == null
                              ? context.referenceContext()                  // not tail: usual context
                              : context.referenceContext().parentOrThis();  // tail: global context
@@ -648,7 +662,7 @@ public final class OpBasicProjectionPsiParser {
       );
 
       if (rootProjection == null) {
-        referenceContext.resolveModelRef(
+        referenceContext.resolveRef(
             projectionName,
             value,
             EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
@@ -668,7 +682,7 @@ public final class OpBasicProjectionPsiParser {
 
         rootProjection.setNormalizedTailReferenceName(type, referenceName);
         // add parent reference that will call `normalizedForType` when dereferenced
-        referenceContext.addModelReference(
+        referenceContext.addReference(
             projectionName,
             new ReferenceContext.RefItem<>(
                 rootProjection,
@@ -676,22 +690,6 @@ public final class OpBasicProjectionPsiParser {
                 EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
             )
         );
-
-//        GenProjectionReference.runOnResolved(
-//            (OpOutputModelProjection) rootProjection,
-//            () -> {
-//              OpOutputModelProjection<?, ?, ?, ?> normalizedTail = rootProjection.normalizedForType(
-//                  type,
-//                  referenceName
-//              );
-//
-//              referenceContext.<OpOutputModelProjection>resolveModelRef( //resolve normalizedTailRef to normalizedTail
-//                  projectionName,
-//                  normalizedTail,
-//                  EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
-//              );
-//            }
-//        );
 
         return value; // return non-normalized tail
       }
@@ -701,7 +699,7 @@ public final class OpBasicProjectionPsiParser {
 
   @SuppressWarnings("unchecked")
   private static @NotNull <MP extends OpModelProjection<?, ?, ?, ?>>
-  /*@NotNull*/ MP parseUnnamedOrRefModelProjection(
+    /*@NotNull*/ MP parseUnnamedOrRefModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       boolean flagged,
@@ -711,7 +709,7 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
 
-    // this follows `parseUnnamedOrRefEntityProjection` logic
+    // this follows `parseUnnamedOrRefProjection` logic
 
     final SchemaOpModelProjectionRef modelProjectionRefPsi = psi.getOpModelProjectionRef();
     if (modelProjectionRefPsi == null) {
@@ -751,7 +749,7 @@ public final class OpBasicProjectionPsiParser {
 
   @SuppressWarnings("unchecked")
   private static @NotNull <MP extends OpModelProjection<?, ?, ?, ?>>
-  /*@NotNull*/ MP parseUnnamedModelProjection(
+    /*@NotNull*/ MP parseUnnamedModelProjection(
       @NotNull Class<MP> modelClass,
       @NotNull DatumTypeApi type,
       boolean flagged,
@@ -940,7 +938,7 @@ public final class OpBasicProjectionPsiParser {
 
   @Contract("_, null, _, _, _ -> null")
   private static @Nullable <MP extends OpModelProjection<?, ?, ?, ?>>
-  /*@Nullable*/ List<MP> parseModelTails(
+    /*@Nullable*/ List<MP> parseModelTails(
       @NotNull Class<MP> modelClass,
       @Nullable SchemaOpModelPolymorphicTail tailPsi,
       @NotNull MP rootProjection,
@@ -989,7 +987,7 @@ public final class OpBasicProjectionPsiParser {
   }
 
   private static @NotNull <MP extends OpModelProjection<?, ?, ?, ?>>
-  /*@NotNull*/ MP buildModelTailProjection(
+    /*@NotNull*/ MP buildModelTailProjection(
       @NotNull Class<MP> modelClass,
       @NotNull SchemaTypeRef tailTypeRefPsi,
       @NotNull SchemaOpModelProjection modelProjectionPsi,
@@ -1260,15 +1258,15 @@ public final class OpBasicProjectionPsiParser {
 //      fieldAnnotationsMap = parseAnnotation(fieldAnnotationsMap, fieldBodyPart.getAnnotation(), context);
 //    }
 
-    final OpEntityProjection varProjection =
-        parseEntityProjection(fieldType, flagged, psi.getOpEntityProjection(), resolver, context);
+    final OpProjection<?, ?> fieldProjection =
+        parseProjection(fieldType, flagged, psi.getOpEntityProjection(), resolver, context);
 
-    ProjectionsParsingUtil.verifyData(fieldType, varProjection, psi, context);
+    ProjectionsParsingUtil.verifyData(fieldType, fieldProjection, psi, context);
 
     return new OpFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),
 //        Annotations.fromMap(fieldAnnotationsMap),
-        varProjection,
+        fieldProjection,
         EpigraphPsiUtil.getLocation(psi)
     );
   }
@@ -1290,14 +1288,14 @@ public final class OpBasicProjectionPsiParser {
         parseKeyProjection(type.keyType(), psi.getOpKeySpec(), resolver, context);
 
     @Nullable SchemaOpEntityProjection valueProjectionPsi = psi.getOpEntityProjection();
-    @NotNull OpEntityProjection valueProjection =
+    @NotNull OpProjection<?, ?> valueProjection =
         valueProjectionPsi == null
-        ? createDefaultEntityProjection(
+        ? createDefaultProjection(
             type.valueType(),
             psi,
             context
         )
-        : parseEntityProjection(type.valueType(), psi.getPlus() != null, valueProjectionPsi, resolver, context);
+        : parseProjection(type.valueType(), psi.getPlus() != null, valueProjectionPsi, resolver, context);
 
     return new OpMapModelProjection(
         type,
@@ -1379,13 +1377,13 @@ public final class OpBasicProjectionPsiParser {
       @NotNull OpPsiProcessingContext context)
       throws PsiProcessingException {
 
-    OpEntityProjection itemsProjection;
+    OpProjection<?, ?> itemsProjection;
     @Nullable SchemaOpEntityProjection opOutputEntityProjectionPsi = psi.getOpEntityProjection();
     if (opOutputEntityProjectionPsi == null)
-      itemsProjection = createDefaultEntityProjection(type, psi, context);
+      itemsProjection = createDefaultProjection(type, psi, context);
     else
       itemsProjection =
-          parseEntityProjection(
+          parseProjection(
               type.elementType(),
               psi.getPlus() != null,
               opOutputEntityProjectionPsi,

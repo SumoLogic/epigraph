@@ -44,31 +44,31 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class OpTestUtil {
   private OpTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpOutputVarProjection(
+  public static @NotNull OpProjection<?, ?> parseOpOutputProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpOutputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpInputVarProjection(
+  public static @NotNull OpProjection<?, ?> parseOpInputProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpDeleteVarProjection(
+  public static @NotNull OpProjection<?, ?> parseOpDeleteProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpDeleteProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpDeleteProjectionsPsiParser::new, varDataType, projectionString, resolver);
   }
 
-  private static @NotNull OpEntityProjection parseOpEntityProjection(
+  private static @NotNull OpProjection<?, ?> parseOpProjection(
       @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
       @NotNull DataType varDataType,
       @NotNull String projectionString,
@@ -93,7 +93,7 @@ public final class OpTestUtil {
           opOutputReferenceContext
       );
       OpProjectionPsiParser parser = parserFactory.apply(context);
-      OpEntityProjection vp = parser.parseEntityProjection(
+      OpProjection<?, ?> p = parser.parseProjection(
           varDataType,
           false,
           psiVarProjection,
@@ -103,17 +103,17 @@ public final class OpTestUtil {
 
       opOutputReferenceContext.ensureAllReferencesResolved();
 
-      return vp;
+      return p;
     });
 
   }
 
-  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
+  public static @NotNull String printOpProjection(@NotNull OpProjection<?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpProjection<?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpProjection<?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {

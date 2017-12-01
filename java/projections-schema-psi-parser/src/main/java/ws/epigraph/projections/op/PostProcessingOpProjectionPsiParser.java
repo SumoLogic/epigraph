@@ -28,6 +28,8 @@ import ws.epigraph.types.DataTypeApi;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.util.Tuple2;
 
+import java.util.Map;
+
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
@@ -46,17 +48,17 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
   }
 
   @Override
-  public @NotNull OpEntityProjection parseEntityProjection(
+  public @NotNull OpProjection<?, ?> parseProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull SchemaOpEntityProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpEntityProjection res =
-        OpBasicProjectionPsiParser.parseEntityProjection(dataType, flagged, psi, typesResolver, context);
+    OpProjection<?, ?> res =
+        OpBasicProjectionPsiParser.parseProjection(dataType, flagged, psi, typesResolver, context);
 
-    return processEntityProjection(res, context);
+    return processProjection(res, context);
   }
 
   @Override
@@ -70,21 +72,21 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
     OpFieldProjection res =
         OpBasicProjectionPsiParser.parseFieldProjection(fieldType, flagged, psi, resolver, context);
 
-    OpEntityProjection transformedEp = processEntityProjection(res.projection(), context);
+    OpProjection<?, ?> transformedEp = processProjection(res.projection(), context);
 
     return new OpFieldProjection(transformedEp, res.location());
   }
 
   @Override
-  public @NotNull OpEntityProjection parseUnnamedOrRefEntityProjection(
+  public @NotNull OpProjection<?, ?> parseUnnamedOrRefProjection(
       final @NotNull DataTypeApi dataType,
       final boolean flagged,
       final @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
       final @NotNull TypesResolver typesResolver,
       final @NotNull OpPsiProcessingContext context) throws PsiProcessingException {
 
-    OpEntityProjection res =
-        OpBasicProjectionPsiParser.parseUnnamedOrRefEntityProjection(
+    OpProjection<?, ?> res =
+        OpBasicProjectionPsiParser.parseUnnamedOrRefProjection(
             dataType,
             flagged,
             psi,
@@ -93,7 +95,7 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
             context
         );
 
-    return processEntityProjection(res, context);
+    return processProjection(res, context);
   }
 
   @Override
@@ -107,48 +109,28 @@ public class PostProcessingOpProjectionPsiParser implements OpProjectionPsiParse
     OpModelProjection<?, ?, ?, ?> res =
         OpBasicProjectionPsiParser.parseModelProjection(type, flagged, psi, typesResolver, context);
 
-    return processModelProjection(res, context);
+    return processProjection(res, context).asModelProjection();
   }
 
-  private @NotNull OpEntityProjection processEntityProjection(
-      @NotNull OpEntityProjection ep,
+  private @NotNull OpProjection<?, ?> processProjection(
+      @NotNull OpProjection<?, ?> p,
       @NotNull OpPsiProcessingContext context) {
 
     if (traversal != null) {
-      traversal.traverse(ep);
+      traversal.traverse(p);
     }
 
     if (transformer == null)
-      return ep;
+      return p;
     else {
-      Tuple2<OpEntityProjection, OpProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
+      Tuple2<OpProjection<?, ?>, Map<OpProjection<?, ?>, OpProjection<?, ?>>> tuple2 = transformer.transform(p, null);
 
-      OpEntityProjection transformedMp = tuple2._1;
-      OpProjectionTransformationMap transformationMap = tuple2._2;
+      OpProjection<?, ?> transformedMp = tuple2._1;
+      Map<OpProjection<?, ?>, OpProjection<?, ?>> transformationMap = tuple2._2;
 
       context.referenceContext().transform(transformationMap);
       return transformedMp;
     }
   }
 
-  private @NotNull OpModelProjection<?, ?, ?, ?> processModelProjection(
-      @NotNull OpModelProjection<?, ?, ?, ?> mp,
-      @NotNull OpPsiProcessingContext context) {
-
-    if (traversal != null) {
-      traversal.traverse(mp);
-    }
-
-    if (transformer == null)
-      return mp;
-    else {
-      Tuple2<OpModelProjection<?, ?, ?, ?>, OpProjectionTransformationMap> tuple2 = transformer.transform(mp);
-
-      OpModelProjection<?, ?, ?, ?> transformedMp = tuple2._1;
-      OpProjectionTransformationMap transformationMap = tuple2._2;
-
-      context.referenceContext().transform(transformationMap);
-      return transformedMp;
-    }
-  }
 }

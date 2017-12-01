@@ -23,6 +23,7 @@ import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,6 +60,9 @@ public abstract class AbstractModelProjection<
         polymorphicTails,
         location
     );
+
+    if (model.kind() == TypeKind.ENTITY)
+      throw new IllegalArgumentException("Model projection can't be created for entity type " + model.name());
 
     TP tp = singleTagFactory.apply(self());
     tagProjections().put(tp.tag().name(), tp);

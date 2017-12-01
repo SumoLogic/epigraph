@@ -31,10 +31,7 @@ import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.op.OpModelProjection;
-import ws.epigraph.projections.op.OpPathPrettyPrinter;
-import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.*;
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
 import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
@@ -270,7 +267,7 @@ public final class TestUtil {
 
 */
 
-  public static @NotNull String printOpEntityPath(@NotNull OpEntityProjection path) {
+  public static @NotNull String printOpPath(@NotNull OpProjection<?, ?> path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     OpPathPrettyPrinter<NoExceptions> printer = new OpPathPrettyPrinter<>(layouter);
@@ -315,12 +312,12 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
+  public static @NotNull String printOpProjection(@NotNull OpProjection<?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpProjection<?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpProjection<?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {

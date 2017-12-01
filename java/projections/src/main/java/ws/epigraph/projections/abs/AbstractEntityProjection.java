@@ -22,6 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.types.TypeKind;
 
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,9 @@ public abstract class AbstractEntityProjection<
       @NotNull TextLocation location) {
 
     super(type, flag, tagProjections, polymorphicTails, location);
+
+    if (type.kind() != TypeKind.ENTITY)
+      throw new IllegalArgumentException("Entity projection can't be created for non-entity type " + type.name());
 
     this.parenthesized = parenthesized;
 

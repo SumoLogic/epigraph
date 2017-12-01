@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenEntityProjection;
-import ws.epigraph.projections.gen.ProjectionReferenceName;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypeRef;
@@ -177,25 +174,25 @@ public final class ProjectionsParsingUtil {
       getTagProjection(tag.name(), op, location, context);
   }
 
-  public static <EP extends GenEntityProjection<EP, ?, ?>> void verifyData(
+  public static <P extends GenProjection<?, ?, ?, ?>> void verifyData(
       @NotNull DataTypeApi dataType,
-      @NotNull EP entityProjection,
+      @NotNull P projection,
       @NotNull PsiElement location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!entityProjection.type().isAssignableFrom(dataType.type())) {
-      final ProjectionReferenceName projectionName = entityProjection.referenceName();
+    if (!projection.type().isAssignableFrom(dataType.type())) {
+      final ProjectionReferenceName projectionName = projection.referenceName();
       final String message;
 
       if (projectionName == null)
         message = String.format(
             "Projection type '%s' is not compatible with type '%s'",
-            entityProjection.type().name(), dataType.type().name()
+            projection.type().name(), dataType.type().name()
         );
       else
         message = String.format(
             "Projection '%s' type '%s' is not compatible with type '%s'",
-            projectionName, entityProjection.type().name(), dataType.type().name()
+            projectionName, projection.type().name(), dataType.type().name()
         );
 
       //context.addError(message, location);
@@ -421,7 +418,7 @@ public final class ProjectionsParsingUtil {
       @NotNull PsiElement tailTypeRefPsi,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
-    if (!dataType.type().isAssignableFrom(tailType))
+    if (tailType.kind() != TypeKind.ENTITY || !dataType.type().isAssignableFrom(tailType))
       throw new PsiProcessingException(
           String.format(
               "Tail type '%s' is not compatible with type '%s'",

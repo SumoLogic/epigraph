@@ -66,6 +66,19 @@ public abstract class ReferenceContext<
   public ReferenceContext<P, EP, MP> parentOrThis() { return parent == null ? this : parent; }
 
   @NotNull
+  public P reference(
+      @NotNull TypeApi type,
+      @NotNull String name,
+      boolean useParent,
+      @NotNull TextLocation location) throws PsiProcessingException {
+
+    if (type.kind() == TypeKind.ENTITY)
+      return (P) entityReference(type, name, useParent, location);
+    else
+      return (P) modelReference((DatumTypeApi) type, name, useParent, location);
+  }
+
+  @NotNull
   public EP entityReference(
       @NotNull TypeApi type,
       @NotNull String name,
@@ -162,7 +175,7 @@ public abstract class ReferenceContext<
     return references.containsKey(name) || (parent != null && parent.hasReference(name));
   }
 
-  private void resolveRef(
+  public void resolveRef(
       @NotNull String name,
       @NotNull P value,
       @NotNull TextLocation location) {

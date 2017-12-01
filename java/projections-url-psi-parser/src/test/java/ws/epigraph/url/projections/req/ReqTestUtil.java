@@ -318,7 +318,7 @@ public final class ReqTestUtil {
           new OpPathPsiProcessingContext(context, psiProcessingContext);
 
       OpEntityProjection vp =
-          OpPathPsiParser.parseEntityPath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
+          OpPathPsiParser.parsePath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 

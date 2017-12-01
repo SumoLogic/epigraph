@@ -17,9 +17,8 @@
 package ws.epigraph.projections.op.input;
 
 import org.junit.Test;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpTestUtil;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.tests.*;
@@ -35,7 +34,7 @@ import static ws.epigraph.test.TestUtil.lines;
  */
 public class OpInputProjectionsTest {
   @Test
-  public void testParsing1() throws PsiProcessingException {
+  public void testParsing1() {
     String projectionStr = lines(
         ":(",
         "  +id,",
@@ -55,29 +54,29 @@ public class OpInputProjectionsTest {
         "  :~ws.epigraph.tests.User :`record` ( profile )"
     );
 
-    testParsingVarProjection(
+    testParsingProjection(
         projectionStr, expected
     );
   }
 
   @Test
-  public void testParseEmpty() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseEmpty() {
+    testParsingProjection(
         "", ":id"
     );
   }
 
   @Test
-  public void testParseDefault() throws PsiProcessingException {
-    testParsingVarProjection(":id { default: 123 }");
+  public void testParseDefault() {
+    testParsingProjection(":id { default: 123 }");
   }
 
   @Test
-  public void testParseDefaultRequired() throws PsiProcessingException {
-    testParsingVarProjection(":`record` { default: { firstName: \"John\" } } ( id, firstName )");
+  public void testParseDefaultRequired() {
+    testParsingProjection(":`record` { default: { firstName: \"John\" } } ( id, firstName )");
 
     try {
-      testParsingVarProjection(":`record` { default: { firstName: \"John\" } } ( +id, firstName )");
+      testParsingProjection(":`record` { default: { firstName: \"John\" } } ( +id, firstName )");
       fail("This should fail with 'Required field missing' message");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError error) {
       String message = error.getMessage();
@@ -86,77 +85,77 @@ public class OpInputProjectionsTest {
   }
 
   @Test
-  public void testParseMultipleTags() throws PsiProcessingException {
-    testParsingVarProjection(":( +id, `record` )");
+  public void testParseMultipleTags() {
+    testParsingProjection(":( +id, `record` )");
   }
 
   @Test
-  public void testParseRecursive() throws PsiProcessingException {
-    testParsingVarProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
+  public void testParseRecursive() {
+    testParsingProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
   }
 
   @Test
-  public void testParseModelRecursive() throws PsiProcessingException {
-    testParsingVarProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
+  public void testParseModelRecursive() {
+    testParsingProjection(":`record` $rr = ( id, bestFriend :`record` $rr )");
   }
 
   @Test
-  public void testParseTail() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseTail() {
+    testParsingProjection(
         ":~ws.epigraph.tests.User :id",
         ":id :~ws.epigraph.tests.User :id"
     );
   }
 
   @Test
-  public void testParseTails() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseTails() {
+    testParsingProjection(
         ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
         ":id :~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
 
   @Test
-  public void testParseModelTail() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseModelTail() {
+    testParsingProjection(
         ":`record` ( worstEnemy ( id ) ~ws.epigraph.tests.UserRecord ( profile ) )"
     );
   }
 
   @Test
-  public void testParseCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":id { @epigraph.annotations.Deprecated }");
+  public void testParseCustomParams() {
+    testParsingProjection(":id { @epigraph.annotations.Deprecated }");
   }
 
   @Test
-  public void testParseRecordDefaultFields() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( +id, firstName )");
+  public void testParseRecordDefaultFields() {
+    testParsingProjection(":`record` ( +id, firstName )");
   }
 
   @Test
-  public void testParseRecordFieldsWithStructure() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` ( id ) )");
+  public void testParseRecordFieldsWithStructure() {
+    testParsingProjection(":`record` ( id, bestFriend :`record` ( id ) )");
   }
 
   @Test
-  public void testParseRecordFieldsWithCustomParams() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
+  public void testParseRecordFieldsWithCustomParams() {
+    testParsingProjection(":`record` ( id, bestFriend :`record` { @epigraph.annotations.Deprecated } ( id ) )");
   }
 
   @Test
-  public void testParseList() throws PsiProcessingException {
-    testParsingVarProjection(":`record` ( friends *( :id ) )");
+  public void testParseList() {
+    testParsingProjection(":`record` ( friends *( :id ) )");
   }
 
   @Test
-  public void testParseMap() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseMap() {
+    testParsingProjection(
         ":`record` ( friendsMap [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\" ]( :id ) )");
   }
 
   @Test
-  public void testParseMapWithKeyProjection() throws PsiProcessingException {
-    testParsingVarProjection(
+  public void testParseMapWithKeyProjection() {
+    testParsingProjection(
         lines(
             ":`record` (",
             "  personRecToPersonRec [ ;param: epigraph.String, @epigraph.annotations.Doc \"bla\", projection: ( firstName, lastName ) ](",
@@ -167,10 +166,10 @@ public class OpInputProjectionsTest {
   }
 
   @Test
-  public void testParseMeta() throws PsiProcessingException {
+  public void testParseMeta() {
     String projection = "{ meta: +( start, count ) } [ required ]( :`record` ( id, firstName ) )";
 
-    testParsingVarProjection(
+    testParsingProjection(
         new DataType(PersonMap.type, null),
         projection,
         projection
@@ -178,22 +177,22 @@ public class OpInputProjectionsTest {
   }
 
 
-  private void testParsingVarProjection(String str) {
-    testParsingVarProjection(
+  private void testParsingProjection(String str) {
+    testParsingProjection(
         str,
         str
     );
   }
 
-  private void testParsingVarProjection(String str, String expected) {
-    testParsingVarProjection(
+  private void testParsingProjection(String str, String expected) {
+    testParsingProjection(
         new DataType(Person.type, Person.id),
         str,
         expected
     );
   }
 
-  private void testParsingVarProjection(
+  private void testParsingProjection(
       DataType varDataType,
       String projectionString,
       String expected) {
@@ -212,13 +211,13 @@ public class OpInputProjectionsTest {
         epigraph.annotations.Doc.type
     );
 
-    final OpEntityProjection varProjection = OpTestUtil.parseOpInputVarProjection(
+    final OpProjection<?, ?> projection = OpTestUtil.parseOpInputProjection(
         varDataType,
         projectionString,
         resolver
     );
 
-    String actual = OpTestUtil.printOpEntityProjection(varProjection);
+    String actual = OpTestUtil.printOpProjection(projection);
 
     assertEquals("\n" + actual, expected, actual);
 //    assertEquals(expected.trim(), actual.trim());

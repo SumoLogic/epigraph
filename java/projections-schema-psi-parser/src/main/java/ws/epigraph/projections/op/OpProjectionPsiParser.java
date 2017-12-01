@@ -31,7 +31,7 @@ import ws.epigraph.types.DatumTypeApi;
  */
 public interface OpProjectionPsiParser {
 
-  @NotNull OpEntityProjection parseEntityProjection(
+  @NotNull OpProjection<?, ?> parseProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpEntityProjection psi,
@@ -45,7 +45,7 @@ public interface OpProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull OpPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull OpEntityProjection parseUnnamedOrRefEntityProjection(
+  @NotNull OpProjection<?, ?> parseUnnamedOrRefProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull SchemaOpUnnamedOrRefEntityProjection psi,
