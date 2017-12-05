@@ -63,6 +63,11 @@ public final class RecordModelProjectionHelper {
     if (o == null || rmp.getClass() != o.getClass()) return false;
     GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?> that = (GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) o;
 
+    ProjectionReferenceName referenceName = rmp.referenceName();
+    ProjectionReferenceName thatReferenceName = that.referenceName();
+    if (referenceName != null && thatReferenceName != null)
+      return referenceName.equals(thatReferenceName);
+
     IdentityHashMap<GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>, GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>>
         visitedMap = equalsVisited.get();
 

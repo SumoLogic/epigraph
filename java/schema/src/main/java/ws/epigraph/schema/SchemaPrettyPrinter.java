@@ -373,10 +373,10 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
   @SuppressWarnings("unchecked")
   private void printGlobalProjections(
-      @NotNull String prefix,
-      @NotNull Collection<OpProjection<?, ?>> projections,
-      @NotNull Function<String, ProjectionsPrettyPrinterContext<OpProjection<?, ?>>> prettyPrinterContextFactory,
-      @NotNull Function<ProjectionsPrettyPrinterContext<OpProjection<?, ?>>, OpProjectionsPrettyPrinter<E>> prettyPrinterFactory
+      final @NotNull String prefix,
+      final @NotNull Collection<OpProjection<?, ?>> projections,
+      final @NotNull Function<String, ProjectionsPrettyPrinterContext<OpProjection<?, ?>>> prettyPrinterContextFactory,
+      final @NotNull Function<ProjectionsPrettyPrinterContext<OpProjection<?, ?>>, OpProjectionsPrettyPrinter<E>> prettyPrinterFactory
   ) throws E {
     List<ProjectionReferenceName.RefNameSegment> printedRefs = projections.stream()
         .map(GenProjection::referenceName)
@@ -386,12 +386,14 @@ public class SchemaPrettyPrinter<E extends Exception> {
 
     Set<ProjectionReferenceName.RefNameSegment> printedNames = new HashSet<>();
 
-    while (!projections.isEmpty()) {
+    Collection<OpProjection<?, ?>> _projections = new ArrayList<>(projections);
+
+    while (!_projections.isEmpty()) {
 
       Collection<OpProjection<?, ?>> nextProjections =
           new ArrayList<>(); // projections referenced from printed projections
 
-      for (final OpProjection<?, ?> outputProjection : projections) {
+      for (final OpProjection<?, ?> outputProjection : _projections) {
         final ProjectionReferenceName name = outputProjection.referenceName();
         assert name != null;
         final ProjectionReferenceName.RefNameSegment shortName = name.last();
@@ -427,7 +429,7 @@ public class SchemaPrettyPrinter<E extends Exception> {
         }
       }
 
-      projections = nextProjections;
+      _projections = nextProjections;
     }
   }
 }

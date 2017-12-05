@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.types.TypeApi;
 
 import java.util.Objects;
@@ -32,8 +32,8 @@ import java.util.Objects;
 public class TransformerDeclaration implements Annotated {
   private final @NotNull String name;
   private final @NotNull TypeApi type;
-  private final @NotNull OpEntityProjection inputProjection;
-  private final @NotNull OpEntityProjection outputProjection;
+  private final @NotNull OpProjection<?, ?> inputProjection;
+  private final @NotNull OpProjection<?, ?> outputProjection;
   private final @NotNull Annotations annotations;
   private final @NotNull TextLocation location;
 
@@ -41,8 +41,8 @@ public class TransformerDeclaration implements Annotated {
       @NotNull String name,
       @NotNull TypeApi type,
       @NotNull Annotations annotations,
-      @NotNull OpEntityProjection inputProjection,
-      @NotNull OpEntityProjection outputProjection,
+      @NotNull OpProjection<?, ?> inputProjection,
+      @NotNull OpProjection<?, ?> outputProjection,
       @NotNull TextLocation location) {
 
     this.name = name;
@@ -74,10 +74,10 @@ public class TransformerDeclaration implements Annotated {
   public @NotNull TypeApi type() { return type; }
 
   @Contract(pure = true)
-  public @NotNull OpEntityProjection inputProjection() { return inputProjection; }
+  public @NotNull OpProjection<?, ?> inputProjection() { return inputProjection; }
 
   @Contract(pure = true)
-  public @NotNull OpEntityProjection outputProjection() { return outputProjection; }
+  public @NotNull OpProjection<?, ?> outputProjection() { return outputProjection; }
 
   @Override
   @Contract(pure = true)

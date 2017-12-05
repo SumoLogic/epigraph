@@ -71,27 +71,28 @@ public abstract class AbstractProjectionsPrettyPrinter<
     visitedRefs.addAll(names);
   }
 
+  private @Nullable ProjectionReferenceName.RefNameSegment shortName(@NotNull P p) {
+    ProjectionReferenceName referenceName = p.referenceName();
+    return referenceName == null ? null : referenceName.last();
+  }
+
   public final void printProjection(@NotNull P p, int pathSteps) throws E {
     final ProjectionReferenceName name = p.referenceName();
 
+    @Nullable ProjectionReferenceName.RefNameSegment shortName = shortName(p);
     boolean shouldPrint = true;
 
-    if (name != null && !name.isEmpty()) {
-      ProjectionReferenceName.@Nullable RefNameSegment shortName = name.last();
-      assert shortName != null;
-
+    if (shortName != null) {
       context.addProjection(p);
       if (!context.inNamespace(name) || visitedRefs.contains(shortName)) {
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
-        if (p.type().kind() == TypeKind.ENTITY) { // otherwise label will be printed by model
-          visitedRefs.add(shortName);
-          l.print("$").print(shortName.toString()); //.print(" = ");
-          nbsp();
-          l.print("=");
-          nbsp();
-        }
+        visitedRefs.add(shortName);
+        l.print("$").print(shortName.toString());
+        nbsp();
+        l.print("=");
+        nbsp();
       }
     }
 
@@ -117,12 +118,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       if (tp == null)
         l.print("< invalid " + p.type().name() + " data, 1 tag expected but " + tagProjections.size() + " found >");
       else
-        printTag(null, tp, false, decSteps(pathSteps));
+        printTag(null, tp, false, false, decSteps(pathSteps));
 
     } else if (!p.asEntityProjection().parenthesized() && !tagProjections.isEmpty()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
-      printTag(entry.getKey(), entry.getValue(), true, decSteps(pathSteps));
+      printTag(entry.getKey(), entry.getValue(), true, true, decSteps(pathSteps));
     } else if (tagProjections.isEmpty()) {
       l.print(":()");
     } else {
@@ -142,7 +143,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         if (first) first = false;
         else l.print(",");
         brk();
-        printTag(entry.getKey(), entry.getValue(), true, 0);
+        printTag(entry.getKey(), entry.getValue(), true, true, 0);
       }
       brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -188,7 +189,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected String tailTypeNamePrefix(@NotNull P tail) { return ""; }
 
-  private void printTag(@Nullable String tagName, @NotNull TP tp, boolean printTails, int pathSteps) throws E {
+  private void printTag(@Nullable String tagName, @NotNull TP tp, boolean checkRefs, boolean printTails, int pathSteps)
+      throws E {
     final MP projection = tp.modelProjection();
 
     l.beginIInd(0);
@@ -201,7 +203,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         nbsp();
 //      l.print(" ");
 //      brk();
-      printModel(projection, printTails, pathSteps);
+      printModel(projection, checkRefs, printTails, pathSteps);
     }
 
     l.end();
@@ -210,16 +212,16 @@ public abstract class AbstractProjectionsPrettyPrinter<
   protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E { l.print(tagName); }
 
   public void printModel(@NotNull MP mp, int pathSteps) throws E {
-    printModel(mp, true, pathSteps);
+    printModel(mp, true, true, pathSteps);
   }
 
   @SuppressWarnings("unchecked")
-  private void printModel(@NotNull MP mp, boolean printTails, int pathSteps) throws E {
+  private void printModel(@NotNull MP mp, boolean checkRefs, boolean printTails, int pathSteps) throws E {
     final ProjectionReferenceName name = mp.referenceName();
 
     boolean shouldPrint = true;
 
-    if (name != null && !name.isEmpty()) {
+    if (checkRefs && name != null && !name.isEmpty()) {
       ProjectionReferenceName.RefNameSegment shortName = name.last();
       assert shortName != null;
 

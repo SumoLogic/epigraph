@@ -47,18 +47,18 @@ public abstract class GenProjectionTransformer<
   private Map<P, P> transformationMap = null;
 
   public @NotNull Tuple2<P, Map<P, P>> transform(@NotNull P projection, @Nullable DataTypeApi dataType) {
-    this.transformationMap = new HashMap<>();
+    this.transformationMap = new IdentityHashMap<>();
     return Tuple2.of(transformProjection(projection, dataType), transformationMap());
   }
 
   @SuppressWarnings("unchecked")
   public @NotNull Tuple2<MP, Map<P, P>> transform(@NotNull MP projection) {
-    this.transformationMap = new HashMap<>();
+    this.transformationMap = new IdentityHashMap<>();
     return Tuple2.of((MP) transformProjection((P) projection), transformationMap());
   }
 
   public @NotNull Tuple2<FP, Map<P, P>> transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    this.transformationMap = new HashMap<>();
+    this.transformationMap = new IdentityHashMap<>();
     return Tuple2.of(transformFieldProjection(fp, dataType), transformationMap());
   }
 

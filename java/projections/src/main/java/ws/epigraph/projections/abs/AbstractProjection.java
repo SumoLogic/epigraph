@@ -100,9 +100,7 @@ public abstract class AbstractProjection<
   }
 
   @Override
-  public boolean isResolved() {
-    return isResolved;
-  }
+  public boolean isResolved() { return isResolved; }
 
   protected void validateTags() {
     assertResolved();

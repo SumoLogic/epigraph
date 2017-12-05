@@ -29,12 +29,8 @@ import ws.epigraph.schema.parser.SchemaParserDefinition;
 import ws.epigraph.schema.parser.psi.SchemaFile;
 import ws.epigraph.tests.*;
 
-import java.io.IOException;
-
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.*;
 
 /**
@@ -55,7 +51,7 @@ public class SchemaParserTest {
   );
 
   @Test
-  public void testEmpty() throws IOException {
+  public void testEmpty() {
     testParse(
         lines(
             "namespace test",
@@ -66,7 +62,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testEmptyResource() throws IOException {
+  public void testEmptyResource() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -80,7 +76,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testResource() throws IOException {
+  public void testResource() {
     testParse(
         lines(
             "namespace test",
@@ -188,7 +184,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testProjectionNamespaces() throws IOException {
+  public void testProjectionNamespaces() {
     ResourcesSchema schema = testParse(
         lines(
             "namespace test",
@@ -250,7 +246,9 @@ public class SchemaParserTest {
             "    inputType map[epigraph.String,ws.epigraph.tests.Person],",
             "    inputProjection $input2 = [ ]( :`record` ( firstName, lastName ) ),",
             "    outputType map[epigraph.String,ws.epigraph.tests.Person],",
-            "    outputProjection $defaultOutput",
+            // this relation isn't preserved anymore. todo: special handling?
+            "    outputProjection $out = [ forbidden ]( :id )",
+//            "    outputProjection $defaultOutput",
             "  }",
             "  outputProjection defaultOutput: map[epigraph.String,ws.epigraph.tests.Person]",
             "    = [ forbidden ]( :id )",
@@ -292,7 +290,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseSimpleReference() throws IOException {
+  public void testParseSimpleReference() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -318,7 +316,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseStupidReference() throws IOException {
+  public void testParseStupidReference() {
     try {
       testParse(
           lines(
@@ -349,7 +347,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseCrossReference() throws IOException {
+  public void testParseCrossReference() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -378,7 +376,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseStupidCrossReference() throws IOException {
+  public void testParseStupidCrossReference() {
     try {
       testParse(
           lines(
@@ -413,7 +411,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testDoublePreReference() throws IOException {
+  public void testDoublePreReference() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -452,7 +450,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testDoublePostReference() throws IOException {
+  public void testDoublePostReference() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -491,7 +489,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testDoubleIntraReference() throws IOException {
+  public void testDoubleIntraReference() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -530,7 +528,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testVarModelBackRef() throws IOException {
+  public void testModelBackRef() {
     // test case for parser failing with "Internal error: different references to projection 'p3'"
     testParse(
         lines(
@@ -544,7 +542,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseGlobalProjection() throws IOException {
+  public void testParseGlobalProjection() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -580,7 +578,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseTransformer() throws IOException {
+  public void testParseTransformer() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",
@@ -603,7 +601,7 @@ public class SchemaParserTest {
   }
 
   @Test
-  public void testParseTransformerWithGlobalProjection() throws IOException {
+  public void testParseTransformerWithGlobalProjection() {
     testParse(
         lines(
             "namespace ws.epigraph.tests",

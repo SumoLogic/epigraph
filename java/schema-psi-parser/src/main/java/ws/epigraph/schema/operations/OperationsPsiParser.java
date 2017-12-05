@@ -155,7 +155,7 @@ public final class OperationsPsiParser {
 
     @Nullable OpFieldProjection fieldPath =
         parsePath(operationNameOrDefaultName, OperationKind.CREATE, resourceType, pathPsi, resolver, context);
-    OpEntityProjection entityProjection = fieldPath == null ? null : fieldPath.projection();
+    OpProjection<?, ?> projection = fieldPath == null ? null : fieldPath.projection();
 
     if (inputProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", psi, context);
@@ -175,7 +175,7 @@ public final class OperationsPsiParser {
 
     final OpFieldProjection fieldProjection =
         context.schemaPsiProcessingContext().inputProjectionsParser().parseFieldProjection(
-            resolveInputType(resourceType, entityProjection, inputTypePsi, resolver, context),
+            resolveInputType(resourceType, projection, inputTypePsi, resolver, context),
             inputProjectionPsi.getPlus() != null,
             inputFieldProjectionPsi,
             resolver,
@@ -245,7 +245,7 @@ public final class OperationsPsiParser {
     if (inputFieldProjectionPsi == null)
       throw new PsiProcessingException("Input projection must be specified", inputProjectionPsi, context);
 
-    final @Nullable OpEntityProjection entityPath = fieldPath == null ? null : fieldPath.projection();
+    final @Nullable OpProjection<?, ?> entityPath = fieldPath == null ? null : fieldPath.projection();
 
     OpReferenceContext referenceContext =
         createReferenceContext(
@@ -494,13 +494,13 @@ public final class OperationsPsiParser {
     // todo add context
     if (outputProjectionPsi == null || outputFieldProjectionPsi == null) {
 
-      final @NotNull OpEntityProjection varProjection =
+      final @NotNull OpProjection<?, ?> projection =
           OpBasicProjectionPsiParser.createDefaultProjection(outputType, location, opPsiProcessingContext);
 
       fieldProjection = new OpFieldProjection(
 //          OpParams.EMPTY,
 //          Annotations.EMPTY,
-          varProjection,
+          projection,
           EpigraphPsiUtil.getLocation(location)
       );
 
@@ -540,7 +540,7 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveOutputType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpEntityProjection opEntityPath,
+      @Nullable OpProjection<?, ?> opEntityPath,
       @Nullable SchemaOperationOutputType declaredOutputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -570,7 +570,7 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveInputType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpEntityProjection path,
+      @Nullable OpProjection<?, ?> path,
       @Nullable SchemaOperationInputType inputTypePsi,
       @NotNull TypesResolver resolver,
       @NotNull ResourcePsiProcessingContext context) throws PsiProcessingException {
@@ -613,7 +613,7 @@ public final class OperationsPsiParser {
 
   private static @NotNull DataTypeApi resolveDeleteType(
       @NotNull DataTypeApi resourceType,
-      @Nullable OpEntityProjection opEntityPath) {
+      @Nullable OpProjection<?, ?> opEntityPath) {
 
     return opEntityPath == null ? resourceType : ProjectionUtils.tipType(opEntityPath);
   }
