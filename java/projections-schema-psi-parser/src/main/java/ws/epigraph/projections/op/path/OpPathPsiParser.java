@@ -68,7 +68,7 @@ public final class OpPathPsiParser {
             context
         );
 
-      return OpEntityProjection.pathEnd(type, EpigraphPsiUtil.getLocation(psi));
+      return OpPath.pathEnd(type, EpigraphPsiUtil.getLocation(psi));
     }
 
     final TagApi tag = getTag(

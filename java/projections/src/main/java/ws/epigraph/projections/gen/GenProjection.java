@@ -65,6 +65,17 @@ public interface GenProjection<
 
   boolean flag();
 
+  /**
+   * Sometimes projections consist of two parts: trunk (aka path) and coma. Trunk
+   * part has no branching: there's always only one tag/field/map key along them.
+   * When path part is represented by a separate projection instance it must end with
+   * some special instance that will mark a path end. For example it can be an entity
+   * projection without tags, or a record projection without fields.
+   *
+   * @return {@code true} if this is a path end
+   */
+  boolean isPathEnd();
+
   default boolean isEntityProjection() { return type().kind() == TypeKind.ENTITY; }
 
   default boolean isModelProjection() { return type().kind() != TypeKind.ENTITY; }

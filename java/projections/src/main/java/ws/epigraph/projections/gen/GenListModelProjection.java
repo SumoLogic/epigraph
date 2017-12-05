@@ -32,4 +32,7 @@ public interface GenListModelProjection<
     > extends GenModelProjection<EP, TP, MP, LMP, M> {
 
   @NotNull P itemsProjection();
+
+  @Override
+  default boolean isPathEnd() { return false; }
 }

@@ -39,4 +39,6 @@ public interface GenEntityProjection<
    */
   boolean parenthesized();
 
+  @Override
+  default boolean isPathEnd() { return tagProjections().isEmpty(); }
 }

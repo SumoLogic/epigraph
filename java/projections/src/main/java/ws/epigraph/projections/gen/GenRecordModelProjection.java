@@ -49,4 +49,7 @@ public interface GenRecordModelProjection<
     if (fieldProjections.size() == 1) return fieldProjections.values().iterator().next();
     else return null;
   }
+
+  @Override
+  default boolean isPathEnd() { return fieldProjections().isEmpty(); }
 }

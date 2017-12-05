@@ -63,10 +63,6 @@ public class OpEntityProjection extends AbstractEntityProjection<
     );
   }
 
-  public static @NotNull OpEntityProjection pathEnd(@NotNull TypeApi type, @NotNull TextLocation location) {
-    return new OpEntityProjection(type, false, Collections.emptyMap(), false, null, location);
-  }
-
   public OpEntityProjection(final TypeApi type, final TextLocation location) {
     super(type, location);
   }

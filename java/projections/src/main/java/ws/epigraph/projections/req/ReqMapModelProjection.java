@@ -82,6 +82,9 @@ public class ReqMapModelProjection
     return keys;
   }
 
+  @Override
+  public boolean isPathEnd() { return keys != null && keys.isEmpty(); }
+
   public @NotNull ReqKeyProjection pathKey() {
     assert isResolved();
     assert keys != null;

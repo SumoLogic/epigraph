@@ -83,11 +83,6 @@ public abstract class AbstractEntityProjection<
       throw new IllegalArgumentException("Entity projection can't be created for non-entity type " + type.name());
   }
 
-  public boolean isPathEnd() {
-    assertResolved();
-    return tagProjections().isEmpty();
-  }
-
   @Override
   public boolean parenthesized() {
     assertResolved();

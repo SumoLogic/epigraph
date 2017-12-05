@@ -32,4 +32,7 @@ public interface GenMapModelProjection<
     > extends GenModelProjection<EP, TP, MP, MMP, M> {
 
   @NotNull P itemsProjection();
+
+  @Override
+  default boolean isPathEnd() { return false; }
 }

@@ -28,4 +28,7 @@ public interface GenPrimitiveModelProjection<
     PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, M>,
     M extends PrimitiveTypeApi
     > extends GenModelProjection<EP, TP, MP, PMP, M> {
+
+  @Override
+  default boolean isPathEnd() { return true; }
 }
