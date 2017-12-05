@@ -198,8 +198,7 @@ public final class OpBasicProjectionPsiParser {
 
       final String projectionName = refNamePsi.getCanonicalName();
 
-      return context.referenceContext()
-          .entityReference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(refNamePsi));
+      return context.referenceContext().reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(refNamePsi));
     }
   }
 
@@ -244,7 +243,7 @@ public final class OpBasicProjectionPsiParser {
                 tag,
                 parseModelProjection(
                     tag.type(),
-                    singleTagProjectionPsi.getPlus() != null,
+                    singleTagProjectionPsi.getPlus() != null || (flagged && type.kind() != TypeKind.ENTITY), // hmm
                     singleTagProjectionPsi.getOpModelProjection(),
                     typesResolver,
                     context

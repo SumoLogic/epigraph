@@ -31,6 +31,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqEntityProjection extends AbstractEntityProjection<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>
@@ -92,8 +93,7 @@ public class ReqEntityProjection extends AbstractEntityProjection<
   }
 
   @Override
-  protected @NotNull NormalizationContext<TypeApi, ReqEntityProjection> newNormalizationContext() {
-    return new NormalizationContext<>(t -> new ReqEntityProjection(t, location()));
+  protected @NotNull NormalizationContext<TypeApi, ReqProjection<?, ?>> newNormalizationContext() {
+    return new ReqNormalizationContext();
   }
-
 }

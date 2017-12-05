@@ -31,6 +31,7 @@ import java.util.Map;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpEntityProjection extends AbstractEntityProjection<
+    OpProjection<?, ?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>
@@ -90,10 +91,7 @@ public class OpEntityProjection extends AbstractEntityProjection<
   }
 
   @Override
-  protected @NotNull NormalizationContext<TypeApi, OpEntityProjection> newNormalizationContext() {
-    return new NormalizationContext<>(
-        t -> new OpEntityProjection(t, location())
-    );
+  protected @NotNull NormalizationContext<TypeApi, OpProjection<?, ?>> newNormalizationContext() {
+    return new OpNormalizationContext();
   }
-
 }

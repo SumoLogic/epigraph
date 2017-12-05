@@ -85,8 +85,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
         l.print("$").print(shortName.toString());
         shouldPrint = false;
       } else {
-        visitedRefs.add(shortName);
         if (p.type().kind() == TypeKind.ENTITY) { // otherwise label will be printed by model
+          visitedRefs.add(shortName);
           l.print("$").print(shortName.toString()); //.print(" = ");
           nbsp();
           l.print("=");
@@ -117,12 +117,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
       if (tp == null)
         l.print("< invalid " + p.type().name() + " data, 1 tag expected but " + tagProjections.size() + " found >");
       else
-        printTag(null, tp, decSteps(pathSteps));
+        printTag(null, tp, false, decSteps(pathSteps));
 
     } else if (!p.asEntityProjection().parenthesized() && !tagProjections.isEmpty()) {
       Map.Entry<String, TP> entry = tagProjections.entrySet().iterator().next();
       l.print(":");
-      printTag(entry.getKey(), entry.getValue(), decSteps(pathSteps));
+      printTag(entry.getKey(), entry.getValue(), true, decSteps(pathSteps));
     } else if (tagProjections.isEmpty()) {
       l.print(":()");
     } else {
@@ -142,7 +142,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         if (first) first = false;
         else l.print(",");
         brk();
-        printTag(entry.getKey(), entry.getValue(), 0);
+        printTag(entry.getKey(), entry.getValue(), true, 0);
       }
       brk(1, -l.getDefaultIndentation()).end().print(")");
     }
@@ -188,7 +188,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected String tailTypeNamePrefix(@NotNull P tail) { return ""; }
 
-  public void printTag(final @Nullable String tagName, final @NotNull TP tp, final int pathSteps) throws E {
+  private void printTag(@Nullable String tagName, @NotNull TP tp, boolean printTails, int pathSteps) throws E {
     final MP projection = tp.modelProjection();
 
     l.beginIInd(0);
@@ -201,7 +201,7 @@ public abstract class AbstractProjectionsPrettyPrinter<
         nbsp();
 //      l.print(" ");
 //      brk();
-      printModel(projection, pathSteps);
+      printModel(projection, printTails, pathSteps);
     }
 
     l.end();
@@ -209,8 +209,12 @@ public abstract class AbstractProjectionsPrettyPrinter<
 
   protected void printTagName(@NotNull String tagName, @NotNull MP mp) throws E { l.print(tagName); }
 
-  @SuppressWarnings("unchecked")
   public void printModel(@NotNull MP mp, int pathSteps) throws E {
+    printModel(mp, true, pathSteps);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void printModel(@NotNull MP mp, boolean printTails, int pathSteps) throws E {
     final ProjectionReferenceName name = mp.referenceName();
 
     boolean shouldPrint = true;
@@ -230,11 +234,11 @@ public abstract class AbstractProjectionsPrettyPrinter<
     }
 
     if (shouldPrint)
-      printModelNoRefCheck(mp, pathSteps);
+      printModelNoRefCheck(mp, printTails, pathSteps);
   }
 
   @SuppressWarnings("unchecked")
-  public void printModelNoRefCheck(@NotNull MP mp, int pathSteps) throws E {
+  private void printModelNoRefCheck(@NotNull MP mp, boolean printTails, int pathSteps) throws E {
     if (mp.isResolved()) {
       l.beginIInd(0);
 
@@ -256,7 +260,8 @@ public abstract class AbstractProjectionsPrettyPrinter<
       if (!isPrintoutNoParamsEmpty(mp))
         printModelOnly(mp, pathSteps);
 
-      printTailsOnly((P) mp);
+      if (printTails)
+        printTailsOnly((P) mp);
 
       l.end();
     } else
@@ -324,9 +329,9 @@ public abstract class AbstractProjectionsPrettyPrinter<
       case RECORD:
         return ((GenRecordModelProjection<?, ?, ?, ?, ?, ?, ?, ?>) mp).fieldProjections().isEmpty();
       case MAP:
-        return isPrintoutEmpty((EP) ((GenMapModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((P) ((GenMapModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
       case LIST:
-        return isPrintoutEmpty((EP) ((GenListModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
+        return isPrintoutEmpty((P) ((GenListModelProjection<?, ?, ?, ?, ?, ?>) mp).itemsProjection());
       default:
         return true;
     }

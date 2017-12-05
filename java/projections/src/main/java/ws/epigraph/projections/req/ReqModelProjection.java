@@ -34,7 +34,7 @@ public abstract class ReqModelProjection<
     MP extends ReqModelProjection</*MP*/?, /*SMP*/? extends MP, /*M*/?>,
     SMP extends ReqModelProjection</*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
-    extends AbstractModelProjection<ReqEntityProjection, ReqTagProjectionEntry, MP, SMP, M>
+    extends AbstractModelProjection<ReqProjection<?, ?>, ReqEntityProjection, ReqTagProjectionEntry, MP, SMP, M>
     implements ReqProjection<SMP, MP> {
 
   protected /*final*/ @NotNull Directives directives;
@@ -62,7 +62,7 @@ public abstract class ReqModelProjection<
   }
 
   protected ReqModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
-    super(model, location);
+    super(model, location, self -> new ReqTagProjectionEntry(model.self(), self, location));
     params = ReqParams.EMPTY;
     directives = Directives.EMPTY;
   }
@@ -71,23 +71,9 @@ public abstract class ReqModelProjection<
 
   public @NotNull ReqParams params() { return params; }
 
-  @SuppressWarnings("unchecked")
   @Override
-  protected @NotNull NormalizationContext<TypeApi, SMP> newNormalizationContext() {
-    return new NormalizationContext<>(m -> {
-      switch (m.kind()) {
-        case RECORD:
-          return (SMP) new ReqRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
-        case MAP:
-          return (SMP) new ReqMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
-        case LIST:
-          return (SMP) new ReqListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
-        case PRIMITIVE:
-          return (SMP) new ReqPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
-        default:
-          throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
-      }
-    });
+  protected @NotNull NormalizationContext<TypeApi, ReqProjection<?, ?>> newNormalizationContext() {
+    return new ReqNormalizationContext();
   }
 
   @Override

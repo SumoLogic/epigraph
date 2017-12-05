@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.lang.GenQn;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.*;
@@ -150,6 +149,22 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testParseSimpleModel() {
+    OpProjection<?, ?> projection = testParsingProjection(":id");
+    assertTrue(projection.isEntityProjection());
+    OpEntityProjection entityProjection = projection.asEntityProjection();
+
+    OpTagProjectionEntry tpe = entityProjection.singleTagProjection();
+    assertNotNull(tpe);
+    OpModelProjection<?, ?, ?, ?> modelProjection = tpe.modelProjection();
+    tpe = modelProjection.singleTagProjection();
+    assertNotNull(tpe);
+
+    // self-tag should point to self
+    assertTrue(modelProjection == tpe.modelProjection());
+  }
+
+  @Test
   public void testParseRecursive() {
     OpProjection<?, ?> p = testParsingProjection("$self = :( id, `record` ( id, bestFriend $self ) )");
     final ProjectionReferenceName name = p.referenceName();
@@ -236,7 +251,7 @@ public class OpOutputProjectionsTest {
 
   @SuppressWarnings("ConstantConditions")
   @Test
-  public void testNormalizeSelfVarRecursive() {
+  public void testNormalizeSelfRecursive() {
     final OpProjection<?, ?> p =
         testParsingProjection(":`record` ( id, worstEnemy $rr = ( id, worstEnemy $rr ) )")
             .normalizedForType(User.type);
@@ -349,23 +364,6 @@ public class OpOutputProjectionsTest {
     @SuppressWarnings("ConstantConditions")
     OpModelProjection<?, ?, ?, ?> personRecordProjection = personProjection.singleTagProjection().modelProjection();
 
-    // like `personProjection`, but built for `PersonRecord`, not `Person` type
-    OpEntityProjection personRecordVarProjection = new OpEntityProjection(
-        PersonRecord.type,
-        false,
-        ProjectionUtils.singletonLinkedHashMap(
-            DatumType.MONO_TAG_NAME,
-            new OpTagProjectionEntry(
-                PersonRecord.type.self(),
-                personRecordProjection,
-                TextLocation.UNKNOWN
-            )
-        ),
-        false,
-        null,
-        TextLocation.UNKNOWN
-    );
-
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
     final OpReferenceContext referenceContext =
@@ -388,17 +386,13 @@ public class OpOutputProjectionsTest {
     };
 
     testParsingProjection(testConfig, ":`record` $ref", ":`record` <unresolved>");
-//    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` ( id )");
-    // we don't get reference name here because it belongs to var, not model projection ( personRecordVar )
-//    testParsingVarProjection(testConfig, ":`record` $ref", ":`record` $ref = ( id )");
 
     // should not result in class cast
-    referenceContext.resolveRef("ref", personRecordVarProjection, TextLocation.UNKNOWN);
+    referenceContext.resolveRef("ref", personRecordProjection, TextLocation.UNKNOWN);
   }
 
   @Test
   public void testParseWrongTypeRef() throws PsiProcessingException {
-    // todo add to other parser tests too
     OpProjection<?, ?> paginationProjection =
         testParsingProjection(new DataType(PaginationInfo.type, null), "()", "");
 
@@ -420,10 +414,24 @@ public class OpOutputProjectionsTest {
 
     try {
       testParsingProjection(testConfig, ":`record` ( bestFriend $ref )", ":`record` ( bestFriend )");
-      fail("Var reference built for an incompatible type should not be accepted");
+      fail("Reference built for an incompatible type should not be accepted");
     } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
-      assertTrue(e.getMessage().contains(
-          "Projection 'ref' type 'ws.epigraph.tests.PaginationInfo' is not compatible with type 'ws.epigraph.tests.Person'"
+      assertTrue(
+          e.getMessage(),
+          e.getMessage().contains(
+              "Model reference 'ref' of type 'ws.epigraph.tests.PaginationInfo' can't be used for an entity type 'ws.epigraph.tests.Person'"
+          )
+      );
+    }
+
+    try {
+      testParsingProjection(testConfig, ":`record` ( firstName $ref )", ":`record` ( firstName )");
+      fail("Reference built for an incompatible type should not be accepted");
+    } catch (@SuppressWarnings("ErrorNotRethrown") AssertionError e) {
+      assertTrue(
+          e.getMessage(),
+          e.getMessage().contains(
+              "Projection 'ref' type 'ws.epigraph.tests.PaginationInfo' is not compatible with type 'epigraph.String'"
           )
       );
     }
@@ -464,8 +472,7 @@ public class OpOutputProjectionsTest {
   @Test
   public void testParseTails() {
     testParsingProjection(
-        ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
-        ,
+        ":~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )",
         ":id :~( ws.epigraph.tests.User :id, ws.epigraph.tests.User2 :id )"
     );
   }
@@ -705,7 +712,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testNamedEntityTail() throws PsiProcessingException {
+  public void testNamedEntityTail() {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
     final OpReferenceContext referenceContext =
@@ -734,8 +741,8 @@ public class OpOutputProjectionsTest {
     referenceContext.ensureAllReferencesResolved();
     failIfHasErrors(true, ppc.messages());
 
-    ReferenceContext.RefItem<OpEntityProjection> userProjection =
-        referenceContext.lookupEntityReference("user", false, TextLocation.UNKNOWN);
+    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection =
+        referenceContext.lookupReference("user", false);
     assertNotNull(userProjection);
     assertEquals(User.type, userProjection.apply().type());
 
@@ -748,7 +755,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testNamedModelTail() throws PsiProcessingException {
+  public void testNamedModelTail() {
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
 
     final OpReferenceContext referenceContext =
@@ -779,8 +786,8 @@ public class OpOutputProjectionsTest {
     @SuppressWarnings("ConstantConditions")
     OpRecordModelProjection mp = (OpRecordModelProjection) ep.singleTagProjection().modelProjection();
 
-    ReferenceContext.RefItem<OpModelProjection<?, ?, ?, ?>> userProjection =
-        referenceContext.lookupModelReference("user", false, TextLocation.UNKNOWN);
+    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection =
+        referenceContext.lookupReference("user", false);
 
     assertNotNull(userProjection);
     assertEquals(UserRecord.type, userProjection.apply().type());
@@ -936,7 +943,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testDoubleNormalizedTailRef() throws PsiProcessingException {
+  public void testDoubleNormalizedTailRef() {
     AtomicReference<OpReferenceContext> refRef = new AtomicReference<>();
 
     TestConfig cfg = new TestConfig() {
@@ -956,10 +963,10 @@ public class OpOutputProjectionsTest {
 
     OpReferenceContext referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    ReferenceContext.RefItem<OpEntityProjection> refItem =
-        referenceContext.lookupEntityReference("sub", false, TextLocation.UNKNOWN);
+    ReferenceContext.RefItem<OpProjection<?, ?>> refItem =
+        referenceContext.lookupReference("sub", false);
     assertNotNull(refItem);
-    OpEntityProjection sub = refItem.apply();
+    OpEntityProjection sub = refItem.apply().asEntityProjection();
     assertNotNull(sub);
     OpEntityProjection normalizedFrom = sub.normalizedFrom();
     assertEquals(projection, normalizedFrom);
@@ -976,9 +983,9 @@ public class OpOutputProjectionsTest {
 
     referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    refItem = referenceContext.lookupEntityReference("sub", false, TextLocation.UNKNOWN);
+    refItem = referenceContext.lookupReference("sub", false);
     assertNotNull(refItem);
-    sub = refItem.apply();
+    sub = refItem.apply().asEntityProjection();
     assertNotNull(sub);
     normalizedFrom = sub.normalizedFrom();
     assertEquals(projection, normalizedFrom);
@@ -988,9 +995,9 @@ public class OpOutputProjectionsTest {
     assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
     assertEquals(sub, norm);
 
-    refItem = referenceContext.lookupEntityReference("user", false, TextLocation.UNKNOWN);
+    refItem = referenceContext.lookupReference("user", false);
     assertNotNull(refItem);
-    OpEntityProjection user = refItem.apply();
+    OpEntityProjection user = refItem.apply().asEntityProjection();
     assertNotNull(user);
     normalizedFrom = user.normalizedFrom();
     assertEquals(projection, normalizedFrom);
@@ -1006,7 +1013,7 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
-  public void testModelDoubleNormalizedTailRef() throws PsiProcessingException {
+  public void testModelDoubleNormalizedTailRef() {
     AtomicReference<OpReferenceContext> refRef = new AtomicReference<>();
 
     TestConfig cfg = new TestConfig() {
@@ -1030,10 +1037,10 @@ public class OpOutputProjectionsTest {
 
     OpReferenceContext referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    ReferenceContext.RefItem<OpModelProjection<?, ?, ?, ?>> refItem =
-        referenceContext.lookupModelReference("sub", false, TextLocation.UNKNOWN);
+    ReferenceContext.RefItem<OpProjection<?, ?>> refItem =
+        referenceContext.lookupReference("sub", false);
     assertNotNull(refItem);
-    OpModelProjection<?, ?, ?, ?> sub = refItem.apply();
+    OpModelProjection<?, ?, ?, ?> sub = refItem.apply().asModelProjection();
     assertNotNull(sub);
     OpModelProjection<?, ?, ?, ?> normalizedFrom = sub.normalizedFrom();
     assertEquals(modelProjection, normalizedFrom);
@@ -1043,9 +1050,9 @@ public class OpOutputProjectionsTest {
     assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
     assertEquals(sub, norm);
 
-    refItem = referenceContext.lookupModelReference("user", false, TextLocation.UNKNOWN);
+    refItem = referenceContext.lookupReference("user", false);
     assertNotNull(refItem);
-    OpModelProjection<?, ?, ?, ?> user = refItem.apply();
+    OpModelProjection<?, ?, ?, ?> user = refItem.apply().asModelProjection();
     assertNotNull(user);
     normalizedFrom = user.normalizedFrom();
     assertEquals(modelProjection, normalizedFrom);
@@ -1210,10 +1217,12 @@ public class OpOutputProjectionsTest {
 
   private void testModelTailsNormalization(String str, DatumType type, String expected) {
     OpProjection<?, ?> projection = parseOpOutputProjection(str);
-    assertTrue(projection.isModelProjection());
-    final OpModelProjection<?, ?, ?, ?> modelProjection = projection.asModelProjection();
+    assertTrue(projection.isEntityProjection());
+    OpTagProjectionEntry tpe = projection.singleTagProjection();
+    assertNotNull(tpe);
+    final OpModelProjection<?, ?, ?, ?> modelProjection = tpe.modelProjection();
 
-   OpModelProjection<?, ?, ?, ?> normalized = modelProjection.normalizedForType(type);
+    OpModelProjection<?, ?, ?, ?> normalized = modelProjection.normalizedForType(type);
 
     String actual = printOpProjection(normalized);
     assertEquals(expected, actual);

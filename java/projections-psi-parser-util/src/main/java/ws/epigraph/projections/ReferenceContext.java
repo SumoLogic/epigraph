@@ -85,7 +85,7 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, location);
+    @Nullable ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, type, location);
 
     if (ref == null) {
       ref = new IdRefItem<>(newEntityReference(type, location));
@@ -102,7 +102,7 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, location);
+    @Nullable ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, type, location);
 
     if (ref == null) {
       ref = (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, location));
@@ -130,9 +130,10 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  public ReferenceContext.RefItem<EP> lookupEntityReference(
+  private ReferenceContext.RefItem<EP> lookupEntityReference(
       @NotNull String name,
       boolean useParent,
+      @NotNull TypeApi targetType,
       TextLocation location) throws PsiProcessingException {
 
     RefItem<P> refItem = lookupReference(name, useParent);
@@ -143,7 +144,12 @@ public abstract class ReferenceContext<
         return (RefItem<EP>) refItem;
       else
         throw new PsiProcessingException(
-            String.format("Model reference '%s' can't be used as an entity", name),
+            String.format(
+                "Model reference '%s' of type '%s' can't be used for an entity type '%s'",
+                name,
+                refItem.argument.type().name(),
+                targetType.name()
+            ),
             location,
             context
         );
@@ -151,9 +157,10 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  public ReferenceContext.RefItem<MP> lookupModelReference(
+  private ReferenceContext.RefItem<MP> lookupModelReference(
       @NotNull String name,
       boolean useParent,
+      @NotNull TypeApi targetType,
       TextLocation location) throws PsiProcessingException {
 
     RefItem<P> refItem = lookupReference(name, useParent);
@@ -164,7 +171,12 @@ public abstract class ReferenceContext<
         return (RefItem<MP>) refItem;
       else
         throw new PsiProcessingException(
-            String.format("Entity reference '%s' can't be used as a model", name),
+            String.format(
+                "Entity reference '%s' of type '%s' can't be used for a model type '%s'",
+                name,
+                refItem.argument.type().name(),
+                targetType.name()
+            ),
             location,
             context
         );

@@ -17,6 +17,7 @@
 package ws.epigraph.projections.abs;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenTagProjectionEntry;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractTagProjectionEntry<
     TP extends AbstractTagProjectionEntry<TP, /*MP*/?>,
-    MP extends AbstractModelProjection<?, /*TP*/?, /*MP*/?, ? extends MP, ?>
+    MP extends AbstractModelProjection<?, ?, /*TP*/?, /*MP*/?, ? extends MP, ?>
     > implements GenTagProjectionEntry<TP, MP> {
 
   private final @NotNull TagApi tag;
@@ -62,7 +63,7 @@ public abstract class AbstractTagProjectionEntry<
 
   @SuppressWarnings("unchecked")
   @Override
-  public TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
+  public @Nullable TP mergeTags(final @NotNull TagApi tag, final @NotNull List<TP> tagEntries) {
     if (tagEntries.isEmpty()) return null;
 
     final List</*@NotNull */MP> models =
@@ -71,7 +72,7 @@ public abstract class AbstractTagProjectionEntry<
     final /*@NotNull*/ MP mp = models.get(0);
     MP mergedModel = ((GenModelProjection<?, ?, MP, MP, DatumTypeApi>) mp).merge(mp.type(), models);
 
-    return mergedModel == null ? null : mergeTags(tag, tagEntries, mergedModel);
+    return mergeTags(tag, tagEntries, mergedModel);
   }
 
   protected abstract @NotNull TP mergeTags(

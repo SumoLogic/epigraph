@@ -16,6 +16,7 @@
 
 package ws.epigraph.projections.gen;
 
+import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TagApi;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ public interface GenTagProjectionEntry<
 
   MP modelProjection();
 
-  /*static*/ TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
+  /*static*/ @Nullable TP mergeTags(@NotNull TagApi tag, @NotNull List<TP> tagEntries);
 
   @NotNull TP setModelProjection(@NotNull MP modelProjection);
 

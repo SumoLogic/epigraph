@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.gen.GenModelProjection;
+import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
@@ -28,19 +29,20 @@ import ws.epigraph.types.TypeKind;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractModelProjection<
-    EP extends AbstractEntityProjection<EP, /*TP*/?, /*MP*/?>,
+//    P extends GenProjection<? extends P, TP, EP, /*MP*/?>,
+    P extends GenProjection<? extends P, TP, EP, /*MP*/?>,
+    EP extends AbstractEntityProjection<? extends P, EP, /*TP*/?, /*MP*/?>,
     TP extends AbstractTagProjectionEntry<TP, /*MP*/?>,
-    MP extends AbstractModelProjection</*EP*/?, TP, /*MP*/?, /*SMP*/? extends MP, ?>,
-    SMP extends AbstractModelProjection</*EP*/?, TP, /*MP*/?, SMP, ?>,
+    MP extends AbstractModelProjection<P, /*EP*/?, TP, /*MP*/?, /*SMP*/? extends MP, ?>,
+    SMP extends AbstractModelProjection<P, /*EP*/?, TP, /*MP*/?, SMP, ?>,
     M extends DatumTypeApi>
-    extends AbstractProjection<SMP, TP, EP, MP>
+    extends AbstractProjection<P, SMP, TP, EP, MP>
     implements GenModelProjection<EP, TP, MP, SMP, M> {
 
   protected /*final*/ @Nullable MP metaProjection;
@@ -51,7 +53,7 @@ public abstract class AbstractModelProjection<
       @Nullable MP metaProjection,
       @Nullable List<SMP> polymorphicTails,
       @NotNull TextLocation location,
-      Function<SMP, TP> singleTagFactory
+      @NotNull Function<SMP, TP> singleTagFactory
   ) {
     super(
         model,
@@ -64,15 +66,26 @@ public abstract class AbstractModelProjection<
     if (model.kind() == TypeKind.ENTITY)
       throw new IllegalArgumentException("Model projection can't be created for entity type " + model.name());
 
-    TP tp = singleTagFactory.apply(self());
-    tagProjections().put(tp.tag().name(), tp);
-
     this.metaProjection = metaProjection;
+
+    initSelfTag(singleTagFactory);
   }
 
-  protected AbstractModelProjection(@NotNull M model, @NotNull TextLocation location) {
+  protected AbstractModelProjection(
+      @NotNull M model,
+      @NotNull TextLocation location,
+      @NotNull Function<SMP, TP> singleTagFactory) {
+
     super(model, location);
     metaProjection = null;
+    initSelfTag(singleTagFactory);
+  }
+
+  private void initSelfTag(@NotNull Function<SMP, TP> singleTagFactory) {
+    TP tp = singleTagFactory.apply(self());
+    //noinspection AssignmentToSuperclassField
+    this.tagProjections = Collections.singletonMap(tp.tag().name(), tp);
+    validateSelfTagProjection();
   }
 
   @SuppressWarnings("unchecked")
@@ -87,8 +100,8 @@ public abstract class AbstractModelProjection<
   protected SMP merge(
       final @NotNull TypeApi effectiveType,
       final @NotNull List<SMP> projections,
+      final boolean normalizeTags,
       final boolean mergedFlag,
-      final @NotNull Map<String, TP> mergedTags,
       final @Nullable List<SMP> mergedTails) {
 
     return merge(
@@ -105,7 +118,7 @@ public abstract class AbstractModelProjection<
     List<MP> metaProjectionsList = new ArrayList<>();
 
     for (final GenModelProjection<?, ?, ?, ?, ?> p : projections) {
-      AbstractModelProjection<EP, TP, MP, SMP, ?> mp = (AbstractModelProjection<EP, TP, MP, SMP, ?>) p;
+      AbstractModelProjection<P, EP, TP, MP, SMP, ?> mp = (AbstractModelProjection<P, EP, TP, MP, SMP, ?>) p;
       final @Nullable MP meta = mp.metaProjection();
       if (meta != null) metaProjectionsList.add(meta);
     }
@@ -118,7 +131,7 @@ public abstract class AbstractModelProjection<
       assert metaModel != null; // since we have a projection for it
 
       //noinspection ConstantConditions
-      mergedMetaProjection = (MP) ((AbstractModelProjection<EP, TP, MP, SMP, M>) metaProjection)
+      mergedMetaProjection = (MP) ((AbstractModelProjection<P, EP, TP, MP, SMP, M>) metaProjection)
           .merge(metaModel, (List<SMP>) metaProjectionsList)
           .normalizedForType(metaModel);
     }
@@ -138,6 +151,15 @@ public abstract class AbstractModelProjection<
   public void resolve(final @Nullable ProjectionReferenceName name, final @NotNull SMP value) {
     preResolveCheck(value);
     this.metaProjection = (MP) value.metaProjection();
+
     super.resolve(name, value);
+
+    validateSelfTagProjection();
+  }
+
+  private void validateSelfTagProjection() {
+    TP singleTagProjection = singleTagProjection();
+    assert singleTagProjection != null;
+    assert this == singleTagProjection.modelProjection();
   }
 }

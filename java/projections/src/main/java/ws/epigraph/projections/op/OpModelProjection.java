@@ -38,7 +38,7 @@ public abstract class OpModelProjection<
     SMP extends OpModelProjection</*MP*/?, SMP, ?, ?>,
     M extends DatumTypeApi,
     D extends GDatum>
-    extends AbstractModelProjection<OpEntityProjection, OpTagProjectionEntry, MP, SMP, M>
+    extends AbstractModelProjection<OpProjection<?, ?>, OpEntityProjection, OpTagProjectionEntry, MP, SMP, M>
     implements OpProjection<SMP, MP>, Annotated {
 
   protected /*final*/ @NotNull Annotations annotations;
@@ -63,7 +63,7 @@ public abstract class OpModelProjection<
   }
 
   protected OpModelProjection(final @NotNull M model, final @NotNull TextLocation location) {
-    super(model, location);
+    super(model, location, self -> new OpTagProjectionEntry(model.self(), self, location));
     annotations = Annotations.EMPTY;
     params = OpParams.EMPTY;
   }
@@ -123,23 +123,9 @@ public abstract class OpModelProjection<
     super.resolve(name, value);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  protected @NotNull NormalizationContext<TypeApi, SMP> newNormalizationContext() {
-    return new NormalizationContext<>(m -> {
-      switch (m.kind()) {
-        case RECORD:
-          return (SMP) new OpRecordModelProjection((RecordTypeApi) m, TextLocation.UNKNOWN);
-        case MAP:
-          return (SMP) new OpMapModelProjection((MapTypeApi) m, TextLocation.UNKNOWN);
-        case LIST:
-          return (SMP) new OpListModelProjection((ListTypeApi) m, TextLocation.UNKNOWN);
-        case PRIMITIVE:
-          return (SMP) new OpPrimitiveModelProjection((PrimitiveTypeApi) m, TextLocation.UNKNOWN);
-        default:
-          throw new IllegalArgumentException("Unsupported model kind: " + m.kind());
-      }
-    });
+  protected @NotNull NormalizationContext<TypeApi, OpProjection<?, ?>> newNormalizationContext() {
+    return new OpNormalizationContext();
   }
 
   @Override

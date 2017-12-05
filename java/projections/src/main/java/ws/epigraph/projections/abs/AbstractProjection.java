@@ -25,12 +25,9 @@ import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.UnresolvedReferenceException;
 import ws.epigraph.projections.gen.GenProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
-import ws.epigraph.types.TagApi;
 import ws.epigraph.types.TypeApi;
-import ws.epigraph.types.TypeKind;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,34 +41,36 @@ import static ws.epigraph.projections.ProjectionUtils.linearizeTails;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractProjection<
-    P extends AbstractProjection<P, TP, /*EP*/?, /*MP*/?>,
+    P extends GenProjection<? extends P, TP, /*EP*/?, /*MP*/?>,
+    SP extends AbstractProjection<P, SP, TP, /*EP*/?, /*MP*/?> /* & P */,
     TP extends AbstractTagProjectionEntry<TP, /*MP*/?>,
-    EP extends AbstractEntityProjection<EP, /*TP*/?, /*MP*/?>,
-    MP extends AbstractModelProjection</*EP*/?, /*TP*/?, /*MP*/?, ? extends MP, ?>
-    > implements GenProjection<P, TP, EP, MP> {
+    EP extends AbstractEntityProjection<? extends P, EP, /*TP*/?, /*MP*/?> /* & P */,
+    MP extends AbstractModelProjection<? extends P, /*EP*/?, /*TP*/?, /*MP*/?, ? extends MP, ?> /* & P */
+    > implements GenProjection<SP, TP, EP, MP> {
 
   private final @NotNull TypeApi type;
   private /*final*/ @Nullable ProjectionReferenceName name;
   protected /*final*/ boolean flag;
-  private /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
-  private /*final*/ @Nullable List<P> polymorphicTails;
+  protected /*final @NotNull*/ @Nullable Map<String, TP> tagProjections;
+  private /*final*/ @Nullable List<SP> polymorphicTails;
 
   private /*final*/ @NotNull TextLocation location;
 
+  private boolean isResolved;
   private final boolean isReference;
   private final List<Runnable> onResolvedCallbacks = new ArrayList<>();
 
   private final Map<TypeName, NormalizedCacheItem> normalizedCache = new ConcurrentHashMap<>();
   protected final Map<TypeName, ProjectionReferenceName> normalizedTailNames = new ConcurrentHashMap<>();
 
-  protected @Nullable P normalizedFrom = null; // this = normalizedFrom ~ someType ?
+  protected @Nullable SP normalizedFrom = null; // this = normalizedFrom ~ someType ?
 
   @SuppressWarnings("unchecked")
   protected AbstractProjection(
       @NotNull TypeApi type,
       boolean flag,
       @NotNull Map<String, TP> tagProjections,
-      @Nullable List<P> polymorphicTails,
+      @Nullable List<SP> polymorphicTails,
       @NotNull TextLocation location) {
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
@@ -82,6 +81,7 @@ public abstract class AbstractProjection<
     this.polymorphicTails = polymorphicTails;
     this.location = location;
 
+    isResolved = true;
     isReference = false;
 
     validateTags();
@@ -95,12 +95,13 @@ public abstract class AbstractProjection<
     this.type = type;
     this.location = location;
 
+    isResolved = false;
     isReference = true;
   }
 
   @Override
   public boolean isResolved() {
-    return tagProjections != null;
+    return isResolved;
   }
 
   protected void validateTags() {
@@ -116,7 +117,7 @@ public abstract class AbstractProjection<
 
       if (!type.tagsMap().containsKey(tagName))
         throw new IllegalArgumentException(
-            String.format("Tag '%s' does not belong to entity type '%s'",
+            String.format("Tag '%s' does not belong to type '%s'",
                 tagName, type.name()
             )
         );
@@ -132,9 +133,9 @@ public abstract class AbstractProjection<
   }
 
   protected void validateTails() {
-    final @Nullable List<P> tails = polymorphicTails();
+    final @Nullable List<SP> tails = polymorphicTails();
     if (tails != null) {
-      for (final P tail : tails) {
+      for (final SP tail : tails) {
         if (tail.type().isAssignableFrom(type)) {
           throw new IllegalArgumentException(
               String.format(
@@ -167,7 +168,7 @@ public abstract class AbstractProjection<
 
   @Override
   public @NotNull Map<String, TP> tagProjections() {
-    assertResolved();
+//    assertResolved();
     assert tagProjections != null;
 
     return tagProjections;
@@ -176,7 +177,7 @@ public abstract class AbstractProjection<
   public @Nullable TP tagProjection(@NotNull String tagName) { return tagProjections().get(tagName); }
 
   @Override
-  public @Nullable List<P> polymorphicTails() {
+  public @Nullable List<SP> polymorphicTails() {
     assertResolved();
     return polymorphicTails;
   }
@@ -194,7 +195,7 @@ public abstract class AbstractProjection<
     this.name = referenceName;
   }
 
-  public void copyNormalizedTailReferenceNames(@NotNull P vp) {
+  public void copyNormalizedTailReferenceNames(@NotNull SP vp) {
     normalizedTailNames.putAll(vp.normalizedTailNames);
   }
 
@@ -202,11 +203,11 @@ public abstract class AbstractProjection<
 
   @Contract(pure = true)
   @SuppressWarnings("unchecked")
-  protected @NotNull P self() { return (P) this; }
+  protected @NotNull SP self() { return (SP) this; }
 
   @SuppressWarnings("unchecked")
   @Override
-  public @NotNull P normalizedForType(final @NotNull TypeApi targetType) {
+  public @NotNull SP normalizedForType(final @NotNull TypeApi targetType) {
     ProjectionReferenceName resultReferenceName = normalizedTailNames.get(targetType.name());
 
     if (targetType.equals(type()))
@@ -227,7 +228,7 @@ public abstract class AbstractProjection<
           if (cacheItem != null)
             return cacheItem.allocatedByCurrentThread() ? cacheItem.p : cacheItem.awaitForResolved();
 
-          final List<P> linearizedTails = linearizeTails(targetType, polymorphicTails());
+          final List<SP> linearizedTails = linearizeTails(targetType, polymorphicTails());
 
           final TypeApi effectiveType = ProjectionUtils.mostSpecific(
               targetType,
@@ -239,21 +240,21 @@ public abstract class AbstractProjection<
             return self();
 
           try {
-            P ref;
+            SP ref;
             ProjectionReferenceName normalizedRefName = resultReferenceName;
             if (this.name == null) {
-              ref = context.newReference(effectiveType, self());
+              ref = (SP) context.newReference(effectiveType, (P) self());
               ref.setReferenceName(normalizedRefName);
             } else {
               NormalizationContext.VisitedKey visitedKey =
                   new NormalizationContext.VisitedKey(this.name, effectiveType.name());
-              ref = context.visited().get(visitedKey);
+              ref = (SP) context.visited().get(visitedKey);
 
               if (ref != null)
                 return ref;
 
-              ref = context.newReference(effectiveType, self());
-              context.visited().put(visitedKey, ref);
+              ref = (SP) context.newReference(effectiveType, (P) self());
+              context.visited().put(visitedKey, (P) ref);
 
               if (normalizedRefName == null)
                 normalizedRefName = ProjectionUtils.normalizedTailNamespace(
@@ -264,16 +265,16 @@ public abstract class AbstractProjection<
             }
             normalizedCache.put(targetTypeName, new NormalizedCacheItem(ref));
 
-            final List<P> effectiveProjections = new ArrayList<>(linearizedTails);
+            final List<SP> effectiveProjections = new ArrayList<>(linearizedTails);
             effectiveProjections.add(self()); //we're the least specific projection
 
-            final List<P> mergedTails = mergeTails(effectiveProjections);
+            final List<SP> mergedTails = mergeTails(effectiveProjections);
 
-            final List<P> filteredMergedTails;
+            final List<SP> filteredMergedTails;
             if (mergedTails == null)
               filteredMergedTails = null;
             else {
-              final List<P> tmp = mergedTails
+              final List<SP> tmp = mergedTails
                   .stream()
                   // remove 'uninteresting' tails which already describe `effectiveType`
                   .filter(t -> (!t.type().isAssignableFrom(effectiveType)) && effectiveType.isAssignableFrom(t.type()))
@@ -282,12 +283,12 @@ public abstract class AbstractProjection<
               filteredMergedTails = tmp.isEmpty() ? null : tmp;
             }
 
-            List<P> projectionsToMerge = effectiveProjections
+            List<SP> projectionsToMerge = effectiveProjections
                 .stream()
                 .filter(p -> p.type().isAssignableFrom(effectiveType))
                 .collect(Collectors.toList());
 
-            P res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge, normalizedRefName);
+            SP res = merge(effectiveType, true, filteredMergedTails, projectionsToMerge, normalizedRefName);
             res = postNormalizedForType(targetType, res);
             res.normalizedTailNames.putAll(normalizedTailNames);
             res.normalizedFrom = self();
@@ -305,92 +306,14 @@ public abstract class AbstractProjection<
   /**
    * Called after {@code normalizeForType} is performed. Can do some extra steps and return a modified version.
    */
-  protected @NotNull P postNormalizedForType(@NotNull TypeApi targetType, @NotNull P normalizationResult) {
+  protected @NotNull SP postNormalizedForType(@NotNull TypeApi targetType, @NotNull SP normalizationResult) {
     return normalizationResult;
   }
 
+
   @SuppressWarnings("unchecked")
-  private @NotNull LinkedHashMap<String, TP> mergeTags(
-      TypeApi effectiveType,
-      boolean normalizeTags,
-      @NotNull Map<String, TagApi> tags,
-      @NotNull Iterable<? extends P> sources) {
-
-    LinkedHashMap<String, TP> mergedTags = new LinkedHashMap<>();
-
-    for (TagApi tag : tags.values()) {
-      List<TP> tagProjections = new ArrayList<>();
-      for (P projection : sources) {
-        @Nullable TP tagProjection = projection.tagProjection(tag.name());
-        if (tagProjection != null) {
-          if (normalizeTags) {
-            DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
-            DatumTypeApi minModelType = ProjectionUtils.mostSpecific(effectiveModelType, tag.type(), tag.type());
-
-            MP mp = (MP) tagProjection.modelProjection();
-            MP normalizedModel = mp.normalizedForType(minModelType);
-
-            tagProjections.add(((GenTagProjectionEntry<TP, MP>) tagProjection).setModelProjection(normalizedModel));
-          } else {
-            tagProjections.add(tagProjection);
-          }
-        }
-      }
-
-      if (!tagProjections.isEmpty()) {
-        final TP tp0 = tagProjections.get(0);
-
-        @Nullable TP mergedTag = null;
-
-        if (effectiveType.kind() != TypeKind.ENTITY) {
-          if (tagProjections.size() == 1) {
-            if (!tp0.modelProjection().isResolved()) // recursive self-var
-              mergedTag = tp0;
-          } else {
-            // todo: handle cases like `(foo $rec = ( foo $rec ) ~Bar ( foo ( baz ) ) )`
-            // have to dereference and postpone merging?
-            // see also OpOutputProjectionsTest::testNormalizeRecursiveList2
-            final Optional<TP> recTp =
-                tagProjections.stream().filter(tp -> !tp.modelProjection().isResolved()).findFirst();
-            recTp.map(tp -> {
-              throw new IllegalArgumentException(
-                  String.format(
-                      "Can't merge recursive projection [%s] with other projections (%s)",
-                      tp.modelProjection().referenceName(),
-                      tagProjections.stream()
-                          .map(x -> x.tag().name() + ":" + x.modelProjection().toString())
-                          .collect(Collectors.joining(", "))
-                  )
-              );
-            });
-          }
-        }
-
-        if (mergedTag == null)
-          mergedTag = tp0.mergeTags(tag, tagProjections);
-
-        if (mergedTag != null)
-          mergedTags.put(tag.name(), mergedTag);
-      }
-    }
-    return mergedTags;
-  }
-
-  private @NotNull Map<String, TagApi> collectTags(
-      @NotNull Iterable<? extends P> effectiveProjections) {
-
-    Map<String, TagApi> tags = new LinkedHashMap<>();
-
-    for (final P projection : effectiveProjections)
-      projection.tagProjections().values()
-          .stream()
-          .map(GenTagProjectionEntry::tag)
-          .forEach(t -> {if (!tags.containsKey(t.name())) tags.put(t.name(), t);});
-    return tags;
-  }
-
   @Override
-  public @NotNull P merge(@NotNull TypeApi type, @NotNull List<P> projections) {
+  public @NotNull SP merge(@NotNull TypeApi type, @NotNull List<SP> projections) {
     assert !projections.isEmpty();
 
     projections = new ArrayList<>(new LinkedHashSet<>(projections)); // dedup
@@ -398,12 +321,12 @@ public abstract class AbstractProjection<
     if (projections.size() == 1) {
       return projections.get(0);
     } else {
-      Optional<P> unresolvedOpt = projections.stream().filter(p -> !p.isResolved()).findFirst();
+      Optional<SP> unresolvedOpt = projections.stream().filter(p -> !p.isResolved()).findFirst();
       if (unresolvedOpt.isPresent()) {
         String message = NormalizationContext.withContext(
             this::newNormalizationContext,
             context -> {
-              P origin = context.origin(unresolvedOpt.get());
+              SP origin = (SP) context.origin((P) unresolvedOpt.get());
 
               TextLocation loc = context.visited().entrySet().isEmpty() ? TextLocation.UNKNOWN :
                                  context.visited().entrySet().iterator().next().getValue().location();
@@ -421,18 +344,14 @@ public abstract class AbstractProjection<
     }
   }
 
-  protected P merge(
+  protected SP merge(
       final @NotNull TypeApi effectiveType,
       final boolean normalizeTags,
-      final @Nullable List<P> mergedTails,
-      final @NotNull List<P> projections,
+      final @Nullable List<SP> mergedTails,
+      final @NotNull List<SP> projections,
       final @Nullable ProjectionReferenceName defaultReferenceName) {
 
     if (projections.isEmpty()) throw new IllegalArgumentException("empty list of projections to merge");
-
-    final @NotNull Map<String, TagApi> tags = collectTags(projections);
-
-    final @NotNull Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags, projections);
 
     final ProjectionReferenceName mergedRefName = defaultReferenceName == null
                                                   ? buildReferenceName(projections, projections.get(0).location())
@@ -440,12 +359,12 @@ public abstract class AbstractProjection<
 
     boolean mergedFlag = projections.stream().anyMatch(GenProjection::flag);
 
-    P res = merge(effectiveType, projections, mergedFlag, mergedTags, mergedTails);
+    SP res = merge(effectiveType, projections, normalizeTags, mergedFlag, mergedTails);
     if (mergedRefName != null) res.setReferenceName(mergedRefName);
 
     // todo check for clashes
     Map<TypeName, ProjectionReferenceName> mergedTailNames = new HashMap<>();
-    for (P vp : projections) {
+    for (SP vp : projections) {
       mergedTailNames.putAll(vp.normalizedTailNames);
     }
     res.normalizedTailNames.putAll(mergedTailNames);
@@ -454,16 +373,16 @@ public abstract class AbstractProjection<
   }
 
   @SuppressWarnings("unchecked")
-  private @Nullable List<P> mergeTails(final @NotNull List<? extends P> sources) {
+  private @Nullable List<SP> mergeTails(final @NotNull List<? extends SP> sources) {
 
-    Map<TypeApi, List<P>> tailsByType = null;
+    Map<TypeApi, List<SP>> tailsByType = null;
 
-    for (final P projection : sources) {
-      final List<P> tails = projection.polymorphicTails();
+    for (final SP projection : sources) {
+      final List<SP> tails = projection.polymorphicTails();
       if (tails != null) {
         if (tailsByType == null) tailsByType = new LinkedHashMap<>();
-        for (P tail : tails) {
-          List<P> collectedTails = tailsByType.computeIfAbsent(tail.type(), k -> new ArrayList<>());
+        for (SP tail : tails) {
+          List<SP> collectedTails = tailsByType.computeIfAbsent(tail.type(), k -> new ArrayList<>());
           collectedTails.add(tail);
         }
       }
@@ -471,9 +390,9 @@ public abstract class AbstractProjection<
 
     if (tailsByType == null) return null;
 
-    List<P> mergedTails = new ArrayList<>(tailsByType.size());
+    List<SP> mergedTails = new ArrayList<>(tailsByType.size());
 
-    for (final Map.Entry<TypeApi, List<P>> entry : tailsByType.entrySet()) {
+    for (final Map.Entry<TypeApi, List<SP>> entry : tailsByType.entrySet()) {
       mergedTails.add(
           merge(
               entry.getKey(),
@@ -489,14 +408,14 @@ public abstract class AbstractProjection<
   }
 
   /* static */
-  protected abstract P merge(
+  protected abstract SP merge(
       @NotNull TypeApi effectiveType,
-      @NotNull List<P> projections,
+      @NotNull List<SP> projections,
+      boolean normalizeTags,
       boolean mergedFlag,
-      @NotNull Map<String, TP> mergedTags,
-      @Nullable List<P> mergedTails);
+      @Nullable List<SP> mergedTails);
 
-  protected void preResolveCheck(final @NotNull P value) {
+  protected void preResolveCheck(final @NotNull SP value) {
     if (!isReference)
       throw new IllegalStateException("Non-reference projection can't be resolved");
     if (isResolved())
@@ -512,20 +431,18 @@ public abstract class AbstractProjection<
   }
 
   @Override
-  public void resolve(@Nullable ProjectionReferenceName name, @NotNull P value) {
+  public void resolve(@Nullable ProjectionReferenceName name, @NotNull SP value) {
     preResolveCheck(value);
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 
     this.name = name;
     this.flag = value.flag;
-    this.tagProjections = value.tagProjections();
     this.polymorphicTails = value.polymorphicTails();
     this.location = value.location();
     this.normalizedFrom = value.normalizedFrom();
     this.normalizedTailNames.putAll(value.normalizedTailNames);
-
-    validateTags();
+    this.isResolved = true;
 
 //    System.out.println("Resolved " + name);
     for (final Runnable callback : onResolvedCallbacks)
@@ -542,7 +459,7 @@ public abstract class AbstractProjection<
   }
 
   @Override
-  public @Nullable P normalizedFrom() { return normalizedFrom; }
+  public @Nullable SP normalizedFrom() { return normalizedFrom; }
 
   @Override
   public @NotNull TextLocation location() { return location; }
@@ -551,10 +468,9 @@ public abstract class AbstractProjection<
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    final AbstractProjection<?, ?, ?, ?> that = (AbstractProjection<?, ?, ?, ?>) o;
+    final AbstractProjection<?, ?, ?, ?, ?> that = (AbstractProjection<?, ?, ?, ?, ?>) o;
     return flag == that.flag &&
            Objects.equals(type, that.type) &&
-           Objects.equals(tagProjections, that.tagProjections) &&
            Objects.equals(polymorphicTails, that.polymorphicTails);
   }
 
@@ -562,7 +478,7 @@ public abstract class AbstractProjection<
   public int hashCode() {
 //    assertResolved(); // todo: this should be prohibited for unresolved projections
 
-    return Objects.hash(type, flag, tagProjections, polymorphicTails);
+    return Objects.hash(type, flag, polymorphicTails);
   }
 
   @Override
@@ -573,16 +489,16 @@ public abstract class AbstractProjection<
 
   private final class NormalizedCacheItem {
     final long creatorThreadId;
-    final @NotNull P p;
+    final @NotNull SP p;
 
-    NormalizedCacheItem(final @NotNull P p) {
+    NormalizedCacheItem(final @NotNull SP p) {
       creatorThreadId = Thread.currentThread().getId();
       this.p = p;
     }
 
     boolean allocatedByCurrentThread() { return Thread.currentThread().getId() == creatorThreadId; }
 
-    @NotNull P awaitForResolved() {
+    @NotNull SP awaitForResolved() {
       assert !allocatedByCurrentThread();
       final CountDownLatch latch = new CountDownLatch(1);
       p.runOnResolved(latch::countDown);

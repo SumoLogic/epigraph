@@ -18,6 +18,7 @@ package ws.epigraph.projections.op.input;
 
 import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.PostProcessingOpProjectionPsiParser;
+import ws.epigraph.projections.op.postprocess.OpFlagSynchronizer;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -28,7 +29,10 @@ public final class OpInputProjectionsPsiParser extends PostProcessingOpProjectio
   public static final String FLAGGED = "flagged";
 
   public OpInputProjectionsPsiParser(String flagSemantics, MessagesContext context) {
-    super(null, null);
+    super(
+        null,
+        new OpFlagSynchronizer(flagSemantics, context)
+    );
   }
 
   public OpInputProjectionsPsiParser(MessagesContext context) {
