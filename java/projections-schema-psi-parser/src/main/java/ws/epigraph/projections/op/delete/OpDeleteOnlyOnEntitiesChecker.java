@@ -18,9 +18,10 @@ package ws.epigraph.projections.op.delete;
 
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.op.OpProjectionTraversal;
-import ws.epigraph.types.TypeKind;
+import ws.epigraph.projections.op.OpTagProjectionEntry;
 
 /**
  * Checks that 'delete' flag is only set on entity types
@@ -33,10 +34,13 @@ public class OpDeleteOnlyOnEntitiesChecker extends OpProjectionTraversal {
   public OpDeleteOnlyOnEntitiesChecker(final @NotNull MessagesContext context) {this.context = context;}
 
   @Override
-  protected boolean visitProjection(final @NotNull OpProjection<?, ?> projection) {
-    if (projection.flag() && projection.type().kind() != TypeKind.ENTITY)
-      context.addWarning("'delete' flag is only supported on entity projections, ignoring", projection.location());
-    return super.visitProjection(projection);
-  }
+  protected boolean visitEntityProjection(final @NotNull OpEntityProjection projection) {
+    for (final OpTagProjectionEntry tpe : projection.tagProjections().values()) {
+      OpModelProjection<?, ?, ?, ?> modelProjection = tpe.modelProjection();
+      if (modelProjection.flag())
+        context.addWarning("'delete' flag is not supported on tags, ignoring", modelProjection.location());
+    }
 
+    return super.visitEntityProjection(projection);
+  }
 }
