@@ -86,8 +86,8 @@ public final class EpigraphTestUtil {
     }
   }
 
-  public static @NotNull OpEntityProjection parseOpEntityProjection(
-      @NotNull DataType varDataType,
+  public static @NotNull OpProjection<?, ?> parseOpProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
@@ -109,8 +109,8 @@ public final class EpigraphTestUtil {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = new OpOutputProjectionsPsiParser(context).parseEntityProjection(
-          varDataType,
+      OpProjection<?, ?> vp = new OpOutputProjectionsPsiParser(context).parseProjection(
+          dataType,
           false,
           psiEntityProjection,
           resolver,
@@ -163,12 +163,12 @@ public final class EpigraphTestUtil {
     });
   }
 
-  public static @NotNull String printOpEntityProjection(@NotNull OpEntityProjection projection) {
+  public static @NotNull String printOpProjection(@NotNull OpProjection<?, ?> projection) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
-    ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> pctx = new
-        ProjectionsPrettyPrinterContext<OpEntityProjection, OpModelProjection<?, ?, ?, ?>>(
+    ProjectionsPrettyPrinterContext<OpProjection<?, ?>> pctx = new
+        ProjectionsPrettyPrinterContext<OpProjection<?, ?>>(
             ProjectionReferenceName.EMPTY,
             null
         ) {

@@ -31,6 +31,8 @@ abstract class OpProjectionGen[P <: OpProjection[_, _]](p: P) extends ObjectGen[
     ctx: ObjectGenContext): String = {
 
     val opName = p.referenceName()
+    val projectionRefs = p.`type`().kind().toString.toLowerCase + "ProjectionRefs"
+
     if (opName != null) {
       val opNameString = opName.toString
       val visitedKey = "projections.op." + opNameString
@@ -42,19 +44,19 @@ abstract class OpProjectionGen[P <: OpProjection[_, _]](p: P) extends ObjectGen[
         ctx.use("java.util.Map")
         ctx.use("java.util.HashMap")
 
-        if (ctx.addField(s"private static Map<String, $o> projectionRefs = new HashMap<>();"))
-          ctx.addStatic("projectionRefs = null;")
+        if (ctx.addField(s"private static Map<String, $o> $projectionRefs = new HashMap<>();"))
+          ctx.addStatic(s"$projectionRefs = null;")
         ctx.addMethod(
           /*@formatter:off*/sn"""\
 private static $o $methodName() {
-  $o ref = projectionRefs.get("$opNameString");
+  $o ref = $projectionRefs.get("$opNameString");
   if (ref != null && ref.isResolved()) return ref;
   if (ref == null) {
     ref = new $o(
       ${genTypeExpr(p.`type`(), ctx.gctx)},
       ${gen(p.location(), ctx)}
     );
-    projectionRefs.put("$opNameString", ref);
+    $projectionRefs.put("$opNameString", ref);
     $o value = ${sp(4, generateNonVisitedObject(o, ctx))};
     ref.resolve(${gen(opName, ctx)}, value);
   }

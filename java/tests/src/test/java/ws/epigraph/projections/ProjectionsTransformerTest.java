@@ -41,21 +41,21 @@ public class ProjectionsTransformerTest {
     String projection = ":`record` ( bestFriend $bf = :`record` ( id, bestFriend $bf ) )";
     String transformedProjection = ":`record` ( bestFriend $bf = :`record` ( bestFriend $bf ) )";
 
-    OpEntityProjection vp = EpigraphTestUtil.parseOpEntityProjection(
+    OpProjection<?, ?> vp = EpigraphTestUtil.parseOpProjection(
         (DataType) Person.type.dataType(),
         projection,
         StaticTypesResolver.instance()
     );
 
-    String s = EpigraphTestUtil.printOpEntityProjection(vp);
+    String s = EpigraphTestUtil.printOpProjection(vp);
     assertEquals(projection, s);
 
-    OpEntityProjection oPersonProjection = vp;
+    OpProjection<?, ?> oPersonProjection = vp;
 
     OpRecordModelProjection oPersonRecordProjection =
         (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
 
-    OpEntityProjection oBfProjection =
+    OpProjection<?, ?> oBfProjection =
         oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().projection();
 
     OpRecordModelProjection oBfRecordProjection =
@@ -86,7 +86,7 @@ public class ProjectionsTransformerTest {
     vp = tuple._1;
     OpProjectionTransformationMap transformationMap = tuple._2;
 
-    s = EpigraphTestUtil.printOpEntityProjection(vp);
+    s = EpigraphTestUtil.printOpProjection(vp);
     assertEquals(transformedProjection, s);
 
     // check transformation map

@@ -120,6 +120,7 @@
   .firstName.OutputStringProjection => .firstName.OutputFirstNameProjection
   ```
 - [ ] req projections: flag should be correctly applied to defaults. `(+bestFriend)` => `(+bestFriend:+id)`
+- [ ] references stuff is messy: resolution order, namespaces, normalized projections, transformations. Must be redesigned.
 
 # Operations
 

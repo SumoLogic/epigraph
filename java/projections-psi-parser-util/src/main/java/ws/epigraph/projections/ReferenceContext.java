@@ -85,15 +85,15 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    ProjectionReferenceName referenceName = projectionReferenceName(name);
     @Nullable final ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, type, location);
 
     if (ref == null) {
+      ProjectionReferenceName referenceName = projectionReferenceName(name);
       ReferenceContext.RefItem<EP> newRef = new IdRefItem<>(newEntityReference(type, referenceName, location));
       addReference(name, (RefItem<P>) newRef);
       return newRef.apply();
     } else if (ref.isResolved()) {
-      return ref.apply();
+      return ref.apply(); // todo may still cause an unresolved reference exception!
     } else {
       // postpone function call till resolved. TODO this approach doesn't work with projection
       // transformations, `ep` won't be updated if `ref.argument` is transformed/replaced
@@ -106,7 +106,7 @@ public abstract class ReferenceContext<
         ProjectionReferenceName lazyReferenceName = projectionReferenceName(lazyName);
         EP lazyEp = newEntityReference(type, lazyReferenceName, location);
         ref.argument().runOnResolved(
-            () -> lazyEp.resolve(referenceName, ref.apply())
+            () -> lazyEp.resolve(ref.argument().referenceName(), ref.apply())
         );
 
         ep = lazyEp;
@@ -126,17 +126,17 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    ProjectionReferenceName referenceName = projectionReferenceName(name);
     @Nullable final ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, type, location);
 
     if (ref == null) {
+      ProjectionReferenceName referenceName = projectionReferenceName(name);
       ReferenceContext.RefItem<MP> newRef =
           (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, referenceName, location));
 
       addReference(name, (RefItem<P>) newRef);
       return newRef.apply();
     } else if (ref.isResolved()) {
-      return ref.apply();
+      return ref.apply(); // todo may still cause an unresolved reference exception!
     } else {
       // postpone function call till resolved. TODO this approach doesn't work with projection
       // transformations, `mp` won't be updated if `ref.argument` is transformed/replaced
@@ -151,7 +151,7 @@ public abstract class ReferenceContext<
         addReference(lazyName, new IdRefItem<>((P) lazyMp));
 
         ref.argument().runOnResolved(
-            () -> ((GenProjectionReference<MP>) lazyMp).resolve(referenceName, ref.apply())
+            () -> ((GenProjectionReference<MP>) lazyMp).resolve(ref.argument().referenceName(), ref.apply())
         );
 
         mp = lazyMp;
@@ -166,9 +166,29 @@ public abstract class ReferenceContext<
   }
 
   public void addReference(@NotNull String name, @NotNull RefItem<P> refItem) {
-    if (references.containsKey(name))
-      throw new IllegalArgumentException("Can't replace reference '" + name + "'");
-    references.put(name, refItem);
+//    if (references.containsKey(name))
+//      throw new IllegalArgumentException("Can't replace reference '" + name + "'");
+
+    RefItem<P> prev = references.put(name, refItem);
+    if (prev != null) {
+      if (prev instanceof IdRefItem) {
+        IdRefItem<P> idRefItem = (IdRefItem<P>) prev;
+        P oldRef = idRefItem.argument();
+
+        if (oldRef.isResolved())
+          throw new IllegalArgumentException("Can't replace reference '" + name + "'");
+
+        // an (unresolved) reference to this name already exists, replace it but resolve it in the future
+        // so that all the usages get updated
+
+        refItem.argument().runOnResolvedWithRetry(() -> {
+          P resolved = refItem.apply();
+          ((GenProjectionReference<P>) oldRef).resolve(resolved.referenceName(), resolved);
+        });
+      } else {
+        throw new IllegalArgumentException("Can't replace reference '" + name + "'");
+      }
+    }
   }
 
   public boolean isResolved(@NotNull String name) {
@@ -248,7 +268,7 @@ public abstract class ReferenceContext<
       @NotNull P value,
       @NotNull TextLocation location) {
 
-    value.runOnResolved(() -> {
+    value.runOnResolved/*WithRetry*/(() -> {
       ProjectionReferenceName referenceName = projectionReferenceName(name);
       ProjectionReferenceName valueReferenceName = value.referenceName();
 
@@ -295,194 +315,6 @@ public abstract class ReferenceContext<
     });
   }
 
-//  public void resolveEntityRef(@NotNull String name, @NotNull EP value, @NotNull TextLocation location) {
-//    resolveEntityRef(name, value, true, location);
-//  }
-//
-//  private <R extends GenProjectionReference<R>> void resolveEntityRef(
-//      @NotNull String name,
-//      @NotNull EP value,
-//      boolean updateMRef,
-//      @NotNull TextLocation location) {
-//
-//    value.runOnResolved(() -> {
-//      ProjectionReferenceName referenceName = projectionReferenceName(name);
-//
-//      ProjectionReferenceName valueReferenceName = value.referenceName();
-//      if (valueReferenceName == null)
-//        value.setReferenceName(referenceName);
-//      // this is valid, e.g.
-//      // outputProjection $foo = $bar
-//      // 'name' is 'foo', 'referenceName' is 'some.foo', 'valueReferenceName' is 'some.bar'
-////      else if (!referenceName.equals(valueReferenceName))
-////        context.addError(
-////            String.format(
-////                "Internal error for entity projection '%s': reference inconsistency: '%s' != '%s'",
-////                name, referenceName, valueReferenceName
-////            ),
-////            location
-////        );
-//
-//      RefItem<EP> eitem = entityReferences.get(name);
-//      RefItem<MP> mitem = modelReferences.get(name);
-//
-//      EP eref = eitem == null ? null : eitem.apply();
-//      MP mref = mitem == null ? null : mitem.apply();
-//
-//      if (eref != null) {
-//        if (eref.isResolved()) {
-//          context.addError(
-//              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-//          );
-//        } else {
-//          if (eref.type().isAssignableFrom(value.type())) {
-//            EP _normalized = value.normalizedForType(eref.type());
-//            eitem.argument().resolve(referenceName, _normalized);
-//            resolvedAt.put(name, location);
-//
-//          } else {
-//            addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
-//          }
-//        }
-//      }
-//
-//      if (updateMRef && mref != null) {
-//        if (mref.isResolved()) {
-//          context.addError(
-//              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-//          );
-//        } else {
-//
-//          if (mref.type().isAssignableFrom(value.type())) { // type correct?
-//            EP _normalized = value.normalizedForType(mref.type());
-//            if (_normalized.type().kind() == TypeKind.ENTITY) // type still correct after normalization?
-//              throw new RuntimeException(
-//                  String.format("Broken isAssignableFrom between %s and %s", mref.type().name(), value.type().name())
-//              );
-//            else {
-//              ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) (fromSelfVar(_normalized)));
-//              resolvedAt.put(name, location);
-//            }
-//          } else
-//            addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
-//
-//        }
-//      }
-//
-//      if (eref == null && mref == null) {
-//        if (parent != null && parent.hasReference(name)) {
-//
-//          // a = c
-//          //    b = a
-//          //    a = 2         <-- prohibited
-//          // c = 1
-//
-//          context.addError(String.format("Can't override projection '%s' from parent context", name), location);
-//
-//        } else {
-//          // race?
-//          context.addError(String.format(
-//              "Projection '%s' entity reference not found (context: '%s')",
-//              name,
-//              referencesNamespace.toString()
-//          ), location);
-////          entityReferences.put(name, new IdRefItem<>(value));
-//        }
-//      }
-//    });
-//  }
-//
-//  public void resolveModelRef(@NotNull String name, @NotNull MP value, @NotNull TextLocation location) {
-//    resolveModelRef(name, value, true, location);
-//  }
-//
-//  private <R extends GenProjectionReference<R>> void resolveModelRef(
-//      @NotNull String name,
-//      @NotNull MP value,
-//      boolean updateERef,
-//      @NotNull TextLocation location) {
-//
-//    value.runOnResolved(() -> {
-//      ProjectionReferenceName referenceName = projectionReferenceName(name);
-//
-//      ProjectionReferenceName valueReferenceName = value.referenceName();
-//      if (valueReferenceName == null)
-//        value.setReferenceName(referenceName);
-//      // this is valid, e.g.
-//      // outputProjection $foo = $bar
-//      // 'name' is 'foo', 'referenceName' is 'some.foo', 'valueReferenceName' is 'some.bar'
-////      else if (!referenceName.equals(valueReferenceName))
-////        context.addError(
-////            String.format(
-////                "Internal error for model projection '%s': reference inconsistency: '%s' != '%s'",
-////                name, referenceName, valueReferenceName
-////            ),
-////            location
-////        );
-//
-//      RefItem<EP> eitem = entityReferences.get(name);
-//      RefItem<MP> mitem = modelReferences.get(name);
-//
-//      EP eref = eitem == null ? null : eitem.apply();
-//      MP mref = mitem == null ? null : mitem.apply();
-//
-//      if (mref != null) {
-//        if (mref.isResolved()) {
-//          context.addError(
-//              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-//          );
-//        } else {
-//          if (mref.type().isAssignableFrom(value.type())) {
-//            MP _normalized = (MP) value.normalizedForType(mref.type());
-//            ((GenProjectionReference<R>) mitem.argument()).resolve(referenceName, (R) _normalized);
-//            resolvedAt.put(name, location);
-//          } else {
-//            addIncompatibleProjectionTypeError(name, value.type(), mref.type(), location);
-//          }
-//        }
-//      }
-//
-//      if (updateERef && eref != null) {
-//        if (eref.isResolved()) {
-//          context.addError(
-//              String.format("Projection '%s' was already resolved at %s", name, resolvedAt.get(name)), location
-//          );
-//        } else {
-//
-//          if (eref.type().isAssignableFrom(value.type())) {
-//            EP evalue = toSelfVar(value);
-//            eitem.argument().resolve(referenceName, evalue);
-//            resolvedAt.put(name, location);
-//          } else
-//            addIncompatibleProjectionTypeError(name, value.type(), eref.type(), location);
-//
-//        }
-//      }
-//
-//      if (eref == null && mref == null) {
-//        if (parent != null && parent.hasReference(name)) {
-//
-//          // a = c
-//          //    b = a
-//          //    a = 2         <-- prohibited
-//          // c = 1
-//
-//          context.addError(String.format("Can't override projection '%s' from parent context", name), location);
-//
-//        } else {
-//          // race?
-//          context.addError(String.format(
-//              "Projection '%s' model reference not found (context: '%s')",
-//              name,
-//              referencesNamespace.toString()
-//          ), location);
-////          modelReferences.put(name, new IdRefItem<>(value));
-//        }
-//      }
-//    });
-//
-//  }
-
   public @NotNull ProjectionReferenceName projectionReferenceName(final @NotNull String name) {
     return referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name));
   }
@@ -510,8 +342,7 @@ public abstract class ReferenceContext<
     for (Map.Entry<String, RefItem<P>> entry : references.entrySet())
       allResolved &= ensureReferenceResolved(
           entry.getKey(),
-          entry.getValue(),
-          parent == null ? null : parent.references
+          entry.getValue()
       );
 
 //    if (parent != null)
@@ -522,8 +353,7 @@ public abstract class ReferenceContext<
 
   private boolean ensureReferenceResolved(
       @NotNull String name,
-      @NotNull ReferenceContext.RefItem<P> ref,
-      @Nullable Map<String, RefItem<P>> parentReferences) {
+      @NotNull ReferenceContext.RefItem<P> ref) {
 
     boolean allResolved = true;
 
@@ -535,17 +365,16 @@ public abstract class ReferenceContext<
       //   b = a
       // a = 1
 
-      if (parentReferences == null) {
+      if (parent == null) {
         allResolved = false;
         context.addError(
             String.format("Projection '%s' is not defined (context: '%s')", name, referencesNamespace),
             ref.location()
         );
       } else {
-        assert parent != null;
-        RefItem<P> parentRef = parentReferences.get(name);
+        RefItem<P> parentRef = parent.references.get(name);
         if (parentRef == null) {
-          parentReferences.put(name, ref);
+          parent.references.put(name, ref);
         } else if (parentRef != ref) {
           context.addError(
               String.format(

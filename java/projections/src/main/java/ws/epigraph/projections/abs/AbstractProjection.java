@@ -517,7 +517,9 @@ public abstract class AbstractProjection<
   @Override
   public String toString() {
     ProjectionReferenceName referenceName = referenceName();
-    return referenceName == null ? String.format("<unnamed '%s' projection>", type().name()) : referenceName.toString();
+    return referenceName == null
+           ? String.format("<unnamed '%s' projection>", type().name())
+           : String.format("%s : %s", referenceName.toString(), type().name());
   }
 
   private final class NormalizedCacheItem {

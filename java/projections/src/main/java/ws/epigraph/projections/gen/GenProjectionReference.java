@@ -56,6 +56,23 @@ public interface GenProjectionReference<R extends GenProjectionReference</*R*/?>
    */
   void runOnResolved(@NotNull Runnable callback);
 
+  /**
+   * Similar to {@link #runOnResolved(Runnable)}, but catches {@link UnresolvedReferenceException}
+   * and retries once it's target gets resolved
+   *
+   * @param callback callback to call when this reference is resolved. Must be idempotent as it may
+   *                 be run multiple times (throwing {@code UnresolvedReferenceException} in between)
+   */
+  default void runOnResolvedWithRetry(@NotNull Runnable callback) {
+    runOnResolved(() -> {
+      try {
+        callback.run();
+      } catch (UnresolvedReferenceException ure) {
+        ure.reference().runOnResolvedWithRetry(callback);
+      }
+    });
+  }
+
   @NotNull TypeApi type();
 
   @NotNull TextLocation location();
