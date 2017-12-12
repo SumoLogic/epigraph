@@ -47,13 +47,6 @@ abstract class ReqInputModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-//  override protected def reqVarProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputVarProjection")
-//
-//  override protected def reqModelProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.input.ReqInputModelProjection")
-
-  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
 
 object ReqInputModelProjectionGen {

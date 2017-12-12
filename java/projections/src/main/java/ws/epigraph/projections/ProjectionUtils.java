@@ -61,7 +61,7 @@ public final class ProjectionUtils {
       lastDataType = ((EntityTypeApi) type).dataType(null);
     }
 
-    while (true) {
+    while (!path.isPathEnd()) {
       final GenTagProjectionEntry<?, ?> tagProjection = path.singleTagProjection();
       if (tagProjection == null) break;
 

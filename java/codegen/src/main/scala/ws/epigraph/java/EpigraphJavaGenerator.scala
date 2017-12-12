@@ -300,13 +300,18 @@ class EpigraphJavaGenerator private(
     def runGenerator(generator: JavaGen)(scheduleGeneratorRun: JavaGen => Unit): Unit = {
       addDebugInfo(generator)
 
-      generator.children.foreach(scheduleGeneratorRun)
+      // children may be scheduled only after this generator was successfully executed
+      // otherwise, if it fails, some of the children may re-schedule it in the *current* run again,
+      // leading to a loop
+      //generator.children.foreach(scheduleGeneratorRun)
 
       try {
         runner.apply(generator)
+        generator.children.foreach(scheduleGeneratorRun)
       } catch {
         case tle: TryLaterException =>
-          val description = generator.description
+//          val description = generator.description
+          val description = describeGenerator(generator, showGensProducingSameFile = false)
           log.debug(s"Postponing '$description' because: ${ tle.getMessage }")
           generator.shouldRunStrategy.unmark()
           postponedGenerators.add(generator) // run generator on next iteration

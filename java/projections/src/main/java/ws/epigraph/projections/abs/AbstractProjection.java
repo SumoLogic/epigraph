@@ -28,6 +28,7 @@ import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.types.DatumTypeApi;
 import ws.epigraph.types.TypeApi;
+import ws.epigraph.util.Util;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -314,24 +315,55 @@ public abstract class AbstractProjection<
   public @NotNull SP merge(@NotNull TypeApi type, @NotNull List<SP> projections) {
     assert !projections.isEmpty();
 
-    projections = new ArrayList<>(new LinkedHashSet<>(projections)); // dedup
+    projections = Util.dedup(projections);
 
     if (projections.size() == 1) {
       return projections.get(0);
     } else {
       Optional<SP> unresolvedOpt = projections.stream().filter(p -> !p.isResolved()).findFirst();
       if (unresolvedOpt.isPresent()) {
+        List<ProjectionReferenceName> refNames =
+            projections.stream()
+                .map(p -> p.referenceName())
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        int numProjections = projections.size();
+
         String message = NormalizationContext.withContext(
             this::newNormalizationContext,
             context -> {
               SP origin = (SP) context.origin((P) unresolvedOpt.get());
 
+              int numUnnamed = numProjections - refNames.size();
+
+              // if refNames don't contain `origin`, then one of unnamed projections is created from origin
+              if (origin != null && !refNames.remove(origin.referenceName()))
+                numUnnamed--;
+
+              if (origin != null)
+                refNames.remove(origin.referenceName());
+
+              String named = refNames.isEmpty() ? "" : refNames.stream()
+                  .map(n -> Objects.requireNonNull(n.last()).toString())
+                  .collect(Collectors.joining("', '", "'", "'"));
+
+              String glue = named.isEmpty() || numUnnamed == 0 ? "" : " and ";
+              String suffix = numUnnamed > 1 ? "s" : "";
+
+              String unnamed = numUnnamed == 0 ? "" : (String.format("%d unnamed projection%s", numUnnamed, suffix));
+
               TextLocation loc = context.visited().entrySet().isEmpty() ? TextLocation.UNKNOWN :
                                  context.visited().entrySet().iterator().next().getValue().location();
 
               return String.format(
-                  "Can't merge recursive projection '%s' with other projection at %s",
-                  origin == null ? "<unknown>" : origin.referenceName(), loc
+                  "Can't merge recursive projection '%s' with %s%s%s at %s",
+                  origin == null ? "<unknown>" : origin.referenceName(),
+                  named,
+                  glue,
+                  unnamed,
+                  loc
               );
             }
         );
@@ -431,6 +463,9 @@ public abstract class AbstractProjection<
   @Override
   public void resolve(@Nullable ProjectionReferenceName name, @NotNull SP value) {
     preResolveCheck(value);
+
+//    if (this.name != null && name != null && !name.equals(this.name))
+//      throw new IllegalArgumentException("Can't resolve reference '" + this.name + "' from '" + name + "'");
 
     assert polymorphicTails == null || !polymorphicTails.isEmpty();
 

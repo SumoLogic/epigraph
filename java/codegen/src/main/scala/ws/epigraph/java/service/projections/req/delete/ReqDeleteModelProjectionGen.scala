@@ -47,13 +47,6 @@ abstract class ReqDeleteModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-//  override protected def reqVarProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteVarProjection")
-//
-//  override protected def reqModelProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.delete.ReqDeleteModelProjection")
-
-  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
 
 object ReqDeleteModelProjectionGen {

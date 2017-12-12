@@ -34,7 +34,7 @@ import java.util.function.Function;
 @SuppressWarnings({"unchecked", "MissortedModifiers"})
 public abstract class ReferenceContext<
     P extends GenProjection<?, ?, EP, ? extends MP>,
-    EP extends GenEntityProjection<?, ?, ?>,
+    EP extends GenEntityProjection<EP, ?, ?>,
     MP extends GenModelProjection<?, ?, ?, ?, ?>
     > {
 
@@ -85,14 +85,38 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, type, location);
+    ProjectionReferenceName referenceName = projectionReferenceName(name);
+    @Nullable final ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, type, location);
 
     if (ref == null) {
-      ref = new IdRefItem<>(newEntityReference(type, location));
-//      System.out.println("Allocated entity reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      addReference(name, (RefItem<P>) ref);
+      ReferenceContext.RefItem<EP> newRef = new IdRefItem<>(newEntityReference(type, referenceName, location));
+      addReference(name, (RefItem<P>) newRef);
+      return newRef.apply();
+    } else if (ref.isResolved()) {
       return ref.apply();
-    } else return ref.apply();
+    } else {
+      // postpone function call till resolved. TODO this approach doesn't work with projection
+      // transformations, `ep` won't be updated if `ref.argument` is transformed/replaced
+      String lazyName = name + "#";
+      final EP ep;
+
+      @Nullable RefItem<P> lazyRef = lookupReference(lazyName, true);
+
+      if (lazyRef == null) {
+        ProjectionReferenceName lazyReferenceName = projectionReferenceName(lazyName);
+        EP lazyEp = newEntityReference(type, lazyReferenceName, location);
+        ref.argument().runOnResolved(
+            () -> lazyEp.resolve(referenceName, ref.apply())
+        );
+
+        ep = lazyEp;
+      } else {
+        // todo even with this hack this should be recursive
+        ep = (EP) lazyRef.apply();
+      }
+
+      return ep;
+    }
   }
 
   @NotNull
@@ -102,18 +126,50 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, type, location);
+    ProjectionReferenceName referenceName = projectionReferenceName(name);
+    @Nullable final ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, type, location);
 
     if (ref == null) {
-      ref = (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, location));
-//      System.out.println("Allocated model reference "+referencesNamespace.append(new ProjectionReferenceName.StringRefNameSegment(name)));
-      addReference(name, (RefItem<P>) ref);
+      ReferenceContext.RefItem<MP> newRef =
+          (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, referenceName, location));
+
+      addReference(name, (RefItem<P>) newRef);
+      return newRef.apply();
+    } else if (ref.isResolved()) {
       return ref.apply();
-    } else return ref.apply();
+    } else {
+      // postpone function call till resolved. TODO this approach doesn't work with projection
+      // transformations, `mp` won't be updated if `ref.argument` is transformed/replaced
+      String lazyName = name + "#";
+      final MP mp;
+
+      RefItem<P> lazyRef = lookupReference(lazyName, true);
+
+      if (lazyRef == null) {
+        ProjectionReferenceName lazyReferenceName = projectionReferenceName(lazyName);
+        MP lazyMp = newModelReference(type, lazyReferenceName, location);
+        addReference(lazyName, new IdRefItem<>((P) lazyMp));
+
+        ref.argument().runOnResolved(
+            () -> ((GenProjectionReference<MP>) lazyMp).resolve(referenceName, ref.apply())
+        );
+
+        mp = lazyMp;
+      } else {
+        // todo even with this hack this should be recursive
+        mp = (MP) lazyRef.apply();
+      }
+
+      return mp;
+    }
 
   }
 
-  public void addReference(@NotNull String name, @NotNull RefItem<P> refItem) { references.put(name, refItem); }
+  public void addReference(@NotNull String name, @NotNull RefItem<P> refItem) {
+    if (references.containsKey(name))
+      throw new IllegalArgumentException("Can't replace reference '" + name + "'");
+    references.put(name, refItem);
+  }
 
   public boolean isResolved(@NotNull String name) {
     RefItem<P> refItem = lookupReference(name, true);
@@ -197,7 +253,7 @@ public abstract class ReferenceContext<
       ProjectionReferenceName valueReferenceName = value.referenceName();
 
       if (valueReferenceName == null)
-        value.setReferenceName(referencesNamespace);
+        value.setReferenceName(referenceName);
 
       RefItem<P> item = references.get(name);
       P ref = item == null ? null : item.apply();
@@ -508,13 +564,16 @@ public abstract class ReferenceContext<
   }
 
   @NotNull
-  protected MP newModelReference(@NotNull DatumTypeApi type, @NotNull TextLocation location)
+  private MP newModelReference(
+      @NotNull DatumTypeApi type,
+      @NotNull ProjectionReferenceName name,
+      @NotNull TextLocation location)
       throws PsiProcessingException {
     switch (type.kind()) {
 
       case RECORD:
         if (type instanceof RecordTypeApi)
-          return newRecordModelReference((RecordTypeApi) type, location);
+          return newRecordModelReference((RecordTypeApi) type, name, location);
         else throw new PsiProcessingException(String.format(
             "Can't create record model projection for type '%s'",
             type.name()
@@ -522,7 +581,7 @@ public abstract class ReferenceContext<
 
       case MAP:
         if (type instanceof MapTypeApi)
-          return newMapModelReference((MapTypeApi) type, location);
+          return newMapModelReference((MapTypeApi) type, name, location);
         else throw new PsiProcessingException(String.format(
             "Can't create map model projection for type '%s'",
             type.name()
@@ -530,7 +589,7 @@ public abstract class ReferenceContext<
 
       case LIST:
         if (type instanceof ListTypeApi)
-          return newListModelReference((ListTypeApi) type, location);
+          return newListModelReference((ListTypeApi) type, name, location);
         else throw new PsiProcessingException(String.format(
             "Can't create list model projection for type '%s'",
             type.name()
@@ -538,7 +597,7 @@ public abstract class ReferenceContext<
 
       case PRIMITIVE:
         if (type instanceof PrimitiveTypeApi)
-          return newPrimitiveModelReference((PrimitiveTypeApi) type, location);
+          return newPrimitiveModelReference((PrimitiveTypeApi) type, name, location);
         else throw new PsiProcessingException(String.format(
             "Can't create primitive model projection for type '%s'",
             type.name()
@@ -553,15 +612,30 @@ public abstract class ReferenceContext<
   }
 
   @NotNull
-  protected abstract EP newEntityReference(@NotNull TypeApi type, @NotNull TextLocation location);
+  protected abstract EP newEntityReference(
+      @NotNull TypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location);
 
-  protected abstract MP newRecordModelReference(@NotNull RecordTypeApi type, @NotNull TextLocation location);
+  protected abstract MP newRecordModelReference(
+      @NotNull RecordTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location);
 
-  protected abstract MP newMapModelReference(@NotNull MapTypeApi type, @NotNull TextLocation location);
+  protected abstract MP newMapModelReference(
+      @NotNull MapTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location);
 
-  protected abstract MP newListModelReference(@NotNull ListTypeApi type, @NotNull TextLocation location);
+  protected abstract MP newListModelReference(
+      @NotNull ListTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location);
 
-  protected abstract MP newPrimitiveModelReference(@NotNull PrimitiveTypeApi type, @NotNull TextLocation location);
+  protected abstract MP newPrimitiveModelReference(
+      @NotNull PrimitiveTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location);
 
   /**
    * Updates references using a transformation map obtained

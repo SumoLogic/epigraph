@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import ws.epigraph.lang.Qn;
 import ws.epigraph.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ws.epigraph.util.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,9 +98,7 @@ public class ImportAwareTypesResolver implements TypesResolver {
     }
 
     if (deduplicate) {
-      LinkedHashSet<Qn> dedup = new LinkedHashSet<>(prefixes);
-      prefixes.clear();
-      prefixes.addAll(dedup);
+      prefixes = Util.dedup(prefixes);
     }
 
     return prefixes;

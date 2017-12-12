@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.ObjectGenContext
 import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
-import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.OpMapModelProjection
 import ws.epigraph.types.TypeApi
 
@@ -28,9 +28,9 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpMapModelProjectionGen(p: OpMapModelProjection) extends ObjectGen[OpMapModelProjection](p) {
+class OpMapModelProjectionGen(p: OpMapModelProjection) extends OpProjectionGen[OpMapModelProjection](p) {
 
-  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+  override protected def generateNonVisitedObject(o: String, ctx: ObjectGenContext): String = {
 //    ctx.use(classOf[MapType].getName)
 
     /*@formatter:off*/sn"""\

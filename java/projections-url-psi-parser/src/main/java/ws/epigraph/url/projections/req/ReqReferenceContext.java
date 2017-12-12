@@ -19,7 +19,6 @@ package ws.epigraph.url.projections.req;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.ProjectionUtils;
 import ws.epigraph.projections.ReferenceContext;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.req.*;
@@ -30,69 +29,74 @@ import ws.epigraph.types.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqReferenceContext
-    extends ReferenceContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
+    extends ReferenceContext<ReqProjection<?, ?>, ReqEntityProjection, ReqModelProjection<?, ?, ?>> {
 
   public ReqReferenceContext(
       final @NotNull ProjectionReferenceName referencesNamespace,
-      final @Nullable ReferenceContext<ReqEntityProjection, ReqModelProjection<?, ?, ?>> parent,
+      final @Nullable ReferenceContext<ReqProjection<?, ?>, ReqEntityProjection, ReqModelProjection<?, ?, ?>> parent,
       final @NotNull PsiProcessingContext context) {
+
     super(referencesNamespace, parent, context);
   }
 
   @Override
   protected @NotNull ReqEntityProjection newEntityReference(
-      final @NotNull TypeApi type,
-      final @NotNull TextLocation location) {
+      @NotNull TypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
 
-    return new ReqEntityProjection(type, location);
+    ReqEntityProjection projection = new ReqEntityProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected ReqModelProjection<?, ?, ?> newRecordModelReference(
-      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
-    return new ReqRecordModelProjection(type, location);
+      @NotNull RecordTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    ReqRecordModelProjection projection = new ReqRecordModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected ReqModelProjection<?, ?, ?> newMapModelReference(
-      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
-    return new ReqMapModelProjection(type, location);
+      @NotNull MapTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    ReqMapModelProjection projection = new ReqMapModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected ReqModelProjection<?, ?, ?> newListModelReference(
-      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
-    return new ReqListModelProjection(type, location);
+      @NotNull ListTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    ReqListModelProjection projection = new ReqListModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected ReqModelProjection<?, ?, ?> newPrimitiveModelReference(
-      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
-    return new ReqPrimitiveModelProjection(type, location);
+      @NotNull PrimitiveTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    ReqPrimitiveModelProjection projection = new ReqPrimitiveModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
-  @Override
-  protected @NotNull ReqEntityProjection toSelfVar(final @NotNull ReqModelProjection<?, ?, ?> mRef) {
-    assert mRef.isResolved();
-    ReqEntityProjection ep = (ReqEntityProjection) mRef.entityProjection();
-    if (ep == null) {
-      final DatumTypeApi modelType = mRef.type();
-      return new ReqEntityProjection(
-          modelType,
-          mRef.flag(),
-          ProjectionUtils.singletonLinkedHashMap(
-              modelType.self().name(),
-              new ReqTagProjectionEntry(
-                  modelType.self(),
-                  mRef,
-                  TextLocation.UNKNOWN
-              )
-          ),
-          false,
-          null,
-          TextLocation.UNKNOWN
-      );
-    } else
-      return ep;
-  }
 }

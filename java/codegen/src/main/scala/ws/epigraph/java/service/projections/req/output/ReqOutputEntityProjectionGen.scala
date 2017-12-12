@@ -113,7 +113,7 @@ class ReqOutputEntityProjectionGen(
 object ReqOutputEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpEntityProjection,
+    op: OpProjection[_, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqOutputTypeProjectionGen],
@@ -128,7 +128,7 @@ object ReqOutputEntityProjectionGen {
         case TypeKind.ENTITY =>
           new ReqOutputEntityProjectionGen(
             baseNamespaceProvider,
-            op,
+            op.asEntityProjection(),
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqOutputEntityProjectionGen]),
@@ -137,7 +137,7 @@ object ReqOutputEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.asModelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqOutputModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,

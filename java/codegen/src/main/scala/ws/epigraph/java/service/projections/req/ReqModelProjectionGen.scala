@@ -38,13 +38,10 @@ trait ReqModelProjectionGen extends ReqTypeProjectionGen {
 
   override protected val cType: CDatumType = JavaGenUtils.toCType(op.`type`())
 
-  protected def reqVarProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqEntityProjection")
+  protected def reqProjectionFqn: Qn =
+    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqProjection")
 
-  protected def reqModelProjectionFqn: Qn =
-    Qn.fromDotSeparated("ws.epigraph.projections.req.ReqModelProjection")
-
-  protected def reqModelProjectionParams: String
+  protected val reqProjectionParams: String = "<?, ?>"
 
   protected def metaGenerator(metaOp: OpMetaProjectionType): ReqModelProjectionGen =
     throw new RuntimeException("meta projections not supported")

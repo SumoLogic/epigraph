@@ -153,7 +153,7 @@ trait ReqEntityProjectionGen extends ReqTypeProjectionGen {
    */
   public @Nullable ${tagGenerator.shortClassName} ${tagMethodName(tag.name)}() {
     ${reqTagProjectionEntryFqn.last()} tpe = raw.tagProjections().get(${ttr(cType, tag.name, namespace.toString)}.name());
-    return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.projection());
+    return tpe == null ? null : new ${tagGenerator.shortClassName}(tpe.modelProjection());
   }
 """/*@formatter:on*/ ,
       Set(

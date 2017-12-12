@@ -38,13 +38,6 @@ abstract class ReqPathModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
 
-//  override protected def reqVarProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqVarPath")
-//
-//  override protected def reqModelProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.path.ReqModelPath")
-
-  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
 }
 
 object ReqPathModelProjectionGen {

@@ -39,32 +39,61 @@ public class OpReferenceContext
 
   @Override
   protected @NotNull OpEntityProjection newEntityReference(
-      final @NotNull TypeApi type,
-      final @NotNull TextLocation location) {
-    return new OpEntityProjection(type, location);
+      @NotNull TypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    OpEntityProjection projection = new OpEntityProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected OpModelProjection<?, ?, ?, ?> newRecordModelReference(
-      final @NotNull RecordTypeApi type, final @NotNull TextLocation location) {
-    return new OpRecordModelProjection(type, location);
+      @NotNull RecordTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    OpRecordModelProjection projection = new OpRecordModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected OpModelProjection<?, ?, ?, ?> newMapModelReference(
-      final @NotNull MapTypeApi type, final @NotNull TextLocation location) {
-    return new OpMapModelProjection(type, location);
+      @NotNull MapTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    OpMapModelProjection projection = new OpMapModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected OpModelProjection<?, ?, ?, ?> newListModelReference(
-      final @NotNull ListTypeApi type, final @NotNull TextLocation location) {
-    return new OpListModelProjection(type, location);
+      @NotNull ListTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    OpListModelProjection projection = new OpListModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 
   @Override
   protected OpModelProjection<?, ?, ?, ?> newPrimitiveModelReference(
-      final @NotNull PrimitiveTypeApi type, final @NotNull TextLocation location) {
-    return new OpPrimitiveModelProjection(type, location);
+      @NotNull PrimitiveTypeApi type,
+      @Nullable ProjectionReferenceName name,
+      @NotNull TextLocation location) {
+
+    OpPrimitiveModelProjection projection = new OpPrimitiveModelProjection(type, location);
+    if (name != null)
+      projection.setReferenceName(name);
+    return projection;
   }
 }

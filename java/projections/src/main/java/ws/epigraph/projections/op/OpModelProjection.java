@@ -25,7 +25,8 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.NormalizationContext;
 import ws.epigraph.projections.abs.AbstractModelProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.types.*;
+import ws.epigraph.types.DatumTypeApi;
+import ws.epigraph.types.TypeApi;
 
 import java.util.List;
 import java.util.Objects;

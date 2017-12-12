@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.ObjectGenContext
 import ws.epigraph.java.ObjectGenUtils.{genFieldExpr, genLinkedMap, genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
-import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.{OpFieldProjectionEntry, OpRecordModelProjection}
 import ws.epigraph.types.{RecordTypeApi, TypeApi}
 
@@ -29,9 +29,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class OpRecordModelProjectionGen(p: OpRecordModelProjection)
-  extends ObjectGen[OpRecordModelProjection](p) {
+  extends OpProjectionGen[OpRecordModelProjection](p) {
 
-  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+  override protected def generateNonVisitedObject(o: String, ctx: ObjectGenContext): String = {
 //    ctx.use(classOf[RecordType].getName)
     val fpe = ctx.use(classOf[OpFieldProjectionEntry].getName)
 

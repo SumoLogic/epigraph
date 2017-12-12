@@ -48,14 +48,6 @@ abstract class ReqUpdateModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-//  override protected def reqVarProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateVarProjection")
-//
-//  override protected def reqModelProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.update.ReqUpdateModelProjection")
-
-  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
-
   override protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if model must be replaced (updated), and {@code false} if it must be patched

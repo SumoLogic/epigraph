@@ -36,11 +36,11 @@ public final class ProjectionDataTrimmer {
 
   public ProjectionDataTrimmer() {}
 
-  public @NotNull Data trimData(@NotNull Data data, @NotNull ReqEntityProjection projection) {
+  public @NotNull Data trimData(@NotNull Data data, @NotNull ReqProjection<?, ?> projection) {
     final @NotNull Data.Raw raw = data._raw();
     final @NotNull Data.Builder.Raw b = data.type().createDataBuilder()._raw();
 
-    ReqEntityProjection normalizedProjection = projection.normalizedForType(data.type());
+    ReqProjection<?, ?> normalizedProjection = projection.normalizedForType(data.type());
 
     for (Map.Entry<String, ReqTagProjectionEntry> entry : normalizedProjection.tagProjections().entrySet()) {
       final String tagName = entry.getKey();

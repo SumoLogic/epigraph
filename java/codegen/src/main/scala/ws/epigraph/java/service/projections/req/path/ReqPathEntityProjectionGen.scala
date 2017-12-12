@@ -36,13 +36,15 @@ class ReqPathEntityProjectionGen(
   override type OpProjectionType = OpEntityProjection
   override type OpTagProjectionEntryType = OpTagProjectionEntry
 
-  override val shortClassName: String = s"$classNamePrefix${ln(cType)}$classNameSuffix"
+  override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
   override protected def tailGenerator(
     op: OpEntityProjection,
     normalized: Boolean): ReqProjectionGen = throw new RuntimeException("paths have no tails")
 
-  override protected def tagGenerator(pgo: Option[ReqEntityProjectionGen], tpe: OpTagProjectionEntry): ReqPathProjectionGen =
+  override protected def tagGenerator(
+    pgo: Option[ReqEntityProjectionGen],
+    tpe: OpTagProjectionEntry): ReqPathProjectionGen =
     ReqPathModelProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       tpe.modelProjection(),
@@ -59,17 +61,16 @@ class ReqPathEntityProjectionGen(
 object ReqPathEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpEntityProjection,
+    op: OpProjection[_, _],
     namespaceSuffix: Qn,
     ctx: GenContext): ReqPathTypeProjectionGen = op.`type`().kind() match {
 
     case TypeKind.ENTITY =>
-      new ReqPathEntityProjectionGen(baseNamespaceProvider, op, namespaceSuffix, ctx)
-
+      new ReqPathEntityProjectionGen(baseNamespaceProvider, op.asEntityProjection(), namespaceSuffix, ctx)
 
     case _ =>
       val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-        op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+        op.asModelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
       ReqPathModelProjectionGen.dataProjectionGen(
         baseNamespaceProvider,

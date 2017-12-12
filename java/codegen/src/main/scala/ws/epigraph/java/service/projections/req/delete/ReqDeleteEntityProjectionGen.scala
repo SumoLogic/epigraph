@@ -102,7 +102,7 @@ class ReqDeleteEntityProjectionGen(
 object ReqDeleteEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpEntityProjection,
+    op: OpProjection[_, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqDeleteTypeProjectionGen],
@@ -117,7 +117,7 @@ object ReqDeleteEntityProjectionGen {
         case TypeKind.ENTITY =>
           new ReqDeleteEntityProjectionGen(
             baseNamespaceProvider,
-            op,
+            op.asEntityProjection(),
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqDeleteEntityProjectionGen]),
@@ -126,7 +126,7 @@ object ReqDeleteEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.asModelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqDeleteModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,

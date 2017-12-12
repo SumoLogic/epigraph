@@ -16,14 +16,14 @@
 
 package ws.epigraph.java.service.projections.req
 
-import ws.epigraph.compiler.CType
+import ws.epigraph.compiler.{CType, CTypeKind}
 import ws.epigraph.java.JavaGenNames._
 import ws.epigraph.java.{JavaGenUtils, ShouldRunStrategy, TryLaterException}
 import ws.epigraph.java.service.projections.ProjectionGenUtil
 import ws.epigraph.lang.Qn
 import ws.epigraph.projections.gen.{GenProjectionReference, ProjectionReferenceName}
 import ws.epigraph.schema.Namespaces
-import ws.epigraph.types.TypeApi
+import ws.epigraph.types.{TypeApi, TypeKind}
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -92,4 +92,10 @@ object ReqTypeProjectionGen {
   def tailMethodPrefix(normalized: Boolean): String = if (normalized) "normalizedFor_" else ""
 
   def tailMethodSuffix(normalized: Boolean): String = if (normalized) "" else "Tail"
+
+  def castProjection(isEntity: Boolean): String = s"as${ if (isEntity) "Entity" else "Model" }Projection()"
+
+  def castProjection(kind: TypeKind): String = castProjection(kind == TypeKind.ENTITY)
+
+  def castProjection(kind: CTypeKind): String = castProjection(kind == CTypeKind.ENTITY)
 }

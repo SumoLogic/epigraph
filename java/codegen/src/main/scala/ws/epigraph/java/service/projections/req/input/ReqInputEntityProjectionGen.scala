@@ -57,6 +57,7 @@ class ReqInputEntityProjectionGen(
         ctx
       )
     }
+
   override val shortClassName: String = genShortClassName(classNamePrefix, classNameSuffix)
 
   override protected def tailGenerator(op: OpEntityProjection, normalized: Boolean): ReqInputEntityProjectionGen =
@@ -100,7 +101,7 @@ class ReqInputEntityProjectionGen(
 object ReqInputEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpEntityProjection,
+    op: OpProjection[_, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqInputTypeProjectionGen],
@@ -115,7 +116,7 @@ object ReqInputEntityProjectionGen {
         case TypeKind.ENTITY =>
           new ReqInputEntityProjectionGen(
             baseNamespaceProvider,
-            op,
+            op.asEntityProjection(),
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqInputEntityProjectionGen]),
@@ -124,7 +125,7 @@ object ReqInputEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.asModelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqInputModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,

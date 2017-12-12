@@ -39,7 +39,7 @@ class ReqOutputFieldProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ up(fieldName) }Field$classNameSuffix"
 
-  override lazy val dataProjectionGen: ReqOutputProjectionGen =
+  override lazy val dataProjectionGen: ReqOutputTypeProjectionGen =
     ReqOutputEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.projection(),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2017 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -118,5 +114,21 @@ public interface Util {
     }
 
     return res;
+  }
+
+  static <T> List<T> dedup(@NotNull List<T> l) {
+    if (l.size() < 2) return l;
+
+    List<T> r = new ArrayList<>(l.size());
+    Set<T> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    for (final T t : l) {
+      if (!visited.contains(t)) {
+        visited.add(t);
+        r.add(t);
+      }
+    }
+
+    return r;
   }
 }

@@ -110,34 +110,39 @@ public final class OpBasicProjectionPsiParser {
 
       TypeApi type = dataType.type();
 
-      ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
-          referenceContext = rootProjection == null
-                             ? context.referenceContext()                  // not tail: usual context
-                             : context.referenceContext().parentOrThis();  // tail: global context
-
-      OpProjection<?, ?> reference =
-          referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
-//      final OpEntityProjection reference = referenceContext
-//          .entityReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
-
-      final OpProjection<?, ?> value = parseUnnamedOrRefProjection(
-          dataType,
-          flagged,
-          unnamedOrRefEntityProjectionPsi,
-          rootProjection,
-          typesResolver,
-          context
-      );
 
       if (rootProjection == null) {
-        referenceContext.resolveRef(
-            projectionName,
-            value,
-            EpigraphPsiUtil.getLocation(unnamedOrRefEntityProjectionPsi)
+        ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+            referenceContext = context.referenceContext();
+
+        // register a reference first to catch recursive cases
+        OpProjection<?, ?> reference =
+            referenceContext.reference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+        final OpProjection<?, ?> value = parseUnnamedOrRefProjection(
+            dataType,
+            flagged,
+            unnamedOrRefEntityProjectionPsi,
+            null,
+            typesResolver,
+            context
         );
+
+        try {
+          referenceContext.resolveRef(
+              projectionName,
+              value,
+              EpigraphPsiUtil.getLocation(unnamedOrRefEntityProjectionPsi)
+          );
+        } catch (RuntimeException e) {
+          context.addError(e.getMessage(), psi);
+        }
 
         return reference;
       } else {
+        ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+            parentReferenceContext = context.referenceContext().parentOrThis();
+
         // special case:
         // someProjection = ( ... ) :~ SubType $subProjection = ( ... )
         // must result in `subProjection` created in the same namespace as `someProjection`
@@ -146,10 +151,10 @@ public final class OpBasicProjectionPsiParser {
 
         // `reference` belongs to parent context and will contain normalized tail
 
-        ProjectionReferenceName referenceName = referenceContext.projectionReferenceName(projectionName);
+        ProjectionReferenceName referenceName = parentReferenceContext.projectionReferenceName(projectionName);
         rootProjection.setNormalizedTailReferenceName(type, referenceName);
         // add parent reference that will call `normalizedForType` when dereferenced
-        referenceContext.addReference(
+        parentReferenceContext.addReference(
             projectionName,
             new ReferenceContext.RefItem<>(
                 rootProjection,
@@ -158,7 +163,14 @@ public final class OpBasicProjectionPsiParser {
             )
         );
 
-        return value; // return non-normalized tail
+        return parseUnnamedOrRefProjection(
+            dataType,
+            flagged,
+            unnamedOrRefEntityProjectionPsi,
+            rootProjection,
+            typesResolver,
+            context
+        );
       }
     }
   }
@@ -198,7 +210,8 @@ public final class OpBasicProjectionPsiParser {
 
       final String projectionName = refNamePsi.getCanonicalName();
 
-      return context.referenceContext().reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(refNamePsi));
+      return context.referenceContext()
+          .reference(dataType.type(), projectionName, true, EpigraphPsiUtil.getLocation(refNamePsi));
     }
   }
 
@@ -642,33 +655,39 @@ public final class OpBasicProjectionPsiParser {
             context.messages()
         );
 
-      ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
-          referenceContext = rootProjection == null
-                             ? context.referenceContext()                  // not tail: usual context
-                             : context.referenceContext().parentOrThis();  // tail: global context
-
-      final MP reference = (MP) referenceContext
-          .modelReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
-
-      final MP value = parseUnnamedOrRefModelProjection(
-          modelClass,
-          type,
-          flagged,
-          unnamedOrRefModelProjectionPsi,
-          rootProjection,
-          typesResolver,
-          context
-      );
-
       if (rootProjection == null) {
-        referenceContext.resolveRef(
-            projectionName,
-            value,
-            EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+        ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+            referenceContext = context.referenceContext();
+
+        // register a reference first to catch recursive cases
+        final MP reference =
+            (MP) referenceContext .modelReference(type, projectionName, false, EpigraphPsiUtil.getLocation(psi));
+
+        final MP value = parseUnnamedOrRefModelProjection(
+            modelClass,
+            type,
+            flagged,
+            unnamedOrRefModelProjectionPsi,
+            null,
+            typesResolver,
+            context
         );
+
+        try {
+          referenceContext.resolveRef(
+              projectionName,
+              value,
+              EpigraphPsiUtil.getLocation(unnamedOrRefModelProjectionPsi)
+          );
+        } catch (RuntimeException e) {
+          context.addError(e.getMessage(), psi);
+        }
 
         return reference;
       } else {
+        ReferenceContext<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>>
+            parentReferenceContext = context.referenceContext().parentOrThis();
+
         // special case:
         // someProjection = ( ... ) :~ SubType $subProjection = ( ... )
         // must result in `subProjection` created in the same namespace as `someProjection`
@@ -677,11 +696,11 @@ public final class OpBasicProjectionPsiParser {
 
         // `reference` belongs to parent context and will contain normalized tail
 
-        ProjectionReferenceName referenceName = referenceContext.projectionReferenceName(projectionName);
+        ProjectionReferenceName referenceName = parentReferenceContext.projectionReferenceName(projectionName);
 
         rootProjection.setNormalizedTailReferenceName(type, referenceName);
         // add parent reference that will call `normalizedForType` when dereferenced
-        referenceContext.addReference(
+        parentReferenceContext.addReference(
             projectionName,
             new ReferenceContext.RefItem<>(
                 rootProjection,
@@ -690,7 +709,15 @@ public final class OpBasicProjectionPsiParser {
             )
         );
 
-        return value; // return non-normalized tail
+        return parseUnnamedOrRefModelProjection(
+            modelClass,
+            type,
+            flagged,
+            unnamedOrRefModelProjectionPsi,
+            rootProjection,
+            typesResolver,
+            context
+        );
       }
 
     }
@@ -1090,9 +1117,8 @@ public final class OpBasicProjectionPsiParser {
               valueType.name()
           ), locationPsi, context);
 
-        final OpEntityProjection valueEntityProjection = createDefaultEntityProjection(
-            valueType.type(),
-            defaultValuesTag,
+        final OpProjection<?, ?> valueEntityProjection = createDefaultProjection(
+            valueType,
             locationPsi,
             context
         );
@@ -1121,9 +1147,8 @@ public final class OpBasicProjectionPsiParser {
               elementType.name()
           ), locationPsi, context);
 
-        final OpEntityProjection itemEntityProjection = createDefaultEntityProjection(
-            elementType.type(),
-            defaultElementsTag,
+        final OpProjection<?, ?> itemEntityProjection = createDefaultProjection(
+            elementType,
             locationPsi,
             context
         );

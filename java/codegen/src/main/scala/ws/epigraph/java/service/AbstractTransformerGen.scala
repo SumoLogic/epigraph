@@ -67,7 +67,7 @@ class AbstractTransformerGen(td: TransformerDeclaration, baseNamespace: Qn, val 
     val shortType = sctx.use(lqn2(cType, namespace.toString))
 
     val inputArg = if (cType.kind == CTypeKind.ENTITY) s"($shortType)input" else s"(($shortDataType)input).get()"
-    val outputProjectionArg = if (cType.kind == CTypeKind.ENTITY) "outputProjection" else "outputProjection.singleTagProjection().projection()"
+    val outputProjectionArg = if (cType.kind == CTypeKind.ENTITY) "outputProjection" else "outputProjection.singleTagProjection().modelProjection()"
     val thenFunc = if (cType.kind == CTypeKind.ENTITY) s"$ires::success" else s"d -> $ires.success($shortType.type.createDataBuilder().set(d))"
 
     def generateBatching(sctx: ObjectGenContext): String = {

@@ -27,13 +27,12 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqPrimitiveModelProjectionGen extends ReqModelProjectionGen {
-  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenPrimitiveModelProjection[_, _, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenPrimitiveModelProjection[_, _, _, _, _ <: DatumTypeApi]
 
   protected def generate(reqPrimitiveModelProjectionFqn: Qn, extra: CodeChunk = CodeChunk.empty): String = {
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
-      reqVarProjectionFqn.toString,
-      reqModelProjectionFqn.toString,
+      reqProjectionFqn.toString,
       reqPrimitiveModelProjectionFqn.toString
     ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
@@ -48,12 +47,8 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName $extendsClause{
 ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqPrimitiveModelProjectionFqn.last()} raw;\n" else ""}\
 
-  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqProjectionFqn.last()}$reqProjectionParams raw) {
     ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqPrimitiveModelProjectionFqn.last()}) raw" else "super(raw)"};
-  }
-
-  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
-    this(selfVar.singleTagProjection().projection());
   }\
 \s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqPrimitiveModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\

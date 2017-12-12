@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.ObjectGenContext
 import ws.epigraph.java.ObjectGenUtils._
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
-import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.{OpEntityProjection, OpTagProjectionEntry}
 import ws.epigraph.types.TypeApi
 
@@ -28,57 +28,9 @@ import scala.collection.JavaConversions._
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-class OpEntityProjectionGen(p: OpEntityProjection) extends ObjectGen[OpEntityProjection](p) {
+class OpEntityProjectionGen(p: OpEntityProjection) extends OpProjectionGen[OpEntityProjection](p) {
 
-  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
-
-    val opName = p.referenceName()
-    if (opName != null) {
-      val opNameString = p.referenceName().toString
-
-      val visitedKey = "projections.op.output.output." + opNameString
-      val methodName = "constructEntityProjectionFor$" + opNameString.replace(".", "_")
-
-      if (!ctx.visited(visitedKey)) {
-
-        ctx.addVisited(visitedKey)
-        ctx.use("java.util.Map")
-        ctx.use("java.util.HashMap")
-
-        if (ctx.addField(s"private static Map<String, $o> outputProjectionRefs = new HashMap<>();"))
-          ctx.addStatic("outputProjectionRefs = null;")
-        ctx.addMethod(
-          /*@formatter:off*/sn"""\
-private static $o $methodName() {
-  $o ref = outputProjectionRefs.get("$opNameString");
-  if (ref != null && ref.isResolved()) return ref;
-  if (ref == null) {
-    ref = new $o(
-      ${genTypeExpr(p.`type`(), ctx.gctx)},
-      ${gen(p.location(), ctx)}
-    );
-    outputProjectionRefs.put("$opNameString", ref);
-    $o value = new $o(
-      ${genTypeExpr(p.`type`(), ctx.gctx)},
-      ${p.flag().toString},
-      ${i(genLinkedMap("String", "OpTagProjectionEntry", p.tagProjections().entrySet().toList.map{ e =>
-        (normalizeTagName(e.getKey, ctx), genTagProjectionEntry(p.`type`(), e.getValue, ctx))}, ctx))},
-      ${p.parenthesized().toString},
-      ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
-      ${gen(p.location(), ctx)}
-    );
-    ref.resolve(${gen(opName, ctx)}, value);
-  }
-  return ref;
-}"""/*@formatter:on*/
-        )
-
-      }
-
-      s"$methodName()"
-
-    } else {
-
+  override protected def generateNonVisitedObject(o: String, ctx: ObjectGenContext): String = {
       /*@formatter:off*/sn"""\
 new $o(
   ${genTypeExpr(p.`type`(), ctx.gctx)},
@@ -89,8 +41,6 @@ new $o(
   ${i(if (p.polymorphicTails() == null) "null" else genList(p.polymorphicTails().map(gen(_, ctx)),ctx))},
   ${gen(p.location(), ctx)}
 )"""/*@formatter:on*/
-
-    }
 
   }
 

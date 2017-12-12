@@ -49,14 +49,6 @@ abstract class ReqOutputModelProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${ ln(cType) }$classNameSuffix"
 
-//  override protected def reqVarProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputVarProjection")
-//
-//  override protected def reqModelProjectionFqn: Qn =
-//    Qn.fromDotSeparated("ws.epigraph.projections.req.output.ReqOutputModelProjection")
-
-  override protected def reqModelProjectionParams: String = "<?, ?, ?>"
-
   override protected lazy val flag: CodeChunk = CodeChunk(/*@formatter:off*/sn"""\
   /**
    * @return {@code true} if model is required

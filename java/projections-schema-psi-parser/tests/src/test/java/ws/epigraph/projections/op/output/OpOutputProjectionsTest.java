@@ -679,6 +679,33 @@ public class OpOutputProjectionsTest {
   }
 
   @Test
+  public void testNormalizedRecursiveTailInSelf() {
+    testParsingProjection(
+        ":`record` ( worstUser $tt ) ~ws.epigraph.tests.UserRecord $tt = ( id, worstUser $tt )",
+        ":`record` ( worstUser $tt = ( id, worstUser $tt ) ) ~ws.epigraph.tests.UserRecord ( id, worstUser $tt )"
+    );
+
+    // how this example works:
+
+    // tails are parsed first
+    // a reference `ref` for $tt is created (in the root context)
+    // (id, we $tt) projection is parsed, `ref` is used to unwind recursion
+    // parent.onResolved -> ref.resolve(parent.normalizedForType(UserRecord)) ??? | has to happen late? when?
+
+    // result can be transformed! if `parent` is replaced by `parent2` during transformation, then
+    // ref must be re-resolved to become `parent2 ~ UserRecord` !
+
+    // see ReferenceContext::entityReference/modelReference
+
+    testModelTailsNormalization(
+        ":`record` ( worstUser $tt ) ~ws.epigraph.tests.UserRecord $tt = ( id, worstUser $tt )",
+        UserRecord.type,
+        "$tt = ( id, worstUser $tt )"
+    );
+
+  }
+
+  @Test
   public void testListTailsNormalization() {
     testTailsNormalization(
         ":`record`(friends*(:id)):~ws.epigraph.tests.User :`record`(friends*(:`record`(id)))",
@@ -734,7 +761,7 @@ public class OpOutputProjectionsTest {
         testConfig,
         ":id :~ws.epigraph.tests.User $user = :`record` ( id, bestFriend4 $user )",
         // should we preserve original label for some reason?
-        ":id :~ws.epigraph.tests.User :`record` ( id, bestFriend4 <UNRESOLVED> )"
+        ":id :~ws.epigraph.tests.User :`record` ( id, bestFriend4 $user = :( `record` ( id, bestFriend4 $user ), id ) )"
         // $user is unresolved in parser's scope
     );
 
@@ -885,7 +912,8 @@ public class OpOutputProjectionsTest {
       assertTrue(
           error.getMessage(),
           error.getMessage().contains(
-              "Tail projection type 'ws.epigraph.tests.PersonRecord' is not a subtype of tail type 'ws.epigraph.tests.UserRecord'")
+              "Value type 'ws.epigraph.tests.PersonRecord' is incompatible with reference type 'ws.epigraph.tests.UserRecord'"
+          )
       );
     }
   }
@@ -937,7 +965,7 @@ public class OpOutputProjectionsTest {
     } catch (IllegalArgumentException e) {
       assertTrue(
           e.getMessage(),
-          e.getMessage().contains("Can't merge recursive projection 'p' with other projection")
+          e.getMessage().contains("Can't merge recursive projection 'p' with 1 unnamed projection")
       );
     }
   }

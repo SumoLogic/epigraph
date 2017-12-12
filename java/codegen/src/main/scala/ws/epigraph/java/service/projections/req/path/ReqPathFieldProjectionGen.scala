@@ -35,7 +35,7 @@ class ReqPathFieldProjectionGen(
 
   override val shortClassName: String = s"$classNamePrefix${up(fieldName)}Field$classNameSuffix"
 
-  override lazy val dataProjectionGen: ReqPathProjectionGen =
+  override lazy val dataProjectionGen: ReqPathTypeProjectionGen =
     ReqPathEntityProjectionGen.dataProjectionGen(
       baseNamespaceProvider,
       op.projection(),

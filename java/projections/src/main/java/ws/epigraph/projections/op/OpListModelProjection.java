@@ -54,7 +54,7 @@ public class OpListModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull OpProjection<?, ?> itemsProjection,
+      @Nullable OpProjection<?, ?> itemsProjection,
       @Nullable List<OpListModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
@@ -64,6 +64,23 @@ public class OpListModelProjection
   public OpListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  public static @NotNull OpListModelProjection pathEnd(@NotNull ListTypeApi model, @NotNull TextLocation location) {
+    return new OpListModelProjection(
+        model,
+        false,
+        null,
+        OpParams.EMPTY,
+        Annotations.EMPTY,
+        null,
+        null, // marks path end
+        null,
+        location
+    );
+  }
+
+  @Override
+  public boolean isPathEnd() { return itemsProjection == null; }
 
   @Override
   public @NotNull OpProjection<?, ?> itemsProjection() {
@@ -88,6 +105,7 @@ public class OpListModelProjection
             .map(OpListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
+    //noinspection RedundantCast
     final /*@NotNull*/ OpProjection<?, ?> mergedItems = (OpProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 
     return new OpListModelProjection(

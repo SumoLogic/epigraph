@@ -393,9 +393,9 @@ public final class OpPathPsiParser {
 
     final OpProjection<?, ?> fieldProjection;
 
-    @Nullable SchemaOpEntityPath varPathPsi = psi.getOpEntityPath();
+    @Nullable SchemaOpEntityPath entityPathPsi = psi.getOpEntityPath();
 
-    fieldProjection = parsePath(fieldType, varPathPsi, resolver, context);
+    fieldProjection = parsePath(fieldType, entityPathPsi, resolver, context);
 
     return new OpFieldProjection(
 //        OpParams.fromCollection(fieldParamsList),

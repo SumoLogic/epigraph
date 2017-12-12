@@ -27,7 +27,7 @@ import ws.epigraph.types.DatumTypeApi
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 trait ReqListModelProjectionGen extends ReqModelProjectionGen {
-  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenListModelProjection[_, _, _, _, _ <: DatumTypeApi]
+  override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _] with GenListModelProjection[_, _, _, _, _, _ <: DatumTypeApi]
 
   protected val elementsNamespaceSuffix = "elements"
 
@@ -40,8 +40,7 @@ trait ReqListModelProjectionGen extends ReqModelProjectionGen {
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
-      reqVarProjectionFqn.toString,
-      reqModelProjectionFqn.toString,
+      reqProjectionFqn.toString,
       reqListModelProjectionFqn.toString,
       elementGen.fullClassName
     ) ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
@@ -57,19 +56,15 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName $extendsClause{
 ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqListModelProjectionFqn.last()} raw;\n" else ""}\
 
-  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqProjectionFqn.last()}$reqProjectionParams raw) {
     ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqListModelProjectionFqn.last()}) raw" else "super(raw)"};
-  }
-
-  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
-    this(selfVar.singleTagProjection().projection());
   }
 
   /**
    * @return items projection
    */
   public @NotNull $elementProjectionClass itemsProjection() {
-    return new $elementProjectionClass(raw.itemsProjection());
+    return new $elementProjectionClass(raw.itemsProjection().${ReqTypeProjectionGen.castProjection(elementGen.op.`type`().kind())});
   }\
 \s${(extra + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqListModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\

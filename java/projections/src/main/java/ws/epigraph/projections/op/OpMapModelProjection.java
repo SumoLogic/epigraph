@@ -55,8 +55,8 @@ public class OpMapModelProjection
       @NotNull OpParams params,
       @NotNull Annotations annotations,
       @Nullable OpModelProjection<?, ?, ?, ?> metaProjection,
-      @NotNull OpKeyProjection keyProjection,
-      @NotNull OpProjection<?, ?> itemsProjection,
+      @Nullable OpKeyProjection keyProjection,
+      @Nullable OpProjection<?, ?> itemsProjection,
       @Nullable List<OpMapModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, defaultValue, params, annotations, metaProjection, tails, location);
@@ -67,6 +67,24 @@ public class OpMapModelProjection
   public OpMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  public static @NotNull OpMapModelProjection pathEnd(@NotNull MapTypeApi model, @NotNull TextLocation location) {
+    return new OpMapModelProjection(
+        model,
+        false,
+        null,
+        OpParams.EMPTY,
+        Annotations.EMPTY,
+        null,
+        null,
+        null,
+        null,
+        location
+    );
+  }
+
+  @Override
+  public boolean isPathEnd() { return itemsProjection == null; }
 
   public @NotNull OpKeyProjection keyProjection() {
     assert isResolved();
@@ -130,6 +148,7 @@ public class OpMapModelProjection
     assert mergedKeysPresence != null; // modelProjections should have at least one element
     assert !itemsProjectionsToMerge.isEmpty();
 
+    //noinspection RedundantCast
     return new OpMapModelProjection(
         model,
         mergedFlag,

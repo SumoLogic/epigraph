@@ -22,7 +22,6 @@ import ws.epigraph.annotations.Annotated;
 import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.ProjectionUtils;
-import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
 import ws.epigraph.schema.ResourceDeclaration;
@@ -111,7 +110,7 @@ public abstract class OperationDeclaration implements Annotated {
 
     final TypeApi outputProjectionType = projection.type();
 
-    if (!outputType.equals(outputProjectionType))
+    if (!outputType.equals(outputProjectionType)) {
       errors.add(
           new ResourceDeclarationError(
               resource,
@@ -125,6 +124,7 @@ public abstract class OperationDeclaration implements Annotated {
               outputProjection.location()
           )
       );
+    }
   }
 
   @Override

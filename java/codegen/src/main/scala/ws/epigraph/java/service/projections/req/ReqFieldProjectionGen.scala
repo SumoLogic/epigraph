@@ -27,7 +27,7 @@ import ws.epigraph.projections.op.OpFieldProjection
 trait ReqFieldProjectionGen extends ReqProjectionGen {
   protected def op: OpFieldProjection
 
-  def dataProjectionGen: ReqProjectionGen
+  def dataProjectionGen: ReqTypeProjectionGen
 
   protected def fieldName: String
 
@@ -64,7 +64,7 @@ public class $shortClassName {
    * @return field data projection
    */
   public @NotNull ${dataProjectionGen.shortClassName} dataProjection() {
-    return new ${dataProjectionGen.shortClassName}(raw.projection());
+    return new ${dataProjectionGen.shortClassName}(raw.projection().${ReqTypeProjectionGen.castProjection(dataProjectionGen.op.`type`().kind())});
   }
 ${/*params.code*/""}\
 ${extra.code}\

@@ -33,7 +33,7 @@ import scala.collection.JavaConversions._
  */
 trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
   override type OpProjectionType <: OpModelProjection[_, _, _ <: DatumTypeApi, _]
-      with GenRecordModelProjection[_, _, _, _, _, _, _ <: DatumTypeApi]
+      with GenRecordModelProjection[_, _, _, _, _, _, _, _ <: DatumTypeApi]
 //  override protected type GenType <: ReqRecordModelProjectionGen
 
   /** field generators: should only include new or overridden fields, should not include inherited */
@@ -145,7 +145,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
    */
   public @Nullable $dataGenFQN ${jn(field.name)}() {
     ${reqFieldProjectionEntryFqn.last()} fpe = raw.fieldProjection("${field.name}");
-    return fpe == null ? null : new $dataGenFQN(fpe.fieldProjection().projection());
+    return fpe == null ? null : new $dataGenFQN(fpe.fieldProjection().projection().${ReqTypeProjectionGen.castProjection(field.typeRef.resolved.kind)});
   }
 """/*@formatter:on*/
 
@@ -172,8 +172,7 @@ trait ReqRecordModelProjectionGen extends ReqModelProjectionGen {
 
     val imports: Set[String] = Set(
       "org.jetbrains.annotations.NotNull",
-      reqVarProjectionFqn.toString,
-      reqModelProjectionFqn.toString,
+      reqProjectionFqn.toString,
       reqRecordModelProjectionFqn.toString
     ) ++ fields.imports ++ params.imports ++ meta.imports ++ tails.imports ++ normalizedTails.imports ++ dispatcher.imports ++ extra.imports
 
@@ -188,12 +187,8 @@ ${JavaGenUtils.generatedAnnotation(this)}
 public class $shortClassName $extendsClause{
 ${if (parentClassGenOpt.isEmpty) s"  protected final @NotNull ${reqRecordModelProjectionFqn.last()} raw;\n" else ""}\
 
-  public $shortClassName(@NotNull ${reqModelProjectionFqn.last()}$reqModelProjectionParams raw) {
+  public $shortClassName(@NotNull ${reqProjectionFqn.last()}$reqProjectionParams raw) {
     ${if (parentClassGenOpt.isEmpty) s"this.raw = (${reqRecordModelProjectionFqn.last()}) raw" else "super(raw)"};
-  }
-
-  public $shortClassName(@NotNull ${reqVarProjectionFqn.last()} selfVar) {
-    this(selfVar.singleTagProjection().projection());
   }\
 \s${(extra + fields + params + meta + tails + normalizedTails + dispatcher).code}\
 ${if (parentClassGenOpt.isEmpty) s"\n  public @NotNull ${reqRecordModelProjectionFqn.last()} _raw() { return raw; };\n\n" else ""}\

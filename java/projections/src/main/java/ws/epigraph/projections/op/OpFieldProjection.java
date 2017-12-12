@@ -44,8 +44,8 @@ public class OpFieldProjection extends AbstractFieldProjection<
   }
 
   @Override
-  public @NotNull OpFieldProjection setProjection(final @NotNull OpProjection<?, ?> varProjection) {
-    return new OpFieldProjection(varProjection, TextLocation.UNKNOWN);
+  public @NotNull OpFieldProjection setProjection(final @NotNull OpProjection<?, ?> projection) {
+    return new OpFieldProjection(projection, TextLocation.UNKNOWN);
   }
 
   public boolean flag() { return projection().flag(); }

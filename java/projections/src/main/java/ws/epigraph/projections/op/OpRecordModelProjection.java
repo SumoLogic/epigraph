@@ -75,6 +75,20 @@ public class OpRecordModelProjection
     this.fieldProjections = Collections.emptyMap();
   }
 
+  public static @NotNull OpRecordModelProjection pathEnd(@NotNull RecordTypeApi model, @NotNull TextLocation location) {
+    return new OpRecordModelProjection(
+        model,
+        false,
+        null,
+        OpParams.EMPTY,
+        Annotations.EMPTY,
+        null,
+        Collections.emptyMap(), // marks path end
+        null,
+        location
+    );
+  }
+
   @Override
   public @NotNull Map<String, OpFieldProjectionEntry> fieldProjections() {
     assert isResolved();

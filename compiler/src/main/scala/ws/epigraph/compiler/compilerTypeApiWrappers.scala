@@ -44,7 +44,7 @@ trait CTypeApiWrapper extends TypeApi {
     case _ => throw new IllegalArgumentException("Unsupported kind: " + cType.kind)
   }
 
-  override lazy val supertypes: util.List[_ <: TypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s)}
+  override lazy val supertypes: util.List[_ <: TypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s) }
 
   override def isAssignableFrom(`type`: TypeApi): Boolean = `type` match {
     case wrapper: CTypeApiWrapper => cType.isAssignableFrom(wrapper.cType)
@@ -53,11 +53,24 @@ trait CTypeApiWrapper extends TypeApi {
   }
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[CTypeApiWrapper]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: CTypeApiWrapper => (that canEqual this) && cType == that.cType
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(cType)
+    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
+  }
+
 }
 
 object CTypeApiWrapper {
   def wrap(cType: CType): TypeApi = cType match {
-    case t: CEntityTypeDef => new CVarTypeDefApiWrapper(t)
+    case t: CEntityTypeDef => new CEntityTypeDefApiWrapper(t)
     case t: CRecordTypeDef => new CRecordTypeDefApiWrapper(t)
     case t: CMapTypeDef => new CMapTypeDefApiWrapper(t)
     case t: CAnonMapType => new CAnonMapTypeApiWrapper(t)
@@ -71,7 +84,7 @@ object CTypeApiWrapper {
 class CDataTypeApiWrapper(private val dataType: CDataType) extends DataTypeApi {
   override val `type`: TypeApi = CTypeApiWrapper.wrap(dataType.typeRef.resolved)
 
-  override val retroTag: TagApi = dataType.defaultTag.map{ ct => new CTagApiWrapper(ct) }.orNull
+  override val retroTag: TagApi = dataType.defaultTag.map { ct => new CTagApiWrapper(ct) }.orNull
 
   override val name: DataTypeName = new DataTypeName(`type`.name(), dataType.defaultTag.map(_.name).orNull)
 
@@ -114,29 +127,17 @@ trait CTypeDefApiWrapper extends CTypeApiWrapper {
   override def annotations(): Annotations = cType.annotations
 }
 
-class CVarTypeDefApiWrapper(val cType: CEntityTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
-  override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map{ ct => new CTagApiWrapper(ct) }
+class CEntityTypeDefApiWrapper(val cType: CEntityTypeDef) extends CTypeDefApiWrapper with EntityTypeApi {
+  override lazy val tags: util.Collection[_ <: TagApi] = cType.effectiveTags.map { ct => new CTagApiWrapper(ct) }
 
   override lazy val tagsMap: util.Map[String, _ <: TagApi] =
-    mapAsJavaMap(cType.effectiveTags.map{ ct => ct.name -> new CTagApiWrapper(ct) }.toMap)
+    mapAsJavaMap(cType.effectiveTags.map { ct => ct.name -> new CTagApiWrapper(ct) }.toMap)
 
-  override lazy val supertypes: util.List[_ <: EntityTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[EntityTypeApi]}
+  override lazy val supertypes: util.List[_ <: EntityTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[EntityTypeApi] }
 
   override def dataType(defaultTag: TagApi): DataTypeApi =
     new CDataTypeApiWrapper(cType.dataType(Option(defaultTag).map(_.name())))
 
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CVarTypeDefApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CVarTypeDefApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
 }
 
 trait CDatumTypeApiWrapper extends CTypeApiWrapper with DatumTypeApi {
@@ -153,7 +154,7 @@ trait CDatumTypeApiWrapper extends CTypeApiWrapper with DatumTypeApi {
 
   override def dataType(): DataTypeApi = new CDataTypeApiWrapper(cType.dataType)
 
-  override def metaType(): DatumTypeApi = cType.meta.map{ ct => CTypeApiWrapper.wrap(ct).asInstanceOf[DatumTypeApi] }.orNull
+  override def metaType(): DatumTypeApi = cType.meta.map { ct => CTypeApiWrapper.wrap(ct).asInstanceOf[DatumTypeApi] }.orNull
 }
 
 class CFieldApiWrapper(private val cField: CField) extends FieldApi {
@@ -178,35 +179,23 @@ class CFieldApiWrapper(private val cField: CField) extends FieldApi {
 }
 
 class CRecordTypeDefApiWrapper(val cType: CRecordTypeDef)
-  extends CTypeDefApiWrapper with CDatumTypeApiWrapper with RecordTypeApi {
+    extends CTypeDefApiWrapper with CDatumTypeApiWrapper with RecordTypeApi {
 
-  override lazy val supertypes: util.List[_ <: RecordTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[RecordTypeApi]}
+  override lazy val supertypes: util.List[_ <: RecordTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[RecordTypeApi] }
 
-  override lazy val fields: util.Collection[_ <: FieldApi] = cType.effectiveFields.map{ cf => new CFieldApiWrapper(cf) }
+  override lazy val fields: util.Collection[_ <: FieldApi] = cType.effectiveFields.map { cf => new CFieldApiWrapper(cf) }
 
   override lazy val immediateFields: util.Collection[_ <: FieldApi] = cType.declaredFields.map{ cf => new CFieldApiWrapper(cf) }
 
   override lazy val fieldsMap: util.Map[String, _ <: FieldApi] =
-    mapAsJavaMap(cType.effectiveFields.map{ cf => cf.name -> new CFieldApiWrapper(cf) }.toMap)
+    mapAsJavaMap(cType.effectiveFields.map { cf => cf.name -> new CFieldApiWrapper(cf) }.toMap)
 
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CRecordTypeDefApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CRecordTypeDefApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
 }
 
 trait CMapTypeApiWrapper extends CTypeApiWrapper with CDatumTypeApiWrapper with MapTypeApi {
   override val cType: CMapType
 
-  override lazy val supertypes: util.List[_ <: MapTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[MapTypeApi]}
+  override lazy val supertypes: util.List[_ <: MapTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[MapTypeApi] }
 
   override val keyType: DatumTypeApi = CTypeApiWrapper.wrap(cType.keyTypeRef.resolved).asInstanceOf[DatumTypeApi]
 
@@ -215,18 +204,6 @@ trait CMapTypeApiWrapper extends CTypeApiWrapper with CDatumTypeApiWrapper with 
 
 class CAnonMapTypeApiWrapper(val cType: CAnonMapType) extends CMapTypeApiWrapper {
   override val name: TypeName = new AnonMapTypeName(keyType.name(), valueType.name())
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CAnonMapTypeApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CAnonMapTypeApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
 }
 
 class CMapTypeDefApiWrapper(val cType: CMapTypeDef) extends CMapTypeApiWrapper with CTypeDefApiWrapper
@@ -234,46 +211,21 @@ class CMapTypeDefApiWrapper(val cType: CMapTypeDef) extends CMapTypeApiWrapper w
 trait CListTypeApiWrapper extends CTypeApiWrapper with CDatumTypeApiWrapper with ListTypeApi {
   override val cType: CListType
 
-  override lazy val supertypes: util.List[_ <: ListTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[ListTypeApi]}
+  override lazy val supertypes: util.List[_ <: ListTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[ListTypeApi] }
 
   override val elementType: DataTypeApi = new CDataTypeApiWrapper(cType.elementDataType)
 }
 
 class CAnonListTypeApiWrapper(val cType: CAnonListType) extends CListTypeApiWrapper {
   override val name: TypeName = new AnonListTypeName(elementType.name())
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CAnonListTypeApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CAnonListTypeApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
 }
 
-class CListTypeDefApiWrapper(val cType: CListTypeDef) extends CListTypeApiWrapper with CTypeDefApiWrapper {
-
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CListTypeDefApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CListTypeDefApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
-}
+class CListTypeDefApiWrapper(val cType: CListTypeDef) extends CListTypeApiWrapper with CTypeDefApiWrapper
 
 class CPrimitiveTypeDefApiWrapper(val cType: CPrimitiveTypeDef)
-  extends CTypeDefApiWrapper with CDatumTypeApiWrapper with PrimitiveTypeApi {
+    extends CTypeDefApiWrapper with CDatumTypeApiWrapper with PrimitiveTypeApi {
 
-  override lazy val supertypes: util.List[_ <: PrimitiveTypeApi] = cType.supertypes.map{s => CTypeApiWrapper.wrap(s).asInstanceOf[PrimitiveTypeApi]}
+  override lazy val supertypes: util.List[_ <: PrimitiveTypeApi] = cType.supertypes.map { s => CTypeApiWrapper.wrap(s).asInstanceOf[PrimitiveTypeApi] }
 
 
   override def primitiveKind(): PrimitiveTypeApi.PrimitiveKind = cType.kind match {
@@ -285,15 +237,4 @@ class CPrimitiveTypeDefApiWrapper(val cType: CPrimitiveTypeDef)
     case _ => throw new RuntimeException("Unknown primitive kind: " + cType.kind)
   }
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[CPrimitiveTypeDefApiWrapper]
-
-  override def equals(other: Any): Boolean = other match {
-    case that: CPrimitiveTypeDefApiWrapper => (that canEqual this) && cType == that.cType
-    case _ => false
-  }
-
-  override def hashCode(): Int = {
-    val state = Seq(cType)
-    state.map(_.hashCode()).foldLeft(31)((a, b) => 31 * a + b)
-  }
 }

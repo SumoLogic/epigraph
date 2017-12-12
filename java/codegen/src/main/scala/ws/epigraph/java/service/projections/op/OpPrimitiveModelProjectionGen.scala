@@ -17,9 +17,9 @@
 package ws.epigraph.java.service.projections.op
 
 import ws.epigraph.java.NewlineStringInterpolator.{NewlineHelper, i}
+import ws.epigraph.java.ObjectGenContext
 import ws.epigraph.java.ObjectGenUtils.{genList, genTypeExpr}
 import ws.epigraph.java.service.ServiceObjectGenerators.gen
-import ws.epigraph.java.{ObjectGen, ObjectGenContext}
 import ws.epigraph.projections.op.OpPrimitiveModelProjection
 import ws.epigraph.types.TypeApi
 
@@ -29,9 +29,9 @@ import scala.collection.JavaConversions._
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 class OpPrimitiveModelProjectionGen(p: OpPrimitiveModelProjection)
-  extends ObjectGen[OpPrimitiveModelProjection](p) {
+  extends OpProjectionGen[OpPrimitiveModelProjection](p) {
 
-  override protected def generateObject(o: String, ctx: ObjectGenContext): String = {
+  override protected def generateNonVisitedObject(o: String, ctx: ObjectGenContext): String = {
 //    ctx.use(classOf[PrimitiveType[_]].getName)
 
     /*@formatter:off*/sn"""\

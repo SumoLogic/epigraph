@@ -89,16 +89,18 @@ public class GeneratedClassesTest {
 
   @Test
   public void testRecursiveOpProjection() {
-    final @NotNull OpEntityProjection varProjection =
-        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection().projection();
+    final @NotNull OpModelProjection<?, ?, ?, ?> modelProjection =
+        UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.deleteProjection()
+            .projection()
+            .asModelProjection();
 
     assertEquals(
         "[ ]( $recTest = :`record` ( bestFriend $recTest ) )",
-        printOpDeleteVarProjection(
+        printOpDeleteModelProjection(
             Qn.fromDotSeparated("ws.epigraph.tests"),
             UsersResourceDeclaration.INSTANCE.fieldName(),
             UsersResourceDeclaration.recursiveTestDeleteOperationDeclaration.name(),
-            varProjection
+            modelProjection
         )
     );
   }
@@ -164,20 +166,16 @@ public class GeneratedClassesTest {
   public void testOpOutputDefaults() {
     OpFieldProjection fieldProjection =
         ws.epigraph.tests._resources.users.UsersResourceDeclaration.readOperationDeclaration.outputProjection();
-    OpEntityProjection entityProjection = fieldProjection.projection();
-    assertFalse(entityProjection.flag());
 
-    OpTagProjectionEntry tpe = entityProjection.singleTagProjection(); // self
-    assertNotNull(tpe);
-
-    OpModelProjection<?, ?, ?, ?> modelProjection = tpe.modelProjection();
+    OpModelProjection<?, ?, ?, ?> modelProjection = fieldProjection.projection().asModelProjection();
     assertFalse(modelProjection.flag());
     assertTrue(modelProjection instanceof OpMapModelProjection);
     OpMapModelProjection mapModelProjection = (OpMapModelProjection) modelProjection;
-    entityProjection = mapModelProjection.itemsProjection();
+    OpEntityProjection entityProjection = mapModelProjection.itemsProjection().asEntityProjection();
+
     assertFalse(entityProjection.flag());
 
-    tpe = entityProjection.tagProjection("id");
+    OpTagProjectionEntry tpe = entityProjection.tagProjection("id");
     assertNotNull(tpe);
     assertTrue(tpe.modelProjection().flag());
 
@@ -216,11 +214,11 @@ public class GeneratedClassesTest {
     } catch (NullPointerException ignored) {}
   }
 
-  private static @NotNull String printOpDeleteVarProjection(
+  private static @NotNull String printOpDeleteModelProjection(
       Qn namespace,
       String resourceName,
       String operationName,
-      OpEntityProjection projection) {
+      OpModelProjection<?, ?, ?, ?> projection) {
 
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);

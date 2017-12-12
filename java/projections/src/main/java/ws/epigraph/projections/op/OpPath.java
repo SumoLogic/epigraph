@@ -17,11 +17,8 @@
 package ws.epigraph.projections.op;
 
 import org.jetbrains.annotations.NotNull;
-import ws.epigraph.annotations.Annotations;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.*;
-
-import java.util.Collections;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -34,34 +31,15 @@ public final class OpPath {
 
     switch (type.kind()) {
       case ENTITY:
-        return new OpEntityProjection(type, false, Collections.emptyMap(), false, null, location);
+        return OpEntityProjection.pathEnd(type, location);
       case RECORD:
-        return new OpRecordModelProjection(
-            (RecordTypeApi) type,
-            false,
-            null,
-            OpParams.EMPTY,
-            Annotations.EMPTY,
-            null,
-            Collections.emptyMap(),
-            null,
-            location
-        );
+        return OpRecordModelProjection.pathEnd((RecordTypeApi) type, location);
       case MAP:
-        throw new IllegalArgumentException("Op path can't end with a map type " + type.name());
+        return OpMapModelProjection.pathEnd((MapTypeApi) type, location);
       case LIST:
-        throw new IllegalArgumentException("Op path can't end with a list type " + type.name());
+        return OpListModelProjection.pathEnd((ListTypeApi) type, location);
       case PRIMITIVE:
-        return new OpPrimitiveModelProjection(
-            (PrimitiveTypeApi) type,
-            false,
-            null,
-            OpParams.EMPTY,
-            Annotations.EMPTY,
-            null,
-            null,
-            location
-        );
+        return OpPrimitiveModelProjection.pathEnd((PrimitiveTypeApi) type, location);
       case ENUM:
         throw new IllegalArgumentException("Unsupported model kind");
     }

@@ -58,6 +58,22 @@ public class OpPrimitiveModelProjection
     super(model, location);
   }
 
+  public static @NotNull OpPrimitiveModelProjection pathEnd(
+      @NotNull PrimitiveTypeApi model,
+      @NotNull TextLocation location) {
+
+    return new OpPrimitiveModelProjection(
+        model,
+        false,
+        null,
+        OpParams.EMPTY,
+        Annotations.EMPTY,
+        null,
+        null,
+        location
+    );
+  }
+
   @Override
   protected OpPrimitiveModelProjection merge(
       final @NotNull PrimitiveTypeApi model,

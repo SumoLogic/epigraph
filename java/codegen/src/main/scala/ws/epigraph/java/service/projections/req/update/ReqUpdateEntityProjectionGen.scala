@@ -107,7 +107,7 @@ class ReqUpdateEntityProjectionGen(
 object ReqUpdateEntityProjectionGen {
   def dataProjectionGen(
     baseNamespaceProvider: BaseNamespaceProvider,
-    op: OpEntityProjection,
+    op: OpProjection[_, _],
     baseNamespaceOpt: Option[Qn],
     namespaceSuffix: Qn,
     parentClassGenOpt: Option[ReqUpdateTypeProjectionGen],
@@ -122,7 +122,7 @@ object ReqUpdateEntityProjectionGen {
         case TypeKind.ENTITY =>
           new ReqUpdateEntityProjectionGen(
             baseNamespaceProvider,
-            op,
+            op.asEntityProjection(),
             baseNamespaceOpt,
             namespaceSuffix,
             parentClassGenOpt.map(pg => pg.asInstanceOf[ReqUpdateEntityProjectionGen]),
@@ -131,7 +131,7 @@ object ReqUpdateEntityProjectionGen {
 
         case _ =>
           val modelOp: OpModelProjection[_, _, _ <: DatumTypeApi, _] =
-            op.singleTagProjection().modelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
+            op.asModelProjection().asInstanceOf[OpModelProjection[_, _, _ <: DatumTypeApi, _]]
 
           ReqUpdateModelProjectionGen.dataProjectionGen(
             baseNamespaceProvider,
