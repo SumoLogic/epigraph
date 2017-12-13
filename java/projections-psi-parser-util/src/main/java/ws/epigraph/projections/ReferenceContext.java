@@ -23,9 +23,11 @@ import ws.epigraph.projections.gen.*;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.types.*;
+import ws.epigraph.util.Tuple2;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -85,7 +87,10 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable final ReferenceContext.RefItem<EP> ref = lookupEntityReference(name, useParent, type, location);
+    final @Nullable Tuple2<RefItem<EP>, ProjectionReferenceName> tuple =
+        lookupEntityReference(name, useParent, type, location);
+
+    final RefItem<EP> ref = tuple == null ? null : tuple._1;
 
     if (ref == null) {
       ProjectionReferenceName referenceName = projectionReferenceName(name);
@@ -100,19 +105,24 @@ public abstract class ReferenceContext<
       String lazyName = name + "#";
       final EP ep;
 
-      @Nullable RefItem<P> lazyRef = lookupReference(lazyName, true);
+      @Nullable Tuple2<RefItem<P>, ProjectionReferenceName> lazyTuple = lookupReference(lazyName, true);
 
-      if (lazyRef == null) {
+      if (lazyTuple == null) {
         ProjectionReferenceName lazyReferenceName = projectionReferenceName(lazyName);
         EP lazyEp = newEntityReference(type, lazyReferenceName, location);
         ref.argument().runOnResolved(
-            () -> lazyEp.resolve(ref.argument().referenceName(), ref.apply())
+            () -> {
+              ProjectionReferenceName resultReferenceName =
+                  Optional.ofNullable(ref.argument().referenceName()).orElse(tuple._2);
+
+              lazyEp.resolve(resultReferenceName, ref.apply());
+            }
         );
 
         ep = lazyEp;
       } else {
         // todo even with this hack this should be recursive
-        ep = (EP) lazyRef.apply();
+        ep = (EP) lazyTuple._1.apply();
       }
 
       return ep;
@@ -126,9 +136,12 @@ public abstract class ReferenceContext<
       boolean useParent,
       @NotNull TextLocation location) throws PsiProcessingException {
 
-    @Nullable final ReferenceContext.RefItem<MP> ref = lookupModelReference(name, useParent, type, location);
+    final @Nullable Tuple2<RefItem<MP>, ProjectionReferenceName> tuple =
+        lookupModelReference(name, useParent, type, location);
 
-    if (ref == null) {
+    final RefItem<MP> ref = tuple == null ? null : tuple._1;
+
+    if (tuple == null) {
       ProjectionReferenceName referenceName = projectionReferenceName(name);
       ReferenceContext.RefItem<MP> newRef =
           (RefItem<MP>) new IdRefItem<>((R) newModelReference(type, referenceName, location));
@@ -143,21 +156,26 @@ public abstract class ReferenceContext<
       String lazyName = name + "#";
       final MP mp;
 
-      RefItem<P> lazyRef = lookupReference(lazyName, true);
+      @Nullable Tuple2<RefItem<P>, ProjectionReferenceName> lazyTuple = lookupReference(lazyName, true);
 
-      if (lazyRef == null) {
+      if (lazyTuple == null) {
         ProjectionReferenceName lazyReferenceName = projectionReferenceName(lazyName);
         MP lazyMp = newModelReference(type, lazyReferenceName, location);
         addReference(lazyName, new IdRefItem<>((P) lazyMp));
 
         ref.argument().runOnResolved(
-            () -> ((GenProjectionReference<MP>) lazyMp).resolve(ref.argument().referenceName(), ref.apply())
+            () -> {
+              ProjectionReferenceName resultReferenceName =
+                  Optional.ofNullable(ref.argument().referenceName()).orElse(tuple._2);
+
+              ((GenProjectionReference<MP>) lazyMp).resolve(resultReferenceName, ref.apply());
+            }
         );
 
         mp = lazyMp;
       } else {
         // todo even with this hack this should be recursive
-        mp = (MP) lazyRef.apply();
+        mp = (MP) lazyTuple._1.apply();
       }
 
       return mp;
@@ -192,38 +210,40 @@ public abstract class ReferenceContext<
   }
 
   public boolean isResolved(@NotNull String name) {
-    RefItem<P> refItem = lookupReference(name, true);
-    return refItem != null && refItem.isResolved();
+    @Nullable Tuple2<RefItem<P>, ProjectionReferenceName> refItem = lookupReference(name, true);
+    return refItem != null && refItem._1.isResolved();
   }
 
   @Nullable
-  public ReferenceContext.RefItem<P> lookupReference(@NotNull String name, boolean useParent) {
+  public Tuple2<ReferenceContext.RefItem<P>, ProjectionReferenceName>
+  lookupReference(@NotNull String name, boolean useParent) {
     RefItem<P> item = references.get(name);
-    if (item == null && useParent && parent != null)
-      item = parent.lookupReference(name, true);
 
-    return item;
+    if (item == null && useParent && parent != null)
+      return parent.lookupReference(name, true);
+
+    return item == null ? null : Tuple2.of(item, projectionReferenceName(name));
   }
 
   @Nullable
-  private ReferenceContext.RefItem<EP> lookupEntityReference(
+  private Tuple2<ReferenceContext.RefItem<EP>, ProjectionReferenceName> lookupEntityReference(
       @NotNull String name,
       boolean useParent,
       @NotNull TypeApi targetType,
       TextLocation location) throws PsiProcessingException {
 
-    RefItem<P> refItem = lookupReference(name, useParent);
-    if (refItem == null) {
+    @Nullable Tuple2<RefItem<P>, ProjectionReferenceName> tuple = lookupReference(name, useParent);
+    if (tuple == null) {
       return null;
     } else {
-      if (refItem.argument.isEntityProjection())
-        return (RefItem<EP>) refItem;
+      if (tuple._1.argument.isEntityProjection())
+        return Tuple2.of((RefItem<EP>) tuple._1, tuple._2);
       else
         throw new PsiProcessingException(
             String.format(
                 "Model reference '%s' of type '%s' can't be used for an entity type '%s'",
                 name,
-                refItem.argument.type().name(),
+                tuple._1.argument.type().name(),
                 targetType.name()
             ),
             location,
@@ -233,24 +253,24 @@ public abstract class ReferenceContext<
   }
 
   @Nullable
-  private ReferenceContext.RefItem<MP> lookupModelReference(
+  private Tuple2<ReferenceContext.RefItem<MP>, ProjectionReferenceName> lookupModelReference(
       @NotNull String name,
       boolean useParent,
       @NotNull TypeApi targetType,
       TextLocation location) throws PsiProcessingException {
 
-    RefItem<P> refItem = lookupReference(name, useParent);
-    if (refItem == null) {
+    @Nullable Tuple2<RefItem<P>, ProjectionReferenceName> tuple = lookupReference(name, useParent);
+    if (tuple == null) {
       return null;
     } else {
-      if (refItem.argument.isModelProjection())
-        return (RefItem<MP>) refItem;
+      if (tuple._1.argument.isModelProjection())
+        return Tuple2.of((RefItem<MP>) tuple._1, tuple._2);
       else
         throw new PsiProcessingException(
             String.format(
                 "Entity reference '%s' of type '%s' can't be used for a model type '%s'",
                 name,
-                refItem.argument.type().name(),
+                tuple._1.argument.type().name(),
                 targetType.name()
             ),
             location,
