@@ -202,7 +202,7 @@ public abstract class RequestUrlPsiParser {
         outputStepsAndProjection = new StepsAndProjection<>(
             1,
             new ReqFieldProjection(
-                firstProjectionParser.createDefaultEntityProjection(
+                firstProjectionParser.createDefaultProjection(
                     op.outputType().dataType(),
                     op.outputProjection().projection(),
                     false, // todo this should come from op
@@ -257,7 +257,7 @@ public abstract class RequestUrlPsiParser {
         outputStepsAndProjection = new StepsAndProjection<>(
             1,
             new ReqFieldProjection(
-                outputProjectionParser.createDefaultEntityProjection(
+                outputProjectionParser.createDefaultProjection(
                     op.outputType().dataType(),
                     op.outputProjection().projection(),
                     false, // todo this should come from op
@@ -334,7 +334,7 @@ public abstract class RequestUrlPsiParser {
       );
 
     else if (trunkEntityPsi != null && !trunkEntityPsi.getText().isEmpty())
-      return firstProjectionParser.parseTrunkEntityProjection(
+      return firstProjectionParser.parseTrunkProjection(
           dataType,
           flagged,
           op.projection(),
@@ -344,7 +344,7 @@ public abstract class RequestUrlPsiParser {
       ).wrap(projection -> new ReqFieldProjection(projection, projection.location()));
 
     else if (comaEntityPsi != null && !comaEntityPsi.getText().isEmpty())
-      return firstProjectionParser.parseComaEntityProjection(
+      return firstProjectionParser.parseEntityProjection(
           dataType,
           flagged,
           op.projection(),

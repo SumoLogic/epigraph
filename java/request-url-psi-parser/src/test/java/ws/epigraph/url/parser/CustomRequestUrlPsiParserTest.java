@@ -36,7 +36,6 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.RequestUrl;
 import ws.epigraph.url.parser.psi.UrlUrl;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -87,7 +86,7 @@ public class CustomRequestUrlPsiParserTest {
   }
 
   @Test
-  public void testParsing1() throws IOException, PsiProcessingException {
+  public void testParsing1() throws PsiProcessingException {
     test(
         customIdl1,
         "/users(id)>/123:record(id)?format='json'&verbose=true",
@@ -126,7 +125,7 @@ public class CustomRequestUrlPsiParserTest {
     final @Nullable StepsAndProjection<ReqFieldProjection> inputProjection = requestUrl.inputProjection();
     if (inputProjection == null) assertNull(expectedInputProjection);
     else
-      assertEquals(expectedInputProjection, printReqEntityProjection(inputProjection.projection().projection(), 0));
+      assertEquals(expectedInputProjection, printReqProjection(inputProjection.projection().projection(), 0));
 
     final @NotNull StepsAndProjection<ReqFieldProjection> stepsAndProjection = requestUrl.outputProjection();
     assertEquals(expectedSteps, stepsAndProjection.pathSteps());

@@ -32,10 +32,7 @@ import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
 import ws.epigraph.projections.op.*;
-import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqPathPrettyPrinter;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.*;
 import ws.epigraph.schema.ResourcesSchema;
 import ws.epigraph.schema.SchemaPrettyPrinter;
@@ -276,7 +273,7 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqEntityPath(@NotNull ReqEntityProjection path) {
+  public static @NotNull String printReqPath(@NotNull ReqProjection<?,?> path) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqPathPrettyPrinter<NoExceptions> printer = new ReqPathPrettyPrinter<>(layouter);
@@ -299,11 +296,11 @@ public final class TestUtil {
     return sb.getString();
   }
 
-  public static @NotNull String printReqEntityProjection(@NotNull StepsAndProjection<ReqEntityProjection> stepsAndProjection) {
-    return printReqEntityProjection(stepsAndProjection.projection(), stepsAndProjection.pathSteps());
+  public static @NotNull String printReqProjection(@NotNull StepsAndProjection<ReqProjection<?, ?>> stepsAndProjection) {
+    return printReqProjection(stepsAndProjection.projection(), stepsAndProjection.pathSteps());
   }
 
-  public static @NotNull String printReqEntityProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
+  public static @NotNull String printReqProjection(@NotNull ReqProjection<?, ?> projection, int pathSteps) {
     StringBackend sb = new StringBackend(120);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
     ReqProjectionsPrettyPrinter<NoExceptions> printer = new ReqProjectionsPrettyPrinter<>(layouter);

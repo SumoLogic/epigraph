@@ -70,7 +70,7 @@ public class RequestFactoryTest {
     StepsAndProjection<ReqFieldProjection> inputStepsAndProjection = request.inputStepsAndProjection();
     assertNotNull(inputStepsAndProjection);
     assertEquals(2, inputStepsAndProjection.pathSteps()); // one step for field, one for self-var
-    String s = TestUtil.printReqEntityProjection(inputStepsAndProjection.projection().projection(), 0);
+    String s = TestUtil.printReqProjection(inputStepsAndProjection.projection().projection(), 0);
     assertEquals(";useLowerCase = true", s);
   }
 }

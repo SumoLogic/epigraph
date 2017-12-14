@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -32,8 +32,8 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.ReqReferenceContext;
+import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static org.junit.Assert.*;
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
@@ -53,7 +53,7 @@ public class ReqInputProjectionParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpInputVarProjection(
+  private final OpProjection<?, ?> personOpProjection = parsePersonOpInputProjection(
       lines(
           ":(",
           "  id,",
@@ -89,19 +89,19 @@ public class ReqInputProjectionParserTest {
         lines(
             ":record (",
             "  +id,",
-            "  +bestFriend :( id, +record ( id, +bestFriend :+record ( +id, +firstName ) ) ),",
-            "  +bestFriend2 $bf2 = :+record ( +id, +bestFriend2 $bf2 ),",
-            "  +bestFriend3",
+            "  bestFriend :( id, +record ( id, bestFriend :+record ( +id, +firstName ) ) ),",
+            "  bestFriend2 $bf2 = :+record ( +id, bestFriend2 $bf2 ),",
+            "  bestFriend3",
             "    :(",
             "      +id,",
             "      +record (",
             "        +id,",
             "        +firstName,",
-            "        +bestFriend3",
+            "        bestFriend3",
             "          :+record (",
             "            +id,",
             "            +lastName,",
-            "            +bestFriend3 :+record ( +id, +bestFriend3 $bf3 = :+record ( +id, +bestFriend3 $bf3 ) )",
+            "            bestFriend3 :+record ( +id, bestFriend3 $bf3 = :+record ( +id, bestFriend3 $bf3 ) )",
             "          )",
             "      )",
             "    ),",
@@ -121,19 +121,19 @@ public class ReqInputProjectionParserTest {
             "  id,",
             "  record (",
             "    +id,",
-            "    +bestFriend :( id, +record ( id, +bestFriend :+record ( +id, +firstName ) ) ),",
-            "    +bestFriend2 $bf2 = :+record ( +id, +bestFriend2 $bf2 ),",
-            "    +bestFriend3",
+            "    bestFriend :( id, +record ( id, bestFriend :+record ( +id, +firstName ) ) ),",
+            "    bestFriend2 $bf2 = :+record ( +id, bestFriend2 $bf2 ),",
+            "    bestFriend3",
             "      :(",
             "        +id,",
             "        +record (",
             "          +id,",
             "          +firstName,",
-            "          +bestFriend3",
+            "          bestFriend3",
             "            :+record (",
             "              +id,",
             "              +lastName,",
-            "              +bestFriend3 :+record ( +id, +bestFriend3 $bf3 = :+record ( +id, +bestFriend3 $bf3 ) )",
+            "              bestFriend3 :+record ( +id, bestFriend3 $bf3 = :+record ( +id, bestFriend3 $bf3 ) )",
             "            )",
             "        )",
             "      ),",
@@ -245,8 +245,8 @@ public class ReqInputProjectionParserTest {
         ReqPsiProcessingContext psiProcessingContext =
             new ReqPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp =
-            new ReqInputProjectionPsiParser(true, context).parseTrunkEntityProjection(
+        @NotNull StepsAndProjection<ReqProjection<?, ?>> p =
+            new ReqInputProjectionPsiParser(true, context).parseTrunkProjection(
                 dataType,
                 false,
                 personOpProjection,
@@ -257,7 +257,7 @@ public class ReqInputProjectionParserTest {
 
         referenceContext.ensureAllReferencesResolved();
 
-        return vp;
+        return p;
       });
       fail();
     } catch (PsiProcessingException ignored) {
@@ -265,17 +265,17 @@ public class ReqInputProjectionParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
-        ReqTestUtil.parseReqInputEntityProjection(dataType, personOpProjection, expr, resolver);
+    final StepsAndProjection<ReqProjection<?, ?>> projection =
+        ReqTestUtil.parseReqInputProjection(dataType, personOpProjection, expr, resolver);
 
-    String s = TestUtil.printReqEntityProjection(varProjection);
+    String s = TestUtil.printReqProjection(projection);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpInputVarProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpInputEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?, ?> parsePersonOpInputProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpInputProjection(dataType, projectionString, resolver);
   }
 }

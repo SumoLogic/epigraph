@@ -19,13 +19,11 @@ package ws.epigraph.url.projections.req.update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.MessagesContext;
-import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
 import ws.epigraph.projections.req.ReqPrimitiveModelProjection;
-import ws.epigraph.projections.req.ReqTagProjectionEntry;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.types.DataTypeApi;
-import ws.epigraph.types.TypeKind;
-import ws.epigraph.url.projections.req.postprocess.ReqRequiredSynchronizer;
+import ws.epigraph.url.projections.req.postprocess.ReqModelEntityTrackingTransformer;
 
 import java.util.List;
 
@@ -35,10 +33,11 @@ import java.util.List;
  *
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
+public class ReqUpdatePostProcessor extends /*ReqRequiredSynchronizer*/ ReqModelEntityTrackingTransformer {
+  private final MessagesContext context;
   private int flaggedInCurrentPath = 0;
 
-  public ReqUpdatePostProcessor(final @NotNull MessagesContext context) { super(context); }
+  public ReqUpdatePostProcessor(final @NotNull MessagesContext context) { this.context = context; /*super(context);*/ }
 
   @Override
   public void reset() {
@@ -47,30 +46,9 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
   }
 
   @Override
-  protected @NotNull ReqEntityProjection transformEntityProjection(
-      final @NotNull ReqEntityProjection projection,
-      final @Nullable DataTypeApi dataType) {
+  protected @NotNull ReqProjection<?, ?> transformResolvedProjection(
+      final @NotNull ReqProjection<?, ?> projection, final @Nullable DataTypeApi dataType) {
 
-    ReqTagProjectionEntry singleTagProjection = projection.singleTagProjection();
-    boolean selfModelFlagged = projection.type().kind() != TypeKind.ENTITY &&
-                               singleTagProjection != null &&
-                               singleTagProjection.modelProjection().flag();
-
-    int flagged = projection.flag() && !selfModelFlagged ? 1 : 0;
-    flaggedInCurrentPath += flagged;
-
-    if (flaggedInCurrentPath > 1)
-      context.addError("'replace' flags cannot be nested", projection.location());
-
-    try {
-      return super.transformEntityProjection(projection, dataType);
-    } finally {
-      flaggedInCurrentPath -= flagged;
-    }
-  }
-
-  @Override
-  protected @NotNull ReqModelProjection<?, ?, ?> transformModelProjection(final @NotNull ReqModelProjection<?, ?, ?> projection) {
     int flagged = projection.flag() ? 1 : 0;
     flaggedInCurrentPath += flagged;
 
@@ -78,11 +56,10 @@ public class ReqUpdatePostProcessor extends ReqRequiredSynchronizer {
       context.addError("'replace' flags cannot be nested", projection.location());
 
     try {
-      return super.transformModelProjection(projection);
+      return super.transformResolvedProjection(projection, dataType);
     } finally {
       flaggedInCurrentPath -= flagged;
     }
-
   }
 
   @Override

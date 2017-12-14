@@ -146,7 +146,7 @@ public final class RequestFactory {
             new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
         if (trunkEntityProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseTrunkEntityProjection(
+          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseTrunkProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().projection(),
@@ -160,7 +160,7 @@ public final class RequestFactory {
               new ReqFieldProjection(r.projection(), r.projection().location())
           );
         } else if (comaEntityProjection != null) {
-          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseComaEntityProjection(
+          StepsAndProjection<ReqEntityProjection> r = outputProjectionPsiParser.parseEntityProjection(
               pathTipType,
               false,
               operationDeclaration.outputProjection().projection(),
@@ -497,7 +497,7 @@ public final class RequestFactory {
 
     PsiProcessingContext context = new DefaultPsiProcessingContext();
     try {
-      return ReqPathPsiParser.parseEntityPath(
+      return ReqPathPsiParser.parsePath(
           op,
           type,
           psi,
@@ -598,7 +598,7 @@ public final class RequestFactory {
     try {
       ReqProjectionPsiParser parser = parserFactory.apply(context);
       @NotNull StepsAndProjection<ReqEntityProjection> res =
-          parser.parseTrunkEntityProjection(
+          parser.parseTrunkProjection(
               type,
               flagged,
               op,

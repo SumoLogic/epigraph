@@ -37,7 +37,7 @@ public class ReqFlaggedNotSupportedChecker extends AbstractReqTraversal {
   // keep in sync with OpFlaggedNotSupportedChecker
 
   @Override
-  protected boolean visitVarProjection(
+  protected boolean visitEntityProjection(
       final @NotNull ReqEntityProjection varProjection,
       final @NotNull OpEntityProjection guide) {
 

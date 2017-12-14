@@ -19,10 +19,10 @@ package ws.epigraph.url.projections.req;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
@@ -34,27 +34,27 @@ import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public interface ReqProjectionPsiParser {
-  @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkEntityProjection(
+  @NotNull StepsAndProjection<ReqProjection<?, ?>> parseTrunkProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
+  @NotNull StepsAndProjection<ReqProjection<?, ?>> parseEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull UrlReqComaEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
-  ReqEntityProjection createDefaultEntityProjection(
+  @NotNull ReqProjection<?, ?> createDefaultProjection(
       @NotNull DataTypeApi type,
-      @NotNull OpEntityProjection op,
+      OpProjection<?, ?> op,
       boolean required,
-      @NotNull  TypesResolver resolver,
+      @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 

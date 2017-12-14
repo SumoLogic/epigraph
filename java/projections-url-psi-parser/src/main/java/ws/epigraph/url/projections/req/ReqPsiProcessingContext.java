@@ -18,7 +18,7 @@ package ws.epigraph.url.projections.req;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.psi.DelegatingPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 
@@ -33,8 +33,8 @@ import java.util.Queue;
 public class ReqPsiProcessingContext extends DelegatingPsiProcessingContext {
 
   private final @NotNull ReqReferenceContext entityReferenceContext;
-  private final @NotNull Map<String, Queue<OpEntityProjection>> verifiedRefOps = new HashMap<>();
-  private final @NotNull Map<String, Queue<OpEntityProjection>> unverifiedRefOps = new HashMap<>();
+  private final @NotNull Map<String, Queue<OpProjection<?, ?>>> verifiedRefOps = new HashMap<>();
+  private final @NotNull Map<String, Queue<OpProjection<?, ?>>> unverifiedRefOps = new HashMap<>();
 
   public ReqPsiProcessingContext(
       final @NotNull PsiProcessingContext delegate,
@@ -46,12 +46,12 @@ public class ReqPsiProcessingContext extends DelegatingPsiProcessingContext {
 
   public @NotNull ReqReferenceContext referenceContext() { return entityReferenceContext; }
 
-  public @Nullable Queue<OpEntityProjection> verifiedRefOps(@NotNull String name) {
+  public @Nullable Queue<OpProjection<?, ?>> verifiedRefOps(@NotNull String name) {
     return verifiedRefOps.get(name);
   }
 
-  public void addVerifiedRefOp(@NotNull String name, OpEntityProjection op) {
-    Queue<OpEntityProjection> ops = verifiedRefOps(name);
+  public void addVerifiedRefOp(@NotNull String name, OpProjection<?, ?> op) {
+    Queue<OpProjection<?, ?>> ops = verifiedRefOps(name);
     if (ops == null) {
       ops = new ArrayDeque<>();
       verifiedRefOps.put(name, ops);
@@ -59,12 +59,12 @@ public class ReqPsiProcessingContext extends DelegatingPsiProcessingContext {
     ops.add(op);
   }
 
-  public @Nullable Queue<OpEntityProjection> unverifiedRefOps(@NotNull String name) {
+  public @Nullable Queue<OpProjection<?, ?>> unverifiedRefOps(@NotNull String name) {
     return unverifiedRefOps.get(name);
   }
 
-  public void addUnverifiedRefOp(@NotNull String name, OpEntityProjection op) {
-    Queue<OpEntityProjection> ops = unverifiedRefOps(name);
+  public void addUnverifiedRefOp(@NotNull String name, OpProjection<?, ?> op) {
+    Queue<OpProjection<?, ?>> ops = unverifiedRefOps(name);
     if (ops == null) {
       ops = new ArrayDeque<>();
       unverifiedRefOps.put(name, ops);

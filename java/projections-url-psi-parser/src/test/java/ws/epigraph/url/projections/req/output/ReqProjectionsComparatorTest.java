@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.output;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.projections.req.ReqProjectionsComparator;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -29,8 +29,8 @@ import ws.epigraph.types.DataType;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputEntityProjection;
-import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputEntityProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseOpOutputProjection;
+import static ws.epigraph.url.projections.req.ReqTestUtil.parseReqOutputProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -57,37 +57,39 @@ public class ReqProjectionsComparatorTest {
 
   @Test
   public void testRec1() {
-    OpEntityProjection op = parsePersonOpEntityProjection(
+    OpProjection<?, ?> op = parsePersonOpProjection(
         "$rec = :`record`(firstName, lastName, bestFriend $rec)"
     );
 
-    ReqEntityProjection vp1 = parseReqVarProjection(
+    ReqProjection<?, ?> p1 = parseReqProjection(
         op,
         "$rec = :record( firstName, bestFriend:record( lastName,bestFriend $rec ) )"
     );
 
-    ReqEntityProjection vp2 = parseReqVarProjection(
+    ReqProjection<?, ?> p2 = parseReqProjection(
         op,
         "$rec = :record( lastName, bestFriend:record( firstName,bestFriend $rec ) )"
     );
 
     ReqProjectionsComparator comparator = new ReqProjectionsComparator(false, false);
-    assertFalse(comparator.equals(vp1, vp2));
+    assertFalse(comparator.equals(p1, p2));
 
-    final ReqEntityProjection vp1_1 =
-        ((ReqRecordModelProjection) vp1.tagProjection("record").modelProjection()).fieldProjection("bestFriend")
+    assertTrue(p1.isEntityProjection());
+
+    final ReqProjection<?, ?> vp1_1 =
+        ((ReqRecordModelProjection) p1.asEntityProjection().tagProjection("record").modelProjection()).fieldProjection("bestFriend")
             .fieldProjection()
             .projection();
 
-    assertTrue(comparator.equals(vp1_1, vp2));
+    assertTrue(comparator.equals(vp1_1, p2));
   }
 
-  private @NotNull ReqEntityProjection parseReqVarProjection(@NotNull OpEntityProjection op, String s) {
-    return parseReqOutputEntityProjection(dataType, op, s, resolver).projection();
+  private @NotNull ReqProjection<?, ?> parseReqProjection(@NotNull OpProjection<?, ?> op, String s) {
+    return parseReqOutputProjection(dataType, op, s, resolver).projection();
   }
 
-  private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
-    return parseOpOutputEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?, ?> parsePersonOpProjection(@NotNull String projectionString) {
+    return parseOpOutputProjection(dataType, projectionString, resolver);
   }
 
   // todo more tests

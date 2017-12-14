@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.delete;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.refs.SimpleTypesResolver;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
@@ -46,7 +46,7 @@ public class ReqDeleteProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpDeleteEntityProjection(
+  private final OpProjection<?, ?> personOpProjection = parsePersonOpDeleteProjection(
       lines(
           ":(",
           "  id,",
@@ -143,17 +143,17 @@ public class ReqDeleteProjectionsParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    final @NotNull ReqEntityProjection varProjection =
-        ReqTestUtil.parseReqDeleteEntityProjection(dataType, personOpProjection, expr, resolver).projection();
+    final ReqProjection<?, ?> projection =
+        ReqTestUtil.parseReqDeleteProjection(dataType, personOpProjection, expr, resolver).projection();
 
-    String s = TestUtil.printReqEntityProjection(varProjection, 0);
+    String s = TestUtil.printReqProjection(projection, 0);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpDeleteEntityProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpDeleteEntityProjection(dataType, projectionString, resolver);
+  private OpProjection<?, ?> parsePersonOpDeleteProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpEntityProjection(dataType, projectionString, resolver);
   }
 }

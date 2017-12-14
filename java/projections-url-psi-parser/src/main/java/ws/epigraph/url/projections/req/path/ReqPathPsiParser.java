@@ -43,8 +43,8 @@ public final class ReqPathPsiParser {
 
   private ReqPathPsiParser() {}
 
-  public static ReqEntityProjection parseEntityPath(
-      @NotNull OpEntityProjection op,
+  public static ReqProjection<?, ?> parsePath(
+      @NotNull OpProjection<?, ?> op,
       @NotNull DataTypeApi dataType,
       @NotNull UrlReqEntityPath psi,
       @NotNull TypesResolver typesResolver,
@@ -89,7 +89,7 @@ public final class ReqPathPsiParser {
     final OpModelProjection<?, ?, ?, ?> opModelProjection = opTagPath.modelProjection();
 
 
-    final ReqModelProjection<?, ?, ?> parsedModelProjection = parseModelProjection(
+    final ReqModelProjection<?, ?, ?> modelPath = parseModelProjection(
         opModelProjection,
         opTag.type(),
         modelPathPsi,
@@ -97,15 +97,13 @@ public final class ReqPathPsiParser {
         context
     );
 
-    try {
-      return ReqEntityProjection.path(
-          type,
-          new ReqTagProjectionEntry(opTag, parsedModelProjection, EpigraphPsiUtil.getLocation(modelPathPsi)),
-          EpigraphPsiUtil.getLocation(psi)
-      );
-    } catch (Exception e) {
-      throw new PsiProcessingException(e, psi, context);
-    }
+    return
+        type.kind() == TypeKind.ENTITY ?
+        ReqEntityProjection.path(
+            type,
+            new ReqTagProjectionEntry(opTag, modelPath, EpigraphPsiUtil.getLocation(modelPathPsi)),
+            EpigraphPsiUtil.getLocation(psi)
+        ) : modelPath;
   }
 
 //  private static boolean isModelProjectionEmpty(@Nullable UrlReqModelProjection pathPsi) {
@@ -256,9 +254,9 @@ public final class ReqPathPsiParser {
 
     @Nullable UrlReqEntityPath fieldEntityProjectionPsi = psi.getReqEntityPath();
 
-    final ReqEntityProjection varProjection;
+    final ReqProjection<?, ?> projection;
 
-    varProjection = parseEntityPath(op.projection(), fieldType, fieldEntityProjectionPsi, typesResolver, context);
+    projection = parsePath(op.projection(), fieldType, fieldEntityProjectionPsi, typesResolver, context);
 
 //    final ReadReqPathParsingResult<ReqEntityProjection> fieldVarParsingResult;
 
@@ -267,7 +265,7 @@ public final class ReqPathPsiParser {
     return new ReqFieldProjection(
 //        fieldParams,
 //        fieldAnnotations,
-        varProjection,
+        projection,
         fieldLocation
     );
   }
@@ -295,8 +293,8 @@ public final class ReqPathPsiParser {
     if (valueProjectionPsi == null)
       throw new PsiProcessingException("Map value projection not specified", psi, context);
 
-    @NotNull ReqEntityProjection valueProjection =
-        parseEntityPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
+    ReqProjection<?, ?> valueProjection =
+        parsePath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
 
     return new ReqMapModelProjection(
         type,

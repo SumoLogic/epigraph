@@ -95,8 +95,7 @@ public final class OpPathPsiParser {
                 EpigraphPsiUtil.getLocation(modelPathPsi)
             ),
             EpigraphPsiUtil.getLocation(psi)
-        ) :
-        modelPath;
+        ) : modelPath;
   }
 
   private static @NotNull OpParams parseModelParams(

@@ -19,8 +19,10 @@ package ws.epigraph.url.projections.req;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpRecordModelProjection;
 import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.projections.req.ReqProjectionTraversal;
 import ws.epigraph.projections.req.ReqRecordModelProjection;
 import ws.epigraph.types.TagApi;
@@ -48,9 +50,9 @@ public class AbstractReqTraversal extends ReqProjectionTraversal {
 
   @Override
   protected void registerMissingGuideTail(
-      final @NotNull ReqEntityProjection projection,
-      final @NotNull OpEntityProjection projection2,
-      final @NotNull ReqEntityProjection tail) {
+      final @NotNull ReqProjection<?, ?> projection,
+      final @NotNull OpProjection<?, ?> guide,
+      final @NotNull ReqProjection<?, ?> tail) {
 
     context.addError("Tail is not supported", tail.location());
   }

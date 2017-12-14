@@ -57,8 +57,8 @@ public final class ReqPartialPathPsiParser {
    *
    * @return (partial) parsing result
    */
-  public static ReqPartialPathParsingResult<ReqEntityProjection> parseEntityPath(
-      @NotNull OpEntityProjection op,
+  public static ReqPartialPathParsingResult<ReqProjection<?, ?>> parsePath(
+      @NotNull OpProjection<?, ?> op,
       @NotNull DataTypeApi dataType,
       @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -74,7 +74,7 @@ public final class ReqPartialPathPsiParser {
       if (unnamedOrRefTrunkEntityProjection == null)
         throw new PsiProcessingException("Incomplete entity path definition", psi, context);
 
-      return parseUnnamedOrRefEntityPath(
+      return parseUnnamedOrRefPath(
           op,
           dataType,
           unnamedOrRefTrunkEntityProjection,
@@ -90,7 +90,7 @@ public final class ReqPartialPathPsiParser {
     if (unnamedOrRefTrunkEntityProjection == null)
       throw new PsiProcessingException("Incomplete var projection definition", psi, context);
 
-    return parseUnnamedOrRefEntityPath(
+    return parseUnnamedOrRefPath(
         op,
         dataType,
         unnamedOrRefTrunkEntityProjection,
@@ -99,8 +99,8 @@ public final class ReqPartialPathPsiParser {
     );
   }
 
-  public static ReqPartialPathParsingResult<ReqEntityProjection> parseUnnamedOrRefEntityPath(
-      @NotNull OpEntityProjection op,
+  private static ReqPartialPathParsingResult<ReqProjection<?, ?>> parseUnnamedOrRefPath(
+      @NotNull OpProjection<?, ?> op,
       @NotNull DataTypeApi dataType,
       @NotNull UrlReqUnnamedOrRefTrunkEntityProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -117,7 +117,7 @@ public final class ReqPartialPathPsiParser {
     if (unnamedTrunkEntityProjection == null)
       throw new PsiProcessingException("Incomplete var projection definition", psi, context);
 
-    return parseUnnamedEntityPath(
+    return parseUnnamedPath(
         op,
         dataType,
         unnamedTrunkEntityProjection,
@@ -126,8 +126,8 @@ public final class ReqPartialPathPsiParser {
     );
   }
 
-  public static ReqPartialPathParsingResult<ReqEntityProjection> parseUnnamedEntityPath(
-      @NotNull OpEntityProjection op,
+  private static @NotNull ReqPartialPathParsingResult<ReqProjection<?, ?>> parseUnnamedPath(
+      @NotNull OpProjection<?, ?> op,
       @NotNull DataTypeApi dataType,
       @NotNull UrlReqUnnamedTrunkEntityProjection psi,
       @NotNull TypesResolver typesResolver,
@@ -215,23 +215,20 @@ public final class ReqPartialPathPsiParser {
 //      );
 //    }
 
-    try {
-      return new ReqPartialPathParsingResult<>(
-          ReqEntityProjection.path(
-              type,
-              new ReqTagProjectionEntry(
-                  opTag,
-                  parsedModelResult.path(),
-                  EpigraphPsiUtil.getLocation(modelPsi)
-              ),
-              EpigraphPsiUtil.getLocation(psi)
-          ),
-          parsedModelResult.trunkProjectionPsi(),
-          parsedModelResult.comaProjectionPsi()
-      );
-    } catch (Exception e) {
-      throw new PsiProcessingException(e, psi, context);
-    }
+    return new ReqPartialPathParsingResult<>(
+        type.kind() == TypeKind.ENTITY ?
+        ReqEntityProjection.path(
+            type,
+            new ReqTagProjectionEntry(
+                opTag,
+                parsedModelResult.path(),
+                EpigraphPsiUtil.getLocation(modelPsi)
+            ),
+            EpigraphPsiUtil.getLocation(psi)
+        ) : parsedModelResult.path(),
+        parsedModelResult.trunkProjectionPsi(),
+        parsedModelResult.comaProjectionPsi()
+    );
   }
 
   public static @NotNull ReqPartialPathParsingResult<? extends ReqModelProjection<?, ?, ?>> parseModelPath(
@@ -388,12 +385,12 @@ public final class ReqPartialPathPsiParser {
 
     FieldApi field = opFieldEntry.field();
     final @NotNull OpFieldProjection opFieldPath = opFieldEntry.fieldProjection();
-    final @NotNull OpEntityProjection opFieldEntityProjection = opFieldPath.projection();
+    final OpProjection<?, ?> opFieldProjection = opFieldPath.projection();
 
     final @Nullable UrlReqTrunkFieldProjection fieldProjectionPsi = psi.getReqTrunkFieldProjection();
 
     if (fieldProjectionPsi == null) {
-      if (opFieldEntityProjection.isPathEnd()) {
+      if (opFieldProjection.isPathEnd()) {
         final @NotNull TextLocation qidLocation = EpigraphPsiUtil.getLocation(psi.getQid());
         try {
           return new ReqPartialPathParsingResult<>(
@@ -473,10 +470,10 @@ public final class ReqPartialPathPsiParser {
 
     @NotNull UrlReqTrunkEntityProjection fieldVarPathPsi = psi.getReqTrunkEntityProjection();
 
-    final ReqPartialPathParsingResult<ReqEntityProjection> fieldVarParsingResult;
+    final ReqPartialPathParsingResult<ReqProjection<?, ?>> fieldParsingResult;
 
     if (op.projection().isPathEnd()) {
-      fieldVarParsingResult = new ReqPartialPathParsingResult<>(
+      fieldParsingResult = new ReqPartialPathParsingResult<>(
           ReqEntityProjection.pathEnd(
               fieldType.type(),
               EpigraphPsiUtil.getLocation(fieldVarPathPsi)
@@ -485,8 +482,8 @@ public final class ReqPartialPathPsiParser {
           null
       );
     } else
-      fieldVarParsingResult =
-          parseEntityPath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, context);
+      fieldParsingResult =
+          parsePath(op.projection(), fieldType, fieldVarPathPsi, typesResolver, context);
 
     final @NotNull TextLocation fieldLocation = EpigraphPsiUtil.getLocation(psi);
 
@@ -495,11 +492,11 @@ public final class ReqPartialPathPsiParser {
         new ReqFieldProjection(
 //            fieldParams,
 //            fieldAnnotations,
-            fieldVarParsingResult.path(),
+            fieldParsingResult.path(),
             fieldLocation
         ),
-        fieldVarParsingResult.trunkProjectionPsi(),
-        fieldVarParsingResult.comaProjectionPsi()
+        fieldParsingResult.trunkProjectionPsi(),
+        fieldParsingResult.comaProjectionPsi()
     );
   }
 
@@ -523,8 +520,8 @@ public final class ReqPartialPathPsiParser {
 
     @NotNull UrlReqTrunkEntityProjection valueProjectionPsi = psi.getReqTrunkEntityProjection();
 
-    ReqPartialPathParsingResult<ReqEntityProjection> varParsingResult =
-        parseEntityPath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
+    ReqPartialPathParsingResult<ReqProjection<?, ?>> itemParsingResult =
+        parsePath(op.itemsProjection(), type.valueType(), valueProjectionPsi, resolver, context);
 
     return new ReqPartialPathParsingResult<>(
         new ReqMapModelProjection(
@@ -535,12 +532,12 @@ public final class ReqPartialPathPsiParser {
             null,
             Collections.singletonList(keyProjection),
             true,
-            varParsingResult.path(),
+            itemParsingResult.path(),
             null,
             EpigraphPsiUtil.getLocation(psi)
         ),
-        varParsingResult.trunkProjectionPsi(),
-        varParsingResult.comaProjectionPsi()
+        itemParsingResult.trunkProjectionPsi(),
+        itemParsingResult.comaProjectionPsi()
     );
   }
 
@@ -569,7 +566,7 @@ public final class ReqPartialPathPsiParser {
     );
   }
 
-  public static @NotNull ReqPartialPathParsingResult<ReqPrimitiveModelProjection> parsePrimitiveModelPath(
+  private static @NotNull ReqPartialPathParsingResult<ReqPrimitiveModelProjection> parsePrimitiveModelPath(
       @NotNull PrimitiveTypeApi type,
       @NotNull ReqParams params,
       @NotNull Directives directives,

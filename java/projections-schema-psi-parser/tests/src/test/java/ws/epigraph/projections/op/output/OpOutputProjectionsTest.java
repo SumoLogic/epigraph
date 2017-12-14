@@ -35,6 +35,7 @@ import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
+import ws.epigraph.util.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -768,9 +769,11 @@ public class OpOutputProjectionsTest {
     referenceContext.ensureAllReferencesResolved();
     failIfHasErrors(true, ppc.messages());
 
-    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection =
+    Tuple2<ReferenceContext.RefItem<OpProjection<?, ?>>, ProjectionReferenceName> tuple2 =
         referenceContext.lookupReference("user", false);
-    assertNotNull(userProjection);
+    assertNotNull(tuple2);
+
+    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection = tuple2._1;
     assertEquals(User.type, userProjection.apply().type());
 
     OpProjection<?, ?> normalized = ep.normalizedForType(User.type);
@@ -813,10 +816,13 @@ public class OpOutputProjectionsTest {
     @SuppressWarnings("ConstantConditions")
     OpRecordModelProjection mp = (OpRecordModelProjection) ep.singleTagProjection().modelProjection();
 
-    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection =
+    Tuple2<ReferenceContext.RefItem<OpProjection<?, ?>>, ProjectionReferenceName> tuple2 =
         referenceContext.lookupReference("user", false);
 
-    assertNotNull(userProjection);
+    assertNotNull(tuple2);
+
+    ReferenceContext.RefItem<OpProjection<?, ?>> userProjection = tuple2._1;
+
     assertEquals(UserRecord.type, userProjection.apply().type());
 
     OpRecordModelProjection normalized = mp.normalizedForType(UserRecord.type);
@@ -991,9 +997,12 @@ public class OpOutputProjectionsTest {
 
     OpReferenceContext referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    ReferenceContext.RefItem<OpProjection<?, ?>> refItem =
+
+    Tuple2<ReferenceContext.RefItem<OpProjection<?, ?>>, ProjectionReferenceName> tuple2 =
         referenceContext.lookupReference("sub", false);
-    assertNotNull(refItem);
+    assertNotNull(tuple2);
+
+    ReferenceContext.RefItem<OpProjection<?, ?>> refItem = tuple2._1;
     OpEntityProjection sub = refItem.apply().asEntityProjection();
     assertNotNull(sub);
     OpEntityProjection normalizedFrom = sub.normalizedFrom();
@@ -1011,8 +1020,9 @@ public class OpOutputProjectionsTest {
 
     referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    refItem = referenceContext.lookupReference("sub", false);
-    assertNotNull(refItem);
+    tuple2 = referenceContext.lookupReference("sub", false);
+    assertNotNull(tuple2);
+    refItem = tuple2._1;
     sub = refItem.apply().asEntityProjection();
     assertNotNull(sub);
     normalizedFrom = sub.normalizedFrom();
@@ -1023,8 +1033,9 @@ public class OpOutputProjectionsTest {
     assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
     assertEquals(sub, norm);
 
-    refItem = referenceContext.lookupReference("user", false);
-    assertNotNull(refItem);
+    tuple2 = referenceContext.lookupReference("user", false);
+    assertNotNull(tuple2);
+    refItem = tuple2._1;
     OpEntityProjection user = refItem.apply().asEntityProjection();
     assertNotNull(user);
     normalizedFrom = user.normalizedFrom();
@@ -1065,9 +1076,10 @@ public class OpOutputProjectionsTest {
 
     OpReferenceContext referenceContext = refRef.get();
     assertNotNull(referenceContext);
-    ReferenceContext.RefItem<OpProjection<?, ?>> refItem =
+    Tuple2<ReferenceContext.RefItem<OpProjection<?, ?>>, ProjectionReferenceName> tuple2 =
         referenceContext.lookupReference("sub", false);
-    assertNotNull(refItem);
+    assertNotNull(tuple2);
+    ReferenceContext.RefItem<OpProjection<?, ?>> refItem = tuple2._1;
     OpModelProjection<?, ?, ?, ?> sub = refItem.apply().asModelProjection();
     assertNotNull(sub);
     OpModelProjection<?, ?, ?, ?> normalizedFrom = sub.normalizedFrom();
@@ -1078,8 +1090,9 @@ public class OpOutputProjectionsTest {
     assertEquals(Optional.of("sub"), Optional.ofNullable(norm.referenceName()).map(GenQn::toString));
     assertEquals(sub, norm);
 
-    refItem = referenceContext.lookupReference("user", false);
-    assertNotNull(refItem);
+    tuple2 = referenceContext.lookupReference("user", false);
+    assertNotNull(tuple2);
+    refItem = tuple2._1;
     OpModelProjection<?, ?, ?, ?> user = refItem.apply().asModelProjection();
     assertNotNull(user);
     normalizedFrom = user.normalizedFrom();

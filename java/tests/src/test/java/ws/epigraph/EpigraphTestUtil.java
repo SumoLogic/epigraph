@@ -31,9 +31,12 @@ import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.projections.ProjectionsPrettyPrinterContext;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.*;
-import ws.epigraph.projections.op.output.*;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.op.OpProjectionsPrettyPrinter;
+import ws.epigraph.projections.op.OpPsiProcessingContext;
+import ws.epigraph.projections.op.OpReferenceContext;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.gdata.SchemaGDataPsiParser;
@@ -46,8 +49,8 @@ import ws.epigraph.types.Type;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.ReqReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -124,9 +127,9 @@ public final class EpigraphTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
+  public static @NotNull StepsAndProjection<ReqProjection<?, ?>> parseReqOutputProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
@@ -147,8 +150,8 @@ public final class EpigraphTestUtil {
       ReqPsiProcessingContext reqOutputPsiProcessingContext =
           new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
-      @NotNull StepsAndProjection<ReqEntityProjection> res =
-          new ReqOutputProjectionPsiParser(context).parseTrunkEntityProjection(
+      @NotNull StepsAndProjection<ReqProjection<?, ?>> res =
+          new ReqOutputProjectionPsiParser(context).parseTrunkProjection(
               type,
               false,
               op,

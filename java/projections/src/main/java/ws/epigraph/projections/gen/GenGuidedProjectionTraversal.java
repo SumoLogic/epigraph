@@ -22,6 +22,7 @@ import ws.epigraph.lang.TextLocation;
 import ws.epigraph.types.TagApi;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -54,8 +55,8 @@ public abstract class GenGuidedProjectionTraversal<
 
   private final Set<P> visited = Collections.newSetFromMap(new IdentityHashMap<>());
 
-  protected @Nullable String currentEntityDataDescription; // e.g. a field name or a map value reference
-  protected @Nullable TextLocation currentEntityDataLocation;
+  protected @Nullable String currentDataDescription; // e.g. a field name or a map value reference
+  protected @Nullable TextLocation currentDataLocation;
 
   public boolean traverse(@NotNull P projection, @NotNull GP guide) {
     if (visited.contains(projection)) return true;
@@ -77,28 +78,25 @@ public abstract class GenGuidedProjectionTraversal<
         EP ep = projection.asEntityProjection();
         GEP gep = guide.asEntityProjection();
 
-        if (visitEntityProjection(ep, gep)) {
-          // tags
-          for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
-            final TP tagProjection = entry.getValue();
-            final GTP guideTagProjection = guide.tagProjections().get(tagProjection.tag().name());
+        // tags
+        for (final Map.Entry<String, TP> entry : projection.tagProjections().entrySet()) {
+          final TP tagProjection = entry.getValue();
+          final GTP guideTagProjection = guide.tagProjections().get(tagProjection.tag().name());
 
-            if (guideTagProjection == null)
-              registerMissingGuideTag(ep, gep, tagProjection.tag());
-            else {
-              if (!visitTagProjection(ep, gep, entry.getKey(), tagProjection, guideTagProjection)) return false;
+          if (guideTagProjection == null)
+            registerMissingGuideTag(ep, gep, tagProjection.tag());
+          else {
+            if (!visitTagProjection(ep, gep, entry.getKey(), tagProjection, guideTagProjection)) return false;
 
-              if (!traverse((P) tagProjection.modelProjection(), (GP) guideTagProjection.modelProjection())) return false;
-            }
+            if (!traverse((P) tagProjection.modelProjection(), (GP) guideTagProjection.modelProjection()))
+              return false;
           }
         }
       } else {
         MP mp = projection.asModelProjection();
         GMP gmp = guide.asModelProjection();
 
-        if (visitModelProjection(mp, gmp)) {
-          if (!traverseModel(mp, gmp)) return false;
-        }
+        if (!traverseModel(mp, gmp)) return false;
       }
 
       // tails
@@ -113,7 +111,8 @@ public abstract class GenGuidedProjectionTraversal<
           }
         } else {
           for (final P tail : tails) {
-            Optional<? extends GP> guideTailOpt = guideTails.stream().filter(gt -> gt.type() == tail.type()).findFirst();
+            Optional<? extends GP> guideTailOpt =
+                guideTails.stream().filter(gt -> gt.type() == tail.type()).findFirst();
             if (guideTailOpt.isPresent()) {
               if (!traverse(tail, guideTailOpt.get())) return false;
             } else {
@@ -176,11 +175,12 @@ public abstract class GenGuidedProjectionTraversal<
   }
 
   protected boolean traverse(@NotNull RMP projection, @NotNull GRMP gp, @NotNull FPE fpe, @NotNull GFPE gfpe) {
-    currentEntityDataDescription = String.format("field '%s'", fpe.field().name());
-    currentEntityDataLocation = fpe.location();
-
-    return visitFieldProjectionEntry(projection, gp, fpe, gfpe) &&
-           traverse(fpe.fieldProjection(), gfpe.fieldProjection());
+    return withCurrentData(
+        String.format("field '%s'", fpe.field().name()),
+        fpe.location(),
+        () -> visitFieldProjectionEntry(projection, gp, fpe, gfpe) &&
+              traverse(fpe.fieldProjection(), gfpe.fieldProjection())
+    );
   }
 
   public boolean traverse(@NotNull FP fp, @NotNull GFP gfp) {
@@ -195,20 +195,24 @@ public abstract class GenGuidedProjectionTraversal<
     if (!visitMapModelProjection(projection, guide))
       return false;
 
-    currentEntityDataDescription += " value";
-    currentEntityDataLocation = projection.itemsProjection().location();
+    return withCurrentData(
+        currentDataDescription + " value",
+        projection.itemsProjection().location(),
+        () -> traverse(projection.itemsProjection(), guide.itemsProjection())
+    );
 
-    return traverse(projection.itemsProjection(), guide.itemsProjection());
   }
 
   protected boolean traverse(@NotNull LMP projection, @NotNull GLMP guide) {
     if (!visitListModelProjection(projection, guide))
       return false;
 
-    currentEntityDataDescription += " item";
-    currentEntityDataLocation = projection.itemsProjection().location();
-
-    return traverse(projection.itemsProjection(), guide.itemsProjection());
+    return withCurrentData(
+        currentDataDescription + " item",
+        projection.itemsProjection().location(),
+        () ->
+            traverse(projection.itemsProjection(), guide.itemsProjection())
+    );
   }
 
   protected boolean traverse(@NotNull PMP projection, @NotNull GPMP guide) {
@@ -342,4 +346,19 @@ public abstract class GenGuidedProjectionTraversal<
   protected void registerMissingGuideTail(@NotNull P projection, @NotNull GP guide, @NotNull P tail) {}
 
   protected void registerMissingGuideField(@NotNull RMP mp, @NotNull GRMP gmp, @NotNull String fieldName) { }
+
+  private <R> R withCurrentData(String currentDataDescription, TextLocation currentDataLocation, Supplier<R> sup) {
+    String pd = this.currentDataDescription;
+    TextLocation pl = this.currentDataLocation;
+
+    this.currentDataDescription = currentDataDescription;
+    this.currentDataLocation = currentDataLocation;
+
+    try {
+      return sup.get();
+    } finally {
+      this.currentDataDescription = pd;
+      this.currentDataLocation = pl;
+    }
+  }
 }

@@ -26,7 +26,7 @@ import ws.epigraph.projections.op.input.OpInputProjectionsPsiParser;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiParser;
 import ws.epigraph.projections.op.path.OpPathPsiProcessingContext;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
@@ -57,15 +57,15 @@ import static ws.epigraph.test.TestUtil.*;
 public final class ReqTestUtil {
   private ReqTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpOutputEntityProjection(
+  public static OpProjection<?, ?> parseOpOutputProjection(
       @NotNull DataType entityDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpOutputProjectionsPsiParser::new, entityDataType, projectionString, resolver);
+    return parseOpProjection(OpOutputProjectionsPsiParser::new, entityDataType, projectionString, resolver);
   }
 
-  public static @NotNull OpModelProjection<?,?,?,?> parseOpOutputModelProjection(
+  public static @NotNull OpModelProjection<?, ?, ?, ?> parseOpOutputModelProjection(
       @NotNull DatumTypeApi type,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -73,32 +73,32 @@ public final class ReqTestUtil {
     return parseOpModelProjection(OpOutputProjectionsPsiParser::new, type, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpInputEntityProjection(
-      @NotNull DataType varDataType,
+  public static OpProjection<?, ?> parseOpInputProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpInputProjectionsPsiParser::new, dataType, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpUpdateEntityProjection(
-      @NotNull DataType varDataType,
+  public static OpProjection<?, ?> parseOpUpdateProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     // same parser for now
-    return parseOpEntityProjection(OpInputProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpInputProjectionsPsiParser::new, dataType, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpDeleteEntityProjection(
-      @NotNull DataType varDataType,
+  public static OpProjection<?, ?> parseOpEntityProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseOpEntityProjection(OpDeleteProjectionsPsiParser::new, varDataType, projectionString, resolver);
+    return parseOpProjection(OpDeleteProjectionsPsiParser::new, dataType, projectionString, resolver);
   }
 
-  private static @NotNull OpEntityProjection parseOpEntityProjection(
+  private static @NotNull OpProjection<?, ?> parseOpProjection(
       @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
       @NotNull DataType entityDataType,
       @NotNull String projectionString,
@@ -123,7 +123,7 @@ public final class ReqTestUtil {
           opOutputReferenceContext
       );
       OpProjectionPsiParser parser = parserFactory.apply(context);
-      OpEntityProjection ep = parser.parseEntityProjection(
+      OpProjection<?, ?> p = parser.parseProjection(
           entityDataType,
           false,
           entityProjectionPsi,
@@ -133,12 +133,12 @@ public final class ReqTestUtil {
 
       opOutputReferenceContext.ensureAllReferencesResolved();
 
-      return ep;
+      return p;
     });
 
   }
 
-  private static @NotNull OpModelProjection<?,?,?,?> parseOpModelProjection(
+  private static @NotNull OpModelProjection<?, ?, ?, ?> parseOpModelProjection(
       @NotNull Function<MessagesContext, OpProjectionPsiParser> parserFactory,
       @NotNull DatumTypeApi type,
       @NotNull String projectionString,
@@ -163,7 +163,7 @@ public final class ReqTestUtil {
           opOutputReferenceContext
       );
       OpProjectionPsiParser parser = parserFactory.apply(context);
-      OpModelProjection<?,?,?,?> mp = parser.parseModelProjection(
+      OpModelProjection<?, ?, ?, ?> mp = parser.parseModelProjection(
           type,
           false,
           modelProjectionPsi,
@@ -178,68 +178,68 @@ public final class ReqTestUtil {
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
+  public static StepsAndProjection<ReqProjection<?, ?>> parseReqOutputProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         ReqOutputProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqInputEntityProjection(
+  public static StepsAndProjection<ReqProjection<?, ?>> parseReqInputProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         mc -> new ReqInputProjectionPsiParser(true, mc),
         type, op, projectionString, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqUpdateEntityProjection(
+  public static StepsAndProjection<ReqProjection<?, ?>> parseReqUpdateProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         mc -> new ReqUpdateProjectionPsiParser(true, mc),
         type, op, projectionString, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteEntityProjection(
+  public static StepsAndProjection<ReqProjection<?, ?>> parseReqDeleteProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         ReqDeleteProjectionPsiParser::new,
         type, op, projectionString, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqEntityProjection(
+  public static StepsAndProjection<ReqProjection<?, ?>> parseReqProjection(
       @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection2(parserFactory, type, op, projectionString, resolver)._1;
+    return parseReqProjection2(parserFactory, type, op, projectionString, resolver)._1;
   }
 
-  public static @NotNull Tuple2<StepsAndProjection<ReqEntityProjection>, ReqReferenceContext> parseReqEntityProjection2(
+  public static @NotNull Tuple2<StepsAndProjection<ReqProjection<?, ?>>, ReqReferenceContext> parseReqProjection2(
       @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
@@ -261,8 +261,8 @@ public final class ReqTestUtil {
           new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
       ReqProjectionPsiParser parser = parserFactory.apply(context);
-      @NotNull StepsAndProjection<ReqEntityProjection> res =
-          parser.parseTrunkEntityProjection(
+      @NotNull StepsAndProjection<ReqProjection<?, ?>> res =
+          parser.parseTrunkProjection(
               type,
               false,
               op,
@@ -277,13 +277,13 @@ public final class ReqTestUtil {
     });
   }
 
-  public static @NotNull OpEntityProjection parseOpEntityPath(
-      @NotNull DataType varDataType,
+  public static @NotNull OpProjection<?, ?> parseOpPath(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     try {
-      return parseOpEntityPath(varDataType, projectionString, true, resolver);
+      return parseOpPath(dataType, projectionString, true, resolver);
     } catch (PsiProcessingException e) { // can't happen..
       e.printStackTrace();
       fail(e.getMessage());
@@ -292,8 +292,8 @@ public final class ReqTestUtil {
     throw new RuntimeException("unreachable");
   }
 
-  public static @NotNull OpEntityProjection parseOpEntityPath(
-      @NotNull DataType varDataType,
+  public static @NotNull OpProjection<?, ?> parseOpPath(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       boolean catchPsiErrors,
       @NotNull TypesResolver resolver) throws PsiProcessingException {
@@ -308,7 +308,7 @@ public final class ReqTestUtil {
 
     failIfHasErrors(entityPathPsi, errorsAccumulator);
 
-    final TestUtil.PsiParserClosure<OpEntityProjection> closure = context -> {
+    final TestUtil.PsiParserClosure<OpProjection<?, ?>> closure = context -> {
       OpReferenceContext referenceContext =
           new OpReferenceContext(ProjectionReferenceName.EMPTY, null, context);
 
@@ -317,12 +317,12 @@ public final class ReqTestUtil {
       OpPathPsiProcessingContext opPathPsiProcessingContext =
           new OpPathPsiProcessingContext(context, psiProcessingContext);
 
-      OpEntityProjection vp =
-          OpPathPsiParser.parsePath(varDataType, entityPathPsi, resolver, opPathPsiProcessingContext);
+      OpProjection<?, ?> p =
+          OpPathPsiParser.parsePath(dataType, entityPathPsi, resolver, opPathPsiProcessingContext);
 
       referenceContext.ensureAllReferencesResolved();
 
-      return vp;
+      return p;
     };
 
     return catchPsiErrors ? runPsiParser(true, closure) : runPsiParserNotCatchingErrors(closure);

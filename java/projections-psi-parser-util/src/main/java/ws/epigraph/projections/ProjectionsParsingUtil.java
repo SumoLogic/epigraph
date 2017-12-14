@@ -60,14 +60,13 @@ public final class ProjectionsParsingUtil {
    * @throws PsiProcessingException in case tag can't be found
    */
   public static <
-      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      EP extends GenEntityProjection<EP, TP, MP>
+      P extends GenProjection<?, TP, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, ?>
       >
   @NotNull TagApi getTag(
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable EP op,
+      @Nullable P op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -108,14 +107,13 @@ public final class ProjectionsParsingUtil {
    * @return tag instance or null if not found
    */
   public static @Nullable <
-      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      EP extends GenEntityProjection<EP, TP, MP>
+      P extends GenProjection<?, TP, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, ?>
       >
   TagApi findTag(
       @NotNull DataTypeApi dataType,
       @Nullable String tagName,
-      @Nullable EP op,
+      @Nullable P op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -152,14 +150,13 @@ public final class ProjectionsParsingUtil {
   }
 
   public static <
-      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      EP extends GenEntityProjection<EP, TP, MP>
+      P extends GenProjection<?, TP, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, ?>
       >
   void verifyTag(
       @NotNull TypeApi type,
       @NotNull TagApi tag,
-      @Nullable EP op,
+      @Nullable P op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
 
@@ -204,7 +201,7 @@ public final class ProjectionsParsingUtil {
     return type.tags().stream().map(TagApi::name).collect(Collectors.joining(","));
   }
 
-  public static <VP extends GenEntityProjection<?, ?, ?>> String listTags(@NotNull VP op) {
+  public static <P extends GenProjection<?, ?, ?, ?>> String listTags(@NotNull P op) {
     return String.join(", ", op.tagProjections().keySet());
   }
 
@@ -270,13 +267,12 @@ public final class ProjectionsParsingUtil {
    * Finds tag projection by tag name
    */
   public static @NotNull <
-      MP extends GenModelProjection<EP, TP, ?, ?, ?>,
-      TP extends GenTagProjectionEntry<TP, MP>,
-      EP extends GenEntityProjection<EP, TP, MP>
+      P extends GenProjection<?, TP, ?, ?>,
+      TP extends GenTagProjectionEntry<TP, ?>
       >
   TP getTagProjection(
       @NotNull String tagName,
-      @NotNull EP op,
+      @NotNull P op,
       @NotNull TextLocation location,
       @NotNull PsiProcessingContext context) throws PsiProcessingException {
     final TP tagProjection = op.tagProjections().get(tagName);

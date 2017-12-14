@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -32,8 +32,8 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.ReqTestUtil;
 import ws.epigraph.url.projections.req.ReqReferenceContext;
+import ws.epigraph.url.projections.req.ReqTestUtil;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -55,7 +55,7 @@ public class ReqUpdateProjectionsParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpUpdateEntityProjection(
+  private final OpProjection<?, ?> personOpProjection = parsePersonOpUpdateProjection(
       lines(
           ":(",
           "  id,",
@@ -231,8 +231,8 @@ public class ReqUpdateProjectionsParserTest {
   @Test
   public void testParseModelTail() {
     testParse(
-        ":record (id) ~+UserRecord (profile)",
-        ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( profile )"
+        ":record (id) ~UserRecord (profile)",
+        ":record ( +id ) ~ws.epigraph.tests.UserRecord ( +profile )"
     );
   }
 
@@ -241,6 +241,24 @@ public class ReqUpdateProjectionsParserTest {
   @Test
   public void testFieldReplaceNotSupported() {
     testParseFail(":record ( +worstEnemy ( id ) )");
+  }
+
+  @Test
+  public void testTailReplaceNotSupported() {
+    //noinspection ErrorNotRethrown
+    try {
+      testParse(
+          ":record (id) ~+UserRecord (profile)",
+          ":record ( +id ) ~+ws.epigraph.tests.UserRecord ( +profile )"
+      );
+      fail();
+    } catch (AssertionError e) {
+      assertTrue(
+          e.getMessage(),
+          e.getMessage()
+              .contains("Operation doesn't support replacing data for data for type 'ws.epigraph.tests.UserRecord'")
+      );
+    }
   }
 
   @Test
@@ -280,8 +298,8 @@ public class ReqUpdateProjectionsParserTest {
         ReqPsiProcessingContext psiProcessingContext =
             new ReqPsiProcessingContext(context, referenceContext);
 
-        @NotNull StepsAndProjection<ReqEntityProjection> vp =
-            new ReqUpdateProjectionPsiParser(true, context).parseTrunkEntityProjection(
+        @NotNull StepsAndProjection<ReqProjection<?, ?>> p =
+            new ReqUpdateProjectionPsiParser(true, context).parseTrunkProjection(
                 dataType,
                 false,
                 personOpProjection,
@@ -292,7 +310,7 @@ public class ReqUpdateProjectionsParserTest {
 
         referenceContext.ensureAllReferencesResolved();
 
-        return vp;
+        return p;
 
       });
 
@@ -302,17 +320,17 @@ public class ReqUpdateProjectionsParserTest {
   }
 
   private void testParse(String expr, String expectedProjection) {
-    final @NotNull StepsAndProjection<ReqEntityProjection> varProjection =
-        ReqTestUtil.parseReqUpdateEntityProjection(dataType, personOpProjection, expr, resolver);
+    final StepsAndProjection<ReqProjection<?, ?>> projection =
+        ReqTestUtil.parseReqUpdateProjection(dataType, personOpProjection, expr, resolver);
 
-    String s = TestUtil.printReqEntityProjection(varProjection);
+    String s = TestUtil.printReqProjection(projection);
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
   }
 
-  private @NotNull OpEntityProjection parsePersonOpUpdateEntityProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpUpdateEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?, ?> parsePersonOpUpdateProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpUpdateProjection(dataType, projectionString, resolver);
   }
 }

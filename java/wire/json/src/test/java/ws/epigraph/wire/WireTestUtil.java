@@ -101,7 +101,7 @@ public final class WireTestUtil {
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqPsiProcessingContext psiProcessingContext = new ReqPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqEntityProjection> res = new ReqOutputProjectionPsiParser(context).parseTrunkEntityProjection(
+      StepsAndProjection<ReqEntityProjection> res = new ReqOutputProjectionPsiParser(context).parseTrunkProjection(
           type,
           false,
           op,

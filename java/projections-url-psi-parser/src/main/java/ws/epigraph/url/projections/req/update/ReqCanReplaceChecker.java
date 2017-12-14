@@ -20,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpTagProjectionEntry;
 import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.projections.req.ReqTagProjectionEntry;
 import ws.epigraph.types.TypeKind;
 import ws.epigraph.url.projections.req.AbstractReqTraversal;
@@ -41,40 +43,45 @@ public class ReqCanReplaceChecker extends AbstractReqTraversal {
   }
 
   @Override
-  protected boolean visitVarProjection(
-      final @NotNull ReqEntityProjection projection,
-      final @NotNull OpEntityProjection guide) {
+  protected boolean visitProjection(
+      final @NotNull ReqProjection<?, ?> projection,
+      final @NotNull OpProjection<?, ?> guide) {
 
     if (projection.flag() && !guide.flag() && guide.type().kind() != TypeKind.PRIMITIVE) // can always replace primitive
     {
-      String description = Optional.ofNullable(currentEntityDataDescription).orElse(
+      String description = Optional.ofNullable(currentDataDescription).orElse(
           String.format("data for type '%s'", projection.type().name())
       );
 
-      TextLocation location = Optional.ofNullable(currentEntityDataLocation).orElse(projection.location());
+      TextLocation location = Optional.ofNullable(currentDataLocation).orElse(projection.location());
 
       context.addError("Operation doesn't support replacing data for " + description, location);
     }
 
-    if (projection.type().kind() == TypeKind.ENTITY) {
-      for (final Map.Entry<String, ReqTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
-        String tagName = entry.getKey();
-        ReqTagProjectionEntry rtpe = entry.getValue();
-        OpTagProjectionEntry gtpe = guide.tagProjection(tagName);
+    return super.visitProjection(projection, guide);
+  }
 
-        if (gtpe == null)
-          context.addError(String.format("Malformed projection: unsupported tag '%s'", tagName), rtpe.location());
-        else if (rtpe.modelProjection().flag() && !gtpe.modelProjection().flag())
-          context.addError(
-              String.format("Operation doesn't support replacing data for tag '%s'", tagName),
-              rtpe.location()
-          );
-      }
+  @Override
+  protected boolean visitEntityProjection(
+      final @NotNull ReqEntityProjection projection,
+      final @NotNull OpEntityProjection guide) {
+
+    for (final Map.Entry<String, ReqTagProjectionEntry> entry : projection.tagProjections().entrySet()) {
+      String tagName = entry.getKey();
+      ReqTagProjectionEntry rtpe = entry.getValue();
+      OpTagProjectionEntry gtpe = guide.tagProjection(tagName);
+
+      if (gtpe == null)
+        context.addError(String.format("Malformed projection: unsupported tag '%s'", tagName), rtpe.location());
+      else if (rtpe.modelProjection().flag() && !gtpe.modelProjection().flag())
+        context.addError(
+            String.format("Operation doesn't support replacing data for tag '%s'", tagName),
+            rtpe.location()
+        );
     }
 
     // todo replace on tails? (and model tails too)
 
     return super.visitEntityProjection(projection, guide);
   }
-
 }

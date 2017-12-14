@@ -280,7 +280,7 @@ public class ReqOutputRequiredDataPrunerTest {
     );
 
     StepsAndProjection<ReqEntityProjection> req =
-        EpigraphTestUtil.parseReqOutputEntityProjection(
+        EpigraphTestUtil.parseReqOutputProjection(
             (DataType) data.type().dataType(),
             op,
             reqProjection,
@@ -302,7 +302,7 @@ public class ReqOutputRequiredDataPrunerTest {
     );
 
     StepsAndProjection<ReqEntityProjection> req =
-        EpigraphTestUtil.parseReqOutputEntityProjection(
+        EpigraphTestUtil.parseReqOutputProjection(
             datum.type().dataType(),
             op,
             reqProjection,

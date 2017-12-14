@@ -17,10 +17,11 @@
 package ws.epigraph.url.projections.req.path;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -52,7 +53,7 @@ public class ReadReqPathParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpPath = parseOpEntityPath(
+  private final OpProjection<?, ?> personOpPath = parseOpPath(
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
@@ -120,16 +121,16 @@ public class ReadReqPathParserTest {
     );
   }
 
-  private void testParse(OpEntityProjection opPath, String expr) {
+  private void testParse(OpProjection<?, ?> opPath, String expr) {
     testParse(opPath, expr, expr, null);
   }
 
-  private void testPathNotMatched(OpEntityProjection opPath, String expr) {
+  private void testPathNotMatched(OpProjection<?, ?> opPath, String expr) {
     try {
       UrlReqTrunkEntityProjection psi = getPsi(expr);
       PsiProcessingContext psiProcessingContext = new DefaultPsiProcessingContext();
       ReqPathPsiProcessingContext pathPsiProcessingContext = new ReqPathPsiProcessingContext(psiProcessingContext);
-      ReqPartialPathPsiParser.parseEntityPath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
+      ReqPartialPathPsiParser.parsePath(opPath, Person.type.dataType(null), psi, resolver, pathPsiProcessingContext);
 
       fail("Expected to get 'path not matched' error");
     } catch (PathNotMatchedException ignored) {
@@ -139,11 +140,15 @@ public class ReadReqPathParserTest {
     }
   }
 
-  private void testParse(OpEntityProjection opPath, String expr, String expectedPath, @Nullable String expectedPsiRemainder) {
+  private void testParse(
+      OpProjection<?, ?> opPath,
+      String expr,
+      String expectedPath,
+      @Nullable String expectedPsiRemainder) {
 
     UrlReqTrunkEntityProjection psi = getPsi(expr);
-    final ReqPartialPathParsingResult<ReqEntityProjection> result =
-        TestUtil.runPsiParser(true, context -> ReqPartialPathPsiParser.parseEntityPath(
+    final ReqPartialPathParsingResult<ReqProjection<?, ?>> result =
+        TestUtil.runPsiParser(true, context -> ReqPartialPathPsiParser.parsePath(
             opPath,
             Person.type.dataType(null),
             psi,
@@ -151,7 +156,7 @@ public class ReadReqPathParserTest {
             new ReqPathPsiProcessingContext(context)
         ));
 
-    String s = TestUtil.printReqEntityPath(result.path());
+    String s = TestUtil.printReqPath(result.path());
 
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
@@ -194,8 +199,8 @@ public class ReadReqPathParserTest {
     return psiVarPath;
   }
 
-  private OpEntityProjection parseOpEntityPath(String projectionString) {
-    return ReqTestUtil.parseOpEntityPath(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?, ?> parseOpPath(String projectionString) {
+    return ReqTestUtil.parseOpPath(dataType, projectionString, resolver);
   }
 
 }

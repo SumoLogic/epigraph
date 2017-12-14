@@ -20,12 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.ReqProjectionTransformer;
-import ws.epigraph.projections.req.ReqProjectionTraversal;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.*;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.DataTypeApi;
@@ -33,6 +30,8 @@ import ws.epigraph.url.parser.psi.UrlReqComaEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.parser.psi.UrlReqTrunkFieldProjection;
 import ws.epigraph.util.Tuple2;
+
+import java.util.Map;
 
 /**
  * Psi parser that calls {@link ReqBasicProjectionPsiParser} to build basic structure, then
@@ -58,49 +57,49 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull StepsAndProjection<ReqEntityProjection> parseTrunkEntityProjection(
+  public @NotNull StepsAndProjection<ReqProjection<?, ?>> parseTrunkProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull UrlReqTrunkEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
-        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseTrunkEntityProjection(
+    @NotNull StepsAndProjection<ReqProjection<?, ?>> stepsAndProjection =
+        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseTrunkProjection(
             dataType, flagged, op, psi, resolver
         );
 
-    return processEntityProjection(stepsAndProjection, op, context);
+    return processProjection(stepsAndProjection, op, context);
   }
 
   @Override
-  public @NotNull StepsAndProjection<ReqEntityProjection> parseComaEntityProjection(
+  public @NotNull StepsAndProjection<ReqProjection<?, ?>> parseEntityProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull UrlReqComaEntityProjection psi,
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    StepsAndProjection<ReqEntityProjection> stepsAndProjection =
-        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseComaEntityProjection(
+    @NotNull StepsAndProjection<ReqProjection<?, ?>> stepsAndProjection =
+        new ReqBasicProjectionPsiParser(defaultProjectionConstructor, context).parseComaProjection(
             dataType, flagged, op, psi, resolver
         );
 
-    return processEntityProjection(stepsAndProjection, op, context);
+    return processProjection(stepsAndProjection, op, context);
   }
 
   @Override
-  public ReqEntityProjection createDefaultEntityProjection(
+  public @NotNull ReqProjection<?, ?> createDefaultProjection(
       @NotNull DataTypeApi type,
-      @NotNull OpEntityProjection op,
+      OpProjection<?, ?> op,
       boolean required,
       @NotNull TypesResolver resolver,
       @NotNull TextLocation location,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException {
 
-    return defaultProjectionConstructor.createDefaultEntityProjection(
+    return defaultProjectionConstructor.createDefaultProjection(
         type, op, required, null, resolver, location, context
     );
   }
@@ -120,9 +119,9 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
         );
 
     ReqFieldProjection fieldProjection = stepsAndProjection.projection();
-    ReqEntityProjection ep = fieldProjection.projection();
+    ReqProjection<?, ?> ep = fieldProjection.projection();
 
-    ReqEntityProjection transformedEp = processEntityProjection(ep, op.projection(), context);
+    ReqProjection<?, ?> transformedEp = processProjection(ep, op.projection(), context);
 
     return new StepsAndProjection<>(
         stepsAndProjection.pathSteps(),
@@ -133,14 +132,14 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
     );
   }
 
-  private @NotNull StepsAndProjection<ReqEntityProjection> processEntityProjection(
-      @NotNull StepsAndProjection<ReqEntityProjection> s,
-      @NotNull OpEntityProjection op,
+  private @NotNull StepsAndProjection<ReqProjection<?, ?>> processProjection(
+      @NotNull StepsAndProjection<ReqProjection<?, ?>> s,
+      @NotNull OpProjection<?, ?> op,
       @NotNull ReqPsiProcessingContext context) {
 
     return new StepsAndProjection<>(
         s.pathSteps(),
-        processEntityProjection(
+        processProjection(
             s.projection(),
             op,
             context
@@ -148,9 +147,9 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
     );
   }
 
-  private @NotNull ReqEntityProjection processEntityProjection(
-      @NotNull ReqEntityProjection ep,
-      @NotNull OpEntityProjection op,
+  private @NotNull ReqProjection<?, ?> processProjection(
+      @NotNull ReqProjection<?, ?> ep,
+      @NotNull OpProjection<?, ?> op,
       @NotNull ReqPsiProcessingContext context) {
 
     if (traversal != null) {
@@ -160,9 +159,11 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
     if (transformer == null)
       return ep;
     else {
-      Tuple2<ReqEntityProjection, ReqProjectionTransformationMap> tuple2 = transformer.transform(ep, null);
-      ReqEntityProjection transformedEp = tuple2._1;
-      ReqProjectionTransformationMap transformationMap = tuple2._2;
+      Tuple2<ReqProjection<?, ?>, Map<ReqProjection<?, ?>, ReqProjection<?, ?>>> tuple2 =
+          transformer.transform(ep, null);
+
+      ReqProjection<?, ?> transformedEp = tuple2._1;
+      Map<ReqProjection<?, ?>, ReqProjection<?, ?>> transformationMap = tuple2._2;
 
       context.referenceContext().transform(transformationMap);
       return transformedEp;

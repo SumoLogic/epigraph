@@ -20,8 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.lang.TextLocation;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.*;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqListModelProjection;
+import ws.epigraph.projections.req.ReqModelProjection;
+import ws.epigraph.projections.req.ReqPrimitiveModelProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingContext;
 import ws.epigraph.psi.PsiProcessingException;
@@ -30,13 +33,11 @@ import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.test.TestUtil;
 import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
-import ws.epigraph.types.DatumTypeApi;
 
 import java.util.Collections;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static ws.epigraph.test.TestUtil.lines;
 
@@ -55,7 +56,7 @@ public class DefaultReqProjectionConstructorTest {
       epigraph.Integer.type
   );
 
-  private final OpEntityProjection personOpProjection = parsePersonOpOutputEntityProjection(
+  private final OpProjection<?, ?> personOpProjection = parsePersonOpOutputProjection(
       lines(
           ":(",
           "  id,",
@@ -89,67 +90,59 @@ public class DefaultReqProjectionConstructorTest {
   @Test
   public void testIncludeFlaggedOnlyPrimitive() throws PsiProcessingException {
     DataType dataType = PersonId.type.dataType();
-    ReqEntityProjection req = test(
+    ReqProjection<?, ?> req = test(
         dataType,
-        ReqTestUtil.parseOpOutputEntityProjection(dataType, "", resolver),
+        ReqTestUtil.parseOpOutputProjection(dataType, "", resolver),
         DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ""
     );
 
-    assertEquals(1, req.tagProjections().size());
-    ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
-    assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
+    assertTrue(req.isModelProjection());
+    ReqModelProjection<?, ?, ?> modelProjection = req.asModelProjection();
     assertTrue(modelProjection instanceof ReqPrimitiveModelProjection);
   }
 
   @Test
   public void testIncludeNonePrimitiveList() throws PsiProcessingException {
     DataType dataType = PersonId_List.type.dataType();
-    ReqEntityProjection req = test(
+    ReqProjection<?, ?> req = test(
         dataType,
-        ReqTestUtil.parseOpOutputEntityProjection(dataType, "", resolver),
+        ReqTestUtil.parseOpOutputProjection(dataType, "", resolver),
         DefaultReqProjectionConstructor.Mode.INCLUDE_NONE,
         "" // * :id
     );
 
-    assertEquals(1, req.tagProjections().size());
-    ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
-    assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
+    assertTrue(req.isModelProjection());
+    ReqModelProjection<?, ?, ?> modelProjection = req.asModelProjection();
     assertTrue(modelProjection instanceof ReqListModelProjection);
     ReqListModelProjection listModelProjection = (ReqListModelProjection) modelProjection;
-    ReqEntityProjection itemsProjection = listModelProjection.itemsProjection();
-    assertEquals(1, itemsProjection.tagProjections().size());
-    assertNotNull(itemsProjection.tagProjection(DatumTypeApi.MONO_TAG_NAME));
+    ReqProjection<?, ?> itemsProjection = listModelProjection.itemsProjection();
+    assertTrue(itemsProjection.isModelProjection());
   }
 
   @Test
   public void testIncludeFlaggedOnlyPrimitiveList() throws PsiProcessingException {
     DataType dataType = PersonId_List.type.dataType();
-    ReqEntityProjection req = test(
+    ReqProjection<?, ?> req = test(
         dataType,
-        ReqTestUtil.parseOpOutputEntityProjection(dataType, "", resolver),
+        ReqTestUtil.parseOpOutputProjection(dataType, "", resolver),
         DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         "" // * :id
     );
 
-    assertEquals(1, req.tagProjections().size());
-    ReqTagProjectionEntry monoTpe = req.tagProjection(DatumTypeApi.MONO_TAG_NAME);
-    assertNotNull(monoTpe);
-    ReqModelProjection<?, ?, ?> modelProjection = monoTpe.modelProjection();
+    assertTrue(req.isModelProjection());
+    ReqModelProjection<?, ?, ?> modelProjection = req.asModelProjection();
     assertTrue(modelProjection instanceof ReqListModelProjection);
     ReqListModelProjection listModelProjection = (ReqListModelProjection) modelProjection;
-    ReqEntityProjection itemsProjection = listModelProjection.itemsProjection();
-    assertEquals(1, itemsProjection.tagProjections().size());
-    assertNotNull(itemsProjection.tagProjection(DatumTypeApi.MONO_TAG_NAME));
+    ReqProjection<?, ?> itemsProjection = listModelProjection.itemsProjection();
+    assertTrue(itemsProjection.isModelProjection());
   }
 
   @Test
   public void testRetro() throws PsiProcessingException {
     test(
         dataType,
-        parsePersonOpOutputEntityProjection(":`record`(bestFriend2)"),
+        parsePersonOpOutputProjection(":`record`(bestFriend2)"),
         DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ":record ( bestFriend2 :id )"
     );
@@ -157,7 +150,7 @@ public class DefaultReqProjectionConstructorTest {
 
   @Test
   public void testMeta() throws PsiProcessingException {
-    OpEntityProjection op = parsePersonOpOutputEntityProjection(":`record`(friendsMap2 {meta:(+start,count)}[](:id))");
+    OpProjection<?, ?> op = parsePersonOpOutputProjection(":`record`(friendsMap2 {meta:(+start,count)}[](:id))");
 
     test(
         dataType,
@@ -243,7 +236,7 @@ public class DefaultReqProjectionConstructorTest {
   public void testWithData() throws PsiProcessingException {
     test(
         dataType,
-        parsePersonOpOutputEntityProjection(":`record`(friendsMap[required]:id)"),
+        parsePersonOpOutputProjection(":`record`(friendsMap[required]:id)"),
         DefaultReqProjectionConstructor.Mode.INCLUDE_ALL,
         Person.create().setRecord(
             PersonRecord.create().setFriendsMap(
@@ -260,7 +253,7 @@ public class DefaultReqProjectionConstructorTest {
   public void testWithKeyParams() throws PsiProcessingException {
     test(
         dataType,
-        parsePersonOpOutputEntityProjection(
+        parsePersonOpOutputProjection(
             ":`record`(friendsMap[required,;p:epigraph.Integer {default: 555} ]:id)"
         ),
         DefaultReqProjectionConstructor.Mode.INCLUDE_ALL,
@@ -277,18 +270,19 @@ public class DefaultReqProjectionConstructorTest {
 
   @Test
   public void testSingleTagNonParenthesized() throws PsiProcessingException {
-    ReqEntityProjection req = test(
+    ReqProjection<?, ?> req = test(
         dataType,
-        parsePersonOpOutputEntityProjection(":( +id, `record`(id) )"),
+        parsePersonOpOutputProjection(":( +id, `record`(id) )"),
         DefaultReqProjectionConstructor.Mode.INCLUDE_UNFLAGGED_ONLY,
         ":record ( id )"
     );
-    assertFalse(req.parenthesized());
+    assertTrue(req.isEntityProjection());
+    assertFalse(req.asEntityProjection().parenthesized());
   }
 
-  private ReqEntityProjection test(
+  private ReqProjection<?, ?> test(
       DataType type,
-      OpEntityProjection op,
+      OpProjection<?, ?> op,
       DefaultReqProjectionConstructor.Mode mode,
       String expectedReq)
       throws PsiProcessingException {
@@ -296,16 +290,16 @@ public class DefaultReqProjectionConstructorTest {
     return test(type, op, mode, null, expectedReq);
   }
 
-  private ReqEntityProjection test(
+  private ReqProjection<?, ?> test(
       DataType type,
-      OpEntityProjection op,
+      OpProjection<?, ?> op,
       DefaultReqProjectionConstructor.Mode mode,
       Data data,
       String expectedReq)
       throws PsiProcessingException {
 
     PsiProcessingContext ppc = new DefaultPsiProcessingContext();
-    ReqEntityProjection req = new DefaultReqProjectionConstructor(mode, true, false).createDefaultEntityProjection(
+    ReqProjection<?, ?> req = new DefaultReqProjectionConstructor(mode, true, false).createDefaultProjection(
         type,
         op,
         false,
@@ -319,14 +313,14 @@ public class DefaultReqProjectionConstructorTest {
 
     assertEquals(
         expectedReq,
-        TestUtil.printReqEntityProjection(req, 0)
+        TestUtil.printReqProjection(req, 0)
     );
 
     return req;
   }
 
-  private @NotNull OpEntityProjection parsePersonOpOutputEntityProjection(@NotNull String projectionString) {
-    return ReqTestUtil.parseOpOutputEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?, ?> parsePersonOpOutputProjection(@NotNull String projectionString) {
+    return ReqTestUtil.parseOpOutputProjection(dataType, projectionString, resolver);
   }
 
 }

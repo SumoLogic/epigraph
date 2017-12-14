@@ -39,7 +39,7 @@ public class ReqRequiredChecker extends AbstractReqTraversal {
   }
 
   @Override
-  protected boolean visitVarProjection(
+  protected boolean visitEntityProjection(
       final @NotNull ReqEntityProjection projection,
       final @NotNull OpEntityProjection guide) {
 

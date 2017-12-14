@@ -230,7 +230,7 @@ public abstract class GenProjectionTransformer<
   }
 
   @SuppressWarnings("unchecked")
-  private @NotNull MP transformResolvedModelProjection(
+  protected @NotNull MP transformResolvedModelProjection(
       @NotNull MP projection,
       @Nullable List<MP> transformedTails,
       boolean tailsChanged) {

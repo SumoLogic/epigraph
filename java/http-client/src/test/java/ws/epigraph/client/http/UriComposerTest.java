@@ -222,7 +222,7 @@ public class UriComposerTest {
 
       ReqProjectionPsiParser parser = parserFactory.apply(context);
       @NotNull StepsAndProjection<ReqEntityProjection> res =
-          parser.parseTrunkEntityProjection(
+          parser.parseTrunkProjection(
               type,
               flag,
               op,

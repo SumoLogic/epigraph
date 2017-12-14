@@ -18,8 +18,8 @@ package ws.epigraph.url.projections.req.path;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingException;
 import ws.epigraph.refs.SimpleTypesResolver;
@@ -49,7 +49,7 @@ public class ReqPathParserTest {
       epigraph.String.type
   );
 
-  private final OpEntityProjection personOpPath = parseOpEntityProjection(
+  private final OpProjection<?, ?> personOpPath = parseOpProjection(
       lines(
           ":`record` { ;p1:epigraph.String }",
           "  / friendsMap { ;p2:epigraph.String }",
@@ -76,7 +76,7 @@ public class ReqPathParserTest {
 
     try {
       TestUtil.runPsiParserNotCatchingErrors(context ->
-          ReqPathPsiParser.parseEntityPath(
+          ReqPathPsiParser.parsePath(
               personOpPath,
               Person.type.dataType(null),
               psi,
@@ -95,8 +95,8 @@ public class ReqPathParserTest {
   private void testParse(String expr, String expectedProjection) {
     UrlReqEntityPath psi = getPsi(expr);
 
-    final @NotNull ReqEntityProjection path = TestUtil.runPsiParser(true, context ->
-        ReqPathPsiParser.parseEntityPath(
+    final @NotNull ReqProjection<?, ?> path = TestUtil.runPsiParser(true, context ->
+        ReqPathPsiParser.parsePath(
             personOpPath,
             Person.type.dataType(null),
             psi,
@@ -104,7 +104,7 @@ public class ReqPathParserTest {
             new ReqPathPsiProcessingContext(context)
         ));
 
-    String s = TestUtil.printReqEntityPath(path);
+    String s = TestUtil.printReqPath(path);
     final String actual =
         s.replaceAll("\"", "'"); // pretty printer outputs double quotes, we use single quotes in URLs
     assertEquals(expectedProjection, actual);
@@ -124,8 +124,8 @@ public class ReqPathParserTest {
     return psiVarPath;
   }
 
-  private @NotNull OpEntityProjection parseOpEntityProjection(String projectionString) {
-    return ReqTestUtil.parseOpEntityPath(dataType, projectionString, resolver);
+  private OpProjection<?, ?> parseOpProjection(String projectionString) {
+    return ReqTestUtil.parseOpPath(dataType, projectionString, resolver);
   }
 
 }
