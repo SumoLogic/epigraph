@@ -18,8 +18,10 @@ package ws.epigraph.wire;
 
 import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqModelProjection;
+import ws.epigraph.projections.req.ReqProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface ReqFormatReader extends FormatReader<ReqEntityProjection, ReqModelProjection<?, ?, ?>> {}
+public interface ReqFormatReader
+    extends FormatReader<ReqProjection<?, ?>, ReqEntityProjection, ReqModelProjection<?, ?, ?>> {}

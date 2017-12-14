@@ -21,7 +21,9 @@ package ws.epigraph.wire;
 import net.jcip.annotations.NotThreadSafe;
 import ws.epigraph.projections.op.OpEntityProjection;
 import ws.epigraph.projections.op.OpModelProjection;
+import ws.epigraph.projections.op.OpProjection;
 
 @NotThreadSafe
-public interface OpFormatWriter extends FormatWriter<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
+public interface OpFormatWriter
+    extends FormatWriter<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {
 }

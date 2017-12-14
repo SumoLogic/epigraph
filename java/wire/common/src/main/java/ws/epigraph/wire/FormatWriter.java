@@ -28,6 +28,7 @@ import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.types.DatumType;
 import ws.epigraph.types.Type;
 
@@ -37,10 +38,22 @@ import java.nio.charset.Charset;
 
 @NotThreadSafe
 public interface FormatWriter<
-    VP extends GenEntityProjection<VP, ?, ?>,
-    MP extends GenModelProjection<?, /*MP*/?, ?, ?>> extends AutoCloseable {
+    P extends GenProjection<?, ?, /*EP*/?, /*MP*/?>,
+    EP extends GenEntityProjection<EP, ?, ?>,
+    MP extends GenModelProjection<?, ?, /*MP*/?, ?, ?>> extends AutoCloseable {
 
   // with projections
+
+  @SuppressWarnings("unchecked")
+  default void write(@NotNull P projection, int pathSteps, @Nullable Data data) throws IOException {
+    if (projection.isEntityProjection())
+      writeData((EP) projection.asEntityProjection(), pathSteps, data);
+    else {
+      DatumType datumType = (DatumType) projection.type();
+      Datum datum = data == null ? null : data._raw().getDatum(datumType.self());
+      writeDatum((MP) projection.asModelProjection(), pathSteps, datum); // todo subtract 1 for $self here?
+    }
+  }
 
   /**
    * Writes data out
@@ -51,7 +64,7 @@ public interface FormatWriter<
    *                   be skipped from the output
    * @param data       data to write
    */
-  void writeData(@NotNull VP projection, int pathSteps, @Nullable Data data) throws IOException;
+  void writeData(@NotNull EP projection, int pathSteps, @Nullable Data data) throws IOException;
 
   /**
    * Writes datum out
@@ -80,7 +93,7 @@ public interface FormatWriter<
   default void close() throws IOException {}
 
   @ThreadSafe
-  interface Factory<FW extends FormatWriter<?, ?>> {
+  interface Factory<FW extends FormatWriter<?, ?, ?>> {
     @NotNull WireFormat format();
 
     @NotNull FW newFormatWriter(@NotNull OutputStream out, @NotNull Charset charset);

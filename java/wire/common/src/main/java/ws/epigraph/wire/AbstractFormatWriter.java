@@ -36,15 +36,16 @@ import java.util.Set;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractFormatWriter
-    <
-        EP extends GenEntityProjection<EP, TP, MP>,
-        TP extends GenTagProjectionEntry<TP, MP>,
-        MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
-        RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
-        FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
-        FP extends GenFieldProjection<EP, TP, MP, FP>,
-        MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>> implements FormatWriter<EP, MP> {
+public abstract class AbstractFormatWriter<
+    P extends GenProjection<?, TP, EP, MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>>
+    implements FormatWriter<P, EP, MP> {
 
   @Override
   public void writeData(@NotNull EP projection, int pathSteps, @Nullable Data data) throws IOException {
@@ -95,7 +96,7 @@ public abstract class AbstractFormatWriter
             assert fieldEntries.size() == 1;
             FPE fpe = fieldEntries.iterator().next().getValue();
 
-            writeData(
+            write(
                 fpe.fieldProjection().projection(),
                 pathSteps - 1,
                 recordDatum._raw().getData((Field) fpe.field())
@@ -109,7 +110,7 @@ public abstract class AbstractFormatWriter
             Collection<Datum> expectedKeys = getExpectedKeys(mapProjection);
             assert expectedKeys != null && expectedKeys.size() == 1;
 
-            writeData(
+            write(
                 mapProjection.itemsProjection(),
                 pathSteps - 1,
                 mapDatum._raw().elements().get(

@@ -31,6 +31,4 @@ import ws.epigraph.projections.gen.GenProjection;
  */
 public interface OpProjection<P extends OpProjection<?, ?>, MP extends OpModelProjection<?, ?, ?, ?>>
     extends GenProjection<P, OpTagProjectionEntry, OpEntityProjection, MP> {
-
-
 }

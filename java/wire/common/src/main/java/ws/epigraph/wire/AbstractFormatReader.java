@@ -34,15 +34,16 @@ import java.util.Set;
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public abstract class AbstractFormatReader
-    <
-        EP extends GenEntityProjection<EP, TP, MP>,
-        TP extends GenTagProjectionEntry<TP, MP>,
-        MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
-        RMP extends GenRecordModelProjection<EP, TP, MP, RMP, FPE, FP, ?>,
-        FPE extends GenFieldProjectionEntry<EP, TP, MP, FP>,
-        FP extends GenFieldProjection<EP, TP, MP, FP>,
-        MMP extends GenMapModelProjection<EP, TP, MP, MMP, ?>> implements FormatReader<EP, MP> {
+public abstract class AbstractFormatReader<
+    P extends GenProjection<?, TP, EP, MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
+    TP extends GenTagProjectionEntry<TP, MP>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>>
+    implements FormatReader<P, EP, MP> {
 
   @Override
   public @Nullable Data readData(@NotNull EP projection, final int pathSteps) throws IOException, FormatException {
@@ -102,7 +103,7 @@ public abstract class AbstractFormatReader
           RecordDatum.Builder recordDatum = recordType.createBuilder();
           recordDatum._raw().setData(
               (Field) fieldEntry.field(),
-              readData(fieldEntry.fieldProjection().projection(), pathSteps - 1)
+              read(fieldEntry.fieldProjection().projection(), pathSteps - 1)
           );
 
           return recordDatum.asValue();
@@ -122,7 +123,7 @@ public abstract class AbstractFormatReader
           }
 
           MapDatum.Builder mapDatum = mapType.createBuilder();
-          Data data = readData(mapProjection.itemsProjection(), pathSteps - 1);
+          Data data = read(mapProjection.itemsProjection(), pathSteps - 1);
 
           if (data == null) {
             StringBuilder sb = new StringBuilder();

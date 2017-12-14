@@ -18,8 +18,10 @@ package ws.epigraph.wire;
 
 import ws.epigraph.projections.op.OpModelProjection;
 import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
-public interface OpFormatReader extends FormatReader<OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {}
+public interface OpFormatReader
+    extends FormatReader<OpProjection<?, ?>, OpEntityProjection, OpModelProjection<?, ?, ?, ?>> {}
