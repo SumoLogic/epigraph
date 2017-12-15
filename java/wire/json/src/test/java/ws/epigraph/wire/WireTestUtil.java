@@ -19,11 +19,11 @@ package ws.epigraph.wire;
 import org.jetbrains.annotations.NotNull;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpPsiProcessingContext;
 import ws.epigraph.projections.op.OpReferenceContext;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.parser.SchemaSubParserDefinitions;
@@ -32,8 +32,8 @@ import ws.epigraph.types.DataType;
 import ws.epigraph.url.parser.UrlSubParserDefinitions;
 import ws.epigraph.url.parser.psi.UrlReqTrunkEntityProjection;
 import ws.epigraph.url.projections.req.ReqPsiProcessingContext;
-import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 import ws.epigraph.url.projections.req.ReqReferenceContext;
+import ws.epigraph.url.projections.req.output.ReqOutputProjectionPsiParser;
 
 import static ws.epigraph.test.TestUtil.failIfHasErrors;
 import static ws.epigraph.test.TestUtil.runPsiParser;
@@ -44,7 +44,7 @@ import static ws.epigraph.test.TestUtil.runPsiParser;
 public final class WireTestUtil {
   private WireTestUtil() {}
 
-  public static @NotNull OpEntityProjection parseOpEntityProjection(
+  public static @NotNull OpProjection<?, ?> parseOpProjection(
       @NotNull DataType varDataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
@@ -66,7 +66,7 @@ public final class WireTestUtil {
       OpPsiProcessingContext outputPsiProcessingContext =
           new OpPsiProcessingContext(context, outputReferenceContext);
 
-      OpEntityProjection vp = new OpOutputProjectionsPsiParser(context).parseEntityProjection(
+      OpProjection<?, ?> p = new OpOutputProjectionsPsiParser(context).parseProjection(
           varDataType,
           false,
           psiEntityProjection,
@@ -75,14 +75,14 @@ public final class WireTestUtil {
       );
 
       outputReferenceContext.ensureAllReferencesResolved();
-      return vp;
+      return p;
 
     });
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
+  public static @NotNull StepsAndProjection<ReqProjection<?, ?>> parseReqProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?, ?> op,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
@@ -101,14 +101,15 @@ public final class WireTestUtil {
           new ReqReferenceContext(ProjectionReferenceName.EMPTY, null, context);
       ReqPsiProcessingContext psiProcessingContext = new ReqPsiProcessingContext(context, referenceContext);
 
-      StepsAndProjection<ReqEntityProjection> res = new ReqOutputProjectionPsiParser(context).parseTrunkProjection(
-          type,
-          false,
-          op,
-          psi,
-          resolver,
-          psiProcessingContext
-      );
+      @NotNull StepsAndProjection<ReqProjection<?, ?>> res =
+          new ReqOutputProjectionPsiParser(context).parseTrunkProjection(
+              type,
+              false,
+              op,
+              psi,
+              resolver,
+              psiProcessingContext
+          );
 
       referenceContext.ensureAllReferencesResolved();
 

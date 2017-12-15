@@ -33,20 +33,13 @@ import ws.epigraph.data.RecordDatum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.lang.Qn;
-import ws.epigraph.projections.gen.GenFieldProjection;
-import ws.epigraph.projections.gen.GenFieldProjectionEntry;
-import ws.epigraph.projections.gen.GenListModelProjection;
-import ws.epigraph.projections.gen.GenMapModelProjection;
-import ws.epigraph.projections.gen.GenModelProjection;
-import ws.epigraph.projections.gen.GenProjectionsComparator;
-import ws.epigraph.projections.gen.GenRecordModelProjection;
-import ws.epigraph.projections.gen.GenTagProjectionEntry;
-import ws.epigraph.projections.gen.GenEntityProjection;
+import ws.epigraph.projections.gen.*;
 import ws.epigraph.refs.QnTypeRef;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.types.*;
 import ws.epigraph.wire.AbstractFormatReader;
 import ws.epigraph.wire.FormatException;
+import ws.epigraph.wire.WireUtil;
 import ws.epigraph.wire.json.JsonFormat;
 import ws.epigraph.wire.json.JsonFormatCommon;
 
@@ -99,17 +92,18 @@ Data ::= BackRef | PolyData | MonoData // PolyData triggered by projection (poly
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 abstract class AbstractJsonFormatReader<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>
+    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>
     //,PMP extends GenPrimitiveModelProjection<PMP, ?>
     >
-    extends AbstractFormatReader<VP, TP, MP, RMP, FPE, FP, MMP> {
+    extends AbstractFormatReader<P, TP, MP, RMP, FPE, FP, MMP> {
 
   protected static final @NotNull JsonFactory JSON_FACTORY = new JsonFactory();
 
@@ -129,10 +123,10 @@ abstract class AbstractJsonFormatReader<
     resetParserStateRecording();
   }
 
-  protected abstract GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, ?, FPE, FP> projectionsComparator();
+  protected abstract GenProjectionsComparator<P, TP, EP, MP, RMP, MMP, LMP, ?, FPE, FP> projectionsComparator();
 
   @Override
-  public @Nullable Data readData(@NotNull VP projection) throws IOException, JsonFormatException {
+  public @Nullable Data readData(@NotNull P projection) throws IOException, JsonFormatException {
     Data data = readData((Type) projection.type(), Collections.singletonList(projection));
     ensureEOF();
     return data;
@@ -141,7 +135,7 @@ abstract class AbstractJsonFormatReader<
   // DATA ::= RECDATA or POLYDATA or MONODATA
   private @Nullable Data readData(
       @NotNull Type typeBound,
-      @NotNull List<VP> projections // non-empty, polymorphic tails respected
+      @NotNull List<P> projections // non-empty, polymorphic tails respected
   ) throws IOException, JsonFormatException {
 
     if (nextToken() == null) return null;
@@ -150,10 +144,10 @@ abstract class AbstractJsonFormatReader<
 
   private @NotNull Data finishReadingData(
       @NotNull Type typeBound,
-      @NotNull List<VP> projections // non-empty, polymorphic tails respected
+      @NotNull List<P> projections // non-empty, polymorphic tails respected
   ) throws IOException, JsonFormatException {
     assert !projections.isEmpty();
-    boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    boolean readPoly = WireUtil.needPoly(typeBound, projections);
 
     JsonToken token = currentToken();
 
@@ -175,7 +169,7 @@ abstract class AbstractJsonFormatReader<
         if (visitedDataEntry == null)
           throw error("Can't find data by recursion level " + revStackDepth);
 
-        // assuming that exactly the same, not just structurally same projection was used for writing
+        // assuming that exactly the same, not just structurally same projection was used for writing.
         // need full data validation in place if we want to accept structurally equal projections.
 
         // for instance {foo{foo{foo...}}} data can be serialized with this projection:
@@ -207,10 +201,15 @@ abstract class AbstractJsonFormatReader<
     }
 
     // read MONODATA
-    List<VP> flattened = flatten(new ArrayList<>(), projections, type);
+    List<P> flattened = flatten(new ArrayList<>(), projections, type);
 
     String monoTagName = type.kind() == TypeKind.ENTITY ? JsonFormatCommon.monoTag(flattened) : DatumType.MONO_TAG_NAME;
-    final Data.Builder data = type.createDataBuilder();
+    // use `typeBound` to create data builder for model types, otherwise results won't be the same
+    // as using generated builder classes. To reproduce the problem: change it to always use `type` and
+    // run ReqOutputJsonFormatReaderTest::testReadModelTail, 'worstEnemy' *data* type will be
+    // PersonRecord.type, not UserRecord.type
+    // see also: WireUtil.type(Data)
+    final Data.Builder data = type.kind() == TypeKind.ENTITY ? type.createDataBuilder() : typeBound.createDataBuilder();
 
     dataByLevel.add(new VisitedDataEntry(data, projections));
 
@@ -235,7 +234,7 @@ abstract class AbstractJsonFormatReader<
   private @NotNull Data.Builder finishReadingMultiData(
       @NotNull Type effectiveType,
       @NotNull Data.Builder data,
-      @NotNull List<VP> projections // non-empty, polymorphic tails ignored
+      @NotNull List<P> projections // non-empty, polymorphic tails ignored
   ) throws IOException, JsonFormatException {
 
     assert !projections.isEmpty();
@@ -260,7 +259,7 @@ abstract class AbstractJsonFormatReader<
     }
     ensure(token, JsonToken.END_OBJECT);
 
-    for (final VP projection : projections) {
+    for (final P projection : projections) {
       for (final TP tagProjectionEntry : projection.tagProjections().values()) {
         if (tagRequired(tagProjectionEntry)) {
           final Val value = data._raw().getValue((Tag) tagProjectionEntry.tag());
@@ -295,7 +294,7 @@ abstract class AbstractJsonFormatReader<
       @NotNull List<MP> projections // non-empty
   ) throws IOException, JsonFormatException {
     assert !projections.isEmpty();
-    boolean readPoly = projections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
+    boolean readPoly = WireUtil.needPoly(typeBound, projections);
 
     JsonToken token = currentToken();
     final DatumType type;
@@ -349,7 +348,8 @@ abstract class AbstractJsonFormatReader<
       @Nullable String fieldName,
       final @NotNull Collection<? extends MP> modelProjections) throws IOException, JsonFormatException {
 
-    List<MP> flattened = flatten(new ArrayList<>(), modelProjections, type);
+    // MP should be extending P
+    List<MP> flattened = (List<MP>) flatten(new ArrayList<>(), (Collection<? extends P>) modelProjections, type);
 
     Collection<MP> metaProjections = flattened.stream()
         .map(this::getMetaProjection)
@@ -491,10 +491,10 @@ abstract class AbstractJsonFormatReader<
         if (field == null) throw error(
             "Unknown field '" + fieldName + "' in record type '" + type.name().toString() + "'"
         );
-        List<VP> varProjections =
-            fieldVarProjections(projections, field, () -> new ArrayList<>(projections.size()));
-        if (varProjections == null) throw error("Unexpected field '" + fieldName + "'");
-        Data fieldData = readData(field.dataType().type(), varProjections);
+        List<P> fieldProjections =
+            fieldProjections(projections, field, () -> new ArrayList<>(projections.size()));
+        if (fieldProjections == null) throw error("Unexpected field '" + fieldName + "'");
+        Data fieldData = readData(field.dataType().type(), fieldProjections);
         datum._raw().setData(field, fieldData);
 
         JsonToken token = nextNonEof();
@@ -537,7 +537,7 @@ abstract class AbstractJsonFormatReader<
     final MapDatum.@NotNull Builder datum = type.createBuilder();
     final @Nullable Set<Datum> expectedKeys = getExpectedKeys(projections);
     final List<? extends MP> keyProjections = getKeyProjections(projections);
-    final List<VP> itemProjections = projections.stream().map(MMP::itemsProjection).collect(Collectors.toList());
+    final List<P> itemProjections = projections.stream().map(MMP::itemsProjection).collect(Collectors.toList());
 
     while (true) {
       token = nextNonEof();
@@ -576,7 +576,7 @@ abstract class AbstractJsonFormatReader<
     ensure(token, JsonToken.START_ARRAY);
 
     final ListDatum.@NotNull Builder datum = type.createBuilder();
-    final List<VP> itemProjections = projections.stream().map(LMP::itemsProjection).collect(Collectors.toList());
+    final List<P> itemProjections = projections.stream().map(LMP::itemsProjection).collect(Collectors.toList());
 
     final Collection<@NotNull Data> elements = datum._raw().elements();
     while (true) {
@@ -618,7 +618,7 @@ abstract class AbstractJsonFormatReader<
   }
 
   private @NotNull Type readType(
-      @NotNull Collection<VP> projections // polymorphic tails respected
+      @NotNull Collection<P> projections // polymorphic tails respected
   ) throws IOException, JsonFormatException {
     stepOver(JsonFormat.POLYMORPHIC_TYPE_FIELD);
     stepOver(JsonToken.VALUE_STRING, "string value");
@@ -631,14 +631,14 @@ abstract class AbstractJsonFormatReader<
 
   @Contract("null, _ -> null")
   private @Nullable Type resolveType(
-      @Nullable Collection<VP> projections, // polymorphic tails respected
+      @Nullable Collection<? extends P> projections, // polymorphic tails respected
       @NotNull String typeName
   ) {
     if (projections == null) return null;
-    for (VP vp : projections) {
-      Type type = (Type) vp.type();
+    for (P p : projections) {
+      Type type = (Type) p.type();
       if (typeName.equals(type.name().toString())) return type;
-      type = resolveType(vp.polymorphicTails(), typeName); // dfs
+      type = resolveType(p.polymorphicTails(), typeName); // dfs
       if (type != null) return type;
     }
     return null;
@@ -1204,14 +1204,14 @@ abstract class AbstractJsonFormatReader<
 
   private final class VisitedDataEntry {
     final Data.Builder builder;
-    final Collection<VP> projections;
+    final Collection<P> projections;
 
-    private VisitedDataEntry(final Data.Builder builder, final Collection<VP> projections) {
+    private VisitedDataEntry(final Data.Builder builder, final Collection<P> projections) {
       this.builder = builder;
       this.projections = projections;
     }
 
-    boolean matches(Collection<VP> projections) {
+    boolean matches(Collection<P> projections) {
       return projectionsComparator().projectionsEquals(projections, this.projections);
     }
   }

@@ -35,18 +35,17 @@ import java.util.Set;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractFormatReader<
-    P extends GenProjection<?, TP, EP, MP>,
-    EP extends GenEntityProjection<EP, TP, MP>,
+    P extends GenProjection<? extends P, TP, ?, ? extends MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
-    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    MP extends GenModelProjection<?, TP, /*MP*/?, ?, ?>,
+    RMP extends GenRecordModelProjection<P, TP, ?, MP, RMP, FPE, FP, ?>,
     FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
     FP extends GenFieldProjection<P, TP, MP, FP>,
-    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>>
-    implements FormatReader<P, EP, MP> {
+    MMP extends GenMapModelProjection<P, TP, ?, MP, MMP, ?>>
+    implements FormatReader<P,  MP> {
 
   @Override
-  public @Nullable Data readData(@NotNull EP projection, final int pathSteps) throws IOException, FormatException {
+  public @Nullable Data readData(@NotNull P projection, final int pathSteps) throws IOException, FormatException {
     if (pathSteps == 0) {
       return readData(projection);
     } else {
@@ -73,7 +72,7 @@ public abstract class AbstractFormatReader<
     }
   }
 
-  protected abstract @Nullable Data readData(@NotNull EP projection) throws IOException, FormatException;
+  protected abstract @Nullable Data readData(@NotNull P projection) throws IOException, FormatException;
 
   @SuppressWarnings("unchecked")
   @Override
@@ -103,7 +102,7 @@ public abstract class AbstractFormatReader<
           RecordDatum.Builder recordDatum = recordType.createBuilder();
           recordDatum._raw().setData(
               (Field) fieldEntry.field(),
-              read(fieldEntry.fieldProjection().projection(), pathSteps - 1)
+              readData(fieldEntry.fieldProjection().projection(), pathSteps - 1)
           );
 
           return recordDatum.asValue();
@@ -123,7 +122,7 @@ public abstract class AbstractFormatReader<
           }
 
           MapDatum.Builder mapDatum = mapType.createBuilder();
-          Data data = read(mapProjection.itemsProjection(), pathSteps - 1);
+          Data data = readData(mapProjection.itemsProjection(), pathSteps - 1);
 
           if (data == null) {
             StringBuilder sb = new StringBuilder();

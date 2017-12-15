@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 @NotThreadSafe
 public class ReqJsonFormatWriter extends AbstractJsonFormatWriter<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,

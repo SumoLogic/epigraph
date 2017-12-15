@@ -24,6 +24,8 @@ import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
 
 import java.util.Collection;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.function.Supplier;
 
 public final class JsonFormatCommon {
@@ -34,58 +36,27 @@ public final class JsonFormatCommon {
    * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
    * with most specific one being last
    */
-  public static <VP extends GenEntityProjection<VP, ?, ?>, Acc extends Collection<VP>> @NotNull Acc flatten(
+  public static <P extends GenProjection<? extends P, ?, ?, ?>, Acc extends Collection<P>> @NotNull Acc flatten(
       @NotNull Acc acc,
-      @NotNull Collection<? extends VP> projections,
+      @NotNull Collection<? extends P> projections,
       @NotNull TypeApi type
   ) {
     // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
-    for (VP projection : projections) append(acc, projection, type);
+    for (P projection : projections) append(acc, projection, type);
     return acc;
   }
 
-  /**
-   * Recursively traverse all {@code projections}, including tails, and collect those applicable to {@code type},
-   * with most specific one being last
-   */
-  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> @NotNull Acc flatten(
+  public static <P extends GenProjection<? extends P, ?, ?, ?>, Acc extends Collection<P>> Acc append(
       @NotNull Acc acc,
-      @NotNull Collection<? extends MP> projections,
-      @NotNull DatumTypeApi type
-  ) {
-    // TODO more careful ordering of projections might be needed to ensure last one is the most precise in complex cases
-    for (MP projection : projections) append(acc, projection, type);
-    return acc;
-  }
-
-  public static <VP extends GenEntityProjection<VP, ?, ?>, Acc extends Collection<VP>> Acc append(
-      @NotNull Acc acc,
-      @NotNull VP varProjection,
+      @NotNull P projection,
       @NotNull TypeApi type
   ) {
     // effectively this is
     // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(varProjection).stream()));
 
-    if (varProjection.type().isAssignableFrom(type)) acc.add(varProjection);
-    Iterable<VP> tails = varProjection.polymorphicTails();
-    if (tails != null) for (VP tail : tails) {
-      if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
-    }
-    return acc;
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <MP extends GenModelProjection<?, ?, ?, ?>, Acc extends Collection<MP>> Acc append(
-      @NotNull Acc acc,
-      @NotNull MP modelProjection,
-      @NotNull DatumTypeApi type
-  ) {
-    // effectively this is
-    // Collections.reverse(ProjectionUtils.linearizeTails(type, Collections.singleton(modelProjection).stream()));
-
-    if (modelProjection.type().isAssignableFrom(type)) acc.add(modelProjection);
-    Iterable<MP> tails = (Iterable<MP>) modelProjection.polymorphicTails();
-    if (tails != null) for (MP tail : tails) {
+    if (projection.type().isAssignableFrom(type)) acc.add(projection);
+    Iterable<? extends P> tails = projection.polymorphicTails();
+    if (tails != null) for (P tail : tails) {
       if (tail.type().isAssignableFrom(type)) return append(acc, tail, type); // dfs
     }
     return acc;
@@ -108,13 +79,13 @@ public final class JsonFormatCommon {
 //  }
 
   // return 'tag' if all projections are of the form ':tag(...)'
-  public static @Nullable <VP extends GenEntityProjection<VP, ?, ?>>
-  String monoTag(@NotNull Iterable<? extends VP> projections) {
+  public static @Nullable <P extends GenProjection<? extends P, ?, ?, ?>>
+  String monoTag(@NotNull Iterable<? extends P> projections) {
     String tagName = null;
-    for (VP vp : projections) {
+    for (P p : projections) {
       // TODO confirm multi-tag projection yields parenthesized=true (even if built from defaults)
-      if (vp.parenthesized()) return null;
-      for (String vpTagName : vp.tagProjections().keySet()) {
+      if (p.isEntityProjection() && p.asEntityProjection().parenthesized()) return null;
+      for (String vpTagName : p.tagProjections().keySet()) {
         if (tagName == null) tagName = vpTagName;
         else if (!tagName.equals(vpTagName)) return null;
       }
@@ -126,19 +97,19 @@ public final class JsonFormatCommon {
    * @return non-empty collection or `null`
    */
   public static <
-      VP extends GenEntityProjection<VP, TP, MP>,
+      P extends GenProjection<? extends P, TP, ?, ? extends MP>,
       TP extends GenTagProjectionEntry<TP, MP>,
-      MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
+      MP extends GenModelProjection<?, TP, /*MP*/?, ?, ?>,
       Coll extends Collection<MP>>
 
   @Nullable Coll tagModelProjections(
       @NotNull TagApi tag,
-      @NotNull Iterable<? extends VP> projections, // non-empty, polymorphic tails ignored
+      @NotNull Iterable<? extends P> projections, // non-empty, polymorphic tails ignored
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
     Coll tagModelProjections = null;
-    for (VP vp : projections) {
-      TP tagProjection = vp.tagProjections().get(tag.name());
+    for (P p : projections) {
+      TP tagProjection = p.tagProjections().get(tag.name());
       if (tagProjection != null) {
         if (tagModelProjections == null) tagModelProjections = collSupplier.get();
         tagModelProjections.add(tagProjection.modelProjection());
@@ -151,24 +122,24 @@ public final class JsonFormatCommon {
    * @return non-empty collection or `null`
    */
   public static <
-      VP extends GenEntityProjection<VP, ?, ?>,
-      RMP extends GenRecordModelProjection<VP, ?, ?, RMP, FPE, ?, ?>,
-      FPE extends GenFieldProjectionEntry<VP, ?, ?, ?>,
-      Coll extends Collection<VP>>
-  @Nullable Coll fieldVarProjections(
+      P extends GenProjection<? extends P, ?, ?, ?>,
+      RMP extends GenRecordModelProjection<P, ?, ?, ?, RMP, FPE, ?, ?>,
+      FPE extends GenFieldProjectionEntry<P, ?, ?, ?>,
+      Coll extends Collection<P>>
+  @Nullable Coll fieldProjections(
       @NotNull Iterable<? extends RMP> projections, // non-empty
       @NotNull FieldApi field,
       @NotNull Supplier<@NotNull Coll> collSupplier
   ) {
-    Coll varProjections = null;
+    Coll res = null;
     for (RMP mp : projections) {
       FPE fieldProjectionEntry = mp.fieldProjection(field.name());
       if (fieldProjectionEntry != null) {
-        if (varProjections == null) varProjections = collSupplier.get();
-        varProjections.add(fieldProjectionEntry.fieldProjection().projection());
+        if (res == null) res = collSupplier.get();
+        res.add(fieldProjectionEntry.fieldProjection().projection());
       }
     }
-    return varProjections;
+    return res;
   }
 
 }

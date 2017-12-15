@@ -43,6 +43,7 @@ import java.util.Set;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ReqJsonFormatReader extends AbstractJsonFormatReader<
+    ReqProjection<?, ?>,
     ReqEntityProjection,
     ReqTagProjectionEntry,
     ReqModelProjection<?, ?, ?>,
@@ -54,14 +55,11 @@ public class ReqJsonFormatReader extends AbstractJsonFormatReader<
     > implements ReqFormatReader {
 
   public ReqJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typesResolver) {
-    super(
-        jsonParser,
-        typesResolver
-    );
+    super(jsonParser, typesResolver);
   }
 
   @Override
-  protected GenProjectionsComparator<ReqEntityProjection, ReqTagProjectionEntry, ReqModelProjection<?, ?, ?>, ReqRecordModelProjection, ReqMapModelProjection, ReqListModelProjection, ?, ReqFieldProjectionEntry, ReqFieldProjection> projectionsComparator() {
+  protected GenProjectionsComparator<ReqProjection<?, ?>, ReqTagProjectionEntry, ReqEntityProjection, ReqModelProjection<?, ?, ?>, ReqRecordModelProjection, ReqMapModelProjection, ReqListModelProjection, ?, ReqFieldProjectionEntry, ReqFieldProjection> projectionsComparator() {
     return new ReqProjectionsComparator(false, false);
   }
 
@@ -103,13 +101,7 @@ public class ReqJsonFormatReader extends AbstractJsonFormatReader<
         @NotNull TypesResolver typesResolver) throws IOException {
 
       return new ReqJsonFormatReader(
-          AbstractJsonFormatReader.JSON_FACTORY.createParser(
-              new InputStreamReader(
-                  is,
-                  charset
-              )
-          ),
-          typesResolver
+          AbstractJsonFormatReader.JSON_FACTORY.createParser(new InputStreamReader(is, charset)), typesResolver
       );
     }
   }

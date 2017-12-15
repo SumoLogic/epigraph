@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 @NotThreadSafe
 public class OpJsonFormatWriter extends AbstractJsonFormatWriter<
+    OpProjection<?,?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,

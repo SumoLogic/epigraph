@@ -24,7 +24,6 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.data.Val;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.projections.gen.GenEntityProjection;
 import ws.epigraph.projections.gen.GenModelProjection;
 import ws.epigraph.projections.gen.GenProjection;
 import ws.epigraph.refs.TypesResolver;
@@ -36,24 +35,12 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public interface FormatReader<
-    P extends GenProjection<?, ?, /*EP*/?, /*MP*/?>,
-    EP extends GenEntityProjection<EP, ?, ?>,
+    P extends GenProjection<? extends P, ?, ?, ? extends MP>,
     MP extends GenModelProjection<?, ?, /*MP*/?, ?, ?>> {
 
   // with projections
 
-  @SuppressWarnings("unchecked")
-  default @Nullable Data read(@NotNull P projection, int pathSteps) throws IOException, FormatException {
-    if (projection.isEntityProjection())
-      return readData((EP) projection.asEntityProjection(), pathSteps);
-    else {
-      Val val = readValue((MP) projection.asModelProjection(), pathSteps); // todo subtract 1 for $self here?
-      DatumType datumType = (DatumType) projection.type();
-      return datumType.createDataBuilder()._raw().setValue(datumType.self(), val);
-    }
-  }
-
-  @Nullable Data readData(@NotNull EP projection, int pathSteps) throws IOException, FormatException;
+  @Nullable Data readData(@NotNull P projection, int pathSteps) throws IOException, FormatException;
 
   @NotNull Val readValue(@NotNull MP projection, int pathSteps) throws IOException, FormatException;
 
@@ -67,7 +54,7 @@ public interface FormatReader<
 
   @NotNull ErrorValue readError() throws IOException, FormatException;
 
-  interface Factory<FR extends FormatReader<?, ?, ?>> {
+  interface Factory<FR extends FormatReader<?, ?>> {
     @NotNull WireFormat format();
 
     @NotNull FR newFormatReader(@NotNull InputStream is, @NotNull Charset charset, @NotNull TypesResolver typesResolver)

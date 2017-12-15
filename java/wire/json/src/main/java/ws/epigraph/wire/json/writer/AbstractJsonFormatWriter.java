@@ -26,7 +26,9 @@ import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.gen.*;
 import ws.epigraph.types.*;
 import ws.epigraph.wire.AbstractFormatWriter;
+import ws.epigraph.wire.WireUtil;
 import ws.epigraph.wire.json.JsonFormat;
+import ws.epigraph.wire.json.JsonFormatCommon;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -43,17 +45,18 @@ import static ws.epigraph.wire.json.JsonFormatCommon.*;
  */
 @NotThreadSafe
 public abstract class AbstractJsonFormatWriter<
-    VP extends GenEntityProjection<VP, TP, MP>,
+    P extends GenProjection<? extends P, TP, EP, ? extends MP>,
+    EP extends GenEntityProjection<EP, TP, MP>,
     TP extends GenTagProjectionEntry<TP, MP>,
-    MP extends GenModelProjection<TP, /*MP*/?, ?, ?>,
-    RMP extends GenRecordModelProjection<VP, TP, MP, RMP, FPE, FP, ?>,
-    FPE extends GenFieldProjectionEntry<VP, TP, MP, FP>,
-    FP extends GenFieldProjection<VP, TP, MP, FP>,
-    MMP extends GenMapModelProjection<VP, TP, MP, MMP, ?>,
-    LMP extends GenListModelProjection<VP, TP, MP, LMP, ?>,
-    PMP extends GenPrimitiveModelProjection<TP, MP, PMP, ?>,
+    MP extends GenModelProjection<EP, TP, /*MP*/?, ?, ?>,
+    RMP extends GenRecordModelProjection<P, TP, EP, MP, RMP, FPE, FP, ?>,
+    FPE extends GenFieldProjectionEntry<P, TP, MP, FP>,
+    FP extends GenFieldProjection<P, TP, MP, FP>,
+    MMP extends GenMapModelProjection<P, TP, EP, MP, MMP, ?>,
+    LMP extends GenListModelProjection<P, TP, EP, MP, LMP, ?>,
+    PMP extends GenPrimitiveModelProjection<EP, TP, MP, PMP, ?>,
     KP // key projection
-    > extends AbstractFormatWriter<VP, TP, MP, RMP, FPE, FP, MMP> {
+    > extends AbstractFormatWriter<P, TP, MP, RMP, FPE, FP, MMP> {
 
   private final @NotNull Writer out;
   private final @NotNull Map<Data, List<VisitedDataEntry>> visitedData = new IdentityHashMap<>();
@@ -74,25 +77,27 @@ public abstract class AbstractJsonFormatWriter<
   }
 
   @Override
-  public void writeData(@NotNull VP projection, @Nullable Data data) throws IOException {
+  public void writeData(@NotNull P projection, @Nullable Data data) throws IOException {
     if (data == null) {
       out.write("null");
     } else {
       TypeApi type = data.type();
       assert projection.type().isAssignableFrom(type) :
           "Projection type " + projection.type().name() + " is not assignable from " + type.name();
-      writeData(projection.polymorphicTails() != null, varProjections(projection, type), data);
+      writeData(projection.polymorphicTails() != null, projections(projection, type), data);
     }
   }
 
+  @SuppressWarnings("unchecked")
   private void writeData(
       boolean renderPoly,
-      @NotNull Deque<VP> projections, // non-empty, polymorphic tails ignored
+      @NotNull Deque<P> projections, // non-empty, polymorphic tails ignored
       @NotNull Data data
   ) throws IOException {
+    TypeApi type = projections.peekLast().type();
 
     // don't do recursion check on primitives
-    final TypeKind kind = projections.peek().type().kind();
+    final TypeKind kind = type.kind();
     boolean doRecursionCheck = kind != TypeKind.PRIMITIVE;
 
     List<VisitedDataEntry> visitedDataEntries = visitedData.get(data);
@@ -119,7 +124,6 @@ public abstract class AbstractJsonFormatWriter<
       visitedDataEntries.add(new VisitedDataEntry(dataStackDepth++, projections));
     }
 
-    TypeApi type = projections.peekLast().type(); // use deepest match type from here on
     // TODO check all projections (not just the ones that matched actual data type)?
     boolean renderMulti = type.kind() == TypeKind.ENTITY && monoTag(projections) == null;
     if (renderPoly) {
@@ -143,7 +147,7 @@ public abstract class AbstractJsonFormatWriter<
         final @Nullable Val value = data._raw().getValue((Tag) tag);
         writeValue(
             value == null || value.getDatum() == null ? tagModelProjections :
-            flatten(new ArrayDeque<>(), tagModelProjections, value.getDatum().type()),
+            (Deque<MP>) flatten(new ArrayDeque<>(), tagModelProjections, value.getDatum().type()),
             value
         );
       }
@@ -194,7 +198,7 @@ public abstract class AbstractJsonFormatWriter<
       throws IOException {
 
     DatumTypeApi model = projections.peekLast().type();
-    boolean renderPoly = projections.stream().anyMatch(p -> p.polymorphicTails() != null);
+    boolean renderPoly = WireUtil.needPoly(model, projections);
 
     Deque<? extends MP> metaProjections = projections.stream()
         .map(m -> (MP) (m.metaProjection()))
@@ -265,9 +269,9 @@ public abstract class AbstractJsonFormatWriter<
     RecordTypeApi type = projections.peekLast().type();
     boolean comma = false;
     for (FieldApi field : type.fields()) {
-      Deque<VP> varProjections =
-          fieldVarProjections(projections, field, () -> new ArrayDeque<>(projections.size()));
-      if (varProjections != null) { // if this field was mentioned in at least one projection
+      Deque<P> fieldProjections =
+          fieldProjections(projections, field, () -> new ArrayDeque<>(projections.size()));
+      if (fieldProjections != null) { // if this field was mentioned in at least one projection
         Data fieldData = datum._raw().getData((Field) field);
         if (fieldData != null) {
           if (comma) out.write(',');
@@ -276,8 +280,8 @@ public abstract class AbstractJsonFormatWriter<
           out.write(field.name());
           out.write("\":");
           writeData(
-              varProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null),
-              flatten(new ArrayDeque<>(), varProjections, fieldData.type()),
+              WireUtil.needPoly(fieldProjections),
+              flatten(new ArrayDeque<>(), fieldProjections, WireUtil.type(fieldData)),
               fieldData
           );
         }
@@ -293,12 +297,12 @@ public abstract class AbstractJsonFormatWriter<
   ) throws IOException {
     out.write("[");
     List<KP> keyProjections = keyProjections(projections);
-    Deque<VP> valueProjections = subProjections(
+    Deque<P> valueProjections = subProjections(
         projections,
         MMP::itemsProjection
     );
-    boolean polymorphicValue = valueProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<VP>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    boolean polymorphicValue = WireUtil.needPoly(valueProjections);
+    Map<Type, Deque<P>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     if (keyProjections == null) writeMapEntries(
         datum.type().keyType(),
         getKeyModelProjections(projections),
@@ -331,21 +335,21 @@ public abstract class AbstractJsonFormatWriter<
 
   protected abstract @NotNull Datum keyDatum(@NotNull KP keyProjection);
 
-  private <P> @NotNull Deque<VP> subProjections(
-      @NotNull Deque<? extends P> projections, // non-empty
-      @NotNull Function<P, VP> varFunc
+  private <PR, SP> @NotNull Deque<SP> subProjections(
+      @NotNull Deque<? extends PR> projections, // non-empty
+      @NotNull Function<PR, SP> func
   ) {
     assert !projections.isEmpty() : "no projection(s)";
-    ArrayDeque<VP> subProjections = new ArrayDeque<>(projections.size());
-    for (P projection : projections) subProjections.add(varFunc.apply(projection));
+    ArrayDeque<SP> subProjections = new ArrayDeque<>(projections.size());
+    for (PR projection : projections) subProjections.add(func.apply(projection));
     return subProjections;
   }
 
   private <E> void writeMapEntries(
       @NotNull DatumType keyType,
       @Nullable Deque<? extends MP> keyModelProjections,
-      @NotNull Deque<VP> valueProjections,
-      @Nullable Map<Type, Deque<VP>> polymorphicCache,
+      @NotNull Deque<P> valueProjections,
+      @Nullable Map<Type, Deque<P>> polymorphicCache,
       @NotNull Iterable<E> entries,
       @NotNull Function<E, @NotNull Datum> keyFunc,
       @NotNull Function<E, @Nullable Data> valueFunc
@@ -363,12 +367,12 @@ public abstract class AbstractJsonFormatWriter<
         else
           writeDatum(keyModelProjections, key);
         out.write(",\"" + JsonFormat.MAP_ENTRY_VALUE_FIELD + "\":");
-        Deque<VP> flatValueProjections = polymorphicCache == null
-                                         ? valueProjections
-                                         : polymorphicCache.computeIfAbsent(
-                                             valueData.type(),
-                                             t -> flatten(new ArrayDeque<>(), valueProjections, t)
-                                         );
+        Deque<P> flatValueProjections = polymorphicCache == null
+                                        ? valueProjections
+                                        : polymorphicCache.computeIfAbsent(
+                                            valueData.type(),
+                                            t -> flatten(new ArrayDeque<>(), valueProjections, t)
+                                        );
         writeData(polymorphicCache != null, flatValueProjections, valueData);
         out.write('}');
       }
@@ -379,23 +383,22 @@ public abstract class AbstractJsonFormatWriter<
   private void writeList(@NotNull Deque<LMP> projections, @NotNull ListDatum datum)
       throws IOException {
     out.write('[');
-    Deque<VP> elementProjections = subProjections(
+    Deque<P> elementProjections = subProjections(
         projections,
         LMP::itemsProjection
     );
-    // TODO extract following to separate method and re-use in maps, too?
-    boolean polymorphicValue = elementProjections.stream().anyMatch(vp -> vp.polymorphicTails() != null);
-    Map<Type, Deque<VP>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
+    boolean polymorphicValue = WireUtil.needPoly(elementProjections);
+    Map<Type, Deque<P>> polymorphicCache = polymorphicValue ? new HashMap<>() : null;
     boolean comma = false;
     for (Data element : datum._raw().elements()) {
       if (comma) out.write(',');
       else comma = true;
-      Deque<VP> flatElementProjections = polymorphicCache == null
-                                         ? elementProjections
-                                         : polymorphicCache.computeIfAbsent(
-                                             element.type(),
-                                             t -> flatten(new ArrayDeque<>(), elementProjections, t)
-                                         );
+      Deque<P> flatElementProjections = polymorphicCache == null
+                                        ? elementProjections
+                                        : polymorphicCache.computeIfAbsent(
+                                            element.type(),
+                                            t -> flatten(new ArrayDeque<>(), elementProjections, t)
+                                        );
       writeData(polymorphicCache != null, flatElementProjections, element);
     }
     out.write(']');
@@ -406,15 +409,15 @@ public abstract class AbstractJsonFormatWriter<
       @NotNull PrimitiveDatum<?> datum
   ) throws IOException { writePrimitive(datum); }
 
-  private @NotNull Deque<VP> varProjections(
-      @NotNull VP projection,
-      @NotNull TypeApi varType
-  ) { return append(new ArrayDeque<>(5), projection, varType); }
+  private @NotNull Deque<P> projections(@NotNull P projection, @NotNull TypeApi varType) {
+    return append(new ArrayDeque<>(5), projection, varType);
+  }
 
-  private @NotNull Deque<MP> modelProjections(
-      @NotNull MP projection,
-      @NotNull DatumTypeApi modelType
-  ) { return append(new ArrayDeque<>(5), projection, modelType); }
+  @SuppressWarnings("unchecked")
+  private @NotNull Deque<MP> modelProjections(@NotNull MP projection, @NotNull DatumTypeApi modelType) {
+    // MP should extend P
+    return (Deque<MP>) append(new ArrayDeque<>(5), (P) projection, modelType);
+  }
 
   // FIXME take explicit type for all projectionless writes below
 
@@ -635,15 +638,15 @@ public abstract class AbstractJsonFormatWriter<
 
   private final class VisitedDataEntry {
     final int depth;
-    final Collection<VP> projections;
+    final Collection<P> projections;
 
-    VisitedDataEntry(final int depth, final Collection<VP> projections) {
+    VisitedDataEntry(final int depth, final Collection<P> projections) {
       this.depth = depth;
       this.projections = projections;
     }
 
-    boolean matches(Collection<VP> projections) {
-      return new GenProjectionsComparator<VP, TP, MP, RMP, MMP, LMP, PMP, FPE, FP>().projectionsEquals(
+    boolean matches(Collection<P> projections) {
+      return new GenProjectionsComparator<P, TP, EP, MP, RMP, MMP, LMP, PMP, FPE, FP>().projectionsEquals(
           projections,
           this.projections
       );

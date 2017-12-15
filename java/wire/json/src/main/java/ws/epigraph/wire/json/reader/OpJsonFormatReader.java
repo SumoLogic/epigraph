@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class OpJsonFormatReader extends AbstractJsonFormatReader<
+    OpProjection<?, ?>,
     OpEntityProjection,
     OpTagProjectionEntry,
     OpModelProjection<?, ?, ?, ?>,
@@ -55,15 +56,12 @@ public class OpJsonFormatReader extends AbstractJsonFormatReader<
     > implements OpFormatReader {
 
   @Override
-  protected GenProjectionsComparator<OpEntityProjection, OpTagProjectionEntry, OpModelProjection<?, ?, ?, ?>, OpRecordModelProjection, OpMapModelProjection, OpListModelProjection, ?, OpFieldProjectionEntry, OpFieldProjection> projectionsComparator() {
+  protected GenProjectionsComparator<OpProjection<?, ?>, OpTagProjectionEntry, OpEntityProjection, OpModelProjection<?, ?, ?, ?>, OpRecordModelProjection, OpMapModelProjection, OpListModelProjection, ?, OpFieldProjectionEntry, OpFieldProjection> projectionsComparator() {
     return new GenProjectionsComparator<>();
   }
 
   public OpJsonFormatReader(@NotNull JsonParser jsonParser, @NotNull TypesResolver typeResolver) {
-    super(
-        jsonParser,
-        typeResolver
-    );
+    super(jsonParser, typeResolver);
   }
 
   @Override

@@ -121,6 +121,12 @@
   ```
 - [ ] req projections: flag should be correctly applied to defaults. `(+bestFriend)` => `(+bestFriend:+id)`
 - [ ] references stuff is messy: resolution order, namespaces, normalized projections, transformations. Must be redesigned.
+  - `foo ( bar $bar )` doesn't decide on `$bar` namespace (inside current projection or more global), yet currently `$bar` reference
+     gets created in the current (innermost) namespace and later resolved in the corrent namespace (hopefully)
+  - ` ( foo ) ~Bar $bar = ( bar )` must result in `$bar` created in the same NS as current projection. This is hard for 2 reasons:
+     first, a reference to `$bar` may have already been created (see above); and second, this reference must involve a call
+     to `normalize` once current projection is resolved. This plays badly with projection transformers which may replace
+     current projection with something else.
 
 # Operations
 
