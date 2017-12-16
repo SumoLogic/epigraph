@@ -70,12 +70,17 @@ public class ReqMapModelProjection
     super(model, location);
   }
 
-  public static @NotNull ReqMapModelProjection pathEnd(@NotNull MapTypeApi model, @NotNull TextLocation location) {
+  public static @NotNull ReqMapModelProjection pathEnd(
+      @NotNull MapTypeApi model,
+      @NotNull ReqParams params,
+      @NotNull Directives directives,
+      @NotNull TextLocation location) {
+
     return new ReqMapModelProjection(
         model,
         false,
-        ReqParams.EMPTY,
-        Directives.EMPTY,
+        params,
+        directives,
         null,
         null,
         false,
@@ -98,7 +103,7 @@ public class ReqMapModelProjection
   }
 
   @Override
-  public boolean isPathEnd() { return valuesProjection == null ; }
+  public boolean isPathEnd() { return valuesProjection == null; }
 
   public @NotNull ReqKeyProjection pathKey() {
     assert isResolved();

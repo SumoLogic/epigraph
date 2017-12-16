@@ -56,13 +56,15 @@ public class ReqPrimitiveModelProjection
 
   public static @NotNull ReqPrimitiveModelProjection pathEnd(
       @NotNull PrimitiveTypeApi model,
+      @NotNull ReqParams params,
+      @NotNull Directives directives,
       @NotNull TextLocation location) {
 
     return new ReqPrimitiveModelProjection(
         model,
         false,
-        ReqParams.EMPTY,
-        Directives.EMPTY,
+        params,
+        directives,
         null,
         null,
         location

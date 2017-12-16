@@ -62,12 +62,17 @@ public class ReqListModelProjection
     super(model, location);
   }
 
-  public static @NotNull ReqListModelProjection pathEnd(@NotNull ListTypeApi model, @NotNull TextLocation location) {
+  public static @NotNull ReqListModelProjection pathEnd(
+      @NotNull ListTypeApi model,
+      @NotNull ReqParams params,
+      @NotNull Directives directives,
+      @NotNull TextLocation location) {
+
     return new ReqListModelProjection(
         model,
         false,
-        ReqParams.EMPTY,
-        Directives.EMPTY,
+        params,
+        directives,
         null,
         null, // marks path end
         null,
@@ -101,6 +106,7 @@ public class ReqListModelProjection
             .map(ReqListModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
+    //noinspection RedundantCast
     final /*@NotNull*/ ReqProjection<?, ?> mergedItemsVarType =
         (ReqProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 

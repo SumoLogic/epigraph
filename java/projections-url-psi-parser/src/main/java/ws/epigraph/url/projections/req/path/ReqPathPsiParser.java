@@ -121,11 +121,11 @@ public final class ReqPathPsiParser {
       @NotNull ReqPathPsiProcessingContext context)
       throws PsiProcessingException {
 
-    if (op.isPathEnd())
-      return (ReqModelProjection<?, ?, ?>) ReqPath.pathEnd(type, EpigraphPsiUtil.getLocation(psi));
-
     ReqParams params = parseReqParams(psi.getReqParamList(), op.params(), typesResolver, psi, context);
     Directives directives = parseAnnotations(psi.getReqAnnotationList(), context);
+
+    if (op.isPathEnd())
+      return (ReqModelProjection<?, ?, ?>) ReqPath.pathEnd(type, params, directives, EpigraphPsiUtil.getLocation(psi));
 
     switch (type.kind()) {
       case RECORD:

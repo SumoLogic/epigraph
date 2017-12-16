@@ -74,13 +74,15 @@ public class ReqRecordModelProjection
 
   public static @NotNull ReqRecordModelProjection pathEnd(
       @NotNull RecordTypeApi model,
+      @NotNull ReqParams params,
+      @NotNull Directives directives,
       @NotNull TextLocation location) {
 
     return new ReqRecordModelProjection(
         model,
         false,
-        ReqParams.EMPTY,
-        Directives.EMPTY,
+        params,
+        directives,
         null,
         Collections.emptyMap(), // marks path end
         null,

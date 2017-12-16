@@ -33,15 +33,44 @@ public final class ReqPath {
       case ENTITY:
         return ReqEntityProjection.pathEnd(type, location);
       case RECORD:
-        return ReqRecordModelProjection.pathEnd((RecordTypeApi) type, location);
+        return ReqRecordModelProjection.pathEnd((RecordTypeApi) type, ReqParams.EMPTY, Directives.EMPTY, location);
       case MAP:
-        return ReqMapModelProjection.pathEnd((MapTypeApi) type, location);
+        return ReqMapModelProjection.pathEnd((MapTypeApi) type, ReqParams.EMPTY, Directives.EMPTY, location);
       case LIST:
-        return ReqListModelProjection.pathEnd((ListTypeApi) type, location);
+        return ReqListModelProjection.pathEnd((ListTypeApi) type, ReqParams.EMPTY, Directives.EMPTY, location);
       case ENUM:
         throw new IllegalArgumentException("Unsupported model kind");
       case PRIMITIVE:
-        return ReqPrimitiveModelProjection.pathEnd((PrimitiveTypeApi) type, location);
+        return ReqPrimitiveModelProjection.pathEnd(
+            (PrimitiveTypeApi) type,
+            ReqParams.EMPTY,
+            Directives.EMPTY,
+            location
+        );
+    }
+
+    return null;
+  }
+
+  public static @NotNull ReqProjection<?, ?> pathEnd(
+      @NotNull DatumTypeApi type,
+      @NotNull ReqParams params,
+      @NotNull Directives directives,
+      @NotNull TextLocation location) {
+
+    switch (type.kind()) {
+      case ENTITY:
+        throw new IllegalArgumentException("Unsupported model kind");
+      case RECORD:
+        return ReqRecordModelProjection.pathEnd((RecordTypeApi) type, params, directives, location);
+      case MAP:
+        return ReqMapModelProjection.pathEnd((MapTypeApi) type, params, directives, location);
+      case LIST:
+        return ReqListModelProjection.pathEnd((ListTypeApi) type, params, directives, location);
+      case ENUM:
+        throw new IllegalArgumentException("Unsupported model kind");
+      case PRIMITIVE:
+        return ReqPrimitiveModelProjection.pathEnd((PrimitiveTypeApi) type, params, directives, location);
     }
 
     return null;
