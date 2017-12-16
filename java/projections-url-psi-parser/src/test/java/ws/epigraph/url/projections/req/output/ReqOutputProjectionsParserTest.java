@@ -666,7 +666,7 @@ public class ReqOutputProjectionsParserTest {
           e.getMessage(),
           e.getMessage()
               .contains(
-                  "Entity projection is marked as required, but type 'ws.epigraph.tests.Person' has no retro tag defined")
+                  "Entity projection is marked as required, but 'ws.epigraph.tests.Person' type has no retro tag defined")
       );
     }
   }

@@ -474,7 +474,7 @@ public final class ReqPartialPathPsiParser {
 
     if (op.projection().isPathEnd()) {
       fieldParsingResult = new ReqPartialPathParsingResult<>(
-          ReqEntityProjection.pathEnd(
+          ReqPath.pathEnd(
               fieldType.type(),
               EpigraphPsiUtil.getLocation(fieldVarPathPsi)
           ),

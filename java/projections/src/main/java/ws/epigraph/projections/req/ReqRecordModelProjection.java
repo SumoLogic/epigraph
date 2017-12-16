@@ -39,7 +39,7 @@ import static ws.epigraph.projections.RecordModelProjectionHelper.reattachFields
 public class ReqRecordModelProjection
     extends ReqModelProjection<ReqModelProjection<?, ?, ?>, ReqRecordModelProjection, RecordTypeApi>
     implements GenRecordModelProjection<
-    ReqProjection<?,?>,
+    ReqProjection<?, ?>,
     ReqTagProjectionEntry,
     ReqEntityProjection,
     ReqModelProjection<?, ?, ?>,
@@ -70,6 +70,22 @@ public class ReqRecordModelProjection
   public ReqRecordModelProjection(final @NotNull RecordTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
     fieldProjections = Collections.emptyMap();
+  }
+
+  public static @NotNull ReqRecordModelProjection pathEnd(
+      @NotNull RecordTypeApi model,
+      @NotNull TextLocation location) {
+
+    return new ReqRecordModelProjection(
+        model,
+        false,
+        ReqParams.EMPTY,
+        Directives.EMPTY,
+        null,
+        Collections.emptyMap(), // marks path end
+        null,
+        location
+    );
   }
 
   @Override

@@ -50,8 +50,23 @@ public class ReqPrimitiveModelProjection
     super(model, flag, params, directives, metaProjection, tails, location);
   }
 
-  public ReqPrimitiveModelProjection( final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
+  public ReqPrimitiveModelProjection(final @NotNull PrimitiveTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
+  }
+
+  public static @NotNull ReqPrimitiveModelProjection pathEnd(
+      @NotNull PrimitiveTypeApi model,
+      @NotNull TextLocation location) {
+
+    return new ReqPrimitiveModelProjection(
+        model,
+        false,
+        ReqParams.EMPTY,
+        Directives.EMPTY,
+        null,
+        null,
+        location
+    );
   }
 
   /* static */

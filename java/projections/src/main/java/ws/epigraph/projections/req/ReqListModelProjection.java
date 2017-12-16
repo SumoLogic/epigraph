@@ -51,7 +51,7 @@ public class ReqListModelProjection
       @NotNull ReqParams params,
       @NotNull Directives directives,
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
-      @NotNull ReqProjection<?, ?> itemsProjection,
+      @Nullable ReqProjection<?, ?> itemsProjection,
       @Nullable List<ReqListModelProjection> tails,
       @NotNull TextLocation location) {
     super(model, flag, params, directives, metaProjection, tails, location);
@@ -61,6 +61,22 @@ public class ReqListModelProjection
   public ReqListModelProjection(final @NotNull ListTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
   }
+
+  public static @NotNull ReqListModelProjection pathEnd(@NotNull ListTypeApi model, @NotNull TextLocation location) {
+    return new ReqListModelProjection(
+        model,
+        false,
+        ReqParams.EMPTY,
+        Directives.EMPTY,
+        null,
+        null, // marks path end
+        null,
+        location
+    );
+  }
+
+  @Override
+  public boolean isPathEnd() { return itemsProjection == null; }
 
   @Override
   public @NotNull ReqProjection<?, ?> itemsProjection() {

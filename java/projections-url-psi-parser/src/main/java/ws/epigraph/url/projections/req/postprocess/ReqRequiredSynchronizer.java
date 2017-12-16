@@ -54,13 +54,17 @@ public class ReqRequiredSynchronizer extends ReqModelEntityTrackingTransformer {
         && dataType != null
         && dataType.retroTag() == null) {
 
-      context.addError(
-          String.format(
-              "Entity projection is marked as required, but type '%s' has no retro tag defined",
-              dataType.name().toString()
-          ),
-          projection.location()
-      );
+      boolean hasRequiredTags = projection.tagProjections().values().stream().anyMatch(p -> p.modelProjection().flag());
+
+      if (!hasRequiredTags) {
+        context.addError(
+            String.format(
+                "Entity projection is marked as required, but '%s' type has no retro tag defined",
+                dataType.name().toString()
+            ),
+            projection.location()
+        );
+      }
     }
 
     return super.transformResolvedEntityProjection(projection, dataType, transformedTails, tailsChanged);

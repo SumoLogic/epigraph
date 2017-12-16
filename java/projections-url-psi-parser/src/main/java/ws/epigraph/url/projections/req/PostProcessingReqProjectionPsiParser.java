@@ -74,7 +74,7 @@ public class PostProcessingReqProjectionPsiParser implements ReqProjectionPsiPar
   }
 
   @Override
-  public @NotNull StepsAndProjection<ReqProjection<?, ?>> parseEntityProjection(
+  public StepsAndProjection<ReqProjection<?, ?>> parseComaProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpProjection<?, ?> op,

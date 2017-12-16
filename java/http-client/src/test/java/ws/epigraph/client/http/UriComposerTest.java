@@ -22,12 +22,12 @@ import ws.epigraph.lang.MessagesContext;
 import ws.epigraph.lang.TextLocation;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.gen.ProjectionReferenceName;
-import ws.epigraph.projections.op.OpEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
 import ws.epigraph.projections.op.OpPsiProcessingContext;
 import ws.epigraph.projections.op.OpReferenceContext;
 import ws.epigraph.projections.op.output.OpOutputProjectionsPsiParser;
-import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -48,9 +48,7 @@ import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static ws.epigraph.server.http.Util.decodeUri;
-import static ws.epigraph.test.TestUtil.failIfHasErrors;
-import static ws.epigraph.test.TestUtil.lines;
-import static ws.epigraph.test.TestUtil.runPsiParser;
+import static ws.epigraph.test.TestUtil.*;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
@@ -59,7 +57,7 @@ public class UriComposerTest {
   private final TypesResolver resolver = StaticTypesResolver.instance();
   private final DataType dataType = new DataType(Person.type, null);
 
-  private final OpEntityProjection personOpProjection = parsePersonOpEntityProjection(
+  private final OpProjection<?,?> personOpProjection = parsePersonOpProjection(
       lines(
           ":(",
           "  id,",
@@ -94,16 +92,16 @@ public class UriComposerTest {
     String uri = UriComposer.composeDeleteUri(
         "foo",
         null,
-        new StepsAndProjection<>(0, parseReqDeleteEntityProjection("", true)),
-        new StepsAndProjection<>(0, parseReqOutputEntityProjection(":id", false))
+        new StepsAndProjection<>(0, parseReqDeleteProjection("", true)),
+        new StepsAndProjection<>(0, parseReqOutputProjection(":id", false))
     );
 
     assertEquals("/+foo:()>:id", decodeUri(uri));
   }
 
-  private ReqFieldProjection parseReqDeleteEntityProjection(String s, boolean flag) {
+  private ReqFieldProjection parseReqDeleteProjection(String s, boolean flag) {
     return new ReqFieldProjection(
-        parseReqDeleteEntityProjection(
+        parseReqDeleteProjection(
             dataType,
             personOpProjection,
             s,
@@ -114,9 +112,9 @@ public class UriComposerTest {
     );
   }
 
-  private ReqFieldProjection parseReqOutputEntityProjection(String s, boolean flag) {
+  private ReqFieldProjection parseReqOutputProjection(String s, boolean flag) {
     return new ReqFieldProjection(
-        parseReqOutputEntityProjection(
+        parseReqOutputProjection(
             dataType,
             personOpProjection,
             s,
@@ -127,24 +125,24 @@ public class UriComposerTest {
     );
   }
 
-  private @NotNull OpEntityProjection parsePersonOpEntityProjection(@NotNull String projectionString) {
-    return parseOpEntityProjection(dataType, projectionString, resolver);
+  private @NotNull OpProjection<?,?> parsePersonOpProjection(@NotNull String projectionString) {
+    return parseOpProjection(dataType, projectionString, resolver);
   }
 
-  public static @NotNull OpEntityProjection parseOpEntityProjection(
-      @NotNull DataType varDataType,
+  public static @NotNull OpProjection<?,?> parseOpProjection(
+      @NotNull DataType dataType,
       @NotNull String projectionString,
       @NotNull TypesResolver resolver) {
 
     EpigraphPsiUtil.ErrorsAccumulator errorsAccumulator = new EpigraphPsiUtil.ErrorsAccumulator();
 
-    SchemaOpEntityProjection psiEntityProjection = EpigraphPsiUtil.parseText(
+    SchemaOpEntityProjection projectionPsi = EpigraphPsiUtil.parseText(
         projectionString,
         SchemaSubParserDefinitions.OP_ENTITY_PROJECTION,
         errorsAccumulator
     );
 
-    failIfHasErrors(psiEntityProjection, errorsAccumulator);
+    failIfHasErrors(projectionPsi, errorsAccumulator);
 
     return runPsiParser(true, context -> {
       OpReferenceContext opOutputReferenceContext =
@@ -154,51 +152,51 @@ public class UriComposerTest {
           context,
           opOutputReferenceContext
       );
-      OpEntityProjection vp = new OpOutputProjectionsPsiParser(context).parseEntityProjection(
-          varDataType,
+      OpProjection<?,?> p = new OpOutputProjectionsPsiParser(context).parseProjection(
+          dataType,
           false,
-          psiEntityProjection,
+          projectionPsi,
           resolver,
           opPsiProcessingContext
       );
 
       opOutputReferenceContext.ensureAllReferencesResolved();
 
-      return vp;
+      return p;
     });
 
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqOutputEntityProjection(
+  public static @NotNull StepsAndProjection<ReqProjection<?,?>> parseReqOutputProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       boolean flag,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         ReqOutputProjectionPsiParser::new,
         type, op, projectionString, flag, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqDeleteEntityProjection(
+  public static @NotNull StepsAndProjection<ReqProjection<?,?>> parseReqDeleteProjection(
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       boolean flag,
       @NotNull TypesResolver resolver) {
 
-    return parseReqEntityProjection(
+    return parseReqProjection(
         ReqDeleteProjectionPsiParser::new,
         type, op, projectionString, flag, resolver
     );
   }
 
-  public static @NotNull StepsAndProjection<ReqEntityProjection> parseReqEntityProjection(
+  public static @NotNull StepsAndProjection<ReqProjection<?,?>> parseReqProjection(
       @NotNull Function<MessagesContext, ReqProjectionPsiParser> parserFactory,
       @NotNull DataType type,
-      @NotNull OpEntityProjection op,
+      @NotNull OpProjection<?,?> op,
       @NotNull String projectionString,
       boolean flag,
       @NotNull TypesResolver resolver) {
@@ -221,7 +219,7 @@ public class UriComposerTest {
           new ReqPsiProcessingContext(context, reqOutputReferenceContext);
 
       ReqProjectionPsiParser parser = parserFactory.apply(context);
-      @NotNull StepsAndProjection<ReqEntityProjection> res =
+      @NotNull StepsAndProjection<ReqProjection<?,?>> res =
           parser.parseTrunkProjection(
               type,
               flag,

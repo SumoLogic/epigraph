@@ -42,7 +42,7 @@ public interface ReqProjectionPsiParser {
       @NotNull TypesResolver resolver,
       @NotNull ReqPsiProcessingContext context) throws PsiProcessingException;
 
-  @NotNull StepsAndProjection<ReqProjection<?, ?>> parseEntityProjection(
+  StepsAndProjection<ReqProjection<?, ?>> parseComaProjection(
       @NotNull DataTypeApi dataType,
       boolean flagged,
       @NotNull OpProjection<?, ?> op,

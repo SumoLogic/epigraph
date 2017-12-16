@@ -344,7 +344,7 @@ public abstract class RequestUrlPsiParser {
       ).wrap(projection -> new ReqFieldProjection(projection, projection.location()));
 
     else if (comaEntityPsi != null && !comaEntityPsi.getText().isEmpty())
-      return firstProjectionParser.parseEntityProjection(
+      return firstProjectionParser.parseComaProjection(
           dataType,
           flagged,
           op.projection(),

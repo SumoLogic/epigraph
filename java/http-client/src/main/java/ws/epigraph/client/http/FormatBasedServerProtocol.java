@@ -35,8 +35,8 @@ import ws.epigraph.invocation.ErrorValueInvocationError;
 import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.service.operations.ReadOperationResponse;
 import ws.epigraph.util.IOUtil;
@@ -84,8 +84,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer createRequestContentProducer(
-      final @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
-      final @NotNull OpEntityProjection opInputProjection,
+      final @Nullable StepsAndProjection<ReqProjection<?,?>> reqInputProjection,
+      final @NotNull OpProjection<?,?> opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -124,8 +124,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer updateRequestContentProducer(
-      final @Nullable StepsAndProjection<ReqEntityProjection> reqUpdateProjection,
-      final @NotNull OpEntityProjection opInputProjection,
+      final @Nullable StepsAndProjection<ReqProjection<?,?>> reqUpdateProjection,
+      final @NotNull OpProjection<?,?> opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -164,8 +164,8 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public HttpContentProducer customRequestContentProducer(
-      final StepsAndProjection<ReqEntityProjection> reqInputProjection,
-      final @NotNull OpEntityProjection opInputProjection,
+      final StepsAndProjection<ReqProjection<?,?>> reqInputProjection,
+      final @NotNull OpProjection<?,?> opInputProjection,
       final @NotNull Data inputData,
       final @NotNull OperationInvocationContext operationInvocationContext) {
 
@@ -174,7 +174,7 @@ public class FormatBasedServerProtocol implements ServerProtocol {
 
   @Override
   public InvocationResult<ReadOperationResponse<Data>> readResponse(
-      final @NotNull StepsAndProjection<ReqEntityProjection> projection,
+      final @NotNull StepsAndProjection<ReqProjection<?,?>> projection,
       final @NotNull OperationInvocationContext operationInvocationContext,
       final @NotNull HttpResponse httpResponse,
       final int okStatusCode) {
@@ -254,19 +254,6 @@ public class FormatBasedServerProtocol implements ServerProtocol {
       return new ErrorValue(response.getStatusLine().getStatusCode(), string);
     }
   }
-
-//  private @NotNull Data createErrorData(@NotNull ReqOutputVarProjection projection, @NotNull ErrorValue errorValue) {
-//    // create data instance with all requested tags set to error
-//
-//    Type type = (Type) projection.type();
-//    Data.Builder builder = type.createDataBuilder();
-//
-//    for (final ReqOutputTagProjectionEntry tpe : projection.tagProjections().values()) {
-//      builder._raw().setError((Tag) tpe.tag(), errorValue);
-//    }
-//
-//    return builder;
-//  }
 
   private interface ContentWriter {
     void write() throws IOException;

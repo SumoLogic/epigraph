@@ -20,13 +20,11 @@ import de.uka.ilkd.pp.Layouter;
 import de.uka.ilkd.pp.NoExceptions;
 import de.uka.ilkd.pp.StringBackend;
 import org.apache.commons.codec.net.URLCodec;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
-import ws.epigraph.projections.req.ReqFieldProjection;
-import ws.epigraph.projections.req.ReqProjectionsPrettyPrinter;
-import ws.epigraph.projections.req.ReqPathPrettyPrinter;
+import ws.epigraph.projections.req.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -35,7 +33,7 @@ import java.util.BitSet;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public final class UriComposer {
-  protected static final BitSet SAFE_CHARACTERS = new BitSet(256);
+  private static final BitSet SAFE_CHARACTERS = new BitSet(256);
 
   // todo UT
   static {
@@ -83,7 +81,7 @@ public final class UriComposer {
     final StringBuilder decodedUri = new StringBuilder();
 
     if (path == null) {
-      if (inputStepsAndProjection !=null && inputStepsAndProjection.projection().flag())
+      if (inputStepsAndProjection != null && inputStepsAndProjection.projection().flag())
         decodedUri.append('+');
       decodedUri.append(fieldName);
     } else
@@ -154,7 +152,7 @@ public final class UriComposer {
       String fieldName,
       @Nullable StepsAndProjection<ReqFieldProjection> stepsAndProjection) {
 
-    if (stepsAndProjection !=null && stepsAndProjection.projection().flag())
+    if (stepsAndProjection != null && stepsAndProjection.projection().flag())
       decodedUri.append('+');
 
     decodedUri.append(fieldName);
@@ -181,12 +179,15 @@ public final class UriComposer {
 
     ReqProjectionsPrettyPrinter<NoExceptions> printer =
         new ReqProjectionsPrettyPrinter<NoExceptions>(layouter) {
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
@@ -196,19 +197,22 @@ public final class UriComposer {
     return sb.getString();
   }
 
-  private static @NotNull String printReqProjection(@NotNull ReqEntityProjection projection, int pathSteps) {
+  private static @NotNull String printReqProjection(@NotNull ReqProjection<?, ?> projection, int pathSteps) {
 
     StringBackend sb = new StringBackend(2000);
     Layouter<NoExceptions> layouter = new Layouter<>(sb, 2);
 
     ReqProjectionsPrettyPrinter<NoExceptions> printer =
         new ReqProjectionsPrettyPrinter<NoExceptions>(layouter) {
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };
@@ -227,12 +231,15 @@ public final class UriComposer {
 
     ReqPathPrettyPrinter<NoExceptions> printer =
         new ReqPathPrettyPrinter<NoExceptions>(layouter) {
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk() { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> brk(final int width, final int offset) { return layouter; }
 
+          @Contract(pure = true)
           @Override
           protected @NotNull Layouter<NoExceptions> nbsp() { return layouter; }
         };

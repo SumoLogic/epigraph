@@ -56,7 +56,7 @@ public class ReqMapModelProjection
       @Nullable ReqModelProjection<?, ?, ?> metaProjection,
       @Nullable List<ReqKeyProjection> keys,
       boolean keysRequired,
-      @NotNull ReqProjection<?, ?> valuesProjection,
+      @Nullable ReqProjection<?, ?> valuesProjection,
       @Nullable List<ReqMapModelProjection> tails,
       @NotNull TextLocation location) {
 
@@ -68,6 +68,21 @@ public class ReqMapModelProjection
 
   public ReqMapModelProjection(final @NotNull MapTypeApi model, final @NotNull TextLocation location) {
     super(model, location);
+  }
+
+  public static @NotNull ReqMapModelProjection pathEnd(@NotNull MapTypeApi model, @NotNull TextLocation location) {
+    return new ReqMapModelProjection(
+        model,
+        false,
+        ReqParams.EMPTY,
+        Directives.EMPTY,
+        null,
+        null,
+        false,
+        null,
+        null,
+        location
+    );
   }
 
   @Override
@@ -83,7 +98,7 @@ public class ReqMapModelProjection
   }
 
   @Override
-  public boolean isPathEnd() { return keys != null && keys.isEmpty(); }
+  public boolean isPathEnd() { return valuesProjection == null ; }
 
   public @NotNull ReqKeyProjection pathKey() {
     assert isResolved();
@@ -125,7 +140,8 @@ public class ReqMapModelProjection
             .map(ReqMapModelProjection::itemsProjection)
             .collect(Collectors.toList());
 
-    final /*@NotNull*/ ReqProjection<?, ?> mergedItemsVarType =
+    //noinspection RedundantCast
+    final /*@NotNull*/ ReqProjection<?, ?> mergedItemsType =
         (ReqProjection<?, ?>) ProjectionUtils.merge(itemProjections);
 
     return new ReqMapModelProjection(
@@ -136,7 +152,7 @@ public class ReqMapModelProjection
         mergedMetaProjection,
         mergedKeys,
         modelProjections.stream().anyMatch(ReqMapModelProjection::keysRequired),
-        mergedItemsVarType,
+        mergedItemsType,
         mergedTails,
         TextLocation.UNKNOWN
     );
