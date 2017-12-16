@@ -23,14 +23,10 @@ import ws.epigraph.data.Data;
 import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.refs.StaticTypesResolver;
-import ws.epigraph.tests.Person;
-import ws.epigraph.tests.PersonId;
-import ws.epigraph.tests.PersonRecord;
-import ws.epigraph.tests.Person_List;
-import ws.epigraph.tests.String_PersonRecord_Map;
+import ws.epigraph.tests.*;
 import ws.epigraph.types.DataType;
 import ws.epigraph.util.HttpStatusCode;
 
@@ -273,13 +269,13 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpEntityProjection op = EpigraphTestUtil.parseOpProjection(
+    OpProjection<?, ?> op = EpigraphTestUtil.parseOpProjection(
         (DataType) data.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqEntityProjection> req =
+    StepsAndProjection<ReqProjection<?, ?>> req =
         EpigraphTestUtil.parseReqOutputProjection(
             (DataType) data.type().dataType(),
             op,
@@ -295,13 +291,13 @@ public class ReqOutputRequiredDataPrunerTest {
       @NotNull String opProjection,
       @NotNull String reqProjection) {
 
-    OpEntityProjection op = EpigraphTestUtil.parseOpProjection(
+    OpProjection<?, ?> op = EpigraphTestUtil.parseOpProjection(
         datum.type().dataType(),
         opProjection,
         StaticTypesResolver.instance()
     );
 
-    StepsAndProjection<ReqEntityProjection> req =
+    StepsAndProjection<ReqProjection<?, ?>> req =
         EpigraphTestUtil.parseReqOutputProjection(
             datum.type().dataType(),
             op,

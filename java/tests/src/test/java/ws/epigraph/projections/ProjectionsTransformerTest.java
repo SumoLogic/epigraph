@@ -36,24 +36,25 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class ProjectionsTransformerTest {
+  @SuppressWarnings("ConstantConditions")
   @Test
   public void testRecursiveProjectionTransformation() {
     String projection = ":`record` ( bestFriend $bf = :`record` ( id, bestFriend $bf ) )";
     String transformedProjection = ":`record` ( bestFriend $bf = :`record` ( bestFriend $bf ) )";
 
-    OpProjection<?, ?> vp = EpigraphTestUtil.parseOpProjection(
+    OpProjection<?, ?> p = EpigraphTestUtil.parseOpProjection(
         (DataType) Person.type.dataType(),
         projection,
         StaticTypesResolver.instance()
     );
 
-    String s = EpigraphTestUtil.printOpProjection(vp);
+    String s = EpigraphTestUtil.printOpProjection(p);
     assertEquals(projection, s);
 
-    OpProjection<?, ?> oPersonProjection = vp;
+    OpProjection<?, ?> oPersonProjection = p;
 
     OpRecordModelProjection oPersonRecordProjection =
-        (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
+        (OpRecordModelProjection) p.singleTagProjection().modelProjection();
 
     OpProjection<?, ?> oBfProjection =
         oPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().projection();
@@ -82,30 +83,30 @@ public class ProjectionsTransformerTest {
       }
     };
 
-    Tuple2<OpEntityProjection, OpProjectionTransformationMap> tuple  = t.transform(vp, null);
-    vp = tuple._1;
-    OpProjectionTransformationMap transformationMap = tuple._2;
+    Tuple2<OpProjection<?, ?>, Map<OpProjection<?, ?>, OpProjection<?, ?>>> tuple  = t.transform(p, null);
+    p = tuple._1;
+    Map<OpProjection<?, ?>, OpProjection<?, ?>> transformationMap = tuple._2;
 
-    s = EpigraphTestUtil.printOpProjection(vp);
+    s = EpigraphTestUtil.printOpProjection(p);
     assertEquals(transformedProjection, s);
 
     // check transformation map
 
-    OpEntityProjection nPersonProjection = vp;
+    OpProjection<?, ?> nPersonProjection = p;
 
     OpRecordModelProjection nPersonRecordProjection =
-        (OpRecordModelProjection) vp.singleTagProjection().modelProjection();
+        (OpRecordModelProjection) p.singleTagProjection().modelProjection();
 
-    OpEntityProjection nBfProjection =
+    OpProjection<?, ?> nBfProjection =
         nPersonRecordProjection.fieldProjection("bestFriend").fieldProjection().projection();
 
     OpRecordModelProjection nBfRecordProjection =
         (OpRecordModelProjection) nBfProjection.singleTagProjection().modelProjection();
 
-    assertEquals(4, transformationMap.size());
-    assertTrue(transformationMap.getEntityMapping(oPersonProjection) == nPersonProjection);
-    assertTrue(transformationMap.getModelMapping(oPersonRecordProjection) == nPersonRecordProjection);
-    assertTrue(transformationMap.getEntityMapping(oBfProjection) == nBfProjection);
-    assertTrue(transformationMap.getModelMapping(oBfRecordProjection) == nBfRecordProjection);
+    assertEquals(5, transformationMap.size()); // 5 since $bf gets registered twice
+    assertTrue(transformationMap.get(oPersonProjection) == nPersonProjection);
+    assertTrue(transformationMap.get(oPersonRecordProjection) == nPersonRecordProjection);
+    assertTrue(transformationMap.get(oBfProjection) == nBfProjection);
+    assertTrue(transformationMap.get(oBfRecordProjection) == nBfRecordProjection);
   }
 }

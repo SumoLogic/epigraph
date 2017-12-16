@@ -47,18 +47,21 @@ public abstract class GenProjectionTransformer<
   private Map<P, P> transformationMap = null;
 
   public @NotNull Tuple2<P, Map<P, P>> transform(@NotNull P projection, @Nullable DataTypeApi dataType) {
-    this.transformationMap = new IdentityHashMap<>();
+//    this.transformationMap = new IdentityHashMap<>();
+    reset();
     return Tuple2.of(transformProjection(projection, dataType), transformationMap());
   }
 
   @SuppressWarnings("unchecked")
   public @NotNull Tuple2<MP, Map<P, P>> transform(@NotNull MP projection) {
-    this.transformationMap = new IdentityHashMap<>();
+//    this.transformationMap = new IdentityHashMap<>();
+    reset();
     return Tuple2.of((MP) transformProjection((P) projection), transformationMap());
   }
 
   public @NotNull Tuple2<FP, Map<P, P>> transform(@NotNull FP fp, @NotNull DataTypeApi dataType) {
-    this.transformationMap = new IdentityHashMap<>();
+//    this.transformationMap = new IdentityHashMap<>();
+    reset();
     return Tuple2.of(transformFieldProjection(fp, dataType), transformationMap());
   }
 
@@ -68,6 +71,7 @@ public abstract class GenProjectionTransformer<
   // -------------------------------------------------------------------------------------------------------------------
 
   public void reset() {
+    this.transformationMap = new IdentityHashMap<>();
     transformedCache.clear();
     visited.clear();
     usedRecursively.clear();
@@ -187,12 +191,10 @@ public abstract class GenProjectionTransformer<
 
     if (usedRec) {
       ((GenProjectionReference<P>) res).resolve(projection.referenceName(), transformed);
-      transformationMap.put(projection, res);
-      transformedCache.put(projection, res);
+      registerTransformed(projection, res);
       return res;
     } else {
-      transformationMap.put(projection, transformed);
-      transformedCache.put(projection, transformed);
+      registerTransformed(projection, transformed);
       return transformed;
     }
   }
@@ -277,10 +279,16 @@ public abstract class GenProjectionTransformer<
 
     }
 
-    if (projection != transformed)
-      transformationMap.put((P) projection, (P) transformed);
+    registerTransformed((P) projection, (P) transformed);
 
     return transformed;
+  }
+
+  private void registerTransformed(@NotNull P o, @NotNull P n) {
+    if (o != n) {
+      transformationMap.put(o, n);
+      transformedCache.put(o, n);
+    }
   }
 
   protected @NotNull RMP transformRecordProjection(
