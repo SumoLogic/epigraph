@@ -102,7 +102,7 @@ public abstract class AbstractEntityProjection<
       // collect tag projections from all sources
       List<TP> tagProjections = new ArrayList<>();
       for (EP source : sources) {
-        @Nullable TP sourceTp = source.tagProjection(tag.name());
+        /*@Nullable*/ TP sourceTp = source.tagProjection(tag.name());
         if (sourceTp != null) {
           if (normalizeTags) {
             DatumTypeApi effectiveModelType = effectiveType.tagsMap().get(tag.name()).type();
@@ -122,7 +122,7 @@ public abstract class AbstractEntityProjection<
       if (!tagProjections.isEmpty()) {
         final TP tp0 = tagProjections.get(0);
 
-        @Nullable TP mergedTag = null;
+        /*@Nullable*/ TP mergedTag = null;
 
 //        if (effectiveType.kind() != TypeKind.ENTITY) {
 //          if (tagProjections.size() == 1) {
@@ -159,8 +159,7 @@ public abstract class AbstractEntityProjection<
     return mergedTags;
   }
 
-  private @NotNull Map<String, TagApi> collectTags(
-      @NotNull Iterable<? extends EP> effectiveProjections) {
+  private @NotNull Map<String, TagApi> collectTags(@NotNull Iterable<? extends EP> effectiveProjections) {
 
     Map<String, TagApi> tags = new LinkedHashMap<>();
 
@@ -188,8 +187,8 @@ public abstract class AbstractEntityProjection<
       final boolean mergedFlag,
       final @Nullable List<EP> mergedTails) {
 
-    final @NotNull Map<String, TagApi> tags = collectTags(projections);
-    final @NotNull Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags.values(), projections);
+    final Map<String, TagApi> tags = collectTags(projections);
+    final Map<String, TP> mergedTags = mergeTags(effectiveType, normalizeTags, tags.values(), projections);
 
     return merge(
         effectiveType,
