@@ -71,7 +71,6 @@
 - [ ] ~~op entity projections: no syntax for body (annotations/defaults/...). Use `:{..}`~~
 - [ ] paths: ~~add entity params,~~ make tags optional (so it's possible to have path params without anything else, i.e. without having to change operation type)
 - [ ] bug? `(+foo)` if foo is an entity type without retro tag, `+` seems to have no effect
-- [ ] op parameter projections should have their own reference context, with global/resource input context as a parent
 - [ ] `UriComposer`: make sure `+` is added before flagged delete entity projections (+UT)
 - [ ] reverse the meaning of `+` (required) on OpInput and ReqOutput projections
   - do NOT mark default projection parts as `required` though
@@ -96,12 +95,13 @@
   do `gradle --rerun-tasks :epigraph-builtin-services-service:compileJava`, sometimes `OutputDatumTypeProjection` won't
   extend `OutputType_Projection` (fixed?)
 - [ ] global named projections should be visible between files (it is somewhat visible now, only from the same namespace)
+  - projections should be importable
 - [ ] Make op projections merge tags from entity tails. Having an op projection like `:rec(a) :~ Bar:rec(b)` should
   allow request projection like `:rec(a) ~ BRec(b)` (if `Bar:rec` type is `BarRec`). Procedure should be:
   - for every entity tail: for every tag: if this tag is present in the main projection
   - if tag type is the same: merge tag projections (? or ignore?)
   - else add it as main projection tag's tail
-- [ ] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
+- [x] BIG: refactor projections after `Type`/`DataType`/`DatumType` hierarchy: self-var projections should NOT
   be represented by entity-model projections pair, this leads to messy code
 - [ ] op output parser: check if 'include in default' fields have required parameters without defaults
 - [ ] BIG move flag from entity back projections to fields/collection items. Because:
