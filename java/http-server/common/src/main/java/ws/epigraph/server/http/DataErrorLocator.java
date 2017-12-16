@@ -48,7 +48,7 @@ public final class DataErrorLocator {
    * @return error value if data contains an error after {@code pathSteps} along the path, {@code null} otherwise
    */
   public static @Nullable ErrorValue getError(
-      @NotNull ReqEntityProjection projection,
+      @NotNull ReqProjection<?, ?> projection,
       int pathSteps,
       @Nullable Data data) {
 

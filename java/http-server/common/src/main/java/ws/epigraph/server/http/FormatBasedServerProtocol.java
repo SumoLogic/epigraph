@@ -20,15 +20,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
 import ws.epigraph.http.ContentType;
-import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqModelProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.refs.TypesResolver;
 import ws.epigraph.schema.operations.OperationKind;
 import ws.epigraph.util.HttpStatusCode;
@@ -67,8 +65,8 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
 
   @Override
   public Data readInput(
-      @NotNull OpEntityProjection opInputProjection,
-      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
+      @NotNull OpProjection<?,?> opInputProjection,
+      @Nullable StepsAndProjection<ReqProjection<?,?>> reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException {
 
@@ -93,7 +91,7 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
   @Override
   public void writeDataResponse(
       @NotNull OperationKind operationKind,
-      @NotNull StepsAndProjection<ReqEntityProjection> outputProjection,
+      @NotNull StepsAndProjection<ReqProjection<?,?>> outputProjection,
       @Nullable Data data,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -103,23 +101,6 @@ public class FormatBasedServerProtocol<C extends HttpInvocationContext> implemen
         httpInvocationContext,
         operationInvocationContext,
         writer -> writer.writeData(outputProjection.projection(), outputProjection.pathSteps(), data)
-    );
-
-  }
-
-  @Override
-  public void writeDatumResponse(
-      @NotNull OperationKind operationKind,
-      @NotNull StepsAndProjection<ReqModelProjection<?, ?, ?>> outputProjection,
-      @Nullable Datum datum,
-      @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext) {
-
-    writeFormatResponse(
-        getSuccessStatusCode(operationKind),
-        httpInvocationContext,
-        operationInvocationContext,
-        writer -> writer.writeDatum(outputProjection.projection(), outputProjection.pathSteps(), datum)
     );
 
   }

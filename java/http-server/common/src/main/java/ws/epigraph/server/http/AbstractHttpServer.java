@@ -24,8 +24,8 @@ import ws.epigraph.invocation.*;
 import ws.epigraph.projections.StepsAndProjection;
 import ws.epigraph.projections.abs.AbstractFieldProjection;
 import ws.epigraph.projections.op.OpFieldProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
 import ws.epigraph.projections.req.ReqFieldProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.psi.DefaultPsiProcessingContext;
 import ws.epigraph.psi.EpigraphPsiUtil;
 import ws.epigraph.psi.PsiProcessingContext;
@@ -196,12 +196,12 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private static final class ReadResult {
     final @Nullable Data data;
     final int pathSteps;
-    final @NotNull ReqEntityProjection projection;
+    final @NotNull ReqProjection<?,?> projection;
 
     ReadResult(
         final @Nullable Data data,
         final int steps,
-        final @NotNull ReqEntityProjection projection) {
+        final @NotNull ReqProjection<?,?> projection) {
       this.data = data;
       pathSteps = steps;
       this.projection = projection;
@@ -886,7 +886,7 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
   private void writeData(
       final @NotNull OperationKind operationKind,
       final int pathSteps,
-      @NotNull ReqEntityProjection reqProjection,
+      @NotNull ReqProjection<?,?> reqProjection,
       @Nullable Data data,
       @NotNull C context,
       @NotNull OperationInvocationContext operationInvocationContext) {
@@ -915,57 +915,8 @@ public abstract class AbstractHttpServer<C extends HttpInvocationContext> {
           );
         }
 
-//        DataPathRemover.PathRemovalResult noPathResult = DataPathRemover.removePath(reqProjection, data, pathSteps);
-//
-//        if (noPathResult.error == null) {
-//          final @Nullable ReqEntityProjection varProjection = noPathResult.dataProjection;
-//          final @Nullable ReqModelProjection<?, ?, ?> modelProjection = noPathResult.datumProjection;
-//
-//          if (varProjection != null) {
-//            serverProtocol.writeDataResponse(
-//                operationKind,
-//                varProjection,
-//                noPathResult.data,
-//                context,
-//                operationInvocationContext
-//            );
-//          } else if (modelProjection != null) {
-//            serverProtocol.writeDatumResponse(
-//                operationKind,
-//                modelProjection,
-//                noPathResult.datum,
-//                context,
-//                operationInvocationContext
-//            );
-//          } else {
-//            serverProtocol.writeEmptyResponse(operationKind, context, operationInvocationContext);
-//          }
-//        } else {
-//          serverProtocol.writeErrorResponse(
-//              operationKind,
-//              noPathResult.error,
-//              context,
-//              operationInvocationContext
-//          );
-//        }
       }
 
-//    } catch (AmbiguousPathException ignored) {
-//      writeInvocationErrorAndCloseContext(
-//          new GenericServerInvocationError(
-////              String.format(
-////                  "Can't remove %d path steps from data: \n%s\n",
-////                  pathSteps == 0 ? 0 : pathSteps - 1,
-////                  dataToString(data)
-////              )
-//              String.format(
-//                  "Can't remove %d path steps from data",
-//                  pathSteps == 0 ? 0 : pathSteps - 1
-//              )
-//          ),
-//          context,
-//          operationInvocationContext
-//      );
     } catch (RuntimeException e) {
       context.logger().error("Error writing response", e);
       writeInvocationErrorAndCloseContext(

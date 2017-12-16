@@ -27,6 +27,7 @@ import ws.epigraph.util.HttpStatusCode;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class NotFoundError extends InvocationErrorImpl {
+  // todo rename to OperationNotFoundInvocationError ?
   public NotFoundError(
       @NotNull String resourceName,
       @NotNull OperationKind operationKind,

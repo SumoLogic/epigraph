@@ -19,14 +19,12 @@ package ws.epigraph.server.http;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.data.Datum;
 import ws.epigraph.errors.ErrorValue;
-import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationError;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqModelProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.schema.operations.OperationKind;
 
 import java.io.IOException;
@@ -38,22 +36,15 @@ public interface ServerProtocol<C extends HttpInvocationContext> {
   // server-side counterpart of ws.epigraph.client.http.ServerProtocol
 
   Data readInput(
-      @NotNull OpEntityProjection opInputProjection,
-      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
+      @NotNull OpProjection<?,?> opInputProjection,
+      @Nullable StepsAndProjection<ReqProjection<?,?>> reqInputProjection,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext) throws IOException;
 
   void writeDataResponse(
       @NotNull OperationKind operationKind,
-      @NotNull StepsAndProjection<ReqEntityProjection> outputProjection,
+      @NotNull StepsAndProjection<ReqProjection<?,?>> outputProjection,
       @Nullable Data data,
-      @NotNull C httpInvocationContext,
-      @NotNull OperationInvocationContext operationInvocationContext);
-
-  void writeDatumResponse(
-      @NotNull OperationKind operationKind,
-      @NotNull StepsAndProjection<ReqModelProjection<?, ?, ?>> outputProjection,
-      @Nullable Datum datum,
       @NotNull C httpInvocationContext,
       @NotNull OperationInvocationContext operationInvocationContext);
 

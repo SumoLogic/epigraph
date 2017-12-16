@@ -20,11 +20,11 @@ import org.apache.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ws.epigraph.data.Data;
-import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.projections.StepsAndProjection;
-import ws.epigraph.projections.op.OpEntityProjection;
-import ws.epigraph.projections.req.ReqEntityProjection;
+import ws.epigraph.projections.op.OpProjection;
+import ws.epigraph.projections.req.ReqProjection;
 import ws.epigraph.service.operations.ReadOperationResponse;
 
 /**
@@ -39,26 +39,26 @@ public interface ServerProtocol {
   @NotNull String[] mimeTypes();
 
   InvocationResult<ReadOperationResponse<Data>> readResponse(
-      @NotNull StepsAndProjection<ReqEntityProjection> projection,
+      @NotNull StepsAndProjection<ReqProjection<?, ?>> projection,
       @NotNull OperationInvocationContext operationInvocationContext,
       @NotNull HttpResponse httpResponse,
       int okStatusCode);
 
   HttpContentProducer createRequestContentProducer(
-      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
-      @NotNull OpEntityProjection opInputProjection,
+      @Nullable StepsAndProjection<ReqProjection<?, ?>> reqInputProjection,
+      @NotNull OpProjection<?,?> opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   HttpContentProducer updateRequestContentProducer(
-      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
-      @NotNull OpEntityProjection opInputProjection,
+      @Nullable StepsAndProjection<ReqProjection<?, ?>> reqInputProjection,
+      @NotNull OpProjection<?,?> opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 
   HttpContentProducer customRequestContentProducer(
-      @Nullable StepsAndProjection<ReqEntityProjection> reqInputProjection,
-      @NotNull OpEntityProjection opInputProjection,
+      @Nullable StepsAndProjection<ReqProjection<?, ?>> reqInputProjection,
+      @NotNull OpProjection<?,?> opInputProjection,
       @NotNull Data inputData,
       @NotNull OperationInvocationContext operationInvocationContext);
 }
