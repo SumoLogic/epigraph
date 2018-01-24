@@ -3,8 +3,7 @@
 [![codecov.io](https://codecov.io/gh/SumoLogic/epigraph/branch/master/graphs/badge.svg)](https://codecov.io/gh/SumoLogic/epigraph/branch/master)
 [![License](https://img.shields.io/github/license/SumoLogic/epigraph.svg)](LICENSE.md)
 
-Under construction
-
+- [Documentation Wiki](https://github.com/SumoLogic/epigraph/wiki)
 - [Roadmap](roadmap.md)
 - [Todo](todo.md)
 - [IDEA plugin snapshot](https://github.com/SumoLogic/epigraph/files/1181584/epigraph-idea-plugin-0.0.5.zip)
