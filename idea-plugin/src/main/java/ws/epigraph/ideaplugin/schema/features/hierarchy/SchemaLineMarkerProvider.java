@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,23 +41,28 @@ import static ws.epigraph.schema.lexer.SchemaElementTypes.S_QID;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaLineMarkerProvider extends RelatedItemLineMarkerProvider {
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return "Epigraph line markers";
   }
 
   @Override
-  protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
+  protected void collectNavigationMarkers(
+      @NotNull PsiElement element,
+      @NotNull Collection<? super RelatedItemLineMarkerInfo> result) {
+
     Project project = element.getProject();
-    if (element.getNode().getElementType() != S_QID) return;
 
     PsiElement parent = element.getParent();
+    if (parent == null || parent.getNode() == null || parent.getNode().getElementType() != S_QID) return;
+
+    parent = parent.getParent();
 
     if (parent instanceof SchemaTypeDef) {
       SchemaTypeDef typeDef = (SchemaTypeDef) parent;
 
-      List<SchemaSupplementDef> supplements = HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
+      List<SchemaSupplementDef> supplements =
+          HierarchyCache.getHierarchyCache(project).getSupplementsBySupplemented(typeDef);
 
       if (!supplements.isEmpty()) {
         NavigationGutterIconBuilder<PsiElement> builder =
