@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,19 +83,17 @@ public class SchemaCompletionContributor extends CompletionContributor {
               @NotNull CompletionParameters parameters,
               ProcessingContext context,
               @NotNull CompletionResultSet result) {
+
             PsiElement position = parameters.getPosition();
             completeTopLevelKeywords(position, result);     // complete top-level schema keywords
             completeExtendsKeyword(position, result);       // complete `extends` in type defs
             completeMetaKeyword(position, result);          // complete `meta` in type defs
             completeSupplementsKeyword(position, result);   // complete `supplements` in type defs
             completeWith(position, result);                 // complete `with` inside `supplements`
-            completeNewTypeName(
-                position,
-                result
-            );          // complete new type names using unresolved references in current file
+            completeNewTypeName( position, result );        // complete new type names using unresolved references in current file
             completeOverride(position, result);             // complete `override` in field/tag decls
             completeOverrideMember(position, result);       // complete type name after `override`
-            completeRetro(position, result);              // complete `default` keyword in `valueTypeRef`
+            completeRetro(position, result);                // complete `retro` keyword in `valueTypeRef`
 
             completeResourceKeywords(position, result);     // complete top-level keywords for resource defs
             completeOperationKeywords(position, result);    // complete top-level keywords for operation defs
@@ -253,7 +251,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     }
   }
 
-  private void completeWith(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeWith(@NotNull PsiElement position, final @NotNull CompletionResultSet result) {
     PsiElement qid = position.getParent();
     if (!(qid instanceof SchemaQid)) return;
 
@@ -272,7 +270,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   }
 
-  private void completeNewTypeName(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeNewTypeName(@NotNull PsiElement position, final @NotNull CompletionResultSet result) {
     // complete things like "record <caret>"
     // use all unresolved type references as candidates. In the future: be more intelligent and filter them by kind,
     // see commented out CompletionTest::testUndefinedTypeNameCompletion2
@@ -321,7 +319,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
   }
 
-  private void completeOverride(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeOverride(@NotNull PsiElement position, final @NotNull CompletionResultSet result) {
     boolean addOverride = false;
 
 //    PsiElement parent = position.getParent();
@@ -393,7 +391,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     return false;
   }
 
-  private void completeOverrideMember(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeOverrideMember(@NotNull PsiElement position, final @NotNull CompletionResultSet result) {
     SchemaRecordTypeDef recordTypeDef = null;
     SchemaEntityTypeDef entityTypeDef = null;
 
@@ -440,7 +438,7 @@ public class SchemaCompletionContributor extends CompletionContributor {
     }
   }
 
-  private void completeRetro(@NotNull PsiElement position, @NotNull final CompletionResultSet result) {
+  private void completeRetro(@NotNull PsiElement position, final @NotNull CompletionResultSet result) {
     SchemaValueTypeRef valueTypeRef = PsiTreeUtil.getParentOfType(position, SchemaValueTypeRef.class);
     // there is a value type ref and no 'default' in it yet
     if (valueTypeRef == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package ws.epigraph.ideaplugin.schema.features.completion;
 
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import ws.epigraph.ideaplugin.schema.brains.NamespaceManager;
 import ws.epigraph.schema.parser.SchemaFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,12 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return "src/test/resources/testData/features/completion";
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    NamespaceManager.getNamespaceManager(myFixture.getProject()).reset();
+    super.tearDown();
   }
 
   public void testStaticImportCompletion() {
@@ -323,7 +330,7 @@ public class CompletionTest extends LightCodeInsightFixtureTestCase {
     List<String> expected = Arrays.asList(variants);
     Collections.sort(actual);
     Collections.sort(expected);
-    assertEquals(dumpPsi(), expected, actual);
+    assertEquals(/*dumpPsi(), */expected, actual);
   }
 
   private void checkCompletionVariants(List<String> variants, String... moreVariants) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,20 +32,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class SchemaQnReferenceResolver {
-  @NotNull
-  private final List<Qn> prefixes;
-  @NotNull
-  private final Qn suffix;
-  @NotNull
-  private final Qn input;
-  @NotNull
-  private final GlobalSearchScope searchScope;
+  private final @NotNull List<Qn> prefixes;
+  private final @NotNull Qn suffix;
+  private final @NotNull Qn input;
+  private final @NotNull GlobalSearchScope searchScope;
 
   public SchemaQnReferenceResolver(@NotNull List<Qn> prefixes, @NotNull Qn input, @NotNull GlobalSearchScope searchScope) {
     this.searchScope = searchScope;
@@ -56,23 +51,19 @@ public class SchemaQnReferenceResolver {
     this.suffix = input;
   }
 
-  @NotNull
-  public Qn getInput() {
+  public @NotNull Qn getInput() {
     return input;
   }
 
-  @NotNull
-  public Qn getSuffix() {
+  public @NotNull Qn getSuffix() {
     return suffix;
   }
 
-  @NotNull
-  public List<Qn> getPrefixes() {
+  public @NotNull List<Qn> getPrefixes() {
     return prefixes;
   }
 
-  @Nullable
-  public PsiElement resolve(@NotNull Project project) {
+  public @Nullable PsiElement resolve(@NotNull Project project) {
     SchemaTypeDef typeDef = resolveTypeDef(project);
     if (typeDef != null) return typeDef;
 
@@ -91,27 +82,18 @@ public class SchemaQnReferenceResolver {
     return null;
   }
 
-  @Nullable
-  public Qn getTargetTypeDefQn(@NotNull Project project) {
+  public @Nullable Qn getTargetTypeDefQn(@NotNull Project project) {
     SchemaTypeDef typeDef = resolveTypeDef(project);
     if (typeDef != null) return typeDef.getQn();
     return null;
   }
 
-  @Nullable
-  private SchemaTypeDef resolveTypeDef(@NotNull Project project) {
+  private @Nullable SchemaTypeDef resolveTypeDef(@NotNull Project project) {
     return SchemaIndexUtil.findTypeDef(project, prefixes, suffix, searchScope);
 //    return SchemaIndexUtil.findSingleTypeDef(project, prefixes, suffix, searchScope);
   }
 
-  @NotNull
-  public ResolveResult[] multiResolve(@NotNull Project project) {
-    List<ResolveResult> typeDefs =
-        SchemaIndexUtil.findTypeDefs(project, prefixes, suffix, searchScope).stream()
-        .filter(Objects::nonNull)
-        .map(PsiElementResolveResult::new)
-        .collect(Collectors.toList());
-
+  public @NotNull ResolveResult[] multiResolve(@NotNull Project project) {
     // see comment in `resolve` above re. namespace declaration reference
 
     Qn prefix = input;
@@ -122,15 +104,18 @@ public class SchemaQnReferenceResolver {
         .map(ns -> new PsiElementResolveResult(getTargetSegment(ns, prefixLength)))
         .toArray(ResolveResult[]::new);
 
-    return ArrayUtil.mergeArrays(typeDefs.toArray(new ResolveResult[typeDefs.size()]), namespaces);
+    return ArrayUtil.mergeArrays(SchemaIndexUtil.findTypeDefs(project, prefixes, suffix, searchScope)
+        .stream()
+        .filter(Objects::nonNull)
+        .map(PsiElementResolveResult::new)
+        .toArray(ResolveResult[]::new), namespaces);
   }
 
   /**
    * @return either a list with a single namespace declaration which is exactly our prefix, or a list
    * of namespaces that start with prefix
    */
-  @NotNull
-  private List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Project project, @NotNull Qn prefix) {
+  private @NotNull List<SchemaNamespaceDecl> resolveNamespaces(@NotNull Project project, @NotNull Qn prefix) {
     List<SchemaNamespaceDecl> namespaces = SchemaIndexUtil.findNamespaces(project, prefix.toString(), searchScope);
     // try to find a namespace which is exactly our prefix
     for (SchemaNamespaceDecl namespace : namespaces) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public class NamespaceManager {
-  public static Qn[] DEFAULT_NAMESPACES = new Qn[]{new Qn("epigraph")};
+  public static Qn[] DEFAULT_NAMESPACES = {new Qn("epigraph")};
 //  public static List<Qn> DEFAULT_NAMESPACES_LIST = Collections.unmodifiableList(Arrays.asList(DEFAULT_NAMESPACES));
 
   private final Project project;
@@ -54,8 +54,7 @@ public class NamespaceManager {
     return project.getComponent(NamespaceManager.class);
   }
 
-  @NotNull
-  public Collection<SchemaNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
+  public @NotNull Collection<SchemaNamespaceDecl> getAllNamespaces(@NotNull GlobalSearchScope searchScope) {
     Collection<SchemaNamespaceDecl> res = allNamespaces;
     if (res != null) return res;
 
@@ -64,8 +63,12 @@ public class NamespaceManager {
     return res;
   }
 
-  @Nullable
-  public static Qn getNamespace(@NotNull PsiElement element) {
+  // reset cached state -- need for testing
+  public void reset() {
+    allNamespaces = null;
+  }
+
+  public static @Nullable Qn getNamespace(@NotNull PsiElement element) {
     SchemaFile schemaFile = getSchemaFile(element);
 
     if (schemaFile == null) return null;
@@ -79,8 +82,7 @@ public class NamespaceManager {
     return namespaceDeclQn.getQn();
   }
 
-  @NotNull
-  public static List<Qn> getImportedNamespaces(@NotNull PsiElement element) {
+  public static @NotNull List<Qn> getImportedNamespaces(@NotNull PsiElement element) {
     SchemaFile schemaFile = getSchemaFile(element);
     if (schemaFile == null) return Collections.emptyList();
 
@@ -104,8 +106,7 @@ public class NamespaceManager {
    *                               (without implicit dot), then a singleton list with only this namespace is returned.
    * @return collection of matching namespaces.
    */
-  @NotNull
-  public static List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
+  public static @NotNull List<SchemaNamespaceDecl> getNamespacesByPrefix(@NotNull Project project,
                                                                 @Nullable Qn prefix,
                                                                 boolean returnSingleExactMatch,
                                                                 @NotNull GlobalSearchScope searchScope) {
@@ -131,8 +132,7 @@ public class NamespaceManager {
     }
   }
 
-  @Nullable
-  private static SchemaFile getSchemaFile(@NotNull PsiElement element) {
+  private static @Nullable SchemaFile getSchemaFile(@NotNull PsiElement element) {
     return element instanceof SchemaFile ? (SchemaFile) element :
         PsiTreeUtil.getParentOfType(element, SchemaFile.class);
   }
