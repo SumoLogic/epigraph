@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ws.epigraph.data.Data;
 import ws.epigraph.invocation.DefaultOperationInvocationContext;
-import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.invocation.InvocationResult;
+import ws.epigraph.invocation.OperationInvocationContext;
 import ws.epigraph.printers.DataPrinter;
 import ws.epigraph.refs.StaticTypesResolver;
 import ws.epigraph.refs.TypesResolver;
@@ -47,6 +47,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +62,7 @@ public abstract class AbstractHttpClientTest {
   // todo implement using generated clients (once available)
   // todo test params
 
-  protected static final int PORT = 8888;
+  protected static final AtomicInteger UNIQUE_PORT = new AtomicInteger(8888);
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
   protected static final Charset CHARSET = StandardCharsets.UTF_8;
@@ -70,12 +71,14 @@ public abstract class AbstractHttpClientTest {
   protected static final ResourceDeclaration resourceDeclaration = UsersResourceDeclaration.INSTANCE;
   protected static CloseableHttpAsyncClient httpClient;
 
-  protected final HttpHost httpHost = new HttpHost(HOST, PORT);
+  protected final HttpHost httpHost = new HttpHost(HOST, port());
   protected final ServerProtocol serverProtocol = new FormatBasedServerProtocol(
       JsonFormatFactories.INSTANCE,
       CHARSET,
       resolver
   );
+
+  protected abstract int port();
 
   @Test
   public void testSimpleRead() throws ExecutionException, InterruptedException {

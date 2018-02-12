@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  */
 public final class BooksBackend {
   private static final AtomicLong nextId = new AtomicLong();
-  private static final Map<BookId, BookData> books = new HashMap<>();
+  private static final Map<BookId, BookData> books = new ConcurrentHashMap<>();
 
   private BooksBackend() {}
 

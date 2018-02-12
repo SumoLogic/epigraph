@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,14 @@ import ws.epigraph.server.http.jetty.EpigraphJettyHandler;
 public class JettyHandlerHttpClientTest extends AbstractHttpClientTest {
   private static Server jettyServer;
 
+  private static final int port = UNIQUE_PORT.incrementAndGet();
+
+  @Override
+  protected int port() { return port; }
+
   @BeforeClass
   public static void start() throws Exception {
-    jettyServer = new Server(PORT);
+    jettyServer = new Server(port);
     EpigraphJettyHandler handler = new EpigraphJettyHandler(buildUsersService(), -1);
     jettyServer.setHandler(handler);
 

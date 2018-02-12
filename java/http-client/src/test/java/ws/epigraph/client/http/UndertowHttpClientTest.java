@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,15 @@ import ws.epigraph.service.ServiceInitializationException;
 public class UndertowHttpClientTest extends AbstractHttpClientTest {
   private static Undertow server;
 
+  private static final int port = UNIQUE_PORT.incrementAndGet();
+
+  @Override
+  protected int port() { return port; }
+
   @BeforeClass
   public static void start() throws ServiceInitializationException {
     server = Undertow.builder()
-        .addHttpListener(PORT, HOST)
+        .addHttpListener(port, HOST)
         .setServerOption(UndertowOptions.DECODE_URL, false) // don't decode URLs
         .setServerOption(UndertowOptions.REQUEST_PARSE_TIMEOUT, 100)
         .setHandler(new EpigraphUndertowHandler(buildUsersService(), TIMEOUT))

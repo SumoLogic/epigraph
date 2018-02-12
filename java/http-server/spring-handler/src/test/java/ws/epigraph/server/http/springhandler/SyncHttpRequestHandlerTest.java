@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.junit.BeforeClass;
 import ws.epigraph.server.http.AbstractHttpServerTest;
 
-import javax.servlet.*;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +34,11 @@ public class SyncHttpRequestHandlerTest extends AbstractHttpServerTest {
   private static Server jettyServer;
   private static SyncHttpRequestHandler requestHandler;
 
+  private static final int port = UNIQUE_PORT.incrementAndGet();
+
+  @Override
+  protected int port() { return port; }
+
   public static void main(String[] args) throws Exception {
     start();
     jettyServer.join();
@@ -41,7 +46,7 @@ public class SyncHttpRequestHandlerTest extends AbstractHttpServerTest {
 
   @BeforeClass
   public static void start() throws Exception {
-    jettyServer = new Server(PORT);
+    jettyServer = new Server(port);
 
     requestHandler = new SyncHttpRequestHandler(buildUsersService(), 100);
 

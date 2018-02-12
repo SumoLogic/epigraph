@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,11 +51,11 @@ import static junit.framework.TestCase.*;
  * @author <a href="mailto:konstantin.sobolev@gmail.com">Konstantin Sobolev</a>
  */
 public abstract class AbstractHttpServerTest {
-  protected static final int PORT = 8888; // FIXME allocate dynamically
+  protected static final AtomicInteger UNIQUE_PORT = new AtomicInteger(8888);
   protected static final String HOST = "localhost";
   protected static final int TIMEOUT = 100; // ms
 
-  protected int port() { return PORT; }
+  protected abstract int port();
 
   protected static @NotNull Service buildUsersService() throws ServiceInitializationException {
     return new Service(
@@ -188,10 +189,10 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testCreateReadUpdateDelete() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
-    int nextId = id + 1;
+    int nextId = id + 100;
 
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
-    put("/users[" + id + "]:record(firstName)", "[{'K':11,'V':{'firstName':'Bruce'}}]", 200, "[]", false);
+    put("/users[" + id + "]:record(firstName)", "[{'K':" + id + ",'V':{'firstName':'Bruce'}}]", 200, "[]", false);
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Bruce'}");
     delete(
         "/users[" + id + "," + nextId + "]>[*](code,message)",
@@ -203,7 +204,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testCreateReadUpdateDeleteWithPath() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
-    int nextId = id + 1;
+    int nextId = id + 100;
 
     get("/users/" + id + ":record(firstName)", 200, "{'firstName':'Alfred'}");
     put("/users/" + id + ":record/firstName", "'Bruce'", 200, "[]", false);
@@ -252,7 +253,7 @@ public abstract class AbstractHttpServerTest {
   @Test
   public void testCustom() throws IOException {
     Integer id = Integer.parseInt(post(null, "/users", "[{'firstName':'Alfred'}]", 201, "\\[(\\d+)\\]").group(1));
-    int nextId = id + 1;
+    int nextId = id + 100;
 
     post(
         "capitalize",
@@ -276,11 +277,28 @@ public abstract class AbstractHttpServerTest {
     get(requestUri, expectedStatus, expectedBody, ContentTypes.JSON_UTF8);
   }
 
+  protected void get(String host, int port, String requestUri, int expectedStatus, String expectedBody)
+      throws IOException {
+    get(host, port, requestUri, expectedStatus, expectedBody, ContentTypes.JSON_UTF8);
+  }
+
   protected void get(String requestUri, int expectedStatus, String expectedBody, ContentType expectedContentType)
       throws IOException {
 
+    get(HOST, port(), requestUri, expectedStatus, expectedBody, expectedContentType);
+  }
+
+  protected void get(
+      String host,
+      int port,
+      String requestUri,
+      int expectedStatus,
+      String expectedBody,
+      ContentType expectedContentType)
+      throws IOException {
+
     CloseableHttpClient httpClient = HttpClients.createDefault();
-    HttpGet httpGet = new HttpGet(url(requestUri));
+    HttpGet httpGet = new HttpGet(url(host, port, requestUri, null));
     final CloseableHttpResponse response = httpClient.execute(httpGet);
 
     int status = response.getStatusLine().getStatusCode();
@@ -376,9 +394,11 @@ public abstract class AbstractHttpServerTest {
 
   private String url(String requestUri) { return url(requestUri, null); }
 
-  private String url(String requestUri, String query) {
+  private String url(String requestUri, String query) { return url(HOST, port(), requestUri, query); }
+
+  private String url(String host, int port, String requestUri, String query) {
     try {
-      URI uri = new URI("http", null, HOST, port(), requestUri, query, null);
+      URI uri = new URI("http", null, host, port, requestUri, query, null);
       return uri.toURL().toString();
     } catch (URISyntaxException | MalformedURLException e) {
       throw new RuntimeException(e);

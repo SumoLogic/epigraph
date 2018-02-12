@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,10 @@ import javax.servlet.ServletConfig;
 public class AsyncEpigraphServletHttpServerTest extends AbstractHttpServerTest {
   private static Server jettyServer;
 
-  private int port = PORT;
+  private static final int port = UNIQUE_PORT.incrementAndGet();
+
+  @Override
+  protected int port() { return port; }
 
   public static void main(String[] args) throws Exception {
     start();
@@ -46,12 +49,9 @@ public class AsyncEpigraphServletHttpServerTest extends AbstractHttpServerTest {
     jettyServer.join();
   }
 
-  @Override
-  protected int port() { return port; }
-
   @BeforeClass
   public static void start() throws Exception {
-    jettyServer = new Server(PORT);
+    jettyServer = new Server(port);
 
     ServletHandler handler = new ServletHandler();
     handler.addServletWithMapping(TestServlet.class, "/*");
@@ -84,12 +84,12 @@ public class AsyncEpigraphServletHttpServerTest extends AbstractHttpServerTest {
 
   @Test
   public void testWithRewrite() throws Exception {
-    port = PORT+1;
-    Server server = startWithRewrite(port);
+    int portWithRewrite = UNIQUE_PORT.incrementAndGet();
+    Server server = startWithRewrite(portWithRewrite);
 
     try {
-      get("/api/epigraph/users[2]:record(firstName,lastName)",200,"[{\"K\":2,\"V\":{\"firstName\":\"First2\",\"lastName\":\"Last2\"}}]");
-      get("/api/getUser/2",200,"{\"firstName\":\"First2\",\"lastName\":\"Last2\"}");
+      get(HOST, portWithRewrite, "/api/epigraph/users[2]:record(firstName,lastName)",200,"[{\"K\":2,\"V\":{\"firstName\":\"First2\",\"lastName\":\"Last2\"}}]");
+      get(HOST, portWithRewrite, "/api/getUser/2",200,"{\"firstName\":\"First2\",\"lastName\":\"Last2\"}");
     } finally {
       server.stop();
     }
