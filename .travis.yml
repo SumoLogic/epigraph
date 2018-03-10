@@ -10,17 +10,19 @@ cache:
 
 install: true
 
-script: ./mvnw --show-version -Dbuildtime.output.log -Plight-psi
-  clean
-  org.jacoco:jacoco-maven-plugin:prepare-agent
-  test
-  org.jacoco:jacoco-maven-plugin:report-aggregate
+script:
+  - ./mvnw --show-version --batch-mode -Dbuildtime.output.log -Plight-psi
+    -T8 clean process-test-classes
+  - ./mvnw --show-version --batch-mode -Dbuildtime.output.log -Plight-psi
+    -Djacoco.append -Djacoco.destFile="$(pwd)/target/jacoco.exec" org.jacoco:jacoco-maven-plugin:prepare-agent test
 
 # TODO run gradle build as well?
 
-# Remove any Epigrph project artifacts (that change from build to build) from cached local repository:
+# Remove any Epigraph project artifacts (that change from build to build) from cached local repository:
 before_cache:
   - rm -rf $HOME/.m2/repository/ws/epigraph
 
 after_success:
+  - ./mvnw --show-version --batch-mode
+    -T8 -Djacoco.dataFile="$(pwd)/target/jacoco.exec" org.jacoco:jacoco-maven-plugin:report
   - bash <(curl -s https://codecov.io/bash)

@@ -37,8 +37,13 @@
   <properties>
 
     <maven.compiler.parameters>true</maven.compiler.parameters>
+    <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
+    <maven.compiler.testTarget>${maven.compiler.source}</maven.compiler.testTarget>
+    <!-- https://issues.apache.org/jira/browse/MCOMPILER-205 -->
+    <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
 
     <maven-plugin-version>3.5</maven-plugin-version><!-- maven-plugin-plugin and related libs -->
 
@@ -651,7 +656,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
-          <version>1.0.0</version>
+          <version>1.0.1</version>
         </plugin>
 
         <plugin>
@@ -667,7 +672,7 @@
           <!-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test org.jacoco:jacoco-maven-plugin:report -->
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.7.9</version>
+          <version>0.8.0</version>
           <configuration>
             <excludes>
               <!-- use "vm/binary class name" with a `*` suffix, see https://github.com/jacoco/jacoco/issues/34 -->
