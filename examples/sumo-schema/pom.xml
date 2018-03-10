@@ -23,13 +23,17 @@
 
     <!-- test dependencies -->
 
-    <dependency>
-      <groupId>ws.epigraph</groupId>
-      <artifactId>epigraph-builtin-types-schema</artifactId>
-      <version>${project.parent.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
+    <!-- FIXME: `mvn clean test-compile -Plight-psi -T8 -e` fails on `ws.epigraph:epigraph-maven-plugin:testCompile` when:
+      - this (unused) dependency is present
+      - and testSourceDirectory points to non-existing directory
+    -->
+    <!--<dependency>-->
+      <!--<groupId>ws.epigraph</groupId>-->
+      <!--<artifactId>epigraph-builtin-types-schema</artifactId>-->
+      <!--<version>${project.parent.version}</version>-->
+      <!--<type>test-jar</type>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
 
   </dependencies>
 
