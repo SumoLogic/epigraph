@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2017 Sumo Logic
+  ~ Copyright 2018 Sumo Logic
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -45,14 +45,14 @@
     <!-- https://issues.apache.org/jira/browse/MCOMPILER-205 -->
     <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
 
-    <maven-plugin-version>3.5</maven-plugin-version><!-- maven-plugin-plugin and related libs -->
+    <maven-plugin-version>3.5.1</maven-plugin-version><!-- maven-plugin-plugin and related libs -->
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <revision>_-SNAPSHOT</revision><!-- keep in sync with bom/pom.xml -->
 
     <scala.compat.version>2.11</scala.compat.version>
-    <scala.version>${scala.compat.version}.11</scala.version>
+    <scala.version>${scala.compat.version}.12</scala.version>
 
   </properties>
 
@@ -132,7 +132,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
-        <version>2.9.1</version>
+        <version>2.9.4</version>
       </dependency>
 
       <dependency>
@@ -150,19 +150,19 @@
       <dependency>
         <groupId>com.typesafe.scala-logging</groupId>
         <artifactId>scala-logging_${scala.compat.version}</artifactId>
-        <version>3.7.2</version>
+        <version>3.8.0</version>
       </dependency>
 
       <dependency>
         <groupId>io.undertow</groupId>
         <artifactId>undertow-core</artifactId>
-        <version>1.4.20.Final</version>
+        <version>2.0.1.Final</version>
       </dependency>
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version>
+        <version>4.0.0</version>
       </dependency>
 
       <dependency>
@@ -192,13 +192,13 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.5.3</version>
+        <version>4.5.3</version> <!-- locked by httpasyncclient -->
       </dependency>
 
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore-nio</artifactId>
-        <version>4.4.6</version>
+        <version>4.4.6</version> <!-- locked by httpasyncclient -->
       </dependency>
 
       <dependency>
@@ -209,22 +209,22 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-artifact</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-model</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.3</version>
       </dependency>
 
       <dependency>
@@ -248,7 +248,7 @@
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-shared-utils</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1</version>
       </dependency>
 
       <dependency>
@@ -264,27 +264,33 @@
       </dependency>
 
       <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-rewrite</artifactId>
-        <version>9.4.6.v20170531</version>
+        <version>9.4.8.v20171121</version>
       </dependency>
 
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
-        <version>9.4.6.v20170531</version>
+        <version>9.4.8.v20171121</version>
       </dependency>
 
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-servlet</artifactId>
-        <version>9.4.6.v20170531</version>
+        <version>9.4.8.v20171121</version>
       </dependency>
 
       <dependency>
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
-        <version>15.0</version>
+        <version>16.0.1</version>
         <!-- typical scope: provided -->
       </dependency>
 
@@ -308,18 +314,19 @@
       <dependency>
         <groupId>org.scalameta</groupId>
         <artifactId>scalameta_${scala.compat.version}</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0</version> <!-- locked by pprint -->
       </dependency>
+
       <dependency>
         <groupId>org.scalameta</groupId>
         <artifactId>trees_${scala.compat.version}</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.0</version> <!-- locked by pprint -->
       </dependency>
 
       <dependency>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest_${scala.compat.version}</artifactId>
-        <version>3.2.0-SNAP7</version>
+        <version>3.2.0-SNAP7</version> <!-- by some reason gradle fails to pick up SNAP10 -->
       </dependency>
 
       <dependency>
@@ -347,13 +354,13 @@
       <dependency>
         <groupId>org.spockframework</groupId>
         <artifactId>spock-core</artifactId>
-        <version>1.0-groovy-2.4</version>
+        <version>1.1-groovy-2.4</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-web</artifactId>
-        <version>4.3.12.RELEASE</version>
+        <version>5.0.4.RELEASE</version>
       </dependency>
 
     </dependencies>

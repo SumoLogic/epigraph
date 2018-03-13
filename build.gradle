@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Sumo Logic
+ * Copyright 2018 Sumo Logic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,15 +36,15 @@ pom.properties.'*'.each { prop -> pomProps.put(prop.name().localPart, prop.text(
 
 // resolve properties, e.g. '${scala.compat.version}.11 -> '2.11.11'
 def resolveProps (s, props) {
-  if (s =~ ~/.*\$\{(.+)\}.*/) {
+  if (s =~ ~/.*\$\{(.+)}.*/) {
     def match = Matcher.lastMatcher[0][1]
     return resolveProps(s.replace("\${$match}", props[match]), props)
   }
   return s
 }
 
-def javaSourceVersion = pomProps['maven.compiler.source']
-def javaTargetVersion = pomProps['maven.compiler.target']
+def javaSourceVersion = resolveProps(pomProps['maven.compiler.source'], pomProps)
+def javaTargetVersion = resolveProps(pomProps['maven.compiler.target'], pomProps)
 
 allprojects {
   apply plugin: 'idea'
@@ -56,6 +56,7 @@ allprojects {
 
   pom.dependencyManagement.dependencies.dependency.each { dep ->
     def version = resolveProps("${dep.groupId.text()}:${dep.artifactId.text()}:${dep.version.text()}", pomProps)
+//    println "${dep.groupId.text()}:${dep.artifactId.text()}:${dep.version.text()} -> $version"
     configurations.all {
       // https://github.com/typesafehub/zinc/issues/87#issuecomment-139236549
       if (it.name != 'zinc') {
