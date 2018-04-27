@@ -27,10 +27,10 @@
   <url>https://github.com/SumoLogic/epigraph</url>
 
   <!-- first-time build bootstrap:
-      ./mvnw clean install -Plight-psi && ./mvnw clean test-compile
+      ./mvnw clean install -Plight-psi -DskipMain && ./mvnw clean test-compile
   -->
-  <!-- IDEA project set-up:
-    - Run: ./mvnw clean install -Plight-psi,main
+  <!-- IDEA project set-up (installs epigraph maven plugins):
+    - Run: ./mvnw clean install -Plight-psi
     - File > Open... > Select project root folder
   -->
 
@@ -459,7 +459,7 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <version>3.3.1</version>
+          <version>3.3.2</version>
           <executions>
             <execution>
               <goals>

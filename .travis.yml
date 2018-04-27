@@ -12,7 +12,7 @@ install:
   - ./mvnw --show-version -Dbuildtime.output.log
     -Plight-psi -DskipMain clean install
 
-script:
+script: # compile in parallel, run tests sequentially
   - ./mvnw --show-version -Dbuildtime.output.log
     -T8 clean process-test-classes
   - ./mvnw --show-version -Dbuildtime.output.log
