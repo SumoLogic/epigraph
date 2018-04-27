@@ -12,11 +12,11 @@ install:
   - ./mvnw --show-version -Dbuildtime.output.log
     -Plight-psi -DskipMain clean install
 
-script: # compile in parallel, run tests sequentially
+script: # build sequentially - epigraph-maven-plugin (light-psi) is not thread-safe :(
   - ./mvnw --show-version -Dbuildtime.output.log
-    -T8 clean process-test-classes
-  - ./mvnw --show-version -Dbuildtime.output.log
-    -Djacoco.append -Djacoco.destFile="$(pwd)/target/jacoco.exec" org.jacoco:jacoco-maven-plugin:prepare-agent test
+    clean
+    -Djacoco.append -Djacoco.destFile="$(pwd)/target/jacoco.exec" org.jacoco:jacoco-maven-plugin:prepare-agent
+    test
 
 # TODO run gradle build as well?
 
