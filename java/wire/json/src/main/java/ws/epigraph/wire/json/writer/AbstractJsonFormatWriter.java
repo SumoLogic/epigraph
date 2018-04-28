@@ -88,7 +88,6 @@ public abstract class AbstractJsonFormatWriter<
     }
   }
 
-  @SuppressWarnings("unchecked")
   private void writeData(
       boolean renderPoly,
       @NotNull Deque<P> projections, // non-empty, polymorphic tails ignored
@@ -145,11 +144,13 @@ public abstract class AbstractJsonFormatWriter<
           out.write("\":");
         }
         final @Nullable Val value = data._raw().getValue((Tag) tag);
-        writeValue(
-            value == null || value.getDatum() == null ? tagModelProjections :
-            (Deque<MP>) flatten(new ArrayDeque<>(), tagModelProjections, value.getDatum().type()),
-            value
-        );
+        @SuppressWarnings("unchecked")
+        Deque<MP> modelProjections = value == null || value.getDatum() == null ? tagModelProjections :
+            (Deque<MP>) JsonFormatCommon. // java 10 quirk requires explicit type arguments
+                <GenModelProjection<?, TP, ?, ?, ?>, Deque<GenModelProjection<?, TP, ?, ?, ?>>>flatten(
+                new ArrayDeque<>(), tagModelProjections, value.getDatum().type()
+            );
+        writeValue(modelProjections, value);
       }
     } // TODO if we're not rendering multi and zero tags were requested (projection error) - render error instead
     if (renderMulti) out.write('}');
@@ -164,7 +165,7 @@ public abstract class AbstractJsonFormatWriter<
 
   }
 
-  private void writeValue(@NotNull Deque<MP> projections, @Nullable Val value)
+  private void writeValue(@NotNull Deque<? extends MP> projections, @Nullable Val value)
       throws IOException {
     if (value == null) { // TODO in case of null value we should probably render NO_VALUE error?
       out.write("null");

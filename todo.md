@@ -170,3 +170,6 @@
 # Various bugs
  - [ ] [konst-frontend-1]:konstantin@~$ g 'http://localhost:23662/som/files/100025(id,name)~FolderItem(...)'
        Internal error 'java.lang.IllegalArgumentException: Tail type 'com.sumologic.som.FolderItem' is assignable from model type 'com.sumologic.som.FolderItem'. Tail defined at <unknown> line 1 (offset range 33-38)'
+
+# Java 10
+ - [ ] Generate `module-info.java` for generated modules (needed for, e.g., `@javax.annotations.Generated`)
