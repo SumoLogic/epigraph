@@ -123,16 +123,23 @@
   <dependencyManagement><!-- sets version for shared child dependencies -->
     <dependencies><!-- maintain alphabetical order; blank line between different group ids -->
 
+      <!-- BOMs go first to make sure their (nested) entries take precedence -->
+      <?SORTPOM IGNORE?>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.9.8</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <?SORTPOM RESUME?>
+
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>1.2.3</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.9.4</version>
       </dependency>
 
       <dependency>
